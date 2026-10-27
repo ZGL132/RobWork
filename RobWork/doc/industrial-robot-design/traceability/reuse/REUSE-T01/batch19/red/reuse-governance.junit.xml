@@ -1,0 +1,34 @@
+<testsuite name="reuse-governance" tests="8" failures="8" skipped="0">
+  <testcase name="script-audit-no-fake-target">
+    <failure>REUSE-FUNCTION : missing targets
+</failure>
+  </testcase>
+  <testcase name="script-audit-reject-cmake-target">
+    <failure>REUSE-FUNCTION : fixture.governance.entry|NONE : target needs bound CMake registration sdurws_ird_core
+</failure>
+  </testcase>
+  <testcase name="script-audit-reject-product-escape">
+    <failure>REUSE-FUNCTION : missing targets
+</failure>
+  </testcase>
+  <testcase name="script-audit-reject-other-directory">
+    <failure>REUSE-FUNCTION : missing targets
+</failure>
+  </testcase>
+  <testcase name="script-audit-reject-fake-migration">
+    <failure>REUSE-FUNCTION : missing targets
+</failure>
+  </testcase>
+  <testcase name="script-audit-require-own-context">
+    <failure>REUSE-FUNCTION : missing targets
+</failure>
+  </testcase>
+  <testcase name="script-audit-stale-context">
+    <failure>REUSE-FUNCTION : missing targets
+</failure>
+  </testcase>
+  <testcase name="script-audit-reject-production-disguise">
+    <failure>REUSE-FUNCTION : missing targets
+</failure>
+  </testcase>
+</testsuite>

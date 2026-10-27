@@ -1,0 +1,83 @@
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:22: * @file PrismaticJoint.hpp
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:36:     * PrismaticJoint implements a prismatic joint for the displacement in the
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:39:    class PrismaticJoint : public Joint
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:43:        typedef rw::core::Ptr< PrismaticJoint > Ptr;
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:46:         * @brief Constructs PrismaticJoint
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:51:        PrismaticJoint (const std::string& name, const rw::math::Transform3D<>& transform);
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:54:        virtual ~PrismaticJoint ();
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:61:         * This method is equivalent to Frame::multiplyTransform except that is operates
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:76:         * This method is equivalent to Frame::multiplyTransform except that is operates
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:91:         * This method is equivalent to Frame::multiplyTransform except that is operates
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:99:        rw::math::Transform3D<> getTransform (double q) const;
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:100:        // we need to declare the getTransform again because its shadowed by the getTransform(q)
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:101:        using rw::kinematics::Frame::getTransform;
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:133:         * @copydoc rw::kinematics::Frame::doGetTransform
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:135:        rw::math::Transform3D<> doGetTransform (const rw::kinematics::State& state) const;
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:139:         * @brief Forward declaration of the PrismaticJointImpl
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:141:        class PrismaticJointImpl
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:144:            virtual ~PrismaticJointImpl (){/* Do nothing */};
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:146:            virtual void multiplyTransform (const rw::math::Transform3D<>& parent, double q,
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:149:            virtual rw::math::Transform3D<> getTransform (double q) = 0;
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:158:        class PrismaticJointImplBasic : public PrismaticJointImpl
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:161:            PrismaticJointImplBasic (const rw::math::Transform3D<>& transform) :
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:164:            virtual ~PrismaticJointImplBasic (){};
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:166:            inline void multiplyTransform (const rw::math::Transform3D<>& parent, double q,
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:183:            rw::math::Transform3D<> getTransform (double q)
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:202:        class PrismaticJointZeroOffsetImpl : public PrismaticJointImpl
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:205:            PrismaticJointZeroOffsetImpl (const rw::math::Rotation3D<>& rotation) :
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:209:            virtual ~PrismaticJointZeroOffsetImpl (){};
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:211:            void multiplyTransform (const rw::math::Transform3D<>& parent, double q,
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:222:            rw::math::Transform3D<> getTransform (double q)
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:240:        class PrismaticJointZeroRotationImpl : public PrismaticJointImpl
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:243:            PrismaticJointZeroRotationImpl (const rw::math::Vector3D<double>& translation) :
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:247:            virtual ~PrismaticJointZeroRotationImpl (){};
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:249:            void multiplyTransform (const rw::math::Transform3D<>& parent, double q,
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:258:            rw::math::Transform3D<> getTransform (double q)
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:276:        class PrismaticJointWithQMapping : public PrismaticJointImpl
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:279:            PrismaticJointWithQMapping (const rw::math::Transform3D<>& transform,
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:281:            ~PrismaticJointWithQMapping ();
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:284:            void multiplyTransform (const rw::math::Transform3D<>& parent, double q,
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:287:            rw::math::Transform3D<> getTransform (double q);
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:295:            PrismaticJointImpl* _impl;
+RobWork/RobWork/src/rw/models/PrismaticJoint.hpp:299:        PrismaticJointImpl* _impl;
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:18:#include "PrismaticJoint.hpp"
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:27:// PrismaticJoint
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:30:PrismaticJoint::PrismaticJoint (const std::string& name, const Transform3D<>& transform) :
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:35:        _impl = new PrismaticJointZeroRotationImpl (transform.P ());
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:37:        _impl = new PrismaticJointZeroOffsetImpl (transform.R ());
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:39:        _impl = new PrismaticJointImplBasic (transform);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:42:PrismaticJoint::~PrismaticJoint ()
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:47:void PrismaticJoint::getJointValueTransform(const Transform3D<>& parent,
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:54:void PrismaticJoint::multiplyJointTransform (const Transform3D<>& parent, const Q& q,
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:57:    _impl->multiplyTransform (parent, q (0), result);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:60:void PrismaticJoint::doMultiplyTransform (const Transform3D<>& parent, const State& state,
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:63:    _impl->multiplyTransform (parent, getData (state)[0], result);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:66:Transform3D<> PrismaticJoint::doGetTransform (const State& state) const
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:68:    return _impl->getTransform (getData (state)[0]);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:71:void PrismaticJoint::getJacobian (size_t row, size_t col, const Transform3D<>& joint,
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:82:rw::math::Transform3D<> PrismaticJoint::getFixedTransform () const
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:87:void PrismaticJoint::setFixedTransform (const rw::math::Transform3D<>& t3d)
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:89:    PrismaticJointImpl* tmp = _impl;
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:92:        _impl = new PrismaticJointZeroRotationImpl (t3d.P ());
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:94:        _impl = new PrismaticJointZeroOffsetImpl (t3d.R ());
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:96:        _impl = new PrismaticJointImplBasic (t3d);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:101:void PrismaticJoint::setJointMapping (rw::math::Function1Diff<>::Ptr function)
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:103:    PrismaticJointImpl* tmp = _impl;
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:104:    _impl                   = new PrismaticJointWithQMapping (tmp->getFixedTransform (), function);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:109:void PrismaticJoint::removeJointMapping ()
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:115:rw::math::Transform3D<> PrismaticJoint::getTransform (double q) const
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:117:    return _impl->getTransform (q);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:120:Transform3D<> PrismaticJoint::getJointTransform (double q) const
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:125:rw::math::Transform3D<> PrismaticJoint::getJointTransform (const rw::kinematics::State& state) const
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:131:void PrismaticJoint::PrismaticJointImpl::getJacobian (size_t row, size_t col,
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:140:PrismaticJoint::PrismaticJointWithQMapping::PrismaticJointWithQMapping (
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:146:        _impl = new PrismaticJointZeroRotationImpl (t3d.P ());
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:148:        _impl = new PrismaticJointZeroOffsetImpl (t3d.R ());
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:150:        _impl = new PrismaticJointImplBasic (t3d);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:153:PrismaticJoint::PrismaticJointWithQMapping::~PrismaticJointWithQMapping ()
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:158:void PrismaticJoint::PrismaticJointWithQMapping::multiplyTransform (
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:162:    _impl->multiplyTransform (parent, q, result);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:165:rw::math::Transform3D<> PrismaticJoint::PrismaticJointWithQMapping::getTransform (double q)
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:168:    return _impl->getTransform (qnew);
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:171:rw::math::Transform3D<> PrismaticJoint::PrismaticJointWithQMapping::getFixedTransform () const
+RobWork/RobWork/src/rw/models/PrismaticJoint.cpp:176:void PrismaticJoint::PrismaticJointWithQMapping::getJacobian (size_t row, size_t col,

@@ -1,0 +1,13 @@
+--- d52fd06aafcb025a7d494d59c6d44bc9c16f3643
++++ cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7
+@@ -45,7 +45,9 @@
+     if ($LASTEXITCODE) { throw 'fixture sparse init failed' }
+     # 父目录文件由 cone 模式自动带入；只取 traceability/pipeline，避免检出历史
+     # builds 中的长路径截图，也让本测试与“普通任务不加载历史库”的实际流程一致。
+-    & git -C $testRoot sparse-checkout set 'RobWork/doc/industrial-robot-design/context' 'RobWork/doc/industrial-robot-design/tasks' 'RobWork/doc/industrial-robot-design/units' 'RobWork/doc/industrial-robot-design/reuse' 'RobWork/doc/industrial-robot-design/traceability/pipeline' 'RobWork/doc/industrial-robot-design/traceability/acceptance' 'RobWork/scripts' 'RobWork/.agents' 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot'
++    # 沿用test-reuse-governance的两套上游gtest检出面：catalog已绑定测试入口，
++    # 漏带时正例会因REUSE-MISSING提前失败，无法实际验证索引的允许/拒绝行为。
++    & git -C $testRoot sparse-checkout set 'RobWork/doc/industrial-robot-design/context' 'RobWork/doc/industrial-robot-design/tasks' 'RobWork/doc/industrial-robot-design/units' 'RobWork/doc/industrial-robot-design/reuse' 'RobWork/doc/industrial-robot-design/traceability/pipeline' 'RobWork/doc/industrial-robot-design/traceability/acceptance' 'RobWork/scripts' 'RobWork/.agents' 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' 'RobWork/RobWork/gtest' 'RobWork/RobWorkSim/gtest' 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot'
+     if ($LASTEXITCODE) { throw 'fixture sparse set failed' }
+     & git -C $testRoot checkout --quiet --detach HEAD
+     if ($LASTEXITCODE) { throw 'fixture checkout failed' }

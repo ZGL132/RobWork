@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T31",
+  "unit": "dynamics",
+  "masterWp": "WP-A",
+  "title": "GAP-FD-BUILD-01 动力学后端供给定向探测与提案（WP-08）",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "DYN-05"
+  ],
+  "designRefs": [
+    "units/dynamics.md#6",
+    "reuse/migration.md#13.3",
+    "reuse/policy.md#1.1",
+    "reuse/extensions/GAP-FD-BUILD-01.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T31.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e74886dfcb972a2bbcc4f1336e22ab146037ffde..HEAD",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T31.json -Base e74886dfcb972a2bbcc4f1336e22ab146037ffde -Head HEAD"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T31.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T31.json",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/proposal-search.json",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T31/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-*.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-*/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/**",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "ODE 供给定向探测证据（vcpkg port/安装状态/API 链/负面证据/部署握手，全部只读实核）与 traceability/reuse/REUSE-T31 原始记录",
+    "GAP-FD-BUILD-01.md 修订为可裁决供给提案（供给事实＋阶段 B 验证设计＋回滚边界）及 proposal-search 增量检索",
+    "functions/dynamics.json DYN-FD proposal 绑定摘要刷新与 required-proposals/migration §13.1 状态同步"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "定向探测全部只读实核并以命令＋输出留痕（proposal-search.json 增量批＋traceability/reuse/REUSE-T31/README.md）：①供给事实——vcpkg port ode 0.16.6（BSD-3-Clause OR LGPL-2.1-or-later、supports !uwp、ODE_WITH_DEMOS/TESTS=OFF、config 包经 vcpkg_cmake_config_fixup 落 share/ode）在位而未安装（installed/x64-windows/lib 零 ode 库、bullet3 在位对照），集成缓存 BUILD_sdurwsim_ode=OFF、ODE_DIR-NOTFOUND、VCPKG_MANIFEST_MODE=OFF/x64-windows——补齐 GAP §2『若该渠道当前无适用port』的不确定；②力驱动直连 API 链行号级核验——RigidDevice::setMotorForceTargets 同时写目标并置 modes=1（Force）（RigidDevice.cpp:234）、setJointVelocities 经 State 可恢复初速（:260）、ODEVelocityDevice::update 力模式分支 setForce（ODEVelocityDevice.cpp:166）、ODESimulator::addDevice 对 RigidDevice 建 ODEVelocityDevice（ODESimulator.cpp:1214）、PhysicsEngine 纯虚 step/resetScene/initPhysics/exitPhysics/getTime（PhysicsEngine.hpp:99-120）；③负面证据落位——BtSimulator::addDevice 直接 RW_THROW not implemented（BtSimulator.cpp:585-588；bullet3 虽为已装库但对 RigidDevice FD 不可用）、RWPhysics 对 RigidDevice 打印 NO SUPPORT FOR RIGID DEVICES!（RWSimulator.cpp:132-135）、rwphysics RK4Integrator 是单 RigidBody 的 BodyIntegrator（RK4Integrator.hpp:22-36）非关节 ODE 求解器——不把刚体积分器当关节求解器；④部署握手——FindODE.cmake 先走 lib/cmake/ode-* config 包（:10-16）与 vcpkg 安装布局兼容、config 命中时走 ODE_INCLUDE_DIRS/ODE_BUILD_WITH=DOUBLE 分支且手工 dDOUBLE/dSINGLE 宏仅 ODE<0.13 无 threading-impl 路径（rwsimlibs/ode/CMakeLists.txt:65-86,118）",
+    "提案可裁决（policy §4）：GAP-FD-BUILD-01.md 修订为供给提案——vcpkg port 事实（版本/许可/精度握手/经典模式安装命令草拟）、API 链与负面证据精确行号引用、阶段 B 验证设计（先跑既有 sdurwsim_ode-gtest 受影响用例，再增单自由度力输入→step 探针：解析单摆/移动质量 oracle＋RNE 反算交叉验证＋能量守恒＋确定性重复，独立于产品 RK4）、回滚（仅关 BUILD_sdurwsim_ode 构建选项，零产品接线）；明确不实施项：不安装依赖、不改 vcpkg/上游、不接生产、不动 integratorToken 词表（rk4-fixed 锁定值属 WP-09 前瞻）",
+    "零产品代码/零依赖变更：本包不触碰产品源码/测试/CMake、RobWorkSim 与 vcpkg（forbiddenFiles 全程无违反）；REUSE-T04 保持 planned 不假动；DYN-FD 三条 proposal 行中带 proposal 绑定的 evalAcceleration/rk4Stages 摘要刷新为新提案文件 Digest 口径哈希（solveLinearSystem 为 pending 无 proposal 绑定，不动）",
+    "文档同步：required-proposals.md GAP-FD 状态行、migration.md §13.1 续接入口登记本包实施完成待独验；proposal-search.json 增量批记录本次实核命令与输出；validate-docs -TaskFile（文档＋契约＋全量复用检查一次收口）、commit-lint、verify-task-scope 显式 -Base/-Head 三门禁全绿",
+    "所有者保留裁决项：阶段 B（安装 ode 0.16.6＋隔离树启用 BUILD_sdurwsim_ode＋探针实施）属新依赖启用，未获批准不实施；本包仅交付适用性与供给提案，不签发批准、不解除 WP-09 阻断；独立验收/提案裁决由所有者另开会话执行，实施者不自签"
+  ],
+  "note": "migration §13.3 WP-08 行（migration.md:298）＝『现有 PhysicsEngine/ODE 等实际供给定向探测；核 Device、力驱动、状态/步长/确定性与部署；记录 Bullet/RWPhysics 已知不适用证据』，前提栏『仅适用性与供给提案；新依赖/扩展等未获批不实施，不把刚体积分器当关节求解器』。§13.1:240：GAP-FD-BUILD-01 未获批仅阻断依赖能力（WP-09），探测不受阻；§13.4：FD 后端供给是 WP-09 真依赖而非本包前置。起始 SHA=e74886dfcb972a2bbcc4f1336e22ab146037ffde。范围＝探测/证据/提案：零产品代码改动（allowedFiles 限文档与证据）；复用来源全部为直接 API（H1）——rwsim::simulator::PhysicsEngine（load/step/resetScene/initPhysics/exitPhysics/getTime）、ODESimulator（DWC ctor）、RigidDevice（setMotorForceTargets/setJointVelocities/getMotorForceLimits/getMotorModes）、DynamicWorkCellLoader，产品侧承接面＝既有 DynamicWorkCellCompiler（S7 已产 rwsim DWC，集成模式编译）与 ForwardDynamics 公契约（ForwardDynamicsValidator，ForwardDynamics.hpp:303）；依赖供给候选＝vcpkg port ode 0.16.6（批准门控）。GAP-FD-BUILD-01 自 8a7174945 创建后零改动，本次修订只追加实核事实与阶段 B 设计，不放宽原边界（不 vendor、不网络另装、不改上游 CMake、不预授权框架 patch）。阶段 B 验证设计：隔离构建树 cmake -DBUILD_sdurwsim_ode=ON 复用 FindODE/导出目标→构建 sdurwsim_ode→先跑既有 sdurwsim_ode-gtest 受影响用例（ODEControlTest 为 movePTP 速度控制、ODESimpleTest 为落体/托盘稳定，均非 DYN-05 力输入测试，如实引用不冒充）→新增单自由度力输入探针（解析单摆/移动质量 oracle＋RNE 反算交叉验证＋能量守恒＋确定性重复，独立于产品 RK4；resetScene 清速后经 setJointVelocities 恢复初速须实测验证）。已知环境事实如实分列：集成缓存 ODE_DIR-NOTFOUND/BUILD_sdurwsim_ode=OFF 只证明本机未供给，不证明上游无 FD；冒烟 kinematics test/contract exe T19 遗留链接缺口与 py313 DLL 属已知无关全局阻断，本包阶段 A 无 C++ 构建不受影响。所有者保留裁决项：阶段 B 新依赖启用、integratorToken 词表扩展、任何上游 patch 均未获批，本包不自批；若提案被否或裁决要求补充探测，置 blocked 登记原因与受影响消费者（WP-09/T04）。独立验收与提案裁决由所有者另开会话或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型），实施者不自签；本包收口时状态保持 ready＝实施完成待独验，不伪装 done。masterWp=WP-A 按 REUSE-T29/T30 先例（探测包无独立 DTB 工作包层）。门禁口径澄清：三门禁 -TaskFile 仅取本契约（tasks/REUSE-T31.json，ird-task/1）；reuse/changes/REUSE-T31.json 是本契约 reuse.manifest 指向的逐文件凭证清单（ird-reuse-change/1，validate-reuse.ps1 按 taskId/taskFile/files 校验），不是任务契约，不得作为 -TaskFile 输入（缺 unit/status/allowedFiles 契约字段，validate-task.ps1:76 与 verify-task-scope.ps1:137 会按契约口径拒绝）。 2026-10-25 独立验收收口：所有者明确指令的单次验收子智能体（授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体，GOV-T23/T24 先例同型，实施者不得自签，未解除常规禁令）实测 16/16 通过——verdict=pass，绑定送验 SHA=e078984b29ba2a2862120e346db6a23712b750ba（base=e74886dfc），记录 traceability/acceptance/REUSE-T31-20261025-r1.json（复跑原件在其同名目录：02-scope/03-validate-docs/04-commit-lint/05-probe-reverify 四日志，验收员独立重跑非转录）；据此登记 done。限制（limitations 原文口径）：PASS 仅绑定送验 head 的阶段 A 范围（探测/证据/提案，零产品代码），不构成阶段 B（vcpkg 安装 ode、隔离树 BUILD_sdurwsim_ode、力输入探针）的批准或实施许可，不解除 WP-09/T04 阻断，提案技术可裁决性验收≠提案获批，阶段 B 启用与否由所有者裁决。 独立验收由所有者另开会话，实施者不自签；本 note 不解除任何常规禁令。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T31.json"
+  }
+}

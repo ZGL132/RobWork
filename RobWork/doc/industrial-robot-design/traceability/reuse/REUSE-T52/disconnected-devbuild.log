@@ -1,0 +1,27 @@
+Note: Google Test filter = DynRnea.NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DynRnea
+[ RUN      ] DynRnea.NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 3.2976016776875472, which exceeds tol, where
+actual evaluates to -7.0028983223124541,
+expected evaluates to -10.300500000000001, and
+tol evaluates to 1.0300500000000002e-08.
+鍏宠妭 1 闈欐€侀噸鍔涚煩锛堥潪闆跺亸缃揩鐓р€斺€旀潈濞佽鐩寸敤锛夛紙瀹炲緱 -7.0028983223124541锛屾湡鏈?-10.300500000000001锛?
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 1.2213933492222953, which exceeds tol, where
+actual evaluates to -0.25010665077770483,
+expected evaluates to -1.4715, and
+tol evaluates to 1.4715000000000001e-09.
+鍏宠妭 2 闈欐€侀噸鍔涚煩锛堥潪闆跺亸缃揩鐓р€斺€旀潈濞佽鐩寸敤锛夛紙瀹炲緱 -0.25010665077770483锛屾湡鏈?-1.4715锛?
+
+[  FAILED  ] DynRnea.NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8 (0 ms)
+[----------] 1 test from DynRnea (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DynRnea.NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8
+
+ 1 FAILED TEST

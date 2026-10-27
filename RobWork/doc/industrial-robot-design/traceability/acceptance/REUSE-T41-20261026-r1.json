@@ -1,0 +1,96 @@
+{
+  "taskId": "REUSE-T41",
+  "baseCommit": "cf00a7dc9465b82bf5b42828435dacc62b8dcdd3",
+  "reviewedCommit": "8c402228b60c23a43b7ed26a2e4e9828e76dabb7",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T10:15:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T41 独立验收会话（单次验收子智能体，未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型）；实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（REUSE-T41-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未远程操作；BASE 基线对照临时 worktree 用后即删；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 cf00a7dc9465..8c402228b60c（冻结范围，两提交：1cb967892「[governance] 宿主例外封闭清单4→5增HOST-WORKBENCH解除REUSE-T41落地阻断」＋8c402228b「[WP-18-T41] F-967 ui宿主装配候选落地与全文件解决批收口」；含宿主例外治理批按治理脚本正负例与 ARCH 记录一并核验）：①逐契约 verify-task-scope 显式 Base/Head 落盘；②acceptance 逐项清单式增量复验（六文件 post-blob/pre-blob 逐位核验＋落地批复跑原件核数＋集成三套件亲跑＋全文件解决批区段抽查）；③红线抽查（H1—H6、架构红线、CLOSURE 冻结、无平行回流、宿主例外范围未扩越权）；④当前 HEAD 门禁实测 validate-docs -TaskFile（PowerShell 数组传参，决定性套件＋全量对照＋BASE 基线控制）。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 3,
+    "skipped": 0,
+    "unit": "12 项验收检查；测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场与范围：HEAD=8c402228b60c（redesign-main），工作区仅三个未跟踪验收产物目录（本目录＋T10/T30 前序会话遗留），产品源工作树零改动。verify-task-scope 显式 -Base cf00a7dc9465 -Head 8c402228b60c exit 0：changed=40 全部落在契约 allowedFiles（20 规则）内、forbiddenFiles（4 规则）零命中（evidence/verify-task-scope.log）；commit-lint -Range cf00a7dc9465..8c402228b60c PASS（2 提交合规，evidence/acc-commit-lint.log）。",
+    "候选落地逐位核验：六产品件（UiPlugin.cpp/hpp、ui/CMakeLists.txt、ird_gates_whitelist.cmake、EventBus.hpp、production-assembly-manifest.json）的 candidate/*.diff index 头与 git blob 三方比对——pre-blob 6/6 等于 base cf00a7dc9 blob（d2a88072f/bcc1b79cd/4dc5c6759/9c97f9a10/ab8ad4d56/6af94d781）、post-blob 6/6 等于送验 HEAD 8c402228b blob 且与契约 note 六前缀（9ccf33f23/de2b38445/45bad6709/72c24df31/ac5e93dc4/8a5309db4）逐一吻合——「六文件按 candidate/*.diff 原样落地」成立。",
+    "宿主例外治理批核验（1cb967892）：①机读封闭清单恰 5 项（reuse-contract.ps1:71 $names＝HOST-RENDER/HOST-PRESENT/HOST-COMPILE/HOST-GATEWAY/HOST-WORKBENCH），未知 ID 拒/重复 ID 拒/target=sdurws_ird_ui_plugin 与 permissionRef=ARCH:3.6.2 固定/文件面 expected 逐 ext 精确比对（:73-78）；②permissions.json hostExceptions 第 5 项 HOST-WORKBENCH 文件面精确（UiPlugin.{hpp,cpp}）；首批两条 host-presentation 精确 grant——REUSE-T41-UiPlugin.hpp（categories=[host,model]/operations=[borrow]，open(rw::models::WorkCell*) 框架回调借持形参）、REUSE-T41-UiPlugin.cpp（categories=[model,state,graphics,host]/write-state＝既有 D8 Jog 桥任务私有 setQ），粒度到操作、退出条件随 ARCH 同批回收；③ARCHITECTURE.md v0.17 三处登记在案（:268 表行、:272 扩面登记段含范围/理由/退出条件/授权脉络、:868 变更记录）；④治理自测本人实跑 157/157 exit 0（evidence/acc-reuse-governance-selftest.log），含 grant-HOST-WORKBENCH-positive 正例与 ad-host-unknown-id-rejected 负例（HOST-NOPE 清单外 ID 即使文件面/目标/权限引用合法仍拒）按预期——宿主例外范围未扩越权。UiPlugin 两文件本批字节零改动（post-blob=pre-blob 同为候选终版），grant 摘要按门禁 AuditOnly 口径登记。",
+    "修复实现审查（UiPlugin.cpp:751-767 装配点、:844-871/:873-954 双 sink、:1553-1566 析构兜底、:2287-2296 快照访问器、:2315-2332 aboutToQuit 收口）：①生产装配换核＝make_shared<execution::DomainEventBusImpl>（越界 core::ReferenceEventBus 归零），头文件保持 core::IDomainEventBus 接口类型（hpp:618-630），向下转型仅两处且有唯一写入点注释论证；②投递线程转接＝写侧 lock_guard 护 m_lastStoreAdapter（:773-777）＋读侧 snapshotEventStoreAdapter() 互斥快照（两 sink 均改）＋QTimer::singleShot 改 QMetaObject::invokeMethod(…, Qt::QueuedConnection)（投递线程→UI 线程显式排队，宿主销毁排队体自动丢弃），迟到守卫（adapter==source/isClosed/projectId）与 PM-04『持写锁不同步回查』语义保持；③关停 drain 序＝先停发布源→两 RAII 句柄 reset→waitForIdle→成员逆序销毁（hpp 成员声明序论证互斥晚于总线析构），总线保留到成员析构（store 适配器非 owning 裸指针）。中文注释含业务依据（F-967/execution §10.4/§13）。",
+    "落地批复跑原件核数（traceability/reuse/REUSE-T41/landing-*）：execution_test 157/157＋execution_contract_test 38/38＋core_test 74/74＋ui_contract_test 63/63 全绿（各 log 尾 PASSED 计数逐一读取）；ui_test 345 ran/331 passed/14 failed；ird_gates 正例「R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」、撤登记负例恰 1 项真实命中＝IRD-GATE-SUB ui->execution（sdurws_ird_ui_plugin→sdurws_ird_execution）（自测夹具预期检出除外，log 明示「命中 1 项」）、恢复复验零命中——放行面唯一性证据链完整。",
+    "集成抽验亲跑（本验收实测，非引用实施方日志）：cmake 增量构建三测试目标 exit 0（二进制为实施会话 08:57-08:58 落地批构建＝HEAD 源——工作树与 HEAD 零差异＋cmake up-to-date 判定，见 limitations 1）；亲跑 sdurws_ird_ui_contract_test 63/63 exit 0（含 AssemblyManifest wiredAnchor :2855/:2929 行级核对与 manifest +74 锚点一致）、sdurws_ird_execution_contract_test 38/38 exit 0（被采纳实现契约＝oracle：FIFO/RAII/死锁/waitForIdle 线程交错确定性同步）、sdurws_ird_ui_test 331 passed/14 failed exit 1——14 项失败名单剥离耗时后与 landing 原件、与候选态 log 三方 IDENTICAL（DefectPinning F-560×1＋F-973 数值链 13 项＝HostCompilePipelineTest 1＋KinEvaluationChannel 12），如实分列不修复（evidence/acc-sdurws_ird_*.{log,xml,ird-test-report.json}）；ird_gates 正例本人直跑 exit 0 零命中（evidence/acc-ird-gates-positive.log）。",
+    "全文件解决批抽查：①productionWiring 功能行（ui.json:2337）decision=business-specific/status=migrated，四 sources 区段实改（UiPlugin.cpp 754-768/844-871/873-954/1051，锚点行内容与 :754/:844/:1051 实读一致）；②三行整文件行覆盖载体在案（ui.CMake.targetWiring ui.json:2547、ui.IrdWorkbenchHostPlugin :2602、execution.EventBusContractHeader execution.json:10818）；③foundation-governance.ird_gates_whitelist.L10 区段重定位 580-601（foundation-governance.json:421-422）与白名单 :578-601 实读（IRD_TARGET_LEVEL_EDGES set 块＋新增边）一致；④changes/REUSE-T41.json 五产品文件凭证按 validate-reuse 同款 Digest 口径（文本读入→剥 BOM→CRLF→LF→尾换行规范化→UTF8 sha256）本人复算 5/5 MATCH（UiPlugin.cpp=75fe95ce…、hpp=db30dc7f…、ui/CMakeLists.txt=2555c4a5…、EventBus.hpp=48874e11…、ird_gates_whitelist.cmake=5015ba9d…，与 permissions.json 两 grant source/build 摘要同源）；⑤全矩阵摘要重钉由 ④ validate-reuse 全量机器检查承载（changed=121 PASS），105 处 inputs/auditEvidence 重钉（ui 65/execution 11/core 14/foundation 10/permissions 5）与 ui.json diff 654 行 sha256 面规模相符。",
+    "收口登记核验：findings.json F-967 status=open→fixed，落地批 resolution 段实证范围如实限定（「止于装配越界/数据竞争/RAII 与关停序缺口收口，不声称 GUI 端到端验证」）；migration.md §13.1 WP-18 blocked 划线留痕＋解阻说明、§13.2 REUSE-T41 行改已落地（含落地起始/治理批 SHA 与六 post-blob 前缀）、§13.3 WP-18 行同步三处一致；production-assembly-manifest.json 两 wiredAnchor 各 +74 行位移（:2781→:2855、:2855→:2929）由亲跑 ui_contract_test 63 全绿承载；装配边登记正本 wp18-t41-gate-registrations.md 在场（登记内容/边界不动面/机器验证表/待裁决边界四节）；契约 status=ready 待独立验收、候选/落地双起点 SHA 与实测一致。",
+    "落地边界核验（T33/T36/T40 同型）：①不重造第三总线——diff 零 ui 侧总线子类/包装，直接消费 execution::DomainEventBusImpl；②上游 rw::core::Event 不采用——productionWiring search.conclusion 明示 CORE-EVENT 维持 candidate；③零触碰——core/src/Events.cpp、core/test/EventsTest.cpp、execution/src/EventBus.cpp、BuildRedLineTest 均不在 40 文件 diff 中（待裁决四项未获批未实施，登记正本 :47-55 在案）；④单元级白名单 IRD_ALLOWED_UNIT_EDGES 零新增——白名单 diff 仅 IRD_TARGET_LEVEL_EDGES（L10）+1 条与注释，ui 产品库 sdurws_ird_ui 链接块零 execution（仅 sdurws_ird_ui_plugin MODULE 链接面 +1）；⑤ReferenceEventBus 产品（非 test）使用点归零——rg 全产品树仅剩 core 定义（Events.hpp:166/Events.cpp）与各单元 test 及注释提及。",
+    "红线抽查（H1—H6/架构）：H1＝直接 API 复用 execution 单元既有生产实现 DomainEventBusImpl（§10.4/§13 交接），无最小扩展、无新实现；H2＝无平行实现（无第三总线）、无 old/ 回流（diff 增行 old/ 零命中）；H3＝命名空间 sdurws::ird::* 与中文契约保持，EventBus.hpp include 面纯标准库＋core/Events.hpp 契约头零 Qt（L2 零 Qt 保持）；H4＝代码/测试/文档/矩阵/凭证/门禁同批收口（40 文件全部 allowedFiles）；H5＝所有者 2026-10-26 批量批准落地裁决表第 1~4 项授权脉络在契约 note/ARCH :868/migration §13.2/findings resolution 四处一致登记；H6＝逐文件凭证（复算 5/5 MATCH）＋productionWiring 四区段＋整文件行覆盖载体三级绑定可追溯。架构红线＝项目修订写路径未涉、名称前缀未剥、runtime 模型 owner 红线不变（两 grant lifetime 明示不授模型构造/结构写入）。",
+    "CLOSURE 冻结与宿主例外边界：范围 diff 不含 closures.json；closures.json 零 UiPlugin 条目（grep 计 0）——无 CLOSURE 冻结面触碰；宿主例外扩面止于 HOST-WORKBENCH 精确文件族（UiPlugin.{hpp,cpp}），机读面恰 5 项、permissions.json 不能自扩例外（负例实测拒绝）、target 与 permissionRef 固定——未越权扩面。",
+    "④ 当前 HEAD 门禁实测（PowerShell 数组传参，包装脚本落盘）：决定性套件 validate-docs -TaskFile @('REUSE-T41.json','GOV-T21.json','GOV-T22.json')（本包＋dependsOn 前置）exit 0——validate-reuse: PASS governance only; inventory=1401 units=20 changed=121 DEBT=16 UNRESOLVED=1399（REUSE-AD-PENDING 各行为 reporting/runtime/ui 等文件既有 pending 提示，UiPlugin 两文件已凭 grant 出列；GOV-T24 独验同定性，非本包阻断）；validate-task: PASS (3 tasks)；validate-docs: PASS (20 units, 12 trace entries, 424 task files…)（evidence/acc-validate-docs-package-suite.log）。全量对照：76 份 tasks/*.json 契约数组套件 exit 1 于「ready task has empty or missing field allowedFiles: CORE-T01」（validate-task 首错即停语义下的第一个失败契约）——BASE cf00a7dc9 临时 worktree 同款套件同跑同样 exit 1 同一失败逐字一致（evidence/acc-validate-docs-baseline-control.log），失败为 legacy 契约治理存量（T40 独验 limitations 第 2 条已定性 DOC-T01/CORE-T01 同族），非本包引入。实测教训复现并规避：pwsh -File 子进程形式下数组展开为位置参数、第二路径溢出误绑 -RepoRoot（首跑 exit 1 留痕），改为同进程 & 调用脚本后数组保真（evidence/run-acc-validate-docs-package.ps1 注释记录）。"
+  ],
+  "integrationTest": {
+    "uiContract": { "tests": 63, "passed": 63, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "evidence/acc-sdurws_ird_ui_contract_test.log", "xml": "evidence/acc-sdurws_ird_ui_contract_test.xml", "note": "本验收亲跑；含 AssemblyManifest wiredAnchor 行级核对（manifest +74 锚点）" },
+    "executionContract": { "tests": 38, "passed": 38, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "evidence/acc-sdurws_ird_execution_contract_test.log", "xml": "evidence/acc-sdurws_ird_execution_contract_test.xml", "note": "本验收亲跑；被采纳实现契约＝oracle（FIFO/RAII/死锁/waitForIdle 线程交错确定性同步）" },
+    "uiTest": { "tests": 345, "passed": 331, "failed": 14, "skipped": 0, "notRun": 0, "exitCode": 1, "log": "evidence/acc-sdurws_ird_ui_test.log", "xml": "evidence/acc-sdurws_ird_ui_test.xml", "note": "本验收亲跑；14 项失败三方名单 IDENTICAL（亲跑=landing=候选态）：F-560×1＋F-973 数值链×13，与本包五产品文件零因果，如实分列不修复，归所有者归类" },
+    "irdGates": { "exitCode": 0, "log": "evidence/acc-ird-gates-positive.log", "result": "R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（本验收直跑）；撤登记负例恰 1 条 IRD-GATE-SUB 与恢复复验 exit 0 引用 landing-* 原件核读" },
+    "governanceSelfTest": { "passed": 157, "failed": 0, "skipped": 0, "exitCode": 0, "log": "evidence/acc-reuse-governance-selftest.log", "note": "本验收实跑；含 HOST-WORKBENCH 正例与 ad-host-unknown-id-rejected 负例（expectedTests 155→157）" }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T41.json -Base cf00a7dc9465b82bf5b42828435dacc62b8dcdd3 -Head 8c402228b60c23a43b7ed26a2e4e9828e76dabb7", "exitCode": 0, "passed": true, "log": "evidence/verify-task-scope.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range cf00a7dc9465b82bf5b42828435dacc62b8dcdd3..8c402228b60c23a43b7ed26a2e4e9828e76dabb7", "exitCode": 0, "passed": true, "log": "evidence/acc-commit-lint.log" },
+    { "name": "candidate-blob-identity", "command": "git ls-tree <base|head> -- <六文件> 与 candidate/*.diff index 头比对：pre 6/6、post 6/6 逐位一致", "exitCode": 0, "passed": true },
+    { "name": "credential-digest-recompute", "command": "pwsh 按 reuse-contract/validate-reuse 同款 Digest 口径（剥 BOM→CRLF→LF→尾换行规范化→UTF8 SHA256）复算 changes/REUSE-T41.json 五凭证", "exitCode": 0, "passed": true, "note": "5/5 MATCH；裸字节 Get-FileHash 口径不匹配为行尾差异，非凭证失真" },
+    { "name": "build-affected-targets", "command": "cmake --build build --config Release --target sdurws_ird_ui_contract_test --target sdurws_ird_execution_contract_test --target sdurws_ird_ui_test", "exitCode": 0, "passed": true, "log": "evidence/evidence-acc-build.log", "note": "增量判定 up-to-date（exe=实施会话 08:57-08:58 落地批构建，工作树与 HEAD 零差异）" },
+    { "name": "int-ui-contract-test", "command": "QT_QPA_PLATFORM=windows sdurws_ird_ui_contract_test.exe --gtest_output=xml:… --ird_report=…", "exitCode": 0, "passed": true, "log": "evidence/acc-sdurws_ird_ui_contract_test.log" },
+    { "name": "int-execution-contract-test", "command": "QT_QPA_PLATFORM=windows sdurws_ird_execution_contract_test.exe --gtest_output=xml:… --ird_report=…", "exitCode": 0, "passed": true, "log": "evidence/acc-sdurws_ird_execution_contract_test.log" },
+    { "name": "int-ui-test", "command": "QT_QPA_PLATFORM=windows sdurws_ird_ui_test.exe --gtest_output=xml:… --ird_report=…", "exitCode": 1, "passed": false, "log": "evidence/acc-sdurws_ird_ui_test.log", "note": "14 项失败为契约如实分列的预存名单（三方 IDENTICAL），exit 1 属预期非本包缺陷" },
+    { "name": "ird-gates-positive", "command": "cmake -DIRD_ROOT=<industrialrobot 绝对路径> -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "evidence/acc-ird-gates-positive.log" },
+    { "name": "governance-selftest", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1", "exitCode": 0, "passed": true, "log": "evidence/acc-reuse-governance-selftest.log" },
+    { "name": "validate-docs-package-suite", "command": "pwsh -NoProfile -File <evidence>/run-acc-validate-docs-package.ps1（内部同进程 & 调用 validate-docs.ps1 -TaskFile @('REUSE-T41.json','GOV-T21.json','GOV-T22.json')）", "exitCode": 0, "passed": true, "log": "evidence/acc-validate-docs-package-suite.log" },
+    { "name": "validate-docs-all-tasks-and-baseline-control", "command": "76 份 tasks/*.json 全量数组套件于 HEAD 与 BASE cf00a7dc9（临时 worktree，用后即删）各跑一次：两处同样 exit 1 于 CORE-T01 allowedFiles 缺项——基线既有，非本包引入", "exitCode": 1, "passed": false, "log": "evidence/acc-validate-docs-all-tasks.log；evidence/acc-validate-docs-baseline-control.log", "note": "不计入本包判定（见 limitations 第 2 条）" }
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "GUI 真实生产路径（修订事件双 sink 投递端到端）",
+      "reason": "HEAD 既有启动段错误（F-974，gui-smoke-head-baseline-segfault.log 双跑归因在档）阻断——契约 acceptance ③与 findings resolution 均如实登记 NOT RUN；替代证据＝execution 总线契约 38 项（本验收亲跑）＋ui_contract 63 项（本验收亲跑）。跨任务缺陷归类与修复归所有者。"
+    },
+    {
+      "item": "性能微基准",
+      "reason": "本包为生产装配换核＋治理面收口，无公共接口签名/依赖/数值算法变化；线程确定性同步语义由 execution_contract 38 项亲跑承载，契约与 AGENTS §4 均未设性能验收面。"
+    },
+    {
+      "item": "fresh 全量重配",
+      "reason": "增量口径：五产品文件与 landing 复跑时逐位一致（blob 三方核验），受影响目标二进制为实施会话落地批构建（08:57-08:58，提交 09:28 前的工作树即 HEAD 终版内容），本验收 cmake 增量 up-to-date 判定＋工作树零差异＋亲跑计数与 landing 原件逐项一致三重印证；未做 fresh 全库重配。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 REUSE-T41 送验范围（cf00a7dc9465..8c402228b60c）与宿主例外治理批的记录/正负例核验。四点如实说明：1) 集成测试二进制为实施会话落地批复跑时构建（build 树增量、源与 HEAD 逐位一致），本验收亲跑产出结果并与 landing-* 原件交叉印证，未做 fresh 全量重配；构建缓存 RWS_BUILD_INDUSTRIALROBOT=ON 经 CMakeCache 确认。2) 全量契约套件（76 份）在 HEAD 与 BASE 同样 exit 1，首个失败点为 legacy 契约既有缺项（CORE-T01 allowedFiles 缺失；T40 独验已定性同族 DOC-T01/71 个 ready 缺 allowedFiles 为治理存量）——validate-task 首错即停，全清单未展开，本验收不修复，维持 T40 提请的所有者后续治理批次收口。3) validate-reuse 为 governance only 口径（DEBT=16、UNRESOLVED=1399），不构成算法替换（migration §11）或 REUSE-T02 放行；F-967 fixed 的实证范围以 findings 登记为准（止于生产装配越界/投递线程数据竞争/RAII 退订与关停 drain 序缺口收口），不声称 GUI 端到端投递验证。4) 待所有者裁决残留四项（core ReferenceSubscription RAII 恢复＋EventsTest 句柄契约纠正、EventBus.cpp:66-67 同款失实注释、BuildRedLineTest 增 ReferenceEventBus 禁入扫描、F-973/F-974 归类）本批零触碰未实施，与登记一致；validate-docs 数组传参首跑踩 -File 溢出误绑 -RepoRoot 坑（ask 已预警），已改同进程 & 调用并以包装脚本留痕复现与修正。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/verify-task-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-ird-gates-positive.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-reuse-governance-selftest.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/evidence-acc-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_ui_contract_test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_ui_contract_test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_ui_contract_test.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_execution_contract_test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_execution_contract_test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_execution_contract_test.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_ui_test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_ui_test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-sdurws_ird_ui_test.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-validate-docs-package-suite.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-validate-docs-all-tasks.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/acc-validate-docs-baseline-control.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/run-acc-validate-docs-package.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/run-acc-validate-docs-all.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1/evidence/run-acc-validate-docs-baseline.ps1"
+  ]
+}

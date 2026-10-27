@@ -1,0 +1,122 @@
+[
+  {
+    "file": "acceptance.json",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "baseline-hash-review.json",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "batch3-source-sections.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "consumer-review.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "diff.exit.txt",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "diff.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "docs.exit.txt",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "docs.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "final-scope-consumer-review.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "hash-review.json",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "reuse.exit.txt",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "reuse.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-1.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-2.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-3.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-4.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-5.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-6.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-7.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-8.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "search-replay.json",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "task.exit.txt",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "task.log",
+    "archived": true,
+    "contentPreserved": true
+  },
+  {
+    "file": "upstream-target-api.log",
+    "archived": true,
+    "contentPreserved": true
+  }
+]

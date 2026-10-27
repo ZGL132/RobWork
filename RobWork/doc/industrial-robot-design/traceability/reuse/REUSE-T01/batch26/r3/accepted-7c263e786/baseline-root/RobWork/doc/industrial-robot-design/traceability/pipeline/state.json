@@ -1,0 +1,2284 @@
+{
+  "schemaVersion": "ird-pipeline/1",
+  "phase": "idle",
+  "tickCount": 461,
+  "currentTask": null,
+  "branch": null,
+  "base": null,
+  "headSha": null,
+  "acceptedHead": null,
+  "acceptanceRecord": null,
+  "lastFailureRecord": null,
+  "run": null,
+  "attempts": {
+    "implement": 0,
+    "fix": 0,
+    "accept": 0
+  },
+  "heartbeat": {
+    "updatedAt": "2026-10-04T17:10:55+08:00",
+    "ticksNoProgress": 0
+  },
+  "history": [
+    {
+      "task": "UI-T35",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "c5549025",
+        "d46762ca"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T35-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（单会话顺序执行——独立性降级已在记录声明）。需求会话一致性修复批次（R2 审核整改 F-446）：①DomainAssembly 需求 onCommitted 根身份回填〔扫描 newHeadState.objectRefs 的 req-set——建模域同构〕②wireRequirementsSession 空项目内存空根初始化〔EmptyRequirementsClosure→loadBaseline→attachEditor——生命周期按钮从零可用，首应用 allocateNew 取号正式身份（O-36 编辑期临时句柄零伪造）〕③捕获/拾取撤牌〔isAssembled 移除两条→注册期禁用——不合格中间态处置〕④需求域修订同步 sink＋sessionBaseRevision 出线＋RevisionSyncPolicy 三分岔判定纯函数（判定/执行分离）；送验后尾款补齐轮（d46762ca）：同步具名用例四条（三分岔真值表×3＋门面基线往返）＋冒烟撤牌断言 16 行（禁用原因键分岔 7/2＝七条 reason.no-project／两条 cmd.flow-not-assembled.reason＋按钮呈现面统一不可达）＋两处过期注释随行为更新。验证＝冷启 detached worktree 双模式零错误（F-429 第 5 次模板拷入/F-323 框架插件 73 错既定口径隔离——均如实登记）＋ctest 五单元 12 目标 100%（主树/acc 树/冷启树三树）＋ird_gates 96 命中集与 UI-T34 验收基线条目切分归一化逐条一致（零新增）＋冒烟双场景 PASS 零 failed-assert＋validate-docs/task/state PASS；双变异〔策略判定恒返 StaleNotice→真值表 2 红/flowCaptureTcp 伪成功→降级用例红〕均还原复绿零残留；验收初稿撤牌断言口径（enabled 位）被冷启冒烟打回后修正为禁用原因键分岔——对抗机制实录。合入口径 PIPE §4.7②③〔evidence a4418336＋代码 d46762ca 按 SHA 合并——state.json 分支簿记按 F-426 留任务分支；findings.json 冲突经 merge-findings-union 并集解算（F-446/F-447/F-448 并存 441 条）〕；F-446 随本收尾转 fixed（fixedBy=d46762ca）并按 F-447 勘误标注，F-447 随之关闭，F-448（主树陈旧二进制防复发）保持 open。R2 中间验收审核整改批次全闭；三维接线（RegionPreviewSink→宿主视图）/TCP 捕获完整实现/宿主 E2E 用例归 UI-T33（D 批次，前置 View3D 阶段 B 立项）。需求语义零变化"
+    },
+    {
+      "task": "UI-T34",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "d9055c56"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T34-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#450 实施/tick#451 验收——单会话顺序执行，独立性降级已声明）。校验与应用体验收口（E 批次）：校验页①页头实时化〔『尚未执行』静态退役——阻断 N 项引导/就绪二态随报告刷新，UI-T26 既有登记的消费兑现〕②逐项三过滤行〔级别 4 值/层 R0~R9/稳定码子串不区分大小写——纯呈现层重投影＋m_lastReadiness 报告缓存〕③Blocking 行红色前景〔拒绝分组视觉面〕④修订只增不改语义文案〔防旧版冻结心智误读〕；updateTabHeaders 校验头职责移交 renderValidationPage；gui 用例六断言组。纯呈现层零数据面〔include/src/ui 零触碰——契约禁止面执行〕。验证＝ctest 五单元 12 目标 100%〔gui 16/16；首跑 ui gui 闪失败＝HostIntegration 时序敏感，直跑 67/67＋三连绿＋复采集 5/5——T32 attempt3 同型如实登记〕＋冒烟双场景 PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异〔过滤判定失效红〔新面锚〕/Readiness 反转 45 红〕均恢复绿。合入口径 PIPE §4.7②③〔evidence 9d590c30＋代码 d9055c56〕。需求界面功能对照五批次〔A/B1/B2/C/E〕全闭"
+    },
+    {
+      "task": "UI-T32",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "60f4cb6a",
+        "fc8dfe4b",
+        "99e14693"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T32-20261001-r3.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收史＝attempt1 fail〔B-1 契约承诺 gui 用例缺失——flows 模态对话框无可测缝→CommandDialogHost 注入缝＋FakeDialogHost 七组用例〕→attempt2 fail〔B-1′ 门面出线 executeDomainCommand 未在 allowedFiles——T27 同型登记缺口→契约 v1.2 增补 assembly/**〕→attempt3 pass。九命令 UI 流程装配（C 批次）：RequirementsCommandFlows〔组1 导出/模板/镜像/阵列/重生成＋解除——submitBatchEdit 单快照；组2 导入向导 CSV 五步流＋JSON 直映射＋行级错误预览＋临时句柄修复 O-36；组3 捕获/拾取降级壳〕＋面板/模块/门面出线＋UiPlugin 九条置位；域逻辑零重写。验证＝ctest 五单元 12 目标 100%〔gui 17/17〕＋冒烟双场景 PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异〔导入句柄回退 3 红/Editor 重名面 5 红〕恢复绿。合入口径 PIPE §4.7②③〔evidence 8069617b＋代码 99e14693〕"
+    },
+    {
+      "task": "UI-T31",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3938cfe6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T31-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#439 实施/tick#440 验收）。区域/工况字段编辑 B2：regionQuantitySpecs/applyRegionEditSet＋conditionQuantitySpecs/applyConditionEditSet〔specs 词表＋回填——工位轨同构单一词表两处消费；单位分档 m/无量纲/s/kg＋bounds 预过滤〕＋盒复合行拆三分量＋质量行 Provided 态收窄＋两检查器行按 enablement 可编〔解除 T27 降级〕＋onRegion/ConditionFieldEditingFinished 两槽〔权威值短路→parseFieldValueText 唯一出口→submitEntryEdit〕＋工况表选中锚跨 rebuild 恢复〔区域页同款既有缺陷修复〕＋表 objectName 锚。gui_test 三用例（区域四态＋撤销同栈/工况未设→设值/只读门控）。验证＝ctest 五单元 12 目标 100%＋冒烟双场景 PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异（区域回填错位 3 红〔本批新增面锚〕/Readiness 反转 45 红）均恢复绿。合入口径 PIPE §4.7②③〔evidence 8025cee3＋代码 3938cfe6〕"
+    },
+    {
+      "task": "UI-T30",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "c9b54cfd"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T30-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#437 实施/tick#438 验收）。对象生命周期 B1：三页签生命周期工具行〔FlowLayout 防撑主 Dock——冒烟二次启动中央区 319px 回归的对照修复〕＋结构槽三件〔新增＝合法起步＋uniqueEntryName 防撞／复制＝深拷贝＋新 id＋副本名＋溯源保源值／删除＝removeEdit＋同位次锚回落〕＋submitStructuralEdit 统一轨（UI-T29 组合子就绪重估复用）＋无会话门控＋focusObject(nullopt) 页签头收口＋gui_test 四具名用例＋T29 夹具工况空集合 UB 修复。域侧 upsert/Remove 原语与 I-REQ-2/3 UT 既有在册零新增（契约缺则补分支未触发）。验证＝ctest 五单元 12 目标 100%＋冒烟双场景 LAYOUT_SMOKE_PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异（Readiness 反转 45 红/Editor 重名拒绝面失效 5 红）均恢复绿。合入口径 PIPE §4.7②③〔evidence 8d9da829＋代码 c9b54cfd〕"
+    },
+    {
+      "task": "UI-T29",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "990f1263"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T29-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#434 实施/tick#435 验收——单会话顺序执行模式，独立性降级已在记录声明）。需求域宿主会话接线＋最小校验（批次 A）：wireRequirementsSession 二态接线〔HEAD 闭包载入→attachEditor＋bindSessionAnchor＋bindReadiness＋req-set 根回填；无根→诚实空态〕＋ProjectRequirementsClosure 闭包适配器＋面板 setPostEditAction＋模块组合子（重估→bindReadiness→最新报告 refreshPanel——校验页实时化）＋draft.apply 注册期门控〔applyDraftDisablement 契约增量 ui.md v1.33 注⑯＋UiText 键 reason.readiness-blocking〕＋sdurws_ird_requirements_gui_test 新目标三具名用例＋契约 v1.1 范围修正（gui_test/CMakeLists/两契约白名单）。验证＝双模式零错误＋ctest 五单元 12 目标 100%＋layout 冒烟双场景 LAYOUT_SMOKE_PASS＋ird_gates 93→96 恰增 3 条随登记件＋validate-docs PASS；留痕 builds/ui-t29/＋acc 补全九帧。合入口径 PIPE §4.7②③〔evidence SHA da7790a5＋代码 SHA 990f1263——漂移检测通过〕；state.json 两次冲突按 F-426 红线主线版本保留；建议级 F-444 随收尾转登"
+    },
+    {
+      "task": "UI-T27",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "37ab8102",
+        "dc5e6650",
+        "d63dca9a",
+        "3070b75a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T27-20260930-r2.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收史＝attempt1 fail（acc/UI-T27/1@74ba3c9a——B-1 四件 assembly 越界未登记／B-2 承诺测试面缺失／B-3 留痕缺失；证据分支保留）→所有者『返工』指令→返工提交 3070b75a（契约 v1.1 范围修正＋sdurws_ird_modeling_gui_test 新目标五具名用例＋ui gui_test assembled=false 用例＋留痕 builds/ui-t27/ 三域截图九帧＋ui.md v1.32/DTB v0.35 落位登记）→attempt2 pass（acc/UI-T27/2@b0fa837c——§4.1~§4.11 全项 PASS，双变异全新实证）。插件面板缺陷修复批次 P0×5＋P1×3：建模表单全清〔removeRow(0) 单次无循环〕/单位分离/仅 zero-offset 可编/未装配命令注册期禁用〔DomainCommandEntry.assembled＋enablement 恒禁〕/幻影脏化消除＋需求宿主提交出口补线〔setCommandSubmit 从未注入——审计新发现〕/需求区域选中保持＋预览随选中/运动学求解门控与输入提示。验证＝双模式零错误〔ird-smoke-t27-rework 独立冒烟树 27 测试目标自包含〕＋ctest 五单元 11 目标 100%〔含新 gui_test〕＋layout 冒烟双场景 LAYOUT_SMOKE_PASS〔三域呼出截图九帧——关闭复位保证二次启动断言初态〕＋ird_gates 90→93 恰增 3 条随登记件〔新测试目标同单元链接——零产品新边〕＋validate-docs PASS。合入口径：PIPE §4.7②③〔evidence SHA b0fa837c＋代码 SHA 3070b75a——漂移检测通过〕；state.json 冲突按 F-426 红线主线版本保留〔两次〕。段内治理提交 d63dca9a（UI-T29~T34 立项六卡——需求界面功能对照批次 A~E，所有者确认批次结构 v2）随本段携带合入；建议级 F-442/F-443 随 3070b75a 转登在册"
+    },
+    {
+      "task": "UI-T26",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "88e14fa9",
+        "eb902e93",
+        "d49bdfaf",
+        "3717c308"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T26-20260930.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（单会话顺序执行模式——独立性降级已在记录声明）。对象上下文栏与项目树检索（B1.2 第一阶段第一批；所有者 2026-09-30 界面评审『认可』立项）：P1 顶栏上下文栏〔三标签＋noteSelectionForContext 契约面增量 §10.1 v1.29 注⑭〕＋P2 项目树检索〔容器化＋applyFilter〕＋P3 建模命令四组分节＋P4 需求页签状态行。验证＝双变异实证＋ird_gates 67 处命中同形态零新增＋ctest 五单元全绿＋layout 冒烟双场景 PASS＋留痕 builds/ui-t26/。合入口径：PIPE §4.7②③〔SHA 3717c308——验收记录随任务段〕；state.json 冲突按 F-426 红线主线版本保留"
+    },
+    {
+      "task": "UI-T25",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "4b36b225",
+        "a032a0c4",
+        "b4f48c5d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T25-20260930.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（单会话顺序执行模式——独立性降级已在记录声明）。界面文案治理与空态引导：P0 文案治理〔三域迁移标记挂 UiText 键族⑨——F-430/F-432 消账〕＋P0 空态引导〔下一步建议静态页签〕＋P1 占位收敛＋P1 qt_zh_CN 翻译装载＋P2 需求命令条分组。验证＝布局冒烟双场景 LAYOUT_SMOKE_PASS＋ctest 全绿＋ird_gates 同形态零新增＋双变异实证＋留痕 builds/ui-t25/。合入口径：PIPE §4.7②③〔SHA b4f48c5d——验收记录随任务段〕；合入零冲突"
+    },
+    {
+      "task": "UI-T24",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "fd4f1c8b",
+        "13f60200",
+        "78d4173d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T24-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。体验收口 S/M（所有者 2026-09-29 界面审查授权）：P1 净室默认布局收敛＝四域自持面板 Dock（建模/需求/运动学/高级）工厂默认不呈现＋「视图」菜单四项勾选呼出＋跨会话辅助记忆半区（IWorkbenchContent 增 setAuxVisibilityTarget/auxVisible/setAuxVisible 三方法＋LayoutMemory aux 键族——域 Dock 晚于宿主 restoreState 挂载故框架 blob 无效，记忆自持；Dock 关闭钮同步记忆、窗口不在屏抖动不记忆）；净室中央三维视图 18px→476px。P2 中央区保护＝钳制源定位前置（clamp-source.md：源 1 需求命令条 12 按钮单行 2074px、源 2 顶栏三占位 QLabel 1054px——tick#424 的 962/2092 复现吻合）→新公共构件 FlowLayout 双源消除（顶栏/命令条流式栅格，主 Dock minHint 1054→240＝§4.4 原文）→装配侧事件观察＋确定性回推保障（中央保留 320px，最小窗口实测 692px；SA-02 框架零修改）。P3＝UiText 键族①b 增 cmd.requirements.* 九键（§9.8 行序）＋按钮经 titleKey→resolveText（消账 F-430 家族需求域按钮一族——UX-02 commandId 直出清零）＋命令条流式栅格宽窄两态零重叠；registeredTextKeys 盘点面勘误补全（域命令族建模十键登记时遗漏）；具名用例 UiText_RequirementsDomainCommandTitlesRegistered 键表完备性。验证＝布局冒烟双场景自动化（IRD_UI_PLUGIN_SMOKE=layout|layout2 净室 30 断言＋记忆 4 断言全绿；7 帧 GUI 截图）；ird_gates 引擎直跑归一 96→97 恰增 1 条 R3（FlowLayout.hpp——ui 例外类既定形态，DTB §4.5 行＋登记件）；ctest ird 9/9＋四域零回归＋validate-docs PASS＋双模式零错误。验收侧 detached worktree 冷启双树独立复现（工业目标集装配闭包＋独立冒烟树；环境链四次消费既有 open 发现口径——F-429 ini 模板拷入／F-008+F-323 RWSimulatorPlugin 失败隔离／F-428+F-440 python313 手动补齐〔pythoneditor=OFF 置换不消除，sdurws 无条件链 PYTHON_LIBRARIES 为根因，与 F-440 诊断一致〕）＋双变异注入实证（UiText 摘键→具名用例红；摘默认收敛→冒烟 default-hidden 红；均 checkout 还原复绿、送验 SHA 零触碰）；ird_gates 命中集零意外增量；②③合并零冲突，findings.json 并集例外未触发；验收建议级 F-441（F-012 家族提交标题名词前缀）随 acc/UI-T24/1 转登；验收自产证据 acc-*＋acc-smoke/ 22 件按 F-427 口径随本治理提交补录（.log 计 git add -f）；实施段三轮冒烟实录两轮缺陷修复链（断言面页签堆叠误报收窄＋FlowLayout 漏 addLayout 子布局收养）随任务分支在库；收尾①前主工作树停留 ui-t24（EX-T06 系风险点），切回 redesign-main 后方执行①~③，零误落"
+    },
+    {
+      "task": "WP-24-T09",
+      "unit": "delivery",
+      "result": "pass-merged",
+      "commits": [
+        "4dc5c4e9fbe639cd575cbead0a49f30657449eeb"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-24-T09-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。B.1 批次收尾任务（SA-18 D13）：产品交付路径收敛＝ui/CMakeLists.txt 全产品唯一 install 段（COMPONENT IRD_PRODUCT——ARCH §5.4 bin/plugins/share 三目录：studio＋worker 两可执行＋RobWork/RWSim/Qt 运行库钉 Release＋相对前缀 qt.conf 防开发机路径依赖＋baseline.md 入 share）＋start_studio.bat 启动目标切换正式产品并注明开发辅助定位＋DTB v0.26 产品交付路径声明行；开发验证通道（ui/_plugin 与各域 _app harness）与三域 deprecated 自持导航标记保留＋移出产品交付路径（D13 保留支——标记删除落点在 forbidden 三域 plugin/ 私有面且破坏 --auto 冒烟断言，acceptance 4 反向适用，逐项依据登记 retirement-checklist.md §2.2）。staging 七项判据全过（组件化安装排除框架未分组 install 规则；干净 PATH 绝对路径直启 GREEN exit=0；About 清单与装配日志逐项一致）；ird_gates 双端归一 65↔65 零差异（验收侧 detached worktree 冷启独立取证）；验收双变异注入实证（摘 worker 安装行→审计①红；摘 qwindows.dll→启动即红；qt.conf 摘除非崩溃形态——归因修正如实记录）；验收建议级 F-439（sdurwsim 取件路径单点依赖存量布局）/F-440（RobWork 配置期 Python 检测漂移致冷启 exe 导入 python313——F-428 同族新维度）随 acc/WP-24-T09/1 转登；验收自产证据 acc-* 按F-427 口径随本治理提交补录。B.1 批次十二阶段全部完成（manifest completion 条件达成：requiredFinalTask=WP-24-T09 done＋pipeline idle＋queue 空）"
+    },
+    {
+      "task": "UI-T23",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "da64b3cf507fea1d6426febe85e6b1314de71228"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T23-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。B.1 迁移链链尾收口（O-45 补建缝消费——三域经门面装配，R-2 合规）：draft.apply 多模块遍历（DomainModuleRunner，消除 modeling 硬编码；测试注册模块具名用例）＋三域共享面宿主挂位（项目树入主 Dock／检查器升格右 Dock——UI-T21/T22 预留缝收口）＋L1/L2/L3 联动接线（L3 桥＝frameSelectedEvent 订阅，L2 出口＝WorkCellScene::setHighlighted 框架公开 API，NameMap 端口＝空映射二态适配器）＋§11.3 失败隔离多域形态（域分组占位 setGroupPlaceholder）＋关闭清理八类对象＋集成冒烟通道（IRD_UI_PLUGIN_SMOKE=auto 七步）。验收侧 detached worktree 冷启复现：集成八目标闭包零错误（F-429 模板缺口第三次冷启实录按口径拷入；RWSimulatorPlugin 73 错＝F-323 存量环境隔离，WP-14-T11 同款）＋冒烟全树零错误＋237/32/62＋ctest ird 2/2＋ird_gui 1/1＋GUI 冒烟 SMOKE_EXIT=0 七步（F-320 PATH 实测修正：需补 vcpkg installed/x64-windows/bin——assimp 等传递依赖，缺它 0xC0000135；F-428 python313.dll 同链复证）＋双变异注入实证（Runner 摘 NoDraft 跳过红／树占位渲染摘除红，均 checkout 还原复绿、送验 SHA 零触碰）＋ird_gates 验收树 7 条新 SUB 边在场复核（实施侧 base↔head stash 切换法恰增 7 条 SUB、六码零变化——登记件 wp10-t23-gate-registrations.md 归 WP-01-T03）；验收零新登 findings（F-429/F-428/F-320 家族复证注明）；诚实缺口如实登记＝验收侧未独立重跑 base 态门禁构建（消费实施侧 raw 留痕复核）。实施段既有缺陷顺带修正：IPluginUiModule.hpp 前向声明裸 namespace project→sdurws::ird::project（声明实体归位，语义零变化）。acceptance 6 退役清单草案（retirement-draft.md）与 acceptance 7 互斥合规自查（shared-surface-audit.md——三域迁移触碰面零越界）随留痕移交 WP-24-T09。②③合并零冲突，findings.json 并集例外未触发"
+    },
+    {
+      "task": "WP-14-T11",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "48666d25ea49d40993f4469b57c38e0f836f0564"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T11-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。O-45 裁决创设微任务：门面只出线不重写（assembly/RequirementsPluginAssembly.hpp＋plugin 实现编入 sdurws_ird_requirements_plugin，与 modeling/kinematics 双先例同构；RequirementsUiModule P-REQ-8 消账切换 IPluginUiModule 真实继承——三方法同形 override 语义零变化；PluginPanelTest 全局 project 别名删除——ui 接口头断环兜底前向块注入 ::project 与别名 C2386 冲突，域类型改全限定，唯一使用点零语义变化）。验收侧 detached worktree 冷启复现（industrialrobot 六目标含宿主 sdurws_ird_studio 装配闭包零错误＋ctest 2/2 冷启树＋validate-docs PASS；RobWorkSim 框架插件宏冲突 71 错按基线树 2865a67f 同款实证隔离——环境既有 F-323 复证、BUILD_sdurws_pythoneditor=OFF 置换不消除，industrialrobot 目标集口径复现，F-438 建议级随 acc/WP-14-T11/1 转登）＋双变异注入实证测试真实失败能力（域键漂移 2 例红＋buildDraftCommand 摘除 2 例红，均 git checkout 精确还原后复绿、送验 SHA 零触碰）；ird_gates base↔head 82↔82 零增量（验收侧冷启双树独立取证）；②③合并零冲突，findings.json 并集例外未触发。编排事件实录两件：①pass 落盘 heartbeat 误写超前时钟（+6min）被 validate-state 拦截，按实际时钟修正后过——零状态污染；②收尾②evidence 合并首次因主树 builds/wp14-t11 未跟踪验收留痕副本与 evidence 提交同路径挡路 abort（固化次序②③倒置：③代码合并先成、清副本后②按 0643fd0a 重做干净——两合并相互独立，git 层零损害；EX-T06 系『工作区异物挡合并』新变体，副本已 git clean 并随 evidence 合入）"
+    },
+    {
+      "task": "WP-15-T18",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "7e015c6f647d53be62cb5e044c0d0524b52c5bcb"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T18-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。本任务实施段含一次语义 blocked→所有者 O-44 裁决（出路②接入面 v1 诚实边界，契约 v1.2）→恢复实施→送验；tick#415 开局修复 awaiting_acceptance 残留 implement run（2e29b0ad 声明\"run 清待派\"而落盘未清——PIPE §0 可修复矛盾，提交 2cb0727d 注明）后派验收。验收侧 detached worktree 冷启双模式独立复现（集成六目标含宿主 ui_plugin 装配闭包零错误＋冒烟全树零错误；冷启前置件链 F-007/F-429 口径全量消费——vcpkg toolchain＋Qt 前缀＋ini 模板拷入，模板缺失卡点在本验收冷启实录复现）＋三变异注入实证测试真实失败能力（域键漂移 4 例红＋runtimeOnly 早退摘除 1 例红＋零 Qt 门禁 R3 注入咬合，均 git checkout 精确还原后复绿、送验 SHA 零触碰）；ird_gates 引擎直跑 base(3f7dd0f1)↔head 归一化 82↔82 集合零增量（逐条目粒度较实施侧 28 类口径更细，同判）；gtest 181（180 过＋1 envUnavailable 同惯例）＋契约 57/57＋HostMigration 16/16＋ctest 2/2 双树＋GUI 冒烟四序列逐字复现（nodeCount=0＝O-44 诚实空供给非缺陷）；validate-docs PASS（20 units/202 tasks）。②③合并零冲突，findings.json 并集例外未触发；验收建议级 F-436（UiText 冻结文案族运动学域再现——navDeprecationLabel＋harness Dock 标题，随 P-DIAG-9 批次）与 F-437（实施提交 7e015c6f 正文末尾缺 Acc-Covered 标注——近期五任务主交付提交均有；消账面经盘点＝acceptance 1~6 全覆盖零歧义，已推送不可 amend 故按建议级登记、口径裁决留所有者）随 acc/WP-15-T18/1 转登"
+    },
+    {
+      "task": "WP-14-T10",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "d84008e39ad5c2e951f2df27031a7f132ed0fd3a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T10-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。验收侧 detached worktree 冷启双模式独立复现（集成六目标含宿主 studio 装配闭包零错误＋冒烟全树零错误；冷启前置件链 F-007/F-429 口径全量消费——vcpkg toolchain〔Boost 随链〕＋Qt 前缀＋ini 模板拷入）＋双变异注入实证测试真实失败能力（域键漂移 2 例红＋上行拾取闭包过滤摘除 1 例红，均 git checkout 精确还原后 HostMigration 16/16 复绿、送验 SHA 零触碰）；ird_gates 引擎直跑 head 82 条 vs base 81 恰增 1 条（requirements_app→requirements_plugin R1 自边——modeling_app 同型 harness 先例，比对附件随留痕提交，登记册回填归 WP-01-T03）；单测 199/199＋契约 11/11＋GUI 冒烟 --auto SMOKE_EXIT=0 全链（deprecated 标记在场/树 4 节点/检查器应答 5 字段/D6 激活 ok/L3 反解/L2 草稿反例）；②③合并零冲突，findings.json 并集例外未触发；验收建议级 F-435（F-430/F-432/F-433 同族在需求域三接入面再现——页面标题/复杂页入口标题/deprecated 标记冻结文案未挂 UiText 键系，随 P-DIAG-9 批次）随 acc/WP-14-T10/1 转登"
+    },
+    {
+      "task": "WP-13-T20",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "0cb8d53bbbea4e8a869d251ff5a5dcbc6c33c2b4"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T20-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1＝派发会话中断零产出（02:19:32 派发、租约 03:14:32 到期无 verdict、无 evidence 分支、无记录——零返工 fix 保持 0；§2『租约到期按重启上限重新开始当前角色』与 §4.2『默认不自动重派验收』口径张力按 §0 单会话模式最新规则＋IO-T07/UI-T11 先例处置：tick#411 重启验收角色为 attempt 2 并在 tick 报告注明）；attempt2 全量冷启重跑 pass（acc/WP-13-T20/2 @ af4e8a85：冷启双模式独立复现——集成六目标含宿主 studio 装配闭包 exit 0＋冒烟 SMOKE_EXIT=0；gtest 282/282＋contract 17/17＋冒烟 224/224＋ctest 2/2＋validate-docs PASS；双变异注入实证——域键漂移 4 例 9 断言红＋限位单侧语义 1 例红，均 git checkout 精确还原后 HostMigration* 10/10 复绿、送验 SHA 零触碰；ird_gates 引擎直跑 base↔head 归一化 81↔81 双向零新增）；实施会话中断遗留未提交 acc-*.log 九件已作无归属产物删除，收尾③后另检出同源僵尸管线尾段补写五件（03:39~03:40 时间戳、纯日志重定向无 git 操作、零干扰）一并删除；tick#411 开局主工作树曾停留 wp13-t20（EX-T06 系风险点），切回 redesign-main 后方执行守卫与收尾（零误落）；验收建议级 F-433（建模域冻结文案未挂 UiText 键系——F-430/F-432 同族随 P-DIAG-9 批次）／F-434（gates 留痕乱码族再现——F-207/F-231/F-309 家族随 F-336 口径）随 acc/WP-13-T20/2 转登；收尾①双漂移检测零漂移、②③合并零冲突（findings.json 并集例外未触发）、验收自产证据 19 件按 F-427 口径随本治理提交补录（.log/.ps1 计 git add -f）；收尾⑥补充检出：中断会话的验证管线僵尸进程已于 03:44 自行完成 attempt 1 全套验收并推送孤儿 evidence 分支 acc/WP-13-T20/1（e22bac97，verdict=pass＋F-433 同族同判〔与本 attempt 2 各自独立得出，其 findings 撞号因该分支未合并而未触主线〕）——分支未合并不入主线、留置所有者处置（UI-T11 孤儿分支先例口径），其两个 worktree 已清理"
+    },
+    {
+      "task": "UI-T22",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "9c33ffd369c2de39e7daccfab328103908550e7c"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T22-20260928.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。验收侧 detached worktree 冷启双模式独立复现（集成七目标零错误＋冒烟全树零错误）＋双变异注入实证测试真实失败能力（分野哨兵 16→17 红＋runtimeOnly 零触碰摘除红，均精确还原后全绿）；ird_gates base↔head 归一化 87↔88 恰增 1 条 R3（NFR-MNT-01 ui 例外类既定形态，登记件 wp10-t22-gate-registrations.md）；验收建议级 F-431（CMakeLists AUTOMOC 注释计数第四次沿袭——F-273/F-275/F-277 家族）／F-432（共享检查器冻结文案未挂 UiText 键系——F-430 同族随 P-DIAG-9 批次）随 acc/UI-T22/1 转登 findings.json；收尾编排事故实录：②首度合并误落于被实施工作树检出的 ui-t22（EX-T06 系风险点再次实际触发——『Switched to redesign-main』确认实为 cwd 停留 evidence worktree 时该 worktree 的分支切换），当即恢复：evidence worktree 脱离 redesign-main 占用、主树切回、ui-t22 指针复位回冻结尖端 9c33ffd3，误落合并提交 ce632655 未推送且复位后不可达零残留，②③ 于 redesign-main 重做干净（23c79431/2e03197f）；另环境注记：pipeline-lock 在 evidence worktree 内因自检根误解析误报 no-lock，真实锁全程健在零接管"
+    },
+    {
+      "task": "UI-T21",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "c34596ce164a3f04a6abc5e98c106e6e32b0a045"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T21-20260928.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。验收侧 detached worktree 冷启双模式独立复现（集成七目标零错误＋冒烟全树零错误；F-429 第三前置件模板验收侧独立补拷）＋双变异注入实证测试真实失败能力（INV-B4 Clear 用例红＋重建拒绝词表断言红，均已精确还原）；验收建议级 F-430（项目树面板文案未挂 UiText 键系——过渡先例载体偏差，随 P-DIAG-9 批次）随 acc/UI-T21/1 转登 findings.json；ird_gates base↔head 归一化 92↔93 恰增 1 条 R3（NFR-MNT-01 ui 例外类既定形态，登记件 wp10-t21-gate-registrations.md）；findings 并集例外未触发（②③合并零冲突）"
+    },
+    {
+      "task": "RT-T14",
+      "unit": "runtime",
+      "result": "pass-merged",
+      "commits": [
+        "3803dbb3bb8f2252dc5fdb5b3968890f267eca2b",
+        "89f460b6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RT-T14-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "UI-T19",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "e9cae348c7c7f953d63733b6b33710f36f9d8199",
+        "13aca7c2"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T19-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "CORE-T01",
+      "unit": "core",
+      "result": "pass-merged",
+      "commits": [
+        "ad7bce6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/CORE-T01-20260910.md",
+      "mergedAt": "2026-09-10"
+    },
+    {
+      "task": "TK-T01",
+      "unit": "testkit",
+      "result": "pass-merged",
+      "commits": [
+        "eb31fc9de7c6bd16dad1c4d856b7c994ca2493fa"
+      ],
+      "acceptanceRecord": "traceability/acceptance/TK-T01-20260910.md",
+      "mergedAt": "2026-09-10"
+    },
+    {
+      "task": "WP-01-T01",
+      "unit": "build",
+      "result": "pass-merged",
+      "commits": [
+        "511d58f04165ab196da2a374b87a23e9593353e0"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-01-T01-20260910.md",
+      "mergedAt": "2026-09-10"
+    },
+    {
+      "result": "pass-merged",
+      "unit": "governance",
+      "task": "WP-00-T01",
+      "acceptanceRecord": "traceability/acceptance/WP-00-T01-20260910.md",
+      "mergedAt": "2026-09-10",
+      "commits": [
+        "df8df352313b4a4cd2dff6db2e34344cac06c095"
+      ]
+    },
+    {
+      "acceptanceRecord": "traceability/acceptance/DOC-T03-20260910.md",
+      "result": "pass-merged",
+      "unit": "foundation-governance",
+      "mergedAt": "2026-09-10",
+      "commits": [
+        "cfe22dab73249fe819e031ab909ed4101092b9e7"
+      ],
+      "task": "DOC-T03"
+    },
+    {
+      "result": "pass-merged",
+      "acceptanceRecord": "traceability/acceptance/WP-01-T02-20260910.md",
+      "task": "WP-01-T02",
+      "unit": "build",
+      "mergedAt": "2026-09-10",
+      "commits": [
+        "aa9c4f9e6c5160eb3f38846300abb586e35bcef0"
+      ]
+    },
+    {
+      "commits": [
+        "97ec55eb79d8cfcf35004be91255ca7af6a1e175"
+      ],
+      "task": "WP-00-T02",
+      "result": "pass-merged",
+      "acceptanceRecord": "traceability/acceptance/WP-00-T02-20260910.md",
+      "mergedAt": "2026-09-10",
+      "unit": "governance"
+    },
+    {
+      "task": "CORE-T02",
+      "mergedAt": "2026-09-10",
+      "result": "pass-merged",
+      "commits": [
+        "b2a176617560675bf9c2c7e6beb1d78ff740861e"
+      ],
+      "unit": "core",
+      "failReason": "attempt1 fail（4.10 日志被 .gitignore 吞）——返工补证后 attempt2 pass",
+      "acceptanceRecord": "traceability/acceptance/CORE-T02-20260910-r2.md"
+    },
+    {
+      "acceptanceRecord": "traceability/acceptance/CORE-T09-20260910.md",
+      "result": "pass-merged",
+      "commits": [
+        "9a9f4880a5038b27bb89fd26c653887f65e78b8c"
+      ],
+      "unit": "core",
+      "mergedAt": "2026-09-10",
+      "task": "CORE-T09"
+    },
+    {
+      "task": "TK-T02",
+      "result": "pass-merged",
+      "acceptanceRecord": "traceability/acceptance/TK-T02-20260910.md",
+      "commits": [
+        "c8a109c8c1e5a677ac14bfb743b648fda14c5fb1"
+      ],
+      "unit": "testkit",
+      "mergedAt": "2026-09-10"
+    },
+    {
+      "unit": "testkit",
+      "acceptanceRecord": "traceability/acceptance/TK-T09-20260910.md",
+      "mergedAt": "2026-09-10",
+      "task": "TK-T09",
+      "commits": [
+        "59b92d718f27f0e4f94a02c6ece679108884eb66"
+      ],
+      "result": "pass-merged"
+    },
+    {
+      "commits": [
+        "fea293d2801f2ac6d4f39c728aecaa7aef22cf93"
+      ],
+      "mergedAt": "2026-09-10",
+      "task": "RT-T01",
+      "result": "pass-merged",
+      "unit": "runtime",
+      "acceptanceRecord": "traceability/acceptance/RT-T01-20260910.md"
+    },
+    {
+      "acceptanceRecord": "traceability/acceptance/EV-T01-20260911.md",
+      "unit": "evidence",
+      "mergedAt": "2026-09-11",
+      "task": "EV-T01",
+      "commits": [
+        "aa93c4b18202f8a965b99ecf40d83e4189e78497"
+      ],
+      "result": "pass-merged"
+    },
+    {
+      "result": "pass-merged",
+      "unit": "policy",
+      "mergedAt": "2026-09-11",
+      "acceptanceRecord": "traceability/acceptance/POL-T01-20260911.md",
+      "task": "POL-T01",
+      "commits": [
+        "432f9fa8f7a5eaeb5cd496d8a20e0b4976605ddc"
+      ]
+    },
+    {
+      "task": "DOC-T04",
+      "unit": "foundation-governance",
+      "result": "pass-merged",
+      "commits": [
+        "15249151f34609513d515fb085d46cc2a17d3ae1"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DOC-T04-20260911.md",
+      "mergedAt": "2026-09-11"
+    },
+    {
+      "unit": "core",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "task": "CORE-T03",
+      "commits": [
+        "7b786f70c7377bf1c851f6def91e770cf2f75d50"
+      ],
+      "acceptanceRecord": "traceability/acceptance/CORE-T03-20260911.md"
+    },
+    {
+      "commits": [
+        "dff6bc8350c705585f61e2f5c877593cad4b7645"
+      ],
+      "mergedAt": "2026-09-11",
+      "task": "CORE-T04",
+      "result": "pass-merged",
+      "acceptanceRecord": "traceability/acceptance/CORE-T04-20260911.md",
+      "unit": "core"
+    },
+    {
+      "mergedAt": "2026-09-11",
+      "result": "pass-merged",
+      "unit": "core",
+      "acceptanceRecord": "traceability/acceptance/CORE-T05-20260911.md",
+      "commits": [
+        "4ce149373a993a163a43258f0ddcd75707f0527d"
+      ],
+      "task": "CORE-T05"
+    },
+    {
+      "unit": "core",
+      "commits": [
+        "2b8eb53943517fcd6dab9fc6e9d64d6c76e67c51"
+      ],
+      "task": "CORE-T06",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "acceptanceRecord": "traceability/acceptance/CORE-T06-20260911.md"
+    },
+    {
+      "unit": "core",
+      "task": "CORE-T07",
+      "commits": [
+        "2bf15d6e1a7e8a1a8b6eddcb353ede8efdd388b6"
+      ],
+      "mergedAt": "2026-09-11",
+      "acceptanceRecord": "traceability/acceptance/CORE-T07-20260911.md",
+      "result": "pass-merged"
+    },
+    {
+      "acceptanceRecord": "traceability/acceptance/CORE-T08-20260911.md",
+      "task": "CORE-T08",
+      "unit": "core",
+      "commits": [
+        "1b4fa4dcd1ef855f4bc5a31aaf2a86063b9c5701"
+      ],
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11"
+    },
+    {
+      "mergedAt": "2026-09-11",
+      "task": "CORE-T10",
+      "commits": [
+        "ee1dc25eb4990a215e4e6814a72ac70f44236ba1"
+      ],
+      "result": "pass-merged",
+      "unit": "core",
+      "acceptanceRecord": "traceability/acceptance/CORE-T10-20260911.md"
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T05",
+      "mergedAt": "2026-09-11",
+      "acceptanceRecord": "traceability/acceptance/DOC-T05-20260911.md",
+      "result": "pass-merged",
+      "commits": [
+        "fec5e7dd415c7bf6150d0652bcff398d15bbc380"
+      ]
+    },
+    {
+      "task": "TK-T03",
+      "mergedAt": "2026-09-11",
+      "acceptanceRecord": "traceability/acceptance/TK-T03-20260911.md",
+      "result": "pass-merged",
+      "unit": "testkit",
+      "commits": [
+        "ea7f6cafbb3ddc879722aab28d4ead95d5866145"
+      ]
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T04",
+      "commits": [
+        "f102f12bb03a10a0f3d72316a1733caf876a152d"
+      ],
+      "mergedAt": "2026-09-11",
+      "result": "pass-merged",
+      "acceptanceRecord": "traceability/acceptance/TK-T04-20260911.md"
+    },
+    {
+      "unit": "testkit",
+      "commits": [
+        "dc4296a8c85c3a366317598fee98862bb68a6adf"
+      ],
+      "mergedAt": "2026-09-11",
+      "result": "pass-merged",
+      "acceptanceRecord": "traceability/acceptance/TK-T05-20260911.md",
+      "task": "TK-T05"
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T06",
+      "acceptanceRecord": "traceability/acceptance/TK-T06-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "4bb606c5802f7e1828b9de0558e6d2c916ef830b"
+      ]
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T07",
+      "acceptanceRecord": "traceability/acceptance/TK-T07-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "0fe1077ddc20604cc6fbdf6b6dc9105809d5a97f"
+      ]
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T08",
+      "acceptanceRecord": "traceability/acceptance/TK-T08-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "5cfd4898fc313416700ee832c4f6cd45cacb70bc"
+      ]
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T10",
+      "acceptanceRecord": "traceability/acceptance/TK-T10-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "c7b8419ef0cc68a3ac402e4035ee4a61c512865f"
+      ]
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T11",
+      "acceptanceRecord": "traceability/acceptance/TK-T11-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "10afd55552e428a6a0e3db85f5f9e0c3f4112a1c"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T06",
+      "acceptanceRecord": "traceability/acceptance/DOC-T06-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "3af4aae5b42584d11c05575bd6a810aab0efd529"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T07",
+      "acceptanceRecord": "traceability/acceptance/DOC-T07-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "31aae8b75c96e301080c3f8787220f14aa5f68ca"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T08",
+      "acceptanceRecord": "traceability/acceptance/DOC-T08-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "1343a91e1869dddee909a8d2eeb01b57aff78450"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T09",
+      "acceptanceRecord": "traceability/acceptance/DOC-T09-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "4e0a74b99568c308dd59600e8d45850084547f44"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T10",
+      "acceptanceRecord": "traceability/acceptance/DOC-T10-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "fc7d247c7c1ae0a040cf5a65cdfd1021c5b30eae"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T11",
+      "acceptanceRecord": "traceability/acceptance/DOC-T11-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "1ca5167fae1ef5aa1c5debc1d8f791215442c39c"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T12",
+      "acceptanceRecord": "traceability/acceptance/DOC-T12-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "523df626c1dbe7d34358f1b0ba976cf80aa2a321"
+      ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T13",
+      "acceptanceRecord": "traceability/acceptance/DOC-T13-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "f12553d14305c3dd616f71076d8858f5793bf893"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T02",
+      "acceptanceRecord": "traceability/acceptance/RT-T02-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "f0a4c0ee0f27f1a303f23fac14628ab004c873f7"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T03",
+      "acceptanceRecord": "traceability/acceptance/RT-T03-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "d0fc6e5baad0c9ffb7b92ff07e8d8549c599c806"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T04",
+      "acceptanceRecord": "traceability/acceptance/RT-T04-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "92b164fe6dc8c7b1e4d27addccf9025cf1cdeef6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T05",
+      "acceptanceRecord": "traceability/acceptance/RT-T05-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "215578dec0d0021c8d5769679589451d8a714d0c"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T06",
+      "acceptanceRecord": "traceability/acceptance/RT-T06-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "ca789342c6a5c61d4d8d216bed162ea93ed4c0b2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T07",
+      "acceptanceRecord": "traceability/acceptance/RT-T07-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "ded5f2c7cff6b2e648b238f55919e1fa59dacf09"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T08",
+      "acceptanceRecord": "traceability/acceptance/RT-T08-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "a9f95c309521df7d40da2d6584de01fe5a21dcdf"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T09",
+      "acceptanceRecord": "traceability/acceptance/RT-T09-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "13072b12d67aa972e94d58a207478e484515e583"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T10",
+      "acceptanceRecord": "traceability/acceptance/RT-T10-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "73ba2d05779a8340a2cfe8e87e19f0217232e4c9"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T11",
+      "acceptanceRecord": "traceability/acceptance/RT-T11-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "753f4460de7ee990a7dc6bf75a9bb6a9cfe8fd8f"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T12",
+      "acceptanceRecord": "traceability/acceptance/RT-T12-20260912-r2.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "failReason": "attempt1 fail（B-1：黄金数据集未防护 CRLF 行尾归一化，fresh 检出 manifest 失配）——返工加 testdata/.gitattributes 钉死 LF 后 attempt2 pass",
+      "commits": [
+        "c044f10fc79078a6c9f1b10fe0bab1b387a6caf1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T13",
+      "acceptanceRecord": "traceability/acceptance/RT-T13-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "a2bb6ff61b23b149a60efbc8d28fc32eb859f3a5"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T02",
+      "acceptanceRecord": "traceability/acceptance/EV-T02-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "d1314a6dd44c23bad084e431c419a29a6bbaf92e"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T03",
+      "acceptanceRecord": "traceability/acceptance/EV-T03-20260912.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "commits": [
+        "f3b8acf20b52ed5b5494e2ba5f8f1accd8b44fe4"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T04",
+      "acceptanceRecord": "traceability/acceptance/EV-T04-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "d58a64b0ff67447d07b97890118b1a32f946583c"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T05",
+      "acceptanceRecord": "traceability/acceptance/EV-T05-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "203c29458b4b68bd9ef5197a61fe36edb62b005a"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T06",
+      "acceptanceRecord": "traceability/acceptance/EV-T06-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "e266e09f5322804c8222a6ba6582adc63b5acb8d"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T07",
+      "acceptanceRecord": "traceability/acceptance/EV-T07-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "3e4e099c8c1792b79da3f4b7b15a306f6b2e4ca0"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T08",
+      "acceptanceRecord": "traceability/acceptance/EV-T08-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "46c0c682dfa7013c92068ebd8486555dc5780e64"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T09",
+      "acceptanceRecord": "traceability/acceptance/EV-T09-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "f9eaec775e794862082861d1bc86c66d9584c5ea"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T10",
+      "acceptanceRecord": "traceability/acceptance/EV-T10-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "f67b597bbc675611dab5744463f86ba7af0752b5"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "task": "EV-T11",
+      "acceptanceRecord": "traceability/acceptance/EV-T11-20260913.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-13",
+      "commits": [
+        "cef36791c392d7edd091bcb9819eb98b937762ea"
+      ]
+    },
+    {
+      "task": "EV-T12",
+      "unit": "evidence",
+      "result": "pass-merged",
+      "commits": [
+        "b898f0baf08c9c15416599d67c15c8b28a704c2a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EV-T12-20260913.md",
+      "mergedAt": "2026-09-13"
+    },
+    {
+      "task": "POL-T02",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "0c09beb4d682c494bb15bdc48e22bef71cbba78c"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T02-20260913.md",
+      "mergedAt": "2026-09-13"
+    },
+    {
+      "task": "POL-T03",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "35127c62f41248ee34dd42cd07529a2d81890d97"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T03-20260913.md",
+      "mergedAt": "2026-09-13"
+    },
+    {
+      "task": "POL-T04",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "2df7eb2cdfd2b81ebe0b28ddf5c856b562047c6e"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T04-20260913.md",
+      "mergedAt": "2026-09-13"
+    },
+    {
+      "task": "POL-T05",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "1b54f7131f4808d56089a143e0d4370677a48591"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T05-20260913.md",
+      "mergedAt": "2026-09-13"
+    },
+    {
+      "task": "POL-T06",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "553a535c503483289b79b6cd89930a87f7618393"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T06-20260913.md",
+      "mergedAt": "2026-09-13"
+    },
+    {
+      "task": "POL-T07",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "e5ad5960e667519783642a3fb14a8553891f8823"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T07-20260913.md",
+      "mergedAt": "2026-09-13"
+    },
+    {
+      "task": "POL-T08",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "2edfdf01455c6508dd0e11c8de0c1acc1e5ea279"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T08-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "POL-T09",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "04f3e762f749a7f5decc4789567f644222746776"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T09-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "POL-T10",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "de9119cce6891f4aba3cd35f59617e6564262e61"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T10-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "POL-T11",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "ba0cb7d5c4b0cbba340eec962e253eb804d748aa"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T11-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "POL-T12",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "dd3090c4f76115967cd07b794719f3034a051970"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T12-20260914-r2.md",
+      "mergedAt": "2026-09-14",
+      "failReason": "attempt3 fail（B-1：governance-log.md 越界——语义达成而载体违规，F-094 登记）——返工拆分治理提交（追加还原，治理落点 governance/pol-t12-registry @ 94fe223c 待所有者追认并流）后 attempt4 pass"
+    },
+    {
+      "task": "DIAG-T02",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "b5c9504eab8482c60b6653b27cf93d450c5dce75"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T02-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "DIAG-T03",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "ce618ea464dd200a72a8916df05d373f385f9b8c"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T03-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "DIAG-T04",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "6dd6e665168d03fbe3f487e9c9fac3dc5839035e"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T04-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "DIAG-T05",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "e98e693d187dbd613cfa2d2730fb9a24b6692940"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T05-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "DIAG-T06",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "fd3698d318117571416e2e8f69b3bcbf21143043"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T06-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "DIAG-T07",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "cf30112f45169c29b431556228762221587ce594"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T07-20260914.md",
+      "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "DIAG-T08",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "a11f1726d8d4dface4b33a2f3a145c3cbb2a1eee"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T08-20260915.md",
+      "mergedAt": "2026-09-15"
+    },
+    {
+      "task": "DIAG-T09",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "4d4bf83c11bfe6c626efe6d5d25084beff4671a4"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T09-20260915.md",
+      "mergedAt": "2026-09-15"
+    },
+    {
+      "task": "DIAG-T10",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "76c128d7351200e00d5792271007e38d69113ff2",
+        "a71e42eea2cb3cce05b0b9ed6349c69f01548bc0"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T10-20260915.md",
+      "mergedAt": "2026-09-15"
+    },
+    {
+      "task": "DIAG-T11",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "866ce899fd1a31a10528cdb0de897a58d366fb69",
+        "8d345a43cc90beb7be3434d5d9545a5713868402"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T11-20260915.md",
+      "mergedAt": "2026-09-15"
+    },
+    {
+      "task": "PRJ-T01",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "5de89534c1c88eadce53cc6c8327e1fbd9b542e0"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T01-20260915.md",
+      "mergedAt": "2026-09-15"
+    },
+    {
+      "task": "PRJ-T02",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "290296ff34c34b97eb19ecf2d0fb2b93f95de146",
+        "04315ecb47b5950b31bf657fc16d01bc342ece20"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T02-20260915.md",
+      "mergedAt": "2026-09-15"
+    },
+    {
+      "task": "PRJ-T03",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "a3ac8fa5ffba35e71f2b9df4f7a6de7285fd55eb",
+        "ad01b11be8383d9a3e9d914811f039ad340f4c13",
+        "65520d6a769bc6a66f5580e8d4790136fa29829a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T03-20260915.md",
+      "mergedAt": "2026-09-15"
+    },
+    {
+      "task": "PRJ-T04",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "ae7fb6aa51a9ddcba371b1021bd6307fc03beaa5",
+        "ae9596db0c32a2d8ee12803a2a01cdf9be5625f1",
+        "a148a99e4d6bd5f3b06d0c6ad69aed9de349d1fa"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T04-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T05",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "9438eb0ed7aa63ea1a589a83d8c5a4d8c40f631d",
+        "7f058bde3f0c19f53a17635995b16da4590eae6c",
+        "b6cc2352a5d9b7963198748184365fff1e101e20"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T05-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T06",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "5cb8e991dff3c1cb6d095e78df5345fe0a52f068",
+        "07685765bf14643513770afb4087487f4864d8e2",
+        "e70031c8bb8135cd4bee5c3b9e7a6941f44379fc"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T06-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T07",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "856544ef723e74e2b7db0d538c03ec758a0fbe9b",
+        "e61ade92e14481c20e7e322176cb404ba8ddbc86",
+        "65e05bee8e904586ed56af27bf51c4425928f382",
+        "448d2e4f715d58fee7ba3a9183a631c405fc9912"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T07-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T08",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "5cb6bc9e3082f0498382d44f165a01329381c877",
+        "185c221d9543c800b20d23469e161eb4722b5bd6",
+        "69ca3e2c3050732f4d3513f8d6d15488c36af45b",
+        "3e19fc6798d6c0285fe9d544dcebd895159fccb2"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T08-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T09",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "b2fa1c5e449f3ae11c956924251ea5458c55297d",
+        "60e10e78078cd49fe27d4106d84fdd10fb63e6f2",
+        "3c0b8bf62ed31dad4b617dc2dedb6af2a39db981",
+        "93489c02687e80eb97ba8e8d3267f72f530aff0e"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T09-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T10",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "c6527070810c9a00324d57d3482aa774abdebaae",
+        "43925b3ca33193dc75593fb94338c366217d40f8",
+        "e9d6da3fced7e3dadf409267857d6b231cb1610d",
+        "37d05852530d6512b22091c9a1f24ad027908820"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T10-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T11",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "bfe2d5d16202c37a4d681916b91159283c9bb8e4",
+        "151e7d6b3e6ef0107e68d8c50140d3484dc5876f",
+        "46c58061bd010941d1b15da89b1476968a61c230",
+        "cdb242646be12eab64678cb93794be9efeef4d51"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T11-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T12",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "5006e293228388d78859e946ca3b2af88a6473a8",
+        "ff39c51deacfa439667c476a6998ea8a8f69387a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T12-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T13",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "c2144fe14af2b4e7a8626792cbecd43102ed0b4e",
+        "03eb0fe0012b4e7a4318ca7bed812653b279f144"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T13-20260916.md",
+      "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T14",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "1a0894c7f5ef77eb551b20aaf0564de3f612eeb5",
+        "bdb01a2f8a2bd20df81d68458e988733f62de9fb"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T14-20260917.md",
+      "mergedAt": "2026-09-17"
+    },
+    {
+      "task": "PRJ-T15",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "a8b01ac31affeda0f26a9a47e937d762e5bc00fa",
+        "a52dbd9388c8241e8a1e92775ef83f2c2eae1fef"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T15-20260917.md",
+      "mergedAt": "2026-09-17"
+    },
+    {
+      "task": "PRJ-T16",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "af6417c4b42c1265a4cc9a03a5ed114e1d2fe9ab",
+        "3fe0ee71ace3ab0c82675ddb6771004ba740c34e"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T16-20260917.md",
+      "mergedAt": "2026-09-17"
+    },
+    {
+      "task": "IO-T01",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "881f67ff575fc941dd962cf9355c5b41b3f4d6e4",
+        "8d45c17c9061477fc2cdee6f9541bcfb5d99e088",
+        "d175a4e4b8b1de79dbb12de6a3a1cddcd2742625"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T01-20260917.md",
+      "mergedAt": "2026-09-17"
+    },
+    {
+      "task": "IO-T02",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "aafb66ac3bcf9854482d31d97c860e7a0d8b49a8",
+        "eaa6aa9975e0da756676e00177845104fdc1e2eb",
+        "3e0314f8cc188dd5c977996ade89eaa9fe81139b",
+        "8c61896d3a1a6ec5a5eb17f1890de7734f899dd3"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T02-20260917-r2.md",
+      "mergedAt": "2026-09-17",
+      "failReason": "attempt1 fail（B-1：8 份 .log 留痕被 .gitignore 全局规则吞，§4.10 不通过）——返工 git add -f 补证＋S-1/S-3 补正后 attempt2 pass"
+    },
+    {
+      "task": "IO-T03",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "c4cfdf06c3c96314bd42a65fa7b4196528db8545",
+        "64bdbcb00352141608620fb4c7c878fe0074bbc8",
+        "cb2b793b6a6d16207591caae9bf7e7a711ef37d1"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T03-20260917-r2.md",
+      "mergedAt": "2026-09-17",
+      "failReason": "attempt1 fail（B-1：units/io.md 未随实现做落位同步）——返工补 io.md v0.5 落位同步后 attempt2 pass"
+    },
+    {
+      "task": "IO-T04",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "e8240fb89302dec30761b8945b4be51d9dc0deb2",
+        "d820e5dd6aeb406ab9e435f02af0abd32e9d5b34",
+        "595737049abff486e823436a0690afe4553e099a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T04-20260917.md",
+      "mergedAt": "2026-09-17",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 §4.7③ 合并时 findings.json 数组尾部冲突（HEAD 侧 F-193 vs 任务分支侧 F-191/F-192）按 PIPE 冲突即停转 blocked，所有者裁决三条目并存后续完（② 81b2876a、③ 16b4646a）"
+    },
+    {
+      "task": "IO-T05",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "b9e894cfa2923a9fe66d10e37a045c8cfb36852d",
+        "3019f4e67ad327b411f7db19bd803f1dc9f26dd0",
+        "7f4c1143b0037ddd9eee245b210823e83e1845ce"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T05-20260917.md",
+      "mergedAt": "2026-09-17"
+    },
+    {
+      "task": "IO-T06",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "ae8a15a14535637f130bda24e9245a86ac9325f7",
+        "82aa537601187bf50012d7f0413bd3bc5d7178fb",
+        "16d7fee90b8810b027ff8019c407777dfe9f31f3",
+        "de10bec9ad496a66dd4327e2e61f0e410df6dde6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T06-20260917-r2.md",
+      "mergedAt": "2026-09-18",
+      "failReason": "attempt1 fail（4.9/4.10 验证留痕落位缺失——12 份现产日志未落库）——返工 de10bec9 重跑现产留痕后 attempt2 pass；收尾 §4.7③ 合并时 findings.json 尾部冲突（HEAD 侧 F-200/F-201 vs 任务分支侧 F-197，另有 F-194 open→fixed 翻转）按 PIPE 冲突即停转 blocked，所有者裁决并集并存后续完（② 89a277d3、③ fa865524）：F-197~F-201 五条目入主线（F-198/F-199 自 acc/IO-T06/1@a0a212b0 逐字转录，循 attempt2 记录 §4.8 指令），F-194 保留 fixed（fixedBy=16d7fee9）"
+    },
+    {
+      "task": "IO-T07",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "da13bb6668864ad20b8cbc6489aeb48abd80fee7",
+        "cee796ab1a07c61797fc72f6cd4bbc119421634c",
+        "d381d9d3e430d910b2a8ed8a4bf41eadd5dbc180"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T07-20260918.md",
+      "mergedAt": "2026-09-18",
+      "failReason": "验收 attempt2 pass（attempt1＝验收派发中断重派，未产出 verdict、acc/IO-T07/1 分支未建立——零返工，fix 保持 0）；收尾 §4.7③ 合并时 findings.json 尾部冲突（HEAD 侧 F-203 vs 任务分支侧 F-202）按 PIPE 冲突即停转 blocked，所有者裁决并集并存后续完（② 259ba6ce、③ d98be7bc）：F-202/F-203 按编号序并存；F-198/F-199/F-203 随 ⑤ 治理收尾提交统一翻转 fixed（fixedBy=da13bb66，循 F-203 resolution 与 IO-T07-20260918.md §4.8）"
+    },
+    {
+      "task": "EX-T01",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "b0861ec2671d74e004d65e8724256c966fe6a130",
+        "a83a5ce476709c07de3d1a61f4580787f2c6ab43"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T01-20260918-r2.md",
+      "mergedAt": "2026-09-18",
+      "failReason": "attempt1 fail（4.9/4.10：九件验证日志被 .gitignore *.log 规则吞且未 add -f，留痕声称与在库不符）——返工 a83a5ce4 补交九件日志后 attempt2 pass；实施期检出窗口事故另见 F-205（治理提交一度误落本地主线，所有者治理会话 840688a9 实录并确认完整补救；任务侧最终以 b0861ec2 承载实现）"
+    },
+    {
+      "task": "EX-T02",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "c1ee4c6c18a96d7b3d602e7e659163413ec0a3dd",
+        "9d12b6107b97ac51bb1ed9bb842652fb063f7c4d",
+        "2777bc0a7aba0b4e31c0d7e22c83b7ee605476fe"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T02-20260918.md",
+      "mergedAt": "2026-09-18"
+    },
+    {
+      "task": "EX-T03",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "4cc494357df73f9b58fe0b53a5a2c57f7ff7378e",
+        "3fdc7efaffa42b8f6b450bc4133971b8d973abdd",
+        "b8cf368d2622b59c7852ff5138d15bb6c7073abc"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T03-20260918.md",
+      "mergedAt": "2026-09-18"
+    },
+    {
+      "task": "EX-T04",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "743cefc456fdc91c00c1ca4caf58462f54f5ba27",
+        "bc646c24ba9269bd13799a4518b745dfccc58100",
+        "4adc54f2b3e7ed37dae14552cdfda5fab9f7c04c"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T04-20260918.md",
+      "mergedAt": "2026-09-18"
+    },
+    {
+      "task": "EX-T05",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "e28dc691696334083deb97e73c09e8bbd69c7e2c"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T05-20260918.md",
+      "mergedAt": "2026-09-18"
+    },
+    {
+      "task": "EX-T06",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "d19839d07471e12aa9487a81633c6e9cde14048e",
+        "22044b7778d007289ba9eb1d9c6199808bdde200"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T06-20260918.md",
+      "mergedAt": "2026-09-18",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；编排者收尾时 §4.7② 首次合并误落于被实施工作树检出的 wp08-t06（未推送），当即重置回冻结尖端 22044b77 并切回 redesign-main 重做，零残留（tick#206 报告有实录）"
+    },
+    {
+      "task": "EX-T07",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "c560d6b3ee1c50dbb4a0034200911b9febaffce3",
+        "b2b384b590bd9f4138a682570005103a8882fe60"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T07-20260919.md",
+      "mergedAt": "2026-09-19"
+    },
+    {
+      "task": "EX-T08",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "f9db4c3a232c7bee6ca432380bb39160fbce31ef",
+        "3cfcf13aacd64fed43c828a2d8cc9ed025a8fa15",
+        "1cc1c796aa6851624cb20b0fa2fb684b98b45bc2"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T08-20260919.md",
+      "mergedAt": "2026-09-19"
+    },
+    {
+      "task": "EX-T09",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "353b3362611f51899fd114e7f61ebbef7a82d77c",
+        "293ef150589497da9635700830d828496c9b736a",
+        "8a5a05fbb77679c399fa23fd293be59bc3d9911a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T09-20260919-r2.md",
+      "mergedAt": "2026-09-19",
+      "failReason": "attempt1 fail（B-1：9 件 .log 留痕被 .gitignore *.log 吞且未 add -f，4.10 在库与声称不符——同族第四次）——返工 8a5a05fb 补交后 attempt2 pass；编排者收尾 §4.7② 首次合并误落于实施工作树检出的 wp08-t09（tick#206 同型：② 在任务分支上双端 findings 追加必撞），当即 merge --abort 零残留、切回 redesign-main 重做（② 干净、③ findings.json 冲突经 v1.13 merge-findings-union 并集解算 F-221 自动通过）"
+    },
+    {
+      "task": "EX-T10",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "76590c980b71abcf614b434fd5fddb6d40214a9a",
+        "df619a24d473249adb9d7f0f1c8323317a24a8a2",
+        "0b64525957e20597a8aca7370d734da54e529e43"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T10-20260919.md",
+      "mergedAt": "2026-09-19"
+    },
+    {
+      "task": "UI-T02",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "24be3abac6248f9d8be869506b16a7f75e4eb233",
+        "eb3de24c878425194f92332e08ef8f0cefeb6862",
+        "1428e3520ef9bb0943bb0806a98e2b8b389c0af4",
+        "48e614cf19b62bf1ad5859ec1eeea6c286dcf7fd"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T02-20260919.md",
+      "mergedAt": "2026-09-19"
+    },
+    {
+      "task": "RPT-T01",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "508b3e335e0e66b22ecbce1cca54af4e18bb671c",
+        "e80e05f950be4c9e6fb12d065f6b34faa963392c",
+        "636f065ef43180cfa691bb9b802b3b1f8cf405fe"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T01-20260919.md",
+      "mergedAt": "2026-09-19",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；编排者收尾 §4.7② 首次合并误落于被实施工作树检出的 wp12-t01（tick#206/EX-T09 同型），当即 reset --hard 回冻结尖端 636f065e 零残留、切回 redesign-main 重做（②③ 干净无冲突）——reset --hard 附带清掉本 tick 未提交的编排侧 state.json 簿记（队列 25 条与中间相位写回），已按最终收尾口径重建（事件均已实际完成，主线推送 3c77c716..17c61183）；验收端建议级 F-230/F-231 已随 evidence 提交转登 findings.json"
+    },
+    {
+      "task": "RPT-T02",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "9677752305ab6449e6fb44ba48f4667f21d437f8",
+        "f77fc436eca1a1cad405931f75d1fee84e39b856"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T02-20260919.md",
+      "mergedAt": "2026-09-19"
+    },
+    {
+      "task": "RPT-T03",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "2c3d9a1c601751c86564689238b9faee9297f881",
+        "a2522b68c0d1e23dede8c887ce1f394ae8a7e4fc"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T03-20260919.md",
+      "mergedAt": "2026-09-19",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因环境并发额度中断（约 50 分钟、零提交、零消账），attempts.implement=1 重启续作完成"
+    },
+    {
+      "task": "RPT-T04",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "b848ac204c0e69b7e9789682e79a1c257fe52ee5",
+        "0d8203a9672c0e61363a260bd6e40c704978b8d9",
+        "0310e31c8af70d0e85978047a3ec635ce3b4b500"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T04-20260919.md",
+      "mergedAt": "2026-09-19",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因环境人机验证超时中断（零提交、零消账），当即重派成功，attempts.implement 保持 0"
+    },
+    {
+      "task": "RPT-T05",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "6a9aba31215435c63f8148e7519f7a21d21526b6",
+        "d24adf7dd30ae93bd79cc2c5f92fe547a7f483df",
+        "d14eab5c595702a41c72815a8ae76b7f299b26c7"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T05-20260920.md",
+      "mergedAt": "2026-09-20",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因会话中断租约到期（零提交、零消账、遗留未提交现场 5 件），§4.2 重派续作完成，attempts.implement=1"
+    },
+    {
+      "task": "RPT-T06",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "a11b603824e6702af33b1f229081f4e8766bb1b5",
+        "8ebebc417cf2499a1a77257446be39e87496109d",
+        "6dc1b140ead7b6e100772d4bbac4640a83efed2a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T06-20260920.md",
+      "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "RPT-T07",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "82a5ff10d2cee985a61947c42a683cb92654350a",
+        "f42c36e9f6ca7e28971b33f2b56c5bb13bc15bf9",
+        "07bb4a78ac4215e07db73ac8be42c09ed6b3d4af"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T07-20260920.md",
+      "mergedAt": "2026-09-20",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因环境人机验证超时中断（已产出实现与留痕、零提交），重派子代理按 §5 对账协议盘点遗留未提交现场后续作完成，attempts.implement 保持 0；验收建议级 F-240 已随记录转登 findings.json"
+    },
+    {
+      "task": "RPT-T08",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "0c3dd4ee655814be36a971824465262bf513e09a",
+        "8f44f45fe681d5f7c1d9ef6bb7c72244dc2dfa31",
+        "be46cf75f4f5736d2ae840122b04d7e5cd5429b5"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T08-20260920.md",
+      "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "RPT-T09",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "8a6004cc7ee95e570fb66d8f593330f5b466a148",
+        "e0836c5ba3d1b88dbd6aa2d1f45ebeb3add73905",
+        "ec0217522ca0c7232730f3f7b16cfea8fdba8885",
+        "35d2ece4442af8ede6a7f788d8b4112d83cac3cc"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T09-20260920.md",
+      "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "RPT-T10",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "55e34f9d06a395361a183c83612c91a76863426d",
+        "0c95de0ee1a26b6ad09557d01f48c0605b462e1b",
+        "4110786ab67144385fe487f5be103f19c9f9eeae"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T10-20260920.md",
+      "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "RPT-T11",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "69d23968353877e2bd07024f3ca192c370418e9a",
+        "ad7e8d1ef05790cdd11dc333d80958b7b0ce7fbd",
+        "08766bd28f9bdd1e87fec97614d4852833a0d8dc",
+        "e412eea23c36a9caec76624ba2830b41730f9ddb",
+        "e995689021af7a657e647fb728000a10ed03f64e"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T11-20260920-r2.md",
+      "mergedAt": "2026-09-20",
+      "failReason": "验收 attempt1 fail（B-1 同族第五次：11 件 .log 留痕被 .gitignore *.log 吞且未 add -f，提交声称 21 份实际入库 10 份，F-253）——返工 552c66d1 补交 11 件后 attempt2 pass；attempt1 验收建议级 F-254/F-255 与 attempt2 建议级 F-256/F-257 均随 evidence 分支转登，F-253/F-254/F-255 已随 ⑤ 自 acc/RPT-T12/1 逐字转录入主线（F-253 循其 resolution 翻转 fixed，fixedBy=552c66d1）"
+    },
+    {
+      "task": "RPT-T12",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "36bbac316d89285f6ea6d43bde601fc44e2f6dc8",
+        "92db3656d3440ac775047fb7093e1e2c89cc13a1",
+        "552c66d1ddb39e468899705822b0424da5b0fa70"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T12-20260920-r2.md",
+      "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "RPT-T13",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "9edb2a2ca947b4b01516454ea697509fa08ff2e4",
+        "3396a00cdf7ee87d0c31c3063721c62b30c11d5d",
+        "9000bfee6e68953f91a48a1166edc5f94c32bcd6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T13-20260920.md",
+      "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "UI-T03",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "d402cfef338acd37f893f49dff168b57836f8f07",
+        "dd9ff626392813f262f68d0d8dacc2cfb22bd4de",
+        "e6ac9d11f51fc9b483d074f3b541f2c2ccbad911"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T03-20260920-r2.md",
+      "mergedAt": "2026-09-20",
+      "failReason": "验收 attempt1 fail（B-1 同族第六次：14 份 .log 留痕被 .gitignore *.log 吞且未 add -f，冻结对象在库 9 件 vs 本地声称 23 件）——返工 e6ac9d11 补交后 attempt2 pass；attempt2 建议级 F-260/F-261 随 evidence 转登；收尾 §4.7③ findings.json 尾部冲突（主线 F-260/F-261 vs 任务分支 F-259，F-204 同型）经 v1.13 merge-findings-union 并集解算通过（F-259 并入共 261 条）；解算脚本对带 BOM 现场退出非 0，编排者当场最小修复（F-262 入册即消账，[governance] b47638b3）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t03，切回 redesign-main 后方执行合并（EX-T06/EX-T09/RPT-T01 同型风险点，本次零误落）"
+    },
+    {
+      "task": "UI-T04",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "aaea78425445ff421db17c70c70cc05e125b0c1e",
+        "0516f7fbb922e9e90c23f6dcfbcabda7625725d0"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T04-20260921.md",
+      "mergedAt": "2026-09-21"
+    },
+    {
+      "task": "UI-T05",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "8a0adb92e1c902c776662ae6d9992f490f486466",
+        "55bebd6a607ce1dd83deac6ac77619f8823d702d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T05-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t05，切回 redesign-main 后方执行合并（EX-T06/EX-T09/RPT-T01/UI-T03 同型风险点，本次零误落）；验收建议级 F-264/F-265 已随 evidence 转登 findings.json"
+    },
+    {
+      "task": "UI-T06",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3830e16404ef056fc8e781af9b620f0638c45f0b",
+        "cdeb53e8c58445462fb2b8d788e5563a9dee9a26"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T06-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t06，切回 redesign-main 后方执行合并（EX-T06/EX-T09/RPT-T01/UI-T03/UI-T05 同型风险点，本次零误落）；验收建议级 F-266（B-1 同族第七次：9 件 .log 留痕被 .gitignore 吞且未 add -f）／F-267 已随 evidence 转登 findings.json"
+    },
+    {
+      "task": "UI-T07",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "7a688a65330a6e5d69653dd92d23cdaa8c509241",
+        "f918798695e5c9199f042ab8ad9d778d54735611"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T07-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施段 push 遭 github.com 网络中断（实施者 5 次＋编排者 4 次重试均 SSL 握手失败，约 1 小时），网络恢复后编排者补推 wp10-t07 成功、交付同步零缺失；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t07，切回 redesign-main 后方执行合并（EX-T06/EX-T09/RPT-T01/UI-T03/UI-T05/UI-T06 同型风险点，本次零误落）；验收建议级 F-268（B-1 同族第八次：声称归档 13 件 .log 实际在库仅 7 件——.gitignore 吞且未 add -f）／F-269 已随 evidence 转登 findings.json"
+    },
+    {
+      "task": "UI-T08",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "a660f3c225e2d3bae09ad7f3fb73692d58246c2c",
+        "3bff786a9a02dc72644ac61fcc1b5da88b684269"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T08-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；pass 落盘后收尾前会话中断，本 tick 以 awaiting_merge 自愈锚点续完 §4.7 七步；验收子代理 evidence 回传推送遭 github.com 网络中断（约 61 分钟，33 次重试后恢复）未完成——origin/acc/UI-T08/1 缺失，网络恢复后编排者按冻结 SHA f9bbdae9 补推（UI-T07 补推先例同型），补推后双漂移检测零漂移"
+    },
+    {
+      "task": "UI-T09",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "ea3489e71a4c0e2b066e5207f8f906d550cedcb7",
+        "e4b30c7778ed2d000077b95ce12ceea5a09ffba4"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T09-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t09，切回 redesign-main 后方执行合并（EX-T06/EX-T09/RPT-T01/UI-T03/UI-T05/UI-T06/UI-T07 同型风险点，本次零误落）；验收建议级 F-274（B-1 同族第九次：构建/门禁等 .log 留痕未入库）／F-275（CMakeLists AUTOMOC 注释计数漂移沿袭）已随 evidence 转登 findings.json"
+    },
+    {
+      "task": "UI-T10",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "61a6dbfd9d580ae2be8f4e9448e279ce6df0f82d",
+        "afdfae98e14bc6b465d1de08fdf1fc69cbb96127"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T10-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 首次合并误落于被实施工作树遗留检出的 wp10-t10（未推送，EX-T06/EX-T09/RPT-T01/UI-T03 同型风险点首次实际触发），当即切回 redesign-main、wp10-t10 指针复位回冻结尖端 afdfae98 后重做，误落合并 192048e9 零残留；另 state 遗留 attempts.accept=1（UI-T09 收尾未按既有实践清零）已按协议口径修复为 0 后派发本次验收（PIPE §0 以协议为准修复并注明）；验收建议级 F-276（B-1 同族第十次：留痕 .log 0 件入库）／F-277（CMakeLists AUTOMOC 注释计数三袭）／F-278（UiPorts.hpp 尾换行丢失）已随 evidence 转登 findings.json"
+    },
+    {
+      "task": "UI-T11",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "21cba320f0438b50bd1b0971824478eaa16a0b3f",
+        "45baa315ab763cac0395768fd091c12e20fdfb6a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T11-20260921-r2.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt2 pass（attempt1＝验收派发中断：子代理完成记录提交 e328d07a 于 acc/UI-T11/1 后在 evidence push 重试阶段失联未返回 verdict、origin 无该分支——零返工，fix 保持 0；孤儿分支 acc/UI-T11/1 未删留所有者处置）；实施段 push 遭代理中断，编排者后台重试第 4 次补推成功（UI-T07 先例同型）；F-277 循 attempt2 记录 §4.8 消账注记随 ⑤ 置 fixed（fixedBy=45baa315）；收尾 ② 前工作树曾遗留检出 wp10-t11，切回 redesign-main 后方执行合并（EX-T06 系风险点，本次零误落）"
+    },
+    {
+      "task": "UI-T12",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3c51a1c5fa27cf9119c4544bfffaf850d73fed45",
+        "417cfa5ab3200a28d5d6fdcb19e77c25fd1a7f23"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T12-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ① 前工作树曾被实施子代理遗留检出 wp10-t12，切回 redesign-main 后方执行收尾（EX-T06 系风险点，本次零误落）；②③ 合并零冲突，findings.json 并集例外未触发；验收建议级 F-281/F-282（UiPorts.hpp／UiSessionController.hpp 尾换行未恢复，F-278 同族复踩）／F-283（README-evidence 索引引用 .log 未入库，F-010 家族第 7 例）已随 evidence 转登 findings.json，无 §4.8 消账指令"
+    },
+    {
+      "task": "UI-T13",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "e727fa2657f4a6e535abfb9785f0147eb53b4820",
+        "6b7ffbc33e9c5bc597d2d68b252548f386925212"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T13-20260922.md",
+      "mergedAt": "2026-09-22",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ① 前工作树曾被实施子代理遗留检出 wp10-t13，切回 redesign-main 后方执行收尾（EX-T06 系风险点，本次零误落）；②③ 合并零冲突，findings.json 并集例外未触发；验收建议级 F-284（F-010/F-283 家族复踩：留痕原始 .log 未入库）／F-285（F-278 家族复踩：UiPorts.hpp 尾换行未恢复）／F-286（TaskPresentation.cpp refresh() 注释声明强于实现）已随 evidence 转登 findings.json，无 §4.8 消账指令"
+    },
+    {
+      "task": "UI-T14",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "cf408f24cb8947f6e3b7afb38ed3dde823319231",
+        "4f74ec22a200565c74da81b7aa679d8228f4c7d8"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T14-20260922.md",
+      "mergedAt": "2026-09-22",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t14，切回 redesign-main 后方执行合并（EX-T06 系风险点，本次零误落）；②③ 合并零冲突，findings.json 并集例外未触发；验收建议级 F-287（F-010/F-283/F-284 家族第 9 例：留痕原始 .log 未入库与清单失准）已随 evidence 转登 findings.json，无 §4.8 消账指令；本 tick 领取时修复上轮收尾遗留 attempts.accept=1（UI-T10 先例同型，PIPE §0 注明），acceptanceRecord.path 初写为仓库根相对形式被 validate-state 拒绝，已按机器校验改一文档根相对形式"
+    },
+    {
+      "task": "WP-13-T02",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "7fdfe8cfffba61e7bba188532afaa2f3479a4f28"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T02-20260922.md",
+      "mergedAt": "2026-09-22",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施段事件：①实施者建分支时将编排者未提交的领取簿记（含 tick#277 追加的 35 条队列）stash 还原，编排者按 PIPE §0 锁保护重建簿记后续行（F-294 登记，零损失）；②ird_gates 命中集 44→46（两测试目标→testkit 边，F-051 同根因既有模式）由实施者 F-292 自登、验收复核一致；③DTB 产出列 _plugin 偏差已按 modeling.md §14.6 v0.3 登记（DTB §5.4 口径，随 WP-13-T15 落位）；编排者 O-41 裁决落地提交 a99bd14c 与本任务实施并行落主线（文件面零交集）；收尾 ③ findings.json 尾部冲突（主线 F-293 vs 分支 F-292）经 v1.13 merge-findings-union 并集解算自动通过（F-292/F-293 编号序并存）；验收建议级 F-293（提交标题风格 F-012 家族）随 acc/WP-13-T02/1 转登"
+    },
+    {
+      "task": "WP-13-T03",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "859d59557724bdb7574d9e8809e904dd99a53806",
+        "ff6c77d9326fb1b03ffee4e2269a86bf7da484c4"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T03-20260922.md",
+      "mergedAt": "2026-09-22",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；实施段环境注记（非本任务缺陷，验收记录 §环境说明同载）：全树冒烟配置需补 Qt 前缀——testkit_qt/ui 单元后置任务引入无条件 find_package(Qt6 REQUIRED)，与 F-007/F-254 在册环境前置缺口叠加；落位偏差七项（a~g）已按 DTB §5.4 登记于 modeling.md §14.6 v0.4；验收建议级 F-298（F-012/F-293 家族：送验留痕提交标题名词开头）随 acc/WP-13-T03/1 转登"
+    },
+    {
+      "task": "WP-13-T04",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "7326ccb6a3f009b25857123358820f063e4a39c5",
+        "9e24b4104d1af423c1fb40ba0d1442bb73990469"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T04-20260923.md",
+      "mergedAt": "2026-09-23",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；落位偏差三项已按 DTB §5.4 登记于 modeling.md §14.6 v0.5（长方体 Iyy 列头澄清经解析验证一致）；验收建议级 F-299（F-012 家族：留痕提交标题名词开头）／F-300（verify 清单缺 contract_test 构建行）／F-301（F-008 失败簇扩展观测 bt_plugin）随 acc/WP-13-T04/1 转登；门禁零新增命中经验收者 detached base 对照独立证实"
+    },
+    {
+      "task": "WP-13-T05",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "827e0e5519ab274d52d8a7a90e57423fb1084171",
+        "eb417a1e784e3424b4acf216b3c18be102776a20",
+        "5e5f04f90df8340328722e4923bd5d63b8ef6dde"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T05-20260923.md",
+      "mergedAt": "2026-09-23",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施耗时 117 分钟贴近 120 分钟租约（本单元迄今最长）；③ findings.json 尾部冲突（主线 F-303~F-307 vs 任务分支 F-302）经 v1.13 merge-findings-union 并集解算自动通过（307 条编号序并存）；实施者自登 F-302（pugixml 词表暴露——O-40 登记依赖的词表面，词表扩充归治理侧）；验收建议级 F-303（F-012 家族提交标题）／F-304（verify 清单缺 contract_test 构建行，F-300 同型）／F-305（kind 词表语义混淆）／F-306（DTB §5.4 登记口径不一致）／F-307（阅读地图编号漂移）随 acc/WP-13-T05/1 转登；落位偏差与 TEMPLATE-RANGE 增登已按 DTB §5.4 登记于 modeling.md §14.6 v0.6"
+    },
+    {
+      "task": "WP-13-T06",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "3aa4f0967b9b3392a4757e5655cadc062a0df77c",
+        "803b435a549a3579834f724aec612c874fc5fd79"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T06-20260923.md",
+      "mergedAt": "2026-09-23",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；实现期增登稳定码 MDL-IMPORT-XACRO-UNRESOLVED（卡 §9.5 原表缺行，T05 增登先例，随卡 v0.7 消账）；2 GiB 产物护栏不触发于单元测试已如实声明（深度护栏＋代码走查覆盖）；验收建议级 F-308（F-012 家族提交标题）／F-309（gates 留痕双重编码乱码，F-207/F-231 家族）／F-310（verify 清单缺 contract_test 构建行，F-300/F-304 家族第三例）／F-311（留痕散文计数少报，F-041 系）随 acc/WP-13-T06/1 转登"
+    },
+    {
+      "task": "WP-13-T07",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "a1c13dcccc0a2fa59e00ac5bcb34d33ce80b1a44",
+        "abde67244a45275e072d4c266478f93a34fd9220",
+        "7156ff13f7fc49f076663c6716a53c27252d677d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T07-20260923.md",
+      "mergedAt": "2026-09-23",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；O-27 处置按 acceptance 2 落地（七轴 createDraft→TemplateDisabled＋MDL-TEMPLATE-DISABLED 提示诊断，仅登记不启用）；偏差七项（含 TemplateOutcome/runtime::Expected 形态、ModelingWorkingSet v1 落位、custom-chain 1 轴种子等）已按 DTB §5.4 登记于 modeling.md §14.6 v0.8；验收建议级 F-312（用例计数少报 13/15，F-041 家族）／F-313（F-012 家族提交标题）／F-314（verify 清单缺 contract_test 构建行，家族第四例）／F-315（gates 留痕乱码，F-207/F-231/F-309 家族）随 acc/WP-13-T07/1 转登"
+    },
+    {
+      "task": "WP-13-T08",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "adc0475f1c1e0dce8b46976aa10e94657c03cd3d",
+        "9a36f397b90f4a8e5b594c4f34f1ebc3b04d7f31",
+        "83d2b63fb0122353bde06e602b8075180f239f4e"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T08-20260923.md",
+      "mergedAt": "2026-09-23",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；实施段时序事件：工作者历时约 148 分钟超 run 租约（09:27:27）29 分钟返回，期间无 tick 接管、锁 fencing 保持、renew 成功后按模板处理完成事件（未触发 §4.2 重派，零双实施者）；O-35 裁决（无点 token）与 V-20 全管线面归 project S5（PRJ-TX-3 在库）均按卡 §14.6 v0.9 口径登记；验收建议级 F-316（DiagCodes 工厂 @brief 计数滞后，纯注释）／F-317（ird-test-report 留痕件为过滤子集，gtest XML 完整可信）随 acc/WP-13-T08/1 转登"
+    },
+    {
+      "task": "UI-T16",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "02d529370978816e8cf45be741d5920463bdbfec"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T16-20260924-r2.md",
+      "mergedAt": "2026-09-24",
+      "failReason": "非验收一次通过：attempt 1 fail（B-1 宿主嵌入式面板四项交互未实证＋B-2 复跑载体失实，记录 acc/UI-T16/1@2558984d）→ 返工 fix=1（d8af3a96 根因修复＋02d52937 共存收口与全量重录）→ attempt 2 pass（记录 acc/UI-T16/2@80b8fbba）。实施段时序事件：首轮实施者完成提交后回传被配额限额截断（12:50）；重启派发一次空启动（6h40m 零产出已停）——两次均属环境层事件，验收独立性与冻结链未受影响；attempt 2 验收建议级 F-321（切换路径语义待所有者裁决，不阻塞）／F-322（Dev 日志采样尾段）／F-323（RobWorkSim 框架目标宏冲突为新树 configure 既有问题＋ini 模板不入库）随 acc/UI-T16/2 转登"
+    },
+    {
+      "task": "UI-T17",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3a9c96ebd917ce6218e9ee1adf2a03c305d9d02a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T17-20260924-r2.md",
+      "mergedAt": "2026-09-24",
+      "failReason": "非验收一次通过：attempt 1 fail（阻断唯一项 B-1＝宿主冒烟关闭确认流/Draining 收口/保存链路半区无宿主实证，记录 UI-T17-20260924.md @ acc/UI-T17/1@c216d6c8；实现面零整改要求）→ 返工 fix=1（e917734a：F-326 两文件头注释对齐＋F-327 延期裁决＋r3 全量重验留痕）→ 宿主 GUI 冒烟由所有者本人于 14:32~14:44 人工执行（3a9c96eb -r4 证据：项目库落盘＋锁 pid/心跳＋dev 日志＋所有者确证『都正确可以通过验收』；对话框/状态行过程视觉帧未捕获〔两轮连拍错过＋所有者裁决不重走〕如实登记）→ attempt 2 pass（4f7a814f：B-1 专章裁定＝机制级 dev 日志 S1/S2 双行执行实证＋情节级所有者确证；switch rejected/lock-held-by-other 独立裁定非缺陷＝S2 候选验证保守拒绝）。建议级 F-324~F-330 随 acc/UI-T17/2 findings 入主线：F-328（r4 登记时间线归属勘误——draining 行属同会话更早项目，随下批 ui 触碰窗口更正）／F-329（连拍帧未在盘留痕，所有者裁决删除）／F-330（同项目重开自锁拒绝 UX 语义，并入 F-321 定案考量）"
+    },
+    {
+      "task": "UI-T18",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "f00fb104a7257911083e5eafff2a5186cec5db00"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T18-20260924-r2.md",
+      "mergedAt": "2026-09-24",
+      "failReason": "非验收一次通过：attempt 1 fail（B-1 仓库根 3 件 gtest XML 越 allowedFiles＋B-2 宿主 GUI 冒烟未执行；实现面 4.2~4.11 全过、实现面零缺陷检出；记录 UI-T18-20260924.md @ acc/UI-T18/1@d3ee8167——该记录因代理故障推送受阻，网络恢复后由返工者代补推）→ 返工 fix=1（840375b3 B-1 git rm／f6d1a235 F-333/F-334 卫生／f00fb104 B-2 宿主冒烟补录＋-r4 全量重验＋ui.md v1.14-r2）→ attempt 2 pass（4.1~4.11 全过；028a0a8f）。环境事件链：本机代理 17890 两度不可达——acceptor 记录推送受阻（worktree 保全后由返工者代推）、收尾 ① fetch 失败转 blocked（tick#300），网络恢复后按 PIPE §0 修复 state 回 awaiting_merge 续行收尾（tick#301，本条即其完成）。建议级 F-335（findings 消账未回写登记册状态翻转——收尾合并时置 fixed）／F-336（ird_gates 取证口径 43/119 行缩减＋GBK 污染，建议固化 cmake -P 口径）随 acc/UI-T18/2 转登"
+    },
+    {
+      "task": "WP-13-T09",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "12284f7280db2ccbdcc692a43583544c4b291984"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T09-20260925-r2.md",
+      "mergedAt": "2026-09-25",
+      "failReason": "非验收一次通过：attempt 1 fail（阻断唯一项 B-1＝集成模式契约测试不可复现全绿——CommandPipelineContractTest.cpp:288 的 T08 时代“T09 行不预建”钉住断言未随本任务在 DiagCodes.cpp 合法登记 §9.5 T09 三码同步更新，全新构建 8/9 FAILED、在库留痕 9/0 不可复现；实现面 4.1/4.4~4.11 全过、零语义缺陷；记录 WP-13-T09-20260925.md @ acc/WP-13-T09/1@05b02655）→ 返工 fix=1（12284f72：钉住断言改在册断言〔三码同源对账＋ownerUnit/confirmable/requiresComparison 逐项〕＋测试更名沿 DiagCodesTest 先例＋F-339 计数 19→20／F-340 报告重收全量 168 条／F-341 调试块清除；F-338 维持 open 归治理侧）→ attempt 2 pass（4.1~4.11 全过、9/9 可复现、gates 411=411 零新增；记录 -r2 @ acc/WP-13-T09/2@bf64f02e）。环境事件：attempt 1 验收记录分支误以任务分支尖端为基（ACC §3 偏差）致收尾 ③ 合并记录即带入代码、④ 空操作——终态经逐笔核验与设计意图一致，偏差已随本条登记；另收尾 push 曾遇不稳定代理路径陈旧协商应答（up-to-date 假象），显式 refspec 重推解决"
+    },
+    {
+      "task": "WP-13-T10",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "0cd85cef9e6114acb4b5a1dfceef24c4aab74334"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T10-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-13-T11",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "049828737a5b02f49cec0315dafaf18fd80d33f1"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T11-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-13-T12",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "541f554c1261085b8bac08c7563e98035d11bde0"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T12-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-13-T13",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "6672a1995e1f203bf542c3f181d0f92b44c761ec"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T13-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-13-T14",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "858629f9bad5d30a3ee077a0ca4a60fc4f4cea56"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T14-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-13-T15",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "cb40fb457ae4f7d4b60104dd91a96a6aaa937676"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T15-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-13-T16",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "08a4a00133a0870f2eaddc6ca4a77ef99bdca217"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T16-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-14-T02",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "07d2f6d633768ae924085d38c6e429e2892790a6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T02-20260925.md",
+      "mergedAt": "2026-09-25"
+    },
+    {
+      "task": "WP-14-T03",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "30f80a0bcb5c136a7f8d21cd5fb56e53a8828e52"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T03-20260925.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-14-T04",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "e63fba9a5e075370a7f03101d70dfd73e958d0e5"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T04-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-14-T05",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "70ddd39de47a9aa4248b09860bdac2d4aed141c2"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T05-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-14-T06",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "392a6785c2344dafae1829b272b13554f15fedea"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T06-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-14-T07",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "16eefa15648c62bdd77207197abeb1d7c4476e97"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T07-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-14-T08",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "678222d8ba235b5b9af0f7245948291b90e23f16"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T08-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-14-T09",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "aa4630078b53803b5aedbc3c2be61c7172c30b20"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T09-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-15-T02",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "8b88d0806453de24a255d3dc770a1dd9fc4e4cc1"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T02-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-15-T03",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "0ece5504bf851a23c40853c608bbf757ec2c0230",
+        "5551d4a4f71591975ccccbbfd64ada349e07d0ef"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T03-20260926.md",
+      "mergedAt": "2026-09-26",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾④ findings.json 冲突——v1.13 首跑『条目计数不符：期望 379 实得 380』即停转 blocked（tick#357），根因＝登记簿 F-379 收行空白畸变（3a5e9ec3 转登误改、base 与任务分支双侧同携）致条目块扫描把 F-379/F-380 并块，计数守卫拦截的正是扫描失真（F-388 入册即消账）；所有者明示『解决阻塞』授权后循 F-262 先例最小修复（收行修复＋merge-findings-union 行形状匹配空白容忍＋闭合行规范化，1e221ff4）并临时工作树预验 RESOLVED，重走④⑤：v1.13 重跑 RESOLVED（并集 F-383、总计 381 条）后合并 b8060287。验收建议级 F-384~F-387 随 acc/WP-15-T03/1 转登；实施端自登 F-383（O-37 配套 evidence.md §9 增补悬账）经验收 §4.8 核对质量合格、维持 open；无 §4.8 消账指令"
+    },
+    {
+      "task": "WP-15-T04",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "a7580dddae86f88b48e93ea3d273086953b26e86",
+        "fb67389f65ee04413efa051949729e2ec8022e6d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T04-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-15-T05",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "4dee67fcbe0f4bb85b2778999e4751d2493ad4a1",
+        "70dbaa11243a8eb395ed877f1663379544cbe791"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T05-20260926.md",
+      "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-15-T06",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "2df969fb5601d1df264abb3f43f45d2a801981bc"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T06-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T07",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "2a9ba53b63ce52500936ebb667977bcabb5ea093"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T07-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T08",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "6b5b0fa69e26096095b11679ef6c1f711cf35408"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T08-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T09",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "06364df81b1c792960da3df8638ba878ac73c7b8"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T09-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T10",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "8c7eb59d9ee70b9990361a28cdc4693436a0865f"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T10-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T11",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "34950b7be34206f4768b313f5015cf953f0ada95"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T11-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T12",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "d1ca13779c7aef0d8e1c415b7fcae79cca0e2995"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T12-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T13",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "cf841baf89e7191cc177085361b8080f2cf1d1a2"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T13-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-24-T08",
+      "unit": "delivery",
+      "result": "pass-merged",
+      "commits": [
+        "6dcbd6862b9bd0fbf178f219dd3850a7a850806d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-24-T08-20260928.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。ird_gates 命中集增量六条随 DTB §4.5 v0.23 登记（SUB studio->ui/project/modeling＋R-3×3——产品宿主包装目标，base 79→head 85 归一 diff 零意外）；验收段冷启复现新检出 F-428（BUILD_sdurws_pythoneditor 默认 ON 的 python313.dll 部署缺口，open 归治理/打包侧）；收尾⑤按 F-427 口径补录验收自产证据 acc-*×10 并更正记录 4.10 声称行（初始『于送验 SHA 实证』对该 10 件不实）"
+    },
+    {
+      "task": "UI-T20",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3bbe831472b0786a4fb871579cb1defdf9a682a4"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T20-20260928.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——独立性降级已声明）。ird_gates 引擎直跑 base↔head 归一化 78↔79 恰增 1 条 SUB（ui_contract_test 直链 runtime——O-31 测试面既定形态 UI-T14 同型，登记件 wp10-t20-gate-registrations.md 责任方 WP-01-T03）；验收双破坏实验实证（门禁注入表外边即红＋③d 重建即新身份检查弱化即模型用例红）；验收新登 F-429（detached worktree 冷启集成树第三前置件 RobWorkStudio.ini.template.static——[Bb]in/ ignore 吞掉的未跟踪模板件，F-007 口径未覆盖）；收尾前主工作树曾停留 ui-t20（EX-T06 系风险点），切回 redesign-main 后方执行①~③，零误落"
+    },
+    {
+      "task": "WP-24-T03",
+      "unit": "delivery",
+      "result": "pass-merged",
+      "commits": [
+        "4dbca0d8b2a0369b6855cae8ad4ebd3f53806344",
+        "90032ede58018f8fa056554decf19aae68d4a045",
+        "9802e83b7df79ba2911a72ec38e5ba00a1da6a82",
+        "0622446f37c77d5e2048097965adf2ff5b04da50",
+        "16b6b7188c9cec62d8f017c7bf75d0af486c75fe"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-24-T03-20260928-r2.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "T03b 验收 attempt1 fail（G1 GUI 冒烟未执行＋G2 三用例未落，记录 WP-24-T03b-20260928.md @ acc/WP-24-T03/1）与 T03 验收 fail（B-1 装配登记恒败——commandIdWellFormed 拒连字符，记录 WP-24-T03-20260928.md @ acc/WP-24-T03/2）→ 返工 fix=1（0622446f 修复＋16b6b718 全链留痕）→ acc/WP-24-T03/3 pass（-r2 记录 @57f12aa3）；收尾③ findings.json 多线登记击穿 v1.13 计数不变量转 blocked（tick#403），所有者人工解算三线并集（c45ce1b1，PIPE v1.17 固化口径：F-425 收行畸变根因／F-426 任务分支误提交 state.json 根因均入册消账）后续完④~⑦（tick#405 幂等续行，acc/1 的 T03b fail 记录随本收尾逐字转录留档主线以保全门禁 evidencePatterns 匹配）"
+    }
+  ],
+  "policy": {
+    "autoMerge": {
+      "enabled": true,
+      "classes": [
+        "doc",
+        "build",
+        "implementation"
+      ]
+    },
+    "strictQueueOrder": true,
+    "autoDiscovery": true,
+    "unitCheckpoint": false,
+    "unitCheckpointExemptFirstUnit": true,
+    "firstUnitCheckpointExempted": true,
+    "noProgressLimit": 3,
+    "maxImplementRestarts": 2,
+    "maxFixCycles": 3,
+    "leaseMinutes": {
+      "implement": 120,
+      "acceptance": 60
+    }
+  },
+  "queue": [],
+  "docRefs": {
+    "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
+    "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
+    "contractCompilation": "doc/industrial-robot-design/contract-compilation.md",
+    "agents": "AGENTS.md",
+    "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
+    "taskContracts": "doc/industrial-robot-design/tasks/",
+    "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
+  },
+  "tickToken": "fb03cf28-1627-48e5-892c-df5d7eca4f20"
+}

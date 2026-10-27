@@ -1,0 +1,89 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp
+773: /// 路径类字段（externalRefs[].absolutePath）的落值口径：非空、无控制字符
+774: /// （C0/C1——转义注入的换行/NUL 破坏清单文件的行结构，且无合法路径含控制
+775: /// 字符）、≤4096 字节（长路径预算；与 io SafePath 的最终校验分工——§5.7
+776: /// 责任划分：解析/存在性/安全归 io，本层只挡结构级失控）。允许空格与
+777: /// 非 ASCII（Windows 长路径/中文路径均为合法登记对象——UTF-8 经 \uXXXX
+778: /// 转义承载，§4.8）。
+779: std::string requirePathField(const JsonValue& obj, const char* key)
+780: {
+781:     const std::string s = requireStringField(obj, key);
+782:     if (s.empty()) { corrupt(std::string("field '") + key + "' must not be empty"); }
+783:     if (s.size() > 4096) {
+784:         corrupt(std::string("field '") + key + "' exceeds 4096 bytes");
+785:     }
+786:     for (const char c : s) {
+787:         const auto u = static_cast<unsigned char>(c);
+788:         if (u < 0x20 || u == 0x7F) {
+789:             corrupt(std::string("field '") + key
+790:                     + "' must not contain control characters");
+791:         }
+792:     }
+793:     return s;
+794: }
+RobWork/doc/industrial-robot-design/reuse/functions/project.json
+2360:       "functionId": "project.Codec.anonymous.requirePathField",
+2361:       "ownerUnit": "project",
+2362:       "requirements": [
+2363:         "PM-02",
+2364:         "NFR-COR-02"
+2365:       ],
+2366:       "sources": [
+2367:         {
+2368:           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+2369:           "symbol": "requirePathField",
+2370:           "qualifiedSymbol": "sdurws::ird::project::codec::(anonymous namespace)::requirePathField",
+2371:           "startLine": 779,
+2372:           "endLine": 794,
+2373:           "sha256": "0d8d32f1d0e0aff79527c9fe9fa2440588de57df1c4bf1c53891cf2501a99924"
+2374:         }
+2375:       ],
+2376:       "targets": [
+2377:         "sdurws_ird_project"
+2378:       ],
+2379:       "usageRole": "adapter",
+2380:       "permissionRef": "ARCH:3.6",
+2381:       "capabilityId": "NONE",
+2382:       "decision": "pending",
+2383:       "status": "pending",
+2384:       "search": {
+2385:         "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+2386:         "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+2387:       },
+2388:       "differences": "4096字节ASCII路径字段profile，非io真实路径解析或第二安全沙箱",
+RobWork/doc/industrial-robot-design/units/project.md
+611:     std::optional<core::RevisionId> newRevision;       // Committed 时唯一非空
+612:     std::optional<RevisionView> newHeadState;
+613:     std::vector<core::ConfirmableFinding> findings;    // Rejected(确认相关) 时回传
+614:     std::vector<core::DiagnosticRecord> diagnostics;   // 硬断言/编译失败定位（处理器产出）
+615:     std::optional<StoreError> error;
+616: };
+617: 
+618: class ProjectCommandService {
+619: public:
+620:     // 唯一写路径入口。全局串行（每存储上下文同时至多一个命令在执行——ARC-01）；
+621:     // 编译类命令可与界面并行，但不与下一命令并发（ARCH §4.2 命令执行线程行）
+622:     CommandResult submit(const CommandEnvelope&, ICommandInteraction* interaction = nullptr);
+623:     std::vector<std::string> registeredCommandTypes() const noexcept;
+624: };
+625: // variant: Committed{revision} | Rejected{reason:
+626: //   hard-assert-failed | confirmations-rejected | stale-revision | unknown-command |
+RobWork/doc/industrial-robot-design/units/reporting.md
+373: ### 4.4 内容身份计算（ReportCodec）
+374: 
+375: | 身份 | 计算对象（canonical 编码） | 进入编码的字段 | 排除的字段 |
+376: | --- | --- | --- | --- |
+377: | `dataIdentity` | ReportCodec-Data | 身份三元组＋revisionSeq＋level＋snapshotId/sliceId＋resultRefs 的 (runId, snapshotId, sliceId, inputBaselineId, caseScope) 集＋unitPreference＋选中章节的 (sectionId, selected) 集 | 评审元数据、entries 内容、诊断、生成时间/者 |
+378: | `contentIdentity` | ReportCodec-Full | dataIdentity 全部字段＋全部章节完整内容（entries/missingItems/status/diagnostics）＋ReviewMetadata＋sectionModelVersion | —（生成时间/生成者不入：同内容重建身份一致——幂等判定的基础；生成信息记录于工件清单） |
+379: 
+380: 编码规则（evidence §5.2 同源纪律）：确定性二进制（magic `IRDRPT1`/`IRDRPTD1`＋字段按名序/章节按 order＋长度前缀＋大端）；presence 字节显式编码 optional；字符串 UTF-8 禁 NUL；浮点位模式；**编码器版本号入编码**（升版＝全体报告身份变化，走设计变更评审）；纯函数（同输入同字节，NFR-COR-02）。往返契约：`parse(encode(x))==x`（RPT-T03 单测锁定——ReportCodec 归 RPT-T03 行，§11；v0.3 校正）。
+381: 
+382: ### 4.5 ReviewMetadata（评审/签署元数据，RPT-01-C/RPT-04）
+383: 
+384: | 字段 | 类型 | 必填 | 约束与语义 |
+385: | --- | --- | --- | --- |
+386: | `basisRevision / basisSnapshot` | core::RevisionId / std::optional\<core::ContentIdentity\> | 是 | 依据修订与依据快照（=报告数据源身份的复核字段——渲染时校验与 dataIdentity 一致） |
+387: | `reviewer / reviewedAtUtc` | std::optional\<std::string\> / std::optional\<time_point\> | C 级条件 | 评审人（principal——ui 采集，报告内受控字段不写日志）与评审时间 |
+388: | `comments` | std::vector\<ReviewComment\> | 是（可空集） | 评审意见（{author, atUtc, text≤4KiB, sectionId?}——逐条不可变，追加产生新报告版本） |
+389: | `signOff` | SignOffState | 是 | `Unsigned`（默认）／`Signed{signer, signedAtUtc, statement digest}`——签署**不改变历史结果**（仅元数据事实） |
+390: | `variantDiff` | std::optional\<VariantDiffBlock\> | C 级条件 | 改型差异引用（RPT-04：{baselineRevision, candidateRevision, modelDiffRef(ObjectId), baselineCheckResult（evidence 基准一致性纯检查结果）, tradeOffs[]（取舍理由——逐条 {topic, rationale, sectionId?}）}） |

@@ -1,6 +1,8 @@
 # 工业机械臂设计软件 · testkit 单元详细设计（阶段 A）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
+
+复用审计同时检查上游测试、夹具、模型、工具和构建目标；沿用 GTest/现有 testkit 报告机制，只补产品边界。独立 oracle 限测试，不发展为通用平行算法库，不添加生产追踪框架或测试专用公共 API。
 
 
 > 2026-09-10 同步：本单元详设编写完成（第一批 11/20）；保留本文 Draft/Draft-Structured 评审状态，不代表接口已冻结或实现通过。当前任务与准入结论见 [阶段一同步记录](../traceability/phase-one-readiness.md)；历史磁盘调查仅表示编写时事实，现状以该记录为准。
@@ -60,7 +62,7 @@ testkit 的产品语义只有一条：**让各业务单元能独立编写可追�
 | 项 | 实测事实 | 本文决定 |
 | --- | --- | --- |
 | 编译器/生成器 | 构建缓存 `build/CMakeCache.txt`：Visual Studio 17 2022（MSVC x64） | 按 MSVC 设计；不用平台特定扩展（进程支撑的 Windows API 仅限 `ProcessRunner` 实现文件内，阶段按需交付） |
-| C++ 标准 | 基线 RobWork `CMAKE_CXX_STANDARD 11`；industrialrobot 目标显式 C++17（core.md D-01） | testkit 同口径：显式 `cxx_std_17`；`std::filesystem`、`std::optional`、`std::variant`、`std::string_view` 允许；不使用 C++20 特性；不引入 Boost 等第三方运行库 |
+| C++ 标准 | 基线 RobWork `CMAKE_CXX_STANDARD 11`；industrialrobot 目标显式 C++17（core.md D-01） | testkit 同口径：显式 `cxx_std_17`；`std::filesystem`、`std::optional`、`std::variant`、`std::string_view` 允许；不使用 C++20 特性；不引入第三方运行库（header-only 编译期使用例外：`Boost::headers`——SetCheck 阶段 2 最大匹配内核，`src/SetCheckMatch.cpp` 单 TU 收敛、零运行库/DLL，经 REUSE-T20 登记批准） |
 | Qt | Qt 6.11.1（msvc2022_64） | **`sdurws_ird_testkit` 库零 Qt**（与 L2 同纪律）：测试断言与数据设施不需要 Qt；未来 GUI 测试辅助（若有）单列 `sdurws_ird_testkit_qt` 独立目标，禁止传递进入生产计算库（§3.5） |
 | 测试框架 | 捆绑 googletest（§1.2） | 沿用；断言宏在消费方翻译单元展开（testkit 库本体不链接 gtest，§3.3） |
 | JSON | vcpkg installed 目录实测无独立 JSON 库（xercesc/zlib 有，nlohmann 无） | testkit 自带**受限 JSON 解析器**（测试侧自用工具，决策 D-02；边界论证见 §4.1） |
@@ -230,7 +232,7 @@ industrialrobot/tools/testdata/ # 清单 lint / 完整性校验工具（TK-T03 �
 
 **范围**：对象/数组/字符串（UTF-8，标准转义）/数字（IEEE double 可精确解析区间）/`true`/`false`/`null`。**拒绝**：重复键、`NaN`/`Infinity` 字面、尾随内容、注释、BOM。错误消息含行/列。
 
-**为何自带而不复用/引入**：(a) io 的 JSON 读写器是产品单元且未产出——依赖 io 违反 T-2；(b) vcpkg installed 实测无独立 JSON 库，引入新第三方依赖超出"不擅自增加"边界；(c) RobWork 侧无共享 JSON 头可借。**边界声明**：JsonLite 是测试工具，不构成产品持久化格式的第二个实现点（NFR-MNT-03 不受影响——单位/身份/比较的权威仍在 core/io），其输出只入 `testdata/` 与测试报告。若 development-task-breakdown 未来统一测试侧 JSON 机制，本文按增量修订对齐（登记于 §12.2）。
+**复用边界（REUSE-T01 审计补正）**：testkit 不得反向依赖 io 产品单元（T-2），测试 JSON 与产品 profile 的区别也不豁免底层解析/Unicode/序列化工具的复用审查。既有自持解析器是待迁移事实，不是因测试侧或未安装独立 JSON 包而获准的新核心。已审上游默认 DOM 工厂为 XML；同渠道已安装 Boost.PropertyTree 的公开 JSON DOM 丢失标量类型及空容器区别，并接受重复键/BOM，不能直接代替本节契约。具体源区段、候选和实测见 `reuse/functions/testkit.json` 与 `traceability/reuse/REUSE-T01/probe-r8/`；该限制不证明所有成熟候选均不可用。后续优先评估同一 vcpkg 渠道的成熟公开 API，保持本节值模型、拒绝规则、错误定位和报告语义，只做实际必要的 profile 薄适配；供给或新实现仍须 H1/H6 批准，禁止另建通用 DOM/解析平台。单位、身份及比较权威仍在 core/io，当前接口与数据格式不因本次审计改变。
 
 ```cpp
 // JsonLite.hpp（节选）
@@ -517,6 +519,8 @@ IRD_EXPECT_FINITE(fieldPath, value)                                      // NaN/
 ```
 
 失败定位输出：`missing`（期望未匹配，逐个列出其身份/最近实际距离）、`extra`（实际未匹配）、`mismatched`（参与相容边计算但无法配对的最近对详情，复用 CompareDetail）；三者合成 SetCheckResult。
+
+当前实现（REUSE-T20／WP-02）：相容边与身份、歧义、详情规则仍归 testkit，容差数值比较复用 core::closeWithin；同次断言以私有标准 map 缓存不可变档案的路径解析值，首次消费才 resolve，不跨档案/调用共享。唯一匹配接缝 `detail::maximumBipartiteMatching` 在 `SetCheckMatch.cpp` 复用已安装 Boost.Graph 的公开 `matching` 策略入口：`greedy_matching` 初始化 → `edmonds_augmenting_path_finder` 增广 → `maximum_cardinality_matching_verifier` → `matching_size` 计数互检 → 索引见证。公共模板头零 Boost，自写 Kuhn 已删除且不恢复。上述 `O(E√V)` 是原复杂度期望，当前 Edmonds 实现不宣称满足该界；稠密输入的时间/内存退化及第三方 catalog 表达缺口仍未关闭，见 [最新实施与未决项](../traceability/reuse/REUSE-T05/setcheck-max-matching/README.md#9-wp-02-串行收口2026-10-24)。多解仅保证同输入/配置下见证确定性，不承诺与旧实现逐对相同。
 
 #### 5.4.3 两种断言的区分
 
@@ -824,6 +828,8 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 - 追溯登记：`IRD_TEST_INFO("KIN-02", {"AT-03"}, datasetRef)`——在测试内首行声明，写入当前 TestRecord；不修改 gtest 注册机制、不发明参数化引擎；
 - **独立性**：报告生成不依赖 reporting 单元（ReviewReport 是产品对象，测试报告不是；两者数据契约无共享，§2.2 第 8 条）。
 
+**REUSE-T01 审计补正（待修复）**：GTest公开 `TestEventListeners::Append` 接管并删除监听器，`Release` 才将所有权交回；当前 `RecordListener.hpp` 的静态对象/不接管注释与该契约冲突。公开API析构探测见 `../traceability/reuse/REUSE-T01/probe-r10/`（1项passed，不等于产品退出崩溃已重现）。后续在现有安装函数内最小修正所有权并同步消费端注释，保持每进程一次、参数/输出/退出码及Qt/子进程顺序，不建立通用启动/监听器平台。36入口与20构建宏的边界及复用方向见 `../traceability/reuse/REUSE-T01/test-build-audit.md`；薄GTest入口可保留，不为三行重复增加抽象。
+
 ### 7.4 与产品报告的边界复述
 
 `ird-test-report.json` 仅测试消费（CI/开发者）；不进入安装包（§3.6）；字段命名与 ReviewReport 体系无耦合。
@@ -996,6 +1002,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | v1.4 | 2026-10-12 | 治理批台账滞后修正（纯文档零代码，pipeline5/redesign-main；2026-10-12 全面盘点报告第五节账实不符族来源）：§12.3 P-TK-4 行补注已消账——对端 governance-log P-TK-4/O-21 与 DTB O-21 行早已 closed（2026-09-10 WP-01-T01：ARCH §3.5 补登 testkit→core＋门禁白名单收录＋dependency-graph.json 补行），本行原文"架构下次修订…补登；本文先行自律"的滞留状态与事实不符，随批补注翻转（卡侧"待增量修订同步翻转"义务兑现）；裁决归属零变更、契约语义零变更 |
 | v1.5 | 2026-10-13 | WP-23-T09 消费者提案落位登记（§10.1"性能基准夹具"行的触发兑现——消费者即 WP-23-T09）：①§3.1 模块表增补 `ReproBenchmark.hpp`（header-only 第 12 公共头——零新增实现 TU、库本体零 gtest、T-2 依赖面不变）；②§6.3 增"复现基准夹具"细则（runReproCase 三腿顺序执行〔reference/rerun/threads〕＋计时仅作原始样本留痕不作阈值判定＋判定全委托 §5.4 SetCheck＋偏差观测测量面＋报告拖挂不阻断＋`IRD_REPRO_REPORT_DIR` 落盘开关）；③数值唯一来源＝`testdata/tolerance/repro-reduction` 档案（附录 D 第 8 项固定值——随 WP-23-T09 落位于 testdata，档案登记义务归基准面非本卡任务表）；④PERF 侧计时统计/吞吐对照夹具细则仍随 WP-23-T02/T07 届时提出（本版不预建）。实现载体：testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp＋test/ReproBenchmarkTest.cpp（元测试：三腿通过/数值扰动集合违例检出/顺序置换稳定序违例检出/报告回读）——分支 wp23-t09 |
 | v1.6 | 2026-10-13 | WP-23-T02 消费者提案落位登记（§10.1"性能基准夹具"行的计时统计半区触发兑现——消费者即 WP-23-T02）：①§3.1 模块表增补 `PerfBenchmark.hpp`（header-only 第 13 公共头——零新增实现 TU、库本体零 gtest、零 Qt）；②§6.3 增"计时统计基准夹具"细则（percentileLinearInterpolated 线性插值分位数＝performance-baseline §4.2 公式唯一实现点＋约定串随报告恒输出＋runInteractionGroup 分组采样执行器〔预热剔除/无效样本逐例留痕＋stderr 打点＋无效安全界 10×minValid 显性抛错〕＋PerfSessionReport 报告拖挂〔IRD_PERF_REPORT_DIR〕＋阈值由消费方按需求原文传入零私设）；③B-06 中位吞吐口径仍随 WP-23-T07 届时提出（与分位半区互不替代——本版不预建）。实现载体：testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp＋test/PerfBenchmarkTest.cpp（元测试四例：P95 已知向量手算核对 n=15/20/2/1＋乱序等价＋违约 fail-fast／预热剔除与无效留痕／报告 JSON 往返／文件落盘回读）——分支 wp23-t02 |
+| v1.7 | 2026-10-23 | REUSE-T20 SetCheck 阶段 2 最大匹配内核复用落位登记：①§3.1 依赖契约修订——"不引入 Boost 等第三方运行库"→"不引入第三方运行库；header-only 编译期使用例外：Boost::headers（SetCheck 匹配内核，src/SetCheckMatch.cpp 单 TU 收敛、零运行库/DLL，经 REUSE-T20 登记批准）"；②§5.4.2 实现取舍注同步——最大匹配核心＝Boost.Graph checked_edmonds_maximum_cardinality_matching 薄适配＋matching_size 计数互检，经 detail::maximumBipartiteMatching 内部接缝承接（src/SetCheckMatch.cpp，Boost 头收敛于该 TU），Kuhn 自写递归删除、无 fallback/双实现；§5.4.2 命名为复杂度期望非算法强制，两算法同为最大基数匹配＝语义等价，多解配对见证确定性保持（构造序＋无随机源）；③ird_gates IRD_THIRDPARTY_ALLOWED_TARGETS 增列 Boost::headers＋DTB §4.5 登记册行同批登记；④候选证据＝REUSE-T01 审计 B17＋probe-r17/candidates 两项公开 API 探测（可运行证明），本批补齐生产接入；实施与回归证据 traceability/reuse/REUSE-T05/setcheck-max-matching/ |
 
 ---
 

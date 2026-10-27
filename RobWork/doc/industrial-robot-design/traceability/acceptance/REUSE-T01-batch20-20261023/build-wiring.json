@@ -1,0 +1,17 @@
+{
+  "generator": "Visual Studio 17 2022",
+  "arch": "x64",
+  "freshBuild": true,
+  "sources": [
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\\repo-isolated\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\probe-r20\\ProjectBoundaryTest.cpp",
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\\repo-isolated\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\TestMainReport.cpp"
+  ],
+  "projects": [
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\\build\\ZERO_CHECK.vcxproj",
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\\build\\ird-core\\sdurws_ird_core.vcxproj",
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\\build\\ird-project\\sdurws_ird_project.vcxproj",
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\\build\\ird-testkit\\sdurws_ird_testkit.vcxproj"
+  ],
+  "usesOriginalTestInclude": true,
+  "sourceDirectory": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\\repo-isolated\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\probe-r20"
+}

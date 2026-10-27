@@ -1,0 +1,13 @@
+
+archive        : B9r2
+files          : 15
+raw            : 14
+normalizedOnly : 1
+failed         : 0
+
+archive        : coverage
+files          : 65
+raw            : 54
+normalizedOnly : 11
+failed         : 0
+

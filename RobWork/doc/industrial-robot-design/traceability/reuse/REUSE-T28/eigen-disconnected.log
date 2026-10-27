@@ -1,0 +1,104 @@
+Note: Google Test filter = MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27:MdlRobotDesign.IMdl5*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlRobotDesign
+[ RUN      ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp(322): error: Value of: hasViolation(checkInvariants(badTriangle), InvariantId::IMdl5, "inertia.triangle")
+  Actual: false (未找到违例 I-MDL-5（subject 含 "inertia.triangle"）；实际条数=3)
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp(326): error: Value of: checkInvariants(missingBody).empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3 (0 ms)
+[----------] 1 test from MdlRobotDesign (0 ms total)
+
+[----------] 1 test from MdlInertiaReuse
+[ RUN      ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.0000000000000001e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999993e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(905): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999991
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(905): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.0000000000000002e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(900): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999997e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(905): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(914): error: Expected equality of these values:
+  violations.empty()
+    Which is: false
+  maximum==2.0
+    Which is: true
+
+[  FAILED  ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27 (0 ms)
+[----------] 1 test from MdlInertiaReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3
+[  FAILED  ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27
+
+ 2 FAILED TESTS

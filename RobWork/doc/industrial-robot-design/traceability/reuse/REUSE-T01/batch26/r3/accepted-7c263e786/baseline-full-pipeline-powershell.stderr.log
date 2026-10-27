@@ -1,0 +1,9 @@
+powershell.exe : git.exe : fatal: path 'RobWork/doc/industrial-robot-design/traceability/findings.json' is in the index
+, but not at stag
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r3-acceptance-20261023\repo\RobWork\scripts\industrialrobot\test-pip
+eline-pipeline.ps1:306 char:22
++ ... nOutput = @(& $script:statePowerShell -NoProfile -File $unionScript - ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (git.exe : fatal...but not at stag:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

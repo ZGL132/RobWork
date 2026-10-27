@@ -1,0 +1,6 @@
+fixture gate rejected
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-e2c3793bdcd144ddb3948253f44bf513\RobWork\scripts\industrialrobot\validate-task.ps1:136
+Line |
+ 136 |  … if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | H1-H6 task reuse contract failed

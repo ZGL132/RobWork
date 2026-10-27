@@ -1,0 +1,7 @@
+{
+  "VSCMD_ARG_TGT_ARCH": "x64",
+  "VCINSTALLDIR": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\",
+  "VSCMD_ARG_HOST_ARCH": "x64",
+  "cmake": "D:\\software\\CMake\\bin\\cmake.exe",
+  "compiler": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\HostX64\\x64\\cl.exe"
+}

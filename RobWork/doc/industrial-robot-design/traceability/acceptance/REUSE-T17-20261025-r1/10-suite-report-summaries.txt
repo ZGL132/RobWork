@@ -1,0 +1,4 @@
+kinematics {"total":289,"passed":288,"failed":0,"skipped":0,"notRun":0,"envUnavailable":1,"datasetInvalid":0,"decisive":false}
+ui {"total":345,"passed":344,"failed":1,"skipped":0,"notRun":0,"envUnavailable":0,"datasetInvalid":0,"decisive":true}
+kinematics-contract {"total":57,"passed":57,"failed":0,"skipped":0,"notRun":0,"envUnavailable":0,"datasetInvalid":0,"decisive":true}
+kinematics-gui {"total":48,"passed":48,"failed":0,"skipped":0,"notRun":0,"envUnavailable":0,"datasetInvalid":0,"decisive":true}

@@ -1,0 +1,1322 @@
+[
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+      "startLine": 470,
+      "endLine": 504,
+      "sha256": "f5697f4e6d1e50c93de811bc6485e6747f1e6654f8855e8c264c53759132bc04"
+    },
+    "match": true,
+    "computed": "f5697f4e6d1e50c93de811bc6485e6747f1e6654f8855e8c264c53759132bc04"
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::currentTcpPose",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::currentTcpPose",
+      "startLine": 119,
+      "endLine": 135,
+      "sha256": "9befb21590e1e84c1248599609070ba858f1c4c4e60ef13b9f8b999f47431832"
+    },
+    "match": true,
+    "computed": "9befb21590e1e84c1248599609070ba858f1c4c4e60ef13b9f8b999f47431832"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "draw",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SampleGridRender::draw",
+      "startLine": 268,
+      "endLine": 344,
+      "sha256": "05cf3428068c11a611fdde2d17c67ff256b686d523d365b466375a616d0689ad"
+    },
+    "match": true,
+    "computed": "05cf3428068c11a611fdde2d17c67ff256b686d523d365b466375a616d0689ad"
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "HostView3DPreviewBackend::HostView3DPreviewBackend",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::HostView3DPreviewBackend",
+      "startLine": 356,
+      "endLine": 358,
+      "sha256": "27272b2e1b33c2240bf86c348794191bc9da4f6baff15ba690262c05ae10edd4"
+    },
+    "match": true,
+    "computed": "27272b2e1b33c2240bf86c348794191bc9da4f6baff15ba690262c05ae10edd4"
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "HostView3DPreviewBackend::draw",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::draw",
+      "startLine": 360,
+      "endLine": 468,
+      "sha256": "daa46be93f2abbc9b37d247e67de01257cb037155ae8a8ce11330079929dc2f7"
+    },
+    "match": true,
+    "computed": "daa46be93f2abbc9b37d247e67de01257cb037155ae8a8ce11330079929dc2f7"
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "HostView3DPreviewBackend::clear",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::clear",
+      "startLine": 506,
+      "endLine": 520,
+      "sha256": "3da8549d55d3754d76af7839d184dea051573956512058fd07900c705c4f7d58"
+    },
+    "match": true,
+    "computed": "3da8549d55d3754d76af7839d184dea051573956512058fd07900c705c4f7d58"
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "PreviewColorScope",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::PreviewColorScope::PreviewColorScope",
+      "startLine": 71,
+      "endLine": 78,
+      "sha256": "a36581a6f78cbd7e046ed9b40569b8a5c21d9ec29ca602e750e17542b821b5f7"
+    },
+    "match": true,
+    "computed": "a36581a6f78cbd7e046ed9b40569b8a5c21d9ec29ca602e750e17542b821b5f7"
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "~PreviewColorScope",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::PreviewColorScope::~PreviewColorScope",
+      "startLine": 80,
+      "endLine": 80,
+      "sha256": "aa180918270074ba64b00a9fff41cc8bf7424238f305d56052bbf1c89c7bdf27"
+    },
+    "match": true,
+    "computed": "aa180918270074ba64b00a9fff41cc8bf7424238f305d56052bbf1c89c7bdf27"
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "applyCellColor",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::applyCellColor",
+      "startLine": 87,
+      "endLine": 103,
+      "sha256": "81d2a3c9f1ef6edc9cd9a297910f557579b6cce38ac362e75ba7eba5a4c365d4"
+    },
+    "match": true,
+    "computed": "81d2a3c9f1ef6edc9cd9a297910f557579b6cce38ac362e75ba7eba5a4c365d4"
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "tintColor",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::tintColor",
+      "startLine": 110,
+      "endLine": 132,
+      "sha256": "bfa6541ad8fdcc11440217dd62c0faced7e3a887385cf06246d737b5dea703f6"
+    },
+    "match": true,
+    "computed": "bfa6541ad8fdcc11440217dd62c0faced7e3a887385cf06246d737b5dea703f6"
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "draw",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::StationMarkerRender::draw",
+      "startLine": 155,
+      "endLine": 186,
+      "sha256": "f1dc6d774da5884eab21b54592e75cbf8a5a6e5ebbba7bb0c4aab6a02d0795c5"
+    },
+    "match": true,
+    "computed": "f1dc6d774da5884eab21b54592e75cbf8a5a6e5ebbba7bb0c4aab6a02d0795c5"
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "draw",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::RegionOutlineRender::draw",
+      "startLine": 211,
+      "endLine": 243,
+      "sha256": "2be633f3eb64c1d5665df034269f670377ea4ef6a8347b903dfce2924f0bcaf3"
+    },
+    "match": true,
+    "computed": "2be633f3eb64c1d5665df034269f670377ea4ef6a8347b903dfce2924f0bcaf3"
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::HostView3DGateway",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::HostView3DGateway",
+      "startLine": 17,
+      "endLine": 28,
+      "sha256": "066f70e537068e9e60ab40bcb1520fb4a48cfab79e48492e878d2cdb3a68ae39"
+    },
+    "match": true,
+    "computed": "066f70e537068e9e60ab40bcb1520fb4a48cfab79e48492e878d2cdb3a68ae39"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::handleViewDoubleClick",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::handleViewDoubleClick",
+      "startLine": 34,
+      "endLine": 61,
+      "sha256": "84608e272a7858716d9a29bf985cd45f14e5960cdf6fa1598f3b9cf5d49f7d35"
+    },
+    "match": true,
+    "computed": "84608e272a7858716d9a29bf985cd45f14e5960cdf6fa1598f3b9cf5d49f7d35"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::applyPresentation",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::applyPresentation",
+      "startLine": 67,
+      "endLine": 103,
+      "sha256": "48237ea91625cdc48eab906cc2602a6d4ef3b9ff87a7599dfe24aab996b26dff"
+    },
+    "match": true,
+    "computed": "48237ea91625cdc48eab906cc2602a6d4ef3b9ff87a7599dfe24aab996b26dff"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::releasePresentation",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::releasePresentation",
+      "startLine": 105,
+      "endLine": 113,
+      "sha256": "ff93f9d5649d969dd385e3a112d8340c51245b2303fbedb6ba2dbc0187cd800d"
+    },
+    "match": true,
+    "computed": "ff93f9d5649d969dd385e3a112d8340c51245b2303fbedb6ba2dbc0187cd800d"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::onSceneCleared",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::onSceneCleared",
+      "startLine": 141,
+      "endLine": 148,
+      "sha256": "354d2b5db55b8eec125a9dca032371c885d5a27bb447d79a1fa2946ea461a822"
+    },
+    "match": true,
+    "computed": "354d2b5db55b8eec125a9dca032371c885d5a27bb447d79a1fa2946ea461a822"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::applyPreview",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::applyPreview",
+      "startLine": 154,
+      "endLine": 169,
+      "sha256": "dbc3cbedb059fb8538456c3f4e54541f0a26ed5c6c35f7645771b87c5e402852"
+    },
+    "match": true,
+    "computed": "dbc3cbedb059fb8538456c3f4e54541f0a26ed5c6c35f7645771b87c5e402852"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "symbol": "HostView3DGateway::removePreview",
+      "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::removePreview",
+      "startLine": 171,
+      "endLine": 178,
+      "sha256": "e38dc647689a79936fd0b93a9642eb914bea7ef12a67a4d57ddb881af2337352"
+    },
+    "match": true,
+    "computed": "e38dc647689a79936fd0b93a9642eb914bea7ef12a67a4d57ddb881af2337352"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+      "symbol": "QtTextBillboard::QtTextBillboard",
+      "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboard::QtTextBillboard",
+      "startLine": 38,
+      "endLine": 41,
+      "sha256": "9196fe765005a8e36e38a0e69eeec823b145230acd3b1f67c03bb9c5982957b6"
+    },
+    "match": true,
+    "computed": "9196fe765005a8e36e38a0e69eeec823b145230acd3b1f67c03bb9c5982957b6"
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+      "symbol": "QtTextBillboard::rasterizeAndUpload",
+      "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboard::rasterizeAndUpload",
+      "startLine": 43,
+      "endLine": 76,
+      "sha256": "41eeab187c898c017c2ae87cb8f143655059c3b0bfe379d04ec7c06bda12b1f0"
+    },
+    "match": true,
+    "computed": "41eeab187c898c017c2ae87cb8f143655059c3b0bfe379d04ec7c06bda12b1f0"
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+      "symbol": "QtTextBillboard::drawBillboard",
+      "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboard::drawBillboard",
+      "startLine": 78,
+      "endLine": 143,
+      "sha256": "80a6be339191e5439c651efdd622eca37f9df685c739fc08785ef9e9c5dbb190"
+    },
+    "match": true,
+    "computed": "80a6be339191e5439c651efdd622eca37f9df685c739fc08785ef9e9c5dbb190"
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+      "symbol": "QtTextBillboardRender::QtTextBillboardRender",
+      "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboardRender::QtTextBillboardRender",
+      "startLine": 149,
+      "endLine": 153,
+      "sha256": "cec9f0b4e7f7b02c5ac3499f015761f5fd9b4abf561894320985682c39ee4350"
+    },
+    "match": true,
+    "computed": "cec9f0b4e7f7b02c5ac3499f015761f5fd9b4abf561894320985682c39ee4350"
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+      "symbol": "QtTextBillboardRender::draw",
+      "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboardRender::draw",
+      "startLine": 155,
+      "endLine": 171,
+      "sha256": "971b93150387ce5f26c68ef9b0a6edcc38418725f4752d05cbcc353edea68ad5"
+    },
+    "match": true,
+    "computed": "971b93150387ce5f26c68ef9b0a6edcc38418725f4752d05cbcc353edea68ad5"
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+    "match": true
+  }
+]

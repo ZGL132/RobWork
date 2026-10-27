@@ -1,0 +1,56 @@
+Resulting JSON is truncated as serialization has exceeded the set depth of 3.
+{
+  "result": "PASS",
+  "meaning": "证据一致性通过；不将core真实失败改写为产品通过",
+  "runs": [
+    {
+      "name": "candidates",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "testIds": [
+        "ReuseAuditMatching.BoostMatchingDistinguishesAlternativeAfterRemovingEdge",
+        "ReuseAuditMatching.BoostMaximumMatchingAvoidsGreedyTrap"
+      ],
+      "matchesOriginalTestIdentityAndOutcomes": true,
+      "xmlAndNativeReportAgree": true,
+      "artifacts": [
+        "System.Collections.Specialized.OrderedDictionary",
+        "System.Collections.Specialized.OrderedDictionary",
+        "System.Collections.Specialized.OrderedDictionary",
+        "System.Collections.Specialized.OrderedDictionary"
+      ]
+    },
+    {
+      "name": "core-red",
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 1,
+      "testIds": [
+        "ReuseAuditCoreBoundary.C4FiniteOverflowMustNotAcceptOutOfTolerance"
+      ],
+      "matchesOriginalTestIdentityAndOutcomes": true,
+      "xmlAndNativeReportAgree": true,
+      "artifacts": [
+        "System.Collections.Specialized.OrderedDictionary",
+        "System.Collections.Specialized.OrderedDictionary",
+        "System.Collections.Specialized.OrderedDictionary",
+        "System.Collections.Specialized.OrderedDictionary"
+      ]
+    }
+  ],
+  "totals": {
+    "total": 3,
+    "notRun": 0,
+    "passed": 2,
+    "skipped": 0,
+    "failed": 1
+  },
+  "oldProbeTestsNotRun": 30
+}

@@ -1,0 +1,4 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt', LF will be replaced by CRLF the next time Git touches it
+REUSE-PATH : RobWork\doc\industrial-robot-design\tasks\REUSE-T21.json
+Write-Error: H1-H6 task reuse contract failed

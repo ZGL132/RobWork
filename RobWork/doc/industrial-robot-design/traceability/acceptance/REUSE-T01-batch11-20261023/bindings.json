@@ -1,0 +1,1727 @@
+[
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp",
+      "symbol": "PowerEnergyCalculator::compute",
+      "qualifiedSymbol": "sdurws::ird::dynamics::PowerEnergyCalculator::compute",
+      "startLine": 63,
+      "endLine": 186,
+      "sha256": "ee09039027629be8c659336797263084934ce15e523c1f3ef299673287ffc836"
+    },
+    "computed": "ee09039027629be8c659336797263084934ce15e523c1f3ef299673287ffc836",
+    "match": true,
+    "first": "PowerEnergySummary PowerEnergyCalculator::compute(const DynamicsSeries& series) const",
+    "last": "}"
+  },
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/PowerEnergy.hpp",
+    "match": true
+  },
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+      "symbol": "probeSeedFor",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeSeedFor",
+      "startLine": 63,
+      "endLine": 66,
+      "sha256": "f5216eee1e556cab7e4808df7400c80bde14b8311cebdf5ccc2fcde75017f0c8"
+    },
+    "computed": "f5216eee1e556cab7e4808df7400c80bde14b8311cebdf5ccc2fcde75017f0c8",
+    "match": true,
+    "first": "std::uint64_t probeSeedFor(std::uint64_t seed, std::uint64_t probeSerial)",
+    "last": "}"
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+      "symbol": "failCaller",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::failCaller",
+      "startLine": 69,
+      "endLine": 72,
+      "sha256": "d2a733b11c2b333b7d29892edc1e6f94e6569363328b6623b2bade7bff6bc91c"
+    },
+    "computed": "d2a733b11c2b333b7d29892edc1e6f94e6569363328b6623b2bade7bff6bc91c",
+    "match": true,
+    "first": "[[noreturn]] void failCaller(const std::string& what)",
+    "last": "}"
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+      "symbol": "probeReachability",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeReachability",
+      "startLine": 127,
+      "endLine": 209,
+      "sha256": "e30675246a0c8892e3991f2fad45079179541e7a998cd2af687f9fb2c96bc891"
+    },
+    "computed": "e30675246a0c8892e3991f2fad45079179541e7a998cd2af687f9fb2c96bc891",
+    "match": true,
+    "first": "ProbeVerdict probeReachability(double t,",
+    "last": "}"
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+      "symbol": "computeApproximateEnvelope",
+      "qualifiedSymbol": "sdurws::ird::kinematics::computeApproximateEnvelope",
+      "startLine": 217,
+      "endLine": 481,
+      "sha256": "7ade2c0c735829fa2fc644c337c469cdb6029fbf0a291c488efe47caa1c992a4"
+    },
+    "computed": "7ade2c0c735829fa2fc644c337c469cdb6029fbf0a291c488efe47caa1c992a4",
+    "match": true,
+    "first": "Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,",
+    "last": "}"
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+      "symbol": "slotValue",
+      "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::slotValue",
+      "startLine": 30,
+      "endLine": 33,
+      "sha256": "0838bb522d1d123ea57b703528b1ed1c3a1056d78bcc86e58690ab0275a09c45"
+    },
+    "computed": "0838bb522d1d123ea57b703528b1ed1c3a1056d78bcc86e58690ab0275a09c45",
+    "match": true,
+    "first": "double slotValue(const FeasibleCandidate& c, MetricId id) noexcept",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+      "symbol": "notWorse",
+      "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::notWorse",
+      "startLine": 37,
+      "endLine": 46,
+      "sha256": "c76dbbdea86f3c92d59588c05c0f3791997a0ad8adda2b0136104eae88839471"
+    },
+    "computed": "c76dbbdea86f3c92d59588c05c0f3791997a0ad8adda2b0136104eae88839471",
+    "match": true,
+    "first": "bool notWorse(double a, double b, MetricDirection d, const core::Tolerance& t) noexcept",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+      "symbol": "strictlyBetter",
+      "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::strictlyBetter",
+      "startLine": 50,
+      "endLine": 57,
+      "sha256": "0d533a54a2bf7815f20745a964aa1e3da0ef4d56b6d6c3fa8a2cfa10733cddc8"
+    },
+    "computed": "0d533a54a2bf7815f20745a964aa1e3da0ef4d56b6d6c3fa8a2cfa10733cddc8",
+    "match": true,
+    "first": "bool strictlyBetter(double a, double b, MetricDirection d,",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+      "symbol": "dominates",
+      "qualifiedSymbol": "sdurws::ird::optimization::dominates",
+      "startLine": 65,
+      "endLine": 88,
+      "sha256": "efeac905c714124cc6e5ac3d2f1eed428d53fd7289eddc98d342984e6c23d1d7"
+    },
+    "computed": "efeac905c714124cc6e5ac3d2f1eed428d53fd7289eddc98d342984e6c23d1d7",
+    "match": true,
+    "first": "bool dominates(const FeasibleCandidate& a, const FeasibleCandidate& b,",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+      "symbol": "ParetoFrontBuilder::buildFront",
+      "qualifiedSymbol": "sdurws::ird::optimization::ParetoFrontBuilder::buildFront",
+      "startLine": 94,
+      "endLine": 291,
+      "sha256": "23c7211028ed5b0df7a2c6e1f5d34c8f26c4a2eefb1d113eb56a3824eaebd47b"
+    },
+    "computed": "23c7211028ed5b0df7a2c6e1f5d34c8f26c4a2eefb1d113eb56a3824eaebd47b",
+    "match": true,
+    "first": "ParetoFrontResult ParetoFrontBuilder::buildFront(",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "symbol": "SeededLhsGenerator::strategyId",
+      "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::strategyId",
+      "startLine": 32,
+      "endLine": 37,
+      "sha256": "33b99579bf94db476d3a2e9d7564ad625eee4ca0d93644e6e2d80369742f4589"
+    },
+    "computed": "33b99579bf94db476d3a2e9d7564ad625eee4ca0d93644e6e2d80369742f4589",
+    "match": true,
+    "first": "std::string SeededLhsGenerator::strategyId() const",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "symbol": "SeededLhsGenerator::generateNextBatch",
+      "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::generateNextBatch",
+      "startLine": 39,
+      "endLine": 61,
+      "sha256": "f1f3b5c3e4f412a1b0ff6dde82edf2b85f02f97112f4a8f7faf54aa8d9c97def"
+    },
+    "computed": "f1f3b5c3e4f412a1b0ff6dde82edf2b85f02f97112f4a8f7faf54aa8d9c97def",
+    "match": true,
+    "first": "GenerationBatch SeededLhsGenerator::generateNextBatch(const GenerationContext& ctx)",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "symbol": "validateBaselinePerturbParams",
+      "qualifiedSymbol": "sdurws::ird::optimization::validateBaselinePerturbParams",
+      "startLine": 67,
+      "endLine": 98,
+      "sha256": "802e1e638596b1f204f38d974a941c74f99a194720335999e9f2adfa0a898410"
+    },
+    "computed": "802e1e638596b1f204f38d974a941c74f99a194720335999e9f2adfa0a898410",
+    "match": true,
+    "first": "void validateBaselinePerturbParams(const BaselinePerturbParams& params)",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "symbol": "BaselinePerturbGenerator::strategyId",
+      "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::strategyId",
+      "startLine": 105,
+      "endLine": 108,
+      "sha256": "4d1eb64e120ab80196fe13a2590b1b9b5ec69d2cf8b1e52072978e439a25c0fd"
+    },
+    "computed": "4d1eb64e120ab80196fe13a2590b1b9b5ec69d2cf8b1e52072978e439a25c0fd",
+    "match": true,
+    "first": "std::string BaselinePerturbGenerator::strategyId() const",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "symbol": "BaselinePerturbGenerator::generateNextBatch",
+      "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::generateNextBatch",
+      "startLine": 110,
+      "endLine": 229,
+      "sha256": "53ad38d647ce0f8b86c3cee88ce4a98dcf44d196f5a675ed6857e9a4090313cb"
+    },
+    "computed": "53ad38d647ce0f8b86c3cee88ce4a98dcf44d196f5a675ed6857e9a4090313cb",
+    "match": true,
+    "first": "GenerationBatch BaselinePerturbGenerator::generateNextBatch(const GenerationContext& ctx)",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "symbol": "builtInStrategyIds",
+      "qualifiedSymbol": "sdurws::ird::optimization::builtInStrategyIds",
+      "startLine": 235,
+      "endLine": 246,
+      "sha256": "8312569da3ce2337abfdcf94b569e0348baa6358e5715d9acd9796552c9d750e"
+    },
+    "computed": "8312569da3ce2337abfdcf94b569e0348baa6358e5715d9acd9796552c9d750e",
+    "match": true,
+    "first": "const std::vector<std::string_view>& builtInStrategyIds()",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "symbol": "generateWithBuiltInStrategy",
+      "qualifiedSymbol": "sdurws::ird::optimization::generateWithBuiltInStrategy",
+      "startLine": 248,
+      "endLine": 280,
+      "sha256": "ce8a2931cba1b24857c9ad39c6c7562e2485f3836260b55fffcc8dc6ebd4cd54"
+    },
+    "computed": "ce8a2931cba1b24857c9ad39c6c7562e2485f3836260b55fffcc8dc6ebd4cd54",
+    "match": true,
+    "first": "GenerationBatch generateWithBuiltInStrategy(const std::string& strategyId,",
+    "last": "}"
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "cancellationRequested",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::cancellationRequested",
+      "startLine": 106,
+      "endLine": 109,
+      "sha256": "2c3b3dcb7b48e1b3658716751e94e52ff972a8cdcddab4bc435f9b7695bad302"
+    },
+    "computed": "2c3b3dcb7b48e1b3658716751e94e52ff972a8cdcddab4bc435f9b7695bad302",
+    "match": true,
+    "first": "    bool cancellationRequested() const override",
+    "last": "    }"
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "alive",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::alive",
+      "startLine": 112,
+      "endLine": 112,
+      "sha256": "a4c306d1cdff1afe8ea2cd884ed0cb70332787c15dd530396fe284f384963b7f"
+    },
+    "computed": "a4c306d1cdff1afe8ea2cd884ed0cb70332787c15dd530396fe284f384963b7f",
+    "match": true,
+    "first": "    bool alive() const override { return true; }",
+    "last": "    bool alive() const override { return true; }"
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "doSetLog",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doSetLog",
+      "startLine": 158,
+      "endLine": 158,
+      "sha256": "a9a037db4527c616faf920a1816ebf6b864d963228bb17b9cb1e8d57aba6b1a7"
+    },
+    "computed": "a9a037db4527c616faf920a1816ebf6b864d963228bb17b9cb1e8d57aba6b1a7",
+    "match": true,
+    "first": "    void doSetLog(rw::core::Log::Ptr) override {}",
+    "last": "    void doSetLog(rw::core::Log::Ptr) override {}"
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "doInCollision",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doInCollision",
+      "startLine": 161,
+      "endLine": 193,
+      "sha256": "144ae336d7d439a05068a06498ce5856de5cbb7e767ab7a843e129d074353079"
+    },
+    "computed": "144ae336d7d439a05068a06498ce5856de5cbb7e767ab7a843e129d074353079",
+    "match": true,
+    "first": "    bool doInCollision(const rw::math::Q& q) const override",
+    "last": "    }"
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "parsePlannerSelection",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::parsePlannerSelection",
+      "startLine": 235,
+      "endLine": 298,
+      "sha256": "7ba858ae9b1032c89b3b496bf1e7f178bcb5f9d62ac982ed670f991d570edbc5"
+    },
+    "computed": "7ba858ae9b1032c89b3b496bf1e7f178bcb5f9d62ac982ed670f991d570edbc5",
+    "match": true,
+    "first": "PlannerTuning parsePlannerSelection(const std::string& familyToken,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "validateConfigPairAndBounds",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::validateConfigPairAndBounds",
+      "startLine": 310,
+      "endLine": 340,
+      "sha256": "ce3474f0c217e2c8fb9180b0af42907ea45d2cf47173a413fc9511743d018f8d"
+    },
+    "computed": "ce3474f0c217e2c8fb9180b0af42907ea45d2cf47173a413fc9511743d018f8d",
+    "match": true,
+    "first": "void validateConfigPairAndBounds(const rw::math::Q& fromQ, const rw::math::Q& toQ,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "sampleStraightPath",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::sampleStraightPath",
+      "startLine": 360,
+      "endLine": 387,
+      "sha256": "7b00c6965a7c1cec9d048fa025fa3ea9638d6235c305559d5e65c3574b4245ee"
+    },
+    "computed": "7b00c6965a7c1cec9d048fa025fa3ea9638d6235c305559d5e65c3574b4245ee",
+    "match": true,
+    "first": "SampledPath sampleStraightPath(const rw::math::Q& fromQ, const rw::math::Q& toQ,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "reviewPathSequence",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::reviewPathSequence",
+      "startLine": 419,
+      "endLine": 462,
+      "sha256": "50560bf84aac5bc0ea50d5636001b2bebb730c44bfbf4dd1a5e92445ec4d6339"
+    },
+    "computed": "50560bf84aac5bc0ea50d5636001b2bebb730c44bfbf4dd1a5e92445ec4d6339",
+    "match": true,
+    "first": "ReviewResult reviewPathSequence(const policy::CollisionEvaluationSession& session,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "maxAdjacentStep",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::maxAdjacentStep",
+      "startLine": 469,
+      "endLine": 478,
+      "sha256": "93a148498960a227fab5a0d05923f878eef7b68bb23ea29daee4e1f181b579ec"
+    },
+    "computed": "93a148498960a227fab5a0d05923f878eef7b68bb23ea29daee4e1f181b579ec",
+    "match": true,
+    "first": "double maxAdjacentStep(const std::vector<rw::math::Q>& configurations)",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "pathJointLength",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::pathJointLength",
+      "startLine": 481,
+      "endLine": 490,
+      "sha256": "6fdbb4af35545e40588a7da2f284dbd347ed078aa81df4b0b0e3c09c90306c6c"
+    },
+    "computed": "6fdbb4af35545e40588a7da2f284dbd347ed078aa81df4b0b0e3c09c90306c6c",
+    "match": true,
+    "first": "double pathJointLength(const std::vector<rw::math::Q>& configurations)",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "minNormalizedMargin",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::minNormalizedMargin",
+      "startLine": 494,
+      "endLine": 510,
+      "sha256": "189fb62c9ec6071b3b9a1f442f02d72f4d66fe341ccda3b3e98f5451854ed568"
+    },
+    "computed": "189fb62c9ec6071b3b9a1f442f02d72f4d66fe341ccda3b3e98f5451854ed568",
+    "match": true,
+    "first": "double minNormalizedMargin(const std::vector<rw::math::Q>& configurations,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "candidatePreferred",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::candidatePreferred",
+      "startLine": 516,
+      "endLine": 533,
+      "sha256": "05ef87ace2b8eef2580bd18edb1d7e53bdd2ab8f3205d78e165b0646a57326d4"
+    },
+    "computed": "05ef87ace2b8eef2580bd18edb1d7e53bdd2ab8f3205d78e165b0646a57326d4",
+    "match": true,
+    "first": "bool candidatePreferred(const PathCandidate& lhs, const PathCandidate& rhs,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "makeAvoidFailure",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::makeAvoidFailure",
+      "startLine": 543,
+      "endLine": 555,
+      "sha256": "05152ff8d090435a4135f23863d0f15ebe1400e4cc6e60bff08b1c9fcfc50e09"
+    },
+    "computed": "05152ff8d090435a4135f23863d0f15ebe1400e4cc6e60bff08b1c9fcfc50e09",
+    "match": true,
+    "first": "FailedSegmentRecord makeAvoidFailure(std::uint32_t segmentIndex,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "search",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PathPlannerAdapterImpl::search",
+      "startLine": 580,
+      "endLine": 819,
+      "sha256": "b4011665bd190c30824009674eff016917b85cf874d0ad4751b02b82df470b9b"
+    },
+    "computed": "b4011665bd190c30824009674eff016917b85cf874d0ad4751b02b82df470b9b",
+    "match": true,
+    "first": "    PlanSearchResult search(const PlannerSearchRequest& request) override",
+    "last": "    }"
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "makePathPlannerAdapter",
+      "qualifiedSymbol": "sdurws::ird::trajectory::makePathPlannerAdapter",
+      "startLine": 828,
+      "endLine": 831,
+      "sha256": "ee3353ad52545c243faa2769c62ba5589b3b65c45034421f77d2513083b6373b"
+    },
+    "computed": "ee3353ad52545c243faa2769c62ba5589b3b65c45034421f77d2513083b6373b",
+    "match": true,
+    "first": "std::unique_ptr<IPathPlannerAdapter> makePathPlannerAdapter()",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "symbol": "planPtpWithObstacleAvoidance",
+      "qualifiedSymbol": "sdurws::ird::trajectory::planPtpWithObstacleAvoidance",
+      "startLine": 837,
+      "endLine": 1088,
+      "sha256": "380e629bd9c8e4f58464457ebbbac09d6c52cb5cfaeda34a300017038c4b86cc"
+    },
+    "computed": "380e629bd9c8e4f58464457ebbbac09d6c52cb5cfaeda34a300017038c4b86cc",
+    "match": true,
+    "first": "AvoidancePlanResult planPtpWithObstacleAvoidance(const AvoidancePlanRequest& request,",
+    "last": "}"
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+    "match": true
+  }
+]

@@ -1,0 +1,313 @@
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/diff-check.log:2: trailing whitespace.
+++REUSE-PATH : 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/diff-check.log:4: trailing whitespace.
+++REUSE-PATH : 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/focused-ps51-no-bom-attempt.log:55: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/focused-ps51-no-bom-attempt.log:55: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/original-evidence-audit.log:5: trailing whitespace.
++ps7-every-log-xml-driver : True 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/original-evidence-audit.log:8: trailing whitespace.
++ps51-every-log-xml-driver : True 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/original-evidence-audit.log:11: trailing whitespace.
++red-every-log-xml-driver : True 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/original-evidence-audit.log:15: trailing whitespace.
++intermediate-green-every-log-xml-driver : True 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch19-20261023/original-evidence-audit.log:18: trailing whitespace.
++no-production-framework-vcpkg : True 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:56: trailing whitespace.
++60: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:107: trailing whitespace.
++73: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:146: trailing whitespace.
++73: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:164: trailing whitespace.
++91: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:236: trailing whitespace.
++133: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:276: trailing whitespace.
++133: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:284: trailing whitespace.
++141: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:348: trailing whitespace.
++169: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:401: trailing whitespace.
++185: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:452: trailing whitespace.
++200: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:492: trailing whitespace.
++206: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:515: trailing whitespace.
++229: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:556: trailing whitespace.
++229: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:561: trailing whitespace.
++234: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:602: trailing whitespace.
++234: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:607: trailing whitespace.
++239: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:648: trailing whitespace.
++239: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:653: trailing whitespace.
++244: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:694: trailing whitespace.
++244: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:701: trailing whitespace.
++251: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:742: trailing whitespace.
++251: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:751: trailing whitespace.
++260: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:792: trailing whitespace.
++260: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:814: trailing whitespace.
++282: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:855: trailing whitespace.
++286: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:867: trailing whitespace.
++298: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:919: trailing whitespace.
++350: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:945: trailing whitespace.
++376: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:958: trailing whitespace.
++389: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:966: trailing whitespace.
++397: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:974: trailing whitespace.
++405: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:994: trailing whitespace.
++425: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1037: trailing whitespace.
++468: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1042: trailing whitespace.
++473: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1058: trailing whitespace.
++489: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1079: trailing whitespace.
++510: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1111: trailing whitespace.
++542: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1190: trailing whitespace.
++621: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1215: trailing whitespace.
++646: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1259: trailing whitespace.
++690: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1320: trailing whitespace.
++751: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1343: trailing whitespace.
++774: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1357: trailing whitespace.
++788: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1367: trailing whitespace.
++798: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1408: trailing whitespace.
++798: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1415: trailing whitespace.
++805: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1423: trailing whitespace.
++813: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1454: trailing whitespace.
++844: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1495: trailing whitespace.
++844: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1517: trailing whitespace.
++866: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1558: trailing whitespace.
++870: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1562: trailing whitespace.
++874: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1607: trailing whitespace.
++919: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1630: trailing whitespace.
++942: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1649: trailing whitespace.
++961: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1704: trailing whitespace.
++1016: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1728: trailing whitespace.
++1040: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1742: trailing whitespace.
++1054: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1751: trailing whitespace.
++1063: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1768: trailing whitespace.
++1080: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1821: trailing whitespace.
++1133: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1831: trailing whitespace.
++1143: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1872: trailing whitespace.
++1143: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1888: trailing whitespace.
++1159: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1929: trailing whitespace.
++1163: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1938: trailing whitespace.
++1172: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:1986: trailing whitespace.
++510: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2044: trailing whitespace.
++57: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2084: trailing whitespace.
++57: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2095: trailing whitespace.
++68: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2097: trailing whitespace.
++70: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2136: trailing whitespace.
++75: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2153: trailing whitespace.
++92: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2194: trailing whitespace.
++92: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2226: trailing whitespace.
++124: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2267: trailing whitespace.
++124: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2275: trailing whitespace.
++132: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2316: trailing whitespace.
++132: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2321: trailing whitespace.
++137: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2362: trailing whitespace.
++137: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2372: trailing whitespace.
++147: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2413: trailing whitespace.
++147: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2426: trailing whitespace.
++160: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2467: trailing whitespace.
++160: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2490: trailing whitespace.
++183: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2531: trailing whitespace.
++183: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2549: trailing whitespace.
++201: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2590: trailing whitespace.
++225: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2600: trailing whitespace.
++235: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2618: trailing whitespace.
++253: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2638: trailing whitespace.
++273: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2646: trailing whitespace.
++281: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2655: trailing whitespace.
++290: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2660: trailing whitespace.
++295: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2701: trailing whitespace.
++295: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2710: trailing whitespace.
++304: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2751: trailing whitespace.
++304: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2759: trailing whitespace.
++312: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2799: trailing whitespace.
++206: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2808: trailing whitespace.
++215: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2849: trailing whitespace.
++215: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2859: trailing whitespace.
++225: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2908: trailing whitespace.
++253: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2948: trailing whitespace.
++168: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2956: trailing whitespace.
++176: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2962: trailing whitespace.
++182: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:2966: trailing whitespace.
++186: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3002: trailing whitespace.
++222: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3043: trailing whitespace.
++321: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3068: trailing whitespace.
++346: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3109: trailing whitespace.
++346: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3114: trailing whitespace.
++351: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3131: trailing whitespace.
++368: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3137: trailing whitespace.
++374: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3158: trailing whitespace.
++395: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3220: trailing whitespace.
++90: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3272: trailing whitespace.
++113: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3313: trailing whitespace.
++852: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3327: trailing whitespace.
++866: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3336: trailing whitespace.
++875: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3344: trailing whitespace.
++883: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3348: trailing whitespace.
++887: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3364: trailing whitespace.
++903: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3429: trailing whitespace.
++968: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3475: trailing whitespace.
++1014: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3508: trailing whitespace.
++1047: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3524: trailing whitespace.
++1063: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3527: trailing whitespace.
++1066: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3568: trailing whitespace.
++454: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3585: trailing whitespace.
++471: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3626: trailing whitespace.
++471: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3656: trailing whitespace.
++501: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3711: trailing whitespace.
++532: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3727: trailing whitespace.
++548: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3734: trailing whitespace.
++555: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3789: trailing whitespace.
++610: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3804: trailing whitespace.
++625: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3807: trailing whitespace.
++628: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3812: trailing whitespace.
++633: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/all47-source-review.txt:3814: trailing whitespace.
++635: 
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/build.log:41: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch20-20261023/generated-CMakeCache.txt:1057: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-green-ps51/deep-rejects-invalid-index.log:25: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-green-ps51/deep-rejects-invalid-index.log:30: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-green-ps51/deep-rejects-invalid-index.log:30: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-red-ps51/default-ignores-optional-index.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-red-ps51/default-ignores-optional-index.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-red-ps51/default-ignores-optional-index.log:14: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-red-ps51/driver.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/lite-red-ps51/driver.log:14: new blank line at EOF.

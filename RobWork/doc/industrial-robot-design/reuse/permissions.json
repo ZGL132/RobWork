@@ -1,0 +1,726 @@
+{
+  "schemaVersion": "ird-reuse-permissions/1",
+  "authority": "ARCH:3.6",
+  "modelOwner": "runtime",
+  "hostExceptions": [
+    {
+      "id": "HOST-RENDER",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-PRESENT",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-COMPILE",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-GATEWAY",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-WORKBENCH",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    }
+  ],
+  "grants": [
+    {
+      "id": "REUSE-T13-WorkCellCompiler.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "loader"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T13-WorkCellCompilerTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
+        "sha256": "043d7bb5d4ed45fc1fda26ca80cc3a0b1df6b4cf225d6a3e924f6b01ddfbe773"
+      },
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T13-WorkCellGeometryTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+        "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+      },
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T13-SnapshotTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
+        "sha256": "a8227a8891061a2ca263745af6164ee126bbf91cba25d42311b11b6eac47de1f"
+      },
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T17-KinEvaluationChannelTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+        "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811"
+      },
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "REUSE-T17锚语义executor级用例＋UI-T86（F-973诊断返工）锚能力迁移登记：write-state仅及任务私有State（device->setQ于makeState副本，证明跨任务State隔离）；模型消费经runtime编译快照受控视图；FixtureView自UI-T86起覆盖runtimeModelView()——经kinematics/test夹具compileRealSnapshot以本替身CanonicalModel走RuntimeSnapshotFactory S6-S10产品路径（WC构造在runtime owner产品路径内，替身只注入模型值并调用工厂），供真实FK/IK用例锚消费；仅测试目标，无生产权限、无模型所有权主张。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "adapter",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+      }
+    },
+    {
+      "id": "REUSE-T17-KinFkFixture.hpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
+      },
+      "targets": [
+        "sdurws_ird_kinematics_test",
+        "sdurws_ird_kinematics_gui_test"
+      ],
+      "categories": [
+        "state"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "runtime-borrow",
+      "lifetime": "REUSE-T17锚能力测试替身＋REUSE-T19真实编译锚（TestAnchor值面保留冒烟态；集成态经RuntimeSnapshotFactory真实编译——WC构造在runtime owner产品路径内，替身只注入CanonicalModel与调用工厂）：State类型仅作为IRuntimeModelView::makeState覆盖签名出现；仅测试目标，不授予生产权限、不授予模型构造/写入。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "adapter",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
+    },
+    {
+      "id": "REUSE-T19-Fk.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+        "sha256": "c54affbf288991261dc3c073b976d8cf785ea9b38904def274a1a92a717f2361"
+      },
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "REUSE-T19 FK上游消费：write-state仅及每次evaluate经锚makeState()取得的任务私有State副本（Device::setQ写入，不触快照共享结构）；模型消费经runtimeModelView受控视图（findDevice/findFrame只读查询＋baseTframe/baseJframe值面返回）；无WC构造、无DWC、无发布面。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "adapter",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
+    },
+    {
+      "id": "REUSE-T19-FkTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
+        "sha256": "efad6cfdfce504fb9a5a125ce53984dbf12b71c9589ad21b364e31d2ab9a73b2"
+      },
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "REUSE-T19上游直接对照用例：write-state仅及测试内makeState任务私有State副本（直接Device::setQ与评估器路径同语义对照）；模型消费经真实编译快照受控视图；仅测试目标，无生产权限。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "adapter",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
+    },
+    {
+      "id": "REUSE-T30-DynamicWorkCellCompiler.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+        "sha256": "f296c73e438cf11e0eeb8bb7ec739cddd98e9dad1380c09e9aba86f54c3c81ee"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；S7编译调用期独占构造Body/RigidDevice/DWC与addFrame材质注册，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T30-DynamicWorkCellCompilerTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+        "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
+      },
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state",
+        "mutate-model"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1测试侧任务私有State（setQ/setJointVelocities于本地State）与真实DWC构造读回；仅集成模式测试目标；无生产权限扩散。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T32-Planner.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+        "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+      },
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "categories": [
+        "model",
+        "solver"
+      ],
+      "operations": [
+        "query",
+        "borrow"
+      ],
+      "origin": "runtime-borrow",
+      "lifetime": "REUSE-T32 规划器适配上游消费：WorkCell/Device/State 只经 runtime WorkCellConstView 只读借持（§10.1——findDevice 查询与 bounds 读取，零模型构造/零 State 写/零发布面）；solver 类＝rw/pathplanning（QConstraint/QSampler/QEdgeConstraint/PlannerConstraint/PathAnalyzer）与 rw/trajectory（QPath 值面）及 rwlibs/pathplanners RRTPlanner 的规划器装配消费；policy 会话经④端口直穿，不触 proximity 直链。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "adapter",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+      }
+    },
+    {
+      "id": "policy-collision-evaluator",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+        "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+      },
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "categories": [
+        "collision",
+        "model"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "task-private",
+      "lifetime": "policy 会话任务私有（构建期只读；会话构造后只读可重入）",
+      "permissionRef": "ARCH:3.6",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    },
+    {
+      "id": "policy-collision-backend",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+        "sha256": "9c6dac0001316f6dddabcf9a2858fd5a413a26f219aca71305b0d39895a82d09"
+      },
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "categories": [
+        "collision"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "task-private",
+      "lifetime": "policy 会话任务私有（评估器持后端实例与查询互斥，会话共享）",
+      "permissionRef": "ARCH:3.6",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    },
+    {
+      "id": "policy-collision-test-fixture",
+      "usageRole": "owner",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+        "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+      },
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "categories": [
+        "collision",
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "test-fixture",
+      "lifetime": "测试夹具装配任务输入（gtest 会话内构造 WorkCell/FakeDevice 驱动解析链；ARCH §3.6.2.1——2026-10-26 所有者落地授权脉络批准，同日已追认：指令原文「A1~A4 全按推荐」）",
+      "permissionRef": "ARCH:3.6",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    },
+    {
+      "id": "REUSE-T41-UiPlugin.hpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+        "sha256": "db30dc7f8b95f758280f98c81c9513457c10b32075a519964298b6b5fd0fc6be"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "host",
+        "model"
+      ],
+      "operations": [
+        "borrow"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-WORKBENCH",
+      "lifetime": "宿主插件装配体头面（ARCH §3.6.2 HOST-WORKBENCH，2026-10-26 所有者批量批准扩面——REUSE-T41/F-967 落地批，呈现装配层）：host 类别＝RobWorkStudioPlugin 框架基类接入（rws/ include）；model 类别＝open(rw::models::WorkCell*) 借持形参（框架回调签名，只读借用，非构造/非结构写入，borrow 单操作如实限定）。F-967 收口后新增互斥成员与总线接口类型声明不改变受限面。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+      }
+    },
+    {
+      "id": "REUSE-T41-UiPlugin.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+        "sha256": "75fe95cea890c3e6b206474ea4a4dc2fde398e7041df2f06c265a22ea672b834"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "graphics",
+        "host"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-WORKBENCH",
+      "lifetime": "宿主插件装配体实现面（ARCH §3.6.2 HOST-WORKBENCH，2026-10-26 所有者批量批准扩面——REUSE-T41/F-967 落地批，呈现装配层）：host＝rws/ 框架壳接入；graphics＝rwlibs/opengl 选中几何呈现；model/state＝借持模型指针与既有发布 State 呈现读；write-state 唯一点＝D8 Jog 桥 device->setQ 任务私有 State 写（宿主操纵，非权威模型结构写入——运行时模型 owner 红线不变）。F-967 收口新增面＝构造 execution::DomainEventBusImpl 生产实例与投递线程转接（消费公共头 EventBus.hpp，R-2 公共面，不产生新受限类别）。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+      }
+    },
+    {
+      "id": "REUSE-T51-Ik.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      },
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "solver"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "REUSE-T51 完整位姿普通模式上游迭代核（migration §13.3 WP-04）：solver＝rw::invkin::JacobianIKSolver（经 T17 锚的已编译 WorkCell 构造，每请求一次，SVD/不钳限位/不查限位默认显式登记）；write-state 仅及每初值经锚 makeState() 取得的任务私有 State 副本（Device::setQ/getQ，初值间零共享——§8.7/§9.2）；模型消费经 runtimeModelView 受控视图（findDevice/findFrame 只读查询）；无 WC 构造、无 DWC、无发布面、无隐藏 fallback（锚缺失→IkFacilityFailure 值面）。",
+      "permissionRef": "ARCH:3.6.1",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
+    },
+    {
+      "id": "REUSE-T51-IkTest.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+        "sha256": "1f5abeb77da3ef34cad133cf9ff59f3990591c368f66be7d65e6e54d064dc39b"
+      },
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "solver"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "REUSE-T51 上游直接对照与轨迹同一性用例（IRD_HAVE_RUNTIME_COMPILE 门控，仅测试目标）：write-state 仅及测试内经锚 makeState() 取得的任务私有 State 副本（直接 Device::setQ/getQ 与产品路径同语义对照——REUSE-T19-FkTest 先例同型）；solver＝直接构造 JacobianIKSolver 作上游对照 oracle；模型消费经真实编译快照受控视图（模型构造在 runtime owner 产品路径内——夹具授予面不变），不授予生产权限、不授予模型构造/写入。",
+      "permissionRef": "ARCH:3.6.1",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
+    },
+    {
+      "id": "REUSE-T52-InverseDynamics.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f"
+      },
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "ARCH 3.6 任务私有会话：evaluate 内一次性 RNE 载体消费（载体构造归 runtime 工厂 buildRneConsumptionDevice——2026-10-26 所有者构造面上收裁决；dynamics 侧仅 setQ 于该私有 State 与末连杆 BodyInfo 变体回写，随调用栈消亡）——零共享快照触碰、零产品面名称/真值出口、无跨单元/跨进程所有权扩展（REUSE-T52 契约登记语义）。",
+      "permissionRef": "ARCH:3.6",
+      "usageRole": "adapter",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
+      }
+    },
+    {
+      "id": "REUSE-T52-RneConsumptionDevice.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
+        "sha256": "6c284faa7234ccd632e501de06fc9eeeaeec7b78f16ac8d6d70bfa477accd1d4"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1 既有 runtime 模型 owner：RNE 可消费一次性载体工厂（2026-10-26 所有者构造面上收裁决）——工厂调用期独占构造 StateStructure/SerialDevice/RigidDevice 与 addFrame 关节帧树，载体所有权随返回值移交调用方（task-private 消费）；GAP-RNE-FRAME 关节帧换算在本工厂单点（§8.2/S7 产品映射/modeling 导出零触碰）；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T52-RneConsumptionDevice.hpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
+        "sha256": "27d1b17a72611ce4bded8939f1ab92b5a124dc5e1d088009b00c6f3a3c868f84"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1 runtime 模型 owner：RNE 载体工厂公共契约头（载体值聚合的 rw 类型成员面——零构造/零写入操作，所有权语义见头注释；实现构造归同名 src 授权）。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T52-RneaTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
+        "sha256": "39b298bba8bd1e55a8d91af869f332cfcfdba326a61423a724fd992d2ba6af04"
+      },
+      "targets": [
+        "sdurws_ird_dynamics_test"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "test-fixture",
+      "lifetime": "REUSE-T36 测试夹具例外（/test/ 路径）：上游直接对照用例（DynRnea.UpstreamDirectComparison_REUSE_T52）测试侧内联同构 RNE 载体构造（StateStructure/SerialDevice/RigidDevice/addFrame——对照位形取默认 State，零 State 写；构型相关面由产品路径用例与工厂断开实验承担）——任务输入装配而非模型所有权主张，产品侧构造仍归 runtime 工厂授权；仅集成模式测试目标，无生产权限扩散。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
+      }
+    },
+    {
+      "id": "REUSE-T53-ForwardDynamicsBoundaryContractTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ForwardDynamicsBoundaryContractTest.cpp",
+        "sha256": "932877e246bef8c65a656adebdd215a8f2a4745b8c4088216daea96ec2820a78"
+      },
+      "targets": [
+        "sdurws_ird_dynamics_contract_test"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "test-fixture",
+      "lifetime": "REUSE-T53 测试夹具例外（/test/ 路径，test-fixture 同 REUSE-T36/T52 形态）：FD 边界契约用例测试侧构造 WorkCell/Device/State 装配任务输入（零生产权限扩散；产品侧引擎会话物化归 runtime FdEngineSession 工厂授权）。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
+      }
+    },
+    {
+      "id": "REUSE-T53-FdEngineSession.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp",
+        "sha256": "16ab18d0fb14247411422b1b670d6531f62e75cdc30f131d8e70ad9b351b5ee6"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model",
+        "write-state"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1 既有 runtime 模型 owner（REUSE-T52 工厂授权同墙复利）：FD 引擎会话工厂——工厂调用期独占构造 StateStructure/WorkCell 载体与 ODESimulator（sdurwsim_ode）物理引擎（initPhysics/step/load），法兰组合替代承载 tool/负载，重力投影与摩擦补偿/力提交为受控写路径；载体所有权随 FdEngineSession 值移交调用方（task-private 消费，RAII exitPhysics）；上游适配差异六项零上游改动（changes/REUSE-T53.json 登记）；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T53-FdEngineSession.hpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp",
+        "sha256": "de57acd48234314f3ad27b8fcd40e58f8f04b73a43d6553bd2f93e383f8d7517"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1 runtime 模型 owner：FD 引擎会话公共契约头（move-only 受控句柄值面——零构造/零写入操作，所有权/生命周期语义见头注释；实现构造归同名 src 授权；REUSE-T52 契约头授权同款形态）。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    }
+  ]
+}

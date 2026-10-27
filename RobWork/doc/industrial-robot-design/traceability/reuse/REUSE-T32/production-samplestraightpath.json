@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "trajectory.Planner.sampleStraightPath",
+  "target": "sdurws_ird_trajectory",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+      "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+      "sha256": "6c229db1508971fe667071d3ee490212cd6c558132c50b6b2b72cfd46586f411"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "sha256": "79736cb31891c2a8ba98bec9f4324102226ea6b0e3ba56e44ec806d8e8eb1ce0"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp",
+      "sha256": "26deb95e77f4d73d949cfd1f3e5f047b783883b9fd864a8826349553022ab4ec"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+      "sha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+    }
+  ],
+  "normal": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/disconnected-l2.xml",
+      "sha256": "dc79d5801e2717b464b2a3f6d42f20d1fefe80374de4189a5526b37dcb8e6f81"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/disconnected-l2.log",
+      "sha256": "e50ef442a1756a4bcb203f39ad45a32d7bbe8842f9d897f8536a72f83adf9b2b"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "originalSha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b",
+      "description": "真实生产变异：sampleStraightPath 的上游 Euclidean 单对距离断开为恒 0（分段数跌至 1、样本仅端点）——直连筛查漏检中间碰撞，CollisionThenRework/BudgetExhausted 两项黄金断言真实失败（exit 1），恢复后复测绿（disconnected-l2-recheck）。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/Planner.mutated-l2.cpp",
+      "sha256": "a0f8affc11cde2017b85a81ebd4a467cab4f5817a16a07a16c8d57bf32026d7a"
+    }
+  },
+  "oracle": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2",
+      "TrjPlannerAvoidance.BudgetExhaustedYieldsMaterialNotInfeasible_WP16T06_ACC2"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjPlannerAvoidance.DirectClearAdoptsStraightPath_WP16T06_ACC1"
+    ]
+  },
+  "note": "单对 L2（makeEuclidean 直接消费）决定等分采样分段数；断开红例证实样本网格的碰撞筛查敏感性（L2→0 即漏检中间碰撞）；采样计数公式级观测需计数替身夹具，受零模型构造红线限制登记为覆盖限制（README）。"
+}

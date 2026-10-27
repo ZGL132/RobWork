@@ -1,0 +1,272 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T45",
+ "unit": "reporting",
+ "description": "business-specific 判定的 nonOverlap 证据（族判定＋行级差异引用；族检索记录与决策文件见批目录）。",
+ "entries": [
+  {
+   "functionId": "reporting.ReportArchiveCoordinator.publish",
+   "conclusion": "报告归档发布为产品证据契约编排（目录/版本/原子面），上游 IOUtil 为通用文件读写原语——编排语义产品专属。 行差异：经产物sink/归档端口编排，需核project唯一写权与证据身份；IOUtil不等于归档事务，禁止另建对象库或越权直接写"
+  },
+  {
+   "functionId": "reporting.CMake.ird_add_gtest",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u8",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u16",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u32",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u64",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.i64",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.f64",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.boolean",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.presence",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.raw",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.string",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.unitToken",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u8",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u16",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u32",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u64",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.i64",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.f64",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.boolean",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.presence",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.raw",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.string",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.unitToken",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.take",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.pointer",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.vector",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.rawArray",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.expectEnd",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.need",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Header",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Time",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Enum",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.OptionalIdentity",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.TaskIdentity",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Provenance",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.SourcedDouble",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ComparativeValue",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ComparativeFields",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.InvalidationReason",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.BaselineResult",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.FieldValue",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ResultBinding",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.EvidenceBinding",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.JumpTarget",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.SectionEntry",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.MissingItem",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.EligibilityNote",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.DiagRefEntry",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.CurrentnessSnapshot",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Section",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ReviewComment",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.SignOff",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.TradeOff",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.VariantDiff",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.VersionEntry",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ReviewMetadata",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ResultDataSourceRef",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.UnitPreference",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.anonymous.digestBytes",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.encodeData",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.parseData",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.digestData",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.encodeFull",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.parseFull",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.digestFull",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。"
+  }
+ ]
+}

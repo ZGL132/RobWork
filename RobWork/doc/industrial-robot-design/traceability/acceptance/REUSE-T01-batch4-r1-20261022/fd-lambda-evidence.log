@@ -1,0 +1,59 @@
+509:     std::vector<double> qdd(n, 0.0);                 // 解向量（rad/s² 或 m/s²）
+510:     auto evalAcceleration = [&](const std::vector<double>& qv,
+511:                                 const std::vector<double>& qdv, double tIntervalStart,
+512:                                 const std::vector<double>& tauCtrl, bool& cancelledOut,
+513:                                 bool& singularOut, std::string& reasonOut) {
+514:         cancelledOut = false;
+515:         singularOut = false;
+516:         // h_f 提取：单样本 evaluate(q, q̇, q̈=0) 的全量通道＝G＋C·q̇＋摩擦
+517:         // （q̈=0 时惯性通道为零——全量恰为偏置力＋摩擦之和）。
+518:         bool rneaUsable = false;
+519:         callRneaSample(extractBase, tIntervalStart, qv, qdv, zeroVec, evaluator,
+520:                        context, tauTotalBuf, tauInertiaBuf, cancelledOut, rneaUsable);
+521:         if (cancelledOut) { return false; }
+522:         if (!rneaUsable) {
+523:             // F-581：RNEA 部分产出（数值失败只产失败关节行）＝本样本不可
+524:             // 用——走数值异常值面（不以契约外异常穿出）。
+525:             singularOut = true;
+526:             reasonOut = "RNEA 输出非有限（逆动力学部分产出——M/偏置力提取样本不可用）：t="
+527:                         + std::to_string(tIntervalStart) + " s";
+528:             return false;
+529:         }
+530:         hVec = tauTotalBuf;
+531: 
+532:         // M 逐列提取：惯性通道 (g=0, q̇=0, q̈=e_i)＝M·e_i（纯惯量——不叠
+533:         // 摩擦/重力；T03"惯性通道"口径）。n 列 n 次调用。
+534:         for (std::size_t i = 0; i < n; ++i) {
+535:             std::vector<double> e = zeroVec;
+536:             e[i] = 1.0;  // 单位向量（第 i 列激励——rad/s² 或 m/s² 的 1 单位）
+537:             callRneaSample(extractBase, tIntervalStart, qv, zeroVec, e, evaluator,
+538:                            context, tauTotalBuf, tauInertiaBuf, cancelledOut,
+539:                            rneaUsable);
+540:             if (cancelledOut) { return false; }
+541:             if (!rneaUsable) {
+542:                 singularOut = true;
+543:                 reasonOut = "RNEA 输出非有限（逆动力学部分产出——M 第 "
+544:                             + std::to_string(i) + " 列提取样本不可用）：t="
+545:                             + std::to_string(tIntervalStart) + " s";
+546:                 return false;
+547:             }
+548:             for (std::size_t r = 0; r < n; ++r) {
+549:                 massFlat[r * n + i] = tauInertiaBuf[r];  // 行主序 M(r,i)
+550:             }
+551:         }
+552: 
+553:         // rhs＝τ_ctrl − h_f（控制输入减偏置力——正动力学方程右端）。
+554:         for (std::size_t i = 0; i < n; ++i) {
+555:             rhs[i] = tauCtrl[i] - hVec[i];
+556:         }
+557:         // 求解 M·q̈ = rhs（副本消元——massFlat 可复用）。
+558:         std::vector<double> a = massFlat;
+559:         std::vector<double> b = rhs;
+560:         const bool solved = solveLinearSystem(a, b, qdd);
+561:         singularOut = !solved;
+562:         if (!solved) {
+563:             reasonOut = "质量矩阵线性求解失败（奇异或病态）：t="
+564:                         + std::to_string(tIntervalStart) + " s";
+565:         }
+566:         return solved;
+567:     };

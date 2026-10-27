@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="23" failures="1" disabled="0" errors="0" time="0.039" timestamp="2026-10-23T07:13:45.366" name="AllTests">
+  <testsuite name="EventLifetimeAudit" tests="4" failures="1" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-23T07:13:45.366">
+    <testcase name="ReferenceHandleDestructionMustUnsubscribe_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp" line="39" status="run" result="completed" time="0.002" timestamp="2026-10-23T07:13:45.366" classname="EventLifetimeAudit">
+      <failure message="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp:47&#x0A;Expected equality of these values:&#x0A;  bus.subscriberCount()&#x0A;    Which is: 1&#x0A;  0u&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp:47
+Expected equality of these values:
+  bus.subscriberCount()
+    Which is: 1
+  0u
+    Which is: 0
+]]></failure>
+      <failure message="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp:49&#x0A;Expected equality of these values:&#x0A;  sink.count&#x0A;    Which is: 1&#x0A;  0&#x0A;" type=""><![CDATA[C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp:49
+Expected equality of these values:
+  sink.count
+    Which is: 1
+  0
+]]></failure>
+    </testcase>
+    <testcase name="ExistingExecutionHandleDestructionUnsubscribes_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp" line="55" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.368" classname="EventLifetimeAudit" />
+    <testcase name="DuplicateSubscriptionsHaveDifferentRemovalGranularity" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp" line="70" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.369" classname="EventLifetimeAudit" />
+    <testcase name="ExistingExecutionChangesCallbackThread" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.369" classname="EventLifetimeAudit" />
+  </testsuite>
+  <testsuite name="SourcedValueLifetimeAudit" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.036" timestamp="2026-10-23T07:13:45.369">
+    <testcase name="ThrowingCopyTerminatesAtNoexceptTryValue" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp" line="130" status="run" result="completed" time="0.019" timestamp="2026-10-23T07:13:45.369" classname="SourcedValueLifetimeAudit" />
+    <testcase name="ThrowingComparisonTerminatesAtNoexceptEquality" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp" line="143" status="run" result="completed" time="0.016" timestamp="2026-10-23T07:13:45.388" classname="SourcedValueLifetimeAudit" />
+  </testsuite>
+  <testsuite name="EventPayload" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:13:45.405">
+    <testcase name="KindConsistency_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="46" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.405" classname="EventPayload" />
+    <testcase name="AccessorGuardThrows_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="80" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.405" classname="EventPayload" />
+  </testsuite>
+  <testsuite name="EventValue" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:13:45.405">
+    <testcase name="CopyMoveEquality_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.405" classname="EventValue" />
+    <testcase name="EmittedAtUtcParticipatesInEquality_F794" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="116" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.405" classname="EventValue" />
+  </testsuite>
+  <testsuite name="ReferenceBus" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:13:45.405">
+    <testcase name="FifoDeliveryOrder_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="128" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.405" classname="ReferenceBus" />
+    <testcase name="UnsubscribeStopsDelivery_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="149" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.405" classname="ReferenceBus" />
+    <testcase name="MultipleSubscribersAllReceive_UT_EVT" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="170" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="ReferenceBus" />
+  </testsuite>
+  <testsuite name="ProvenanceMake" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:13:45.406">
+    <testcase name="ValidConstructions_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="22" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="ProvenanceMake" />
+    <testcase name="P1InvariantEnforced_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="39" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="ProvenanceMake" />
+    <testcase name="MethodTagSyntax_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="ProvenanceMake" />
+  </testsuite>
+  <testsuite name="ProvenanceTokens" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:13:45.406">
+    <testcase name="Roundtrip_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="80" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="ProvenanceTokens" />
+  </testsuite>
+  <testsuite name="SourcedValueStates" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:13:45.406">
+    <testcase name="FourStateMatrix_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="96" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="SourcedValueStates" />
+    <testcase name="MissingNeverBecomesZero_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="130" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="SourcedValueStates" />
+    <testcase name="EmptyRawInputRejected_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="149" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="SourcedValueStates" />
+    <testcase name="EqualitySemantics_UT_MISS" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="161" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="SourcedValueStates" />
+  </testsuite>
+  <testsuite name="EventTest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:13:45.406">
+    <testcase name="GlobalCallbackFunctions" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWork\gtest\core\EventTest.cpp" line="54" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="EventTest" />
+    <testcase name="EventListener" file="C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\RobWork\gtest\core\EventTest.cpp" line="75" status="run" result="completed" time="0." timestamp="2026-10-23T07:13:45.406" classname="EventTest" />
+  </testsuite>
+</testsuites>

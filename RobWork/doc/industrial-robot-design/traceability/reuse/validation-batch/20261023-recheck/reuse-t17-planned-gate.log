@@ -1,0 +1,19 @@
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+reuse supplement: schema/permission/function evidence checked; functions=1475 closedFiles=1 (semantic review required)
+REUSE-TASK-STATE : REUSE-T17: execution needs ready/done contract
+H1-H6 task reuse contract failed
+At D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\scripts\industrialrobot\validate-task.ps1:136 char:30
++ ... if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
++                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (H1-H6 task reuse contract failed:String) [], RuntimeException
+    + FullyQualifiedErrorId : H1-H6 task reuse contract failed
+ 

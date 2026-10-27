@@ -1,0 +1,16 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+validate-task: PASS (3 tasks)
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md', LF will be replaced by CRLF the next time Git touches it
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+reuse supplement: schema/permission/function evidence checked; functions=1537 closedFiles=1 (semantic review required)
+REUSE-TASK : GOV-T23: reuse contract required
+Write-Error: H1-H6 reuse governance failed

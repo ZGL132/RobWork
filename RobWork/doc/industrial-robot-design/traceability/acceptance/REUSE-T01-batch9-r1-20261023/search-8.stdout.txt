@@ -1,0 +1,12 @@
+90:Fixture threeJointFixture()
+106:    f.chain.joints.at(0).zeroOffset = 0.2;              // 单位 rad
+110:    f.chain.joints.at(1).zeroOffset = -0.35;            // 单位 rad
+273:/** RT-AD-2 偏置映射：非零 zeroOffset 下 WC bounds＝权威区间平移 −offset
+274: *  （q_rw＝q_auth−offset——CanonicalJoint::zeroOffset 口径的数值验证）。 */
+278:    f.chain.joints.at(0).zeroOffset = 0.5;  // 单位 rad（权威零位＝RobWork 0.5）
+346: *  q_auth＝zeroOffset＋q_rw）vs 真实基线 Device FK（Kinematics::frameTframe）
+350:TEST(WorkCellCompilerTest, FkEquivalence_RT_EQ_1)
+352:    const CanonicalModel model = threeJointFixture().build();
+388:            // 权威旋转：绕权威轴转 q_auth＝zeroOffset＋q_rw（rad）。
+390:                cj.axis, cj.zeroOffset + qRw[i]);
+436:    const CanonicalModel model = threeJointFixture().build();

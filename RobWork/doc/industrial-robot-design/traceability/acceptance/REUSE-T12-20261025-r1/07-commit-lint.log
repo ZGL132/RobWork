@@ -1,0 +1,24 @@
+  [PASS] 6fb26b31ddcd
+  [PASS] 439f410c727f
+  [PASS] 091e53353a10
+  [PASS] f378f01c5199
+  [PASS] c5a22b209a94
+  [PASS] a04512054770
+  [PASS] b0997f8d8f56
+  [PASS] 357d19e3d0c6
+  [PASS] aee6ac5bf209
+  [FAIL] 9e1fe9c2e905
+         - 标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: [REUSE-T09] 轨迹五次/七次多项式求值复用上游Polynomial并删除手写基导数链
+  [PASS] a63157aec073
+  [PASS] 8db7a7e78b22
+  [PASS] bc212f24513c
+  [PASS] 82cd82ff7d59
+  [PASS] 27ff6d6f770e
+  [PASS] d50e824c7e8b
+  [FAIL] 340dc88a4000
+         - 标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: [REUSE-T09] 轨迹五次/七次多项式求值复用上游Polynomial并删除手写基导数链
+  [PASS] f74f483d597f
+  [PASS] 2daace508fc5
+  [PASS] 30b5a2343f4d
+  [PASS] a1393ad4ac88
+commit-lint: FAIL —— 2/21 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）

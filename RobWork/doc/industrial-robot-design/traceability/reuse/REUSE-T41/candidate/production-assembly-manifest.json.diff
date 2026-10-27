@@ -1,0 +1,22 @@
+diff --git a/RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json b/RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json
+index 6af94d781..8a5309db4 100644
+--- a/RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json
++++ b/RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json
+@@ -7,7 +7,7 @@
+       "moduleId": "modeling",
+       "required": true,
+       "wired": true,
+-      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2781",
++      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2855",
+       "handleSymbol": "modeling::kModuleHandle",
+       "waiver": null
+     },
+@@ -15,7 +15,7 @@
+       "moduleId": "requirements",
+       "required": true,
+       "wired": true,
+-      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2855",
++      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2929",
+       "handleSymbol": "requirements::kModuleHandle",
+       "waiver": null
+     }

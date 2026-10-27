@@ -1,0 +1,112 @@
+{
+  "taskId": "REUSE-T07",
+  "baseCommit": "bfe024cd01475ab8510a045c2877c0fe07c0d9e3",
+  "reviewedCommit": "53768464caf8e3fb1ba51262fa4d210830f782a2",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-24T23:58:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T07/WP-03 单次验收子智能体（第 2 轮）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何仓库文件、未提交、未切分支、未建工作树、未远程操作、未重配集成构建树；benchmark 复跑复用 r1 独立构建的系统临时冻结工程（零改动，migrated 头忠实性经本轮 blob 三点一致亲证）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "第 2 轮独立复验（r1 两 issues 逐项核销）：送验面按 r1 处置 A 登记口径＝收敛段 c27349a80..8e4a08ac8（实现提交本体）＋返工段 5fb4ebd32..53768464c（单提交，r1 原件入库+处置登记+契约 note/allowedFiles 补登）；ask 字面区间 bfe024cd0..53768464c（grep 首提交父级推导沿用，93 提交）scope/commit-lint 如实复跑并按构成甄别（REUSE-T01-20261024-r2 同型先例：字面越界与送验面零交集、全部属送验面外其他任务包）；r1 issue 2 性能裁决登记核验＋benchmark 第三次独立复跑；契约 4 条 verify 按增量口径执行/引用（validate 三合一因契约文本变更重跑）；acceptance 5 条逐项映射；红线抽查（H1—H6、架构红线、CLOSURE 冻结、无平行实现回流、门禁未越权放宽、PASS/FAIL/SKIP/NOT RUN 分列）；提交链一包一组与正文-证据一致性核对。",
+  "counts": {
+    "failed": 0,
+    "passed": 17,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "17 项验收检查（全部本轮亲测或经输入全同证明后引用 r1 原件）；集成/基准测试计数另列（integrationTest、benchmark），互不相加；notRun 数组引用类项不计入"
+  },
+  "checks": [
+    "现场：git status --short 仅本验收产物目录未跟踪（其余干净）；分支 redesign-main；HEAD=53768464caf8e3fb1ba51262fa4d210830f782a2 即送验 head；实现提交 8e4a08ac8 经 git merge-base --is-ancestor 确认为 HEAD 祖先；字面区间 bfe024cd0..53768464c 共 93 提交，其中实现 head 与返工 base 之间 90 提交全部为其他任务包（送验面外）。证据 01 号。",
+    "r1 issue 1 核销（范围·收敛段）：verify-task-scope -Base c27349a80 -Head 8e4a08ac8 → PASS，286 个路径全部在允许面（allowedRules=18/forbiddenRules=3），与 r1 探针 05-alt-scope-probe.log、r1-fix 自检 01-scope-collapsed.log 同数字 286。证据 03 号。",
+    "r1 issue 1 核销（范围·返工段）：verify-task-scope -Base 5fb4ebd32 -Head 53768464c → PASS，18 个路径全部在允许面——返工仅动 r1 原件入库（13 文件）＋r1-fix 登记（4 文件）＋契约（1 文件），与提交 stat 18 文件一致；返工段对 RobWork/scripts/** 与 RobWork/RobWorkStudio/** 路径计数均为 0（零脚本、零产品源码，提交正文声称属实）。证据 04 号、11 号条目 2。",
+    "字面区间甄别（ask ①如实复跑）：verify-task-scope -Base bfe024cd0 -Head 53768464c exit=1——1676 个 out-of-scope（awk 统计，forbidden=0）；r1 段复核 -Base bfe024cd0 -Head 8e4a08ac8 exit=1——17 越界，与 r1 记录 issues[0] 逐字一致（02b 号）；构成甄别：送验面路径全集（286+18=303，去重）与字面越界路径集交集=0（comm 亲测），B 段（8e4a08ac8..5fb4ebd32，90 其他任务提交、净 1671 路径）对 T07 三个产品文件路径计数 0，字面越界全部属送验面外其他任务包（T01 复核、GOV-T25/T26、REUSE-T18~T29、WP-00/01 等，T01-r2 同构）——按 r1 处置 A 登记口径核销，字面区间 FAIL 不构成本包缺陷。证据 02/02b/02c 号。",
+    "提交规范（三段 commit-lint）：字面区间 5/93 FAIL——9e1fe9c2e、340dc88a4、3e8cec6ef、717594e5c、3a61e300f，与 REUSE-T01-r2 记录同 5 个 SHA（F-970×2＋F-971×3 在册豁免，全在送验面外、历史不改写）；收敛段 c27349a80..8e4a08ac8 1/1 PASS、返工段 5fb4ebd32..53768464c 1/1 PASS——送验面提交 [governance] 中文前缀＋正文合规零违规。证据 05 号。",
+    "冻结面零触碰：收敛段与返工段对 reuse/closures.json（CLOSURE 冻结）、reuse/permissions.json、industrialrobot/cmake/（门禁引擎）的 git diff 路径计数全部为 0；closures.json 当前唯一条目为 T11/RpyMath（migrationCommit a1393ad4a，验收 REUSE-T11-20261023），T07 未填 closure、未冒充闭环（acceptance#5 一致）。证据 06 号条目 1、06b 号。",
+    "H2 无平行实现回流＋迁移成果未回滚：当前树 grep -i jacobi 于 modeling 产品源码仅 3 类命中——CouplingMath.hpp:7 注释（说明不保留自写 Jacobi）、DhConvert.cpp 数值差分 Jacobian（不同概念，r1 已核）、Parts.cpp:281 过期注释（r1 observation 在册）；上游 SVD 生产调用在位（CouplingMath.hpp:91 rw::math::LinearAlgebra::svd，sdurw_math 唯一分解来源注释 6 行在位）；三个产品文件 git blob 于 8e4a08ac8、53768464c、当前工作区三点一致（CouplingMath.hpp=9edee4d8557e00166f2342508aa2f63943e9e2a2 与 r1 记录同值），modeling/CMakeLists.txt 工作区 hash 差异经 git diff 归一比较 CLEAN（core.autocrlf=true 行尾假差异，无内容漂移）。证据 06 号条目 2/4/8、06b 号。",
+    "架构红线：L2 计算库零 Qt——CouplingMath.hpp 6 个 include 无任何 Qt 迹象（0 命中，r1 已核 include 面＝STL＋rw/math＋Eigen，文件未变直接适用）；runtime 唯一模型 owner——纯值 rw::math 调用，不构造 WorkCell/State/求解器（r1 已核，文件未变适用）；无业务域互链、无跨单元私有头（r1 已核维持）。证据 06 号条目 7。",
+    "门禁未越权放宽：契约 8e4a08ac8→53768464c 实质 diff（--ignore-cr-at-eol 亲验）仅 note 追加 r1 返工处置段＋allowedFiles 末尾追加本任务 r1 验收产物 3 条（r1.json、r1/**、r1-fix/**），forbiddenFiles 3 条零改动；permissions.json 零差异（见检查 6）；返工段零脚本变更；gates/TestCMakeComments.ps1 与 test-reuse-governance.ps1 于 8e4a08ac8/5fb4ebd32/53768464c 三点 blob 全同。证据 06 号条目 3/5、06b 号。",
+    "r1 issue 2 核销（性能·所有者裁决登记）：裁决传达原件 03-owner-decision.txt（blob b2c68a06）已在送验 head 提交 53768464c 入库——逐字记录所有者 2026-10-24 经主会话 AskUserQuestion（工作流 dwfrun-d425945b「返工·REUSE-T07」escalate 升级）明示接受该退化，含提问原文对照；登记形态与 REUSE-T20 先例 2ac114f33 一致（登记所有者接受＋仅改裁决记录＋引用既有数值证据不重跑 C++）；契约 note 处置段同步登记（检查 9）；接受边界按 T20 形态（仅覆盖本能力已展示数据、不推导其他能力预算、运行效果仍交独验核查、不回滚迁移成果）。acceptance#1「无依据退化不得自判可接受」以该所有者明示裁决为依据闭合——登记的是所有者裁决而非实施者自判。证据 11 号、r1-fix/03-owner-decision.txt、2ac114f33 提交原件。",
+    "性能 benchmark 第三次独立复跑（数值/性能项真实执行）：复用 r1 独立构建的系统临时冻结工程（零改动；CMakeCache 亲证 migrated_HEADER 指向产品树 CouplingMath.hpp，构建时点 blob 与送验 head 及当前工作区三点一致 9edee4d8——exe 忠实代表送验 head）——baseline 中位 0.09195µs、migrated 中位 0.34002µs（比值约 3.70x），checksum 均 280400、双 exit 0；三次独立测量（原件 4.662x/0.0917→0.4277、r1 复跑 3.46x/0.118→0.409、本轮 3.70x/0.092→0.340）同量级、migrated 三次 0.34~0.43µs 与 baseline 三次 0.09~0.12µs 噪声内吻合，退化事实与数值等价结论稳定。证据 09 号、r1 07 系列、reuse/REUSE-T07/benchmark/comparison.json。",
+    "acceptance#1 四维审查（引用 r1 亲验＋本轮前提复核）：coupling-svd-migration.md 含 policy §1.1 保留/删除/适配/职责归属、被否候选与四维表（r1 checks[9] 亲验属实）；本轮前提复核——返工段对 reuse/coupling-svd-migration.md 的改动为 r1 原件入库范畴（scope 18 路径内），产品/文档实质内容与 r1 验收时点一致（除契约 note 与验收产物外三点无实质变化），r1 四维结论直接适用；性能面以检查 10/11 闭合。",
+    "acceptance#2 数值与接口保持（引用 r1 亲验）：阈值常量（1e8/1e-12）、行主序转换、max 缩放乘回、couplingSingularValues/couplingConditionNumber 签名与 Parts.cpp 消费接口、诊断结构（r1 checks[11] 亲验）——本轮产品文件三点 blob 一致（检查 7）证明 r1 证据输入未变，直接适用。",
+    "acceptance#3 回归有效（本轮真实重跑）：集成 modeling test exe（build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe，Oct 24 14:48 构建，对应 5fb4ebd32 树产品源码；当前树产品源码与该树零差异）PATH 前置框架/vcpkg DLL 复跑——479 tests＝479 passed/0 failed/0 skipped，exit 0，gtest XML 落盘；与 r1 复跑 479/479 同数字（含原 Parts/Readiness 用例、上游 LinearAlgebraTest 对照、CouplingReuse 阈值/尺度/独立 2×2 解析 oracle 用例）。证据 08 号 log+xml。",
+    "acceptance#4 断开真实失败（引用 r1 原件）＋受影响门禁（本轮重跑）：disconnected/gtest.xml 单 case 真实失败、red 37 项 1 预期接线失败、stale 9 失败中间制品如实（r1 checks[14] 亲验原件，证据目录随 53768464c 入库）；本轮 validate-docs.ps1 -TaskFile REUSE-T07.json 三合一重跑（契约文本已变，必须重跑）exit 0——validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-task: PASS (1 tasks)、validate-docs: PASS（20 units, 12 trace entries, 404 task files）；REUSE-AD-PENDING 为 AD 审计既有提示非阻断（r1/GOV-T24-r1 同款）。证据 07 号。",
+    "verify#1/#2（输入全同证明后引用 r1＋PS7 重跑）：verify#1 TestCMakeComments.ps1 本轮 PS7 重跑 exit 0（负例 cpp-state-write-still-rejected/cmake-uncommented-type-still-rejected/cpp-preprocessor-not-a-comment 全过，10 号）；PS5.1 引用 r1 原件（gates 脚本三点 blob 全同、被测 reuse-contract.ps1 自 5fb4ebd32 未变）。verify#2 治理自测 152 例引用 r1 原件（09-governance-selftest.log 152/152）——输入全同亲证：test-reuse-governance.ps1 三点 SAME、夹具固定 GOV-T22 提交 e6f06e5b9、当前树 validator reuse-contract.ps1 于 5fb4ebd32 与 53768464c blob 相同（44ac6d2d，其间 8e4a08ac8→5fb4ebd32 的三次变更出自 B 段 T11 治理提交 a1393ad4a/54f0beda6/e453006ea，属其他任务送验面）。证据 10 号、06b 号。",
+    "acceptance#5 流程边界＋提交链一包一组：契约 status=ready（独验后由登记步骤收口，本轮记录不改任务状态）；实施者未自签（r1 已核 results.json NOT RUN 三项，未变）；无远程操作（本会话亦无）；GAP 均未批准（validate-reuse 维持 governance only）。送验面＝实现提交 8e4a08ac8（一包一组）＋返工提交 53768464c（一包一组），两段各单提交、[governance] 中文前缀合规（检查 5）；返工正文六项声称（286 路径 scope PASS、commit-lint 1 提交 PASS、17 越界剔出不消化、性能裁决登记、仅追加 3 条 allowedFiles、零产品/零脚本/零构建配置）与本轮亲测逐项一致（检查 2/3/5/9/10、11 号条目 2）。"
+  ],
+  "integrationTest": {
+    "modeling": {
+      "tests": 479,
+      "passed": 479,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "exe": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+      "xml": "08-int-modeling-test.xml",
+      "note": "本轮真实重跑（两次运行均 479/479，第二次落 XML）；exe 对应 5fb4ebd32 树产品源码，当前送验 head 树产品源码与之零差异（blob 亲证）"
+    }
+  },
+  "benchmark": {
+    "reviewedAndRerun": true,
+    "original": { "baselineMedianUs": 0.09174, "migratedMedianUs": 0.42767, "ratio": 4.6618, "source": "reuse/REUSE-T07/benchmark/comparison.json" },
+    "rerunR1": { "baselineMedianUs": 0.11802, "migratedMedianUs": 0.40896, "ratioApprox": 3.46, "log": "REUSE-T07-20261024-r1/07-benchmark-run.log" },
+    "rerunR2": { "baselineMedianUs": 0.09195, "migratedMedianUs": 0.34002, "ratioApprox": 3.70, "checksumBoth": 280400, "exitCodeBoth": 0, "log": "09-benchmark-rerun.log" },
+    "method": "复用 r1 独立构建的系统临时冻结工程（t07-acc-bench，零改动）：冻结 benchmark 子目录经 GOV-T24 前置绑定包装（Threads＋synchronization INTERFACE）；CMakeCache 亲证 baseline_HEADER=临时提取头（Jacobi，自 c27349a80）、migrated_HEADER=产品树 CouplingMath.hpp（构建时点与送验 head、当前工作区 blob 三点一致 9edee4d8）；migrated 运行 PATH 前置 build/RobWork/bin/Release（sdurw_math.dll）；VS2022 x64 Release，calls=70100",
+    "interpretation": "三次独立测量同量级（4.66x/3.46x/3.70x；migrated 0.34~0.43µs、baseline 0.09~0.12µs 噪声内吻合），退化事实稳定成立，checksum 280400 三轮一致证数值等价；所有者 2026-10-24 已明示接受该退化（03-owner-decision.txt，T20 2ac114f33 先例形态），接受仅覆盖本能力已展示数据；绝对值亚微秒、生产路径为建模编辑/就绪校验非实时回路",
+    "ownerAcceptance": "登记于 traceability/acceptance/REUSE-T07-20261024-r1-fix/03-owner-decision.txt（blob b2c68a06，随送验 head 53768464c 入库）＋契约 note 处置段；通道＝返工子代理经工作流 dwfrun-d425945b escalate 升级，主会话经 AskUserQuestion 获所有者明示裁决后逐字传达"
+  },
+  "commands": [
+    { "name": "scope-fullrange", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json -Base bfe024cd01475ab8510a045c2877c0fe07c0d9e3 -Head 53768464caf8e3fb1ba51262fa4d210830f782a2", "exitCode": 1, "passed": false, "log": "02-scope-fullrange.log", "note": "ask 字面区间（grep 首提交父级推导沿用）：1676 out-of-scope/0 forbidden（awk 统计）；与送验面交集 0，全部属其他任务包，按 r1 处置 A 登记口径甄别核销（02c 号），不构成本包缺陷" },
+    { "name": "scope-r1range-recheck", "command": "同上 -Base bfe024cd01475ab8510a045c2877c0fe07c0d9e3 -Head 8e4a08ac82498ded085fc4173b17e67044614327", "exitCode": 1, "passed": false, "log": "02b-scope-r1range.log", "note": "17 越界与 r1 记录 issues[0] 逐字一致（复现佐证）" },
+    { "name": "scope-collapsed", "command": "同上 -Base c27349a80d6116151e2b9625c3196c77a4398fff -Head 8e4a08ac82498ded085fc4173b17e67044614327", "exitCode": 0, "passed": true, "log": "03-scope-impl.log" },
+    { "name": "scope-rework", "command": "同上 -Base 5fb4ebd32 -Head 53768464caf8e3fb1ba51262fa4d210830f782a2", "exitCode": 0, "passed": true, "log": "04-scope-rework.log" },
+    { "name": "commit-lint-ranges", "command": "commit-lint.ps1 -Range bfe024cd0..53768464c ／ c27349a80..8e4a08ac8 ／ 5fb4ebd32..53768464c 三组", "exitCode": 1, "passed": false, "log": "05-commit-lint.log", "note": "字面 5/93（F-970×2＋F-971×3 在册豁免、全在送验面外，与 T01-r2 同 5 SHA）；收敛段 1/1、返工段 1/1 PASS——送验面零违规" },
+    { "name": "redline-checks", "command": "git diff --name-only/--exit-code/rev-parse/hash-object 系列：冻结面三处两段零差异；产品文件 blob 三点一致＋CMakeLists 归一 CLEAN；契约实质 diff；Jacobi grep；脚本三点 blob；closures.json 内容；Qt 零命中；SVD 调用在位", "exitCode": 0, "passed": true, "logs": ["06-redline-checks.log", "06b-redline-followup.log"] },
+    { "name": "validate-docs-triple", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" },
+    { "name": "int-modeling-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_output=xml:（PATH 前置 build/RobWork/bin|libs/Release＋vcpkg bin）", "exitCode": 0, "passed": true, "log": "08-int-modeling-test.log", "xml": "08-int-modeling-test.xml" },
+    { "name": "benchmark-rerun-r2", "command": "$TEMP/t07-acc-bench/build/t07-bench-frozen/Release/{coupling_svd_baseline,coupling_svd_migrated}.exe（migrated 经 PATH 前置 build/RobWork/bin/Release）", "exitCode": 0, "passed": true, "log": "09-benchmark-rerun.log" },
+    { "name": "cmake-comments-gate-ps7", "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/gates/TestCMakeComments.ps1", "exitCode": 0, "passed": true, "log": "10-verify1-cmake-comments.log" },
+    { "name": "owner-decision-crosscheck", "command": "git ls-tree 53768464c -- r1-fix/03-owner-decision.txt；返工段 scripts/product 零路径；2ac114f33 先例对照；ListWorkflowRuns（能力缺口如实记录）；Parts.cpp:281 过期注释现状", "exitCode": 0, "passed": true, "log": "11-owner-decision-crosscheck.log" }
+  ],
+  "executionNotes": [
+    "工作流通道佐证局限：本会话 ListWorkflowRuns 不可用（workflow_introspection_unavailable，能力缺口如实记录），无法直接读取 dwfrun-d425945b 运行历史；替代佐证＝裁决传达原件逐字入库（03-owner-decision.txt，含提问原文对照）＋本会话临时路径前缀 sess_dwf-dwfrun-d425945b（本验收会话即该工作流 actor）＋T20 先例登记形态一致。",
+    "02 号 log 含 MSYS grep 不识别的编码字节（T01-r2 executionNotes 同款现象），越界计数以 awk 行前缀统计为准：out-of-scope=1676/forbidden=0（字面）、17/0（r1 段）。",
+    "benchmark migrated 首跑 exit 127（sdurw_math.dll 缺失，r1 运行环境的 PATH 未继承）；PATH 前置 build/RobWork/bin/Release 后 exit 0——中间失败如实留档 09 号，最终数字取补 PATH 后运行。",
+    "集成测试首次运行 gtest_output 绝对路径经 MSYS 转换未落 XML（479/479 已过），以产物相对路径重跑一次落 XML（两次均 479/479 PASSED，663/643ms）。",
+    "r1 段 17 越界与字面区间 1676 越界的处置依据：r1 记录 issues[0] 处置选项 A（返工已落地登记）＋REUSE-T01-20261024-r2 同型先例（字面区间如实复跑＋构成甄别＋送验面两段核销）＋r1-fix README 第 79-80 行「第 2 轮独立验收建议核验面＝收敛段＋返工段」。"
+  ],
+  "issues": [],
+  "notRun": [
+    { "item": "PS5.1 TestCMakeComments 双运行时复跑", "reason": "gates 脚本与被测 reuse-contract.ps1 于 5fb4ebd32 与送验 head blob 全同（06b 号亲证），r1 双运行时原件（04-cmake-comments-gate-ps51.log，八项全过）输入完全适用；本轮 PS7 已重跑 exit 0。" },
+    { "item": "治理自测 152 例完整重跑", "reason": "test-reuse-governance.ps1 三点 SAME＋夹具固定 GOV-T22 e6f06e5b9＋当前树 validator 与 r1 执行时点（5fb4ebd32）blob 相同——输入全同，r1 原件（09-governance-selftest.log，152/152/0/0 exit 0）按 AGENTS §4 增量口径直接引用。" },
+    { "item": "独立冒烟树重配（smoke 372 例）", "reason": "r1 已按效率口径登记 notRun（GOV-T24 已用同链路独立复跑 modeling 冒烟 372/372 含 CouplingReuse 用例；r1 以集成树 479/479 覆盖同一数值面）；本轮零产品变更且集成 479/479 重跑通过，维持该口径。" },
+    { "item": "工作流运行历史读取（dwfrun-d425945b）", "reason": "本会话 ListWorkflowRuns 返回 workflow_introspection_unavailable（能力缺口非空结果），如实记录；裁决事实以入库传达原件＋契约登记＋会话名佐证链核验。" }
+  ],
+  "observations": [
+    "r1 两 observations 未消（非阻断、返工授权面为零产品变更无法顺带修正）：①过期注释 2 处（Parts.cpp:281、PartsTest.cpp:791 仍写「单侧 Jacobi SVD」，本轮 grep 亲证仍在）；②实施发生在旧工作树（证据路径为主树外物，git blob 一致性已核）。留待后续触碰 modeling 的批次顺带处置。"
+  ],
+  "limitations": "PASS 绑定送验面＝收敛段 c27349a80..8e4a08ac8（实现提交，286 路径）＋返工段 5fb4ebd32..53768464c（返工提交，18 路径）及送验 head 53768464caf8e3fb1ba51262fa4d210830f782a2。字面区间 bfe024cd0..53768464c 内其他任务包内容（REUSE-T01 复核、GOV-T25/T26、REUSE-T18~T29、WP-00/01、F-958、覆盖清查及 5 个 F-970/F-971 在册豁免历史提交）不因本验收放行，须按各自契约独立送验独验。性能接受仅覆盖本能力已展示数据（三次独立测量 4.66x/3.46x/3.70x、checksum 280400、非实时回路），不推导其他能力性能预算；后续新增实质退化仍需另行裁决（T20 边界）。validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399）；本验收不构成算法替换（migration §11）、REUSE-T02 或 WP-03 其余五包的放行。本记录只写文件不提交，任务 status 保持 ready，收口由登记步骤统一执行；本记录不改任务状态、不推进下一任务。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/01-field.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/02-scope-fullrange.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/02b-scope-r1range.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/02c-range-composition.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/03-scope-impl.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/04-scope-rework.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/06-redline-checks.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/06b-redline-followup.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/07-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/08-int-modeling-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/08-int-modeling-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/09-benchmark-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/10-verify1-cmake-comments.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/11-owner-decision-crosscheck.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2.json"
+  ]
+}

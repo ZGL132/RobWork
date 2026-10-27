@@ -20,14 +20,16 @@
  *   平面二连杆伸直构型（q2≡0、q̇2=q̈2=0、零重力、零摩擦、匀加速激励
  *   q1(t)=q₀+v₀t+½at²）下，链退化为绕关节 1 的单刚体转动：
  *     τ_ref = [M11·a, M21·a]（恒定——M 通道为常数，见逐行推导注释），
- *   采样保持（区间内 τ_ctrl 常量）零误差；固定步长 RK4 对不超过 4 阶的
- *   多项式轨迹逐位精确 → q_sim(t) 解析重现 q_ref(t) → 误差达双精度机器
- *   精度量级（<1e-12 rad）。断言 toleranceQ=1e-9 判 Passed＋独立上界
- *   maxErrQ<1e-9（解析界——不依赖产品判定逻辑的对照）。
+ *   采样保持（区间内 τ_ctrl 常量）零误差；ODE 引擎（WP-09 换核——半隐
+ *   式 Euler 型推进）对速度恒精确（ω_n=ω₀+n·h·α 逐位）、位置含一阶离散
+ *   超前 α·t·h/2（θ_n=θ₀+ω₀t+α(t²/2+t·h/2)——O(h) 收敛，独立解析界按下
+ *   式声明）→ 误差由解析界钉扎（非机器精度——引擎换核后的诚实口径）。
+ *   断言 toleranceQ=1e-3 判 Passed＋独立解析上界 2.5e-4（＝α·t_end·h——
+ *   一阶界整单位上界，覆盖约束求解器/关节 CFM 柔度的次级效应）。
  *
  * 数值对照口径（附录 D C7）：产品侧容差只经 ForwardCheckSettings 注入
- *   （分析配置来源）；本文件的期望界（1e-9/1e-12 等）全部为测试对照容差，
- *   与产品代码零共享。
+ *   （分析配置来源）；本文件的期望界（2.5e-4/1e-9 等）全部为测试对照容
+ *   差，与产品代码零共享。
  */
 
 #include <sdurws/ird/core/Provenance.hpp>              // SourcedValue/ValueProvenance（负载注入）
@@ -241,7 +243,9 @@ void expectPassedInvariants(const ForwardCheckOutcome& o, std::size_t expectComp
 {
     EXPECT_EQ(o.state, DynamicsValidity::ForwardCheckState::Passed);
     EXPECT_EQ(o.comparedSamples, expectCompared) << "比较区间数＝样本数−1";
-    EXPECT_FALSE(o.numericAnomaly.has_value()) << "Passed 路径无数值异常";
+    EXPECT_FALSE(o.numericAnomaly.has_value())
+        << "Passed 路径无数值异常"
+        << (o.numericAnomaly.has_value() ? ("：" + *o.numericAnomaly) : std::string{});
     EXPECT_FALSE(o.cancelled) << "Passed 路径非取消";
     // 误差结构不变量：RMS ≤ max（全网格均方根不超过逐元素最大值）。
     EXPECT_LE(o.rmsErrQ, o.maxErrQ) << "RMS(e_q) ≤ max|e_q|（结构不变量）";
@@ -280,10 +284,11 @@ TEST(DynForward, AnalyticStraightConfigurationPassed_DYN05)
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"},
                   std::vector<std::string>{"AT-07"});
     // 本用例验证（§11.2 V-13）：τ_ref 回放仿真→max/RMS 误差≤配置阈值→
-    // Passed；黄金对照容差＝本文件声明的 1e-9（测试对照口径，附录 D C7）。
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    // Passed；黄金对照容差＝本文件声明的 1e-3（测试对照口径，附录 D C7）。
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
-    ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);  // rad、rad/s（分析容差）
+    ForwardCheckRequest r = goldenRequest(5e-3, 1e-2);  // rad、rad/s（分析容差——
+                                                        //   位置阈按 ODE 一阶界放宽）
     r.model = &model;
 
     FakeContext ctx;
@@ -291,14 +296,16 @@ TEST(DynForward, AnalyticStraightConfigurationPassed_DYN05)
     const ForwardCheckOutcome o = validator.validate(r, ctx);
 
     expectPassedInvariants(o, static_cast<std::size_t>(kSampleCount - 1));
-    // 独立解析上界（与 Passed 判定同一数据但独立阈值——黄金对照）。
-    EXPECT_LT(o.maxErrQ, 1e-9) << "max|e_q| 解析上界（RK4 对二次多项式精确＋采样"
-                                  "保持零误差——余量为浮点舍入）";
-    EXPECT_LT(o.maxErrQd, 1e-9) << "max|e_qd| 解析上界（rad/s）";
+    // 独立解析上界（与 Passed 判定同一数据但独立阈值——黄金对照）：
+    //   位置＝半隐式 Euler 一阶超前 α·t·h 的整单位上界（解析超前恰为
+    //   α·t·h/2＝1.25e-4 rad，取 2×裕度覆盖约束求解器/关节 CFM 次级效应）；
+    //   速度＝常加速度下 ODE 速度逐位精确（ω_n=ω₀+n·h·α）——机器精度界。
+    EXPECT_LT(o.maxErrQ, 2.5e-4) << "max|e_q| 解析上界（ODE 一阶离散 α·t_end·h）";
+    EXPECT_LT(o.maxErrQd, 1e-5) << "max|e_qd| 实测上界（rad/s——播种收敛残差＋上游 CFM=1e-3 关节软化底噪，2026-10-26 实测 4.7e-6）；";
 }
 
 /**
- * 一致性超阈值（V-13 失败分支）：同一黄金场景把判定容差压到机器精度以下
+ * 一致性超阈值（V-13 失败分支）：同一黄金场景把判定容差压到离散误差以下
  * （1e-18 rad——分析配置来源的合法值），误差必然超阈 → Failed＋
  * DYN-FD-CONSISTENCY-FAILED 比较型素材（实际误差/阈值/单位）——比较型
  * 诊断的执行证明面（§9.4 行 11）。
@@ -306,7 +313,7 @@ TEST(DynForward, AnalyticStraightConfigurationPassed_DYN05)
 TEST(DynForward, ConsistencyFailedBelowMachinePrecision_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"}, std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
     ForwardCheckRequest r = goldenRequest(1e-18, 1e-18);  // 阈值＜浮点舍入余量
     r.model = &model;
@@ -332,13 +339,13 @@ TEST(DynForward, ConsistencyFailedBelowMachinePrecision_DYN05)
 TEST(DynForward, DivergenceDetected_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"}, std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
     r.model = &model;
     // 注入超大激励（恒定 q̈=1e12 rad/s²——发散算例；参考轨迹同步改写保持
     // 激励自洽——发散先于比较发生，参考值量级不参与判定）。
-    const double kHugeAcc = 1e12;  // rad/s²
+    const double kHugeAcc = 2e10;  // rad/s²（引擎可解域内越界——qd 越界于 t≈0.05 s）
     for (std::size_t j = 0; j < r.samples.size(); ++j) {
         const double t = j * kSampleDt;
         r.samples[j].q = {kQ0 + kV0 * t + 0.5 * kHugeAcc * t * t, 0.0};
@@ -346,7 +353,7 @@ TEST(DynForward, DivergenceDetected_DYN05)
         r.samples[j].qdd = {kHugeAcc, 0.0};
     }
     // 大步长减少子步数（发散检出不需要精细积分）。
-    r.forwardCheck.maxStepS = 0.05;  // s（0.5 s 时长 10 区间×每区间 ≤10 子步）
+    r.forwardCheck.maxStepS = 1e-4;  // s（细步长——每步转角保持在求解器线性域）
 
     FakeContext ctx;
     ForwardDynamicsValidator validator;
@@ -361,17 +368,18 @@ TEST(DynForward, DivergenceDetected_DYN05)
 }
 
 /**
- * 数值异常检出（质量阵奇异）：全零物性链（两连杆质量/质心/惯量全部
- * NotProvided——§5.5 降级语义下合法模型）→ M(q)≡0 → 线性求解主元越界 →
- * Failed＋DYN-FD-NUMERIC-ANOMALY（§9.4 行 16——本批增码的消费证明面）。
+ * 数值异常检出（物性能力缺失）：全零物性链（两连杆质量/质心/惯量全部
+ * NotProvided——§5.5 降级语义下合法模型）→ 引擎会话物化被 S7 能力门控
+ * 拒绝（无动力学能力——旧自持核"M(q)≡0 奇异"的同语义延续面）→
+ * Failed＋DYN-FD-NUMERIC-ANOMALY（§9.4 行 16——消费证明面）。
  */
 TEST(DynForward, NumericAnomalySingularMassMatrix_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05", "DYN-06"},
                   std::vector<std::string>{});
     // 全零物性模型（连杆物性字段保持 SourcedValue 默认＝NotProvided）：
-    // 提取层不拒绝（缺失走降级素材——§5.5），但质量阵恒为零——正动力学
-    // 无惯量可积分，属数值异常（非调用方错误、非发散）。
+    // 提取层不拒绝（缺失走降级素材——§5.5），但引擎会话不可物化（无惯量
+    // 可积分）——正动力学不可执行，属数值异常（非调用方错误、非发散）。
     const runtime::CanonicalModel model = makeZeroPropertyTwoLinkModel();
 
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
@@ -383,10 +391,10 @@ TEST(DynForward, NumericAnomalySingularMassMatrix_DYN05)
 
     EXPECT_EQ(o.state, DynamicsValidity::ForwardCheckState::Failed);
     EXPECT_TRUE(hasDiagnostic(o, kDynFdNumericAnomaly))
-        << "质量阵奇异必须产 DYN-FD-NUMERIC-ANOMALY 素材（§9.4 行 16）";
+        << "物性能力缺失必须产 DYN-FD-NUMERIC-ANOMALY 素材（§9.4 行 16）";
     ASSERT_TRUE(o.numericAnomaly.has_value()) << "数值异常必须携带定位文本";
-    EXPECT_NE(o.numericAnomaly->find("质量矩阵"), std::string::npos)
-        << "异常文本定位质量阵（实际：" << *o.numericAnomaly << "）";
+    EXPECT_NE(o.numericAnomaly->find("物化失败"), std::string::npos)
+        << "异常文本定位会话物化失败（实际：" << *o.numericAnomaly << "）";
     // τ_ref 侧降级素材透传（全零物性链的摩擦全缺——共源事实随 outcome 可见）。
     EXPECT_TRUE(hasDiagnostic(o, kDynFrictionMissing))
         << "τ_ref 侧降级素材透传（共源事实）";
@@ -408,7 +416,7 @@ TEST(DynForward, RneaPartialRowsDoNotEscapeContract_F581)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"},
                   std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
     r.model = &model;
@@ -438,7 +446,7 @@ TEST(DynForward, RneaPartialRowsDoNotEscapeContract_F581)
 TEST(DynForward, NotRunEmptyAndSingleSample_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"}, std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
     FakeContext ctx;
     ForwardDynamicsValidator validator;
 
@@ -468,7 +476,7 @@ TEST(DynForward, NotRunNonFiniteInitialState_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05", "NFR-COR-03"},
                   std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
     r.model = &model;
@@ -491,7 +499,7 @@ TEST(DynForward, NotRunNonFiniteInitialState_DYN05)
 TEST(DynForward, NotApplicableWhenSkipped_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"}, std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
     r.model = &model;
@@ -514,7 +522,7 @@ TEST(DynForward, NotApplicableWhenSkipped_DYN05)
 TEST(DynForward, CancelledReturnsNotRunZeroError_DYN05_UX03)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"}, std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
     r.model = &model;
@@ -540,7 +548,7 @@ TEST(DynForward, DeterministicRepeat_NFR_COR_02)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05", "NFR-COR-02"},
                   std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
     r.model = &model;
@@ -575,9 +583,10 @@ TEST(DynForward, PayloadEventSameSourceConsistency_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05", "DYN-02"},
                   std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
 
-    ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
+    ForwardCheckRequest r = goldenRequest(5e-3, 1e-2);  // rad、rad/s（位置阈按
+                                                        //   ODE 一阶界放宽——同黄金算例）
     r.model = &model;
     // 条件负载（法兰挂载点质量负载——物性必填面：mass Provided、com/inertia
     // 提供完整避免估算分支干扰黄金判定）。
@@ -605,8 +614,10 @@ TEST(DynForward, PayloadEventSameSourceConsistency_DYN05)
     const ForwardCheckOutcome o = validator.validate(r, ctx);
 
     expectPassedInvariants(o, static_cast<std::size_t>(kSampleCount - 1));
-    EXPECT_LT(o.maxErrQ, 1e-9)
-        << "事件切换后两路仍同变体（共源强制）——误差保持机器精度量级";
+    // 独立解析上界（黄金算例一阶界＋变体重建种子步瞬态的合并裕度——重建
+    // 会话的初速播种位置漂移 q̇₀·h_seed/2 ≈ 2e-6 rad，远小于一阶界）。
+    EXPECT_LT(o.maxErrQ, 1e-3)
+        << "事件切换后两路仍同变体（共源强制）——误差保持 ODE 一阶界量级";
     // 摩擦缺失素材透传（夹具摩擦全缺——τ_ref 侧 DYN-FRICTION-MISSING 可见）。
     EXPECT_TRUE(hasDiagnostic(o, kDynFrictionMissing))
         << "τ_ref 侧降级素材透传（共源事实）";
@@ -620,7 +631,7 @@ TEST(DynForward, PayloadEventSameSourceConsistency_DYN05)
 TEST(DynForward, FailFastContractViolations_DYN05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-05"}, std::vector<std::string>{});
-    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
     FakeContext ctx;
     ForwardDynamicsValidator validator;
 
@@ -707,7 +718,7 @@ TEST(DynForward, InitialStateQLengthMismatchInputInvalid_F644)
     // 本用例验证（F-644）：首样本 q 长度 2、qd 长度 1（自由度不匹配）——
     // validate 前置防线抛 DynamicsError（不越界、不产出半成品）。
     const runtime::CanonicalModel model =
-        makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+        makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt, {}, true);
     ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
     r.model = &model;
     r.samples.front().qd = {0.3};  // rad/s（长度 1≠q 长度 2——错配注入）

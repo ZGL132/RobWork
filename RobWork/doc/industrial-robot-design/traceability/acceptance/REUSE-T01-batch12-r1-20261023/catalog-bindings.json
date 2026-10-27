@@ -1,0 +1,66 @@
+[
+  {
+    "path": "RobWork/RobWork/src/rw/common/ThreadPool.hpp",
+    "sourceHashMatches": true,
+    "targetHashMatches": true,
+    "symbols": {
+      "addWork": true,
+      "stop": true,
+      "waitForEmptyQueue": true
+    },
+    "target": "sdurw_common",
+    "targetDeclared": true,
+    "headerListed": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "sourceHashMatches": true,
+    "targetHashMatches": true,
+    "symbols": {
+      "push": true,
+      "try_pop": true,
+      "pop": true
+    },
+    "target": "sdurw_common",
+    "targetDeclared": true,
+    "headerListed": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/common/ThreadTask.hpp",
+    "sourceHashMatches": true,
+    "targetHashMatches": true,
+    "symbols": {
+      "ThreadTask": true,
+      "addSubTask": true,
+      "getState": true
+    },
+    "target": "sdurw_common",
+    "targetDeclared": true,
+    "headerListed": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/common/Timer.hpp",
+    "sourceHashMatches": true,
+    "targetHashMatches": true,
+    "symbols": {
+      "Timer": true,
+      "getTimeMs": true,
+      "resetAndResume": true
+    },
+    "target": "sdurw_common",
+    "targetDeclared": true,
+    "headerListed": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "sourceHashMatches": true,
+    "targetHashMatches": true,
+    "symbols": {
+      "currentTimeMs": true,
+      "sleepMs": true
+    },
+    "target": "sdurw_common",
+    "targetDeclared": true,
+    "headerListed": true
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "functionId": "foundation-governance.commit-lint.root-and-encoding",
+    "reviewed": true,
+    "judgment": "UTF-8 setter 仅捕获宿主 setter 失败；根由显式参数/脚本目录与 git rev-parse 取得，非新建路径解析核心。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.Test-CommitMessage",
+    "reviewed": true,
+    "judgment": "单一函数执行前缀、空/泛化/80字标题规则；Merge 豁免，正文真实性未由脚本判断，AllowWip 无新增语义。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.input-and-range",
+    "reviewed": true,
+    "judgment": "Message 与真实 git log/show 分支确实分开；空范围仅说明无新增提交，不产生历史全通过结论。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.aggregate-exit",
+    "reviewed": true,
+    "judgment": "每提交调用同一 Test-CommitMessage，累计后显式 exit1；只检查提交文案。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.root",
+    "reviewed": true,
+    "judgment": "TaskFile/设计树存在性与标准路径操作；没有 RobWork 模型对象加载。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.Test-AnchorExists",
+    "reviewed": true,
+    "judgment": "编号标题压缩空白后的正则及数字边界；父节前缀允许是现存规则，不声称 Markdown 语义解析。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.Test-AnchorRequired",
+    "reviewed": true,
+    "judgment": "四权威设计文档和 units 要求锚点；过程证据整读不要求锚点，均属项目契约规则。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.index-and-contract",
+    "reviewed": true,
+    "judgment": "任务索引/字段/依赖存在/引用/分支/陷阱验证真实存在；依赖存在性不能证明依赖完成。branch=main 真实反例两路径拒绝。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.reuse-gate",
+    "reviewed": true,
+    "judgment": "转调已有 validate-reuse，未复制复用门禁；pending 行仅允许登记。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task.preflight-and-dryrun",
+    "reviewed": true,
+    "judgment": "validate-task 与 validate-reuse 在 DryRun 前执行；正常打印 3 条命令，不能当作真实执行。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task.execute-and-count",
+    "reviewed": true,
+    "judgment": "在仓库根真实 Invoke-Expression 并恢复目录；机器非零/非散文异常抛出；Parse/CommandNotFound 标 manual。此次真实 3 条机器命令，无 manual；其他分类缺陷留待后续审计。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.environment",
+    "reviewed": true,
+    "judgment": "实际运行时进程路径与 GUID Temp 根，使用 Git/PowerShell/.NET 原工具，无第二测试宿主。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.Invoke-Probe",
+    "reviewed": true,
+    "judgment": "子进程实际退出码和具名输出双条件，先记录再抛错；本轮红绿均有真实计数。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.fixtures-and-report",
+    "reviewed": true,
+    "judgment": "8 原用例及规则未变，仅补两套 gtest 稀疏检出；finally 报实际 executed/passed/failed，Temp 清理检查绝对路径前缀。",
+    "conclusion": "本批 pending 治理登记语义符合源码；不构成结项授权"
+  }
+]

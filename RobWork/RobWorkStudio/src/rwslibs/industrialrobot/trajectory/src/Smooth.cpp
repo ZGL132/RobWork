@@ -24,6 +24,12 @@
  *   - 零变化判定（§11.1"几何或采样是否变化？——否——沿用既有复检结论"）：
  *     平滑曲线对折线的偏差位级为 0（共线路径的样条线性重构恒等式）时改
  *     判 NoChange——几何未变，调用方可沿用既有复检结论（零变化零复检）。
+ *   - **基函数求值上游化（REUSE-T09 批）**：五次 Hermite 四基的手写解析
+ *     展开式删除——值基/导数基以升幂系数表交 rw::math::Polynomial 承载，
+ *     求值走上游 evaluate() 的 Horner 形态（H1 直接 API——MATH-POLYNOMIAL
+ *     catalog 条目；端点位级还原与共线"偏差位级 0→NoChange"判定由"整数
+ *     系数 Horner 在 u=0/1 及二进精确探针处无舍入"保持，见
+ *     hermiteQuinticBases 注）。
  *   - 需求 TRJ-04、NFR-COR-02/03（见 Smooth.hpp）；错误二分见 Errors.hpp。
  *
  * 集成模式条件源（Ptp.cpp 同款 gating）：Q/Transform3D 构造析构面消费
@@ -34,12 +40,14 @@
 #include <sdurws/ird/trajectory/Smooth.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
 #include <utility>
 #include <vector>
 
+#include <rw/math/Polynomial.hpp>
 #include <rw/math/Transform3D.hpp>
 
 #include <sdurws/ird/core/Provenance.hpp>   // core::SourcedValue/ValueProvenance（比较型素材值面）
@@ -103,33 +111,41 @@ rw::math::Vector3D<double> tcpPositionOrThrow(IKinematicsComputePort& port,
 }
 
 // =====================================================================
-// 五次 Hermite 基函数（t∈[0,1] 归一化段参数——解析多项式，逐 t 直接求值）
+// 五次 Hermite 基函数族（t∈[0,1] 归一化段参数——上游多项式承载，
+// REUSE-T09 复用替换：手写展开式删除，求值走上游 evaluate 的 Horner 形态）
 // =====================================================================
 
-/// 值基——端点 0 处取 1、端点 1 处取 0（h000）。
-inline double hermiteH000(double t)
+/**
+ * @brief 五次 Hermite 四基的进程级常量多项式表（{h000, h100, h001, h101}
+ *        ——升幂系数 {c0..c5}，闭式见单元卡 §11.4；测试侧独立书写同一闭
+ *        式作黄金对照——NFR-COR-01）。
+ *
+ * 复用依据（H1 直接 API——MATH-POLYNOMIAL catalog，REUSE-T09）：基多项式
+ * 经 rw::math::Polynomial 承载、求值走其 evaluate()（PolynomialND 的
+ * Horner 形态，纯算术零分配——采样热路径不引入容器分配）。函数内
+ * static＝一次初始化的不可变数学常量（C++11 魔法静态，并发首调用线程
+ * 安全；无共享可变状态）。
+ *
+ * 端点位级精确性（求值侧契约的承重面，本注登记替换前后的等价依据）：
+ * 四基系数全为小整数——u=0/1 处 Horner 中间量全为整数（|值|≤84，
+ * binary64 精确）→基值在两端位级等于脉冲形 {1,0}/{0,1}——sampleAt 的
+ * "端点/结点位级还原"由此保持；共线路径"偏差位级 0→NoChange"判定依赖
+ * 探针网格 t=p/64（二进分数）——该处 Horner 中间量分母 ≤2⁰⁰ 量级（64⁵
+ * =2³⁰ 内）全部精确，基和恒等式（h000+h001≡1、h100+h001+h101≡t）无舍
+ * 入破坏，位级零偏差与替换前一致。
+ */
+const std::array<rw::math::Polynomial<>, 4>& hermiteQuinticBases()
 {
-    return 1.0 + t * t * t * (-10.0 + t * (15.0 - 6.0 * t));
-}
-
-/// 一阶导基——端点 0 处导数 1（h100）。
-inline double hermiteH100(double t)
-{
-    return t + t * t * t * (-6.0 + t * (8.0 - 3.0 * t));
-}
-
-/// 值基——端点 1 处取 1（h001）。
-inline double hermiteH001(double t)
-{
-    const double t2 = t * t;
-    return t2 * t * (10.0 + t * (-15.0 + 6.0 * t));
-}
-
-/// 一阶导基——端点 1 处导数 1（h101）。
-inline double hermiteH101(double t)
-{
-    const double t2 = t * t;
-    return t2 * t * (-4.0 + t * (7.0 - 3.0 * t));
+    // 升幂系数闭式：h000=1−10t³+15t⁴−6t⁵、h100=t−6t³+8t⁴−3t⁵、
+    // h001=10t³−15t⁴+6t⁵、h101=−4t³+7t⁴−3t⁵（端点脉冲条件——值基在
+    // 取值端为 1、导数基在求导端导数为 1，其余端点条件全 0）。
+    static const std::array<rw::math::Polynomial<>, 4> bases = {
+        rw::math::Polynomial<>(std::vector<double>{1.0, 0.0, 0.0, -10.0, 15.0, -6.0}),
+        rw::math::Polynomial<>(std::vector<double>{0.0, 1.0, 0.0, -6.0, 8.0, -3.0}),
+        rw::math::Polynomial<>(std::vector<double>{0.0, 0.0, 0.0, 10.0, -15.0, 6.0}),
+        rw::math::Polynomial<>(std::vector<double>{0.0, 0.0, 0.0, -4.0, 7.0, -3.0}),
+    };
+    return bases;
 }
 
 // =====================================================================
@@ -207,16 +223,20 @@ public:
         double t = 0.0;
         decomposeParameter(s, m_knots.size() - 1, k, t);
         // 第 3 步：四基加权合成（h000·p0 + h100·m0 + h001·p1 + h101·m1；
-        // 二阶导基项权重恒 0——见类注；m0/m1 取段级左右导数——λ 收缩语
+        // 二阶导基项权重恒 0——见类注；基值经上游 rw::math::Polynomial::
+        // evaluate 的 Horner 形态求取——REUSE-T09，端点位级形态见
+        // hermiteQuinticBases 注；m0/m1 取段级左右导数——λ 收缩语
         // 义的载体，见 buildTangents 注）。
         const rw::math::Q& p0 = m_knots[k];
         const rw::math::Q& p1 = m_knots[k + 1];
         const rw::math::Q& m0 = m_segTangents[2 * k];
         const rw::math::Q& m1 = m_segTangents[2 * k + 1];
-        const double b000 = hermiteH000(t);
-        const double b100 = hermiteH100(t);
-        const double b001 = hermiteH001(t);
-        const double b101 = hermiteH101(t);
+        const std::array<rw::math::Polynomial<>, 4>& bases =
+            hermiteQuinticBases();
+        const double b000 = bases[0].evaluate(t);
+        const double b100 = bases[1].evaluate(t);
+        const double b001 = bases[2].evaluate(t);
+        const double b101 = bases[3].evaluate(t);
         rw::math::Q out(p0.size());
         for (std::size_t j = 0; j < p0.size(); ++j) {
             out[j] = b000 * p0[j] + b100 * m0[j] + b001 * p1[j] + b101 * m1[j];

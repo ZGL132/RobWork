@@ -1,0 +1,15 @@
+== git status --short ==
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r2/
+== branch / HEAD ==
+redesign-main
+53768464caf8e3fb1ba51262fa4d210830f782a2
+== ancestry: 8e4a08ac8 ancestor of HEAD? ==
+YES
+== literal range bfe024cd0..53768464c commit count ==
+93
+== impl segment c27349a80..8e4a08ac8 commits ==
+8e4a08ac8 [governance] 将耦合SVD接入上游并删除自写Jacobi核心
+== rework segment 5fb4ebd32..53768464c commits ==
+53768464c [governance] REUSE-T07返工：收敛送验范围并登记性能接受裁决
+== commits between impl head and rework base (other tasks, out of acceptance face) ==
+90

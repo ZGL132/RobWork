@@ -199,9 +199,24 @@ target_include_directories(sdurws_ird_selection PUBLIC
 # 登记表以 core 句法承载，DiagCodes.hpp 文件头注有论证）、零 testkit
 # （T-1——testkit 仅随测试目标消费）、零 sdurw_proximity（R-5——碰撞
 # 唯一实现归 policy，与本单元无交集）。
+# 上游对称特征值复用（REUSE-T43）：Backfill 合成断言的 3×3 对称特征值直接
+# 调用上游 rw::math::LinearAlgebra::eigenDecompositionSymmetric（MATH-EIGEN，
+# Eigen SelfAdjointEigenSolver 升序特征值）——H1 直接 API，删除手写解析闭式
+# 平行核。显式实例化符号在框架编译库内（LinearAlgebra.cpp），须真实库链接
+# 边（drivetrain REUSE-T12 同款落位），不借 core 传递依赖隐藏归属；消费面
+# 仅 Backfill.cpp 私有实现（公共头零 rw 类型）——PRIVATE 最小边。集成模式
+# 复用现有目标；独立冒烟消费同一上游导出包，绝不源码复制/备用算法。
+if(NOT TARGET sdurw_math)
+    if(NOT TARGET RW::sdurw_math)
+        find_package(RobWork CONFIG REQUIRED)
+    endif()
+    # 导出目标仅加同名别名，保持两模式的可静态核查链接面，不包装构建基础。
+    add_library(sdurw_math ALIAS RW::sdurw_math)
+endif()
 target_link_libraries(sdurws_ird_selection PUBLIC
     sdurws_ird_core
     sdurws_ird_evidence)
+target_link_libraries(sdurws_ird_selection PRIVATE sdurw_math)
 
 # 别名（集成模式）：供其余单元以 RWS::ird::selection 消费；冒烟模式无
 # 别名（与骨架期行为一致，DTB §5.1）。

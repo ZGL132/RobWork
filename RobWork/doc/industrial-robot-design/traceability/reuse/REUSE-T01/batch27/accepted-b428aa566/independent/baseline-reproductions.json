@@ -1,0 +1,71 @@
+{
+  "executed": 4,
+  "passed": 2,
+  "failed": 2,
+  "cases": [
+    {
+      "shell": "pwsh",
+      "case": "baseline-deleted-contract-row-false-green",
+      "exitCode": 1,
+      "passed": false,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\before-validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "baseline-selected-no-directory-false-green",
+      "exitCode": 0,
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\before-validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\pwsh-baseline-empty\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "baseline-deleted-contract-row-false-green",
+      "exitCode": 1,
+      "passed": false,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\before-validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "baseline-selected-no-directory-false-green",
+      "exitCode": 0,
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\before-validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent\\powershell-baseline-empty\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    }
+  ]
+}

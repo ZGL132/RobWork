@@ -1,0 +1,33 @@
+== 生产库 industrialrobot/ 全目录 diff base..head ==
+EXIT=0
+== forbiddenFiles: RobWork/RobWork/src ==
+EXIT=0
+== forbiddenFiles: RobWork/RobWorkSim/src ==
+EXIT=0
+== forbiddenFiles: vcpkg ==
+EXIT=0
+== cmake 门禁目录 ==
+EXIT=0
+== 全范围文件清单（A=新增）==
+A	RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T25.json
+A	RobWork/doc/industrial-robot-design/reuse/extensions/GAP-PRJ-DIAG-BOUNDARY-01.md
+A	RobWork/doc/industrial-robot-design/tasks/REUSE-T25.json
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/README.md
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/architecture-gates.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/candidate.patch
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/final-build.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/final-report.json
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/final.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/final.xml
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/green-report.json
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/green.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/green.xml
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/integration-build.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/red-build.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/red-report.json
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/red.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/red.xml
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/run-tests.ps1
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/validate-docs-initial.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/validate-docs.log
+A	RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/verification.json

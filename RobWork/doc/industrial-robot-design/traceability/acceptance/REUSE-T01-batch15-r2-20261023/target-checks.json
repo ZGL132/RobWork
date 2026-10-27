@@ -1,0 +1,316 @@
+[
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_plugin"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_ui_test"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_ui_test"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_ui_test"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_ui_test"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_test"
+    ],
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "actualDirectCompileTargets": [
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_ui_test"
+    ],
+    "registered": [
+      "sdurws_ird_ui_plugin",
+      "sdurws_ird_studio",
+      "sdurws_ird_ui_test"
+    ],
+    "match": true
+  }
+]

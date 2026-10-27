@@ -1,0 +1,20 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+sdurws::ird::testkit::detail::compatible
+99: template <class T>
+100: bool compatible(const T& expectedElem, const T& actualElem,
+101:                 const ToleranceProfile& profile, const SetMatchTraits<T>& traits)
+102: {
+103:     const auto expectedFields = traits.numerics(expectedElem);
+104:     const auto actualFields = traits.numerics(actualElem);
+105:     if (expectedFields.empty() || actualFields.size() != expectedFields.size()) {
+106:         return false;
+107:     }
+108:     for (std::size_t i = 0; i < expectedFields.size(); ++i) {
+109:         if (expectedFields[i].fieldPath != actualFields[i].fieldPath) { return false; }
+110:         if (!core::closeWithin(actualFields[i].valueSi, expectedFields[i].valueSi,
+111:                                profile.resolve(expectedFields[i].fieldPath).tolerance)) {
+112:             return false;
+113:         }
+114:     }
+115:     return true;
+116: }

@@ -1,0 +1,101 @@
+{
+  "base": "d1e416b00433bbd3e62903e583b2ee2b103e0396",
+  "task": "REUSE-T24",
+  "independentAcceptance": "NOT RUN",
+  "runs": [
+    {
+      "label": "red",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/red.xml",
+        "sha256": "ffb68c03a20555545a0f2a2a00fc9102768e695b443004feb807a02d955b80c6"
+      },
+      "report": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/red-report.json",
+        "sha256": "c985d399cde9f1663ab3a23d584bd832f375ceb35a9aa1ef07e980b961332ec9"
+      }
+    },
+    {
+      "label": "green",
+      "exitCode": 0,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/green.xml",
+        "sha256": "e6126c0fc4d5d7e2cee654ce07ccedf5d4f89cec7bf0534eedaad7f63331abcf"
+      },
+      "report": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/green-report.json",
+        "sha256": "b0e78dbaf7c7c70bbe8cd52d72fe484ac27cea196bcd690eb5d7ba915d497031"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "rawSha256": "70c85b2ad5a2086612fd8c98dfe762a257a0d3891c4f9cf038c51fb117a4de37"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "rawSha256": "71507beab65f67fb7b877c06c963476861f3a3262b03776cc4fe35c8281ada85"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "rawSha256": "60c5c9cd36a97027360555d8592b6349b16bd02bea8ae8fcd0825abfc608d148"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "rawSha256": "a4ecb2f47bf44ef392be2bf64d747a4b7ef3606e19626971d6620b94e9724758"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "rawSha256": "a8bd6447dcdda309816ea3c673873863dd471d4c1f3a85a790f3329d9090e5ea"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "rawSha256": "fb7a84955a9dd976618300793f7d9a49dceb651d44cd85e2636227b7e860ee99"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/run-tests.ps1",
+      "rawSha256": "6665b839152cc4065b25943ac49e97c8be0d03202a754002c55ace4127ff4e6f"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/perf.cpp",
+      "rawSha256": "fd0478f844b097238d898cd718e69706f2fdcf38eee5995919d4a26b80dd2913"
+    }
+  ],
+  "performance": {
+    "status": "MEASURED",
+    "sourceBase": "d1e416b00433bbd3e62903e583b2ee2b103e0396",
+    "compiler": "MSVC x64 /std:c++17 /EHsc /utf-8 /O2 /DNDEBUG /MD; separate old/new exact ParamSchema.cpp TUs, baseline symbol rename only; 1000000 calls/sample, 3 rounds alternating order",
+    "freshOldUs": [
+      0.113235,
+      0.1096,
+      0.118854
+    ],
+    "freshNewUs": [
+      0.109992,
+      0.109786,
+      0.115088
+    ],
+    "reusedOldUs": [
+      0.057715,
+      0.058504,
+      0.06085
+    ],
+    "reusedNewUs": [
+      0.058222,
+      0.058767,
+      0.061892
+    ],
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/performance.log",
+      "sha256": "06a3f2e5a46e433225e9fb021fbedbb7f7bdb518bd6af2f8b7ae1bc365e59ad2"
+    },
+    "limitations": "microbenchmark; no end-to-end or failure path throughput claim; retained output capacity and no new parsing loop/lock/normal-path allocation"
+  }
+}

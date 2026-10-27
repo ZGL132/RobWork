@@ -1,0 +1,95 @@
+[
+  {
+    "index": 1,
+    "arguments": [
+      "rg",
+      "-n",
+      "addRender|addFrameAxis|removeDrawable|setWorkCell|getWorkCell|setWorldNode|setTransform",
+      "RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp",
+      "RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp",
+      "RobWork/RobWork/src/rw/graphics/DrawableNode.hpp",
+      "RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp",
+      "RobWork/RobWorkStudio/src/rws/RobWorkStudio.hpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 64
+  },
+  {
+    "index": 2,
+    "arguments": [
+      "rg",
+      "-n",
+      "RenderFrame|RenderLines|RenderText|GLUT|glutBitmap|drawVector3D|glColor4f|glVertex3f",
+      "RobWork/RobWork/src/rwlibs/opengl/RenderFrame.hpp",
+      "RobWork/RobWork/src/rwlibs/opengl/RenderFrame.cpp",
+      "RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp",
+      "RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp",
+      "RobWork/RobWork/src/rwlibs/opengl/RenderText.hpp",
+      "RobWork/RobWork/src/rwlibs/opengl/RenderText.cpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 71
+  },
+  {
+    "index": 3,
+    "arguments": [
+      "rg",
+      "-n",
+      "HostView3DPreviewBackend|HostView3DGateway|QtTextBillboard|previewBackend|currentTcpPose|assembleView3DGateway",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 65
+  },
+  {
+    "index": 4,
+    "arguments": [
+      "rg",
+      "-n",
+      "WorkCellScene|RenderLines|RenderFrame|RenderText",
+      "RobWork/RobWork/gtest",
+      "RobWork/RobWork/example",
+      "-g",
+      "*.cpp",
+      "-g",
+      "CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 9
+  },
+  {
+    "index": 5,
+    "arguments": [
+      "rg",
+      "-n",
+      "HOST-RENDER|HOST-GATEWAY|宿主例外|其他文件|sdurws_ird_ui_plugin",
+      "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 5
+  }
+]

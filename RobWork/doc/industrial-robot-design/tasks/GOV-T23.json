@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "GOV-T23",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "WP-00 主线串行复用计划治理落地",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13",
+    "reuse/policy.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -SerialMainlineOnly -OutputDir RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/r1-fix/ps7",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T23.json"
+  ],
+  "allowedFiles": [
+    "AGENTS.md",
+    "RobWork/doc/industrial-robot-design/AGENTS.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md",
+    "RobWork/doc/industrial-robot-design/acceptance-protocol.md",
+    "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "RobWork/doc/industrial-robot-design/contract-compilation.md",
+    "RobWork/doc/industrial-robot-design/reuse/policy.md",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/tasks/GOV-T23.json",
+    "RobWork/doc/industrial-robot-design/tasks/GOV-T24.json",
+    "RobWork/doc/industrial-robot-design/tasks/GOV-T25.json",
+    "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/**",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T23.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T25.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "WP-00 主线串行复用计划治理落地及原始证据"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "根/分区入口可定位唯一有效计划，旧A/B和任务分支/强制远程流程不冲突",
+    "主线分支通过，main/未知分支拒绝；实际主线使用旧契约或隐式基点等于Head均拒绝缺Base；显式范围正反例与任务分支兼容性有效",
+    "文档及近期契约检查真实通过，产品构建NOT RUN（不适用），独验不自签"
+  ],
+  "note": "所有者授权主工作树redesign-main串行，本地提交不操作远程；WP别名仅用于migration调度。不批准新核心、上游扩展或权限放宽。本包起始SHA=58962b338505fc9f69b6a9f1a50e2d55712efffc。首轮独验FAIL及GOV-T23-R1-01原样保留于traceability/acceptance/GOV-T23-20261024-r1.json。返工从4d0f1ab024f093b65d9839d090b124da721aa69f修复实际主线/隐式空范围Base保护并补回归，实施证据见traceability/reuse/WP-00/r1-fix/。R2独立复验PASS，绑定85cfc8f570edc66fa7b20195e75e3587ab9c8e3d，记录traceability/acceptance/GOV-T23-20261024-r2.json，问题闭环；本次据该独验登记done，后续纯记录提交不属于被验实现SHA。所有者仅批准本次独验子智能体及本问题复验，未解除常规禁令；allowedFiles只补确切验收证据，不扩大生产/权限。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T23.json"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "reviewedCommit": "bb997f1cfb89c8d8eb24b457d2c82d4c0711af44",
+  "baseCommit": "7af7e86",
+  "rows": 20,
+  "units": [
+    "io",
+    "testkit"
+  ],
+  "allPending": true,
+  "failedBindingCount": 0,
+  "catalog": [
+    {
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "shaMatches": true,
+      "target": "sdurw_core",
+      "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "targetShaMatches": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "shaMatches": true,
+      "target": "sdurw_core",
+      "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "targetShaMatches": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "shaMatches": true,
+      "target": "sdurw_core",
+      "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "targetShaMatches": true
+    }
+  ]
+}

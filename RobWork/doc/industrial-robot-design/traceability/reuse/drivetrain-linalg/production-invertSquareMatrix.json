@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "drivetrain.invertSquareMatrix",
+  "target": "sdurws_ird_drivetrain",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+      "sha256": "7b23f98afcd34d88920246b324ca6541293fda88357f4529eaf440b408d91e9c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+      "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+      "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/MappingCore.hpp",
+      "sha256": "6a22756cee6c290ebd28daa864b3924ce774a71be6753404147cb2fcc5675a42"
+    }
+  ],
+  "normal": {
+    "command": "& \"D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_drivetrain_test.exe\" --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-test.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-test.xml",
+      "sha256": "8911de39c4e8e535d938cf8426b2c7e3589e15dd17bd8a0766bdc481faecf0c8"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/run.log",
+      "sha256": "79a3773754b98a88c6a403cb4f56be1a4386cadb2e6c06f816e10c1eec61a3cf"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "& \"D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_drivetrain_test.exe\" --gtest_filter=DtMappingR2Linalg.InverseAnalyticOracle_WindowConsumers --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/disconnected/inverse/gtest.xml",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/disconnected/inverse/gtest.xml",
+      "sha256": "aa6c7b6a66d209e4272dd85208fe0ec28c407889a590cafc0cbe28b800d268fc"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/disconnected/inverse/run.log",
+      "sha256": "14a3de272a8c01a61025f1fca67b40aae4ab1c3e969782e6d953ee17bf1864a2"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+      "originalSha256": "7b23f98afcd34d88920246b324ca6541293fda88357f4529eaf440b408d91e9c",
+      "description": "invertSquareMatrix将上游LinearAlgebra::inverse返回值放大1e300（有限但极端——下游溢出触发DataInsufficient，恰好命中窗口消费断言）。真实重建产品库并重跑筛选用例：失败1用例1断言（exit 1）；随后恢复源码核验SHA一致并复跑全绿42+15"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/disconnected/inverse/MappingCore.mutated.cpp",
+      "sha256": "0758f713631579bab9bd2fdd43343a7c4eb3be90fd0e222e5619ffcc95fc40ab"
+    }
+  },
+  "oracle": {
+    "command": "& \"D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_drivetrain_test.exe\" --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-test.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-test.xml",
+      "sha256": "8911de39c4e8e535d938cf8426b2c7e3589e15dd17bd8a0766bdc481faecf0c8"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/run.log",
+      "sha256": "79a3773754b98a88c6a403cb4f56be1a4386cadb2e6c06f816e10c1eec61a3cf"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "DtMappingR2Linalg.InverseAnalyticOracle_WindowConsumers"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "& \"D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_drivetrain_test.exe\" --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-test.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/linalg-drivetrain-test.xml",
+      "sha256": "8911de39c4e8e535d938cf8426b2c7e3589e15dd17bd8a0766bdc481faecf0c8"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/normal/run.log",
+      "sha256": "79a3773754b98a88c6a403cb4f56be1a4386cadb2e6c06f816e10c1eec61a3cf"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "DtMappingR2Linalg.InverseAnalyticOracle_WindowConsumers"
+    ]
+  },
+  "note": "正常/oracle/上游对照来自同一最终完整执行，原件只保存一次；真实断开另编另跑（筛选最小失败集形态，1/1/1）。REUSE-T12收口遗留登记补全由集成会话按所有者指示完成；独验未执行。2026-10-25返工复跑（独验r1 ISSUE-2/ISSUE-3处置）：本报告全部绑定与四面证据按当前树（MappingCore.cpp含1085注释更正＋MappingR2GoldenTest新增Perf组）真实重跑刷新，断链两处变异同形态重建（svd sigma覆盖全1／inverse返回值1e300，均1用例1失败断言exit 1），源码恢复后Digest一致并复跑全绿43+15（rework-20261025/04号证据）。"
+}

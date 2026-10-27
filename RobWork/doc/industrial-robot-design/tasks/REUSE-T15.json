@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T15",
+  "unit": "core",
+  "masterWp": "WP-A",
+  "title": "冻结FNV128成熟定宽算术薄适配",
+  "status": "done",
+  "branch": "codex/reuse-foundation",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#3.6",
+    "units/core.md#3",
+    "traceability/reuse/REUSE-T15/README.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T15.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/IdentityTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/DigestTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T15.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T15.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/**",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/**",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "对应GAP授权边界、原公开协议与owner不变",
+    "数值/真实文件及受影响回归通过，独立验收由所有者安排",
+    "全量继承drivetrain缺口保留，不伪报PASS"
+  ],
+  "note": "所有者2026-10-23逐项批准既有提案；本工作树唯一修改权。无远程/上游修改/合入，不自签独验。 execution/ui矩阵只因核心契约依赖实变刷新输入绑定，保留pending及原债务，不代表业务实施。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T15-20261025-r1.json（复跑原件在其同名目录），verdict=pass，绑定送验 SHA=adaf890031190c71d7705335bcac220c3e31780f（base=f378f01c，送验范围=冻结FNV128成熟定宽算术薄适配）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；验收员亲跑13项通过——其中verify-task-scope对送验范围字面FAIL（161越界路径）经逐文件归因全部落于非T15自有面（同交付提交的T16批次包、T14失败候选证据与三个治理提交），T15自有53文件全在allowed面、禁止面零命中，按范围实质合规计入通过并在记录checks[1]/limitations显式登记字面结果。限制（limitations原文口径）：FNV性能区间为所有者2026-10-23已接受裁决（16B/32B实测与接受区间一致或更快），本轮不新设阈值；实施期继承的drivetrain REUSE-COVERAGE阻断已由范围内6fb26b31d合入清除；validate-reuse仍为governance only（DEBT=16、UNRESOLVED=1399未关闭）。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T15.json"
+  },
+  "outputs": [
+    "有界修正、原始证据、矩阵与待独验交接"
+  ]
+}

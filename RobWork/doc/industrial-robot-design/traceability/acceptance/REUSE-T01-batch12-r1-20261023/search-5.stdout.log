@@ -1,0 +1,8 @@
+16:bool RealProcessOps::createProcess(const std::wstring& commandLine, bool inheritHandles,
+19:    // CreateProcessW 文档口径（§6.6 进程创建行）：
+20:    //   - CREATE_SUSPENDED：主线程挂起启动——Job assign 必须发生在子进程
+26:    //   - 命令行缓冲可变：文档允许 CreateProcessW 改写——传非 const 缓冲。
+30:    const BOOL ok = ::CreateProcessW(nullptr, mutableCmd.data(), nullptr, nullptr,
+32:                                     CREATE_SUSPENDED | CREATE_NO_WINDOW,
+52:LaunchResult launchWorkerProcess(const std::wstring& executablePath,
+87:    if (!ops.createProcess(cmd.str(), /*inheritHandles=*/true, &pi)) {

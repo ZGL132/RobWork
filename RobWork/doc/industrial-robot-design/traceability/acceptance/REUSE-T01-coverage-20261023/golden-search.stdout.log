@@ -1,0 +1,34 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:57:function conditionIdHex(seed) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:63:function trapezoid(ts, ys) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:77:function rneaReference(m, gz, q, qd, qdd) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:84:    const cosQ2 = Math.cos(q[1]);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:89:      ? gz * (m1 * c1 * Math.cos(q[0]) + m2 * (L1 * Math.cos(q[0]) + c2 * Math.cos(q[0] + q[1])))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:90:      : gz * m2 * c2 * Math.cos(q[0] + q[1]);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:92:    const h = m2 * L1 * c2 * Math.sin(q[1]);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:106:function statValue(row, token) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:110:    case 2: return Math.abs(row.qd);       // max|q̇|
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:111:    case 3: return Math.abs(row.qdd);      // max|q̈|
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:119:function mapCase(m, gz, cs, condHex) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:121:    const parts = rneaReference(m, gz, s.q, s.qd, s.qdd);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:171:    rms.push({ jointIndex: j, rmsTau: Math.sqrt(trapezoid(ts, tau2) / cycle) });
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:178:    const ePos = trapezoid(ts, ps.map((p) => (p > 0 ? p : 0)));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:179:    const eNeg = trapezoid(ts, ps.map((p) => (p < 0 ? p : 0)));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:213:function mergeEnvelopeReference(caseIds, perCase) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:106:function aabb(x0, x1, y0, y1, z0, z1) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:210:function splitmixNext(state) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:219:function unitFrom(u64) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:223:function sha256Hex(buf) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:227:function patchCanonicalBytes(items) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:250:function candidateIdHex(oidCanonical, cvCanonical, patchIdHex) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:261:function computeMetrics(f) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:267:  const margin = f.margins.length === 0 ? null : Math.min(...f.margins);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:273:function generateBatch(cfg, vars) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:326:function statusOf(kind) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:353:function closeWithin(a, b, tol) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:355:  return Math.abs(a - b) <= tol.relative * Math.abs(b) + tol.absolute;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:358:function dominates(a, b, objectives) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:381:function bindObjectives(list) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:392:function buildFront(members, objectives) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:414:        if (dominates(unique[j], unique[i], objectivesBound)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:474:function dominanceMatrix(front, objectives) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs:484:      if (dominates(ma, mb, bound)) cells.push({ a, b });

@@ -1,0 +1,29 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-probe-export\ird-core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-probe-export\ird-testkit\Release\sdurws_ird_testkit.lib
+  UpstreamSuitabilityTest.cpp
+  TestMainReport.cpp
+  ird_reuse_audit_probe.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-probe-export\Release\ird_reuse_audit_probe.exe

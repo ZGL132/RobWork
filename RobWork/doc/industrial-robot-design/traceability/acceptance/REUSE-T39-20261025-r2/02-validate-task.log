@@ -1,0 +1,6 @@
+REUSE-POSITIVE : RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/final.log
+[31;1mException: [0mD:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-task.ps1:137[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m 137 | [0m … if ($LASTEXITCODE -ne 0) { [36;1mthrow 'H1-H6 task reuse contract failed'[0m }[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mH1-H6 task reuse contract failed[0m

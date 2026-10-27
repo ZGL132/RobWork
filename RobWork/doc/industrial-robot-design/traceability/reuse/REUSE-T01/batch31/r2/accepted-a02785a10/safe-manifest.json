@@ -1,0 +1,207 @@
+{
+  "scope": "independent acceptance top-level reports/logs/results/scripts only",
+  "excludedDirectories": [
+    "clone",
+    ".git",
+    "build",
+    "fixture"
+  ],
+  "onlyExcludedEligibleFile": "safe-manifest.json",
+  "entries": [
+    {
+      "path": "acceptance-before-whitespace-classification.json",
+      "bytes": 1435,
+      "rawSha256": "eb678778f73fde352d5db6a9911244aa1d595506abcdc1bf4530b85294a95789"
+    },
+    {
+      "path": "acceptance.json",
+      "bytes": 1444,
+      "rawSha256": "909e1c1e285d1911cbbbc472f2e6103009f8a94e64fc996833a2b2c3f7ab6203"
+    },
+    {
+      "path": "audit.log",
+      "bytes": 119,
+      "rawSha256": "899de006e27307df45d94bb4fe35e1541c20a2c66ae33b2f8d8876bd24b5fa8a"
+    },
+    {
+      "path": "audit.py",
+      "bytes": 7772,
+      "rawSha256": "c7be3545ef6c54c9db94ab263457ee736ae625100d726980cc7c4c10104bc0ab"
+    },
+    {
+      "path": "basic-read.txt",
+      "bytes": 2438,
+      "rawSha256": "47a3232b8068c06ec3fe2ee1a959760c8a5413b6375c210b534dd12ad7d70a19"
+    },
+    {
+      "path": "catalog-unit.json",
+      "bytes": 4195,
+      "rawSha256": "b95fd57c1ff5f0cfd3447af69ff7137d9863f3d07a96de54fb9ea2098b60cb5c"
+    },
+    {
+      "path": "checkout.log",
+      "bytes": 79,
+      "rawSha256": "2b2c4cd148b5d64db8862ff8dc4eb6505d4c2eddce4a10f60fa815ba75d65948"
+    },
+    {
+      "path": "checks-before-gate-completion.json",
+      "bytes": 4802,
+      "rawSha256": "b95949a93270fc55a99fcae8f582737150d827e42053e61be4767da87c984e4c"
+    },
+    {
+      "path": "checks-initial-snapshot.json",
+      "bytes": 4736,
+      "rawSha256": "8321afba3e13c64e2fa3525f06094e34658ddea394e91436b7fc6a492e281ffc"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 4802,
+      "rawSha256": "b95949a93270fc55a99fcae8f582737150d827e42053e61be4767da87c984e4c"
+    },
+    {
+      "path": "clone-status-final.log",
+      "bytes": 0,
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "clone.log",
+      "bytes": 117,
+      "rawSha256": "4f94d79fd9781bac4a6128ea68b4b24af11e81c29528f90e6a32041796359e22"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1493,
+      "rawSha256": "ff57273b49ee331d6d0641907d9a08de585bc83f3f26c47837071888d869a8c2"
+    },
+    {
+      "path": "commit-lint.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "commit-lint.log",
+      "bytes": 71,
+      "rawSha256": "bdf16b54ebaef5abcdcc20a503d0373006eb847e9f7c59a30900a947f2182bfa"
+    },
+    {
+      "path": "diff-check-cr-at-eol.exit.txt",
+      "bytes": 3,
+      "rawSha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b"
+    },
+    {
+      "path": "diff-check-cr-at-eol.log",
+      "bytes": 145,
+      "rawSha256": "4a4b1dafbae576e1427c2b5a69f73d3d52fd9495fe2764597635911eb30df70e"
+    },
+    {
+      "path": "docs.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "docs.log",
+      "bytes": 2725,
+      "rawSha256": "14f7c9ffd8355b7a7698587d0eb8d98b05b3a94291f59572a469262bf06379ad"
+    },
+    {
+      "path": "extra-verification.json",
+      "bytes": 2849,
+      "rawSha256": "6bfdfef6026f85cd1997e45c595f95ccdcd272bddc718cbe22d629e3f716bdfd"
+    },
+    {
+      "path": "extra.log",
+      "bytes": 263,
+      "rawSha256": "08136c57e6b35a65fe9ae2b2be9dad043cba487d36ccd3ed4f18ad08b1af5060"
+    },
+    {
+      "path": "extra.py",
+      "bytes": 2212,
+      "rawSha256": "ed23803e61c17e9f645a6953d30d8f6928c064d333f06eb196f7931086690c1b"
+    },
+    {
+      "path": "finalize.py",
+      "bytes": 6456,
+      "rawSha256": "c7d4b0a1b890f3915e1575d3e529f3d8112b1a1740dd0595230c71864138e780"
+    },
+    {
+      "path": "inspect.py",
+      "bytes": 1052,
+      "rawSha256": "3ba9e24cf3084d6b2b1a9fb29a6aaaf759a2b1817609352b83da820219637374"
+    },
+    {
+      "path": "raw-blob-verification.json",
+      "bytes": 30176,
+      "rawSha256": "9da0259760dd99d1f2c5c7b6d0e1a3cf13a6e00f481722418dbccc24a73a6299"
+    },
+    {
+      "path": "referenced-tests.json",
+      "bytes": 372,
+      "rawSha256": "1007aebfe711cd0b097d3fd6e2a162322fe146aec652de8c02b0c5aa3adb1066"
+    },
+    {
+      "path": "report.md",
+      "bytes": 3166,
+      "rawSha256": "b6bc8570b17c920b728322fc15357259a1e08d18f581543b179e272f4157c996"
+    },
+    {
+      "path": "reuse.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "reuse.log",
+      "bytes": 2487,
+      "rawSha256": "5c06490326fa84b4afcfaa4338950b7a02f50e1e5246d529b3618613c6c40606"
+    },
+    {
+      "path": "row-verification.json",
+      "bytes": 9286,
+      "rawSha256": "11d93e6fc1efe88ad0c013e7a72693554fd25781b5b0bf8b977f752c50aa5b32"
+    },
+    {
+      "path": "scope-paths.json",
+      "bytes": 6541,
+      "rawSha256": "2555dcdf9f9797988e9ad9dffb0e7b5a72139de26bf6c7c6bca62cffba604b31"
+    },
+    {
+      "path": "scope.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "scope.log",
+      "bytes": 188,
+      "rawSha256": "802584063d040f6eaf875b67cb7057d620aa7446196e10ffa65d577d7a02837f"
+    },
+    {
+      "path": "shared-status-final.log",
+      "bytes": 90,
+      "rawSha256": "46e677ac34a50995dee1d0435af2f37df8d2393018cf18f7bb9d4d9cd55aa2f1"
+    },
+    {
+      "path": "task.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "task.log",
+      "bytes": 2518,
+      "rawSha256": "72e5a8d0aaa79b73420089aced50c7b706e25de318eb83cbd3ec7c789cabd204"
+    },
+    {
+      "path": "upstream-doc-search.exit.txt",
+      "bytes": 1,
+      "rawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "upstream-doc-search.stderr.log",
+      "bytes": 0,
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "upstream-doc-search.stdout.log",
+      "bytes": 1635,
+      "rawSha256": "8244f5e727e2dbe705eeec0478a31af944e65c835396d738790a42ba78ae1a08"
+    }
+  ]
+}

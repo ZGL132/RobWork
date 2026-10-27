@@ -1,0 +1,16 @@
+<testsuite name="serial-mainline" tests="10" failures="1" skipped="0" errors="1">
+  <testcase name="serial-mainline" />
+  <testcase name="serial-task-branch" />
+  <testcase name="serial-main-rejected" />
+  <testcase name="serial-unknown-rejected" />
+  <testcase name="serial-base-required" />
+  <testcase name="serial-explicit-scope" />
+  <testcase name="serial-forbidden-rejected" />
+  <testcase name="serial-outside-rejected" />
+  <testcase name="serial-legacy-mainline-base-required">
+    <failure>See serial-legacy-mainline-base-required.log</failure>
+  </testcase>
+  <testcase name="driver-completion">
+    <error>notRun=3</error>
+  </testcase>
+</testsuite>

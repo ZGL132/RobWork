@@ -1,0 +1,10 @@
+<testsuite name="serial-mainline" tests="8" failures="0" skipped="0">
+  <testcase name="serial-mainline" />
+  <testcase name="serial-task-branch" />
+  <testcase name="serial-main-rejected" />
+  <testcase name="serial-unknown-rejected" />
+  <testcase name="serial-base-required" />
+  <testcase name="serial-explicit-scope" />
+  <testcase name="serial-forbidden-rejected" />
+  <testcase name="serial-outside-rejected" />
+</testsuite>

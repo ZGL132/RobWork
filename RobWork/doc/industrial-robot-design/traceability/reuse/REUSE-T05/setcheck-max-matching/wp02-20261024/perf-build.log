@@ -1,0 +1,15 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/perf-compare/CMakeLists.txt
+  perf_probe.cpp
+  SetCheckMatch.cpp
+  ToleranceProfile.cpp
+  JsonLite.cpp
+  Dataset.cpp
+  TestPaths.cpp
+  Compare.cpp
+  Units.cpp
+  Digest.cpp
+  正在生成代码...
+  setcheck_perf_probe.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp02-setcheck-perf\Release\setcheck_perf_probe.exe

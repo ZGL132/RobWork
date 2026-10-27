@@ -1,0 +1,40 @@
+t09-chain-scope: commits=7 files=38 allowedRules=13 forbiddenRules=5
+  [forbidden] RobWork/doc/industrial-robot-design/reuse/catalog.json  <= RobWork/doc/industrial-robot-design/reuse/catalog.json
+  [allowed]   RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T09.json
+  [allowed]   RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json
+  [allowed]   RobWork/doc/industrial-robot-design/reuse/trajectory-polynomial-migration.md
+  [allowed]   RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/benchmark/bench-result.txt
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/benchmark/polynomial-replace-bench.cpp
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/Smooth.mutated.cpp
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/smooth/gtest.xml
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/smooth/run.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/TimeParam.mutated.cpp
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/timeparam/gtest.xml
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/timeparam/run.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/ird-gates-final.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/ird-gates.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/merged-reuse-t01-validate-docs.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/merged-reuse-t01-validate-reuse.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/sandbox-integrated-validate-docs.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/sandbox-integrated-validate-reuse.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/t09-register.ps1
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/test-reuse-gov-t09.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/validate-docs-t09.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/validate-reuse-head-frozen-base.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/gates/validate-reuse-t09.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-contract-report.json
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-contract-run.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-contract.xml
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-report.json
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-run.log
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test.xml
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-smooth.json
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-timeparam.json
+  [allowed]   RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/README.md
+  [allowed]   RobWork/doc/industrial-robot-design/units/trajectory.md
+  [allowed]   RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp
+  [allowed]   RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp
+  [allowed]   RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/SmoothTest.cpp
+  [allowed]   RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp
+t09-chain-scope: total=38 allowed=37 forbidden=1 out-of-scope=0

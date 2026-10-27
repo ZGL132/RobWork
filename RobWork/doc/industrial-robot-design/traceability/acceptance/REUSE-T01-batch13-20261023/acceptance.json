@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B13",
+  "result": "PASS",
+  "scope": "仅B13新增54关系与相关治理登记；不授予全T01退出、T02准入或生产迁移批准",
+  "reviewedCommit": "63e86ba5a633e93c9027165756298d76536166b9",
+  "reviewedParentCommit": "d38e4472ec403d9d9f1b7201a0f8e2b4b83f7a0c",
+  "repo": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\repo",
+  "clean": true,
+  "changedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md"
+  ],
+  "counts": {
+    "newRelations": 54,
+    "execution": 36,
+    "modeling": 18,
+    "allRelations": 416,
+    "pending": 413,
+    "proposal": 3,
+    "closedFiles": 0,
+    "hashChecks": 352,
+    "searchReplays": 6,
+    "validationPassed": 4,
+    "validationFailed": 0,
+    "validationSkipped": 0,
+    "cppNotRun": true,
+    "guiNotRun": true,
+    "performanceNotRun": true
+  },
+  "findings": [],
+  "checks": [
+    {
+      "name": "validate-task",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "pwsh -NoProfile -File <repo>/RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile <repo>/RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -RepoRoot <repo>",
+      "log": "task.log"
+    },
+    {
+      "name": "validate-docs",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "pwsh -NoProfile -File <repo>/RobWork/scripts/industrialrobot/validate-docs.ps1 -RepoRoot <repo>/RobWork",
+      "log": "docs.log"
+    },
+    {
+      "name": "validate-reuse frozen",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "pwsh -NoProfile -File <repo>/RobWork/scripts/industrialrobot/validate-reuse.ps1 -RepoRoot <repo> -Head 63e86ba5a633e93c9027165756298d76536166b9 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+      "log": "reuse.log"
+    },
+    {
+      "name": "scoped git diff --check",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "git -C <repo> diff --check HEAD^ HEAD -- <seven changed governance files>",
+      "log": "diff-check.exit.txt"
+    }
+  ],
+  "toolHashes": [
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "rawSha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "rawSha256": "25f27251fafa9cb40146243afc4916ea82b93cdf8708b6fa050c4b37d77f0e57"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "rawSha256": "4161db742d876d18b1d477c5ccd83bcc1598403f05cafd013a11527c8497ec89"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "rawSha256": "e9a46c913f6ed8afc84cb04caffb119411bf77aa967eade090fe7f16d2cf0462"
+    }
+  ],
+  "reviewDriverHashes": [
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\check-b13.ps1",
+      "rawSha256": "823078222eff6a6f891756c88cf084d034babc8c713b94ad936ef256a7494a05"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\write-report.ps1",
+      "rawSha256": "b5a0dae41d36bb2ce219182673c1bed80623b148ca31fa749f4971bad2a3c988"
+    }
+  ],
+  "semanticReview": [
+    "XacroExpand.cpp完整定义审读：emitElement 557-872为实际定义；匿名/外部作用域准确；普通XML层级不计展开深度，总字节护栏仅普通元素收尾，未证明峰值内存。",
+    "ChannelProtocol.cpp完整定义审读：22-63确含put/get U16/U32/U64六函数，代表符号putU16的分组边界已明示；其余35条关系为真实完整定义。",
+    "UTIL-XML真实存在load/save/getRootElement，BoostXMLParser实现由sdurw_core构建；PluginTest.loadDirectPlugin真实消费DOMParser。pugixml已有load_buffer/print/save/xml_writer，未误报无序列化。",
+    "UTIL-BINARCHIVE标量写宿主表示、string格式化长度语义与固定LE协议不等价，候选排除边界正确；摘要委托core，hex只是文本映射。",
+    "MDL-19与TASK-03引用匹配；输入字节/依赖树来自io、栈上Engine生命周期、未重读文件；worker纯值/身份边界及diagnostics文案权威保持待核，未新授权限。",
+    "六条搜索按arguments数组真实重放，比较排序后的行多重集合与exitCode；命中行数376/10/134/160/16/14均一致。第六条读取现有外部安装pugixml头，非冻结Git内文件。"
+  ],
+  "limitations": [
+    "全部新增关系pending，未作适用性运行探测、未跑上游测试或产品C++/GUI/性能。",
+    "attempt 24字节/无NUL、跨片type/identity、seq/fragmentSize极值和缓冲峰值均为静态待核，未声称已复现。",
+    "完整生产消息往返、Xacro输出适配字节回归、project/reporting及其他工具覆盖留后续。",
+    "本轮未改repo、未提交/推送/合入。"
+  ]
+}

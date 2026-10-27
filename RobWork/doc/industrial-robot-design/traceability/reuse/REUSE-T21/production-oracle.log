@@ -1,0 +1,12 @@
+{
+  "verdict": "PASS",
+  "counts": {
+    "cases": 22831,
+    "overflow": 13291,
+    "fixed": 3494,
+    "overflow_errors": 0,
+    "unchanged_path_errors": 0,
+    "normal_rounding_differences": 36
+  },
+  "production_allocation_log": "production-new-calls=0\n"
+}

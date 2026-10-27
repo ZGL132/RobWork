@@ -1,0 +1,4 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp', LF will be replaced by CRLF the next time Git touches it
+REUSE-FRESHNESS : AGENTS.md
+[31;1mWrite-Error: [31;1mH1-H6 reuse governance failed[0m

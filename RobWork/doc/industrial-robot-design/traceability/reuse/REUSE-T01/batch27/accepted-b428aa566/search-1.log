@@ -1,0 +1,4 @@
+56:        static void readFile (const std::string& file_name, std::vector< char >& result);
+78:        static std::string resolveFileName (const std::string& filename,
+122:        static std::vector< std::string > getFilesInFolder (const std::string& path, bool recursive,
+134:        static void getFilesInFolder (const std::string& path, const std::string& fileMask,

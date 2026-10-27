@@ -1,0 +1,16 @@
+2026-10-26T06:10:42+0800
+branch: redesign-main
+HEAD: d8508b1ccd4cb3e033e0638e277aa36f0000e137
+acceptance base: 45e3e80ea08fd65e564501212347cfdc9d9a356b
+acceptance head: d8508b1ccd4cb3e033e0638e277aa36f0000e137
+HEAD==送验head: d8508b1ccd4cb3e033e0638e277aa36f0000e137 -eq d8508b1ccd4cb3e033e0638e277aa36f0000e137
+base is ancestor of head: yes
+commits in range:
+d8508b1cc [WP-13-T36] F-961 policy名称规则修复落地与全文件解决批收口
+3d5753861 [governance] 新增test-fixture测试夹具权限例外解除IRD-GATE-AD死锁（待所有者追认）
+worktree status:
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261025-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261025-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/
+(untracked = acceptance evidence dirs only)
+RWS_BUILD_INDUSTRIALROBOT: RWS_BUILD_INDUSTRIALROBOT:BOOL=ON

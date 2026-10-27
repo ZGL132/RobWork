@@ -858,8 +858,10 @@ TEST(MdlBasePlacementEdit, EulerCompilesAndCodecRoundTrips_MDL22_AT37)
         const auto resolved=runtime::resolveWorldBaseTransform(toRuntimeBase(ws.design.basePlacement));
         ASSERT_TRUE(resolved.ok());
         const double cr=std::cos(rpy[0]),sr=std::sin(rpy[0]),cp=std::cos(rpy[1]),sp=std::sin(rpy[1]),cy=std::cos(rpy[2]),sy=std::sin(rpy[2]);
+        // 此处经过RPY→EAA→runtime矩阵，仅表示转换采用所有者批准的1e-6
+        // 最大元素绝对误差（需求附录D第13项）；其它预设/合法性断言不放宽。
         expectRotationEquals(resolved.get().R(),cy*cp,cy*sp*sr-sy*cr,cy*sp*cr+sy*sr,
-            sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr,-sp,cp*sr,cp*cr,1e-12);
+            sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr,-sp,cp*sr,cp*cr,1e-6);
         EXPECT_DOUBLE_EQ(resolved.get().P()[0],0.1);EXPECT_DOUBLE_EQ(resolved.get().P()[1],-0.2);EXPECT_DOUBLE_EQ(resolved.get().P()[2],0.3);
         EXPECT_EQ(ws.changes.size(),before.changes.size()+1);
         RobotDesignCodec codec;const auto encoded=codec.encode(ObjectVariant{ws.design},kCurrentFormatVersion);

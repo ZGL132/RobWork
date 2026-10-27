@@ -1,0 +1,9 @@
+# 旧核符号产品树复扫（验收现场 2026-10-27，HEAD=011f45ab8cb8fd2970be892933c87d48fae09186）
+## rg 'RneaChain|buildRneaChain|computeGeometry|rneaTorques' → 零命中
+rg_exit=1（1=零命中）
+
+## rg 'SampleGeometry' → 仅注释留痕
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics\src\InverseDynamics.cpp:104:// 由 RNE 面设备承载——WP-07 迁移删除 Vec3/Mat3/SampleGeometry 旧核）。
+
+## rg 自持 Vec3/Mat3 定义 → 零命中
+rg_exit=1（1=零命中）

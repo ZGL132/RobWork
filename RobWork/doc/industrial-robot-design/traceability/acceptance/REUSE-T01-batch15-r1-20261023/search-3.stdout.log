@@ -1,0 +1,65 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp:14: *     装配序下恒空——assembleView3DGateway 在 initialize 装配段执行，绑
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp:290:    // ①正向：延迟现取形态恰一处（缝唯一绑定产品点＝assembleView3DGateway；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp:648:        unitRoot() / "ui" / "plugin" / "HostView3DPreviewBackend.cpp"));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp:650:        << "HostView3DPreviewBackend.cpp 读取失败（扫描面失真）";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:2: * @file   HostView3DGatewayGuiTest.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:13: * 门控说明：本文件与 plugin/HostView3DGateway.cpp 同源编入 ui_gui_test
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:40:#include "plugin/HostView3DGateway.hpp"               // 被测网关（同单元 PRIVATE 面——插件目标同源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:92:    : HostView3DGateway::HostPresentationObject {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:142:    std::unique_ptr<HostView3DGateway> make()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:144:        HostView3DGateway::Deps deps;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:159:            deps.previewBackend.draw = [this](const ui::View3DPreviewUpdate& u) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:163:            deps.previewBackend.clear = [this]() { ++previewClears; };
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:165:        return std::make_unique<HostView3DGateway>(std::move(deps));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:181:TEST(HostView3DGateway, UpstreamPick_ResolvesSelectsAndDispatches_UI_T45)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:209:TEST(HostView3DGateway, UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:237:TEST(HostView3DGateway, PresentationOutlet_TransactionSemantics_UI_T45)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:249:        [](const std::shared_ptr<HostView3DGateway::HostPresentationObject>&
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:296:TEST(HostView3DGateway, PresentationOutlet_IncompleteView_FailsCleanly_UI_T45)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:315:TEST(HostView3DGateway, TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:323:    EXPECT_FALSE(degraded->currentTcpPose("dev").has_value())
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:339:    HostView3DGateway::Deps deps;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:348:    auto gateway = std::make_unique<HostView3DGateway>(std::move(deps));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:350:    const auto pose = gateway->currentTcpPose("dev");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:369:TEST(HostView3DGateway, Constructor_MissingRequiredSeams_Throws_UI_T45)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:374:    HostView3DGateway::Deps deps;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:378:    EXPECT_THROW({ HostView3DGateway gw(deps); (void)gw; }, std::invalid_argument);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:380:    EXPECT_NO_THROW({ HostView3DGateway gw(deps); (void)gw; })
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:390:TEST(HostView3DGateway, PreviewOutlet_DegradedApplyAndClear_UI_T33)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:474:TEST(HostView3DGateway, PreviewOutlet_DrawFailureKeepsOld_UI_T33)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:511:TEST(HostView3DGateway, UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:547: * 链路零修订写入口、零结果失效触发面（结构性保证：HostView3DGateway
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp:550:TEST(HostView3DGateway, UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:2: * @file   HostView3DGateway.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:9:#include "HostView3DGateway.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:17:HostView3DGateway::HostView3DGateway(Deps deps)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:34:bool HostView3DGateway::handleViewDoubleClick(const QPoint& pos)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:67:PresentationApplyReport HostView3DGateway::applyPresentation(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:105:void HostView3DGateway::releasePresentation()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:120:HostView3DGateway::currentTcpPose(const std::string& deviceName)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:141:void HostView3DGateway::onSceneCleared()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:154:bool HostView3DGateway::applyPreview(const View3DPreviewUpdate& update)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:158:    if (!m_deps.previewBackend.draw) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:163:    if (!m_deps.previewBackend.draw(update)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:171:void HostView3DGateway::removePreview()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:173:    if (m_deps.previewBackend.clear) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp:174:        m_deps.previewBackend.clear();  // 幂等（后端清除可重复调用）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:425:        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/QtTextBillboard.cpp  # UI-T77——被测 TU 的同源依赖（F-556 承载件）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:784:        gui_test/HostView3DGatewayGuiTest.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:785:        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostView3DGateway.cpp)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:927:        plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:928:        plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:931:        plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件——呈现适配器骨架标签依赖）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1055:        plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1056:        plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（与插件目标同源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1059:        plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件，与插件目标同源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:125:#include "HostView3DGateway.hpp"                 // 宿主三维网关（UI-T45——上行拾取/呈现出口/TCP 源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:126:#include "HostView3DPreviewBackend.hpp"          // 会话预览渲染后端（UI-T33——场景原语绑定）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:1478:    assembleView3DGateway();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:4724:void IrdWorkbenchHostPlugin::assembleView3DGateway()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:4746:    HostView3DGateway::Deps deps;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:4806:    m_view3dPreviewBackend = std::make_unique<HostView3DPreviewBackend>(studio);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:4807:    deps.previewBackend.draw = [this](const ui::View3DPreviewUpdate& update) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:4811:    deps.previewBackend.clear = [this]() {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:4815:    m_view3dGateway = std::make_unique<HostView3DGateway>(std::move(deps));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:4833:                       ? m_view3dGateway->currentTcpPose(deviceName)

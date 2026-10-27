@@ -1,0 +1,8 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp
+sdurws::ird::testkit::ReferenceSource::operator==
+67:     bool operator==(const ReferenceSource& o) const noexcept
+68:     {
+69:         return method == o.method && scope == o.scope
+70:             && independentOfProductionImpl == o.independentOfProductionImpl
+71:             && description == o.description;
+72:     }

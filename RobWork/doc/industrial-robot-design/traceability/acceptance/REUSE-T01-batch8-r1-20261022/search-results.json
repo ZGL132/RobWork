@@ -1,0 +1,66 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"json_parser|boost/json|nlohmann|rapidjson|utf8|SHA256|sha256\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest --glob \"*.hpp\" --glob \"*.cpp\" --glob CMakeLists.txt",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 3,
+    "command": "rg -n \"utf8|utf_8|on_number|on_boolean|on_null|push_back|skip_introduction|read_json|write_json\" D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser.hpp D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser/detail/standard_callbacks.hpp D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser/detail/narrow_encoding.hpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 4,
+    "command": "rg -n \"endian_load|endian_store|add_library|1.92.0\" D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/boost_endian/boost_endian-targets.cmake D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/boost_property_tree/boost_property_tree-targets.cmake",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 5,
+    "command": "rg -n \"class Parser|parseObject|parseArray|parseString|parseUnicodeEscape|utf8Encode|parseNumber|dumpEscaped|dumpValue\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 6,
+    "command": "rg -n \"class Parser|parseObject|parseArray|parseString|readHex4|appendUtf8|parseNumber|strictUtf8Check|kUtf8Dfa\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 7,
+    "command": "rg -n \"class DecodedStream|nextUtf8|nextUtf16ToUtf8|mapSystemError|kUtf8Dfa\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 8,
+    "command": "Get-ChildItem D:/10_Source_Repos/21_robot/RobWork/vcpkg/ports -Directory | Where-Object Name -Match \"^(boost-json|nlohmann-json|rapidjson|utfcpp|simdutf|openssl|picosha2|cryptopp)$\" | Select-Object -ExpandProperty Name",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  }
+]

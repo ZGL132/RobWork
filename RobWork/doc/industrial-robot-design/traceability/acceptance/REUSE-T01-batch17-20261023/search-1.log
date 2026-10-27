@@ -1,0 +1,108 @@
+RobWork/RobWork/gtest\graphics\SceneGraphTest.cpp:227:    EXPECT_TRUE(root->hasChild(group1)); //check is children nodes are matching
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:205:     * Test file contains 10 points with orientations matching a stable pose with noise of
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:256:     * Test file contains 10 points with orientations matching a stable pose with noise of
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GripperTaskSimulator.hpp:96:		 * For all the poses matching the model, an angle between pose before grasping, and a pose after grasping is calculated.
+RobWork/RobWorkSim/src\rwsim\contacts\ContactDetector.hpp:227:         * @return a new strategy table that includes only strategies matching the given frame pair.
+RobWork/RobWorkSim/src\rwsim\contacts\ContactDetector.hpp:239:         * @return a new strategy table that includes only strategies matching the given frame pair,
+RobWork/RobWorkSim/src\rwsim\contacts\ContactDetector.hpp:259:         * @brief Add a strategy that is only used for frames matching one rule.
+RobWork/RobWorkSim/src\rwsim\contacts\ContactStrategyDMS.cpp:394:                    msg->setDescription ("Matching existing contacts");
+RobWork/RobWorkSim/src\rwsim\contacts\ContactStrategyDMS.cpp:395:                    out << "Matching " << currentInfos.size ()
+RobWork/RobWork/src\rwlibs\task\Task.hpp:71:         * @brief Add an augmentation of the task
+RobWork/RobWork/src\rwlibs\task\Task.hpp:72:         * @param task [in] Task representing the augmentation
+RobWork/RobWork/src\rwlibs\task\Task.hpp:73:         * @param id [in] Id associated to augmentation
+RobWork/RobWork/src\rwlibs\task\Task.hpp:75:        void addAugmentation (TaskBase::Ptr task, const std::string& id)
+RobWork/RobWork/src\rwlibs\task\Task.hpp:77:            _augmentations[id] = task;
+RobWork/RobWork/src\rwlibs\task\Task.hpp:81:         * @brief Returns whether the task has an augmentation with a given \b id
+RobWork/RobWork/src\rwlibs\task\Task.hpp:82:         * @param id [in] id of augmentation to look for
+RobWork/RobWork/src\rwlibs\task\Task.hpp:83:         * @return True if augmentation exists. False otherwise
+RobWork/RobWork/src\rwlibs\task\Task.hpp:85:        bool hasAugmentation (const std::string& id)
+RobWork/RobWork/src\rwlibs\task\Task.hpp:87:            return _augmentations.find (id) != _augmentations.end ();
+RobWork/RobWork/src\rwlibs\task\Task.hpp:91:         * @brief Returns augmentation associated to \b id.
+RobWork/RobWork/src\rwlibs\task\Task.hpp:93:         * If no augmentation exists the method throws a rw::core::Exception
+RobWork/RobWork/src\rwlibs\task\Task.hpp:95:         * @return Pointer to the augmenting task
+RobWork/RobWork/src\rwlibs\task\Task.hpp:97:        TaskBase::Ptr getAugmentation (const std::string& id)
+RobWork/RobWork/src\rwlibs\task\Task.hpp:99:            std::map< std::string, TaskBase::Ptr >::iterator it = _augmentations.find (id);
+RobWork/RobWork/src\rwlibs\task\Task.hpp:100:            if (it == _augmentations.end ())
+RobWork/RobWork/src\rwlibs\task\Task.hpp:101:                RW_THROW ("Unable to find augmentation named \"" << id);
+RobWork/RobWork/src\rwlibs\task\Task.hpp:107:         * @brief Returns map with ids and augmentations
+RobWork/RobWork/src\rwlibs\task\Task.hpp:108:         * @return Reference to map with ids and augmentations
+RobWork/RobWork/src\rwlibs\task\Task.hpp:110:        std::map< std::string, TaskBase::Ptr >& getAugmentations () { return _augmentations; }
+RobWork/RobWork/src\rwlibs\task\Task.hpp:113:         * @brief Returns map with ids and augmentations
+RobWork/RobWork/src\rwlibs\task\Task.hpp:114:         * @return Reference to map with ids and augmentations
+RobWork/RobWork/src\rwlibs\task\Task.hpp:116:        const std::map< std::string, TaskBase::Ptr >& getAugmentations () const
+RobWork/RobWork/src\rwlibs\task\Task.hpp:118:            return _augmentations;
+RobWork/RobWork/src\rwlibs\task\Task.hpp:225:        std::map< std::string, TaskBase::Ptr > _augmentations;
+RobWork/RobWork/src\rwlibs\task\Task.hpp:242:            for (std::map< std::string, TaskBase::Ptr >::iterator it = _augmentations.begin ();
+RobWork/RobWork/src\rwlibs\task\Task.hpp:243:                 it != _augmentations.end ();
+RobWork/RobWork/src\rwlibs\task\Task.hpp:261:            for (std::map< std::string, TaskBase::Ptr >::iterator it = _augmentations.begin ();
+RobWork/RobWork/src\rwlibs\task\Task.hpp:262:                 it != _augmentations.end ();
+RobWork/RobWork/src\rwlibs\task\Task.hpp:264:                target->_augmentations[(*it).first] = NULL;    //(*it).second->doClone();
+RobWork/RobWork/src\rwlibs\swig\lua\LuaState.hpp:96:             * @return a lualibrary if matching lib exists else NULL
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.hpp:109:        void readAugmentations (xercesc::DOMElement* element, rwlibs::task::TaskBase::Ptr task);
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:299:void XMLTaskLoader::readAugmentations (xercesc::DOMElement* element, TaskBase::Ptr task)
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:308:            TaskBase::Ptr augmentation = loader.readTask (child);
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:309:            task->addAugmentation (augmentation, augmentation->getId ());
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:331:            else if (XMLString::equals (XMLTaskFormat::idAugmentations (), child->getNodeName ())) {
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:332:                readAugmentations (child, task);
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskFormat.hpp:59:         * @brief Identifier for Augmentations.
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskFormat.hpp:62:        static const XMLCh* idAugmentations ();
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskFormat.cpp:36:        idAugmentations ();
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskFormat.cpp:82:const XMLCh* XMLTaskFormat::idAugmentations ()
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskFormat.cpp:84:    static const XMLStr id ("Augmentations");
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.hpp:91:        void readAugmentations (rw::core::Ptr< rw::core::DOMElem > element,
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:304:void DOMTaskLoader::readAugmentations (DOMElem::Ptr element, TaskBase::Ptr task)
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:310:                TaskBase::Ptr augmentation = loader.readTask (child);
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:311:                task->addAugmentation (augmentation, augmentation->getId ());
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:329:                else if (child->isName (DOMTaskFormat::idAugmentations ())) {
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:330:                    readAugmentations (child, task);
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskFormat.hpp:64:         * @brief Identifier for Augmentations.
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskFormat.hpp:67:        static const std::string& idAugmentations ();
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskFormat.cpp:34:        idAugmentations ();
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskFormat.cpp:77:const std::string& DOMTaskFormat::idAugmentations ()
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskFormat.cpp:79:    static const std::string id ("Augmentations");
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:195:        // AugmentedQ is a configuration and its clearance
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:196:        typedef std::pair< rw::math::Q, double > AugmentedQ;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:198:        // Path of AugmentedQ's
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:200:        typedef std::list< AugmentedQ > AugmentedPath;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:202:        typedef std::vector< AugmentedQ > AugmentedPath;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:208:        // Performs a subdivision of the path and augments all configs with the clearance
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:209:        void subDivideAndAugmentPath (const rw::trajectory::QPath& inputPath, AugmentedPath& path);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:213:        AugmentedPath validatePath (const AugmentedPath& newPath, const AugmentedPath& orgPath);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:216:        void removeBranches (AugmentedPath& path) const;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:219:        double calcAvgClearance (const AugmentedPath& path) const;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:86:    AugmentedPath path;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:88:    subDivideAndAugmentPath (inputPath, path);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:93:        AugmentedPath newPath = path;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:98:        for (AugmentedPath::const_iterator it = ++(newPath.cbegin ()); it != --(newPath.cend ());
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:116:            AugmentedPath::iterator it = newPath.begin () + q;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:118:        for (AugmentedPath::iterator it = ++(newPath.begin ()); it != --(newPath.end ()); ++it) {
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:149:    for (AugmentedPath::const_iterator it = path.cbegin (); it != path.cend (); ++it) {
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:156:ClearanceOptimizer::AugmentedPath ClearanceOptimizer::validatePath (const AugmentedPath& newPath,
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:157:                                                                    const AugmentedPath& orgPath)
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:159:    AugmentedPath result;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:163:    AugmentedPath::const_iterator it_new  = newPath.begin ();
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:164:    AugmentedPath::const_iterator it_next = ++newPath.begin ();
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:165:    AugmentedPath::const_iterator it_org  = ++orgPath.begin ();
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:174:                result.push_back (AugmentedQ (qint, clearanceInt));
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:190:void ClearanceOptimizer::removeBranches (AugmentedPath& path) const
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:192:    AugmentedPath::iterator it1 = path.begin ();
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:193:    AugmentedPath::iterator it2 = path.begin ();
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:195:    AugmentedPath::iterator it3 = path.begin ();
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:226:double ClearanceOptimizer::calcAvgClearance (const AugmentedPath& path) const
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:229:    for (AugmentedPath::const_iterator it = path.begin (); it != path.end (); ++it) {
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:243:void ClearanceOptimizer::subDivideAndAugmentPath (const QPath& path, AugmentedPath& result)
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:260:        AugmentedPath tmp_res (divisions);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:269:            tmp_res[i]        = AugmentedQ (q, dist);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:274:            result.push_back (AugmentedQ (q, dist));
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:288:    result.push_back (AugmentedQ (path.back (), clearance (path.back ())));
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:291:        << "Time to subdivided and augment " << timer1.getTime () << std::endl;
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:293:    rw::core::Log::log ().debug () << "Time to subdivided and augment " << timer1.getTime () << "  "
+RobWork/RobWork/src\rw\common\INIArchive.cpp:171:        RW_WARN ("Mismatching id when reading INI file. " << valname.first << "!=" << id);
+RobWork/RobWork/src\rw\common\INIArchive.cpp:181:        RW_WARN ("Mismatching id when reading INI file. " << valname.first << "!=" << id);
+RobWork/RobWork/src\rw\pathplanning\QToTrajPlanner.hpp:97:             * @return a QToTPlanner if matching id exists else NULL
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.hpp:35:     * rwxml_trajectory.xsd and matching with rw::loaders::XMLTrajectoryLoader
+RobWork/RobWork/src\rw\kinematics\State.hpp:265:         * @return Pointer to the StateStructure matching the frame
+RobWork/RobWork/src\rw\plugin\PluginRepository.hpp:122:         * @return List of all factories matching T
+RobWork/RobWork/src\rw\loaders\xml\XMLPathSaver.hpp:116:     * matching with XMLPathLoader
+RobWork/RobWork/src\rw\loaders\dom\DOMPathSaver.hpp:36:     * matching with XMLPathLoader
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.hpp:35:     * rwxml_trajectory.xsd and matching with rw::loaders::XMLTrajectoryLoader

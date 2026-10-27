@@ -1,0 +1,214 @@
+{
+  "reviewType": "independent-local-batch-review",
+  "subjectTask": "REUSE-T01",
+  "batch": "B21",
+  "conclusion": "B21_LOCAL_ACCEPTED",
+  "notStageAcceptance": true,
+  "reviewedCommit": "cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7",
+  "comparisonBase": "d52fd06aafcb025a7d494d59c6d44bc9c16f3643",
+  "createdUtc": "2026-10-22T20:27:42.261461+00:00",
+  "scope": "四治理脚本14条pending登记与lite夹具修补；195路径包含B19/B20原件归档",
+  "functionsReviewed": 14,
+  "astDefinitions": 58,
+  "searchReplays": 4,
+  "archivesRawByteEquality": {
+    "B19": 86,
+    "B20": 52,
+    "allEqual": true
+  },
+  "lite": {
+    "lite-ps7": {
+      "expected": 8,
+      "executed": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "complete": true,
+      "notRun": 0
+    },
+    "lite-ps51": {
+      "expected": 8,
+      "executed": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "complete": true,
+      "notRun": 0
+    },
+    "lite-before-ps7": {
+      "expected": 8,
+      "executed": 7,
+      "passed": 6,
+      "failed": 1,
+      "skipped": 0,
+      "complete": false,
+      "notRun": 1
+    },
+    "lite-before-ps51": {
+      "expected": 8,
+      "executed": 7,
+      "passed": 6,
+      "failed": 1,
+      "skipped": 0,
+      "complete": false,
+      "notRun": 1
+    }
+  },
+  "realVerify": {
+    "machineExecuted": 3,
+    "manual": 0,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "name": "lite-before-ps7",
+      "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\before\\test-governance-lite.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+        "-OutputDir",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\lite-before-ps7"
+      ],
+      "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "startUtc": "2026-10-22T20:22:25.1928832Z",
+      "endUtc": "2026-10-22T20:22:39.2245810Z",
+      "exitCode": 1,
+      "log": "lite-before-ps7.log"
+    },
+    {
+      "name": "lite-before-ps51",
+      "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\before\\test-governance-lite.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+        "-OutputDir",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\lite-before-ps51"
+      ],
+      "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "startUtc": "2026-10-22T20:22:39.2424327Z",
+      "endUtc": "2026-10-22T20:22:50.7515741Z",
+      "exitCode": 1,
+      "log": "lite-before-ps51.log"
+    },
+    {
+      "name": "validate-invalid-branch",
+      "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\validate-task.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+        "-TaskFile",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\invalid-branch.json"
+      ],
+      "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "startUtc": "2026-10-22T20:22:50.7695347Z",
+      "endUtc": "2026-10-22T20:22:53.3174739Z",
+      "exitCode": 1,
+      "log": "validate-invalid-branch.log"
+    },
+    {
+      "name": "verify-invalid-branch-dryrun",
+      "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\verify-task.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+        "-TaskFile",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\invalid-branch.json",
+        "-DryRun"
+      ],
+      "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "startUtc": "2026-10-22T20:22:53.3289110Z",
+      "endUtc": "2026-10-22T20:22:54.1600998Z",
+      "exitCode": 1,
+      "log": "verify-invalid-branch-dryrun.log"
+    },
+    {
+      "name": "verify-valid-dryrun",
+      "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\verify-task.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+        "-TaskFile",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+        "-DryRun"
+      ],
+      "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "startUtc": "2026-10-22T20:22:54.1627251Z",
+      "endUtc": "2026-10-22T20:23:21.7109343Z",
+      "exitCode": 0,
+      "log": "verify-valid-dryrun.log"
+    },
+    {
+      "name": "verify-task-real",
+      "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\verify-task.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+        "-TaskFile",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json"
+      ],
+      "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "startUtc": "2026-10-22T20:23:21.7141283Z",
+      "endUtc": "2026-10-22T20:24:23.5957970Z",
+      "exitCode": 0,
+      "log": "verify-task-real.log"
+    },
+    {
+      "name": "commit-lint-frozen-range",
+      "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\commit-lint.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+        "-Range",
+        "d52fd06aafcb025a7d494d59c6d44bc9c16f3643..cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7"
+      ],
+      "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "startUtc": "2026-10-22T20:24:23.5982704Z",
+      "endUtc": "2026-10-22T20:24:24.2096228Z",
+      "exitCode": 0,
+      "log": "commit-lint-frozen-range.log"
+    }
+  ],
+  "scopeCheckExitCode": 0,
+  "findings": [],
+  "limitations": [
+    "不是19治理脚本全审",
+    "未复跑全152复用测试",
+    "未执行C++/GUI/数值/性能",
+    "证据索引DeepEvidence全库审计未执行；lite坏索引负例已执行",
+    "未授全T01/T02或迁移/关闭资格；pending仍未结项",
+    "Parse/CommandNotFound分类边界与lint全部边界不在本轮完整覆盖内"
+  ],
+  "whitespace": {
+    "rawDiffCheckExitCode": 2,
+    "windowsDiffCheckExitCode": 2,
+    "authoredFilesWindowsDiffCheckExitCode": 0,
+    "reason": "CRLF按Git默认空白规则报警；cr-at-eol后仅原样归档及真实日志尾空格/空行，保留原件不修写"
+  },
+  "remoteDelivery": "NOT_PERFORMED_USER_REQUEST",
+  "implementationWorkspace": "只读，未改共享现场、提交、推送或合并",
+  "stageAuthorization": {
+    "REUSE-T01": "NOT_GRANTED",
+    "REUSE-T02": "NOT_GRANTED"
+  }
+}

@@ -1,0 +1,2 @@
+WARNING: validate-context-pack: STALE source: RobWork/doc/industrial-robot-design/context/README.md (pack LITE-T01.md)——重跑 build-context-pack.ps1 -TaskId LITE-T01 刷新
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=1, structural=0

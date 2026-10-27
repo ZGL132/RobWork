@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-22T23:46:24.700" name="AllTests">
+  <testsuite name="ReuseDependencyAudit" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-22T23:46:24.700">
+    <testcase name="EndianPublicLoadStorePreserveWireBits" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\DependencySuitabilityTest.cpp" line="16" status="run" result="completed" time="0." timestamp="2026-10-22T23:46:24.700" classname="ReuseDependencyAudit" />
+    <testcase name="PropertyTreePublicDomErasesTypesAndEmptyShapes" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\DependencySuitabilityTest.cpp" line="36" status="run" result="completed" time="0." timestamp="2026-10-22T23:46:24.700" classname="ReuseDependencyAudit" />
+    <testcase name="PropertyTreePublicReaderAcceptsDuplicateKeysAndBom" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\DependencySuitabilityTest.cpp" line="51" status="run" result="completed" time="0." timestamp="2026-10-22T23:46:24.700" classname="ReuseDependencyAudit" />
+  </testsuite>
+</testsuites>

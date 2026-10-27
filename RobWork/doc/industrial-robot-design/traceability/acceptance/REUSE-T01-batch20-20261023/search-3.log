@@ -1,0 +1,32 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:11: *     ①③④⑤——①④⑤经 TxEngine::scanForRecovery、②锁残留经 StoreLock、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:50: *   ④ 闭包装载采用"扫描预检＋正式搬运"两段：TxEngine::scanForRecovery
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:501: * 前置：scanForRecovery 已通过（headIntegrityVerified==true——闭包内
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:519:void loadCommittedState(tx::TxEngine& engine,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1186:    const tx::TxRecoveryScan scan = engine->scanForRecovery();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1187:    if (!scan.headIntegrityVerified) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1198:    loadCommittedState(*engine, *objects, *index, scan, identity.projectId,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1222:    result.recovery.headIntegrityVerified = scan.headIntegrityVerified;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1384:        const std::string manifestDigest
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1395:        // HEAD（§4.4.1；manifestDigest＝打开后自校验键）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1403:        head.manifestDigest = manifestDigest;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:796:/// 摘要文本字段：64 个小写十六进制字符（manifestDigest/digest256/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:934:    // revisionSeq, branchId, manifestDigest。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:943:    out += ",\"manifestDigest\":";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:944:    appendJsonString(out, value.manifestDigest, "manifestDigest");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1132:    // finalizedAtUtc、manifestDigest。manifestDigest 透传（CR-02——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1160:    out += ",\"manifestDigest\":";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1161:    appendJsonString(out, value.manifestDigest, "manifestDigest");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1198:    v.manifestDigest = requireHex64Field(root, "manifestDigest");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1201:                         "revisionSeq", "branchId", "manifestDigest"},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1500:    v.manifestDigest = requireHex64Field(root, "manifestDigest");  // 幂等判据（§10.1）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1503:                         "finalizedAtUtc", "manifestDigest"},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:462:    // HEAD.manifestDigest 的取值（§4.4.1"指向修订 manifest 的字节摘要"）：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:467:    const std::string manifestDigestHex = cvHex(manifestCv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:694:    // 提交点；切换后重读 HEAD 自校验 manifestDigest"）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:702:    newHead.manifestDigest = manifestDigestHex;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:729:        // 自校验（§7.1 第 5 步"切换后重读 HEAD 自校验 manifestDigest"）：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:794:    result.manifestDigest = manifestDigestHex;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:871:TxRecoveryScan TxEngine::scanForRecovery()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:929:        return scan;  // headIntegrityVerified=false；①的发现已随行带回
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:1135:        scan.headIntegrityVerified = false;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:1139:        scan.headIntegrityVerified = true;

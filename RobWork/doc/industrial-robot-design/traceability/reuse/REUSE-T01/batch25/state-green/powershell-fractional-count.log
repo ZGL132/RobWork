@@ -1,0 +1,5 @@
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1 : tickCount must
+ be an integer >= 0（v1.4：锁内 tickId 的状态侧计数）
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-state.ps1
+ 

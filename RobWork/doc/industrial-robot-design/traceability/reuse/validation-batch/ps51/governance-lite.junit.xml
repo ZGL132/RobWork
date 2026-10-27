@@ -1,0 +1,25 @@
+<testsuite name="validation-batch" tests="23" failures="0" skipped="0">
+  <testcase name="batch-single-compatible" />
+  <testcase name="batch-two-tasks-one-gate" />
+  <testcase name="batch-duplicate-path-once" />
+  <testcase name="batch-array-contract-one-gate" />
+  <testcase name="batch-bad-second-blocks" />
+  <testcase name="batch-gate-fail-propagates" />
+  <testcase name="verify-identical-leading-reused" />
+  <testcase name="verify-relative-root-same-input" />
+  <testcase name="verify-other-runtime-not-reused" />
+  <testcase name="verify-stronger-check-executes" />
+  <testcase name="verify-after-command-executes" />
+  <testcase name="verify-preflight-fail-stops" />
+  <testcase name="verify-dryrun-still-checks" />
+  <testcase name="verify-other-task-executes" />
+  <testcase name="verify-command-suffix-not-reused" />
+  <testcase name="docs-default-full-gate" />
+  <testcase name="docs-batch-one-gate" />
+  <testcase name="docs-bad-task-not-hidden" />
+  <testcase name="docs-legacy-still-full-gate" />
+  <testcase name="reuse-real-checktask-batch" />
+  <testcase name="reuse-real-array-contracts" />
+  <testcase name="reuse-real-bad-second-rejected" />
+  <testcase name="reuse-real-outside-root-rejected" />
+</testsuite>

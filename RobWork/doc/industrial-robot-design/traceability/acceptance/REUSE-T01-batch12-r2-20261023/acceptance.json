@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B12-r2",
+  "reviewedCommit": "6925608ccbc5c7764dc983f7e7e0276f1f12d55f",
+  "comparisonBase": "63e86ba5a633e93c9027165756298d76536166b9",
+  "verdict": "PASS",
+  "scope": "仅独立复验B12-P2-01文档/矩阵返工并关闭此项，不重新授予B12全部语义或全T01 PASS。",
+  "closedFindings": [
+    "B12-P2-01"
+  ],
+  "newFindings": [],
+  "facts": {
+    "reviewedCommit": "6925608ccbc5c7764dc983f7e7e0276f1f12d55f",
+    "comparisonBase": "63e86ba5a633e93c9027165756298d76536166b9",
+    "relatedRows": 34,
+    "newNoteDigest": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "failedHashes": 0,
+    "archiveFiles": 47,
+    "archiveRawMatches": 44,
+    "archiveNewlineOnly": 3,
+    "archiveContentMismatches": 0,
+    "originalFailPreserved": true,
+    "searchHits": 2,
+    "sourceDiffEmpty": true,
+    "scopedDiffCheckExit": 0
+  },
+  "semanticReview": {
+    "running": "当前监督运行态；start置true，stop及自然退出置false，acquire getter",
+    "history": "storeClosedObserved/abandonDiagObserved/gaveUp只置true，start/stop不复位，acquire getter",
+    "source": "CloseSupervisor.hpp:161-178；CloseSupervisor.cpp:73-76,92,128-129,143,157,165,176",
+    "descriptionAndMatrixAgree": true,
+    "onlyExpectedRowChanges": true,
+    "pendingRelationsRemain": 34
+  },
+  "gates": {
+    "exitCodes": {
+      "task": 0,
+      "reuse": 0,
+      "docs": 0
+    },
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "治理结构/文档/任务，不代表算法合规"
+  },
+  "archive": {
+    "originalFrozenCommit": "d38e4472ec403d9d9f1b7201a0f8e2b4b83f7a0c",
+    "originalVerdict": "FAIL",
+    "findingPreserved": "B12-P2-01",
+    "files": 47,
+    "rawMatches": 44,
+    "newlineOnly": 3,
+    "missingOrContentMismatches": 0
+  },
+  "checkoutClean": true,
+  "repositoryModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "wholeT01Pass": false,
+  "remoteDelivery": {
+    "status": "NOT DELIVERED / NOT VERIFIED",
+    "reason": "委派说明远程当前不可达；本轮仅使用本地冻结源做独立验收，未推送、未验证远程可达或交付。",
+    "taskCompleteClaimed": false
+  },
+  "notRun": [
+    "C++构建/测试",
+    "GUI",
+    "数值/性能",
+    "原B12其余语义重验",
+    "历史API探测重跑",
+    "DeepEvidence",
+    "全T01退出",
+    "远程推送/CI"
+  ],
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295"
+}

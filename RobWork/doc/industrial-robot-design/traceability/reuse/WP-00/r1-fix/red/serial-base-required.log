@@ -1,0 +1,5 @@
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-f67d7899059a450ab3b8e754e46553f4\RobWork\scripts\industrialrobot\verify-task-scope.ps1:82
+Line |
+  82 |  … gn-main') { throw 'serial mainline task requires explicit -Base <star …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | serial mainline task requires explicit -Base <start SHA>

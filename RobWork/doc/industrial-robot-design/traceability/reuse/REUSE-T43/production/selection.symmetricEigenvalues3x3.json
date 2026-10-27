@@ -1,0 +1,84 @@
+{
+ "schemaVersion": "ird-reuse-production/1",
+ "functionId": "selection.symmetricEigenvalues3x3",
+ "target": "sdurws_ird_selection",
+ "bindings": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+   "sha256": "2df0d10c2b4311b38b12d3dd6cc45830a27f7798696ab35785817bd60d39e42c"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+   "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+   "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+   "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+   "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+  }
+ ],
+ "normal": {
+  "command": "build/RobWorkStudio/bin/Release/sdurws_ird_selection_test.exe --gtest_filter=-SelPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable（GUI harness 环境占位排除） --gtest_output=xml:<E>/run/normal.xml --ird_report=<E>/run/normal-report.json",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/normal.xml",
+   "sha256": "475e698b26bece1097f0c135e129a60557fa330af78ac5c6bbba871d4ae636d9"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/normal.log",
+   "sha256": "1e9bb7a0b30fe433a928868e1d20c742db75f67719b375c941c9d508aaa8911f"
+  },
+  "exitCode": 0
+ },
+ "disconnected": {
+  "command": "同上 exe --gtest_filter=SelBackfillSynthesis.*（变异构建：特征值返回降序反转 {de.second[2],[1],[0]}——破坏升序契约） --gtest_output=xml:<E>/run/disconnected.xml",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/disconnected.xml",
+   "sha256": "6a3e0948218d907d39ab8e4f46a8cfa1edcc1fc402ace28227025695492a9afb"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/disconnected.log",
+   "sha256": "726dbb9fee41ba7dbda68162a3e71f5e0e2da56cfb05f888c68e0f70995999c5"
+  },
+  "exitCode": 1,
+  "mutation": {
+   "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+   "originalSha256": "2df0d10c2b4311b38b12d3dd6cc45830a27f7798696ab35785817bd60d39e42c",
+   "description": "真实生产源变异：eigenDecompositionSymmetric 结果返回序降序反转，破坏升序特征值契约；SelBackfillSynthesis 7 项中 RejectsNotPositiveDefinite_MDLL06A2 与 RejectsTriangleInequality_MDLL06A3 两项真实失败（SPD 最小值/三角判据读错位特征值），其余 5 项通过；恢复后 recheck 7 项全绿（run/recheck.xml；CMake 定稿后 run/recheck2.xml 复验 SelBackfill* 26 项绿）。"
+  },
+  "mutatedSource": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/backfill-mutated.cpp",
+   "sha256": "2a0933a41d9132d1824558478160d5d89dcaa6fa6efbdcfd1838e0b60ca86eb0"
+  }
+ },
+ "oracle": {
+  "command": "同上 exe --gtest_filter=SelBackfillSynthesis.*（MDL-06 断言分类轨道＋黄金合成值容差对照——sel-golden 双实现附录 D 第 9 项） --gtest_output=xml:<E>/run/oracle.xml --ird_report=<E>/run/oracle-report.json",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/oracle.xml",
+   "sha256": "1c23792eb10d7ac44785d7bf9a98cccc41440c263b9e2005856de19d921e54bb"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/oracle.log",
+   "sha256": "d76d19171cd3c83fc60f05e2ba1ed0697b66b52b685f15254da3be9a9cdfe9e7"
+  },
+  "exitCode": 0
+ },
+ "upstreamComparison": {
+  "command": "REUSE-T43/run/probe-eigen-upstream.exe（独立探针：被替换解析闭式（批次基线 a445f4876 原文摘录）vs 生产同款上游调用，9 用例含对角/纯量/平面退化/近退化/大小尺度，相对 1e-12 容差＋升序＋迹守恒断言；v1 位模式断言实证 Eigen 对对角阵亦非逐位——换核本就非逐位等价，v2 收窄为容差面） --gtest_output=xml:<E>/run/upstreamComparison.xml",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/upstreamComparison.xml",
+   "sha256": "97c3387f35362e8d99eef41b991bf2a684a8ff070fa0332e7c244a3e5cc3df34"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/upstreamComparison.log",
+   "sha256": "5301d682f9eefea8bc9525e4f5469ad252cf0991a57768fda3edd9e21d6b5691"
+  },
+  "exitCode": 0
+ }
+}

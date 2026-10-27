@@ -1,0 +1,49 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B25",
+  "parentCommit": "e60d5d3c9a47a24010964295a935d42986a290e1",
+  "newRows": 19,
+  "refreshedPendingRows": [
+    "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "foundation-governance.pipeline-lock.Read-Lock",
+    "foundation-governance.pipeline-lock.Test-Fencing",
+    "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "foundation-governance.pipeline-lock.root",
+    "foundation-governance.pipeline-lock.actions",
+    "foundation-governance.test-pipeline-pipeline.root",
+    "foundation-governance.test-pipeline-pipeline.regressions"
+  ],
+  "red": {
+    "ps7": {
+      "executed": 7,
+      "passed": 4,
+      "failed": 3,
+      "skipped": 0
+    },
+    "ps51": {
+      "executed": 7,
+      "passed": 2,
+      "failed": 5,
+      "skipped": 0
+    }
+  },
+  "greenEach": {
+    "executed": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+  },
+  "originalRegressionEach": "入口PASS、六边界退出码逐条符合，不推测总用例计数",
+  "notRun": [
+    "全schema分支/身份有效性",
+    "真实队列准入/持锁授权",
+    "C++/GUI/性能",
+    "全T01/T02"
+  ]
+}

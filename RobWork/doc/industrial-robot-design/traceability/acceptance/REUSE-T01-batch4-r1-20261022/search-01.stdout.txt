@@ -1,0 +1,91 @@
+RobWork/RobWork/src/rw/math/Rotation3D.hpp:161:         * @param rotVec [in] rotation type such as \b EAA, \b RPY, or \b Quaternion
+RobWork/RobWork/src/rw/math/Rotation3D.hpp:284:        bool isProperRotation () const;
+RobWork/RobWork/src/rw/math/Rotation3D.hpp:291:        bool isProperRotation (T precision) const;
+RobWork/RobWork/src/rw/math/Rotation3D.hpp:317:        inline const Rotation3D operator* (const Rotation3D& bRc) const
+RobWork/RobWork/src/rw/math/Rotation3D.hpp:331:        inline const Rotation3D operator* (const Eigen::MatrixBase< R >& rhs) const
+RobWork/RobWork/src/rw/math/Rotation3D.hpp:345:        friend inline Rotation3D operator* (const Eigen::MatrixBase< R >& lhs,
+RobWork/RobWork/src/rw/math/Rotation3D.hpp:358:        inline const rw::math::Vector3D< T > operator* (const rw::math::Vector3D< T >& bVc) const
+RobWork/RobWork/src/rw/math/RPY.hpp:18:#ifndef RW_MATH_RPY_HPP
+RobWork/RobWork/src/rw/math/RPY.hpp:19:#define RW_MATH_RPY_HPP
+RobWork/RobWork/src/rw/math/RPY.hpp:22: * @file RPY.hpp
+RobWork/RobWork/src/rw/math/RPY.hpp:36:     * @brief A class for representing Roll-Pitch-Yaw Euler angle rotations.
+RobWork/RobWork/src/rw/math/RPY.hpp:38:    template< class T = double > class RPY : public Rotation3DVector< T >
+RobWork/RobWork/src/rw/math/RPY.hpp:44:        RPY () : _rpy (0.0, 0.0, 0.0) {}
+RobWork/RobWork/src/rw/math/RPY.hpp:47:         * @brief Constructs an initialized roll-pitch-yaw euler angle vector
+RobWork/RobWork/src/rw/math/RPY.hpp:52:        RPY (T roll, T pitch, T yaw) : _rpy (roll, pitch, yaw) {}
+RobWork/RobWork/src/rw/math/RPY.hpp:55:         * @brief Constructs an RPY object initialized according to the specified Rotation3D
+RobWork/RobWork/src/rw/math/RPY.hpp:68:        explicit RPY (const Rotation3D< T >& R, T epsilon = 1e-5);
+RobWork/RobWork/src/rw/math/RPY.hpp:71:         * @copydoc Rotation3DVector::toRotation3D
+RobWork/RobWork/src/rw/math/RPY.hpp:73:        const Rotation3D< T > toRotation3D () const;
+RobWork/RobWork/src/rw/math/RPY.hpp:121:         * @param rhs [in] RPY to compare with
+RobWork/RobWork/src/rw/math/RPY.hpp:124:        bool operator== (const RPY< T >& rhs) const
+RobWork/RobWork/src/rw/math/RPY.hpp:135:         * @param rhs [in] RPY to compare with
+RobWork/RobWork/src/rw/math/RPY.hpp:138:        bool operator!= (const RPY< T >& rhs) const { return !(*this == rhs); }
+RobWork/RobWork/src/rw/math/RPY.hpp:141:         * @brief size of this RPY.
+RobWork/RobWork/src/rw/math/RPY.hpp:148:         * @brief Ouputs RPY to stream
+RobWork/RobWork/src/rw/math/RPY.hpp:153:        friend std::ostream& operator<< (std::ostream& os, const RPY< T >& rpy)
+RobWork/RobWork/src/rw/math/RPY.hpp:155:            return os << "RPY {" << rpy (0) << ", " << rpy (1) << ", " << rpy (2) << "}";
+RobWork/RobWork/src/rw/math/RPY.hpp:160:    TOSTRING (rw::math::RPY<T>);
+RobWork/RobWork/src/rw/math/RPY.hpp:167:     * @brief Casts RPY<T> to RPY<Q>
+RobWork/RobWork/src/rw/math/RPY.hpp:169:     * @param rpy [in] RPY with type T
+RobWork/RobWork/src/rw/math/RPY.hpp:171:     * @return RPY with type Q
+RobWork/RobWork/src/rw/math/RPY.hpp:173:    template< class Q, class T > const RPY< Q > cast (const RPY< T >& rpy)
+RobWork/RobWork/src/rw/math/RPY.hpp:175:        return RPY< Q > (
+RobWork/RobWork/src/rw/math/RPY.hpp:179:    extern template class rw::math::RPY< double >;
+RobWork/RobWork/src/rw/math/RPY.hpp:180:    extern template class rw::math::RPY< float >;
+RobWork/RobWork/src/rw/math/RPY.hpp:184:    SWIG_DECLARE_TEMPLATE (RPYd, rw::math::RPY< double >);
+RobWork/RobWork/src/rw/math/RPY.hpp:185:    ADD_DEFINITION (RPYd, RPY,sdurw_math)
+RobWork/RobWork/src/rw/math/RPY.hpp:187:    SWIG_DECLARE_TEMPLATE (RPY, rw::math::RPY< double >);
+RobWork/RobWork/src/rw/math/RPY.hpp:189:    SWIG_DECLARE_TEMPLATE (RPYf, rw::math::RPY< float >);
+RobWork/RobWork/src/rw/math/RPY.hpp:192:    using RPYd = RPY< double >;
+RobWork/RobWork/src/rw/math/RPY.hpp:193:    using RPYf = RPY< float >;
+RobWork/RobWork/src/rw/math/RPY.hpp:204:         * @relatedalso rw::math::RPY
+RobWork/RobWork/src/rw/math/RPY.hpp:207:        void write (const rw::math::RPY< double >& sobject, rw::common::OutputArchive& oarchive,
+RobWork/RobWork/src/rw/math/RPY.hpp:212:         * @relatedalso rw::math::RPY
+RobWork/RobWork/src/rw/math/RPY.hpp:215:        void write (const rw::math::RPY< float >& sobject, rw::common::OutputArchive& oarchive,
+RobWork/RobWork/src/rw/math/RPY.hpp:220:         * @relatedalso rw::math::RPY
+RobWork/RobWork/src/rw/math/RPY.hpp:223:        void read (rw::math::RPY< double >& sobject, rw::common::InputArchive& iarchive,
+RobWork/RobWork/src/rw/math/RPY.hpp:228:         * @relatedalso rw::math::RPY
+RobWork/RobWork/src/rw/math/RPY.hpp:231:        void read (rw::math::RPY< float >& sobject, rw::common::InputArchive& iarchive,
+RobWork/RobWork/src/rw/math/RPY.cpp:18:#include "RPY.hpp"
+RobWork/RobWork/src/rw/math/RPY.cpp:28:template< class T > RPY< T >::RPY (const Rotation3D< T >& R, T epsilon)
+RobWork/RobWork/src/rw/math/RPY.cpp:74:template< class T > const Rotation3D< T > RPY< T >::toRotation3D () const
+RobWork/RobWork/src/rw/math/RPY.cpp:100:template class rw::math::RPY< double >;
+RobWork/RobWork/src/rw/math/RPY.cpp:101:template class rw::math::RPY< float >;
+RobWork/RobWork/src/rw/math/RPY.cpp:106:    void writeImpl (const RPY< T >& tmp, OutputArchive& oar, const std::string& id)
+RobWork/RobWork/src/rw/math/RPY.cpp:115:    template< class T > void readImpl (RPY< T >& tmp, InputArchive& iar, const std::string& id)
+RobWork/RobWork/src/rw/math/RPY.cpp:129:    template<> void write (const RPY< double >& tmp, OutputArchive& oar, const std::string& id)
+RobWork/RobWork/src/rw/math/RPY.cpp:133:    template<> void write (const RPY< float >& tmp, OutputArchive& oar, const std::string& id)
+RobWork/RobWork/src/rw/math/RPY.cpp:137:    template<> void read (RPY< double >& tmp, InputArchive& iar, const std::string& id)
+RobWork/RobWork/src/rw/math/RPY.cpp:141:    template<> void read (RPY< float >& tmp, InputArchive& iar, const std::string& id)
+RobWork/RobWork/src/rw/math/EAA.hpp:39:     * @brief A class for representing an equivalent angle-axis rotation
+RobWork/RobWork/src/rw/math/EAA.hpp:41:     * This class defines an equivalent-axis-angle orientation vector also known
+RobWork/RobWork/src/rw/math/EAA.hpp:42:     * as an @f$ \thetak @f$ vector or "axis+angle" vector
+RobWork/RobWork/src/rw/math/EAA.hpp:44:     * The equivalent-axis-angle vector is the product of a unit vector @f$
+RobWork/RobWork/src/rw/math/EAA.hpp:45:     * \hat{\mathbf{k}} @f$ and an angle of rotation around that axis @f$ \theta
+RobWork/RobWork/src/rw/math/EAA.hpp:58:         * @brief Extracts Equivalent axis-angle vector from Rotation matrix
+RobWork/RobWork/src/rw/math/EAA.hpp:111:         * @param angle [in] \f$ \theta \f$
+RobWork/RobWork/src/rw/math/EAA.hpp:114:        EAA (const rw::math::Vector3D< T >& axis, T angle) : _eaa (axis * angle) {}
+RobWork/RobWork/src/rw/math/EAA.hpp:144:         * The angle of the EAA are \f$\|eaa\|\f$ and the axis is \f$\frac{eaa}{\|eaa\|}\f$
+RobWork/RobWork/src/rw/math/EAA.hpp:158:         * The angle of the EAA are \f$\|eaa\|\f$ and the axis is \f$\frac{eaa}{\|eaa\|}\f$
+RobWork/RobWork/src/rw/math/EAA.hpp:177:         * @copydoc Rotation3DVector::toRotation3D()
+RobWork/RobWork/src/rw/math/EAA.hpp:196:        virtual const rw::math::Rotation3D< T > toRotation3D () const;
+RobWork/RobWork/src/rw/math/EAA.hpp:199:         * @brief Extracts the angle of rotation @f$ \theta @f$
+RobWork/RobWork/src/rw/math/EAA.hpp:202:        T angle () const { return _eaa.norm2 (); }
+RobWork/RobWork/src/rw/math/EAA.hpp:205:         * @brief change the angle of the EAA
+RobWork/RobWork/src/rw/math/EAA.hpp:206:         * @param angle [in] the new angle
+RobWork/RobWork/src/rw/math/EAA.hpp:209:        EAA< T >& setAngle (const T& angle)
+RobWork/RobWork/src/rw/math/EAA.hpp:211:            (*this) = EAA< T > (this->axis (), angle);
+RobWork/RobWork/src/rw/math/EAA.hpp:221:            T theta = angle ();
+RobWork/RobWork/src/rw/math/EAA.hpp:418:        EAA< T > operator* (const EAA< T >& rhs) const
+RobWork/RobWork/src/rw/math/EAA.hpp:420:            return EAA< T > (this->toRotation3D () * rhs.toRotation3D ());
+RobWork/RobWork/src/rw/math/EAA.hpp:433:        friend EAA< T > operator* (const rw::math::Rotation3D< T >& aRb, const EAA< T >& bTKc)
+RobWork/RobWork/src/rw/math/EAA.hpp:442:         * @return EAA ( this->toRotation3D() * rhs)
+RobWork/RobWork/src/rw/math/EAA.hpp:444:        template< class R > EAA< T > operator* (const rw::math::Rotation3D< R >& rhs)
+RobWork/RobWork/src/rw/math/EAA.hpp:446:            return EAA (this->toRotation3D () * rhs);
+RobWork/RobWork/src/rw/math/EAA.hpp:476:         * @brief scale the angle, keeping the axis the same
+RobWork/RobWork/src/rw/math/EAA.hpp:477:         * @param scale [in] how much the angle should change
+RobWork/RobWork/src/rw/math/EAA.hpp:478:         * @return a new EAA with the scaled angle
+RobWork/RobWork/src/rw/math/EAA.hpp:482:            return EAA< T > (this->axis (), this->angle () * scale);
+RobWork/RobWork/src/rw/math/EAA.hpp:558:         * @param eaa [in] equivalent axis-angle
+RobWork/RobWork/src/rw/math/EAA.hpp:836:        return rw::math::cross (v1, v2.axis () * v2.angle ());

@@ -1,0 +1,5 @@
+verify-task-scope: GOV-T21 base=64ef0fd07755 head=0032c8e78b0a changed=7007 allowedRules=8 forbiddenRules=5
+  [out-of-scope] RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt（未命中任何 allowedFiles 模式）
+  [forbidden] RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp  <= RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**/*.hpp
+  [forbidden] RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CouplingReuseTest.cpp  <= RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**/*.cpp
+verify-task-scope: FAIL GOV-T21 —— 3 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）

@@ -1,0 +1,49 @@
+[
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "ADD_RW_GTEST|add_test|gtest_output|sdurw-gtest-main",
+      "RobWork/RobWork/gtest/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "exitEqual": true,
+    "normalizedStdoutEqual": true
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "ADD_RWSIM_GTEST|add_test|gtest_output|sdurwsim-gtest-main",
+      "RobWork/RobWorkSim/gtest/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "exitEqual": true,
+    "normalizedStdoutEqual": true
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "InitGoogleTest|RUN_ALL_TESTS|AddGlobalTestEnvironment",
+      "RobWork/RobWork/gtest/test-main.cpp"
+    ],
+    "exitCode": 0,
+    "exitEqual": true,
+    "normalizedStdoutEqual": true
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "flake|repeat|gtest_filter|no.tests",
+      "RobWork/RobWork/cmake",
+      "RobWork/RobWorkSim/cmake",
+      "RobWork/RobWork/gtest/CMakeLists.txt",
+      "RobWork/RobWorkSim/gtest/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "exitEqual": true,
+    "normalizedStdoutEqual": true
+  }
+]

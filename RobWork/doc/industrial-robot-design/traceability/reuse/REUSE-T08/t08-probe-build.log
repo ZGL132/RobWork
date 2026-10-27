@@ -1,0 +1,7 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08-probe-src/CMakeLists.txt
+  Probe.cpp
+  rpy_suitability.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08-probe\Release\rpy_suitability.exe
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08-probe-src/CMakeLists.txt

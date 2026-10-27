@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "taskId": "REUSE-T01",
+  "batch": 6,
+  "frozenSha": "ee9cc79bd68ec27b8b2f95901dddd78d6c57d5d2",
+  "verdict": "PASS",
+  "verdictScope": "仅第六批28条新增功能关系及相关catalog、PTP附注的治理登记；不代表算法合规、生产适配完成或REUSE-T01整体退出",
+  "findings": [],
+  "checkout": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\\repo",
+  "checkoutClean": true,
+  "parentTreeModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "scope": {
+    "newRelations": 28,
+    "byUnit": {
+      "core": 1,
+      "dynamics": 1,
+      "runtime": 18,
+      "selection": 8
+    },
+    "newPending": 28,
+    "totalRegistered": 174,
+    "totalPending": 171,
+    "totalProposal": 3,
+    "closedFiles": 0
+  },
+  "verification": {
+    "sourceHashes": {
+      "passed": 28,
+      "failed": 0
+    },
+    "cmakeInputHashes": {
+      "passed": 28,
+      "failed": 0
+    },
+    "catalogHashes": {
+      "passed": 12,
+      "failed": 0
+    },
+    "catalogTestHashes": {
+      "passed": 2,
+      "failed": 0
+    },
+    "ptpEvidenceHashes": {
+      "passed": 2,
+      "failed": 0
+    },
+    "searchReplay": {
+      "passed": 5,
+      "failed": 0,
+      "allExitAndHitMultisetsMatch": true
+    },
+    "validateTask": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "validateDocs": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "docs.log",
+      "deepEvidence": "NOT RUN"
+    },
+    "validateReuse": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "reuse.log",
+      "boundary": "governance only; semantic review required"
+    },
+    "scopedDiff": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "scoped-diff.log"
+    }
+  },
+  "semanticChecks": [
+    "28条源码区段、全限定作用域、需求/设计契约及真实CMake目标已核对；runtime外层snapshot原语与snapshotcodec/rtcodec作用域区分正确，selection匿名命名空间未虚构嵌套。",
+    "core为单位换算唯一owner，与ARCH PA-1、core单元和CORE-T04一致；owner不豁免上游复用。Constants角度因子可候选；当前产品常量差异仍pending。",
+    "Statistics::mean是样本算术均值，variance为n-1样本方差，不能替代DYN-03时间RMS。computeRms的平方力矩梯形积分、缺口零贡献、有效首末时间分母及NaN边界与合同一致。",
+    "DOMBasisTypes::getUnit只返回字符串对应比例且未知单位抛错；没有产品14类QuantityKind和强类型token契约。sdurw_loaders具模型/图形/轨迹依赖，登记已明确禁止为查表引入重依赖。",
+    "runtime显式大端读写且rtcodec字符串u32长度、snapshot字符串u64长度；selection组合codec普通u32/f64显式小端。两处u32At直接memcpy到uint32_t，属于主机序读取，版本读路径的跨端债务已登记，未视为修复。",
+    "BINArchive标量使用原生内存字节，字符串采用格式化长度；固定字节序、长度和拒绝语义并不等同。新增runtime owner为身份/物化协议职责，不授予模型构造或修改权限。",
+    "MATH-STATS、UTIL-UNITS、UTIL-BINARCHIVE相关上游文件、符号和目标真实，状态保持candidate；本批28条decision/status均pending。",
+    "PTP附注与ToolSuitabilityTest.cpp和probe-r7/gtest.xml摘要一致；该证据仅3个标量/工具用例，无Q生产实测，不构成生产PTP通过。"
+  ],
+  "notRun": [
+    "C++构建及产品测试",
+    "Windows GUI/Widgets测试",
+    "上游完整测试集",
+    "本次重新运行API探测",
+    "跨大小端实际执行",
+    "生产断开/扰动验证",
+    "全库DeepEvidence审计"
+  ],
+  "limitations": [
+    "174条仅为已登记关系，不是全20单元全部实际功能的审计完成声明。",
+    "本结论不批准REUSE-T02、算法替换、新核心实现或上游扩展，不授予HOST/模型构造和写入权限。",
+    "本报告不重新背书同提交归档的前批API独立验收，也不将范围diff检查扩大为整个提交全部归档日志的diff检查。"
+  ],
+  "evidence": [
+    "new-rows.json",
+    "source-excerpts.log",
+    "hash-checks.json",
+    "search-replay.json",
+    "search-1.log",
+    "search-2.log",
+    "search-3.log",
+    "search-4.log",
+    "search-5.log",
+    "scope-authority.log",
+    "semantic-targets.log",
+    "final-semantic-review.log",
+    "task.log",
+    "task.exit.txt",
+    "docs.log",
+    "docs.exit.txt",
+    "reuse.log",
+    "reuse.exit.txt",
+    "scoped-diff.log",
+    "scoped-diff.exit.txt"
+  ]
+}

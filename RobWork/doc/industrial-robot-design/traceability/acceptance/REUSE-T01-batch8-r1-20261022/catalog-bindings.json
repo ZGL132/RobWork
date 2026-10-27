@@ -1,0 +1,23 @@
+[
+  {
+    "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+    "shaMatches": true,
+    "target": "sdurw_core",
+    "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+    "shaMatches": true,
+    "target": "sdurw_core",
+    "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+    "shaMatches": true,
+    "target": "sdurw_core",
+    "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "targetShaMatches": true
+  }
+]

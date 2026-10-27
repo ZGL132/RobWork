@@ -1,0 +1,7 @@
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-pack.ps1 : validat
+e-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/tasks/foundation/LITE-T01.json (
+LITE-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 

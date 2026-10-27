@@ -17,6 +17,7 @@
  */
 
 #include "PanelModel.hpp"
+#include "RpyPresentation.hpp"  // rpyview::rotationToRpy——插件私有反解唯一实现（REUSE-T33 删本文件副本）
 
 #include <algorithm>
 #include <array>
@@ -57,28 +58,10 @@ std::string formatVector(const rw::math::Vector3D<double>& v)
          + formatDeterministic(v[2]);
 }
 
-// 旋转矩阵 → ZYX 欧拉角（RPY）反解——位姿行的角度半区呈现用。
-// ★ 逐元素解析实现，不调用 rw::math::RPY 构造（冒烟 header-only 纪律：
-//   RPY 构造是框架外联符号，F-480 同族——HostMigrationProviders 侧已实测
-//   链接失败，本文件禁重蹈）。正解约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)
-//   （GeometryLinkEdit 正解同式），反解：pitch＝-asin(R20)，
-//   roll＝atan2(R21,R22)，yaw＝atan2(R10,R00)；|R20|≈1 奇异（万向锁）时
-//   roll＝0、yaw 改由 atan2(-R01,R11) 确定（确定性特例——呈现专用，
-//   与 HostMigrationProviders::rotationToRpy 同式同源，两处均为插件私有
-//   呈现辅助、零业务判定，公式漂移由各自单元测试钉住）。
-//
-// @param R [in] 旋转矩阵（无量纲正交阵；参考系语义由调用行负责）
-// @return {roll, pitch, yaw}，单位 rad
-std::array<double, 3> rotationToRpy(const rw::math::Rotation3D<double>& R)
-{
-    const double pitch = -std::asin(std::clamp(R(2, 0), -1.0, 1.0));
-    const double cp = std::cos(pitch);
-    if (std::abs(cp) > 1e-12) {
-        return {std::atan2(R(2, 1), R(2, 2)), pitch, std::atan2(R(1, 0), R(0, 0))};
-    }
-    // 万向锁：roll/yaw 共线不可分——确定性取 roll=0（工程惯例）。
-    return {0.0, pitch, std::atan2(-R(0, 1), R(1, 1))};
-}
+// 旋转矩阵 → RPY 反解：REUSE-T33 删除本文件逐元素解析副本（与
+// RpyPresentation.hpp 逐字同款的第二实现——同单元双轨违反 H2），改消费
+// rpyview::rotationToRpy 唯一实现（同目录插件私有头——上游 RPY 反解换序
+// ＋万向锁 roll=0 产品约定保留，语义与实现细节见该头注）。
 
 // 位姿的一行文本（"x, y, z, r, p, y"六值——前三维平移 m，后三维 RPY rad；
 // 六值口径与 HostMigrationProviders 工具/场景检查器页一致，单位由行字段
@@ -86,7 +69,7 @@ std::array<double, 3> rotationToRpy(const rw::math::Rotation3D<double>& R)
 std::string formatPose(const rw::math::Vector3D<double>& d,
                        const rw::math::Rotation3D<double>& R)
 {
-    const std::array<double, 3> rpy = rotationToRpy(R);
+    const std::array<double, 3> rpy = rpyview::rotationToRpy(R);
     return formatDeterministic(d[0]) + ", " + formatDeterministic(d[1]) + ", "
          + formatDeterministic(d[2]) + ", " + formatDeterministic(rpy[0]) + ", "
          + formatDeterministic(rpy[1]) + ", " + formatDeterministic(rpy[2]);

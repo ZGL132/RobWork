@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T15",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T15.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "sha256": "63479dfb324b3d0a0bce6b64dc77c76dc06e6a460a429f811865cc0b4dcf9d90",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/core.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "sha256": "14ee2044ce7bb4e2b31aebc71e9f997691a3b83a8106862c58f818fdd2793a77",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/core.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/IdentityTest.cpp",
+      "sha256": "e2ba87318e9710cc11d6b37b8f71bde495b03a715167eacb50a82a9c4628e608",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/core.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/DigestTest.cpp",
+      "sha256": "07e6c3248dff9d866b41b8152a4319a6c6be28fc64d928f8922c0d6bb6f04a62",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/core.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "sha256": "e390bffe76b4a3670dc5d249fe06cf0350df7b7f3052c8e3c81f4999fe9dbfbb",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/core.xml"
+    }
+  ]
+}

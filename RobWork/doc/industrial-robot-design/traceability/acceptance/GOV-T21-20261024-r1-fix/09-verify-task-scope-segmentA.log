@@ -1,0 +1,5 @@
+# å¤è·‘å‘½ä»¤ï¼špwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T21.json -Base 64ef0fd07755479ce01b3f936320fe91396cfce2 -Head c27349a80d6116151e2b9625c3196c77a4398fff
+# å¤è·‘æ—¶ç‚¹ï¼š2026-10-24 è¿”å·¥ä¼šè¯ï¼ˆr1 issue 1/4 å¤„ç½®ï¼šæ®µAï¼GOV-T21 é¦–å®æ–½è‡³ REUSE-T07 æäº¤ä¹‹çˆ¶ï¼‰
+verify-task-scope: GOV-T21 base=64ef0fd07755 head=c27349a80d61 changed=6378 allowedRules=8 forbiddenRules=5
+verify-task-scope: PASS GOV-T21 ¡ª¡ª 6378 ¸öÂ·¾¶È«²¿ÔÚÔÊĞíÃæÄÚ
+exit=0

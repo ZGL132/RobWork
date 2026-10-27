@@ -1,0 +1,9 @@
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-CLOSURE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp : functional closure

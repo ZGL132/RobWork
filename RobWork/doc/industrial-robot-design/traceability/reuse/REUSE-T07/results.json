@@ -1,0 +1,99 @@
+{
+  "taskId": "REUSE-T07",
+  "implementation": "local-verified-pending-independent-acceptance",
+  "tests": {
+    "red": {
+      "executed": 37,
+      "passed": 36,
+      "failed": 1,
+      "skipped": 0
+    },
+    "initial-green": {
+      "executed": 473,
+      "passed": 473,
+      "failed": 0,
+      "skipped": 0
+    },
+    "stale-restoration": {
+      "executed": 474,
+      "passed": 465,
+      "failed": 9,
+      "skipped": 0
+    },
+    "normal": {
+      "executed": 474,
+      "passed": 474,
+      "failed": 0,
+      "skipped": 0
+    },
+    "contract": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "smoke": {
+      "executed": 372,
+      "passed": 372,
+      "failed": 0,
+      "skipped": 0
+    },
+    "smoke-contract": {
+      "executed": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    "disconnected": {
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0
+    }
+  },
+  "performance": {
+    "baseline": {
+      "medianMicroseconds": 0.09174,
+      "minMicroseconds": 0.08872,
+      "maxMicroseconds": 0.09655,
+      "checksum": 280400,
+      "calls": 70100
+    },
+    "migrated": {
+      "medianMicroseconds": 0.42767,
+      "minMicroseconds": 0.35797,
+      "maxMicroseconds": 0.56139,
+      "checksum": 280400,
+      "calls": 70100
+    },
+    "ratio": 4.661761499890996,
+    "baselineCommit": "c27349a80d6116151e2b9625c3196c77a4398fff",
+    "baselineHeader": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+    "migratedHeader": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+      "sha256": "f04c14eeae79b0d567e17e80d8b09021428b5c71412355e387af00c1b15194c9"
+    },
+    "scope": "同机VS2022 x64 Release，3x3有限矩阵；非整产品交互延迟，无新硬性时限"
+  },
+  "independentAcceptance": "NOT RUN",
+  "remote": "NOT RUN: owner instructed local only",
+  "closure": "NOT CLOSED",
+  "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+    "sha256": "f04c14eeae79b0d567e17e80d8b09021428b5c71412355e387af00c1b15194c9"
+  },
+  "governanceSelftest": {
+    "report": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/gates/t07-governance-pinned/reuse-test-report.json",
+    "executed": 152,
+    "passed": 152,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "fixtureCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6",
+    "scope": "fixed rule fixtures with current validator/helper; separate from current product validation"
+  },
+  "finalGates": {
+    "docs": 0,
+    "ird_gates": 0
+  }
+}

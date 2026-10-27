@@ -1,0 +1,9 @@
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidBody.cpp:99:double RigidBody::calcEnergy (const State& state, const Vector3D<>& gravity,
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidBody.cpp:107:    const double energy           = 0.5 * (mass * dot (linVel, linVel) + Iw2) -
+RobWork/RobWorkSim/src/rwsim/rwphysics/BodyIntegrator.hpp:27:         * @brief integrates velocity over timestep h to update the position of the body
+RobWork/RobWorkSim/src/rwsim/rwphysics/BodyIntegrator.hpp:32:         * @brief integrates forces over timestep h to update the velocity of the body
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:61:        //! @brief Specify the type of integrator to use to integrate the motion - the effect is
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:63:        std::string integratorType;
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:342:         * @brief Calculates the total energy of the body.
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:347:         * @return the total energy of the body.
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:350:        calcEnergy (const rw::kinematics::State& state,

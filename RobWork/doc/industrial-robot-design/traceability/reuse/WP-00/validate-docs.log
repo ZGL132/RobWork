@@ -1,0 +1,12 @@
+pwsh.exe: 
+Line |
+   2 |  … -docs.log'; & pwsh -NoProfile -Command { & ./RobWork/scripts/industri …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot process the XML from the 'Error' stream of 'C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe': Unexpected end of file has occurred. The following elements are not closed: S, MS, Obj, Objs. Line 1, position 6211.
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+validate-task: PASS (3 tasks)
+pwsh.exe: 
+Line |
+   2 |  … -docs.log'; & pwsh -NoProfile -Command { & ./RobWork/scripts/industri …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot process the XML from the 'Error' stream of 'C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe': Data at the root level is invalid. Line 1, position 1.

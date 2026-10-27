@@ -1,0 +1,13 @@
+=== InertiaMath.hpp 私有头消费者（不跨单元红线） ===
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\plugin\ModelingBodyEditor.cpp:7:#include "../src/InertiaMath.hpp" // 同单元唯一惯量判定，不跨单元借私有实现。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\Parts.cpp:28:#include "InertiaMath.hpp"  // 单元私有：惯量 SPD＋三角不等式单一实现（I-MDL-5——与连杆同源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\Parts.cpp:150:    // （InertiaMath.hpp 单元私有头——防两处容差/判定式漂移）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\RobotDesign.cpp:23:#include "InertiaMath.hpp"  // 单元私有：惯量 SPD＋三角不等式单一实现（I-MDL-5——R-2：src/ 内私有头）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\RobotDesign.cpp:309:// InertiaMath.hpp（连杆与工具共用，防两处判定漂移；算法/容差注释见该头），
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\include\sdurws\ird\modeling\CommandHandlers.hpp:164: *     共用 BodyData 单一实现，特征值数学唯一来自 src/InertiaMath.hpp，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\PropertyEstimation.cpp:17:#include "../src/InertiaMath.hpp"  // 单元私有头（R-2：不入 include/）——合成自检单一实现（卡 §9.4.6 @post）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\PropertyEstimation.cpp:87:/// （inertiamath::synthesisSelfCheck，见 InertiaMath.hpp 函数注）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\Import.cpp:44:#include "InertiaMath.hpp"  // 单元私有头（R-2）——I-MDL-5 SPD/三角不等式单一实现（§6.3 错误项判定）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\CommandHandlers.cpp:11: *   - 判定数学零重写：惯量特征值唯一来自 src/InertiaMath.hpp（I-MDL-5
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\src\CommandHandlers.cpp:31:#include "InertiaMath.hpp"  // 单元私有：惯量 SPD＋三角不等式特征值单一实现（I-MDL-5——R-2 src/ 私有头）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/\modeling\test\PropertyEstimationTest.cpp:26:#include "../src/InertiaMath.hpp"  // 单元内私有头（runtime/reporting 同款先例）——自检分量级反例与 NotProvided 断言跳过

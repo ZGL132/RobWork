@@ -1,0 +1,28 @@
+{
+  "reviewedCommit": "e5c58aa0b6b3958b90e3a22ef42c36e4c9a4dc7e",
+  "directParent": "88cae2102d16a338c5f0a7725d080f1c0d802f95",
+  "productBaseline": "549a61834bea9755b873dde478ee80c5b9f4b15a",
+  "scope": "B33 only: 7 new function rows and one refreshed StableCodeRegistry.registerCode row",
+  "sourceSymbols": "Manually checked namespace nesting, signatures and exact start/end ranges for all eight rows; anonymous namespaces remain explicit.",
+  "parserCallChain": "ParamSchema.hpp documents clear-on-failure. ParamSchema.cpp clears at entry but appends accepted names before later failure returns. validateParamSchema returns error on false; StableCodeRegistry::registerCode throws ParamSchemaMismatch before registration completes. DiagnosticsFactory::create throws on false before names are consumed for placeholder validation.",
+  "finding": {
+    "id": "F-968",
+    "status": "open",
+    "boundary": "Private names output discipline only; no demonstrated public-object contamination or acceptance of invalid schema.",
+    "fourInputs": ["[\"pid\",\"PID\"]", "[\"pid\",\"pid\"]", "[\"pid\",]", "[\"pid\"]x"],
+    "observed": "All return false with nonempty error; names.empty() fails four times in one test; prior accepted pid remains by source tracing.",
+    "undefinedBehavior": "No null pointers or dangling state used in the probe."
+  },
+  "upstreamReview": {
+    "searched": "Replayed all six recorded searches over RobWork/RobWorkSim source, tests, examples, actual shared RobWork/doc directories, CMake and product call sites; all exits match zero.",
+    "headersImplementation": "Read DOMParser.hpp/.cpp and StringUtil.hpp/.cpp. DOMParser::make constructs BoostXMLParser; Factory can return plugin DOMParser for supported properties. StringUtil::toLower uses tolower rather than a frozen ASCII-only business-key policy.",
+    "testsExamplesDocsCmake": "Read PluginTest.cpp and StringUtilTest.cpp, ConvertSimTask.cpp (PropertyTree XML use), plugins.hpp.md and programming_conventions.rst (actual shared docs), core and gtest CMake registrations. Default XML is evidenced; absence of every possible ecosystem plugin is not claimed.",
+    "propertyTree": "Read installed public read_json header and version.hpp; real probe confirms [\"1\"] and [1] produce equal ptree, Unicode escape is decoded to pid, and newline whitespace is accepted. Restricted product grammar rejects numeric item and both excluded lexical forms.",
+    "dependency": "Boost 1.92.0 from existing vcpkg installed/x64-windows, four raw hashes verified. External installed files are not claimed as repository-tracked upstream. No install/network action."
+  },
+  "dependencyBoundary": "Product diagnostics CMake has only sdurws_ird_core as its unit link. B33 audit target alone links installed PropertyTree and existing test/report tooling; this does not grant a new production dependency.",
+  "identityAndDedup": "EntryDetail uses core canonical identity texts; task tuple string and code-lower are business projections. Probe checks object isolation, attempt isolation and task priority. It does not establish all catalog aggregation or causal-chain behavior.",
+  "catalog": "Unchanged; UTIL-TEXT remains candidate. NONE is not an approved business-specific exemption; all eight touched rows remain decision/status pending.",
+  "notRun": ["Full diagnostic logging/redaction/catalog acceptance", "Cross-locale behavior", "New backend/plugin", "Production correction", "All REUSE-T01 acceptance", "REUSE-T02", "Remote sync"],
+  "productUpstreamVcpkgChanges": 0
+}

@@ -20,6 +20,8 @@
 
 仅在交接/复杂任务确有需要时运行 build-context-pack.ps1 -TaskId <id>。使用前以 validate-context-pack.ps1 -TaskId <id> 检查该包；无需 -All 或刷新未使用的其他任务包。包里指纹变化不等于任务语义变化，回查相关源章节即可。
 
+显式指定任务但包不存在（包括整个 packs 目录不存在）时退出 1；全量模式无包可查仍退出 0。生成器与校验器共用 `context-pack-files.ps1` 的原有源文件清单：契约、designRefs 所属文件及既有规则输入的指纹不得遗漏。结构错退出 1，输入变化/状态漂移退出 2；缓存校验不代替任务契约校验、复用审计或原件验收。
+
 ## 4. 唯一事实源
 
 自动流水线状态只读写 traceability/pipeline/state.json；跨任务缺陷在 traceability/findings.json，不复制到新状态台账。普通人工任务不读写 PIPE 状态。

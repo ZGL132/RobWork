@@ -1,0 +1,27 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp:88: * 线程安全：全部方法 const 且只读查询（findFrame/getFrames/defaultState
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp:89: * 为基线只读查询——§8.7"结构查询多线程只读安全"）；defaultState 返回值
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp:138:     *         （不抛；调用方以 operator bool 判别——与基线 findDevice
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp:142:        findDevice(std::string_view name) const noexcept;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp:156:     * 关节位 q 全 0（编译器不设初值——q 的权威语义经 zeroOffset 映射在
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp:162:    rw::kinematics::State defaultState() const;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:526: * 定义：T_static ＝ T_parent_joint · R_axis(zeroOffset) · R_align。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:531: * ＝权威 FK（q_authoritative＝zeroOffset＋q_rw，CanonicalJoint::zeroOffset
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:536: * @param zeroOffset   [in] 零位偏置（单位 rad〔移动关节 m〕；RobWork 侧
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:537: *                     q_rw＝q_authoritative−offset）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:544:    double zeroOffset)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:548:    const rw::math::Rotation3D<double> rZeroOffset = rotationFromCustomEaa(axis * zeroOffset);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:706:                // 原样挂接；zeroOffset 对无轴关节无意义，不消费（其合法性
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:714:                    jointStaticTransform(joint.origin, joint.axis, joint.zeroOffset);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:732:                // q 从零起算——zeroOffset 语义），故 WC 侧 bounds 平移 −offset；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:737:                double qLower = -inf;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:738:                double qUpper = inf;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:740:                    qLower = joint.bounds->lower - joint.zeroOffset;  // 单位随关节量纲（rad/m）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:741:                    qUpper = joint.bounds->upper - joint.zeroOffset;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:743:                jointHandle->setBounds(rw::math::Q(1, qLower), rw::math::Q(1, qUpper));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:855:        // 位姿语义经 zeroOffset 映射在链变换内）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:856:        const rw::kinematics::State defaultState = workCell->getDefaultState();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:858:            new rw::models::SerialDevice(serialChain, deviceName.fullName, defaultState));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:998:    WorkCellConstView::findDevice(std::string_view name) const noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:1000:    // 基线 findDevice 返回可变 Ptr——视图面收敛为 const（§8.2 只读包装：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:1002:    return m_workCell->findDevice(std::string(name)).template cast<const rw::models::SerialDevice>();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:1011:rw::kinematics::State WorkCellConstView::defaultState() const

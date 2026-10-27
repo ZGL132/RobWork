@@ -1,0 +1,4 @@
+RobWork/RobWork/src/rw/models/DHParameterSet.hpp:125:        static std::vector< DHParameterSet > getDHParameters (rw::core::Ptr< rw::models::SerialDevice > device);
+RobWork/RobWork/src/rw/math/Transform3D.hpp:147:        static const Transform3D DH (T alpha, T a, T d, T theta);
+RobWork/RobWork/src/rw/math/Transform3D.hpp:178:        static const Transform3D craigDH (T alpha, T a, T d, T theta);
+RobWork/RobWork/src/rw/math/Transform3D.hpp:210:        static const Transform3D DHHGP (T alpha, T a, T beta, T b);

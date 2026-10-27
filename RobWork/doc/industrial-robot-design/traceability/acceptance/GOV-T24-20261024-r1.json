@@ -1,0 +1,95 @@
+{
+  "taskId": "GOV-T24",
+  "baseCommit": "fac3d030a0e301c32972a7bf4564a071fc8e9e0d",
+  "reviewedCommit": "df0b35fc2b32068dcfe3745d1b29a81c58d17f77",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-24T08:32:33.5291015+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "GOV-T24/WP-01 单次验收子智能体",
+    "authorization": "所有者2026-10-24明确指令的单次验收子智能体（GOV-T23先例同型）；根 AGENTS.md 子智能体禁令仅本次豁免。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配或重建构建树；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 fac3d030a..df0b35fc2 送验实现：现场、显式 Base/Head 范围、门禁零改动与 modeling 冻结链硬核验、提交规范、门禁引擎直跑（17 项自测正负例）、validate-docs 一次过（含 validate-task＋validate-reuse）、集成 kinematics 两个测试复跑、冒烟/探针证据原件核对、契约三条 acceptance 与 note/status 一致性映射。",
+  "counts": {
+    "failed": 0,
+    "passed": 10,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "10 项验收检查；集成/冒烟测试计数另列（integrationTest、smokeEvidence），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 空（干净）；HEAD=1256d7459（其后仅补检查日志原件提交，非被验内容）；log -3 依次 1256d7459/df0b35fc2/fac3d030a，与送验说明一致。",
+    "范围：verify-task-scope 显式 -Base fac3d030a -Head df0b35fc2 exit 0，40 路径全在允许面；git diff --name-only 40 文件中无 RobWork/RobWork/src/**、无 vcpkg/**、无 industrialrobot/cmake/ 文件；产品代码仅 core/kinematics 两个 CMakeLists.txt，其余为契约/凭证/矩阵/证据，均落 allowedFiles（REUSE-T19/** 含证据目录与 production/kinematics.FkEvaluator.evaluate.json）。",
+    "门禁零改动硬核验：git diff --exit-code 对 industrialrobot/cmake/ 退出 0 零差异——问题A确认以合法接线而非改门禁消除。",
+    "modeling 冻结链零触碰：modeling/CMakeLists.txt、functions/modeling.json、functions/foundation-governance.json、REUSE-T07/production.json、REUSE-T11 两个 rpyTo*production.json 共 6 文件 git diff --exit-code 退出 0。",
+    "提交规范：commit-lint -Range fac3d030a..df0b35fc2 PASS（1 个提交全部合规）exit 0。",
+    "门禁引擎直跑：cmake -P ird_gates.cmake exit 0，输出“全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中”，日志含 17 行自测正负例记录（10 fail_* 按预期检出＋7 pass_* 无误报）。",
+    "文档/契约/复用一次过：validate-docs -TaskFile GOV-T24.json exit 0——validate-task: PASS（1 tasks）、validate-reuse: PASS governance only（inventory=1401 units=20 changed=83 DEBT=16 UNRESOLVED=1399）、validate-docs: PASS（20 units, 12 trace entries, 394 task files）；REUSE-AD-PENDING 为 AD 审计既有 pending 提示，非本包阻断。",
+    "集成测试复跑（PATH 前置 build/RobWork/bin|libs/Release＋vcpkg installed/x64-windows/bin）：kinematics test 292 tests＝291 passed/0 failed/1 skipped（PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1，T19 已登记预存 envUnavailable）/0 notRun，exit 0；contract 57 tests＝57 passed/0 failed/0 skipped/0 notRun，exit 0；gtest XML 原件（tests=292 failures=0、tests=57 failures=0）入产物目录。",
+    "冒烟/探针证据原件七项标记全部命中：smoke-configure.log 含 Found RobWork 且 CMake Error 计数 0；smoke-modeling-test.xml tests=372 failures=0；smoke-drivetrain-test.xml tests=42 failures=0；smoke-kinematics-test-blocked.log 含 2 处 LNK2019（NOT RUN 登记真实）；rwprobe-default-toolchain-fail.log 含 Invalid character escape；rwprobe-override-verify-fail.log 含 Looking for sdurw - not found；rwprobe-prebound-configure-ok.log 含 Found RobWork。",
+    "契约一致性：GOV-T24.json status==ready；note 含起始 SHA fac3d030a0e301c32972a7bf4564a071fc8e9e0d；三条 acceptance 逐条映射实测——第 1 条（kinematics 条件分支接线、门禁零改动、引擎零命中）：实测 diff 中 kinematics/CMakeLists.txt 集成分支 sdurw_math sdurw_kinematics sdurw_models 三真实目标（274-276 行）、冒烟分支仅建 sdurw_math/sdurw_models 同名 ALIAS（288-293 行）、无 sdurw_kinematics 冒烟别名、_ird_kin_rw_* 变量已删（仅注释留痕），配合检查 3（门禁零差异）与检查 6（引擎直跑零命中）；第 2 条（core 尾段前置绑定＋探针复现留痕）：实测 core/CMakeLists.txt 尾段守卫 if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math) 内 find_package(Threads REQUIRED)＋synchronization 空 INTERFACE IMPORTED GLOBAL 目标（集成模式整体跳过），落点非 modeling（检查 4 零差异），三探针日志标记命中（检查 9）；第 3 条（增量构建、门禁、冒烟通过、测试分列、NOT RUN 如实）：检查 6 门禁＋检查 8 集成测试分列（291/0/1/0 与 57/0/0/0）＋检查 9 冒烟 372/0、42/0 原件；冒烟 kinematics test exe NOT RUN 以 LNK2019×2 原件留痕并在 README 登记为 T19 遗留缺口（修复不在本包授权内），符合“未解决环境缺供如实标 NOT RUN 并说明影响”。"
+  ],
+  "integrationTest": {
+    "kinematics": {
+      "tests": 292,
+      "passed": 291,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "skippedCase": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1（T19 已登记预存 envUnavailable，与本包无关）",
+      "exitCode": 0,
+      "xml": "08-int-kinematics-test.xml"
+    },
+    "kinematicsContract": {
+      "tests": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "08-int-kinematics-contract.xml"
+    }
+  },
+  "smokeEvidence": {
+    "reviewedOnly": true,
+    "modeling": "tests=372 failures=0",
+    "drivetrain": "tests=42 failures=0",
+    "kinematicsSmokeExe": "NOT RUN（T19 遗留缺口：runtime WorkCellConstView::findFrame/findDevice 无冒烟实现，LNK2019×2 原件留痕；修复属 T19 语义不在本包授权内）",
+    "probeChain": "默认 toolchain 转义崩溃（Invalid character escape）→ 带 override 验证断链（Looking for sdurw - not found）→ 前置绑定后配置成功（Found RobWork），三日志原件标记全部命中"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T24.json -Base fac3d030a0e301c32972a7bf4564a071fc8e9e0d -Head df0b35fc2b32068dcfe3745d1b29a81c58d17f77", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "gate-dir-zero-diff", "command": "git diff --exit-code fac3d030a..df0b35fc2 -- RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/", "exitCode": 0, "passed": true },
+    { "name": "modeling-frozen-zero-diff", "command": "git diff --exit-code fac3d030a..df0b35fc2 -- modeling/CMakeLists.txt + functions/modeling.json + functions/foundation-governance.json + REUSE-T07/production.json + REUSE-T11 两 rpyTo*production.json", "exitCode": 0, "passed": true },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range fac3d030a..df0b35fc2", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "gate-engine", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=%TEMP%/govt24-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "06-gate-engine.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/GOV-T24.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" },
+    { "name": "int-kinematics-test", "command": "sdurws_ird_kinematics_test.exe --gtest_output=xml:（PATH 前置框架/vcpkg DLL 目录）", "exitCode": 0, "passed": true, "log": "08-int-kinematics-test.log", "xml": "08-int-kinematics-test.xml" },
+    { "name": "int-kinematics-contract", "command": "sdurws_ird_kinematics_contract_test.exe --gtest_output=xml:（PATH 前置框架/vcpkg DLL 目录）", "exitCode": 0, "passed": true, "log": "08-int-kinematics-contract.log", "xml": "08-int-kinematics-contract.xml" }
+  ],
+  "executionNotes": [
+    "第 8 步首次运行时 gtest_output 参数在 pwsh 参数模式下拼接失误，XML 先落仓库根当前目录；两 exe 本体一次运行即通过（292/291p/1s/0f 与 57/57p/0f，exit 0），未重跑重生成，将真实运行原件 XML 移入产物目录重命名，运行副产物 rwsettings.xml 一并移入留痕（08-rwsettings-runside.xml）；仓库根恢复干净，仅产物目录未跟踪。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "冒烟 kinematics test/contract_test exe",
+      "reason": "T19 遗留缺口（runtime WorkCellConstView 集成专属，冒烟链接缺 findFrame/findDevice），实施方以 LNK2019×2 原件如实登记 NOT RUN；修复属 T19 语义不在本包授权内，不构成本包阻断。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 GOV-T24/WP-01 送验范围（fac3d030a..df0b35fc2）：主线 IRD-GATE-LIB 准入修复与冒烟 RobWork 导出包供给修复。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭）；不构成 WP-02、算法替换（migration §11）或 REUSE-T02 的放行；冒烟 kinematics exe 的 T19 缺口未消。集成测试 exe 为送验时已构建产物（指令明确勿重建），其源码与 df0b35fc2 树一致由第 2 步范围与门禁/文档检查约束。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/06-gate-engine.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/07-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/08-int-kinematics-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/08-int-kinematics-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/08-int-kinematics-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/08-int-kinematics-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/08-rwsettings-runside.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1.json"
+  ]
+}

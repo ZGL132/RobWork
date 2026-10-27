@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.23)
+project(ird_runtime_audit_probe LANGUAGES CXX)
+# 只读审计：导入上游原CONFIG目标，使用产品原runtime CMake编译真实编译器。
+# 别名仅弥合源码内目标与CONFIG导出名，不另列产品源文件或复制其构建规则。
+find_package(RobWork REQUIRED CONFIG COMPONENTS common models kinematics loaders proximity proximitystrategies)
+find_package(GTest CONFIG REQUIRED)
+include("${RWSIM_TARGETS_DIR}/sdurwsim.cmake")
+foreach(component kinematics models loaders proximity proximitystrategies)
+    add_library(sdurw_${component} ALIAS RW::sdurw_${component})
+endforeach()
+add_library(sdurwsim ALIAS RWSIM::sdurwsim)
+get_filename_component(IRD_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../RobWorkStudio/src/rwslibs/industrialrobot" ABSOLUTE)
+add_subdirectory("${IRD_SOURCE_DIR}/core" "${CMAKE_CURRENT_BINARY_DIR}/ird-core" EXCLUDE_FROM_ALL)
+add_subdirectory("${IRD_SOURCE_DIR}/testkit" "${CMAKE_CURRENT_BINARY_DIR}/ird-testkit" EXCLUDE_FROM_ALL)
+add_subdirectory("${IRD_SOURCE_DIR}/runtime" "${CMAKE_CURRENT_BINARY_DIR}/ird-runtime" EXCLUDE_FROM_ALL)
+# 同runtime单元审计测试消费既有私有编译入口/夹具；不增加任何产品跨单元私有头。
+add_executable(ird_runtime_audit_probe RuntimeOffsetAuditTest.cpp "${IRD_SOURCE_DIR}/runtime/test/TestMainReport.cpp")
+target_include_directories(ird_runtime_audit_probe PRIVATE "${IRD_SOURCE_DIR}/runtime/src" "${IRD_SOURCE_DIR}/runtime/test")
+target_compile_features(ird_runtime_audit_probe PRIVATE cxx_std_17)
+if(MSVC)
+    target_compile_options(ird_runtime_audit_probe PRIVATE /utf-8)
+endif()
+target_link_libraries(ird_runtime_audit_probe PRIVATE sdurws_ird_runtime sdurws_ird_testkit GTest::gtest)

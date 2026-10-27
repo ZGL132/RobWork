@@ -1,0 +1,272 @@
+{
+  "seed": 20261023,
+  "total": 13168,
+  "bothOverflow": 7889,
+  "mismatches": [
+    {
+      "input": [
+        "0x1.fffffffffffffp+1023",
+        "-0x1.fffffffffffffp+1022",
+        "0x1.fffffffffffffp+0",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": true
+    },
+    {
+      "input": [
+        "0x1.ffffffffffffep+1023",
+        "-0x1.fffffffffffffp+1023",
+        "0x1.fffffffffffffp+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": true
+    },
+    {
+      "input": [
+        "0x1.ffffffffffffep+1023",
+        "-0x1.fffffffffffffp+1023",
+        "0x1.fffffffffffffp+0",
+        "0x0.0000000000001p-1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": true
+    },
+    {
+      "input": [
+        "-0x1.fffffffffffffp+1023",
+        "0x1.fffffffffffffp+1022",
+        "0x1.fffffffffffffp+0",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": true
+    },
+    {
+      "input": [
+        "-0x1.fffffffffffffp+1023",
+        "0x0.0000000000001p-1022",
+        "0x0.0p+0",
+        "0x1.fffffffffffffp+1023"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x1.fffffffffffffp+1023",
+        "0x0.0000000000001p-1022",
+        "0x1.0000000000000p-1",
+        "0x1.fffffffffffffp+1023"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x1.ffffffffffffep+1023",
+        "0x1.fffffffffffffp+1023",
+        "0x1.fffffffffffffp+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": true
+    },
+    {
+      "input": [
+        "-0x1.ffffffffffffep+1023",
+        "0x1.fffffffffffffp+1023",
+        "0x1.fffffffffffffp+0",
+        "0x0.0000000000001p-1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": true
+    },
+    {
+      "input": [
+        "-0x1.fffffffffffffp+1022",
+        "0x0.0000000000001p-1022",
+        "0x0.0p+0",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x1.fffffffffffffp+1022",
+        "0x0.0000000000001p-1022",
+        "0x1.0000000000000p-1",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "0x0.0000000000001p-1022",
+        "-0x1.fffffffffffffp+1023",
+        "0x0.0p+0",
+        "0x1.fffffffffffffp+1023"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "0x0.0000000000001p-1022",
+        "-0x1.fffffffffffffp+1023",
+        "0x1.0000000000000p-1",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "0x0.0000000000001p-1022",
+        "-0x1.fffffffffffffp+1023",
+        "0x1.0000000000000p+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "0x0.0000000000001p-1022",
+        "-0x1.7ffffffffffffp+1023",
+        "0x1.0000000000000p+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "0x0.0000000000001p-1022",
+        "-0x1.fffffffffffffp+1022",
+        "0x0.0p+0",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "0x0.0000000000001p-1022",
+        "-0x1.fffffffffffffp+1022",
+        "0x1.0000000000000p+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x1.fffffffffffffp+1023",
+        "0x0.0p+0",
+        "0x1.fffffffffffffp+1023"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x1.fffffffffffffp+1023",
+        "0x1.0000000000000p-1",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x1.fffffffffffffp+1023",
+        "0x1.0000000000000p+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x1.7ffffffffffffp+1023",
+        "0x1.0000000000000p+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x1.fffffffffffffp+1022",
+        "0x0.0p+0",
+        "0x1.fffffffffffffp+1022"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x1.fffffffffffffp+1022",
+        "0x1.0000000000000p+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x0.0000000000001p-1022",
+        "0x1.8000000000000p+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    },
+    {
+      "input": [
+        "-0x0.0000000000001p-1022",
+        "0x0.0000000000001p-1022",
+        "0x1.fffffffffffffp+0",
+        "0x0.0p+0"
+      ],
+      "expected": false,
+      "actual": 1,
+      "bothOverflow": false
+    }
+  ],
+  "scope": "\u6709\u9650\u6837\u672c\u7cbe\u786eFraction\u5bf9\u7167\uff0c\u4e0d\u5ba3\u79f0\u5168double\u7cbe\u786e\uff1b\u6b63\u5e38\u8def\u5f84\u820d\u5165/\u4e0b\u6ea2\u4fdd\u7559"
+}

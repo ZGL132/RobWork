@@ -1,0 +1,3 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp
+sdurws::ird::testkit::GoldenDataset::manifest
+179:     const DatasetManifest& manifest() const noexcept { return manifest_; }

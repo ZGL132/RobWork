@@ -1,0 +1,66 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\libs\Release\yaobi.lib
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_plugin.dll
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Auto build dll exports
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_kinematics.dll
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_graspplanning.dll
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_graphics.dll
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_trajectory.dll
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_control.dll
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_invkin.dll
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_loaders.dll
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_algorithms.dll
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_opengl.dll
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_task.dll
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_pathplanners.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  WorkCellCompiler.cpp
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_runtime_test
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe

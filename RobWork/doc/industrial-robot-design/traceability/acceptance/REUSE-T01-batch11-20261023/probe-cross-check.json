@@ -1,0 +1,62 @@
+{
+  "origin": "冻结提交内的实施者实跑证据；本独立会话核对源码绑定与XML/JSON/日志，本轮未重新编译/运行API探测。",
+  "artifactBindings": [
+    {
+      "kind": "sources",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/PlanningSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "sources",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "upstream",
+      "path": "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "match": true
+    },
+    {
+      "kind": "upstream",
+      "path": "RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp",
+      "match": true
+    },
+    {
+      "kind": "upstream",
+      "path": "RobWork/RobWork/src/rw/pathplanning/QSampler.cpp",
+      "match": true
+    },
+    {
+      "kind": "upstream",
+      "path": "RobWork/RobWork/src/rw/pathplanning/StopCriteria.cpp",
+      "match": true
+    },
+    {
+      "kind": "upstream",
+      "path": "RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp",
+      "match": true
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "xmlAttributes": {
+    "tests": "4",
+    "failures": "0",
+    "disabled": "0",
+    "errors": "0",
+    "time": "0.001",
+    "timestamp": "2026-10-23T00:21:58.685",
+    "name": "AllTests"
+  },
+  "testNamesAgree": true,
+  "sourceHashMatches": true,
+  "limits": "4项API适用性探测不等于生产迁移/断开实验；旧26项未重跑。"
+}

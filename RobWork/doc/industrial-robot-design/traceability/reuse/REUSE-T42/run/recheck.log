@@ -1,0 +1,53 @@
+Note: Google Test filter = ReqTemplateArray.*
+[==========] Running 22 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 22 tests from ReqTemplateArray
+[ RUN      ] ReqTemplateArray.MirrorGoldenNormalY_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorGoldenNormalY_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorGoldenNormalZ_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorGoldenNormalZ_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorNormalOverflowRejected_F646
+[       OK ] ReqTemplateArray.MirrorNormalOverflowRejected_F646 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorPointAtTargetAndToolRollFree_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorPointAtTargetAndToolRollFree_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorUnmirrorableRulePending_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorUnmirrorableRulePending_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.LinearArrayCountAndSpacing_WP14T07_ACC2
+[       OK ] ReqTemplateArray.LinearArrayCountAndSpacing_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.RectangularLayersAndRecipe_AT24_WP14T12
+[       OK ] ReqTemplateArray.RectangularLayersAndRecipe_AT24_WP14T12 (0 ms)
+[ RUN      ] ReqTemplateArray.CircularPlaneNormal_AT24_WP14T12
+[       OK ] ReqTemplateArray.CircularPlaneNormal_AT24_WP14T12 (0 ms)
+[ RUN      ] ReqTemplateArray.AtomicExistingPointUpdates_AT24_WP14T12
+[       OK ] ReqTemplateArray.AtomicExistingPointUpdates_AT24_WP14T12 (0 ms)
+[ RUN      ] ReqTemplateArray.RectangularArrayGrid_WP14T07_ACC2
+[       OK ] ReqTemplateArray.RectangularArrayGrid_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.CircularArrayRadiusAndAngle_WP14T07_ACC2
+[       OK ] ReqTemplateArray.CircularArrayRadiusAndAngle_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.PolylineArrayArcLength_WP14T07_ACC2
+[       OK ] ReqTemplateArray.PolylineArrayArcLength_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.LinearArrayMultiSourceProvenance_WP14T07_ACC2
+[       OK ] ReqTemplateArray.LinearArrayMultiSourceProvenance_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.TemplateSixKindsGoldenDefaults_WP14T07_ACC3
+[       OK ] ReqTemplateArray.TemplateSixKindsGoldenDefaults_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.TemplateApplyAndRegenerateReplace_WP14T07_ACC3
+[       OK ] ReqTemplateArray.TemplateApplyAndRegenerateReplace_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.RegenerateConflictKeepsHandModified_WP14T07_ACC3
+[       OK ] ReqTemplateArray.RegenerateConflictKeepsHandModified_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.UnlinkDisablesRegenerationAndAllowsHandEdit_WP14T07_ACC3
+[       OK ] ReqTemplateArray.UnlinkDisablesRegenerationAndAllowsHandEdit_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.BatchApplyUndoRedoAtomic_WP14T07_ACC4
+[       OK ] ReqTemplateArray.BatchApplyUndoRedoAtomic_WP14T07_ACC4 (0 ms)
+[ RUN      ] ReqTemplateArray.DeleteSourceWithLinkedDerivedWarns_WP14T07_ACC4
+[       OK ] ReqTemplateArray.DeleteSourceWithLinkedDerivedWarns_WP14T07_ACC4 (0 ms)
+[ RUN      ] ReqTemplateArray.ReDerivationAcyclicNoLivePropagation_WP14T07_ACC4
+[       OK ] ReqTemplateArray.ReDerivationAcyclicNoLivePropagation_WP14T07_ACC4 (0 ms)
+[ RUN      ] ReqTemplateArray.LocalUndoAndCommandPathSeparation_WP14T07_ACC5
+[       OK ] ReqTemplateArray.LocalUndoAndCommandPathSeparation_WP14T07_ACC5 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorGimbalPositivePitchKeepsYaw_F582
+[       OK ] ReqTemplateArray.MirrorGimbalPositivePitchKeepsYaw_F582 (0 ms)
+[----------] 22 tests from ReqTemplateArray (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 22 tests.

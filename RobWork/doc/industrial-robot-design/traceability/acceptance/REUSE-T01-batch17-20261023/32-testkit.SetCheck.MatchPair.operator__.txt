@@ -1,0 +1,6 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+sdurws::ird::testkit::MatchPair::operator==
+58:     bool operator==(const MatchPair& o) const noexcept
+59:     {
+60:         return expectedIndex == o.expectedIndex && actualIndex == o.actualIndex;
+61:     }

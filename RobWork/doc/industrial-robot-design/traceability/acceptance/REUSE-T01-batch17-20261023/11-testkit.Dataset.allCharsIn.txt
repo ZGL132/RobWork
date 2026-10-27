@@ -1,0 +1,8 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::(anonymous namespace)::allCharsIn
+77: bool allCharsIn(std::string_view s, const std::string& allowed)
+78: {
+79:     return std::all_of(s.begin(), s.end(), [&](char c) {
+80:         return allowed.find(c) != std::string::npos;
+81:     });
+82: }

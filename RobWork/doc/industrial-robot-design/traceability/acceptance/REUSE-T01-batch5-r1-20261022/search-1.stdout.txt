@@ -1,0 +1,89 @@
+RobWork/RobWork/src/rw/common/BINArchive.cpp:18:#include "BINArchive.hpp"
+RobWork/RobWork/src/rw/common/BINArchive.cpp:25:BINArchive::~BINArchive ()
+RobWork/RobWork/src/rw/common/BINArchive.cpp:30:void BINArchive::close ()
+RobWork/RobWork/src/rw/common/BINArchive.cpp:39:void BINArchive::doWrite (bool val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:47:void BINArchive::doWriteEnterScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:52:void BINArchive::doWriteLeaveScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:61:void BINArchive::doReadEnterScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:66:void BINArchive::doReadLeaveScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:74:void BINArchive::doOpenArchive (const std::string& filename)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:91:void BINArchive::doOpenArchive (std::iostream& stream)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:104:void BINArchive::doOpenOutput (std::ostream& ofs)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:116:void BINArchive::doOpenInput (std::istream& ifs)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:128:void BINArchive::flush ()
+RobWork/RobWork/src/rw/common/BINArchive.cpp:136:void BINArchive::doRead (std::vector< bool >& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:149:void BINArchive::doRead (bool& val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:158:void BINArchive::doWrite (const std::string& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:162:        RW_THROW ("BINArchive could not write string, as it is too long!");
+RobWork/RobWork/src/rw/common/BINArchive.cpp:169:void BINArchive::doWrite (const std::vector< std::string >& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:173:        RW_THROW ("BINArchive could not write strings, as the vector is too long!");
+RobWork/RobWork/src/rw/common/BINArchive.cpp:178:            RW_THROW ("BINArchive could not write string in list, as the string is too long!");
+RobWork/RobWork/src/rw/common/BINArchive.cpp:186:void BINArchive::doRead (std::string& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:196:void BINArchive::doRead (std::vector< std::string >& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:211:std::string BINArchive::getScope ()
+RobWork/RobWork/src/rw/core/IOUtil.hpp:105:         * @brief tests if this machine use little or big endian.
+RobWork/RobWork/src/rw/core/IOUtil.hpp:108:        static bool isLittleEndian ();
+RobWork/RobWork/gtest/common/SerializationTest.cpp:24:#include <rw/common/BINArchive.hpp>
+RobWork/RobWork/gtest/common/SerializationTest.cpp:203:TEST(SerializationTest, BINArchiveTest )
+RobWork/RobWork/gtest/common/SerializationTest.cpp:209:        BINArchive iniarchive;
+RobWork/RobWork/gtest/common/SerializationTest.cpp:217:        BINArchive iniarchive;
+RobWork/RobWork/gtest/common/SerializationTest.cpp:227:        BINArchive(std::cout).write(sdata,"sdata");
+RobWork/RobWork/gtest/common/SerializationTest.cpp:228:        BINArchive(std::cout).write(sdata_in,"sdata_in");
+RobWork/RobWork/gtest/common/SerializationTest.cpp:229:        BINArchive(std::cout) << sdata;
+RobWork/RobWork/src/rw/common/BINArchive.hpp:36:    class BINArchive : public InputArchive
+RobWork/RobWork/src/rw/common/BINArchive.hpp:38:    class BINArchive : public InputArchive, public virtual OutputArchive
+RobWork/RobWork/src/rw/common/BINArchive.hpp:43:        BINArchive () : _ofs (NULL), _ifs (NULL), _fstr (NULL), _iostr (NULL), _isopen (false) {}
+RobWork/RobWork/src/rw/common/BINArchive.hpp:49:        BINArchive (std::ostream& ofs) :
+RobWork/RobWork/src/rw/common/BINArchive.hpp:56:        virtual ~BINArchive ();
+RobWork/RobWork/src/rw/common/BINArchive.hpp:93:        void doWrite (int8_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:94:        void doWrite (uint8_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:95:        void doWrite (int16_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:96:        void doWrite (uint16_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:97:        void doWrite (int32_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:98:        void doWrite (uint32_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:99:        void doWrite (int64_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:100:        void doWrite (uint64_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:101:        void doWrite (float val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:102:        void doWrite (double val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:107:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:111:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:115:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:119:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:123:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:127:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:131:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:135:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:139:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:143:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:147:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:161:        template< class T > void writeValue (const std::vector< T >& val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.hpp:165:                RW_THROW ("BINArchive could not write values, as the vector is too long!");
+RobWork/RobWork/src/rw/common/BINArchive.hpp:174:        template< class T > void writeValue (const T& val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.hpp:193:                RW_THROW ("BINArchive could not write matrix, as it is too big!");
+RobWork/RobWork/src/rw/common/BINArchive.hpp:209:            readValue< int8_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:213:            readValue< uint8_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:217:            readValue< int16_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:221:            readValue< uint16_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:225:            readValue< int32_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:229:            readValue< uint32_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:233:            readValue< int64_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:237:            readValue< uint64_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:239:        virtual void doRead (float& val, const std::string& id) { readValue< float > (val, id); }
+RobWork/RobWork/src/rw/common/BINArchive.hpp:240:        virtual void doRead (double& val, const std::string& id) { readValue< double > (val, id); }
+RobWork/RobWork/src/rw/common/BINArchive.hpp:246:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:250:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:254:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:258:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:262:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:266:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:270:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:274:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:278:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:282:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:293:        template< class T > void readValue (std::vector< T >& val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.hpp:306:        template< class T > void readValue (T& val, const std::string& id)
+RobWork/RobWork/src/rw/core/IOUtil.cpp:179:bool IOUtil::isLittleEndian ()
+RobWork/RobWork/src/rw/core/IOUtil.cpp:185:    } endianTest;
+RobWork/RobWork/src/rw/core/IOUtil.cpp:187:    endianTest.testWord = 1;
+RobWork/RobWork/src/rw/core/IOUtil.cpp:188:    if (endianTest.testByte[0] == 1) {
+RobWork/RobWork/src/rw/core/IOUtil.cpp:189:        // litle endian - least significant byte first

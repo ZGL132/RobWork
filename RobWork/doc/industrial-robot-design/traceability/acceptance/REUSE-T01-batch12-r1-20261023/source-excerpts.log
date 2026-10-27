@@ -1,0 +1,1033 @@
+
+testkit.JsonLite.Parser sdurws::ird::testkit::(anonymous namespace)::Parser::Parser
+38: class Parser {
+39: public:
+40:     explicit Parser(std::string_view text)
+41:         : text_(text)
+42:     {
+43:     }
+44: 
+45:     JsonValue run()
+
+testkit.JsonLite.run sdurws::ird::testkit::(anonymous namespace)::Parser::run
+43:     }
+44: 
+45:     JsonValue run()
+46:     {
+47:         // BOM（EF BB BF）在文件头出现即拒绝（§4.1 拒绝清单）——不做剥离容错。
+48:         if (text_.size() >= 3 && static_cast<unsigned char>(text_[0]) == 0xEF
+49:             && static_cast<unsigned char>(text_[1]) == 0xBB
+50:             && static_cast<unsigned char>(text_[2]) == 0xBF) {
+51:             fail("不允许 UTF-8 BOM（受限格式拒绝带 BOM 文本）");
+52:         }
+53:         skipWs();
+54:         if (eof()) {
+55:             fail("空输入（未找到任何 JSON 值）");
+56:         }
+57:         JsonValue v = parseValue(0);
+58:         skipWs();
+59:         if (!eof()) {
+60:             fail("尾随内容（顶层值之后仍有非空白字符）");
+61:         }
+62:         return v;
+63:     }
+64: 
+65: private:
+
+testkit.JsonLite.skipWs sdurws::ird::testkit::(anonymous namespace)::Parser::skipWs
+76:     /// 换行计数（\n 计一行、列回 1；\r 按 JSON 空白处理但不单独成行——
+77:     /// \r\n 由 \n 计行，孤 \r 罕见且 JSON 规范允许作空白）。
+78:     void skipWs()
+79:     {
+80:         while (!eof()) {
+81:             const char c = peek();
+82:             if (c == '\n') {
+83:                 ++pos_;
+84:                 ++line_;
+85:                 col_ = 1;
+86:             } else if (c == ' ' || c == '\t' || c == '\r') {
+87:                 advance();
+88:             } else {
+89:                 break;
+90:             }
+91:         }
+92:     }
+93: 
+94:     /// 吃掉期望的单字符；不符即 fail（结构标量的语法骨架）。
+
+testkit.JsonLite.expect sdurws::ird::testkit::(anonymous namespace)::Parser::expect
+93: 
+94:     /// 吃掉期望的单字符；不符即 fail（结构标量的语法骨架）。
+95:     void expect(char c, const char* what)
+96:     {
+97:         if (eof() || peek() != c) {
+98:             fail(std::string{"期望 '"} + c + "'（" + what + "）");
+99:         }
+100:         advance();
+101:     }
+102: 
+103:     /// 统一错误出口：行列即时快照＋当前路径（TestKitError:DatasetInvalid）。
+
+testkit.JsonLite.fail sdurws::ird::testkit::(anonymous namespace)::Parser::fail
+102: 
+103:     /// 统一错误出口：行列即时快照＋当前路径（TestKitError:DatasetInvalid）。
+104:     [[noreturn]] void fail(std::string reason) const
+105:     {
+106:         throw TestKitError(TestKitErrorKind::DatasetInvalid,
+107:                            "json-parse: line " + std::to_string(line_)
+108:                                + ", column " + std::to_string(col_) + ": " + reason
+109:                                + "（路径 " + path_ + "）");
+110:     }
+111: 
+112:     // ---- 值解析（depth 防栈溢出） ----
+
+testkit.JsonLite.parseValue sdurws::ird::testkit::(anonymous namespace)::Parser::parseValue
+111: 
+112:     // ---- 值解析（depth 防栈溢出） ----
+113:     JsonValue parseValue(std::size_t depth)
+114:     {
+115:         if (depth > kMaxDepth) {
+116:             fail("嵌套超过 " + std::to_string(kMaxDepth) + " 层（拒绝深嵌套）");
+117:         }
+118:         skipWs();
+119:         if (eof()) {
+120:             fail("值位置意外到达文本末尾");
+121:         }
+122:         switch (peek()) {
+123:         case '{': return parseObject(depth);
+124:         case '[': return parseArray(depth);
+125:         case '"': {
+126:             JsonValue v;
+127:             v.kind = JsonValue::Kind::String;
+128:             v.text = parseString();
+129:             return v;
+130:         }
+131:         case 't': expectLiteral("true"); {
+132:             JsonValue v; v.kind = JsonValue::Kind::Bool; v.boolean = true; return v;
+133:         }
+134:         case 'f': expectLiteral("false"); {
+135:             JsonValue v; v.kind = JsonValue::Kind::Bool; v.boolean = false; return v;
+136:         }
+137:         case 'n': expectLiteral("null"); {
+138:             JsonValue v; v.kind = JsonValue::Kind::Null; return v;
+139:         }
+140:         default:
+141:             // 数字或非法字面（NaN/Infinity/注释等在此给出针对性消息）。
+142:             if (peek() == '-' || (peek() >= '0' && peek() <= '9')) {
+143:                 return parseNumber();
+144:             }
+145:             if (peek() == 'N') { fail("NaN 字面被拒绝（受限格式不收非有限数）"); }
+146:             if (peek() == 'I') { fail("Infinity 字面被拒绝"); }
+147:             if (peek() == '/') { fail("注释被拒绝（// 与 /* 均不收——受限格式无注释）"); }
+148:             fail(std::string{"非法值起始字符: '"} + peek() + "'");
+149:         }
+150:     }
+151: 
+152:     /// 字面量整体匹配（true/false/null/NaN 等逐字符——防止 "trueX" 之类越界吞并）。
+
+testkit.JsonLite.expectLiteral sdurws::ird::testkit::(anonymous namespace)::Parser::expectLiteral
+151: 
+152:     /// 字面量整体匹配（true/false/null/NaN 等逐字符——防止 "trueX" 之类越界吞并）。
+153:     void expectLiteral(const char* lit)
+154:     {
+155:         for (const char* p = lit; *p != '\0'; ++p) {
+156:             if (eof() || peek() != *p) {
+157:                 fail(std::string{"字面量不完整或不合法（期望 \""} + lit + "\"）");
+158:             }
+159:             advance();
+160:         }
+161:     }
+162: 
+163:     // ---- 对象：键序＝插入序；重复键拒绝（§4.1） ----
+
+testkit.JsonLite.eof sdurws::ird::testkit::(anonymous namespace)::Parser::eof
+65: private:
+66:     // ---- 基础游标 ----
+67:     bool eof() const noexcept { return pos_ >= text_.size(); }
+68:     char peek() const noexcept { return text_[pos_]; }
+69: 
+70:     void advance() noexcept
+71:     {
+72:         ++pos_;
+73:         ++col_;
+74:     }
+75: 
+76:     /// 换行计数（\n 计一行、列回 1；\r 按 JSON 空白处理但不单独成行——
+
+testkit.JsonLite.JsonValue.find sdurws::ird::testkit::JsonValue::find
+503: // ---------------------------------------------------------------------
+504: 
+505: const JsonValue* JsonValue::find(std::string_view key) const noexcept
+506: {
+507:     if (kind != Kind::Object) { return nullptr; }
+508:     for (const auto& kv : members) {
+509:         if (key == kv.first) { return &kv.second; }
+510:     }
+511:     return nullptr;
+512: }
+513: 
+514: bool JsonValue::deepEquals(const JsonValue& o) const
+
+testkit.JsonLite.JsonValue.deepEquals sdurws::ird::testkit::JsonValue::deepEquals
+512: }
+513: 
+514: bool JsonValue::deepEquals(const JsonValue& o) const
+515: {
+516:     if (kind != o.kind) { return false; }
+517:     switch (kind) {
+518:     case Kind::Null:   return true;
+519:     case Kind::Bool:   return boolean == o.boolean;
+520:     case Kind::Number: {
+521:         // 按位比较（确定性口径：-0.0 与 0.0 视为不同——序列化输出本就不同）。
+522:         if (std::isnan(number) || std::isnan(o.number)) { return false; }
+523:         return std::memcmp(&number, &o.number, sizeof(double)) == 0;
+524:     }
+525:     case Kind::String: return text == o.text;
+526:     case Kind::Array:
+527:         if (items.size() != o.items.size()) { return false; }
+528:         for (std::size_t i = 0; i < items.size(); ++i) {
+529:             if (!items[i].deepEquals(o.items[i])) { return false; }
+530:         }
+531:         return true;
+532:     case Kind::Object: {
+533:         // 语义等价：键集相同且逐键值相等（键序无关——dump 层才保证插入序）。
+534:         if (members.size() != o.members.size()) { return false; }
+535:         for (const auto& kv : members) {
+536:             const JsonValue* other = o.find(kv.first);
+537:             if (other == nullptr || !kv.second.deepEquals(*other)) { return false; }
+538:         }
+539:         return true;
+540:     }
+541:     }
+542:     return false;
+543: }
+544: 
+545: JsonValue parseJson(std::string_view text)
+
+testkit.Check.nonFinite sdurws::ird::testkit::(anonymous namespace)::nonFinite
+18: 
+19: /// 非有限检测（NaN/±Inf）。
+20: bool nonFinite(double v) noexcept
+21: {
+22:     return std::isnan(v) || std::isinf(v);
+23: }
+24: 
+25: /// 组装一条失败详情（公共字段填充——unit 固定 SI 规范 token "m"？否：unit 由
+
+testkit.Check.makeDetail sdurws::ird::testkit::(anonymous namespace)::makeDetail
+26: /// 调用方语境给出；close 族在 SI 域比较故固定 "m" 会失真——本实现以空串表达
+27: /// "SI 域"，详情的 unit 语义由 §7.3 Report 定义）。
+28: CompareDetail makeDetail(std::string fieldPath, bool hasElement, std::size_t index,
+29:                          double actual, double expected, core::Tolerance t)
+30: {
+31:     CompareDetail d;
+32:     d.fieldPath = std::move(fieldPath);
+33:     d.hasElement = hasElement;
+34:     d.elementIndex = index;
+35:     d.actual = actual;
+36:     d.expected = expected;
+37:     d.diff = std::fabs(actual - expected);
+38:     d.tolerance = t;
+39:     return d;
+40: }
+41: 
+42: }  // namespace
+
+testkit.Check.checkCloseWithin sdurws::ird::testkit::checkCloseWithin
+42: }  // namespace
+43: 
+44: CheckResult checkCloseWithin(std::string_view fieldPath, double actualSi,
+45:                              double referenceSi, core::Tolerance tolerance,
+46:                              std::string_view sourceTag) noexcept
+47: {
+48:     (void)sourceTag;   // 详情透传字段——TK-T10 Report 消费；本函数只判 passed
+49:     CheckResult result;
+50:     // 委托 core::closeWithin（唯一公式实现点——CR-06 diff 通过后的合法消费；
+51:     // 非有限输入 core 侧返回 false——不静默通过，NFR-COR-03）。
+52:     if (!core::closeWithin(actualSi, referenceSi, tolerance)) {
+53:         result.failures.push_back(
+54:             makeDetail(std::string{fieldPath}, false, 0, actualSi, referenceSi, tolerance));
+55:         result.passed = false;
+56:     }
+57:     return result;
+58: }
+59: 
+60: CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
+
+testkit.Check.checkAllCloseWithin sdurws::ird::testkit::checkAllCloseWithin
+58: }
+59: 
+60: CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
+61:                                 const std::vector<double>& actualSi,
+62:                                 const std::vector<double>& referenceSi,
+63:                                 core::Tolerance tolerance,
+64:                                 std::string_view sourceTag) noexcept
+65: {
+66:     (void)sourceTag;
+67:     CheckResult result;
+68: 
+69:     // 长度不匹配：失败并列出缺失/额外索引（§4.3.3 表——非异常，测试失败级）。
+70:     // 缺失侧值以 NaN 占位（机器可读——非有限即显式缺失语义）。
+71:     const std::size_t common = std::min(actualSi.size(), referenceSi.size());
+72:     for (std::size_t i = 0; i < common; ++i) {
+73:         // 逐元素 C4（防正负抵消——不以差值总和替代）。
+74:         if (!core::closeWithin(actualSi[i], referenceSi[i], tolerance)) {
+75:             std::string path{fieldPathTemplate};
+76:             path += std::string("[");
+77:             path += std::to_string(i);
+78:             path += std::string("]");
+79:             result.failures.push_back(
+80:                 makeDetail(path, true, i, actualSi[i], referenceSi[i], tolerance));
+81:             result.passed = false;
+82:         }
+83:     }
+84:     if (actualSi.size() != referenceSi.size()) {
+85:         // 额外索引逐条登记（较长侧的超出元素缺失对侧）。
+86:         const auto& longer = actualSi.size() > referenceSi.size() ? actualSi : referenceSi;
+87:         const bool actualLonger = actualSi.size() > referenceSi.size();
+88:         for (std::size_t i = common; i < longer.size(); ++i) {
+89:             CompareDetail d = makeDetail(std::string(fieldPathTemplate) + "[" + std::to_string(i) + "]",
+90:                                          true, i, actualLonger ? longer[i] : 0.0,
+91:                                          actualLonger ? 0.0 : longer[i], tolerance);
+92:             d.actual = actualLonger ? longer[i] : std::nan("");
+93:             d.expected = actualLonger ? std::nan("") : longer[i];
+94:             result.failures.push_back(d);
+95:             result.passed = false;
+96:         }
+97:     }
+98:     return result;
+99: }
+100: 
+101: CheckResult checkAtMost(std::string_view fieldPath, double actualSi, double boundSi,
+
+testkit.Check.checkAtMost sdurws::ird::testkit::checkAtMost
+99: }
+100: 
+101: CheckResult checkAtMost(std::string_view fieldPath, double actualSi, double boundSi,
+102:                         std::string_view unit)
+103: {
+104:     CheckResult result;
+105:     // 单位须已注册（§4.3.3 表：未注册→TestKitError(unit-mismatch)——数据集非法级）。
+106:     const auto token = core::UnitToken::find(unit);
+107:     if (!token.has_value()) {
+108:         throw TestKitError(TestKitErrorKind::UnitMismatch,
+109:                            "unit-mismatch: 单位未注册: " + std::string{unit});
+110:     }
+111:     if (nonFinite(actualSi) || nonFinite(boundSi)) {
+112:         // 非有限上界/实际值：数据集非法级（§4.3.3 表——与容差失败不同分类）。
+113:         throw TestKitError(TestKitErrorKind::UnitMismatch,
+114:                            "unit-mismatch: atMost 输入非有限（NaN/±Inf）");
+115:     }
+116:     if (actualSi > boundSi) {
+117:         core::Tolerance t = core::Tolerance::make(0.0, boundSi);
+118:         result.failures.push_back(
+119:             makeDetail(std::string{fieldPath}, false, 0, actualSi, boundSi, t));
+120:         result.passed = false;
+121:     }
+122:     return result;
+123: }
+124: 
+125: CheckResult checkIdentical(std::string_view fieldPath, std::string_view actual,
+
+testkit.Check.checkIdentical sdurws::ird::testkit::checkIdentical
+123: }
+124: 
+125: CheckResult checkIdentical(std::string_view fieldPath, std::string_view actual,
+126:                            std::string_view expected)
+127: {
+128:     CheckResult result;
+129:     if (actual != expected) {
+130:         // 精确相等（无容差）——字符串形态以 actual/expected 承载（diff 不适用，置 0）。
+131:         core::Tolerance zero = core::Tolerance::make(0.0, 0.0);
+132:         result.failures.push_back(makeDetail(std::string{fieldPath}, false, 0,
+133:                                              0.0, 0.0, zero));
+134:         result.passed = false;
+135:     }
+136:     return result;
+137: }
+138: 
+139: CheckResult checkIdentical(std::string_view fieldPath, std::int64_t actual,
+
+testkit.Check.checkIdentical.int64 sdurws::ird::testkit::checkIdentical
+137: }
+138: 
+139: CheckResult checkIdentical(std::string_view fieldPath, std::int64_t actual,
+140:                            std::int64_t expected)
+141: {
+142:     CheckResult result;
+143:     if (actual != expected) {
+144:         core::Tolerance zero = core::Tolerance::make(0.0, 0.0);
+145:         result.failures.push_back(makeDetail(std::string{fieldPath}, false, 0,
+146:                                              static_cast<double>(actual),
+147:                                              static_cast<double>(expected), zero));
+148:         result.passed = false;
+149:     }
+150:     return result;
+151: }
+152: 
+153: }  // namespace sdurws::ird::testkit
+
+testkit.ProcessRunner.toWin32Wait (anonymous namespace)::toWin32Wait
+139:  * @return Win32 等待毫秒数（0/正数/INFINITE）
+140:  */
+141: DWORD toWin32Wait(std::chrono::milliseconds ms) noexcept
+142: {
+143:     if (ms.count() <= 0) {
+144:         return 0;  // deadline 已过：轮询等待立即返回（超时路径由调用方裁决）
+145:     }
+146:     constexpr auto kInfiniteMinus1 = std::chrono::milliseconds{0xFFFFFFFE};
+147:     if (ms >= kInfiniteMinus1) {
+148:         return INFINITE;  // 天文值钳制——语义仍是"等到为止"，不改变调用方意图
+149:     }
+150:     return static_cast<DWORD>(ms.count());
+151: }
+152: 
+153: /**
+
+testkit.ProcessRunner.utf8ToWide (anonymous namespace)::utf8ToWide
+163:  * @throws TestKitError(EnvUnavailable) 转换失败（非法 UTF-8 序列等）
+164:  */
+165: std::wstring utf8ToWide(const std::string& s)
+166: {
+167:     if (s.empty()) {
+168:         return {};
+169:     }
+170:     const int need = ::MultiByteToWideChar(CP_UTF8, 0, s.data(),
+171:                                            static_cast<int>(s.size()), nullptr, 0);
+172:     if (need <= 0) {
+173:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+174:                            "ProcessRunner：UTF-8→UTF-16 转换失败（输入串长 " +
+175:                                std::to_string(s.size()) + "）");
+176:     }
+177:     std::wstring wide(static_cast<size_t>(need), L'\0');
+178:     ::MultiByteToWideChar(CP_UTF8, 0, s.data(), static_cast<int>(s.size()),
+179:                           wide.data(), need);
+180:     return wide;
+181: }
+182: 
+183: // quoteWindowsArg 已上移至 sdurws::ird::testkit::detail（本文件顶部——
+
+testkit.ProcessRunner.buildEnvironmentBlock (anonymous namespace)::buildEnvironmentBlock
+197:  * @throws TestKitError(EnvUnavailable) UTF-8 转换失败或父环境块不可得
+198:  */
+199: std::wstring buildEnvironmentBlock(const std::map<std::string, std::string>& overrides)
+200: {
+201:     std::map<std::wstring, std::wstring> merged;
+202: 
+203:     // 第一遍：父环境全量装入。GetEnvironmentStringsW 返回
+204:     // "NAME=VALUE\0NAME=VALUE\0...\0" 的双 NUL 结尾块，逐条扫描。
+205:     // 注意返回类型是非 const LPWCH——FreeEnvironmentStringsW 要求同一指针
+206:     // 类型，不能用 const 接收。
+207:     wchar_t* const parent = ::GetEnvironmentStringsW();
+208:     if (parent == nullptr) {
+209:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+210:                            "ProcessRunner：父环境块不可得（GetEnvironmentStringsW 失败）");
+211:     }
+212:     for (const wchar_t* p = parent; *p != L'\0'; p += std::wstring(p).size() + 1) {
+213:         const std::wstring entry{p};
+214:         const auto eq = entry.find(L'=');
+215:         // 以 '=' 开头的条目是 cmd 的隐藏变量（如 "=C:=C:\..."），不进入覆盖
+216:         // 模型（无法用普通 "NAME=VALUE" 语义表达，丢弃不影响测试子进程）。
+217:         if (eq != std::wstring::npos && eq > 0) {
+218:             merged.emplace(entry.substr(0, eq), entry.substr(eq + 1));
+219:         }
+220:     }
+221:     ::FreeEnvironmentStringsW(parent);
+222: 
+223:     // 第二遍：覆盖条目写入（map 赋值语义＝同名覆盖、其余新增）。
+224:     for (const auto& [name, value] : overrides) {
+225:         merged[utf8ToWide(name)] = utf8ToWide(value);
+226:     }
+227: 
+228:     std::wstring block;
+229:     for (const auto& [name, value] : merged) {
+230:         block += name;
+231:         block += L'=';
+232:         block += value;
+233:         block += L'\0';
+234:     }
+235:     block.push_back(L'\0');  // 终止 NUL：整块以双 NUL 结尾
+236:     return block;
+237: }
+238: 
+239: }  // namespace
+
+testkit.ProcessRunner.quoteWindowsArg sdurws::ird::testkit::detail::quoteWindowsArg
+63:  * @return 可直接拼入命令行的参数串
+64:  */
+65: std::wstring quoteWindowsArg(const std::wstring& arg)
+66: {
+67:     // F-595：空串参数必须发射 ""——原实现原样返回空串，命令行里只留下
+68:     // 一个空格，子进程 argv 丢失该参数且后续参数整体前移（位置型参数
+69:     // 全部错位）。
+70:     if (arg.empty()) {
+71:         return L"\"\"";  // 空参数的规范形态（带引号的空串）
+72:     }
+73:     const bool needQuote = arg.find_first_of(L" \t\"") != std::wstring::npos;
+74:     if (!needQuote) {
+75:         return arg;  // 无特殊字符：原样拼接（绝大多数测试参数走此捷径）
+76:     }
+77:     std::wstring out{L'"'};
+78:     size_t pendingBackslashes = 0;  // 当前连续反斜杠计数（遇非反斜杠或结尾时结算）
+79:     for (const wchar_t c : arg) {
+80:         if (c == L'\\') {
+81:             ++pendingBackslashes;  // 先攒着——是否翻倍取决于后一个字符
+82:             continue;
+83:         }
+84:         if (c == L'"') {
+85:             // F-596：Windows 解析规则为 2N+1——引号前 N 个反斜杠全部翻
+86:             // 倍（2N）再加一个转义引号的反斜杠（+1）。原实现发 N+1：
+87:             // 含 \" 序列的参数（N≥1）在子进程端被吞掉一半反斜杠且引号
+88:             // 被当分隔符——参数碎裂、引号状态翻转。
+89:             out.append(2 * pendingBackslashes + 1, L'\\');
+90:             out.push_back(L'"');
+91:         } else {
+92:             out.append(pendingBackslashes, L'\\');  // 普通字符：反斜杠原样
+93:             out.push_back(c);
+94:         }
+95:         pendingBackslashes = 0;
+96:     }
+97:     // 结尾反斜杠也要翻倍（后面紧跟收尾引号，规则同"紧邻引号"）
+98:     out.append(pendingBackslashes * 2, L'\\');
+99:     out.push_back(L'"');
+100:     return out;
+101: }
+102: 
+103: }  // namespace sdurws::ird::testkit::detail
+
+testkit.ProcessRunner.TestProcessRunner.start sdurws::ird::testkit::TestProcessRunner::start
+308:  * @throws TestKitError(EnvUnavailable)  Job/进程 API 失败、UTF-8 转换失败
+309:  */
+310: void TestProcessRunner::start(const ProcessSpec& spec, std::filesystem::path workingDir)
+311: {
+312:     // ---- 第 1 步：调用方契约检查（fail-fast——错误语义见头文件注释）----
+313:     if (impl_ != nullptr) {
+314:         throw TestKitError(TestKitErrorKind::Usage,
+315:                            "TestProcessRunner::start：实例已启动过，不可重复 start"
+316:                            "（同一实例一次生命周期；多进程用例请各用独立实例）");
+317:     }
+318:     if (spec.executable.empty()) {
+319:         throw TestKitError(TestKitErrorKind::Usage,
+320:                            "TestProcessRunner::start：ProcessSpec.executable 为空——"
+321:                            "无可执行文件的启动请求属调用方装配错误");
+322:     }
+323: 
+324:     // ---- 第 2 步：建立 Job Object 并启用"句柄关闭即杀树"----
+325:     HANDLE hJob = ::CreateJobObjectW(nullptr, nullptr);
+326:     if (hJob == nullptr) {
+327:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+328:                            "TestProcessRunner::start：CreateJobObjectW 失败（GetLastError=" +
+329:                                std::to_string(::GetLastError()) + "）");
+330:     }
+331:     JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobLimit{};
+332:     jobLimit.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+333:     if (!::SetInformationJobObject(hJob, JobObjectExtendedLimitInformation,
+334:                                    &jobLimit, sizeof(jobLimit))) {
+335:         const DWORD err = ::GetLastError();
+336:         ::CloseHandle(hJob);
+337:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+338:                            "TestProcessRunner::start：SetInformationJobObject 失败"
+339:                            "（GetLastError=" + std::to_string(err) +
+340:                            "）——无 KILL_ON_JOB_CLOSE 兜底不允许继续");
+341:     }
+342: 
+343:     // ---- 第 3 步：拼命令行与合并环境块（零继承句柄——事件同步走文件标记）----
+344:     // bInheritHandles=FALSE 的原因：§6.5 把跨进程同步判据限定为可观察文件，
+345:     // 子进程不需要继承任何句柄；不继承也杜绝了句柄泄漏进子进程的面。
+346:     std::wstring cmdLine = detail::quoteWindowsArg(spec.executable.wstring());
+347:     for (const std::string& rawArg : spec.args) {
+348:         cmdLine += L' ';
+349:         cmdLine += detail::quoteWindowsArg(utf8ToWide(rawArg));
+350:     }
+351:     std::wstring envBlock = buildEnvironmentBlock(spec.env);
+352: 
+353:     // workingDir 缺省语义（§6.5 签名注释"= TempDir"）：空路径→运行器持有
+354:     // 的临时目录；显式路径则校验存在——把拼写错误挡在启动前（Usage）而不是
+355:     // 让 CreateProcess 以晦涩的目录错误失败。局部经 unique_ptr 持有，启动
+356:     // 成功后才移交 Impl——启动失败路径上临时目录照常 RAII 清理。
+357:     std::unique_ptr<TempDir> ownedDir;
+358:     if (workingDir.empty()) {
+359:         ownedDir = std::make_unique<TempDir>("procrunner-wd");   // 构造即建立（§6.2）
+360:         workingDir = ownedDir->path();
+361:     } else if (!fs::exists(workingDir)) {
+362:         ::CloseHandle(hJob);
+363:         throw TestKitError(TestKitErrorKind::Usage,
+364:                            "TestProcessRunner::start：workingDir 不存在（" +
+365:                                workingDir.string() + "）——调用方须先建目录");
+366:     }
+367: 
+368:     // ---- 第 4 步：挂起态启动子进程 ----
+369:     STARTUPINFOW si{};
+370:     si.cb = sizeof(si);
+371:     PROCESS_INFORMATION pi{};
+372:     const BOOL created = ::CreateProcessW(
+373:         nullptr,                        // lpApplicationName 空：由命令行首段解析模块路径
+374:         cmdLine.data(),                 // 可写缓冲（CreateProcessW 会原位改写）
+375:         nullptr, nullptr,               // 安全属性：默认（句柄不继承，见上）
+376:         FALSE,                          // bInheritHandles：不继承
+377:         CREATE_SUSPENDED | CREATE_UNICODE_ENVIRONMENT,
+378:         envBlock.data(),                // 合并环境块（双 NUL 结尾）
+379:         workingDir.wstring().c_str(),   // 子进程当前工作目录
+380:         &si, &pi);
+381:     if (!created) {
+382:         const DWORD err = ::GetLastError();
+383:         ::CloseHandle(hJob);
+384:         // 可执行文件路径拼错也走这里（ERROR_FILE_NOT_FOUND）——归环境错误
+385:         // 而非 Usage：无法与"路径存在但被占用/被杀毒拦截"区分前不预判调用方。
+386:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+387:                            "TestProcessRunner::start：CreateProcessW 失败"
+388:                            "（GetLastError=" + std::to_string(err) + "，命令行首段=" +
+389:                            spec.executable.string() + "）");
+390:     }
+391: 
+392:     // ---- 第 5 步：绑定 Job（失败即终止已创建进程——不许留 Job 外孤儿）----
+393:     if (!::AssignProcessToJobObject(hJob, pi.hProcess)) {
+394:         const DWORD err = ::GetLastError();
+395:         ::TerminateProcess(pi.hProcess, kForcedExitCode);
+396:         ::CloseHandle(pi.hThread);
+397:         ::CloseHandle(pi.hProcess);
+398:         ::CloseHandle(hJob);
+399:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+400:                            "TestProcessRunner::start：AssignProcessToJobObject 失败"
+401:                            "（GetLastError=" + std::to_string(err) +
+402:                            "）——已终止未受管束的子进程");
+403:     }
+404: 
+405:     // ---- 第 6 步：恢复执行；状态就位 ----
+406:     if (::ResumeThread(pi.hThread) == static_cast<DWORD>(-1)) {
+407:         const DWORD err = ::GetLastError();
+408:         ::TerminateJobObject(hJob, kForcedExitCode);  // 树终止——孙进程也一并处理
+409:         ::CloseHandle(pi.hThread);
+410:         ::CloseHandle(pi.hProcess);
+411:         ::CloseHandle(hJob);
+412:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+413:                            "TestProcessRunner::start：ResumeThread 失败"
+414:                            "（GetLastError=" + std::to_string(err) + "）——已终止子进程树");
+415:     }
+416:     ::CloseHandle(pi.hThread);  // 主线程句柄不再需要（等待只挂 hProcess）
+417: 
+418:     impl_ = new Impl();
+419:     impl_->hProcess = pi.hProcess;
+420:     impl_->hJob = hJob;
+421:     impl_->startedAt = Clock::now();
+422:     impl_->timeout = spec.timeout;
+423:     impl_->ownedWorkingDir = std::move(ownedDir);
+424: }
+425: 
+426: /**
+
+testkit.ProcessRunner.TestProcessRunner.outcome sdurws::ird::testkit::TestProcessRunner::outcome
+441:  *                                       超上限仍不退出（环境异常不静默）
+442:  */
+443: ProcessOutcome TestProcessRunner::outcome()
+444: {
+445:     if (impl_ == nullptr) {
+446:         throw TestKitError(TestKitErrorKind::Usage,
+447:                            "TestProcessRunner::outcome：未 start 即取结果——"
+448:                            "调用方契约违约（fail-fast）");
+449:     }
+450:     // 幂等重入：终结结果只判定一次，重复调用返回缓存（消费方常在断言后再
+451:     // 调 outcome 收尾，双态返回会让两次断言互相矛盾）。
+452:     if (impl_->hasCached) {
+453:         return impl_->cached;
+454:     }
+455: 
+456:     auto& im = *impl_;
+457: 
+458:     // ---- 路径一：kill() 已请求终止 → 等真退出，报 Killed ----
+459:     if (im.phase == Impl::Phase::KilledByRequest) {
+460:         const DWORD wait = ::WaitForSingleObject(
+461:             im.hProcess, toWin32Wait(kTerminateJoinTimeout));
+462:         if (wait != WAIT_OBJECT_0) {
+463:             // 终止请求已发出却久不退出（WAIT_TIMEOUT/FAILED）：环境异常，
+464:             // 静默报 Killed 会掩盖"进程树没死"的严重事实。
+465:             throw TestKitError(TestKitErrorKind::EnvUnavailable,
+466:                                "TestProcessRunner::outcome：kill 后子进程未在上限内退出"
+467:                                "（wait=" + std::to_string(wait) + "）");
+468:         }
+469:         im.cached.kind = ProcessExitKind::Killed;
+470:         im.cached.exitCode = 0;  // 冻结语义：非 Exited 形态 exitCode 恒 0
+471:         im.cached.duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+472:             im.killedAt - im.startedAt);  // 进程存活时长到 kill 请求时刻为止
+473:         im.hasCached = true;
+474:         im.phase = Impl::Phase::Completed;
+475:         return im.cached;
+476:     }
+477: 
+478:     // ---- 路径二：正常等待（Running）——deadline＝start＋timeout 的剩余时间 ----
+479:     const auto deadline = im.startedAt + im.timeout;
+480:     const auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(
+481:         deadline - Clock::now());
+482:     const DWORD wait = ::WaitForSingleObject(im.hProcess, toWin32Wait(remaining));
+483: 
+484:     if (wait == WAIT_FAILED) {
+485:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+486:                            "TestProcessRunner::outcome：WaitForSingleObject 失败"
+487:                            "（GetLastError=" + std::to_string(::GetLastError()) + "）");
+488:     }
+489: 
+490:     if (wait == WAIT_OBJECT_0) {
+491:         // 进程已退出：按退出码二分（§6.5——0＝正常完成事件；非 0＝崩溃，
+492:         // 覆盖 exit(N) 与访问违例等异常码两种"崩溃注入"形态）。
+493:         DWORD code = 0;
+494:         if (!::GetExitCodeProcess(im.hProcess, &code)) {
+495:             throw TestKitError(TestKitErrorKind::EnvUnavailable,
+496:                                "TestProcessRunner::outcome：GetExitCodeProcess 失败"
+497:                                "（GetLastError=" + std::to_string(::GetLastError()) + "）");
+498:         }
+499:         if (code == 0) {
+500:             im.cached.kind = ProcessExitKind::Exited;
+501:             im.cached.exitCode = 0;  // 唯一携带真实码的形态（此处码必为 0）
+502:         } else {
+503:             im.cached.kind = ProcessExitKind::Crashed;
+504:             im.cached.exitCode = 0;  // 冻结语义：Crashed 不携带码（信息走测试日志）
+505:         }
+506:     } else {
+507:         // WAIT_TIMEOUT：deadline 内未见完成事件 → 先杀树再报告
+508:         // TerminatedByTimeout（§6.5"超时→终止进程树后返回"的顺序即在此处）。
+509:         if (!::TerminateJobObject(im.hJob, kForcedExitCode)) {
+510:             throw TestKitError(TestKitErrorKind::EnvUnavailable,
+511:                                "TestProcessRunner::outcome：超时后 TerminateJobObject 失败"
+512:                                "（GetLastError=" + std::to_string(::GetLastError()) + "）");
+513:         }
+514:         const DWORD joined = ::WaitForSingleObject(
+515:             im.hProcess, toWin32Wait(kTerminateJoinTimeout));
+516:         if (joined != WAIT_OBJECT_0) {
+517:             throw TestKitError(TestKitErrorKind::EnvUnavailable,
+518:                                "TestProcessRunner::outcome：超时终止后子进程未在上限内退出"
+519:                                "（wait=" + std::to_string(joined) + "）");
+520:         }
+521:         im.cached.kind = ProcessExitKind::TerminatedByTimeout;
+522:         im.cached.exitCode = 0;  // 冻结语义：超时形态不携带码
+523:     }
+524: 
+525:     // duration＝从 Resume 到"观察到终结"的墙钟时长（近似值，理由见头注释）。
+526:     im.cached.duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+527:         Clock::now() - im.startedAt);
+528:     im.hasCached = true;
+529:     im.phase = Impl::Phase::Completed;
+530:     return im.cached;
+531: }
+532: 
+533: /**
+
+testkit.ProcessRunner.TestProcessRunner.kill sdurws::ird::testkit::TestProcessRunner::kill
+541:  * @throws TestKitError(EnvUnavailable)  TerminateJobObject 失败（杀树请求未受理）
+542:  */
+543: void TestProcessRunner::kill()
+544: {
+545:     if (impl_ == nullptr) {
+546:         throw TestKitError(TestKitErrorKind::Usage,
+547:                            "TestProcessRunner::kill：未 start 即终止——调用方契约违约");
+548:     }
+549:     if (impl_->hasCached) {
+550:         return;  // 已终结：无进程可杀——幂等无操作（调用方无须预判状态）
+551:     }
+552:     if (impl_->phase == Impl::Phase::Running) {
+553:         if (!::TerminateJobObject(impl_->hJob, kForcedExitCode)) {
+554:             throw TestKitError(TestKitErrorKind::EnvUnavailable,
+555:                                "TestProcessRunner::kill：TerminateJobObject 失败"
+556:                                "（GetLastError=" + std::to_string(::GetLastError()) + "）");
+557:         }
+558:         impl_->phase = Impl::Phase::KilledByRequest;
+559:         impl_->killedAt = Clock::now();
+560:     }
+561:     // phase == KilledByRequest：重复 kill——终止请求已发出，无需再发（幂等）。
+562: }
+563: 
+564: /**
+
+testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner sdurws::ird::testkit::TestProcessRunner::~TestProcessRunner
+569:  * 继续跑，测试管线整体被污染。正常路径（已终结）这里只做句柄/目录释放。
+570:  */
+571: TestProcessRunner::~TestProcessRunner()
+572: {
+573:     if (impl_ == nullptr) {
+574:         return;  // 未 start 过：无资源（构造函数零工作与之对称）
+575:     }
+576:     if (impl_->phase == Impl::Phase::Running) {
+577:         // 先显式杀树（KILL_ON_JOB_CLOSE 是第二道内核兜底，双保险），并给
+578:         // 最多 kTerminateJoinTimeout 让其退出——防止目录删除撞上仍在写的
+579:         // 子进程。此处失败不抛（析构禁抛）：KILL_ON_JOB_CLOSE 仍会兜底。
+580:         ::TerminateJobObject(impl_->hJob, kForcedExitCode);
+581:         ::WaitForSingleObject(impl_->hProcess, toWin32Wait(kTerminateJoinTimeout));
+582:     }
+583:     delete impl_;  // Impl 析构：关句柄→析构缺省 TempDir（顺序见 Impl 注释）
+584:     impl_ = nullptr;
+585: }
+586: 
+587: // ---------------------------------------------------------------------------
+
+testkit.ProcessRunner.EventWatch.awaitFile sdurws::ird::testkit::EventWatch::awaitFile
+604:  * @return true＝时限内出现；false＝时限内未出现（调用方裁决为测试失败）
+605:  */
+606: bool EventWatch::awaitFile(const std::filesystem::path& marker,
+607:                            std::chrono::milliseconds deadline)
+608: {
+609:     const auto deadlinePoint = Clock::now() + deadline;
+610:     for (;;) {
+611:         std::error_code probeError;  // exists() 失败不抛——按"本轮未出现"续轮询
+612:         if (fs::exists(marker, probeError)) {
+613:             return true;
+614:         }
+615:         if (Clock::now() >= deadlinePoint) {
+616:             return false;  // 有界等待的出口：到点即返，绝不无限等待
+617:         }
+618:         std::this_thread::sleep_for(kPollInterval);
+619:     }
+620: }
+621: 
+622: /**
+
+testkit.ProcessRunner.EventWatch.awaitLineInFile sdurws::ird::testkit::EventWatch::awaitLineInFile
+637:  * @throws TestKitError(Usage) needle 为空串（任何文件都命中＝等待语义失效）
+638:  */
+639: bool EventWatch::awaitLineInFile(const std::filesystem::path& log,
+640:                                  std::string_view needle,
+641:                                  std::chrono::milliseconds deadline)
+642: {
+643:     if (needle.empty()) {
+644:         throw TestKitError(TestKitErrorKind::Usage,
+645:                            "EventWatch::awaitLineInFile：needle 为空串——空串在任何"
+646:                            "文件都命中，等待语义无意义，属调用方装配错误");
+647:     }
+648:     const auto deadlinePoint = Clock::now() + deadline;
+649:     for (;;) {
+650:         std::error_code probeError;
+651:         if (fs::exists(log, probeError)) {
+652:             // 二进制模式打开：只做字节级行切分，不做任何文本翻译（编码无关注）。
+653:             std::ifstream in{log, std::ios::binary};
+654:             std::string line;
+655:             while (std::getline(in, line)) {
+656:                 if (line.find(needle) != std::string::npos) {
+657:                     return true;
+658:                 }
+659:             }
+660:         }
+661:         if (Clock::now() >= deadlinePoint) {
+662:             return false;
+663:         }
+664:         std::this_thread::sleep_for(kPollInterval);
+665:     }
+666: }
+
+testkit.ProcessRunner.DestructorImpl sdurws::ird::testkit::TestProcessRunner::Impl::~Impl
+273:     bool hasCached = false;                 ///< 缓存有效标志（cached 本身有合法零值，不能当标志用）
+274: 
+275:     ~Impl()
+276:     {
+277:         // 顺序敏感：先关 Job（内核在此兜底杀树——KILL_ON_JOB_CLOSE），再关
+278:         // 进程句柄；TempDir 成员随后析构删目录，此时子进程已不可能存活。
+279:         if (hJob != nullptr) {
+280:             ::CloseHandle(hJob);
+281:             hJob = nullptr;
+282:         }
+283:         if (hProcess != nullptr) {
+284:             ::CloseHandle(hProcess);
+285:             hProcess = nullptr;
+286:         }
+287:     }
+288: };
+289: 
+
+workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor sdurws::ird::workflow::StoreCloseSupervisor::StoreCloseSupervisor
+23: constexpr const char* kCloseSupervisorChannel = "workflow/close-supervisor";
+24: 
+25: StoreCloseSupervisor::StoreCloseSupervisor(project::ProjectStore& store,
+26:                                            execution::TaskScheduler& scheduler,
+27:                                            Config config,
+28:                                            diagnostics::IDevLogSink* devLog,
+29:                                            ClockFn clock)
+30:     : m_store(store)
+31:     , m_scheduler(scheduler)
+32:     , m_config(config)
+33:     , m_devLog(devLog)
+34:     , m_clock(std::move(clock))
+35: {
+36:     // 装配违约 fail-fast（§10.3 错误语义行——零/负阈值无监督语义；WorkflowError
+37:     // 前缀 "workflow/caller-contract:" 由类型自带）。
+38:     if (m_config.abandonThreshold <= std::chrono::milliseconds::zero()) {
+39:         throw WorkflowError("关闭监督器兜底阈值必须为正（abandonThreshold>0）");
+40:     }
+41:     if (m_config.giveUpGrace <= std::chrono::milliseconds::zero()) {
+42:         throw WorkflowError("关闭监督器放弃宽限必须为正（giveUpGrace>0）");
+43:     }
+44:     if (m_config.pollInterval <= std::chrono::milliseconds::zero()) {
+45:         throw WorkflowError("关闭监督器轮询拍间隔必须为正（pollInterval>0）");
+46:     }
+47: }
+48: 
+49: StoreCloseSupervisor::~StoreCloseSupervisor()
+
+workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor sdurws::ird::workflow::StoreCloseSupervisor::~StoreCloseSupervisor
+47: }
+48: 
+49: StoreCloseSupervisor::~StoreCloseSupervisor()
+50: {
+51:     // 析构自动收敛（监督线程不留后台悬挂——头文件线程模型行的兑现）。
+52:     stop();
+53: }
+54: 
+55: void StoreCloseSupervisor::start()
+
+workflow.CloseSupervisor.StoreCloseSupervisor.start sdurws::ird::workflow::StoreCloseSupervisor::start
+53: }
+54: 
+55: void StoreCloseSupervisor::start()
+56: {
+57:     // 幂等先判（F-638）：线程仍在监督中＝直接 no-op——宿主重复触发（如
+58:     // 关闭入口重入）安全。运行态检查必须先于 join：join 收割语义仅在
+59:     // **非运行态**成立，若先 join 则运行态重复 start 会阻塞在运行中线程
+60:     // 上（直至监督循环退出——最长可达阈值＋宽限），既违背幂等 no-op 语
+61:     // 义，又把调用线程无辜挂住。
+62:     if (m_running.load(std::memory_order_acquire)) {
+63:         return;
+64:     }
+65:     // 收割上一轮已自然退出（①/③/④路径 return）的线程对象——thread 赋
+66:     // 值前必须 join，否则 std::terminate。可达此处即非运行态（上判已滤
+67:     // 运行态）：线程要么从未启动（不 joinable＝天然跳过）、要么已自然
+68:     // 退出（joinable＝收割；join 后 running 位必已被线程自身清除——见
+69:     // superviseLoop 收尾，acquire 读到 false 与线程的 release 清位配对）。
+70:     if (m_thread.joinable()) {
+71:         m_thread.join();
+72:     }
+73:     // 复位本次监督的过程态（观测位不在此复位——历史事实保留，见 stop 注；
+74:     // 过程位与线程状态配对复位，保证 start/stop 多轮使用语义清晰）。
+75:     m_stopRequested.store(false, std::memory_order_release);
+76:     m_running.store(true, std::memory_order_release);
+77:     m_thread = std::thread([this] { superviseLoop(); });
+78: }
+79: 
+80: void StoreCloseSupervisor::stop() noexcept
+
+workflow.CloseSupervisor.StoreCloseSupervisor.stop sdurws::ird::workflow::StoreCloseSupervisor::stop
+78: }
+79: 
+80: void StoreCloseSupervisor::stop() noexcept
+81: {
+82:     // 恒收敛（不以 running 位为跳过条件——监督循环的自然退出路径先置
+83:     // 观测位后收尾〔放弃日志在 running 清位之后仍有写入〕，stop 若见
+84:     // running==false 即跳过 join 会与收尾竞态：主线程在放弃日志写入前
+85:     // 读快照——留痕丢失）。未启动＝线程对象不 joinable＝天然 no-op；
+86:     // 重复调用＝二次 joinable 已 false＝幂等。
+87:     m_stopRequested.store(true, std::memory_order_release);
+88:     if (m_thread.joinable()) {
+89:         m_thread.join();  // 阻塞至监督循环完全退出——返回后观测位/日志
+90:                           // 全部可见（线程收尾 happens-before join 返回）
+91:     }
+92:     m_running.store(false, std::memory_order_release);
+93: }
+94: 
+95: void StoreCloseSupervisor::superviseLoop()
+
+workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop sdurws::ird::workflow::StoreCloseSupervisor::superviseLoop
+93: }
+94: 
+95: void StoreCloseSupervisor::superviseLoop()
+96: {
+97:     // 阈值计时起点（t0＝start 时刻——Config.abandonThreshold 的量度基准）。
+98:     const auto now = [this] {
+99:         return m_clock ? m_clock()
+100:                        : std::chrono::steady_clock::now();
+101:     };
+102:     const auto t0 = now();
+103:     const auto tDiag = t0 + m_config.abandonThreshold;  // ②段兜底诊断时点
+104:     const auto tGiveUp = tDiag + m_config.giveUpGrace;  // ③段放弃监督时点
+105:     bool abandonDiagWritten = false;  // ③段一次性标志（Dev 日志恰一条）
+106: 
+107:     // 监督循环（①~④序——头文件 start() 注）：**先观测后查停止**——
+108:     // 循环体首拍必须完成闭合观测再让位给 stop 请求（宿主 start 后立即
+109:     // stop 的短会话形态下，闭合事实不被停止请求吞掉；此后每拍同序）。
+110:     // 线程约束澄清（tick 单线程域）：调度推进（TaskScheduler::tick——
+111:     // 取消协议/排空监视/自动兜底的推进泵）归宿主**调度循环线程**（真实
+112:     // 宿主形态：关闭期间调度循环持续 tick——Scheduler.hpp"tick 仅调度域
+113:     // 单线程"）；本监督线程**只观测不驱动**（并发 tick＝锁域违例——
+114:     // 实测会死锁），这正是"编排线程只观察不推进"（Lifecycle.cpp
+115:     // awaitStoreClosed 同款纪律）的监督面表达。
+116:     //   ① store 已闭合 → 记观测退出（关闭完成——监督成功收场）；
+117:     //   ② 越兜底阈值仍未闭合 → 一次性 Dev 日志（"残留会话"告知——project
+118:     //      §9.7 登记义务：强制 abandonAll 已由宿主调度循环的排空自动兜底
+119:     //      承载，本日志承载"若仍未闭合说明存在非任务侧在途引用"的诚实
+120:     //      告知）；
+121:     //   ③ 越放弃宽限仍未闭合 → Dev 日志＋放弃退出（不阻塞进程退出——
+122:     //      project §9.7 原文义务；非任务侧引用〔在途命令/草稿保存〕不是
+123:     //      abandon 处置面，监督不能替它清零，如实留痕后退出）；
+124:     //   ④ stop() 请求 → 退出（宿主主动收敛——run 返回后的正常路径）。
+125:     while (true) {
+126:         // ① 闭合观测（closed() 为内部互斥快照查询——并发安全）。
+127:         if (m_store.closed()) {
+128:             m_storeClosedObserved.store(true, std::memory_order_release);
+129:             m_running.store(false, std::memory_order_release);
+130:             return;
+131:         }
+132: 
+133:         // ④ 停止请求（在闭合观测**之后**检查——首拍观测优先语义）。
+134:         if (m_stopRequested.load(std::memory_order_acquire)) {
+135:             break;
+136:         }
+137: 
+138:         const auto t = now();
+139: 
+140:         // ② 兜底诊断（一次性——超阈值瞬间恰一条，不逐拍刷屏）。
+141:         if (!abandonDiagWritten && t >= tDiag) {
+142:             abandonDiagWritten = true;
+143:             m_abandonDiagObserved.store(true, std::memory_order_release);
+144:             if (m_devLog != nullptr) {
+145:                 m_devLog->logDev(
+146:                     kCloseSupervisorChannel,
+147:                     "关闭排空超阈值仍未闭合：强制 abandonAll(ForceTerminated) "
+148:                     "已由排空编排自动兜底承载；若存储上下文仍未闭合，说明存在"
+149:                     "非任务侧在途引用（在途命令/草稿保存）——继续监督至宽限");
+150:             }
+151:         }
+152: 
+153:         // ③ 放弃监督（不阻塞进程退出——§9.7 原文义务）。路径序：先
+154:         // 置观测位（宿主 wait-gaveUp 循环的释放面）→**写日志**→清
+155:         // running→return——日志写入先于线程退出，join 返回后必然可见。
+156:         if (t >= tGiveUp) {
+157:             m_gaveUp.store(true, std::memory_order_release);
+158:             if (m_devLog != nullptr) {
+159:                 m_devLog->logDev(
+160:                     kCloseSupervisorChannel,
+161:                     "关闭监督放弃：宽限期内存储上下文仍未闭合（非任务侧在途"
+162:                     "引用未释放）——残留事实已留痕，监督退出不阻塞进程退出；"
+163:                     "请人工核查在途命令/草稿保存持有者");
+164:             }
+165:             m_running.store(false, std::memory_order_release);
+166:             return;
+167:         }
+168: 
+169:         // 拍间隔（awaitStoreClosed 同款 1 ms 拍频——避免忙等烧核；clock
+170:         // 注入形态下的真实睡眠与虚拟推进解耦：测试用短阈值＋真实拍频）。
+171:         std::this_thread::sleep_for(m_config.pollInterval);
+172:     }
+173: 
+174:     // ④ stop() 请求退出——走到此处即宿主主动收敛（闭合与否以观测位为
+175:     // 准——m_storeClosedObserved 只在真实观测到 closed() 时置位）。
+176:     m_running.store(false, std::memory_order_release);
+177: }
+178: 
+179: }  // namespace workflow
+
+workflow.CloseSupervisor.running sdurws::ird::workflow::StoreCloseSupervisor::running
+160: 
+161:     /// 监督线程是否在运行（start 后、stop/自然退出前为 true）。
+162:     bool running() const noexcept { return m_running.load(std::memory_order_acquire); }
+163: 
+164:     /// 监督期间是否观测到 store 闭合（closed()——关闭完成的复核面）。
+165:     bool storeClosedObserved() const noexcept
+166:     {
+167:         return m_storeClosedObserved.load(std::memory_order_acquire);
+168:     }
+169: 
+170:     /// 监督期间是否触发过兜底诊断（超阈值仍未闭合——残留会话告知位）。
+171:     bool abandonDiagObserved() const noexcept
+172:     {
+173:         return m_abandonDiagObserved.load(std::memory_order_acquire);
+174:     }
+175: 
+176:     /// 监督是否以"放弃"收场（越放弃宽限仍未闭合——不阻塞进程退出的
+177:     /// 诚实退出位；true 时宿主应把残留事实升级人工处置）。
+178:     bool gaveUp() const noexcept { return m_gaveUp.load(std::memory_order_acquire); }
+179: 
+180: private:

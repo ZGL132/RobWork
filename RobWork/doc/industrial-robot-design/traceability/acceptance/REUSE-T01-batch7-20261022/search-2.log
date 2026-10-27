@@ -1,0 +1,31 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp:18:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp:20:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp:21:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWork/gtest/test-main.cpp:22:int main(int argc, char** argv) {
+RobWork/RobWork/gtest/test-main.cpp:23:	::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWork/gtest/test-main.cpp:24:    ::testing::AddGlobalTestEnvironment(TestEnvironment::make(argc,argv));
+RobWork/RobWork/gtest/CMakeLists.txt:7:macro(ADD_RW_GTEST target)
+RobWork/RobWork/gtest/CMakeLists.txt:36:add_library(sdurw-gtest-main STATIC ${RWMAIN_TEST_SRC})
+RobWork/RobWork/gtest/CMakeLists.txt:37:target_link_libraries(sdurw-gtest-main ${RWMAIN_TEST_LIBRARIES})
+RobWork/RobWork/gtest/CMakeLists.txt:44:    set(ALGORITHMS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_algorithms)
+RobWork/RobWork/gtest/CMakeLists.txt:57:    set(CALIBRATION_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_calibration)
+RobWork/RobWork/gtest/CMakeLists.txt:70:    set(CORE_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_core)
+RobWork/RobWork/gtest/CMakeLists.txt:132:    set(GEOMETRY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:162:    set(GRAPHICS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:179:    set(INVKIN_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:209:    set(LOADERS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:260:    set(MATHEMATICA_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_mathematica)
+RobWork/RobWork/gtest/CMakeLists.txt:273:    set(MODELS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_models sdurw_loaders)
+RobWork/RobWork/gtest/CMakeLists.txt:289:    set(OPENGL_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_opengl)
+RobWork/RobWork/gtest/CMakeLists.txt:317:    set(PATHPLANNING_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_pathplanners
+RobWork/RobWork/gtest/CMakeLists.txt:333:    set(PROXIMITY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:374:    set(TASK_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_task)
+RobWork/RobWork/gtest/CMakeLists.txt:387:    set(TRAJECTORY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_trajectory sdurw_loaders sdurw_control)
+RobWork/RobWork/gtest/CMakeLists.txt:416:configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestSuiteConfig.xml.in
+RobWork/RobWork/gtest/CMakeLists.txt:417:               ${TEST_RUN_OUTPUT_DIR}/TestSuiteConfig.xml
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp:23:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp:25:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp:30:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWork/gtest/TestEnvironment.cpp:39:    RobWork::init (_argc, (const char**) _argv);
+RobWork/RobWork/gtest/TestEnvironment.cpp:65:        parser->load (executableDir () + SLASH + "TestSuiteConfig.xml");
+RobWork/RobWork/gtest/TestEnvironment.cpp:78:        parser->load (executableDir () + SLASH + "TestSuiteConfig.xml");

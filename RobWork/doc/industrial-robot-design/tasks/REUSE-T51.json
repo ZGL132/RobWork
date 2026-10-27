@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T51",
+  "unit": "kinematics",
+  "masterWp": "WP-A",
+  "title": "WP-04 普通位姿 IK 迁移上游 JacobianIKSolver（完整位姿普通模式）与 Ik.cpp/JointMapping.hpp 全文件解决批",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T17",
+    "REUSE-T18",
+    "REUSE-T19"
+  ],
+  "requirements": [
+    "KIN-01",
+    "KIN-02",
+    "NFR-COR-01",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.3",
+    "reuse/migration.md#13.4",
+    "reuse/policy.md#1.1",
+    "reuse/audit-contract.md",
+    "reuse/extensions/GAP-IK-01.md",
+    "reuse/kinematics-fk-migration.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T51.json",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "cmake --build build --config Release --target sdurws_ird_kinematics sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test ird_gates",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label full-suite",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range a89776f06c80a0408c4fa28e9e58e32215b74738..HEAD"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T51.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T51.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "FullPose 普通模式上游 JacobianIKSolver 薄适配落地（solveLocal 单步循环迭代核＋任务私有 State＋单点 q 映射＋独立双容差残差复核）；Ik.cpp/JointMapping.hpp/Ik.hpp 全文件解决批（矩阵行 migrated＋铺面＋生产证据）；KIN-IK 能力 candidate→verified 升级审查"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "实施前设计判断（policy §1.1.1）：保留＝请求校验/fail-fast 轨、初值编排（makeInitialValues 三策略）、解析界限结局 5、硬过滤①残差复验②限位③碰撞、去重/稳定排序/统计、双容差验收语义、取消探针契约、五类结局词表；删除＝完整位姿普通模式的自写 DLS 迭代核（6 维正规方程 LLT 路径及其 FullPose 调用链——dampedLeastSquaresStep 收缩为仅位置模式 3 维专用并去除 taskDim 参数）；适配＝经 T17 锚（runtimeModelView→已编译 WorkCell）取 Device/任务私有 State，JointMapping 新增 q_rw→q_auth 单点逆映射（与既有 q_auth→q_rw 同头互逆），JacobianIKSolver 构造于解析后的 foi（默认 TCP＝编译产物帧；命名 TCP＝法兰＋目标一次逆偏置复合），solveLocal 以 maxIter=1 单步循环驱动（每步真实迭代计数可观测、取消探针保周期）＋上游收敛后经 FkEvaluator 独立 FK 复算按产品双容差逐项复核（GAP-IK-01 §1『优先原API，结束后以任务实际位置/姿态容差独立复核』）；职责归属＝模型 owner 仍 runtime（锚受控视图），迭代核归上游 rw::invkin，业务编排/过滤/排序/统计归本单元",
+    "上游符号定向核（migration §13.3 WP-04 行）：JacobianIKSolver.hpp:117-129 两构造（Device+State／Device+foi+State）、solve(baseTend,state)→vector<Q>（0/1 解）、solveLocal(bTed,maxError,state&，maxIter)→bool（normInf 混合单位 6 维旋量停判＋每循环恰一次 SVD 伪逆步）、默认 SVD/maxIterations=15/clamp=false/checkLimits=false（JacobianIKSolver.cpp:35-42,89-131）；不可达语义＝maxIter 耗尽返回空/假成功须独立复核（GAP-IK-01 §1 结果正确性行）；限位语义＝默认不钳制不检查——解可能越界，产品硬过滤②按契约区间如实过滤；确定性＝单线程固定算法（SVD 伪逆定序）；maxError=min(位置容差,姿态容差)（上游停判据不承担验收语义——验收归阶段①独立双容差复验）；上游迭代数不回传的统计诚实口径＝solveLocal(·,1) 单步循环逐步实测（与上游内部循环体逐步同构——本基线单步/多步轨迹同一性经真实测试钉），不用配置上限伪造迭代数（GAP-IK-01 §1 取消/统计行）",
+    "迁移边界（migration §13.3）：只迁完整位姿普通模式（taskSpace==FullPose 且无 taskConstraint）；PositionOnly 与约束模式仍走既有链（上游 ParallelIKSolver Target 掩码消费被 runtime 视图权限审查阻断、Euler 掩码差异反例在案——GAP-IK-01 §1，归 WP-05）；锚缺失/设备未命中/上游异常→既有 IkFacilityFailure 值面（不抛承诺不破，F-746③ 同轨；禁止回退旧自写核作隐藏 fallback——KinTypes T17 注）；kIkSolverContractVersion 4→5（CON-04——换核改变同请求数值结果，新旧解集不可假借同一版本身份）",
+    "测试（test-fixture 例外口径）：模型构造仍经 KinFkFixture 既有授权形态（真实编译 RuntimeSnapshotFactory）；新增/改造＝FullPose 上游路径定向（可达收敛＋独立闭式 oracle）、不可达（内孔）搜索未果、限位过滤（越界解如实入 filteredRecords）、同请求逐位确定性、上游直接对照（同模型同初值直接驱动 JacobianIKSolver 与产品解一致）＋solveLocal 单步/多步轨迹同一性钉、F-746③ 设施失败值面适配（锚缺失→InitialFkEvaluation）、黄金数据集与消费者契约回归真实跑",
+    "验证（增量范围）：kinematics 全量套件（集成模式真实执行，passed/failed/skipped/notRun 分列）＋IK 定向消费者契约（TaskPointIkEvaluator contract）＋独立残差 oracle（闭式参考）＋ird_gates；冒烟树不扩权（kinematics 冒烟 test exe 既有 T19 遗留 LNK2019 缺口维持 NOT RUN 原件登记，归 T19 语义/后续包处置，本包不冒称修复）",
+    "全文件解决批（Ik.cpp migration-debt 改动即触发）：Ik.cpp 全部功能行 resolved（IkSolver.solve 行 adapter＋ird-reuse-production/1 四套生产证据 normal/disconnected/oracle/upstreamComparison——disconnected 为真实生产变异红例；其余行 business-specific 持 nonOverlapEvidence）＋逐行区段铺面＋JointMapping.hpp 同批（新增逆映射行）＋Ik.hpp 契约面铺面行＋CMake 行区段刷新＋inputs/build 摘要级联同步＋permissions 精确 grant（Ik.cpp model/state/solver+write-state task-private；IkTest.cpp 测试面 grant）＋catalog KIN-IK candidate→verified（能力审查证据文件，T36 COLLISION 先例同型）＋changes/REUSE-T51.json 凭证",
+    "四维验收（policy §1.1.4）：准确性＝闭式独立 oracle＋黄金数据集＋上游直接对照＋双容差独立复核；架构＝runtime owner/上游迭代核/业务编排三层职责唯一、依赖方向经锚+sdurw_invkin 导出目标；简洁性＝删除 FullPose 自写 DLS/正规方程链的实际清单＋必要保留项逐项理由（PositionOnly 引擎/约束模式数学）；运行效果＝确定性逐位、多初值统计真实性、取消响应、消费者契约回归；四维结果关联本 acceptance 并留证 traceability/reuse/REUSE-T51/",
+    "跨批治理卫生修复（T36 acceptance 第 4 项同型）：本包 CMake 链接面变更使 REUSE-T19 的 FK 生产证据 JSON（kinematics.FkEvaluator.evaluate）内 kinematics/CMakeLists.txt 绑定陈旧——validate-reuse FRESHNESS/POSITIVE 必红（证据新鲜度规则：任一相关依赖变化受影响证据过期）；本包单值同步该绑定至现行摘要并级联刷新 functions/kinematics.json 该行 evidence 绑定，证据内容（runs/XML/断言）零改动——FK 路径与本包零因果，不重跑不重验",
+    "全库证据索引重建（-DeepEvidence 实测前置）：本包收口应答要求 -DeepEvidence 实测，暴露证据索引过期 951 条 mismatch（首条 acceptance/REUSE-T10-20261026-r1.json——先于本包存在的历史批次登记未入索引）；按工具提示重跑 index-evidence.ps1 重建（25269 files/917MB，sha computed=25239 skippedLarge=30）后 -DeepEvidence 复跑 PASS（25269 audited evidence）；索引为生成物零手工改动，覆盖面为全库历史批次而非本包增量"
+  ],
+  "note": "migration §13.3 WP-04 精确子任务（REUSE-T03 父任务 planned 下的精确子任务，父任务归位归收口批）。契约编制即本包工作（2026-10-26 起始 SHA=a89776f06c80a0408c4fa28e9e58e32215b74738）。前置准入核清：模型真值项已由 T13 真值记录满足（migration §13.2 末行）、目标文件无 CLOSURE 冻结（functions/kinematics.json 中 Ik.cpp/JointMapping.hpp 全部行为 pending/proposal 或 business-specific/migrated，无 closed 行；closures.json 无本包目标文件条目）。生产实施的独立验收按既有口径由所有者另开会话、人工或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型），实施者不得自签；本契约 status=ready 表示实施完成待独验，不冒称通过。WP-05（部分姿态/仅位置/迭代观测扩展）边界不动：GAP-IK-01 扩展提案维持 Draft 未批准，本包不实施 ParallelIKSolver/掩码/真实统计扩展。【验收登记（2026-10-26 收口）】独立验收 PASS：记录 traceability/acceptance/REUSE-T51-20261026-r1.json（复跑证据原件在其同名目录 evidence/ 25 件：验收隔离执行器双测试 exe 全量真实执行、node 独立数值探针 14 项、31 区段 sha256 重算＋1318 行铺面＋生产证据四套交叉、validate-docs 单值逐契约×4、verify-task-scope 显式 Base/Head、commit-lint、红线批量），verdict=pass（18 项检查 failed=0/skipped=0/notRun=4——gui_test/-DeepEvidence/冒烟树/非受影响全库按增量口径不重跑；测试计数另列互不相加：test exe 297=296 passed＋1 既有环境 skip、contract 57/57，均为验收会话本轮亲测非引用），绑定送验 reviewedCommit=b69e79f9f672f4bdd0157af0e165ecfd9826ef3a（base=a89776f06c80a0408c4fa28e9e58e32215b74738，冻结范围恰 4 提交：554fa6f7a 产品批收口＋c0003cc69/06aa8779e/b69e79f9f 治理三批）；授权口径＝所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。据此登记 status=done。非阻断两条随批在案（验收记录 issues 原文）：①IkTest.cpp FullPoseUpstreamClosedFormOracle 注释分支编号笔误（初值实近分支 2——node 独立复算亲证；断言有效性不受影响），归所有者归类（GoldenImportTest cosmetic 先例同型）；②本验收记录与 evidence/ 为索引重建（06aa8779e）之后新增产物，证据索引对验收产物过期属生成物语义，随本登记批一并刷新（同 T10/T30 先例）。遗留（不属本包退出条件）：PositionOnly/约束模式迁移归 WP-05（GAP-IK-01 扩展提案维持 Draft 未批准）；冒烟 kinematics test exe T19 遗留缺口维持 NOT RUN 原件登记。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T51.json"
+  }
+}

@@ -351,11 +351,15 @@ public:
      *     （**忽略不删**——现场保留，§4.1 .staging 行口径）；`.staging/tmp`
      *     → 启动清理（整树删除，按需重建——§4.1 tmp 行"启动清理"，D-09
      *     临时物不得逸出该目录）；
-     *   - ④ HEAD 引用闭包完整性：读 HEAD → 装载磁盘全部修订清单入临时
-     *     索引 → committedClosure（悬挂引用/起点缺失＝损坏）→ 对闭包内
+     *   - ④ HEAD 引用闭包完整性：读 HEAD → **HEAD.manifestDigest 与 HEAD
+     *     指向修订清单字节的实算比对**（F-962 修复——经 CR-02 唯一摘要
+     *     入口 codec::contentVersionOf，与提交路径同口径；缺失/不符＝
+     *     损坏并定位到文件）→ 装载磁盘全部修订清单入临时索引 →
+     *     committedClosure（悬挂引用/起点缺失＝损坏）→ 对闭包内
      *     全部对象引用做 size＋SHA-256 校验（scanObjects verifyDigest 档）
      *     → 任一失败＝headIntegrityVerified=false＋PRJ-STORE-CORRUPT＋
-     *     开发诊断（定位到文件）；
+     *     开发诊断（定位到文件；用户诊断 cause 采首败钉扎——扫描序中
+     *     第一个失败优先写入记录，后续失败仍经开发通道逐一交底）；
      *   - §7.3 识别：磁盘修订目录集 ＼ 闭包集 ＝ uncommittedRevisions
      *     （已发布但未提交——对查询不可见的机制化清单）；
      *   - ⑤ 悬挂对象计数（scanObjects 磁盘→引用方向）→

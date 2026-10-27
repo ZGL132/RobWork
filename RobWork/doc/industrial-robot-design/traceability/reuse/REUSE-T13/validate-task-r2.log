@@ -1,0 +1,6 @@
+REUSE-FRESHNESS : RobWork/scripts/industrialrobot/validate-task.ps1
+Exception: D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\scripts\industrialrobot\validate-task.ps1:127
+Line |
+ 127 |  … if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | H1-H6 task reuse contract failed

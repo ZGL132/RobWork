@@ -1,0 +1,2 @@
+import pathlib,re,sys
+r=pathlib.Path(sys.argv[1]);p=r/'repo/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp';s=p.read_text(encoding='utf-8-sig');s=re.sub(r'/\*.*?\*/',lambda m:'\n'*m.group().count('\n'),s,flags=re.S);lines=s.splitlines();out='\n'.join(f'{i+1}: {l}' for i,l in enumerate(lines) if l.strip() and not l.strip().startswith('//'));(r/'collision-code-view.txt').write_text(out,encoding='utf-8');print(out)

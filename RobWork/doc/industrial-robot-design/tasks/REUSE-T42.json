@@ -1,0 +1,75 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T42",
+ "unit": "requirements",
+ "masterWp": "WP-A",
+ "title": "WP-19批次一·requirements单元复用收口：RPY正变换换上游＋全行铺面审计收口",
+ "status": "ready",
+ "branch": "redesign-main",
+ "dependsOn": [
+  "GOV-T21",
+  "GOV-T22"
+ ],
+ "requirements": [
+  "REQ-11",
+  "AT-24",
+  "REQ-10",
+  "KIN-04",
+  "V-02",
+  "NFR-COR-01"
+ ],
+ "designRefs": [
+  "reuse/migration.md#13.3",
+  "reuse/policy.md#1.1",
+  "units/requirements.md#7.2"
+ ],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T42.json",
+  "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+  "cmake --build build --config Release --target sdurws_ird_requirements_test",
+  "build/RobWorkStudio/bin/Release/sdurws_ird_requirements_test.exe（正常面 -GuiRegistration.V22RegisteredNotExecuted_ACC1 排除 GUI 进程占位；oracle 面 ReqTemplateArray.MirrorGolden*；四面对照证据见 traceability/reuse/REUSE-T42/run/）",
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T42.json -Base caea72c7bed3cf1fc2b432a3ce3ea1086006fe7a -Head <送验SHA>"
+ ],
+ "allowedFiles": [
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T42.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T42.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json",
+  "RobWork/doc/industrial-robot-design/reuse/migration.md",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/**"
+ ],
+ "forbiddenFiles": [
+  "RobWork/RobWork/src/**",
+  "RobWork/RobWorkSim/src/**",
+  "vcpkg/**",
+  "main"
+ ],
+ "outputs": [
+  "rotationFromRpy 正变换换上游（MATH-ROT 直接 API）＋位模式恒等探针与四面对照生产证据",
+  "requirements.json 全量收口：TemplateArray.cpp 全行铺面 38 行＋Sampling/panel/flows/测试骨架行处置（46 business-specific＋1 direct＋1 pending 覆盖墙登记）",
+  "G3（requirements 第三份同族反解）差异证据定案与字节/采样分母消费一致性核"
+ ],
+ "interUnit": false,
+ "acceptance": [
+  "G3 定案（评审缺口5回应）：TemplateArray 反解族与已闭 modeling/RpyMath 的关系为三类证据——①RpyMath.hpp 是 modeling 私有头（closures MATH-ROT 冻结、红线禁跨单元私有头），requirements 不能引用；②正变换 rotationFromRpy 与上游 RPY::toRotation3D 逐元素恒等且乘加序一致——本包换核（探针 12 用例含 ±π/2/近万向锁 IEEE754 位模式逐位相等，run/upstreamComparison.xml）；③反解 reflectRpy 保留产品唯一职责，上游 RPY(R,eps) 三点差异实证（eps=1e-5 吸附带违约 REQ-10 的 1e-8rad 回归、退化轴约定绕Z=0≠产品 roll=0、退化提取元素不同；probe-r6 同证）——登记 nonOverlap，不接 RpyMath、不改上游、不重写通用反解",
+  "生产证据四面对照（ird-reuse-production/1）：normal 221 项全过（GUI 进程占位用例排除同 T30 先例）、oracle 2 项解析黄金、disconnected 字段换序变异 2 项真实红（mutatedSource 绑定＋恢复后 recheck 22 项绿）、upstreamComparison 探针逐位对照；探针 v1 isProperRotation 断言（上游内部容差语义、非产品契约）失败记录保留 run/upstreamComparison-v1-properness-failed.*，v2 收窄为位模式断言",
+  "矩阵与凭证：requirements.json 48 行——TemplateArray.cpp 全行铺面（38 行、1491 行零空行遗漏）、Sampling 两行消费一致性待核项关闭（evidence/Snapshot.hpp plannedPosition/plannedPoseSamples 同分母面＋SamplingTest 75U/0U/Random-zero＋GoldenDatasetsContractTest:813 V-02 钉）、targetEditRotation 保持 pending（4165 行面板文件覆盖墙，T33/T36/T40 结构同型如实登记，候选换核已证恒等）、其余行 business-specific 带 nonOverlap 绑定；changes/REUSE-T42.json 逐文件凭证",
+  "增量验证：sdurws_ird_requirements 库与 test 目标 Release 增量构建（公共接口/CMake/依赖零变化，无消费者扩大）；ird_gates 正例；PASS/FAIL/SKIP/NOT RUN 分列（本轮 0 failed；1 skipped 为 GUI 占位用例排除承载，gui_test exe 单独覆盖）",
+  "三门禁：commit-lint -Range 本包base..HEAD、validate-docs -TaskFile（含全量复用检查）、verify-task-scope 显式 -Base caea72c7bed3cf1fc2b432a3ce3ea1086006fe7a -Head 送验SHA 全绿"
+ ],
+ "note": "migration §13.3 WP-19 剩余单元批次一（requirements→selection→…→testkit 及 drivetrain 遗留），正式编号自 REUSE-T42 起（T30—T41 已占用后查重定号）。masterWp=WP-A 按 T29/T30 先例（DTB 别名；migration §13 WP-19 为计划别名）。起始 SHA=caea72c7bed3cf1fc2b432a3ce3ea1086006fe7a（migration §13.1 recon 起点 6921197dd 之后其他会话新增提交已承接）。范围＝§13.3 WP-19 行 requirements 面：沿已有矩阵反查（requirements.json 14 pending 行＋文件全铺面）。政策口径：普通产品修正增量验证（受影响目标构建＋相关测试＋复用检查），无接口/依赖/数值核心变化不扩大消费者。所有者保留裁决项：本包无新核心、无上游扩展、无性能放宽；owner 裁决预留面＝①ui 批次 UiPlugin.cpp（F-967/T41 宿主例外扩面 blocked 先例）②testkit F-959 黄金生成脚本（§13.3 明令不得洗绿，blocked 登记）③字节原语族 Boost.Endian 候选（需所有者明确批准，本包按字节身份契约保留并登记决策记录）。实施完成待独验；独立验收由所有者另开会话，实施者不自签。",
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ },
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T42.json"
+ }
+}

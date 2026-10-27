@@ -1,0 +1,36 @@
+acc-core exit=0
+[----------] Global test environment tear-down
+[==========] 74 tests from 42 test suites ran. (470 ms total)
+[  PASSED  ] 74 tests.
+smoke-core exit=0
+[----------] Global test environment tear-down
+[==========] 71 tests from 41 test suites ran. (507 ms total)
+[  PASSED  ] 71 tests.
+testkit exit=0
+[----------] Global test environment tear-down
+[==========] 29 tests from 12 test suites ran. (126 ms total)
+[  PASSED  ] 29 tests.
+trajectory exit=0
+[----------] Global test environment tear-down
+[==========] 31 tests from 14 test suites ran. (37 ms total)
+[  PASSED  ] 31 tests.
+trajectory-contract exit=0
+[----------] Global test environment tear-down
+[==========] 20 tests from 3 test suites ran. (6 ms total)
+[  PASSED  ] 20 tests.
+selection exit=0
+[----------] Global test environment tear-down
+[==========] 112 tests from 5 test suites ran. (10 ms total)
+[  PASSED  ] 112 tests.
+selection-contract exit=0
+[----------] Global test environment tear-down
+[==========] 29 tests from 4 test suites ran. (22 ms total)
+[  PASSED  ] 29 tests.
+optimization exit=0
+[----------] Global test environment tear-down
+[==========] 9 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 9 tests.
+optimization-contract exit=0
+[----------] Global test environment tear-down
+[==========] 9 tests from 2 test suites ran. (428 ms total)
+[  PASSED  ] 9 tests.

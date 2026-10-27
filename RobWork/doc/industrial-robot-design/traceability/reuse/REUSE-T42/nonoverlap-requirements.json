@@ -1,0 +1,160 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T42",
+ "unit": "requirements",
+ "description": "business-specific 判定的 nonOverlap 证据：逐 functionId 记录与上游（RobWork/RobWorkSim）的能力边界差异与负检索引用。检索命令与输出见同目录 search-batch.txt（S1—S4 全部零命中）；MATH-ROT 面的适用性由 catalog MATH-ROT（verified）与行级 search/differences 承载。",
+ "entries": [
+  {
+   "functionId": "requirements.TemplateArray.fileHead",
+   "conclusion": "文件头/命名空间/确定性约定（IEEE754、%.17g、strtod 全消费、冲突升序）——产品数据身份契约，上游无对应物（S1/S2 零命中）。"
+  },
+  {
+   "functionId": "requirements.formatNumber",
+   "conclusion": "数学数值文本化 %.17g（IEEE754 double 无损往返格式——provenance 快照协议面）；上游 Vector3D 无产品文本格式。"
+  },
+  {
+   "functionId": "requirements.parseNumber",
+   "conclusion": "strtod 全消费解析＋确定性文本约定，属需求参数文本协议；上游 StringUtil 无全消费数值协议同义物。"
+  },
+  {
+   "functionId": "requirements.formatVec3",
+   "conclusion": "%.17g 无损往返文本化（产品 provenance 快照协议）；上游 Vector3D 无产品文本格式。"
+  },
+  {
+   "functionId": "requirements.parseVec3",
+   "conclusion": "三分量全消费解析（协议面），非数学核心。"
+  },
+  {
+   "functionId": "requirements.paramValue",
+   "conclusion": "GenerationProvenance 参数读取（产品 provenance 模型字段），上游无 provenance 概念。"
+  },
+  {
+   "functionId": "requirements.sourceIdsOf",
+   "conclusion": "产品来源 ObjectId 列表读取；上游无 ObjectId/provenance 模型。"
+  },
+  {
+   "functionId": "requirements.refFrameToText",
+   "conclusion": "需求参考系文本编码（产品引用协议）。"
+  },
+  {
+   "functionId": "requirements.refFrameFromText",
+   "conclusion": "需求参考系文本解码（产品引用协议）。"
+  },
+  {
+   "functionId": "requirements.makeDiag",
+   "conclusion": "产品诊断记录装配（diagnostics 契约承载，本单元恒不写诊断）。"
+  },
+  {
+   "functionId": "requirements.errorBatch",
+   "conclusion": "产品 EditBatch 错误面（I-REQ 契约），非上游能力。"
+  },
+  {
+   "functionId": "requirements.finiteVec3",
+   "conclusion": "产品参数有限性拒绝面（NaN/Inf 拒绝语义归业务入口原子拒绝——与 REUSE-T37 core isfinite 收口不重复：此处是业务拒绝分支承载，非通用数值工具）。"
+  },
+  {
+   "functionId": "requirements.reflectPosition",
+   "conclusion": "镜像反射 p'=p−2(n·p)n 是 §7.2 业务反射规则（等距变换 det=−1 语义）；上游无反射原语（S4 零命中），Vector3D 值运算仅作承载，不能为复用把反射当 proper rotation。"
+  },
+  {
+   "functionId": "requirements.reflectionMatrix",
+   "conclusion": "M=I−2nnᵀ 为 det=−1 反射矩阵——Rotation3D 类型系统不能表达（非 proper rotation），上游无通用 3×3 反射构造（S4 零命中）；MATH-ROT 登记面为旋转值类型，不覆盖。"
+  },
+  {
+   "functionId": "requirements.matMul",
+   "conclusion": "固定 3 阶乘法承载 M·R·M 反射共轭（M 非旋转，Rotation3D operator* 类型前提不成立）；乘加序固定为确定性契约（黄金元素规则 σiσj 依据），上游无 det=−1 共轭能力。"
+  },
+  {
+   "functionId": "requirements.reflectRpy",
+   "conclusion": "MRM 共轭＋Z-Y-X 反解为 §7.2 业务镜像规则＋F-582 修复契约（roll'=0、yaw 按符号分支 atan2(R[1][2],R[1][1])）；上游 RPY(R,eps) 差异实证三点：①万向锁判定带宽 eps=1e-5 远宽于产品 1e-12（|cp|∈[1.41e-6,1e-5] 区间上游吸附退化表示、产品保留一般表示——REQ-10 的 1e-8rad 数值回归禁止该吸附）；②退化轴约定不同（上游置绕Z=0、产品置 roll=0）——同矩阵两法表示不同，模板条目字段/摘要随表示变化；③上游退化提取元素 atan2(r12,r22) 与产品 atan2(R[1][2],R[1][1]) 不同。probe-r6（REUSE-T01-api-r6）实测旋转往返正确但表示差异确认。反解保留产品唯一职责，不改上游、不重写通用反解。"
+  },
+  {
+   "functionId": "requirements.methodTagOfGenerator",
+   "conclusion": "产品 provenance methodTag 语法（[a-z0-9./_-]）承载，上游无。"
+  },
+  {
+   "functionId": "requirements.generatedSource",
+   "conclusion": "产品 D-REQ-4 来源标记规则（UserProvided＋methodTag），上游无。"
+  },
+  {
+   "functionId": "requirements.disambiguateName",
+   "conclusion": "批次内确定性试缀消歧（产品 I-REQ-3 边界），上游无同名语义（S1 零命中）。"
+  },
+  {
+   "functionId": "requirements.appendCommonParams",
+   "conclusion": "产品 provenance 参数快照协议。"
+  },
+  {
+   "functionId": "requirements.contentEqualIgnoringIdentity",
+   "conclusion": "产品 TaskPoint 身份无关等值（批次冲突清单语义）。"
+  },
+  {
+   "functionId": "requirements.appendRefFrameParam",
+   "conclusion": "产品 provenance 参考系参数协议。"
+  },
+  {
+   "functionId": "requirements.EditBatchEquality",
+   "conclusion": "产品 EditBatch 值等值（契约面）。"
+  },
+  {
+   "functionId": "requirements.RegenerateOutcomeEquality",
+   "conclusion": "产品 RegenerateOutcome 值等值（契约面）。"
+  },
+  {
+   "functionId": "requirements.defaultTemplateParams",
+   "conclusion": "三类模板默认参数（产品业务默认值契约——§7.2 模板语义）。"
+  },
+  {
+   "functionId": "requirements.defaultProcessTag",
+   "conclusion": "产品工艺标记默认值（业务契约）。"
+  },
+  {
+   "functionId": "requirements.lowerHyphenToken",
+   "conclusion": "产品标识文本化约定（methodTag 连字符形态）。"
+  },
+  {
+   "functionId": "requirements.templateGeneratorId",
+   "conclusion": "产品生成器标识语法（冒号形态）。"
+  },
+  {
+   "functionId": "requirements.arrayGeneratorId",
+   "conclusion": "产品阵列生成器标识语法。"
+  },
+  {
+   "functionId": "requirements.applyTemplate",
+   "conclusion": "模板装配业务（模板/镜像/阵列三类生成器公共面——I-REQ-10 单点执行）；上游无需求模板概念（S1 零命中）。"
+  },
+  {
+   "functionId": "requirements.mirrorPoint",
+   "conclusion": "镜像点几何业务规则（§7.2 点/姿态反射＋rule 保留判定）；反射数学面归 reflectPosition/reflectRpy 行，业务编排为产品唯一职责。"
+  },
+  {
+   "functionId": "requirements.applyMirror",
+   "conclusion": "批量镜像业务（来源选择、消歧、provenance 快照）；上游无。"
+  },
+  {
+   "functionId": "requirements.applyArray",
+   "conclusion": "线性/矩形/圆形阵列生成业务（产品网格语义）；上游无网格模板生成（S1 零命中）。"
+  },
+  {
+   "functionId": "requirements.templateParamsOf",
+   "conclusion": "provenance 参数反解（产品会话协议 regenerate 入参）。"
+  },
+  {
+   "functionId": "requirements.mirrorPlaneOf",
+   "conclusion": "镜像面参数反解（产品协议）。"
+  },
+  {
+   "functionId": "requirements.arrayParamsOf",
+   "conclusion": "阵列参数反解（产品协议）。"
+  },
+  {
+   "functionId": "requirements.regenerate",
+   "conclusion": "再生业务（AC4 无活传播、unlink 后再生——产品编辑器契约）。"
+  },
+  {
+   "functionId": "requirements.unlinkGenerator",
+   "conclusion": "生成器解链业务（D-REQ-4 普通条目可手改的承载面）。"
+  }
+ ]
+}

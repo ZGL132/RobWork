@@ -1,0 +1,1123 @@
+{
+  "schemaVersion": "ird-golden-replay/1",
+  "taskId": "REUSE-T49",
+  "reviewedCommit": "f59b0b25e2e6cfbd8bc810923b9fd25fec386fb7",
+  "nodeVersion": "v24.14.1",
+  "isolation": "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay",
+  "scripts": [
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.0.0/generate/make_dt_mapping_golden.mjs",
+      "scriptRawSha256": "eb59d09e1477f0b67fea26eaf8fdfbd757ba6a0fae0e1229771d91525840ac5f",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\dt-mapping-golden\\1.0.0\\generate\\make_dt_mapping_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "dt-mapping-golden: wrote D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\dt-mapping-golden\\1.0.0\\expected\\dt-mapping-expected.json\n  cases: analytic-single, virtualwork-multi, energy-bidirectional, dwell-zero, inertia-golden\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.0.0/expected/dt-mapping-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "4e6b7a844a60f1cff6513ba1ac8d0ca325004700fc13e7db5d4b024ca1431b03",
+          "replayedRawSha256": "4e6b7a844a60f1cff6513ba1ac8d0ca325004700fc13e7db5d4b024ca1431b03",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.0.0/inputs/dt-mapping-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "12c7842fe650fe4f1d99ba05a2b5b8750dc3ac931b0da1ce13762e3c6db96021",
+          "replayedRawSha256": "12c7842fe650fe4f1d99ba05a2b5b8750dc3ac931b0da1ce13762e3c6db96021",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "88c5fe065a551056fad216bcfc2c05d1248c307bf50d267f193df9e7a07e3793",
+          "replayedRawSha256": "88c5fe065a551056fad216bcfc2c05d1248c307bf50d267f193df9e7a07e3793",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "scriptRawSha256": "e49d9e85fc41f568673aa1d2c9885dd21555646d169faa903b78acdd3b5f4cef",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\dyn-two-link-analytic\\1.0.0\\generate\\make_dyn_two_link_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "dyn-two-link-analytic: wrote D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\dyn-two-link-analytic\\1.0.0\\expected\\dyn-two-link-expected.json\n  cases: static-ground, static-inverted, motion-dwell\n  condition ids: static-ground=024fb5a58009c2251551b22a4446ceef, static-inverted=11537b4b8d6ce0fa6e519dd99e62af3a, motion-dwell=889fb585d35a6624f5808cdc3d4fbcd8\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/expected/dyn-two-link-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "b4ff5cc668816075ba41b988098b3a53c5b3d8a4e23f15008834cbd3eb0bbd99",
+          "replayedRawSha256": "b4ff5cc668816075ba41b988098b3a53c5b3d8a4e23f15008834cbd3eb0bbd99",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/inputs/dyn-two-link-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "23e9c42ef0554db877bd4444167688c12fe9da80e976b4a059cab9456b816694",
+          "replayedRawSha256": "23e9c42ef0554db877bd4444167688c12fe9da80e976b4a059cab9456b816694",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "d184b22f6492029bc73e81adbbdbc5d32c9434e861e98fb8bcf636dac0fbf76a",
+          "replayedRawSha256": "d184b22f6492029bc73e81adbbdbc5d32c9434e861e98fb8bcf636dac0fbf76a",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/ev-slice-fixture/1.0.0/generate/make_ev_slice_fixture.mjs",
+      "scriptRawSha256": "637062f6db9c132e82891b9887e176cc5308e7923b57416e661c5149e42cad2f",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\ev-slice-fixture\\1.0.0\\generate\\make_ev_slice_fixture.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "生成完成：expected/slice-identity.json\n  snapshotId      = cid-279fb3c8f3ea127b17563f86b515e65f6d3306de0b7d3cd78ee3abbf867a5988\n  sliceId         = cid-f165b1376f8d3f6f5e7c818f9c122f5c68a844cc505640496b309df3f027ebb0\n  inputBaselineId = cid-c6980240417d68fe9b5b53511063d4f8ee95a8ba11c2329e25faef6a1204cd7b\nmanifest integrity 申报表（manifest.json 登记用）：\n    { \"path\": \"inputs/slice.json\", \"sha256\": \"cb3ae90419c8e8d4d82e73b5bed52331c923ce95ebc1c751b83566e1ce418adf\", \"sizeBytes\": 3530 }\n    { \"path\": \"expected/slice-identity.json\", \"sha256\": \"5a0a64270b71bdedf1ee47feee9067628d3296ca13231e932fdef56be24763fd\", \"sizeBytes\": 1824 }\n    { \"path\": \"generate/make_ev_slice_fixture.mjs\", \"sha256\": \"637062f6db9c132e82891b9887e176cc5308e7923b57416e661c5149e42cad2f\", \"sizeBytes\": 13450 }\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/ev-slice-fixture/1.0.0/expected/slice-identity.json",
+          "existsBefore": true,
+          "originalRawSha256": "5a0a64270b71bdedf1ee47feee9067628d3296ca13231e932fdef56be24763fd",
+          "replayedRawSha256": "5a0a64270b71bdedf1ee47feee9067628d3296ca13231e932fdef56be24763fd",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/ev-slice-fixture/1.0.0/inputs/slice.json",
+          "existsBefore": true,
+          "originalRawSha256": "cb3ae90419c8e8d4d82e73b5bed52331c923ce95ebc1c751b83566e1ce418adf",
+          "replayedRawSha256": "cb3ae90419c8e8d4d82e73b5bed52331c923ce95ebc1c751b83566e1ce418adf",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/ev-slice-fixture/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "d979a90a31614899ebb0f15c9f6e80deb82b16c5dfda5688e125dbdfa5c279cc",
+          "replayedRawSha256": "d979a90a31614899ebb0f15c9f6e80deb82b16c5dfda5688e125dbdfa5c279cc",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-coverage/1.0.0/generate/make_kin_coverage_golden.mjs",
+      "scriptRawSha256": "cc53fc5dade8c96695b524392268aebb74f2f63b7b64562c2a8317678ed726d1",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\kin-coverage\\1.0.0\\generate\\make_kin_coverage_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "# integrity 段（回填 manifest.json——含本脚本自身）:\n  {\"path\": \"inputs/coverage-inputs.json\", \"sha256\": \"4dcfbd7fbf4b027aabef74780d389a769026f5b3bcecf7d8ac2976266e388608\", \"sizeBytes\": 3412},\n  {\"path\": \"expected/coverage-expected.json\", \"sha256\": \"f0f9597fed99e7dcfa58dd27cb60b15f6157ba4f7168f9c15d84de0fe8b7ce71\", \"sizeBytes\": 3079},\n  {\"path\": \"generate/make_kin_coverage_golden.mjs\", \"sha256\": \"cc53fc5dade8c96695b524392268aebb74f2f63b7b64562c2a8317678ed726d1\", \"sizeBytes\": 8924},\n# planA 100 格心可达 60 / 最小边界裕度 0.09883736647868702\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-coverage/1.0.0/expected/coverage-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "f0f9597fed99e7dcfa58dd27cb60b15f6157ba4f7168f9c15d84de0fe8b7ce71",
+          "replayedRawSha256": "f0f9597fed99e7dcfa58dd27cb60b15f6157ba4f7168f9c15d84de0fe8b7ce71",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-coverage/1.0.0/inputs/coverage-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "4dcfbd7fbf4b027aabef74780d389a769026f5b3bcecf7d8ac2976266e388608",
+          "replayedRawSha256": "4dcfbd7fbf4b027aabef74780d389a769026f5b3bcecf7d8ac2976266e388608",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-coverage/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "0ddfc555e237287994e21d15bee8907631d2cd85d3fb62a80cdfb3454d944c62",
+          "replayedRawSha256": "0ddfc555e237287994e21d15bee8907631d2cd85d3fb62a80cdfb3454d944c62",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/generate/make_kin_fk_golden.mjs",
+      "scriptRawSha256": "e2c98204a21de0e99b401d7e4a2ceb3ed5eec956007bdfd3321e812ba2b1e473",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\kin-fk-analytic\\1.0.0\\generate\\make_kin_fk_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "# integrity 段（回填 manifest.json——含本脚本自身）:\n  {\"path\": \"inputs/fk-cases.json\", \"sha256\": \"fbe6356a4aadc1ae47e9ed98f9c16445ce800a72c01c8dbfcaed3c40cec34adc\", \"sizeBytes\": 4906},\n  {\"path\": \"expected/fk-expected.json\", \"sha256\": \"fbcdca622dbf79be13c1f9634145fc80aad774b7afba5846711eb94a65fc67fc\", \"sizeBytes\": 7711},\n  {\"path\": \"generate/make_kin_fk_golden.mjs\", \"sha256\": \"e2c98204a21de0e99b401d7e4a2ceb3ed5eec956007bdfd3321e812ba2b1e473\", \"sizeBytes\": 13651},\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/expected/fk-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "fbcdca622dbf79be13c1f9634145fc80aad774b7afba5846711eb94a65fc67fc",
+          "replayedRawSha256": "fbcdca622dbf79be13c1f9634145fc80aad774b7afba5846711eb94a65fc67fc",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/inputs/fk-cases.json",
+          "existsBefore": true,
+          "originalRawSha256": "fbe6356a4aadc1ae47e9ed98f9c16445ce800a72c01c8dbfcaed3c40cec34adc",
+          "replayedRawSha256": "fbe6356a4aadc1ae47e9ed98f9c16445ce800a72c01c8dbfcaed3c40cec34adc",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "24b4eb48afbdd119e97be5474765a061b66de33d759d37b54264da49c6ca0400",
+          "replayedRawSha256": "24b4eb48afbdd119e97be5474765a061b66de33d759d37b54264da49c6ca0400",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-ik-dedup/1.0.0/generate/make_kin_ik_dedup_golden.mjs",
+      "scriptRawSha256": "240edaabfdc649ceb81941ed977bda8e955e4f96a4a5fb0905534b2d16d91734",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\kin-ik-dedup\\1.0.0\\generate\\make_kin_ik_dedup_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "# integrity 段（回填 manifest.json——含本脚本自身）:\n  {\"path\": \"inputs/ik-dedup-inputs.json\", \"sha256\": \"77e3e30223d7a93507c95cc690f2e18602b7a78adcaec787d1011d076baa89a9\", \"sizeBytes\": 1719},\n  {\"path\": \"expected/ik-dedup-expected.json\", \"sha256\": \"ad110253c867fa01b4a180783b1fefa07f03d40b2b5a4883c7ae104a0b7d9509\", \"sizeBytes\": 1015},\n  {\"path\": \"generate/make_kin_ik_dedup_golden.mjs\", \"sha256\": \"240edaabfdc649ceb81941ed977bda8e955e4f96a4a5fb0905534b2d16d91734\", \"sizeBytes\": 6965},\n# 参考序（expectedOrder）= [0,1]\n# 双分支 q = [[0.20000000000000012,0.39999999999999997,0],[0.49873161577581365,-0.39999999999999997,0.5012683842241864]]\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-ik-dedup/1.0.0/expected/ik-dedup-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "ad110253c867fa01b4a180783b1fefa07f03d40b2b5a4883c7ae104a0b7d9509",
+          "replayedRawSha256": "ad110253c867fa01b4a180783b1fefa07f03d40b2b5a4883c7ae104a0b7d9509",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-ik-dedup/1.0.0/inputs/ik-dedup-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "77e3e30223d7a93507c95cc690f2e18602b7a78adcaec787d1011d076baa89a9",
+          "replayedRawSha256": "77e3e30223d7a93507c95cc690f2e18602b7a78adcaec787d1011d076baa89a9",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-ik-dedup/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "04c3d07c7b75fef4d8f517846ceb50efe7367d77ae2ebe65888a66318ca90773",
+          "replayedRawSha256": "04c3d07c7b75fef4d8f517846ceb50efe7367d77ae2ebe65888a66318ca90773",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-search-outcomes/1.0.0/generate/make_kin_search_outcomes_golden.mjs",
+      "scriptRawSha256": "a493e11cc56e48c0170fc5f5954a1245d4a1b79029a27518585f82b0a208fb4c",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\kin-search-outcomes\\1.0.0\\generate\\make_kin_search_outcomes_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "# integrity 段（回填 manifest.json——含本脚本自身）:\n  {\"path\": \"inputs/search-outcomes-inputs.json\", \"sha256\": \"1c5ec123d14b5164f0e2bfa91e5140d4fad91a8a19c5e47e515ab061b04ffe1d\", \"sizeBytes\": 5586},\n  {\"path\": \"expected/search-outcomes-expected.json\", \"sha256\": \"2f3a29004774fb71dd3eb4fb29f409cd514e976f43bb950acca224c5b93844f0\", \"sizeBytes\": 2376},\n  {\"path\": \"generate/make_kin_search_outcomes_golden.mjs\", \"sha256\": \"a493e11cc56e48c0170fc5f5954a1245d4a1b79029a27518585f82b0a208fb4c\", \"sizeBytes\": 9873},\n# 3R 双分支 = [[0.20000000000000012,0.39999999999999997,0],[0.49873161577581365,-0.39999999999999997,0.5012683842241864]]\n# 2R 目标 = {\"x\":1.7369167425270358,\"y\":0.1860036957709307,\"phi\":-0.2}\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-search-outcomes/1.0.0/expected/search-outcomes-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "2f3a29004774fb71dd3eb4fb29f409cd514e976f43bb950acca224c5b93844f0",
+          "replayedRawSha256": "2f3a29004774fb71dd3eb4fb29f409cd514e976f43bb950acca224c5b93844f0",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-search-outcomes/1.0.0/inputs/search-outcomes-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "1c5ec123d14b5164f0e2bfa91e5140d4fad91a8a19c5e47e515ab061b04ffe1d",
+          "replayedRawSha256": "1c5ec123d14b5164f0e2bfa91e5140d4fad91a8a19c5e47e515ab061b04ffe1d",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-search-outcomes/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "7891194609935359306b3632c84002b92fe46133eaafd47430ef28a6d60bf3c6",
+          "replayedRawSha256": "7891194609935359306b3632c84002b92fe46133eaafd47430ef28a6d60bf3c6",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/generate/make_dh_equivalence.mjs",
+      "scriptRawSha256": "e0b2b8ce68f31170112b92d37553b04648092246f420de92ba9380e6c8ab2a31",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\mdl-dh-equivalence\\1.0.0\\generate\\make_dh_equivalence.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "mdl-dh-equivalence: expected/expansion.json + expected/roundtrip.json 已生成\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/expected/expansion.json",
+          "existsBefore": true,
+          "originalRawSha256": "4f5d5697592fc8c8b5dc7f76f2e1aa54de5dfbf568d995c41a2cd6ea574846dd",
+          "replayedRawSha256": "4f5d5697592fc8c8b5dc7f76f2e1aa54de5dfbf568d995c41a2cd6ea574846dd",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/expected/roundtrip.json",
+          "existsBefore": true,
+          "originalRawSha256": "2a3e1242ad4e0dbad644b17cd80dee681c861b3e5a9e7c024e4e66c5c1cd7686",
+          "replayedRawSha256": "2a3e1242ad4e0dbad644b17cd80dee681c861b3e5a9e7c024e4e66c5c1cd7686",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/inputs/samples.json",
+          "existsBefore": true,
+          "originalRawSha256": "7e906fe05146c1a886e18e879184f3e840c28bcfcc21c753423381a23103c565",
+          "replayedRawSha256": "7e906fe05146c1a886e18e879184f3e840c28bcfcc21c753423381a23103c565",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "358886c11bf72b2f6625191fcc11668c5c188ae7f999bda118b08855445fd15e",
+          "replayedRawSha256": "358886c11bf72b2f6625191fcc11668c5c188ae7f999bda118b08855445fd15e",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/1.0.0/generate/make_not_expressible.mjs",
+      "scriptRawSha256": "945c098dd6e191548ec5b4b523926de5ef35e08685b607b90ec2d511a1edd666",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\mdl-not-expressible\\1.0.0\\generate\\make_not_expressible.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "mdl-not-expressible: expected/samples-expected.json 已生成\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/1.0.0/expected/samples-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "b1e8dd2afc5b90b3d9db79261dec0b0b24452676008a8484212ca35d9570b668",
+          "replayedRawSha256": "b1e8dd2afc5b90b3d9db79261dec0b0b24452676008a8484212ca35d9570b668",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/1.0.0/inputs/samples.json",
+          "existsBefore": true,
+          "originalRawSha256": "7b63b7f159ff7747e6937004c885fef53591ea74e54f4736f353657aa1a11535",
+          "replayedRawSha256": "7b63b7f159ff7747e6937004c885fef53591ea74e54f4736f353657aa1a11535",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "104a944df548a30a04c4478d063f2a5f2de7a74533a16b680778813d3f726f28",
+          "replayedRawSha256": "104a944df548a30a04c4478d063f2a5f2de7a74533a16b680778813d3f726f28",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/1.0.0/generate/make_template_golden.mjs",
+      "scriptRawSha256": "b158c07e223e97ee5f0164d26d7367521e7d80fbb0132f20b1bab39c1146a3a0",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\mdl-template-6r\\1.0.0\\generate\\make_template_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "mdl-template-6r: expected/six-axis-defaults.json 已生成（与入库版本逐字节一致）\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/1.0.0/expected/six-axis-defaults.json",
+          "existsBefore": true,
+          "originalRawSha256": "c494a5495e0c312f0268f67d919344bdb419e54ff5699c04f4cffe9bd10df28e",
+          "replayedRawSha256": "c494a5495e0c312f0268f67d919344bdb419e54ff5699c04f4cffe9bd10df28e",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/1.0.0/inputs/template-request.json",
+          "existsBefore": true,
+          "originalRawSha256": "9b01fba76d80c7df2c34f11cc19ef75a3522a631f2333253b6d3952f5ee2f2bb",
+          "replayedRawSha256": "9b01fba76d80c7df2c34f11cc19ef75a3522a631f2333253b6d3952f5ee2f2bb",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "477846a4bdaa6ad84ccbe7dd228af4f3970fd0138bb51f164f7ec58c310f42f2",
+          "replayedRawSha256": "477846a4bdaa6ad84ccbe7dd228af4f3970fd0138bb51f164f7ec58c310f42f2",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs",
+      "scriptRawSha256": "f30a5573a1fd65c784660af65300782547d433ef175f2e43a614353837555813",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\mdl-urdf-import\\1.0.0\\generate\\make_import_expectations.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "mdl-urdf-import: expected/import-report.json + expected/xacro-samples.json 已生成\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected/import-report.json",
+          "existsBefore": true,
+          "originalRawSha256": "2448cd83ac6f28990a0e64cf15bbaa7355ac4f7036b50c877f7aa3443c4474d1",
+          "replayedRawSha256": "2448cd83ac6f28990a0e64cf15bbaa7355ac4f7036b50c877f7aa3443c4474d1",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected/xacro-samples.json",
+          "existsBefore": true,
+          "originalRawSha256": "19825fe9a35a05f21ef502d396b5e5909cc2f7d474efe1d29477cf04e563259d",
+          "replayedRawSha256": "19825fe9a35a05f21ef502d396b5e5909cc2f7d474efe1d29477cf04e563259d",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "5ad8dfcc6d80e264e97095d34e28b102dd141763e38e4ee59c4876968dddb78e",
+          "replayedRawSha256": "5ad8dfcc6d80e264e97095d34e28b102dd141763e38e4ee59c4876968dddb78e",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-adopt-golden/1.0.0/generate/make_opt_adopt_golden.mjs",
+      "scriptRawSha256": "3fbf3052274d62821494321f158d40ea0aa245576d097eb9d462908675f29336",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\opt-adopt-golden\\1.0.0\\generate\\make_opt_adopt_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "opt-adopt-golden: candidateId=cnd-316934c06c5f… diffEntries=2\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-adopt-golden/1.0.0/expected/adopt-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "f876ee46a81c1b4a7b561d96e6a1ae9119adb1165426775effe71be722d4d338",
+          "replayedRawSha256": "f876ee46a81c1b4a7b561d96e6a1ae9119adb1165426775effe71be722d4d338",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-adopt-golden/1.0.0/inputs/adopt-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "2f36c0b31817e35151d335c51ceffd10644703afe3eed07e1d959c27ca79134e",
+          "replayedRawSha256": "2f36c0b31817e35151d335c51ceffd10644703afe3eed07e1d959c27ca79134e",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-adopt-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "01b8afea029243e57b257036d049e3ab50ac46d6895f59c8546d19ed33f8be1f",
+          "replayedRawSha256": "01b8afea029243e57b257036d049e3ab50ac46d6895f59c8546d19ed33f8be1f",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-lhs-golden/1.0.0/generate/make_opt_lhs_golden.mjs",
+      "scriptRawSha256": "43b63d1005567bb2a806a14ad879f7a87589d8114f15698073eabe86ecf8c434",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\opt-lhs-golden\\1.0.0\\generate\\make_opt_lhs_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "opt-lhs-golden: batch=13 dims=4 seed=424242 -> inputs/expected 已写出\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-lhs-golden/1.0.0/expected/lhs-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "4e92811b320b97ff0d19d862be945fd1ec91d1ab464fd646afd7687af5ec323c",
+          "replayedRawSha256": "4e92811b320b97ff0d19d862be945fd1ec91d1ab464fd646afd7687af5ec323c",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-lhs-golden/1.0.0/inputs/lhs-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "d9dfc1f89b0fb5776434c81728ca02b3aed07570fa77b2e5b633c7723b24fb7e",
+          "replayedRawSha256": "d9dfc1f89b0fb5776434c81728ca02b3aed07570fa77b2e5b633c7723b24fb7e",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-lhs-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "43c64c78b20eaf01fe248f833228adf0186e94cb29ca70a5b371a65940021b1b",
+          "replayedRawSha256": "43c64c78b20eaf01fe248f833228adf0186e94cb29ca70a5b371a65940021b1b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "scriptRawSha256": "df5970b8ab0ae2001ef537e7955a852ecb4fa1543e8cee91bc7fc88ec5fff932",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\opt-pareto-golden\\1.0.0\\generate\\make_opt_pareto_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "opt-pareto-golden: candidates=9 feasible=6 zeroRank0=4 explicitRank0=3 flipGained=4 flipLost=0\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/expected/pareto-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "4daa3ede7ec734717725688ce13ef7465eb2b764182f5d95fa7268b26f2fd352",
+          "replayedRawSha256": "4daa3ede7ec734717725688ce13ef7465eb2b764182f5d95fa7268b26f2fd352",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/inputs/pareto-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "afa780c82b9da053f6d750e562409f2f068ecfb3605d08351e41d603a71046d7",
+          "replayedRawSha256": "afa780c82b9da053f6d750e562409f2f068ecfb3605d08351e41d603a71046d7",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "f2a7698c25e7f44eb44fd41c7ec954c9d1c8e78dec29126ddd4f64f1e59b41e2",
+          "replayedRawSha256": "f2a7698c25e7f44eb44fd41c7ec954c9d1c8e78dec29126ddd4f64f1e59b41e2",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs",
+      "scriptRawSha256": "55c80e787e88ae08c4e18e0e648786d9b6f3add22676f302aa64bc3163e39026",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\pol-collision-analytic\\1.0.0\\generate\\make_pol_collision_analytic.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "== integrity 申报表（path / sizeBytes / sha256） ==\n  { \"path\": \"inputs/scene-cases.json\", \"sha256\": \"e7b4f25c8fc4c8434a04797699ea73adc296127bed3f78caf3ce33b60321a014\", \"sizeBytes\": 3442 },\n  { \"path\": \"expected/analytic.json\", \"sha256\": \"b7af8c7e3a393648fe9a57816944b35389c25f9c085e6ee711a50aee72fd8b2c\", \"sizeBytes\": 2686 },\n  { \"path\": \"generate/make_pol_collision_analytic.mjs\", \"sha256\": \"55c80e787e88ae08c4e18e0e648786d9b6f3add22676f302aa64bc3163e39026\", \"sizeBytes\": 6221 },\nexpected/analytic.json 已写出：D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\pol-collision-analytic\\1.0.0\\expected\\analytic.json\ncases=6，碰撞例=2\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/expected/analytic.json",
+          "existsBefore": true,
+          "originalRawSha256": "b7af8c7e3a393648fe9a57816944b35389c25f9c085e6ee711a50aee72fd8b2c",
+          "replayedRawSha256": "b7af8c7e3a393648fe9a57816944b35389c25f9c085e6ee711a50aee72fd8b2c",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/inputs/scene-cases.json",
+          "existsBefore": true,
+          "originalRawSha256": "e7b4f25c8fc4c8434a04797699ea73adc296127bed3f78caf3ce33b60321a014",
+          "replayedRawSha256": "e7b4f25c8fc4c8434a04797699ea73adc296127bed3f78caf3ce33b60321a014",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "d2a57d24901e9785bbe042cc22c0a3dc583f37596da07db9e560ab708ec4f09b",
+          "replayedRawSha256": "d2a57d24901e9785bbe042cc22c0a3dc583f37596da07db9e560ab708ec4f09b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/generate/make_pol_policy_fixture.mjs",
+      "scriptRawSha256": "21725a1b7d8b6c339b6454a650951826afe93092a98e029508c1852adc45b561",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\pol-policy-codec-fixture\\1.0.0\\generate\\make_pol_policy_fixture.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "== integrity 申报表（path / sizeBytes / sha256） ==\n  { \"path\": \"inputs/policy-input.json\", \"sha256\": \"cb1fe140fb98281d7a07da1feb65a739fc6d46cf7305d00bb0d1cb75e535b070\", \"sizeBytes\": 2447 },\n  { \"path\": \"inputs/policy-input-variant.json\", \"sha256\": \"11060ff5f2bcc30de42002262f50015bde822c1a1cede5c17e47808add4f0cf4\", \"sizeBytes\": 2557 },\n  { \"path\": \"expected/identity.json\", \"sha256\": \"c6cbd7b9f0572b940fd871c39d1ef3977f80fde97b5e511e70c59772add5cf7b\", \"sizeBytes\": 2941 },\n  { \"path\": \"generate/make_pol_policy_fixture.mjs\", \"sha256\": \"21725a1b7d8b6c339b6454a650951826afe93092a98e029508c1852adc45b561\", \"sizeBytes\": 17698 },\nexpected/identity.json 已写出：D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\pol-policy-codec-fixture\\1.0.0\\expected\\identity.json\nfullEncoding 字节数=526，projection 字节数=401\ncontentIdentityHex=6c0116a37dc17e4e2010cdb76c13fe98ed53b201418fcee315432bd14658ef7c\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/expected/identity.json",
+          "existsBefore": true,
+          "originalRawSha256": "c6cbd7b9f0572b940fd871c39d1ef3977f80fde97b5e511e70c59772add5cf7b",
+          "replayedRawSha256": "c6cbd7b9f0572b940fd871c39d1ef3977f80fde97b5e511e70c59772add5cf7b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/inputs/policy-input-variant.json",
+          "existsBefore": true,
+          "originalRawSha256": "11060ff5f2bcc30de42002262f50015bde822c1a1cede5c17e47808add4f0cf4",
+          "replayedRawSha256": "11060ff5f2bcc30de42002262f50015bde822c1a1cede5c17e47808add4f0cf4",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/inputs/policy-input.json",
+          "existsBefore": true,
+          "originalRawSha256": "cb1fe140fb98281d7a07da1feb65a739fc6d46cf7305d00bb0d1cb75e535b070",
+          "replayedRawSha256": "cb1fe140fb98281d7a07da1feb65a739fc6d46cf7305d00bb0d1cb75e535b070",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "9f6eb7f2953764081b8c97249cf56b68bee5d7d947ab2d8f9edf9877b6865135",
+          "replayedRawSha256": "9f6eb7f2953764081b8c97249cf56b68bee5d7d947ab2d8f9edf9877b6865135",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-partial-pose/1.0.0/generate/make_partial_pose_golden.mjs",
+      "scriptRawSha256": "c3a79dd2204186c07837f868f7dc3095357672f6caf51715240671d88f0d4763",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-partial-pose\\1.0.0\\generate\\make_partial_pose_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "integrity 申报表（path / sizeBytes / sha256）：\ninputs/partial-pose.json 8112 1477cb3ffaa95f596388a96b21fe48633b6cb18c67f27dbcb8f8c1683088db7a\nexpected/partial-pose-expected.json 3890 90838f46b1e50e6ce03d4bb4b4fd234cb17c11f28d391e5fb5ee7f9c86099782\ngenerate/make_partial_pose_golden.mjs 4968 c3a79dd2204186c07837f868f7dc3095357672f6caf51715240671d88f0d4763\nexpected 写出: D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-partial-pose\\1.0.0\\expected\\partial-pose-expected.json\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-partial-pose/1.0.0/expected/partial-pose-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "90838f46b1e50e6ce03d4bb4b4fd234cb17c11f28d391e5fb5ee7f9c86099782",
+          "replayedRawSha256": "90838f46b1e50e6ce03d4bb4b4fd234cb17c11f28d391e5fb5ee7f9c86099782",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-partial-pose/1.0.0/inputs/partial-pose.json",
+          "existsBefore": true,
+          "originalRawSha256": "1477cb3ffaa95f596388a96b21fe48633b6cb18c67f27dbcb8f8c1683088db7a",
+          "replayedRawSha256": "1477cb3ffaa95f596388a96b21fe48633b6cb18c67f27dbcb8f8c1683088db7a",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-partial-pose/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "8e843a8c5506a9ae1f12ce441878167381b7bd549ac77414602ba5ffb6d3df06",
+          "replayedRawSha256": "8e843a8c5506a9ae1f12ce441878167381b7bd549ac77414602ba5ffb6d3df06",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-payload-events/1.0.0/generate/make_payload_events_golden.mjs",
+      "scriptRawSha256": "a92c1ffeb1c0365b6943a21eb3b38be98c2d692beef37c262aba825a52bb36e0",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-payload-events\\1.0.0\\generate\\make_payload_events_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "integrity 申报表（path / sizeBytes / sha256）：\ninputs/payload-events.json 5314 650e4b65d4c6ba2a7847778d155841084463f11e1a5823a64cf47e4ab6275ae1\nexpected/payload-events-expected.json 4566 714b1decaa10dfa98bfdb28a0d566180f9a222d88b3b19204ba47881169eb956\ngenerate/make_payload_events_golden.mjs 4983 a92c1ffeb1c0365b6943a21eb3b38be98c2d692beef37c262aba825a52bb36e0\nexpected 写出: D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-payload-events\\1.0.0\\expected\\payload-events-expected.json\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-payload-events/1.0.0/expected/payload-events-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "714b1decaa10dfa98bfdb28a0d566180f9a222d88b3b19204ba47881169eb956",
+          "replayedRawSha256": "714b1decaa10dfa98bfdb28a0d566180f9a222d88b3b19204ba47881169eb956",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-payload-events/1.0.0/inputs/payload-events.json",
+          "existsBefore": true,
+          "originalRawSha256": "650e4b65d4c6ba2a7847778d155841084463f11e1a5823a64cf47e4ab6275ae1",
+          "replayedRawSha256": "650e4b65d4c6ba2a7847778d155841084463f11e1a5823a64cf47e4ab6275ae1",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-payload-events/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "3800ee39840ae7f14b904befd70b5c5302fa7b871f309339da8a0a2ddf9915e9",
+          "replayedRawSha256": "3800ee39840ae7f14b904befd70b5c5302fa7b871f309339da8a0a2ddf9915e9",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-region-sampling/1.0.0/generate/make_region_sampling_golden.mjs",
+      "scriptRawSha256": "67947e02b5a8e87c10172f4d62ba899a96c592ec0f6f5fcd511bb42b5d6d22a2",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-region-sampling\\1.0.0\\generate\\make_region_sampling_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "integrity 申报表（path / sizeBytes / sha256）：\ninputs/region-sampling.json 5902 40c441b187acb9915f973b54894c538089029a44143a4c2959ac1c6d565a582b\nexpected/region-sampling-expected.json 2725 3bb75a3ce88ab5e873bf935e42760a81f22e1350b875ad95ea0b93bb1418d498\ngenerate/make_region_sampling_golden.mjs 5802 67947e02b5a8e87c10172f4d62ba899a96c592ec0f6f5fcd511bb42b5d6d22a2\nexpected 写出: D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-region-sampling\\1.0.0\\expected\\region-sampling-expected.json\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-region-sampling/1.0.0/expected/region-sampling-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "3bb75a3ce88ab5e873bf935e42760a81f22e1350b875ad95ea0b93bb1418d498",
+          "replayedRawSha256": "3bb75a3ce88ab5e873bf935e42760a81f22e1350b875ad95ea0b93bb1418d498",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-region-sampling/1.0.0/inputs/region-sampling.json",
+          "existsBefore": true,
+          "originalRawSha256": "40c441b187acb9915f973b54894c538089029a44143a4c2959ac1c6d565a582b",
+          "replayedRawSha256": "40c441b187acb9915f973b54894c538089029a44143a4c2959ac1c6d565a582b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-region-sampling/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "808eee7d6db2cfce3212439eb918ed29b09131c2c83baac5bbeb6e8249b75a42",
+          "replayedRawSha256": "808eee7d6db2cfce3212439eb918ed29b09131c2c83baac5bbeb6e8249b75a42",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-transport-task/1.0.0/generate/make_transport_task_golden.mjs",
+      "scriptRawSha256": "63e3cafa918fd77767152b79eafcb996808fe34ce06dda8db66e4ee06a1aa8de",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-transport-task\\1.0.0\\generate\\make_transport_task_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "integrity 申报表（path / sizeBytes / sha256）：\ninputs/transport-task.json 7440 5fd9280c142f9f133a6f055c0e9d96cab5701847a661acbe17ae8e1f4ce2c1a0\nexpected/transport-task-expected.json 2810 56b5dfd57bd1a58a4c467b62422db39f2d46ef71f947bbaf73a9baca181416e3\ngenerate/make_transport_task_golden.mjs 9383 63e3cafa918fd77767152b79eafcb996808fe34ce06dda8db66e4ee06a1aa8de\nexpected 写出: D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\req-transport-task\\1.0.0\\expected\\transport-task-expected.json\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-transport-task/1.0.0/expected/transport-task-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "56b5dfd57bd1a58a4c467b62422db39f2d46ef71f947bbaf73a9baca181416e3",
+          "replayedRawSha256": "56b5dfd57bd1a58a4c467b62422db39f2d46ef71f947bbaf73a9baca181416e3",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-transport-task/1.0.0/inputs/transport-task.json",
+          "existsBefore": true,
+          "originalRawSha256": "5fd9280c142f9f133a6f055c0e9d96cab5701847a661acbe17ae8e1f4ce2c1a0",
+          "replayedRawSha256": "5fd9280c142f9f133a6f055c0e9d96cab5701847a661acbe17ae8e1f4ce2c1a0",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-transport-task/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "87ff694fab5939bd67d6ebd836b601723856adcf616b64f7241eb868723127e1",
+          "replayedRawSha256": "87ff694fab5939bd67d6ebd836b601723856adcf616b64f7241eb868723127e1",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs",
+      "scriptRawSha256": "7cd0b216c7e42843d71ed93792f073da83d08a647071d53552951f777a60caab",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\rt-fk-equation\\1.0.0\\generate\\make_fk_equation.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "written: D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\rt-fk-equation\\1.0.0\\expected\\fk.json samples: 4\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/expected/fk.json",
+          "existsBefore": true,
+          "originalRawSha256": "a8e7066339c30507426c2a6de2fd0f0076b56584d4aa224cbb67cbf9201e15c8",
+          "replayedRawSha256": "a8e7066339c30507426c2a6de2fd0f0076b56584d4aa224cbb67cbf9201e15c8",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/inputs/model.json",
+          "existsBefore": true,
+          "originalRawSha256": "b00f00833754968212d15d2eac71270a0fd68eb1c0fffe5fb8acb912e86be990",
+          "replayedRawSha256": "b00f00833754968212d15d2eac71270a0fd68eb1c0fffe5fb8acb912e86be990",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "be8526fc03c83eb1e5b2b270e10333e2e679402fa38c7e33a6431ee1d5d51f49",
+          "replayedRawSha256": "be8526fc03c83eb1e5b2b270e10333e2e679402fa38c7e33a6431ee1d5d51f49",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0/generate/make_namemap.mjs",
+      "scriptRawSha256": "9211cf6cc94092b7a98fb6b3b6a74a77805812c4d0098e558f8833adccee7417",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\rt-namemap-roundtrip\\1.0.0\\generate\\make_namemap.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "written: D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\rt-namemap-roundtrip\\1.0.0\\expected\\namemap.json entries: 9\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0/expected/namemap.json",
+          "existsBefore": true,
+          "originalRawSha256": "b27b935c30a03bba68d0e99171482cf7acaa2722b53da6732fbba0da31b8bb8b",
+          "replayedRawSha256": "b27b935c30a03bba68d0e99171482cf7acaa2722b53da6732fbba0da31b8bb8b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0/inputs/robot.json",
+          "existsBefore": true,
+          "originalRawSha256": "4c850d8034c5a446f6f0229e1f56f5fd30c4ffdb7ccb4157936d744ad95d1490",
+          "replayedRawSha256": "4c850d8034c5a446f6f0229e1f56f5fd30c4ffdb7ccb4157936d744ad95d1490",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "e3f8b494c68ff417f511e1e2f84de3eb7129b10575eb01bbb278fefb2a52dd70",
+          "replayedRawSha256": "e3f8b494c68ff417f511e1e2f84de3eb7129b10575eb01bbb278fefb2a52dd70",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-backfill-golden/1.0.0/generate/make_sel_backfill_golden.mjs",
+      "scriptRawSha256": "71c617d1be9e092e9713e90ac2ab9802636c1ba3b1f2cd8d28049c8171705928",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\sel-backfill-golden\\1.0.0\\generate\\make_sel_backfill_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "sel-backfill-golden: assembled mass = 24  com = {\"x\":0.025000000000000005,\"y\":0.0037499999999999986,\"z\":0.19104166666666667}\n  inertia = {\"ixx\":0.7307864583333333,\"iyy\":0.7765239583333332,\"izz\":0.28126249999999997,\"ixy\":0.02425,\"ixz\":-0.08537499999999999,\"iyz\":0.06459374999999999}\n  anchor comZ = 0.19104166666666667\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-backfill-golden/1.0.0/expected/backfill-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "d67459519fd3068d663f26d5725db129af9bb94a9fbbb54271f61d0d1266be8b",
+          "replayedRawSha256": "d67459519fd3068d663f26d5725db129af9bb94a9fbbb54271f61d0d1266be8b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-backfill-golden/1.0.0/inputs/backfill-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "c35875edf4311c061e31c86a6dfddf550751658c38e6a29736492983dc03acf3",
+          "replayedRawSha256": "c35875edf4311c061e31c86a6dfddf550751658c38e6a29736492983dc03acf3",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-backfill-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "645f26d9a6028172907c5ad301ae2923b07d639c72fea3db1a7e9c9212977b90",
+          "replayedRawSha256": "645f26d9a6028172907c5ad301ae2923b07d639c72fea3db1a7e9c9212977b90",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-catalog-golden/1.0.0/generate/make_sel_catalog_golden.mjs",
+      "scriptRawSha256": "b3ef0375b815b136f6254257d490389c6f6533e07567a7d29f3f01c6b58357f0",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\sel-catalog-golden\\1.0.0\\generate\\make_sel_catalog_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "sel-catalog-golden: wrote 5 valid files + 6 invalid tables + expected\n  motors.csv sha256 = 7373b04baf11b922 …\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-catalog-golden/1.0.0/expected/catalog-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "d3926ee993e3c8439778d6c963098cc46a5c9ffaccecbd3a72834ab938c6491c",
+          "replayedRawSha256": "d3926ee993e3c8439778d6c963098cc46a5c9ffaccecbd3a72834ab938c6491c",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-catalog-golden/1.0.0/inputs/valid/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "09d1575a7ba71bc074fce5de4d1b7ef588cc15f448ad48056c835fcdd3e9a8ca",
+          "replayedRawSha256": "09d1575a7ba71bc074fce5de4d1b7ef588cc15f448ad48056c835fcdd3e9a8ca",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-catalog-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "15748d69a04678b2e8d8f47c159c31016dd8f5e2f49eb1c9212a7f2850c30697",
+          "replayedRawSha256": "15748d69a04678b2e8d8f47c159c31016dd8f5e2f49eb1c9212a7f2850c30697",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-combo-golden/1.0.0/generate/make_sel_combo_golden.mjs",
+      "scriptRawSha256": "2c9e2fb2f9f1d66cffa0864e78f7c1bd51da69b6e17bffa3c0a07a64dd9b9ff8",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\sel-combo-golden\\1.0.0\\generate\\make_sel_combo_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "K K1: Feasible  mass=24  reasons=[]  coverage=[Feasible/pass;inertia-ratio-policy-unsettled]\nK K2: Rejected  mass=17  reasons=[SpeedInsufficient,SpeedInsufficient,InputSpeedExceeded,InputSpeedExceeded]  coverage=[Rejected/speed-insufficient]\nK K3: Rejected  mass=19.4  reasons=[SpeedInsufficient]  coverage=[Rejected/speed-insufficient]\nK K4: Rejected  mass=18.2  reasons=[SpeedInsufficient,InputSpeedExceeded,ComboIncompatible]  coverage=[Rejected/speed-insufficient]\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-combo-golden/1.0.0/expected/combo-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "00e4c67a280058e1c13f84c1c2795a27eb03a27525a97ed17edcd489e8d5811e",
+          "replayedRawSha256": "00e4c67a280058e1c13f84c1c2795a27eb03a27525a97ed17edcd489e8d5811e",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-combo-golden/1.0.0/inputs/combo-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "f2b9193a50ceae615cb4bd31a6a9a484aac8e58b7534192096f2d710f0d401ae",
+          "replayedRawSha256": "f2b9193a50ceae615cb4bd31a6a9a484aac8e58b7534192096f2d710f0d401ae",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-combo-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "187b14150ff868bc0350b7ef04369a8abd4d56bd671b8e18e8dbc3e348f34159",
+          "replayedRawSha256": "187b14150ff868bc0350b7ef04369a8abd4d56bd671b8e18e8dbc3e348f34159",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/generate/make_sel_linear_golden.mjs",
+      "scriptRawSha256": "df433eed2433ad8c2423bf2da6df6b4cc6c34f142a4eec59acdd0671795f26fc",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\sel-linear-golden\\1.0.0\\generate\\make_sel_linear_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "integrity:\n  { \"path\": \"inputs/valid/manifest.json\", \"sha256\": \"010bea460f6e16b4bf0f3743106d9b164ed23abc1a1198d8691c73c73280a410\", \"sizeBytes\": 8202 },\n  { \"path\": \"inputs/valid/motors.csv\", \"sha256\": \"f8f9c09dc3cdc7b8d3ae583d6cd7df7de01d3824b761a6c1333036f70d610563\", \"sizeBytes\": 428 },\n  { \"path\": \"inputs/valid/gearboxes.csv\", \"sha256\": \"5c67d2735e1e4b88198ad66d1503f516c14bd9fb5f33c714813de47ec922771b\", \"sizeBytes\": 410 },\n  { \"path\": \"inputs/valid/capability_curves.csv\", \"sha256\": \"e5490da0189727068789ad847366d10915ba57c008252ef12348a255c6deb2bc\", \"sizeBytes\": 721 },\n  { \"path\": \"inputs/valid/compatibility.csv\", \"sha256\": \"26fa841968c7646646fda6db90da8a20dce96f07634ebefb2d9d446235c54af2\", \"sizeBytes\": 78 },\n  { \"path\": \"inputs/valid/linear_drives.csv\", \"sha256\": \"170b7fcd2ed6247f606894431ed0855bf3fb1d1d50c16b1cc9a4f0b271ee85a7\", \"sizeBytes\": 551 },\n  { \"path\": \"inputs/invalid/range-linear.csv\", \"sha256\": \"59ce21178a6c9d64006f378df5f189947659c4f3583816a96e9d47a6560f802d\", \"sizeBytes\": 549 },\n  { \"path\": \"inputs/invalid/kind-linear.csv\", \"sha256\": \"26483ff3959d6a8a4a5ec4ce2bd8bf727ba85e27898f87a740f4ecc0e31dec10\", \"sizeBytes\": 552 },\n  { \"path\": \"inputs/invalid/dup-linear.csv\", \"sha256\": \"3a74949859f8988a486a138b4e426008b17e30fbaccc9786b03b694ec81e55f1\", \"sizeBytes\": 632 },\n  { \"path\": \"inputs/invalid/missing-linear.csv\", \"sha256\": \"56cc5847648111cbc4e2ff899d21f21ffb529e74de65c7711cd029b3cd328bd2\", \"sizeBytes\": 547 },\n  { \"path\": \"inputs/invalid/dangling-linear.csv\", \"sha256\": \"5f2c428dcf674816c97c8b90e11ddae2e61c9c6e230587ea8737aedefabe34bd\", \"sizeBytes\": 552 },\n  { \"path\": \"inputs/invalid/unit-curves-linear.csv\", \"sha256\": \"b5a7746fca12388b0982ca28d04bd0cbcaabf0f254ab20bf753a47d0bbebcf00\", \"sizeBytes\": 723 },\n  { \"path\": \"inputs/invalid/unordered-curves-linear.csv\", \"sha256\": \"8503df11ec53c34def9df6068cc6b722b33f66d4f7c46e9f49368b91e7f3e0b7\", \"sizeBytes\": 721 },\n  { \"path\": \"inputs/screening-inputs.json\", \"sha256\": \"868c04d7fbfc17122c50c67ecdda8f97f2470ecebce2f9cc268fdf853b96c7dd\", \"sizeBytes\": 4584 },\n  { \"path\": \"expected/linear-catalog-expected.json\", \"sha256\": \"ef06f69e6c7170a0122a31065caa58df7c89bbd213655dd6bf4d5543c6664b5b\", \"sizeBytes\": 7218 },\n  { \"path\": \"expected/linear-screening-expected.json\", \"sha256\": \"729e926950e86e8424a0a83c4ac89e4c6220366855c6ad0eecace37fb4965d7b\", \"sizeBytes\": 8106 },\ndone: expected/linear-catalog-expected.json + expected/linear-screening-expected.json\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/expected/linear-catalog-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "ef06f69e6c7170a0122a31065caa58df7c89bbd213655dd6bf4d5543c6664b5b",
+          "replayedRawSha256": "ef06f69e6c7170a0122a31065caa58df7c89bbd213655dd6bf4d5543c6664b5b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/expected/linear-screening-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "729e926950e86e8424a0a83c4ac89e4c6220366855c6ad0eecace37fb4965d7b",
+          "replayedRawSha256": "729e926950e86e8424a0a83c4ac89e4c6220366855c6ad0eecace37fb4965d7b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/inputs/screening-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "868c04d7fbfc17122c50c67ecdda8f97f2470ecebce2f9cc268fdf853b96c7dd",
+          "replayedRawSha256": "868c04d7fbfc17122c50c67ecdda8f97f2470ecebce2f9cc268fdf853b96c7dd",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/inputs/valid/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "010bea460f6e16b4bf0f3743106d9b164ed23abc1a1198d8691c73c73280a410",
+          "replayedRawSha256": "010bea460f6e16b4bf0f3743106d9b164ed23abc1a1198d8691c73c73280a410",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "0d2da40e34dae26845fa7a1d0e2a8b93432f2d4786450f609a8c9be0229f73b8",
+          "replayedRawSha256": "0d2da40e34dae26845fa7a1d0e2a8b93432f2d4786450f609a8c9be0229f73b8",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.0.0/generate/make_sel_screening_golden.mjs",
+      "scriptRawSha256": "cb64bddcf47596d41575c07f2c18b0507fe9a290271248429c0cabd0c2c19fbb",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\sel-screening-golden\\1.0.0\\generate\\make_sel_screening_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "sel-screening-golden: 4 cases, 24 records, 33 reasons, 13 gaps\n  anchors: {\"powerCurveAt130\":1040,\"radialAllowG202\":250,\"sfEdgeSpeedPeak\":300}\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.0.0/expected/screening-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "7a3631b845eef539e100b20d82b7ba6ac5373488ab5e6e562cc9b350c8b2a173",
+          "replayedRawSha256": "7a3631b845eef539e100b20d82b7ba6ac5373488ab5e6e562cc9b350c8b2a173",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.0.0/inputs/screening-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "ce01c8a10ae66743a7586f546bd92e28031ad9aae0bc0c5c0da303630b1a21dd",
+          "replayedRawSha256": "ce01c8a10ae66743a7586f546bd92e28031ad9aae0bc0c5c0da303630b1a21dd",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "85ea350be610415d1b3796b474ad75c68bbf740a6e9628d257418c8a39117dad",
+          "replayedRawSha256": "85ea350be610415d1b3796b474ad75c68bbf740a6e9628d257418c8a39117dad",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/generate/make_trj_at06_golden.mjs",
+      "scriptRawSha256": "06a10a688b0c18783eecef4c098ca4a2d7f6ebe56d03791d03e3303d106bcb44",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\trj-at06-recheck-golden\\1.0.0\\generate\\make_trj_at06_golden.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "trj-at06-recheck-golden: wrote D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\trj-at06-recheck-golden\\1.0.0\\expected\\trj-at06-expected.json\n  cases: recheck-collision, budget-exhausted, replan-success, limit-exceeded\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/expected/trj-at06-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "7f3c6058adebb55d236593a55b4ea7cc54953bdbe0b9855b8244feb40143dc8b",
+          "replayedRawSha256": "7f3c6058adebb55d236593a55b4ea7cc54953bdbe0b9855b8244feb40143dc8b",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/inputs/trj-at06-inputs.json",
+          "existsBefore": true,
+          "originalRawSha256": "b8e64f25ccfbd3147667a6491fc0c58bf2a1f7ca66f3b1a307a27bd7bbf98a85",
+          "replayedRawSha256": "b8e64f25ccfbd3147667a6491fc0c58bf2a1f7ca66f3b1a307a27bd7bbf98a85",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "3981d311dcba29ee5fbfb0f55c48b931d0dbeb12a42f27e5dc672dd8dc6f2e02",
+          "replayedRawSha256": "3981d311dcba29ee5fbfb0f55c48b931d0dbeb12a42f27e5dc672dd8dc6f2e02",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    },
+    {
+      "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.0.0/generate/make_wf_gate_advice_fixture.mjs",
+      "scriptRawSha256": "4feb9899991dc77bedca136347650babd2262843646693ca3fa7d4152111bc2c",
+      "command": [
+        "D:/software/Nodev/node.exe",
+        "D:\\10_Source_Repos\\21_robot\\RobWork\\.cache\\t49-golden-replay\\wf-gate-advice-fixture\\1.0.0\\generate\\make_wf_gate_advice_fixture.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "inputs/gate-advice-fixtures.json\n  sha256=1343f9b335b8230af60bfc16712d81985d3dc8b6e5a4728403cea24223df3f6d\n  sizeBytes=18408\nexpected/gate-advice-expected.json\n  sha256=167b657da0be2d53cbf6105718c4944c603d6927a0890a5117b8d99bad0ccde8\n  sizeBytes=31271\ngenerate/make_wf_gate_advice_fixture.mjs\n  sha256=4feb9899991dc77bedca136347650babd2262843646693ca3fa7d4152111bc2c\n  sizeBytes=17883\ncases=10 expected written.\n",
+      "stderr": "",
+      "artifacts": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.0.0/expected/gate-advice-expected.json",
+          "existsBefore": true,
+          "originalRawSha256": "167b657da0be2d53cbf6105718c4944c603d6927a0890a5117b8d99bad0ccde8",
+          "replayedRawSha256": "167b657da0be2d53cbf6105718c4944c603d6927a0890a5117b8d99bad0ccde8",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.0.0/inputs/gate-advice-fixtures.json",
+          "existsBefore": true,
+          "originalRawSha256": "1343f9b335b8230af60bfc16712d81985d3dc8b6e5a4728403cea24223df3f6d",
+          "replayedRawSha256": "1343f9b335b8230af60bfc16712d81985d3dc8b6e5a4728403cea24223df3f6d",
+          "rawEqual": true,
+          "normalizedEqual": true
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.0.0/manifest.json",
+          "existsBefore": true,
+          "originalRawSha256": "424d9d96b48ef9c44d0cc6a6528fd98d8aaa22b4a8830ce2168fcd351612d87c",
+          "replayedRawSha256": "424d9d96b48ef9c44d0cc6a6528fd98d8aaa22b4a8830ce2168fcd351612d87c",
+          "rawEqual": true,
+          "normalizedEqual": true
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "executed": 29,
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "normalizedDriftCount": 0,
+  "scope": "F-959 落地批重放一致性：脚本进程执行/隔离产物对照（原始字节与规范化换行分列）；非产品C++测试，非数学正确性或全量 PASS"
+}

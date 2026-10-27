@@ -1,0 +1,5 @@
+# REUSE-T09 实施链文件面机器核对（独立验收 2026-10-25）
+# 方法：git show --name-only 取 T09 四提交文件清单，逐路径比对契约 allowedFiles 模式（同 verify-task-scope 正则口径：剥尾部全角注记、** 跨层、* 单层、大小写不敏感）
+  [forbidden] RobWork/doc/industrial-robot-design/reuse/catalog.json
+T09 ���ύ��340dc88a4/9e1fe9c2e/aee6ac5bf/357d19e3d��ȥ���ļ���: 38
+violations: 1

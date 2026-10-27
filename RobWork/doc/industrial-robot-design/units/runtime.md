@@ -1,6 +1,8 @@
 # 工业机械臂设计软件 · runtime 单元详细设计（阶段 A）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
+
+模型/名称 owner 边界按 SA-19：WC/DWC 编译、发布和 worker 物化统一构造规则；下游只借持受控视图，State/solver/engine 按任务私有。Snapshot.hpp 的 workCellHandle 非 const 兼容借持仅按既有碰撞契约，不视为任意写权限；本轮不改接口。
 
 
 > 2026-09-10 同步：本单元详设编写完成（第一批 11/20）；保留本文 Draft/Draft-Structured 评审状态，不代表接口已冻结或实现通过。当前任务与准入结论见 [阶段一同步记录](../traceability/phase-one-readiness.md)；历史磁盘调查仅表示编写时事实，现状以该记录为准。
@@ -179,6 +181,7 @@ runtime 由 12 个公共头模块＋1 个编译实现组成（实现文件随 §
 | `Resource.hpp` | ResourceRef/ResourceManifest、ResourceReadError、IRuntimeResourceProvider（值类型 ResourceState/ResourceRef 自 v0.4 起随 RT-T03 落位；ResourceBytes/ResourceReadError/IRuntimeResourceProvider 自 v0.10 起随 RT-T09 落位——Compiler.hpp CompileRequest.resources 字段依赖，io 侧实现仍归阶段 B） | §8.6 |
 | `Snapshot.hpp` | RuntimeSnapshot、SnapshotIdentity、IRuntimeSnapshotFactory、MaterializedSnapshotCodec（worker 物化） | §9.1～§9.3 |
 | `CacheKey.hpp` | CompileCacheKey 及其分量、CompileCacheCompatibility、judgeCompileCacheCompatibility、IRuntimeCompileCacheKey（自 v0.11 起随 RT-T10 落位——实现层增补分量指纹表 CompileCacheComponentFingerprint 与具体生成器 RuntimeCompileCacheKeyBuilder/codecVersionsFromCodecHeaders，判定表行序与 reasons 稳定词汇见 §15.4 v0.11） | §9.4 |
+| `RneConsumptionDevice.hpp` | RneConsumptionDevice（RNE 可消费一次性载体值聚合：StateStructure/SerialDevice/RigidDevice/State＋逐关节投影元数据＋法兰基线/换算基）＋buildRneConsumptionDevice 工厂（自 v0.27 起随 REUSE-T52 落位——模型构造权归 runtime 的消费边界设施：GAP-RNE-FRAME 关节帧换算单点，A2 裁决＋2026-10-26 构造面上收裁决；消费者＝WP-07 dynamics 已落位、WP-09 FD 预留；§8.2 canonical 逐字断言/S7 产品映射/modeling DWC 导出零触碰） | §5.2 S7 系（载体构造与 S6/S7 同源语义） |
 | `README.md` | 既有保留位说明（不参与编译；已指向本文 §12） | — |
 | `src/`（实现，随 RT-T01 建） | 编译器、编码器、名称映射、适配层、校验器等非模板实现 | §5～§9 |
 
@@ -838,7 +841,7 @@ NameMap 的 canonical 编码（RT-Codec 子形态 `IRDNAME`）：条目按 (scop
 
 ### 8.1 依赖边界（P-RT-3 登记）
 
-ARCH §2.3 L2 行允许"L1 的 RobWork 数学/运动学类型"，而 §5.1/§7.3 明文要求 runtime 构造 WorkCell/DynamicWorkCell（rw::models／rwsim::dynamics）。本文按后者明文将以下基线库列为 runtime 的 L1 依赖：`sdurw_math`、rw kinematics（Frame/State/StateStructure）、rw models（WorkCell/SerialDevice/Joint）、rwsim dynamics（DynamicWorkCell/RigidDevice 构造）——全部为**零 Qt 的 RobWork 库**（R-3 不受影响）；**不使用**：rw loaders（XML 解析归 io）、rw pathplanners（归 trajectory）、rw proximity（碰撞归 policy）、rws（Studio 层，L3+）。该措辞差异请求架构评审确认（P-RT-3）；确认前按 §7.3 明文实施，不引入任何表外依赖。
+ARCH §2.3 L2 行允许"L1 的 RobWork 数学/运动学类型"，而 §5.1/§7.3 明文要求 runtime 构造 WorkCell/DynamicWorkCell（rw::models／rwsim::dynamics）。本文按后者明文将以下基线库列为 runtime 的 L1 依赖：`sdurw_math`、rw kinematics（Frame/State/StateStructure）、rw models（WorkCell/SerialDevice/Joint）、rwsim dynamics（DynamicWorkCell/RigidDevice 构造）、`sdurwsim_ode`（REUSE-T53 增登——FD 受控引擎会话消费 ODESimulator，sdurwsim_ode 为 RobWorkSim 子系统库，零 Qt）——全部为**零 Qt 的 RobWork 库**（R-3 不受影响）；**不使用**：rw loaders（XML 解析归 io）、rw pathplanners（归 trajectory）、rw proximity（碰撞归 policy）、rws（Studio 层，L3+）。该措辞差异请求架构评审确认（P-RT-3）；确认前按 §7.3 明文实施，不引入任何表外依赖。
 
 **RT-T15 补记（2026-10-12）**：S6 基本图元几何挂接消费基线几何类（`rw::geometry` 的 Cylinder/Box/Geometry——呈现图元构造，§5.2 S6 输出列"Geometry 对象"的承载面）；该头经 sdurw_models 的 **PUBLIC** 依赖 sdurw_geometry 传递可达（models/CMakeLists.txt 实测 `PUBLIC sdurw_core sdurw_kinematics sdurw_math sdurw_geometry`）——**include 边新增、链接清单不扩**（仍＝上列三库面），属 P-RT-3 口径内的传递依赖消费，非表外依赖。
 
@@ -1531,8 +1534,7 @@ public:
 
 ### 15.4 变更记录
 
-| 版本 | 日期 | 说明 |
-| --- | --- | --- |
+| v0.27 | 2026-10-26 | **REUSE-T52（WP-07 逆动力学 RNE 迁移）构造面上收落位登记**（主工作树 redesign-main 串行；2026-10-26 所有者裁决＝RNE 消费载体构造归 runtime 公共工厂，门禁零改动；授权面＝工厂公共头/src/runtime CMakeLists 增列/本卡三处，最小面）：①**公共头 `RneConsumptionDevice.hpp` 落位**（§3.1 表已增行）——`RneConsumptionDevice` 值聚合（StateStructure/SerialDevice/RigidDevice/State 所有权链＋逐关节投影元数据＋法兰基线/换算基）＋`buildRneConsumptionDevice(CanonicalModel)` 工厂（帧树与 S6 同源语义：tAligned＝origin·R_align、zeroOffset 烘焙、连杆帧 R_alignᵀ；**GAP-RNE-FRAME 关节帧换算单点**——BodyInfo 按 RNE 关节帧解释的产品侧换算，A2 裁决薄适配落点；§8.2 canonical 逐字断言/S7 产品映射/modeling DWC 导出零触碰）；公共边界防御（空链/Fixed/轴单位/偏置有限——InputInvalid）；②**实现 `src/RneConsumptionDevice.cpp`**（本单元内与 WorkCellCompiler.cpp axisAlignmentRotation 同源镜像——最小授权面不触碰既有 S6 TU，合并归卫生批）＋CMake 集成 target_sources 增列＋冒烟分支框架供给（REUSE-T51 同款同名 ALIAS＋sdurwsim 直含 targets 文件——非安装树 RobWorkSimConfig REQUIRED RobWorkStudio 探针在案；sdurwsim 非集成判定符全库零命中）；工厂 TU 双模式编译＝单一实现；③消费者＝dynamics 评估器（dynamics->runtime 登记边；请求 DTO 零变化）、WP-09 FD 预留。验证：runtime 消费者回归 312 项（311 passed＋1 既有 skip）与基线同名单；载体语义经 dynamics 侧独立物理 oracle（弯曲构型叉积/准静态能量平衡/黄金拉格朗日）＋上游直接对照（逐位一致）＋断开实验（工厂换算行去除→2 项真实失败）钉住；ird_gates 零命中。原始记录 traceability/reuse/REUSE-T52/ |
 | v0.1 | 2026-09-10 | 首版：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）及 core/testkit/project/evidence 四份协作输入（均 Draft；project.md 磁盘实测完整——与 evidence 侧登记差异见 P-RT-9）完成 15 章详细设计：冻结 CanonicalModel 数据契约与 RT-Codec 身份、十段确定性编译链与事务状态机、基座—世界变换单一不变量（含预设矩阵与数值例）、RuntimeNameMap 双射解析、RobWork 适配层（只读视图/异常转译/显式设值）、RuntimeSnapshot 并发与 worker 隔离、分层编译缓存纯判定、能力正交声明、公共接口（含 IModelCompilePort 承接答复）、验证反例矩阵 RT-\* 41 组、实现任务 RT-T01～T13；待裁决 9 项（P-RT-1～9）。同日：`runtime/include/sdurws/ird/runtime/README.md` 的任务卡指向由"§9"修正为"§12"（与本文任务拆分章节号一致，同 evidence README 修正先例） |
 | v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查修正（CR-05/CR-07）：§10.3 对 evidence 的供给落点表述更正（modelIdentity/robworkBaselineVersion 入切片 Environment 条目 `runtime.model-identity`/`runtime.robwork-baseline` 并进入 inputBaselineId；复现块仅 compilerContractVersion——原文"§4.1.2 预留字段"不实）；§3.4/RT-T01 行 gtest 引用改指 development-task-breakdown §5.5 定稿。差异记录见 traceability/foundation-api-diff.md |
 | v0.3 | 2026-09-10 | 全链一致性审计消账：①§10.11 稳定码由"建议值"更新为"已收编 14 项（diagnostics.md §4.6）"，并冻结枚举对齐说明（UnknownObject/ContextReleased＝fail-fast token 不发码；RT-CAPABILITY-MISSING/RT-ROBWORK-ERROR＝诊断事件码无枚举对应）；②卡头版本 v0.1→v0.3 更正（原卡头停留 v0.1 而变更记录已达 v0.2，与 policy/reporting 卡的 v0.2 引用不符） |
@@ -1624,6 +1626,22 @@ CanonicalBridge遵循路径不入Description身份而清空sourcePathHint；Work
 
 T30正式工厂增量：SnapshotFactory::create的S6透传现有CompileRequest.resources，解决下层编译网格正确而正式快照丢网格；provider同步借用仅活至create返回。worker物化原无资源供给的边界另记，不宣称本批覆盖。
 
+## REUSE-T13：S6 关节量纲与既有上游能力收口
+
+本段是当前实施说明，替代 v0.8 中对所有关节统一套用旋转偏置及近极 snap 的旧选型；v0.8 保留为历史。实施自查及限定见 `../traceability/reuse/REUSE-T13/README.md`、`../traceability/reuse/REUSE-T13/suitability.md`；尚未独验，不构成全 runtime 迁移完成。
+
+- 关节编译先取 `T_aligned = origin * R_align`，在实际入 WC 的 `PrismaticJoint` / `RevoluteJoint` 上直接 `getTransform(offset)` 并 `setFixedTransform`。offset 对移动关节为 m，对旋转/连续关节为 rad；`q_auth=offset+q_rw`、bounds 减 offset、默认 q_rw=0 均不变。Fixed 不消费 offset。禁止下游再次补偿；连杆系/TCP 是权威物理位姿。
+- `R_align` 复用 `Transform3D::makeLookAt(0,-axis,up).R()`，遵循其 −Z 视向与右手约定；精确 ±Z 仍为 I/Rx(pi)，不作近极 snap。一般轴的内部关节帧滚转由不平行 up 确定，与旧最短弧表示可不同；子连杆同矩阵的逆补偿保证物理 FK 等价。借持 Joint Frame 的消费者不能假定其完整基底等于连杆系；本包没有改变名称/轴/原点契约，也不以一般 Frame 逐元素旧值不变作为验收结论。
+- 资源读取/摘要/安全预算仍经原 provider；STL 直接用 `STLFile::load`，OBJ 用 `LoaderOBJ::load` 后直接 `Model3D::toGeometryData`，删除逐对象/逐三角复制。产品消费 `GeometryData/TriMesh` 的 SI 三角几何，不能固定强转 Plain；材质/纹理不属于本次既有几何通道。资源帧、facet、恒等局部位姿和图元代理回退不变。
+- §5.5 的无隐藏状态指模型内容、身份及产物不依赖环境。已落地的路径型 mesh 加载接缝会访问临时文件及加载器 locale：每次调用独占目录，路径不入身份；仅删除本调用文件和空目录。Windows 加载窗口启用 UCRT 线程 locale 并在正常/异常后恢复调用前 locale 与模式，避免上游进程环境副作用。当前正式平台是 Windows x64（REQUIREMENTS §2、NFR-DEP-01）；非 Windows mesh 并发未验证，不能外推可重入验收，也不降低 Windows 契约。
+- 编译器实现版本为 `ird-runtime-canonical-compiler/1.1`，契约版本仍1。既有 CacheKey / Snapshot 身份公式已经编码实现版本；同模型/选项的旧 /1.0 产物判为 `compiler-changed`、不可复用。不新增缓存、模型副本或对外接口。
+
+模型 owner、WorkCell/Frame/Device 生命周期仍严格归 runtime（ARCH §3.6 / SA-19）；业务通过原受控视图/任务私有 State/序列化快照使用，不跨进程传模型指针。core、diagnostics、evidence 和 policy 的既有权威不迁入本编译器。
+
 ## GOV-T21 迁移约束与旧规则勘误
 
 DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列入迁移债务；复用已有模型编译/关节映射，State 线程私有，不在业务域重新建链。
+
+### REUSE-T10：原版EAA适用边界（2026-10-23）
+
+所有者撤销上游EAA补丁，原库不变。旋转表示转换对照限值唯一取REQUIREMENTS附录D第13项（矩阵→EAA、EAA→矩阵及相关往返统一1e-6，所有者明确数值裁决，均为最大元素绝对误差）；FK/编译链仍按附录D第4项1e-9 m/rad，矩阵合法性与Custom预设语义不随表示容差改变。原EAA双向量构造的近反平行/极轴约定也须按实际编译链审查，不能把表示转换限值用于放过关节轴映射误差。当前仅完成原库恢复和误差测量，不宣称runtime旋转/offset已经迁移。

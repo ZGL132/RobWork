@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T09",
+  "unit": "trajectory",
+  "masterWp": "WP-A",
+  "title": "轨迹高阶多项式求值复用上游Polynomial并删除手写基导数链",
+  "status": "done",
+  "branch": "codex/reuse-trajectory-polynomial",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "TRJ-04",
+    "TRJ-05",
+    "TRJ-06",
+    "TRJ-08-S1",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "reuse/migration.md#12.11",
+    "reuse/policy.md",
+    "reuse/audit-contract.md",
+    "reuse/catalog.json#MATH-POLYNOMIAL",
+    "units/trajectory.md#1.2",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t09-governance-independent",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/SmoothTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T09.json",
+    "RobWork/doc/industrial-robot-design/reuse/trajectory-polynomial-migration.md",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1-fix/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r2.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r2/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json"
+  ],
+  "acceptance": [
+    "执行reuse/policy.md §1.1；在trajectory-polynomial-migration.md定位保留/删除/适配/职责归属及上游适用依据；独验核对准确性、架构、简洁性与运行效果，包含实际冗余删除/必要保留理由和性能前后测量及应用预算；无依据退化不得自判可接受，单有上游调用不构成通过",
+    "Smooth样条与TimeParam两运动律的真实生产链求值消费上游Polynomial evaluate/derivative，删除12个手写基函数展开式及逐阶导数链，无运行时旧算法回退",
+    "端点/结点位级还原、共线零偏差NoChange判定、驻留常值、C²/C³守卫、限值缩放、时间缩放非零端导数及诊断素材语义保持；短时长/退化段/非有限输入失败行为保持",
+    "真实上游evaluateDerivatives对照和独立解析oracle通过；断开生产调用必须真实失败；受影响集成/ird_gates与复用证据通过；catalog candidate→verified翻转属共享文件待主会话整合，未整合前SUITABILITY失败如实登记不伪报",
+    "完整冻结能力包由所有者独立会话验收；实施者不自签、不合入、不操作远程；GAP均未批准"
+  ],
+  "note": "migration.md §12.11 所有者批准能力序列（Polynomial::evaluateDerivatives高阶轨迹）的trajectory包；冻结起点0032c8e78含EAA补丁撤销批54f0beda6，不引用被撤销patches/0004的任何通过记录。catalog对本任务只读：MATH-POLYNOMIAL verified翻转所需复核证据已产出（trajectory-polynomial-migration.md），翻转属主会话统一整合项；整合前validate-reuse对两migrated行SUITABILITY失败属预期并如实登记。上会话基线证据evidence-baseline-*与正式normal运行均绑定真实可重跑命令。2026-10-25 r1独立验收FAIL返工（verdict=fail仅由commit-lint提交前缀触发，技术实质面13项检查全过，记录traceability/acceptance/REUSE-T09-20261025-r1.json）：①340dc88a4/9e1fe9c2e两实施提交[REUSE-T09]前缀违规与3e8cec6ef（送验范围推导带入的非T09提交）三项均＝findings F-971在册豁免（83224ba40于2026-10-24 17:59按F-012/F-970口径登记：历史不可改写；r1开验2026-10-25 00:33时该登记已入库），本人复跑commit-lint -Range 54f0beda6..b0997f8d8实测FAIL 3/18与r1原件09号log逐项一致、三FAIL提交与F-971登记项完全相同零未登记违规，按T01/T07先例直接引用不重复登记；整改＝新增提交过白名单自检（本返工提交即[governance]前缀），r2复核验登记依据即视为收口。②送验范围口径固化（r1 issues[1]建议）：T09送验链＝340dc88a4/9e1fe9c2e/aee6ac5bf/357d19e3d＋8db7a7e78/a63157aec/b0997f8d8七提交，文件面并集38文件＝37命中allowedFiles＋唯一forbidden命中catalog.json（aee6ac5bf/a63157aec主会话整合，本note预登记；本人复跑r1-fix/02号log与r1 03b机器核对同数38/37/1）；全范围54f0beda6..b0997f8d8的verify-task-scope FAIL 97越界与commit-lint FAIL 3/18均系reviewHead由git log推导带入T11/T12/GOV等非T09串行提交所致（r1 02/03号log归因在册），属送验范围推导问题而非T09授权面缺陷，不补allowedFiles消化、由各自契约独立送验。本轮仅追加本任务r1验收产物3条allowedFiles（r1原件/r1目录/r1-fix目录），forbiddenFiles零改动不放宽门禁；零产品源码/零治理脚本/零构建配置变更，r1已实测的验证按AGENTS §4增量口径直接引用原件。处置登记：traceability/acceptance/REUSE-T09-20261025-r1-fix/README.md；status保持ready待所有者按登记依据复核r2，独验不由实施者自签。2026-10-25 独立验收收口：所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」授权工作流内单次验收子智能体（GOV-T23/T24 先例同型；实施者不得自签，本轮验收员未参与实施）r2 复核验 14/14 通过——verdict=pass，绑定送验SHA 93ef0da15e17adbda428d114d25e04f544003697，记录 traceability/acceptance/REUSE-T09-20261025-r2.json（复跑原件在其同名目录：r1 两 issues 逐项核销、T09 专属面 9 提交 61 文件 60 命中＋1 预登记 catalog.json 零越界、返工段 scope 24 路径 PASS、集成 trajectory 191+69 复跑全过、ird_gates 零命中、12 手写基符号零残留红线）；据此由登记步骤置 done，后续纯记录提交不属于被验实现 SHA；性能基准/断开变异/治理自测按 AGENTS §4 增量口径引用 r1 原件（r2 notRun 在册）。字面区间处置（登记后实测）：verify-task-scope -Base 54f0beda6 -Head 93ef0da15 FAIL 1332 与 r2 记录 checks[5] 逐字一致——越界∩T09 面仅预登记 catalog.json、其余 1331 项全部由非 T09 提交产生（r2 记录 04 号归因闭环）；commit-lint -Range 54f0beda6..HEAD FAIL 3/87——9e1fe9c2e/340dc88a4/3e8cec6ef 三提交与 F-971 登记集完全相同零未登记违规（历史不可改写），总数增长均为登记链自身提交且过白名单自检；两门禁字面红均为已登记签名，不补 allowedFiles 消化、不改门禁脚本（机器豁免面变更属所有者决策）；allowedFiles 仅补 r2 验收记录与证据目录两条（登记产物入允许面，forbidden 面零触碰）。2026-10-25 登记后门禁实测处置：verify-task-scope -Base 54f0beda6 -Head 93ef0da15（及 -Head HEAD 同数）FAIL 1332 路径越界，与 r2 记录 checks[5]/commands[0] 逐字一致——越界∩T09 面仅预登记 catalog.json、其余 1331 项全部由非 T09 提交产生（r2 记录 04 号归因闭环）；commit-lint -Range 54f0beda6..HEAD FAIL 3/88——9e1fe9c2e/340dc88a4/3e8cec6ef 三提交与 F-971 登记集完全相同、零未登记违规（历史不可改写，AGENTS §6.3），总数 87→88 的增量为登记提交自身且过白名单自检；两门禁字面红均为已登记签名，机器豁免面变更（补 allowedFiles／改门禁脚本）属所有者决策，本登记不执行。",
+  "independentAcceptance": {
+    "commit": "d804e43ef07177f0e5935ae92ffd473e6a557645",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r2.json",
+    "reviewedCommit": "93ef0da15e17adbda428d114d25e04f544003697",
+    "verdict": "pass"
+  },
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T09.json"
+  },
+  "outputs": [
+    "上游Polynomial基函数族表与手写基删除（Smooth/TimeParam两TU）",
+    "生产正向/真实断开/独立oracle/上游对照证据（REUSE-T09证据目录）",
+    "性能/分配/确定性核查（benchmark探针与结果）",
+    "冻结能力包待独立验收；catalog verified翻转待主会话整合"
+  ]
+}

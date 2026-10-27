@@ -1,0 +1,15 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+reuse supplement: schema/permission/function evidence checked; functions=1764 closedFiles=1 (semantic review required)
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+validate-task: PASS (1 tasks)
+validate-docs: PASS (20 units, 12 trace entries, 404 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, NOT AUDITED evidence)

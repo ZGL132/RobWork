@@ -31,6 +31,17 @@
  *     多项式由 (q0, m̂0, q1, m̂1) 唯一确定——与五次形态共用 SplineSpan
  *     数据结构（零高阶导字段）。黄金算例在测试侧独立书写同一闭式
  *     （NFR-COR-01 双向对照）。
+ *   - **基函数求值上游化（REUSE-T09 批）**：五次/七次共 8 个基函数的手写
+ *     值/一~三阶导数展开链删除——值基以升幂系数表交 rw::math::Polynomial
+ *     承载（H1 直接 API——MATH-POLYNOMIAL catalog 条目），导数链经上游
+ *     derivative() 构造、求值经上游 evaluate() 的 Horner 形态（纯算术零
+ *     分配——峰值扫描/采样重放热路径不引入容器分配；上游每调用分配
+ *     std::vector 的 evaluateDerivatives 不入热路径，转作测试侧上游直接
+ *     对照）。系数闭式保留为数学定义与测试对照基准（见上条与五次形态各
+ *     注）；端点位级形态（结点还原/端点零导/连续性守卫"两侧数学恒 0"）
+ *     由"整数系数 Horner 在 u=0/1 处无舍入"保持——WP-16-T14 批在手写导
+ *     数链中修复的 h0000 二阶导笔误即本替换消除的缺陷类（mechanical 求
+ *     导无抄写错误），见基族表函数注。
  *   - **初值时间分配公式**（§12.2 步骤 1"按段路径长度/最严关节估计"的
  *     确定性展开）：逐运动段以 kInitialLengthProbeSpans 个等参区间采样
  *     段几何，逐轴折线长度 D_i（rad|m 混合计量逐轴）；需求时长按静止-
@@ -132,6 +143,7 @@
 #include <sdurws/ird/trajectory/TimeParam.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <limits>
@@ -139,6 +151,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <rw/math/Polynomial.hpp>
 
 #include <sdurws/ird/core/Compare.hpp>      // core::closeWithin/Tolerance（附录 D C4 公式）
 #include <sdurws/ird/core/Provenance.hpp>   // core::SourcedValue（比较型素材值面）
@@ -187,9 +201,11 @@ inline constexpr double kQuinticPeakAccelFactor =
 inline constexpr double kSepticPeakJerkFactor = 52.5;
 
 // =====================================================================
-// 五次 Hermite 基函数族（u∈[0,1] 归一化段参数；值/一阶/二阶/三阶导数——
-// Smooth.cpp 值基族的超集，本 TU 需要速度/加速度/jerk 求值故四阶并列；
-// 独立书写于实现侧，测试侧另有黄金参照——NFR-COR-01 双向对照）。
+// 五次/七次 Hermite 基函数族（u∈[0,1] 归一化段参数；值/一阶/二阶/三阶
+// 导数——上游多项式承载，REUSE-T09 复用替换：手写展开式与逐阶导数链删
+// 除，值基以升幂系数表交 rw::math::Polynomial，导数链经上游 derivative()
+// 构造、求值经上游 evaluate()。值基系数闭式保留于下（端点脉冲条件见文
+// 件头注），测试侧独立书写同一闭式作黄金对照——NFR-COR-01 双向对照。
 // 三阶导为 WP-16-T14 批增列（peakJointJerk 统计的两形态公共求值面）。
 // =====================================================================
 
@@ -201,142 +217,86 @@ struct BasisValues {
     double d3;   ///< 对 u 的三阶导数（WP-16-T14 批增列——jerk 统计面）
 };
 
-/// 值基 h0000：端点条件 p(0)=1，其余五条件全 0（1−10u³+15u⁴−6u⁵）。
-inline BasisValues basisH0000(double u)
+/// 单基的值/一~三阶导数多项式族（导数多项式经上游 rw::math::Polynomial::
+/// derivative() 构造——mechanical 求导无抄写错误，WP-16-T14 批在手写链
+/// 中修复的 h0000 二阶导笔误即本替换消除的缺陷类；Polynomial 无默认构
+/// 造〔上游类型语义〕——值基经构造函数注入，导数链就地生成）。
+struct HermiteBasisFamily {
+    explicit HermiteBasisFamily(const rw::math::Polynomial<>& value)
+        : p(value),
+          d1(value.derivative(1)),
+          d2(value.derivative(2)),
+          d3(value.derivative(3))
+    {
+    }
+    rw::math::Polynomial<> p;   ///< 值基
+    rw::math::Polynomial<> d1;  ///< 对 u 的一阶导数（上游 derivative(1)）
+    rw::math::Polynomial<> d2;  ///< 对 u 的二阶导数（上游 derivative(2)）
+    rw::math::Polynomial<> d3;  ///< 对 u 的三阶导数（上游 derivative(3)）
+};
+
+/**
+ * @brief 五次基族表（{h0000, h0010, h0001, h0011}×4 阶——进程级不可变
+ *        常量；函数内 static 一次初始化，C++11 魔法静态，并发首调用线
+ *        程安全，无共享可变状态）。
+ *
+ * 升幂系数闭式：h0000=1−10u³+15u⁴−6u⁵、h0010=u−6u³+8u⁴−3u⁵、
+ * h0001=10u³−15u⁴+6u⁵、h0011=−4u³+7u⁴−3u⁵（端点脉冲条件见文件头注）。
+ *
+ * 端点位级精确性（连续性守卫/结点还原的承重面）：四基系数全为小整数
+ * ——u=0/1 处 Horner 中间量全为整数（|值|≤180，binary64 精确）→基值与
+ * 各阶导数在两端位级等于解析脉冲形（如 h0000 二阶导在两端恒精确 0、
+ * h0010 一阶导在 u=0 精确 1）——结点位级还原、端点零速零加速度与
+ * "两侧极限数学恒 0"的守卫位级形态由此保持（与手写展开式一致）。
+ */
+const std::array<HermiteBasisFamily, 4>& quinticBases()
 {
-    const double u2 = u * u;
-    const double u3 = u2 * u;
-    BasisValues b;
-    b.p = 1.0 - 10.0 * u3 + 15.0 * u2 * u2 - 6.0 * u3 * u2;
-    b.d1 = -30.0 * u2 + 60.0 * u3 - 30.0 * u2 * u2;
-    // 二阶导修正（WP-16-T14 批登记——T08 批遗留笔误）：d1 对 u 求导应为
-    // −60u+180u²−120u³，原实现误写 −60u+120u²−60u³。既有黄金算例未暴露
-    // 的原因：全部零起点（q0=0 → h0000 加权项为零）＋结点处各基 d2 端点
-    // 值两版本同为 0（C² 守卫不敏感）；数值实验（中心差分对照解析）定位。
-    // 修正后 h0000''+h0001'' 恒 0（值基和恒 1 的二阶导）恢复结构性成立。
-    b.d2 = -60.0 * u + 180.0 * u2 - 120.0 * u3;
-    // 三阶导（WP-16-T14 批）：d2 对 u 求导——常值 −60＋180·2u−120·3u²。
-    b.d3 = -60.0 + 360.0 * u - 360.0 * u2;
-    return b;
+    static const std::array<HermiteBasisFamily, 4> table = {
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{1.0, 0.0, 0.0, -10.0, 15.0, -6.0})),
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{0.0, 1.0, 0.0, -6.0, 8.0, -3.0})),
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{0.0, 0.0, 0.0, 10.0, -15.0, 6.0})),
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{0.0, 0.0, 0.0, -4.0, 7.0, -3.0})),
+    };
+    return table;
 }
 
-/// 一阶导基 h0010：端点条件 p'(0)=1，其余五条件全 0（u−6u³+8u⁴−3u⁵）。
-inline BasisValues basisH0010(double u)
+/**
+ * @brief 七次基族表（{s0, s1, s2, s3}×4 阶——WP-16-T14 批闭式：s0=1−35u⁴
+ *        +84u⁵−70u⁶+20u⁷、s1=u−20u⁴+45u⁵−36u⁶+10u⁷、s2=35u⁴−84u⁵+70u⁶
+ *        −20u⁷、s3=−15u⁴+39u⁵−34u⁶+10u⁷；端点条件各 4 个，二阶/三阶导
+ *        基项恒缺〔结点高阶导 0 纪律〕——段多项式由 (q0, h·m0, q1, h·m1)
+ *        唯一确定；端点位级精确性论证同 quinticBases 注）。
+ */
+const std::array<HermiteBasisFamily, 4>& septicBases()
 {
-    const double u2 = u * u;
-    const double u3 = u2 * u;
-    BasisValues b;
-    b.p = u - 6.0 * u3 + 8.0 * u2 * u2 - 3.0 * u3 * u2;
-    b.d1 = 1.0 - 18.0 * u2 + 32.0 * u3 - 15.0 * u2 * u2;
-    b.d2 = -36.0 * u + 96.0 * u2 - 60.0 * u3;
-    // 三阶导（WP-16-T14 批增列）。
-    b.d3 = -36.0 + 192.0 * u - 180.0 * u2;
-    return b;
+    static const std::array<HermiteBasisFamily, 4> table = {
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{1.0, 0.0, 0.0, 0.0, -35.0, 84.0, -70.0, 20.0})),
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{0.0, 1.0, 0.0, 0.0, -20.0, 45.0, -36.0, 10.0})),
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{0.0, 0.0, 0.0, 0.0, 35.0, -84.0, 70.0, -20.0})),
+        HermiteBasisFamily(rw::math::Polynomial<>(
+            std::vector<double>{0.0, 0.0, 0.0, 0.0, -15.0, 39.0, -34.0, 10.0})),
+    };
+    return table;
 }
 
-/// 值基 h0001：端点条件 p(1)=1，其余五条件全 0（10u³−15u⁴+6u⁵）。
-inline BasisValues basisH0001(double u)
+/**
+ * @brief 单基四阶值（上游 evaluate() 的 Horner 形态——纯算术零分配；
+ *        无量纲基值，时间量纲换算在逐轴合成处除 h/h²/h³）。
+ */
+BasisValues evalBasis(const HermiteBasisFamily& family, double u)
 {
-    const double u2 = u * u;
-    const double u3 = u2 * u;
     BasisValues b;
-    b.p = 10.0 * u3 - 15.0 * u2 * u2 + 6.0 * u3 * u2;
-    b.d1 = 30.0 * u2 - 60.0 * u3 + 30.0 * u2 * u2;
-    b.d2 = 60.0 * u - 180.0 * u2 + 120.0 * u3;
-    // 三阶导（WP-16-T14 批增列）。
-    b.d3 = 60.0 - 360.0 * u + 360.0 * u2;
-    return b;
-}
-
-/// 一阶导基 h0011：端点条件 p'(1)=1，其余五条件全 0（−4u³+7u⁴−3u⁵）。
-inline BasisValues basisH0011(double u)
-{
-    const double u2 = u * u;
-    const double u3 = u2 * u;
-    BasisValues b;
-    b.p = -4.0 * u3 + 7.0 * u2 * u2 - 3.0 * u3 * u2;
-    b.d1 = -12.0 * u2 + 28.0 * u3 - 15.0 * u2 * u2;
-    b.d2 = -24.0 * u + 84.0 * u2 - 60.0 * u3;
-    // 三阶导（WP-16-T14 批增列）。
-    b.d3 = -24.0 + 168.0 * u - 180.0 * u2;
-    return b;
-}
-
-// =====================================================================
-// 七次 Hermite 基函数族（WP-16-T14 批——septic-spline-c3 运动律；端点
-// 条件各 4 个：值/一阶/二阶/三阶导——二阶三阶导基项恒缺〔结点高阶导 0
-// 纪律〕，段多项式由 (q0, h·m0, q1, h·m1) 唯一确定。闭式推导见文件头
-// 注；测试侧独立书写同一闭式作黄金对照——NFR-COR-01 双向对照）
-// =====================================================================
-
-/// 七次值基 s0：端点条件 p(0)=1，其余七条件全 0
-/// （1 − 35u⁴ + 84u⁵ − 70u⁶ + 20u⁷）。
-inline BasisValues septicS0(double u)
-{
-    const double u2 = u * u;
-    const double u3 = u2 * u;
-    const double u4 = u2 * u2;
-    const double u5 = u4 * u;
-    const double u6 = u5 * u;
-    BasisValues b;
-    b.p = 1.0 - 35.0 * u4 + 84.0 * u5 - 70.0 * u6 + 20.0 * u5 * u2;
-    b.d1 = -140.0 * u3 + 420.0 * u4 - 420.0 * u5 + 140.0 * u6;
-    b.d2 = -420.0 * u2 + 1680.0 * u3 - 2100.0 * u4 + 840.0 * u5;
-    b.d3 = -840.0 * u + 5040.0 * u2 - 8400.0 * u3 + 4200.0 * u4;
-    return b;
-}
-
-/// 七次一阶导基 s1：端点条件 p'(0)=1，其余七条件全 0
-/// （u − 20u⁴ + 45u⁵ − 36u⁶ + 10u⁷）。
-inline BasisValues septicS1(double u)
-{
-    const double u2 = u * u;
-    const double u3 = u2 * u;
-    const double u4 = u2 * u2;
-    const double u5 = u4 * u;
-    const double u6 = u5 * u;
-    BasisValues b;
-    b.p = u - 20.0 * u4 + 45.0 * u5 - 36.0 * u6 + 10.0 * u5 * u2;
-    b.d1 = 1.0 - 80.0 * u3 + 225.0 * u4 - 216.0 * u5 + 70.0 * u6;
-    b.d2 = -240.0 * u2 + 900.0 * u3 - 1080.0 * u4 + 420.0 * u5;
-    b.d3 = -480.0 * u + 2700.0 * u2 - 4320.0 * u3 + 2100.0 * u4;
-    return b;
-}
-
-/// 七次值基 s2：端点条件 p(1)=1，其余七条件全 0
-/// （35u⁴ − 84u⁵ + 70u⁶ − 20u⁷——与 s0 的值部互补：s0+s2 恒 1）。
-inline BasisValues septicS2(double u)
-{
-    const double u2 = u * u;
-    const double u3 = u2 * u;
-    const double u4 = u2 * u2;
-    const double u5 = u4 * u;
-    const double u6 = u5 * u;
-    BasisValues b;
-    b.p = 35.0 * u4 - 84.0 * u5 + 70.0 * u6 - 20.0 * u5 * u2;
-    b.d1 = 140.0 * u3 - 420.0 * u4 + 420.0 * u5 - 140.0 * u6;
-    b.d2 = 420.0 * u2 - 1680.0 * u3 + 2100.0 * u4 - 840.0 * u5;
-    b.d3 = 840.0 * u - 5040.0 * u2 + 8400.0 * u3 - 4200.0 * u4;
-    return b;
-}
-
-/// 七次一阶导基 s3：端点条件 p'(1)=1，其余七条件全 0
-/// （−15u⁴ + 39u⁵ − 34u⁶ + 10u⁷）。
-inline BasisValues septicS3(double u)
-{
-    const double u2 = u * u;
-    const double u3 = u2 * u;
-    const double u4 = u2 * u2;
-    const double u5 = u4 * u;
-    const double u6 = u5 * u;
-    BasisValues b;
-    b.p = -15.0 * u4 + 39.0 * u5 - 34.0 * u6 + 10.0 * u5 * u2;
-    b.d1 = -60.0 * u3 + 195.0 * u4 - 204.0 * u5 + 70.0 * u6;
-    // 二阶/三阶导（逐次求导：s3''＝−180u²+780u³−1020u⁴+420u⁵、
-    // s3'''＝−360u+2340u²−4080u³+2100u⁴；端点校验 s3''(1)=0、
-    // s3'''(1)=0——C³ 结构条件的基级前提，测试端点矩阵钉扎）。
-    b.d2 = -180.0 * u2 + 780.0 * u3 - 1020.0 * u4 + 420.0 * u5;
-    b.d3 = -360.0 * u + 2340.0 * u2 - 4080.0 * u3 + 2100.0 * u4;
+    b.p = family.p.evaluate(u);
+    b.d1 = family.d1.evaluate(u);
+    b.d2 = family.d2.evaluate(u);
+    b.d3 = family.d3.evaluate(u);
     return b;
 }
 
@@ -466,11 +426,14 @@ SpanDerivs evaluateSpanDerivs(const SplineSpan& span, double tau, LawForm form)
     const double u = std::clamp(tau / span.h, 0.0, 1.0);
     const double h2 = span.h * span.h;
     const double h3 = h2 * span.h;
-    // 形态分派（§12.7——每分支一个真实运动律；基族选择在此单点）。
-    const BasisValues b00 = form == LawForm::Quintic ? basisH0000(u) : septicS0(u);
-    const BasisValues b10 = form == LawForm::Quintic ? basisH0010(u) : septicS1(u);
-    const BasisValues b01 = form == LawForm::Quintic ? basisH0001(u) : septicS2(u);
-    const BasisValues b11 = form == LawForm::Quintic ? basisH0011(u) : septicS3(u);
+    // 形态分派（§12.7——每分支一个真实运动律；基族选择在此单点——基值/
+    // 导数链求值经上游 Polynomial evaluate/derivative，REUSE-T09）。
+    const std::array<HermiteBasisFamily, 4>& bases =
+        form == LawForm::Quintic ? quinticBases() : septicBases();
+    const BasisValues b00 = evalBasis(bases[0], u);
+    const BasisValues b10 = evalBasis(bases[1], u);
+    const BasisValues b01 = evalBasis(bases[2], u);
+    const BasisValues b11 = evalBasis(bases[3], u);
     // 逐轴合成：四基加权（位置）＋导数基加权后除 h、h²、h³（时间导数
     // 链式法则）——每轴独立的标量算术，无跨轴归约（确定性算术序）。
     for (std::size_t i = 0; i < n; ++i) {

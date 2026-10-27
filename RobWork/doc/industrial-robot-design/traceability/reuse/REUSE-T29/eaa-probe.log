@@ -1,0 +1,3 @@
+eaa-probe.cpp
+tiny_x_rad=1e-08 oracle_R21=1e-08 upstream_R21=0 candidate_R21=1e-08
+upstream_abs_error=1e-08 candidate_abs_error=0 tolerance=1e-12

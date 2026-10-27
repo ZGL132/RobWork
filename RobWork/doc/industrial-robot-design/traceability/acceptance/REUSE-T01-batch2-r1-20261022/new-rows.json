@@ -1,0 +1,1380 @@
+[
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "id": "core.ContentDigester.compressBlock",
+    "cap": "NONE",
+    "requirements": [
+      "CON-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::core::ContentDigester::compressBlock",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Digest.cpp",
+      "symbol": "ContentDigester::compressBlock",
+      "qualifiedSymbol": "sdurws::ird::core::ContentDigester::compressBlock",
+      "startLine": 139,
+      "endLine": 171,
+      "sha256": "b7a5cb00b17c98929964cbc9af4c7576d9d0ce4843511174f25e6938aa134455"
+    },
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持FIPS180-2压缩核心；上游rw/rwsim搜索SHA/crypto无命中，仅是检索事实。继续查已安装成熟依赖/平台API及跨平台契约，不因此批准保留核心",
+    "region": "void ContentDigester::compressBlock(const std::uint8_t* block)\n{\n    // 消息调度：W[0..15] 直接取自分组（大端），W[16..63] 按 σ0/σ1 扩展（§6.2.2）。\n    std::uint32_t w[64];\n    for (int t = 0; t < 16; ++t) {\n        w[t] = loadBE32(block + 4 * t);\n    }\n    for (int t = 16; t < 64; ++t) {\n        const std::uint32_t s0 = rotr(w[t - 15], 7) ^ rotr(w[t - 15], 18) ^ (w[t - 15] >> 3);\n        const std::uint32_t s1 = rotr(w[t - 2], 17) ^ rotr(w[t - 2], 19) ^ (w[t - 2] >> 10);\n        w[t] = w[t - 16] + s0 + w[t - 7] + s1;\n    }\n\n    // 64 轮压缩（工作变量 a..h；函数 Ch/Maj/Σ0/Σ1 见 FIPS §4.1.2）。\n    std::uint32_t a = state_[0], b = state_[1], c = state_[2], d = state_[3];\n    std::uint32_t e = state_[4], f = state_[5], g = state_[6], h = state_[7];\n    for (int t = 0; t < 64; ++t) {\n        const std::uint32_t S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);\n        const std::uint32_t ch = (e & f) ^ (~e & g);\n        const std::uint32_t t1 = h + S1 + ch + kSha256K[static_cast<std::size_t>(t)] + w[t];\n        const std::uint32_t S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);\n        const std::uint32_t maj = (a & b) ^ (a & c) ^ (b & c);\n        const std::uint32_t t2 = S0 + maj;\n        h = g; g = f; f = e;\n        e = d + t1;\n        d = c; c = b; b = a;\n        a = t1 + t2;\n    }\n\n    // 链接变量累加（中途值寄存于工作变量，轮毕回加——FIPS §6.2.2 第 14 步）。\n    state_[0] += a; state_[1] += b; state_[2] += c; state_[3] += d;\n    state_[4] += e; state_[5] += f; state_[6] += g; state_[7] += h;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+    "id": "io.strictUtf8Check",
+    "cap": "NONE",
+    "requirements": [
+      "NFR-SEC-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::strictUtf8Check",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+      "symbol": "strictUtf8Check",
+      "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::strictUtf8Check",
+      "startLine": 145,
+      "endLine": 162,
+      "sha256": "40c66f0c7a2be2796d2711a5b909d3e78e1bbf4975d7f1b9d9ea95b5b589389a"
+    },
+    "targets": [
+      "sdurws_ird_io"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "与Csv.cpp的UTF-8 DFA表/实现重复；先检索上游StringUtil及同渠道已安装编码工具，保留拒绝超长/代理区/BOM语义",
+    "region": "bool strictUtf8Check(std::string_view bytes, std::size_t* failIndex)\n{\n    std::uint32_t state = 0;   // 起始＝接受态\n    for (std::size_t i = 0; i < bytes.size(); ++i) {\n        const std::uint8_t b = static_cast<std::uint8_t>(bytes[i]);\n        state = kUtf8Dfa[256 + state + kUtf8Dfa[b]];\n        if (state == kUtf8Reject) {\n            *failIndex = i;\n            return false;\n        }\n    }\n    // 悬空多字节序列（文档截断在多字节字符中段）同样非法——终态非接受。\n    if (state != 0) {\n        *failIndex = bytes.size();\n        return false;\n    }\n    return true;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+    "id": "io.canonicalizeJson",
+    "cap": "NONE",
+    "requirements": [
+      "NFR-COR-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::io::canonicalizeJson",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+      "symbol": "canonicalizeJson",
+      "qualifiedSymbol": "sdurws::ird::io::canonicalizeJson",
+      "startLine": 1651,
+      "endLine": 1678,
+      "sha256": "b366d6c386dee4c0f36bb08d320dce5dcd78acf2df4bd0bd26b3cdea86412def"
+    },
+    "targets": [
+      "sdurws_ird_io"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "canonical writer属于产品身份规则，底层JSON编码仍需查复用；不能把身份专属语义作为手写parser全部保留理由",
+    "region": "IoResult<IoString> canonicalizeJson(const JsonDocument& doc, const JsonWriteOptions& options)\n{\n    IoResult<IoString> out;\n    try {\n        // canonical 序列化（键序/版面/数值形态恒定——§5.9.3）；非有限实\n        // 数经 emitCanonicalValue 拒绝（错误原样上抛——错误轨道单一权威）。\n        IoString bytes;\n        const JsonShape* shape =\n            (options.profile != nullptr) ? &options.profile->rootShape : nullptr;\n        if (const IoResult<void> r = emitCanonicalValue(bytes, doc.root, shape, options, 0); !r) {\n            out.error = r.error;\n            return out;\n        }\n        // 根级换行收尾：canonical 文件形态以 LF 结束（POSIX 文本惯例——\n        // 与写出器同一实现面，digest 与 write 字节必然一致）。\n        bytes.append(kLf);\n        out.value = std::move(bytes);\n        return out;\n    } catch (const std::exception& e) {\n        out.error = IoError{IoErrorCode::FormatInternal, {},\n                            std::string(\"json canonicalize: \") + e.what()};\n        return out;\n    } catch (...) {\n        out.error = IoError{IoErrorCode::FormatInternal, {},\n                            \"json canonicalize: unknown exception\"};\n        return out;\n    }\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.orientBoxPoint",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientBoxPoint",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "symbol": "orientBoxPoint",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientBoxPoint",
+      "startLine": 87,
+      "endLine": 96,
+      "sha256": "60e011e53950c6eacac20e7299052c5b7894d50584876961345a3c2000d9a669"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+    "region": "rw::math::Vector3D<double> orientBoxPoint(const RegionBox& box,\n                                         const rw::math::Vector3D<double>& p)\n{\n    const auto& r = box.orientationInBase;\n    if (r == rw::math::Rotation3D<double>(1,0,0,0,1,0,0,0,1)) { return p; }\n    const auto d = p - box.center;\n    return {box.center[0] + r(0,0)*d[0] + r(0,1)*d[1] + r(0,2)*d[2],\n            box.center[1] + r(1,0)*d[0] + r(1,1)*d[1] + r(1,2)*d[2],\n            box.center[2] + r(2,0)*d[0] + r(2,1)*d[1] + r(2,2)*d[2]};\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.orientSampleRotation",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientSampleRotation",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "symbol": "orientSampleRotation",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientSampleRotation",
+      "startLine": 105,
+      "endLine": 113,
+      "sha256": "a6f296f0f196345632be4b57f230a4e51f2da8faa39e3c3c29d004fcb26b2bdf"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+    "region": "rw::math::Rotation3D<double> orientSampleRotation(const rw::math::Rotation3D<double>& a,\n                                                 const rw::math::Rotation3D<double>& b)\n{\n    rw::math::Rotation3D<double> result(1,0,0,0,1,0,0,0,1);\n    for (int i=0; i<3; ++i) for (int j=0; j<3; ++j) {\n        result(i,j)=a(i,0)*b(0,j)+a(i,1)*b(1,j)+a(i,2)*b(2,j);\n    }\n    return result;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.poseFromDirectionRoll",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::poseFromDirectionRoll",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "symbol": "poseFromDirectionRoll",
+      "qualifiedSymbol": "sdurws::ird::kinematics::poseFromDirectionRoll",
+      "startLine": 359,
+      "endLine": 418,
+      "sha256": "83eba6da69459484a2282c07444cf0fb416b17c587f8120d4a1006a56f66ce40"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+    "region": "rw::math::Transform3D<double> poseFromDirectionRoll(\n    const rw::math::Vector3D<double>& direction, double roll,\n    const rw::math::Vector3D<double>& position)\n{\n    // 第一步：工具 z 轴（+Z）到方向 d 的最小旋转的九个矩阵元（Rodrigues\n    // 轴角公式直写——轴＝ẑ×d、角＝atan2(|ẑ×d|, ẑ·d)；双退化分支：d≈+ẑ\n    // 恒等、d≈−ẑ 绕 x 半周。与产品 Fk 路径无共享代码的独立小实现，仅\n    // 姿态组装用；rw 旋转类型的外联符号（默认构造/operator*）全程规避\n    // ——冒烟模式不链 rw 库，Ik.hpp identityTransform3D 同款纪律）。\n    const double dx = direction[0];\n    const double dy = direction[1];\n    const double dz = direction[2];\n    const double cx = -dy;             // ẑ×d 的 x 分量（ẑ＝(0,0,1)）\n    const double cy = dx;              // ẑ×d 的 y 分量\n    const double cz = 0.0;             // ẑ×d 的 z 分量\n    const double crossNorm = std::sqrt(cx * cx + cy * cy + cz * cz);\n    const double dot = dz;             // ẑ·d＝d 的 z 分量\n\n    double m00 = 0.0; double m01 = 0.0; double m02 = 0.0;\n    double m10 = 0.0; double m11 = 0.0; double m12 = 0.0;\n    double m20 = 0.0; double m21 = 0.0; double m22 = 0.0;\n    if (crossNorm > 1e-12) {\n        // 常规分支：Rodrigues 公式展开（R＝I＋sinθ·[axis]×＋(1−cosθ)·\n        // [axis]×²——按分量直写）。\n        const double ax = cx / crossNorm;\n        const double ay = cy / crossNorm;\n        const double az = cz / crossNorm;\n        const double angle = std::atan2(crossNorm, dot);  // atan2 比 acos 数值稳定\n        const double c = std::cos(angle);\n        const double s = std::sin(angle);\n        const double t = 1.0 - c;\n        m00 = t * ax * ax + c;       m01 = t * ax * ay - s * az; m02 = t * ax * az + s * ay;\n        m10 = t * ax * ay + s * az;  m11 = t * ay * ay + c;       m12 = t * ay * az - s * ax;\n        m20 = t * ax * az - s * ay;  m21 = t * ay * az + s * ax;  m22 = t * az * az + c;\n    } else if (dot > 0.0) {\n        // 退化分支 1：d≈+ẑ（夹角 0）——恒等旋转。\n        m00 = 1.0; m01 = 0.0; m02 = 0.0;\n        m10 = 0.0; m11 = 1.0; m12 = 0.0;\n        m20 = 0.0; m21 = 0.0; m22 = 1.0;\n    } else {\n        // 退化分支 2：d≈−ẑ（夹角 π）——绕 x 轴半周（任一正交半周皆可，\n        // 黄金锁定取 x 轴分支）。\n        m00 = 1.0; m01 = 0.0; m02 = 0.0;\n        m10 = 0.0; m11 = -1.0; m12 = 0.0;\n        m20 = 0.0; m21 = 0.0; m22 = -1.0;\n    }\n\n    // 第二步：绕局部 z 轴转 roll（工具滚转）——R＝R_dir·Rz(roll)。\n    // 手写三阶矩阵积：rw 的 Rotation3D::operator*（multiply）是外联符号，\n    // 冒烟模式（不链 rw 库）不可解析。列组合展开：R·Rz 的第 0 列＝cr·\n    // R_dir 列 0＋sr·R_dir 列 1、第 1 列＝cr·R_dir 列 1−sr·R_dir 列 0、\n    // 第 2 列＝R_dir 列 2（Rz 右乘只混前两列）。\n    const double cr = std::cos(roll);\n    const double sr = std::sin(roll);\n    const rw::math::Rotation3D<double> rRoll(\n        m00 * cr + m01 * sr, m01 * cr - m00 * sr, m02,\n        m10 * cr + m11 * sr, m11 * cr - m10 * sr, m12,\n        m20 * cr + m21 * sr, m21 * cr - m20 * sr, m22);\n    return rw::math::Transform3D<double>(position, rRoll);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.validateBoxOrientation",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::validateBoxOrientation",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "symbol": "validateBoxOrientation",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::validateBoxOrientation",
+      "startLine": 56,
+      "endLine": 78,
+      "sha256": "38377ca04a86950a492fdf1bf380f070d0c9164122edba7ecb43a9c76285c3e8"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+    "region": "void validateBoxOrientation(const rw::math::Rotation3D<double>& r)\n{\n    for (int i = 0; i < 3; ++i) {\n        for (int j = 0; j < 3; ++j) {\n            double dot = 0;\n            for (int k = 0; k < 3; ++k) {\n                if (!std::isfinite(r(k, i))) {\n                    throw std::invalid_argument(\"区域orientationInBase非有限：请修正参考系旋转\");\n                }\n                dot += r(k, i) * r(k, j);\n            }\n            if (std::fabs(dot - (i == j ? 1.0 : 0.0)) > 1e-9) {\n                throw std::invalid_argument(\"区域orientationInBase非正交：请使用刚体参考系\");\n            }\n        }\n    }\n    const double det = r(0,0)*(r(1,1)*r(2,2)-r(1,2)*r(2,1))\n        - r(0,1)*(r(1,0)*r(2,2)-r(1,2)*r(2,0))\n        + r(0,2)*(r(1,0)*r(2,1)-r(1,1)*r(2,0));\n    if (std::fabs(det - 1.0) > 1e-9) {\n        throw std::invalid_argument(\"区域orientationInBase不是右手旋转：请修正参考系\");\n    }\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.generateRandomPositions",
+    "cap": "MATH-RANDOM",
+    "requirements": [
+      "KIN-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::generateRandomPositions",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "symbol": "generateRandomPositions",
+      "qualifiedSymbol": "sdurws::ird::kinematics::generateRandomPositions",
+      "startLine": 308,
+      "endLine": 328,
+      "sha256": "199821dbedf3c4d19e0b608734a6986df3d87b1a7e345b7520b499f63516ed1f"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "固定样本序/64位种子/盒体心与分片语义不能因API替换漂移；Random是全局32位源，未认定可直接复用",
+    "region": "generateRandomPositions(const RegionBox& box, std::uint32_t count, std::uint64_t seed)\n{\n    validateBoxOrientation(box.orientationInBase);\n    std::vector<rw::math::Vector3D<double>> out;\n    out.reserve(count);\n    // 种子派生确定性序列（黄金锁定）：第 k 个样本状态＝(seed, k) 完整\n    // 64 位混合（streamSeedFor——KIN-P5/审查 A06：旧\"seed·2³²＋k\"丢弃\n    // seed 高 32 位；换用混合派生属算法语义变更，样本集身份经 IRDSSID\n    // codec 版本 1→2 同步升级——见 sampleSetIdentity 注），逐轴连续派生\n    // x→y→z。\n    for (std::uint32_t k = 0; k < count; ++k) {\n        std::uint64_t state = streamSeedFor(seed, k);\n        const double u0 = unitFromU64(splitmix64(state));\n        const double u1 = unitFromU64(splitmix64(state));\n        const double u2 = unitFromU64(splitmix64(state));\n        out.push_back(orientBoxPoint(box, {box.center[0] - box.size[0] / 2.0 + u0 * box.size[0],\n                         box.center[1] - box.size[1] / 2.0 + u1 * box.size[1],\n                         box.center[2] - box.size[2] / 2.0 + u2 * box.size[2]}));\n    }\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.generateGridPositions",
+    "cap": "NONE",
+    "requirements": [
+      "KIN-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::generateGridPositions",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "symbol": "generateGridPositions",
+      "qualifiedSymbol": "sdurws::ird::kinematics::generateGridPositions",
+      "startLine": 261,
+      "endLine": 305,
+      "sha256": "8566c06f93c2fca8dc68f43b151a1f1807405aaa8f6f31cb9c60aac47cd10a7a"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "确定性体心网格枚举，不使用随机数；保留x慢/z快顺序、旋转盒、零计数及乘积回卷拒绝。相邻QSampler/HyperSphere不是相同枚举契约，继续核工具复用，不错误绑定Random或提前判business-specific",
+    "region": "generateGridPositions(const RegionBox& box, const std::array<std::uint32_t, 3>& counts)\n{\n    validateBoxOrientation(box.orientationInBase);\n    std::vector<rw::math::Vector3D<double>> out;\n    // 零样本判定前置：任一轴计数 0 → 乘积 0（I-REQ-6 零样本场景——空集\n    // 合法，评估面判 DataInsufficient；此处不拒）。★ 审查 G19 防御：乘前\n    // 回卷检查（病态大计数三轴乘积模 2⁶⁴ 回卷为小值→reserve/枚举失真\n    // ——拒绝而非静默；与 plannedPositionSampleCount 防御同源）。\n    constexpr std::uint64_t kU64Max = std::numeric_limits<std::uint64_t>::max();\n    std::uint64_t product = 1U;\n    for (const std::uint32_t c : counts) {\n        if (c != 0U && product > kU64Max / c) {\n            throw std::invalid_argument(\n                \"generateGridPositions: 区域网格计数乘积超出 u64（回卷防护\"\n                \"——计划计数损坏）\");\n        }\n        product *= c;\n    }\n    if (product == 0) {\n        return out;\n    }\n    out.reserve(static_cast<std::size_t>(product));\n\n    // 盒端点（基座系 {B}，单位 m）。\n    const double minX = box.center[0] - box.size[0] / 2.0;\n    const double minY = box.center[1] - box.size[1] / 2.0;\n    const double minZ = box.center[2] - box.size[2] / 2.0;\n\n    // 体心规则（黄金锁定）：格心＝min＋(k＋0.5)·格宽；枚举序＝x 最慢、\n    // z 最快（index＝(ix·counts[1]＋iy)·counts[2]＋iz——登记序）。\n    for (std::uint32_t ix = 0; ix < counts[0]; ++ix) {\n        const double x = minX + (static_cast<double>(ix) + 0.5)\n            * (box.size[0] / static_cast<double>(counts[0]));\n        for (std::uint32_t iy = 0; iy < counts[1]; ++iy) {\n            const double y = minY + (static_cast<double>(iy) + 0.5)\n                * (box.size[1] / static_cast<double>(counts[1]));\n            for (std::uint32_t iz = 0; iz < counts[2]; ++iz) {\n                const double z = minZ + (static_cast<double>(iz) + 0.5)\n                    * (box.size[2] / static_cast<double>(counts[2]));\n                out.push_back(orientBoxPoint(box, {x, y, z}));\n            }\n        }\n    }\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.generateDirections",
+    "cap": "GEOM-SPHERE-SAMPLING",
+    "requirements": [
+      "KIN-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::generateDirections",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "symbol": "generateDirections",
+      "qualifiedSymbol": "sdurws::ird::kinematics::generateDirections",
+      "startLine": 330,
+      "endLine": 344,
+      "sha256": "416314cae75131fd0fe48d4a509f4a1f0402c9812fa7784b1d7718bdff7788d1"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "固定N斐波那契方向集与delta分辨率球面分布不同；不以分布近似掩盖样本数量/身份改变",
+    "region": "std::vector<rw::math::Vector3D<double>> generateDirections(std::uint32_t count)\n{\n    std::vector<rw::math::Vector3D<double>> out;\n    out.reserve(count);\n    // 斐波那契螺旋（黄金锁定）：z_j＝1−(2j＋1)/N、r_j＝√(1−z_j²)、\n    // φ_j＝j·黄金角——球面近似均匀方向集；N=1 退化 z=0、r=1、φ=0＝+X。\n    for (std::uint32_t j = 0; j < count; ++j) {\n        const double n = static_cast<double>(count);\n        const double z = 1.0 - (2.0 * static_cast<double>(j) + 1.0) / n;\n        const double r = std::sqrt(std::max(0.0, 1.0 - z * z));  // 下截断防浮点负\n        const double phi = static_cast<double>(j) * kFibonacciGoldenAngle;\n        out.emplace_back(r * std::cos(phi), r * std::sin(phi), z);\n    }\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.splitmix64",
+    "cap": "MATH-RANDOM",
+    "requirements": [
+      "KIN-13"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::kseed::splitmix64",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
+      "symbol": "splitmix64",
+      "qualifiedSymbol": "sdurws::ird::kinematics::kseed::splitmix64",
+      "startLine": 34,
+      "endLine": 41,
+      "sha256": "20cb6960ed85c226852da4f6c3379f0b0d3e1ebb1bd6af795c320bb27aceefb8"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移",
+    "region": "inline std::uint64_t splitmix64(std::uint64_t& state)\n{\n    state += 0x9E3779B97F4A7C15ull;\n    std::uint64_t z = state;\n    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ull;\n    z = (z ^ (z >> 27)) * 0x94D049BB133111EBull;\n    return z ^ (z >> 31);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.streamSeedFor",
+    "cap": "MATH-RANDOM",
+    "requirements": [
+      "KIN-13"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::kseed::streamSeedFor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
+      "symbol": "streamSeedFor",
+      "qualifiedSymbol": "sdurws::ird::kinematics::kseed::streamSeedFor",
+      "startLine": 61,
+      "endLine": 69,
+      "sha256": "7fb6c98bd15ed4e30c9ca680a57fef281720f747db6277dbebecc0407017b836"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移",
+    "region": "inline std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)\n{\n    std::uint64_t s = seed;\n    const std::uint64_t a = splitmix64(s);\n    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;\n    const std::uint64_t b = splitmix64(t);\n    std::uint64_t u = a ^ b;\n    return splitmix64(u);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.transposeOf",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::transposeOf",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "transposeOf",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::transposeOf",
+      "startLine": 221,
+      "endLine": 225,
+      "sha256": "055338aeb134a298ea76e82738ca21dc425a4def33832793bf03952402b52397"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+    "region": "rw::math::Rotation3D<double> transposeOf(const rw::math::Rotation3D<double>& r)\n{\n    return rw::math::Rotation3D<double>(\n        r(0,0),r(1,0),r(2,0), r(0,1),r(1,1),r(2,1), r(0,2),r(1,2),r(2,2));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.composeOf",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::composeOf",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "composeOf",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::composeOf",
+      "startLine": 228,
+      "endLine": 241,
+      "sha256": "598917da5e8914f091756f7c477869aa9b4cb69191c54ba7a35d42257f83dc09"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+    "region": "rw::math::Rotation3D<double> composeOf(const rw::math::Rotation3D<double>& a,\n                                     const rw::math::Rotation3D<double>& b)\n{\n    return rw::math::Rotation3D<double>(\n        a(0,0)*b(0,0)+a(0,1)*b(1,0)+a(0,2)*b(2,0),\n        a(0,0)*b(0,1)+a(0,1)*b(1,1)+a(0,2)*b(2,1),\n        a(0,0)*b(0,2)+a(0,1)*b(1,2)+a(0,2)*b(2,2),\n        a(1,0)*b(0,0)+a(1,1)*b(1,0)+a(1,2)*b(2,0),\n        a(1,0)*b(0,1)+a(1,1)*b(1,1)+a(1,2)*b(2,1),\n        a(1,0)*b(0,2)+a(1,1)*b(1,2)+a(1,2)*b(2,2),\n        a(2,0)*b(0,0)+a(2,1)*b(1,0)+a(2,2)*b(2,0),\n        a(2,0)*b(0,1)+a(2,1)*b(1,1)+a(2,2)*b(2,1),\n        a(2,0)*b(0,2)+a(2,1)*b(1,2)+a(2,2)*b(2,2));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.zyxEulerAngles",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::zyxEulerAngles",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "zyxEulerAngles",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::zyxEulerAngles",
+      "startLine": 194,
+      "endLine": 212,
+      "sha256": "2c8ffce2e21fb485d7e4fbab6a0578e030eb9a95ad85b0705c88e34eed29d590"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+    "region": "std::array<double, 3> zyxEulerAngles(const rw::math::Rotation3D<double>& r)\n{\n    constexpr double kGimbalEpsilon = 1e-5;\n    constexpr double kHalfPi = 1.57079632679489661923;\n    const double cosPitch = std::sqrt(r(0, 0) * r(0, 0) + r(1, 0) * r(1, 0));\n    const double sinPitch = -r(2, 0);\n    std::array<double, 3> a{}; // roll(X), pitch(Y), yaw(Z)，单位 rad\n    if (cosPitch < kGimbalEpsilon) {\n        // 万向锁时固定 roll=0，yaw 从剩余矩阵项确定（两分支同号——见上注）。\n        a[0] = 0.0;\n        a[1] = sinPitch < 0.0 ? -kHalfPi : kHalfPi;\n        a[2] = -std::atan2(r(0, 1), r(1, 1));\n    } else {\n        a[1] = std::atan2(sinPitch, cosPitch);\n        a[0] = std::atan2(r(2, 1), r(2, 2));\n        a[2] = std::atan2(r(1, 0), r(0, 0));\n    }\n    return a;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.poseError",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::poseError",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "poseError",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::poseError",
+      "startLine": 150,
+      "endLine": 183,
+      "sha256": "f7f80349534a530691d31b2d61681ad7b13e26e908f623496a3d923ab1a2deff"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+    "region": "Eigen::Matrix<double, 6, 1> poseError(const rw::math::Transform3D<double>& target,\n                                      const rw::math::Transform3D<double>& tcpInBase,\n                                      double& posResidualOut,\n                                      double& oriResidualOut)\n{\n    Eigen::Matrix<double, 6, 1> e;\n    // 位置误差（m——基座系逐分量差后取模）。\n    const double dx = target.P()[0] - tcpInBase.P()[0];\n    const double dy = target.P()[1] - tcpInBase.P()[1];\n    const double dz = target.P()[2] - tcpInBase.P()[2];\n    e(0) = dx;\n    e(1) = dy;\n    e(2) = dz;\n    posResidualOut = std::sqrt(dx * dx + dy * dy + dz * dz);\n\n    // 姿态误差（rad）：R_err＝R_target·R_tcpᵀ 的旋转向量——模长即转角。\n    Eigen::Matrix3d rTcp;\n    Eigen::Matrix3d rTarget;\n    for (int i = 0; i < 3; ++i) {\n        for (int j = 0; j < 3; ++j) {\n            rTcp(i, j) = tcpInBase.R()(static_cast<std::size_t>(i),\n                                       static_cast<std::size_t>(j));\n            rTarget(i, j) = target.R()(static_cast<std::size_t>(i),\n                                       static_cast<std::size_t>(j));\n        }\n    }\n    const Eigen::AngleAxisd aa(rTarget * rTcp.transpose());\n    const Eigen::Vector3d rotvec = aa.axis() * aa.angle();\n    e(3) = rotvec(0);\n    e(4) = rotvec(1);\n    e(5) = rotvec(2);\n    oriResidualOut = aa.angle() < 0.0 ? -aa.angle() : aa.angle();\n    return e;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.constrainedPoseError",
+    "cap": "KIN-IK",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedPoseError",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "constrainedPoseError",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedPoseError",
+      "startLine": 295,
+      "endLine": 322,
+      "sha256": "7e6817364f1f0bc4a3039d6aceb8dbe5b4be08559547c46b2f666d0c2102022f"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
+    "region": "Eigen::Matrix<double,6,1> constrainedPoseError(\n    const rw::math::Transform3D<double>& target,\n    const rw::math::Transform3D<double>& actual,\n    const TaskPoseConstraint& constraint,double& posResidual,double& oriResidual)\n{\n    const auto& rr=constraint.referenceInBase;\n    const auto refT=transposeOf(rr);\n    const auto desired=constraint.allowToolRoll\n        ?nearestToolRollTarget(target.R(),actual.R(),constraint.rollRange):target.R();\n    const auto targetRpy=zyxEulerAngles(composeOf(refT,desired));\n    const auto actualRpy=zyxEulerAngles(composeOf(refT,actual.R()));\n    const auto dp=target.P()-actual.P();\n    Eigen::Matrix<double,6,1> e=Eigen::Matrix<double,6,1>::Zero();\n    double p2=0.0,r2=0.0;\n    for(int i=0;i<3;++i) {\n        if(constraint.constrainedDof[static_cast<std::size_t>(i)]) {\n            e(i)=rr(0,i)*dp[0]+rr(1,i)*dp[1]+rr(2,i)*dp[2];\n            p2+=e(i)*e(i);\n        }\n        if(constraint.constrainedDof[static_cast<std::size_t>(3+i)]) {\n            e(3+i)=wrapAngle(targetRpy[static_cast<std::size_t>(i)]\n                            -actualRpy[static_cast<std::size_t>(i)]);\n            r2+=e(3+i)*e(3+i);\n        }\n    }\n    posResidual=std::sqrt(p2);oriResidual=std::sqrt(r2);\n    return e;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.constrainedDampedLeastSquaresStep",
+    "cap": "KIN-IK",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedDampedLeastSquaresStep",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "constrainedDampedLeastSquaresStep",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedDampedLeastSquaresStep",
+      "startLine": 336,
+      "endLine": 368,
+      "sha256": "50f918ccd6886abc35cb9b4448607e5d78b0ec1bc4ed026c37e872203609f6d1"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
+    "region": "std::optional<Eigen::VectorXd> constrainedDampedLeastSquaresStep(\n    const IkRequest& request,const std::vector<double>& q,\n    const Eigen::Matrix<double,6,1>& e,std::string& failure)\n{\n    constexpr double kDifferenceStep=1e-7;\n    const auto dof=q.size();\n    Eigen::MatrixXd j=Eigen::MatrixXd::Zero(6,static_cast<Eigen::Index>(dof));\n    const FkEvaluator fk;\n    for(std::size_t column=0;column<dof;++column) {\n        auto plus=q,minus=q;\n        plus[column]+=kDifferenceStep;minus[column]-=kDifferenceStep;\n        const auto fp=fk.evaluate(*request.modelView,request.tcp,plus);\n        const auto fm=fk.evaluate(*request.modelView,request.tcp,minus);\n        if(!fp.ok()||!fm.ok()) {\n            failure=\"约束Jacobian差分FK失败，轴\"+std::to_string(column)+\": \"\n                +(!fp.ok()?fp.error().detail:fm.error().detail);\n            return std::nullopt;\n        }\n        double unusedPosition=0.0,unusedOrientation=0.0;\n        const auto ep=constrainedPoseError(request.targetInBase,fp.get().tcpInBase,\n            *request.taskConstraint,unusedPosition,unusedOrientation);\n        const auto em=constrainedPoseError(request.targetInBase,fm.get().tcpInBase,\n            *request.taskConstraint,unusedPosition,unusedOrientation);\n        for(int row=0;row<6;++row) {\n            const double difference=row>=3?wrapAngle(ep(row)-em(row)):ep(row)-em(row);\n            j(row,static_cast<Eigen::Index>(column))=-difference/(2.0*kDifferenceStep);\n        }\n    }\n    Eigen::MatrixXd normal=j*j.transpose();\n    const double lambda2=kIkDampingLambda*kIkDampingLambda;\n    for(int i=0;i<6;++i) normal(i,i)+=lambda2;\n    return Eigen::VectorXd(j.transpose()*normal.llt().solve(e));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.dampedLeastSquaresStep",
+    "cap": "KIN-IK",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::dampedLeastSquaresStep",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "dampedLeastSquaresStep",
+      "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::dampedLeastSquaresStep",
+      "startLine": 379,
+      "endLine": 401,
+      "sha256": "c40ff9fd480009336e53de69a7c812acaca2f7cf00482354bc4677f51e4bc328"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
+    "region": "Eigen::VectorXd dampedLeastSquaresStep(const std::vector<double>& jacobianRowMajor,\n                                       std::size_t dof,\n                                       std::size_t taskDim,\n                                       const Eigen::VectorXd& e)\n{\n    Eigen::MatrixXd J(static_cast<Eigen::Index>(taskDim),\n                      static_cast<Eigen::Index>(dof));\n    for (std::size_t r = 0; r < taskDim; ++r) {\n        for (std::size_t c = 0; c < dof; ++c) {\n            J(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c)) =\n                jacobianRowMajor[r * dof + c];\n        }\n    }\n    // 正规方程矩阵 A＝JₜJₜᵀ＋λ²I_m（m×m 对称正定——λ>0 保证可逆；LLT\n    // 单线程固定算法——确定性）。\n    Eigen::MatrixXd A = J * J.transpose();\n    const double lambda2 = kIkDampingLambda * kIkDampingLambda;\n    for (Eigen::Index i = 0; i < static_cast<Eigen::Index>(taskDim); ++i) {\n        A(i, i) += lambda2;\n    }\n    const Eigen::VectorXd x = A.llt().solve(e);\n    return J.transpose() * x;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "id": "kinematics.makeInitialValues",
+    "cap": "MATH-RANDOM",
+    "requirements": [
+      "KIN-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::kinematics::makeInitialValues",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "symbol": "makeInitialValues",
+      "qualifiedSymbol": "sdurws::ird::kinematics::makeInitialValues",
+      "startLine": 503,
+      "endLine": 559,
+      "sha256": "439a3f5ca92341936ca91e7814cf91cfc4669d3d161138748511912fe8faad2b"
+    },
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "Reference/JointGrid/64位SeededRandom按实际策略分别审计，不能整函数标业务专属；候选QSampler有限序列/随机边界仍待核",
+    "region": "std::vector<std::vector<double>> makeInitialValues(InitialValueStrategy strategy,\n                                                   std::uint32_t count,\n                                                   std::uint64_t seed,\n                                                   const std::vector<JointInterval>& intervals,\n                                                   const std::vector<double>& referenceQ)\n{\n    std::vector<std::vector<double>> out;\n    switch (strategy) {\n    case InitialValueStrategy::ReferenceQ: {\n        // 单初值＝显式参考构型（D-KIN-4 同源输入——初值与排序参考一致）。\n        out.push_back(referenceQ);\n        break;\n    }\n    case InitialValueStrategy::SeededRandom: {\n        // seed 派生确定性序列：第 k 个初值状态＝(seed, k) 完整 64 位混合\n        // （streamSeedFor——KIN-P5/审查 A06：旧\"seed·2³²＋k\"在模 2⁶⁴\n        // 算术下丢弃 seed 高 32 位，不同高位种子假借同序列；混合派生后\n        // 逐轴 u_k,i∈[0,1)（splitmix64 按轴序连续派生——同 seed 同矩阵）。\n        out.reserve(count);\n        for (std::uint32_t k = 0; k < count; ++k) {\n            std::uint64_t state = streamSeedFor(seed, k);  // 初值序入混合\n            std::vector<double> q;\n            q.reserve(intervals.size());\n            for (const auto& itv : intervals) {\n                double lo = 0.0;\n                double hi = 0.0;\n                axisRange(itv, lo, hi);\n                q.push_back(lo + unitFromU64(splitmix64(state)) * (hi - lo));\n            }\n            out.push_back(std::move(q));\n        }\n        break;\n    }\n    case InitialValueStrategy::JointGrid: {\n        // 限位空间均分：t_k＝k/(count−1)（count=1 → 中点 0.5）；沿评价\n        // 区间对角线取点——不做自由度组合展开（登记随卡 §14.6 v0.4）。\n        const std::uint32_t n = count == 0U ? 1U : count;\n        out.reserve(n);\n        for (std::uint32_t k = 0; k < n; ++k) {\n            const double t = (n == 1U) ? 0.5\n                                       : static_cast<double>(k)\n                                             / static_cast<double>(n - 1U);\n            std::vector<double> q;\n            q.reserve(intervals.size());\n            for (const auto& itv : intervals) {\n                double lo = 0.0;\n                double hi = 0.0;\n                axisRange(itv, lo, hi);\n                q.push_back(lo + t * (hi - lo));\n            }\n            out.push_back(std::move(q));\n        }\n        break;\n    }\n    }\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotVec",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotVec",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rotVec",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotVec",
+      "startLine": 169,
+      "endLine": 176,
+      "sha256": "260ec79da63465428730a2ed45e5d0024c8a4980dea8a7b8b4c136973f05536b"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Vector3D<double> rotVec(const rw::math::Rotation3D<double>& r,\n                                 const rw::math::Vector3D<double>& v)\n{\n    return rw::math::Vector3D<double>(\n        r(0, 0) * v[0] + r(0, 1) * v[1] + r(0, 2) * v[2],\n        r(1, 0) * v[0] + r(1, 1) * v[1] + r(1, 2) * v[2],\n        r(2, 0) * v[0] + r(2, 1) * v[1] + r(2, 2) * v[2]);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotMul",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotMul",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rotMul",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotMul",
+      "startLine": 181,
+      "endLine": 193,
+      "sha256": "3f4112172f7ba37c2cf4c441f0428c5c8d9240d007fb45ef76c84ce5c15c0b8d"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Rotation3D<double> rotMul(const rw::math::Rotation3D<double>& ra,\n                                    const rw::math::Rotation3D<double>& rb)\n{\n    rw::math::Rotation3D<double> out;\n    for (std::size_t i = 0; i < 3; ++i) {\n        for (std::size_t j = 0; j < 3; ++j) {\n            double s = 0.0;\n            for (std::size_t k = 0; k < 3; ++k) { s += ra(i, k) * rb(k, j); }\n            out(i, j) = s;\n        }\n    }\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.transformMul",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::transformMul",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "transformMul",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::transformMul",
+      "startLine": 196,
+      "endLine": 203,
+      "sha256": "ebb72c65a05976ff5967fa3e7d5b06bd62de78635da4b7d163907a1e1fd90e26"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Transform3D<double> transformMul(const rw::math::Transform3D<double>& ta,\n                                           const rw::math::Transform3D<double>& tb)\n{\n    const rw::math::Rotation3D<double> r = rotMul(ta.R(), tb.R());\n    const rw::math::Vector3D<double> pb = tb.P();\n    const rw::math::Vector3D<double> p = rotVec(ta.R(), pb) + ta.P();\n    return rw::math::Transform3D<double>(p, r);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotZ",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotZ",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rotZ",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotZ",
+      "startLine": 206,
+      "endLine": 213,
+      "sha256": "1011fffbf0bfc5904c6197a5311ae462179a78182bdf99165a99aae9ab4e7537"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Rotation3D<double> rotZ(double psi)\n{\n    const double c = std::cos(psi);\n    const double s = std::sin(psi);\n    return rw::math::Rotation3D<double>(c, -s, 0.0,\n                                        s, c, 0.0,\n                                        0.0, 0.0, 1.0);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotX",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotX",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rotX",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotX",
+      "startLine": 216,
+      "endLine": 223,
+      "sha256": "a6479cf20423d54e01fbb415214d50f4312345636071e35ebb2e70a826659916"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Rotation3D<double> rotX(double alpha)\n{\n    const double c = std::cos(alpha);\n    const double s = std::sin(alpha);\n    return rw::math::Rotation3D<double>(1.0, 0.0, 0.0,\n                                        0.0, c, -s,\n                                        0.0, s, c);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.axisAngleRotation",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::axisAngleRotation",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "axisAngleRotation",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::axisAngleRotation",
+      "startLine": 228,
+      "endLine": 241,
+      "sha256": "a85ed8bb72e4ea83ffd4b2e23cef322d24930b08b7f424dbaac06a1952f4793a"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Rotation3D<double> axisAngleRotation(const rw::math::Vector3D<double>& axis,\n                                               double angle)\n{\n    const double c = std::cos(angle);\n    const double s = std::sin(angle);\n    const double t = 1.0 - c;\n    const double kx = axis[0];\n    const double ky = axis[1];\n    const double kz = axis[2];\n    return rw::math::Rotation3D<double>(\n        c + t * kx * kx,      t * kx * ky - s * kz, t * kx * kz + s * ky,\n        t * kx * ky + s * kz, c + t * ky * ky,      t * ky * kz - s * kx,\n        t * kx * kz - s * ky, t * ky * kz + s * kx, c + t * kz * kz);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotateTranspose",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTranspose",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rotateTranspose",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTranspose",
+      "startLine": 888,
+      "endLine": 895,
+      "sha256": "573a6ea9dd10a6a1b4878218f974bf4d10b0261a6158652b6d41f648efaeeb5d"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Vector3D<double> rotateTranspose(const rw::math::Rotation3D<double>& r,\n                                           const rw::math::Vector3D<double>& v)\n{\n    return rw::math::Vector3D<double>(\n        r(0, 0) * v[0] + r(1, 0) * v[1] + r(2, 0) * v[2],\n        r(0, 1) * v[0] + r(1, 1) * v[1] + r(2, 1) * v[2],\n        r(0, 2) * v[0] + r(1, 2) * v[1] + r(2, 2) * v[2]);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotateTransposeFrame",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTransposeFrame",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rotateTransposeFrame",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTransposeFrame",
+      "startLine": 898,
+      "endLine": 910,
+      "sha256": "2b03a4f585df0172b11d2be654f5a367bf20143f50facf555598875d225495e1"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "rw::math::Rotation3D<double> rotateTransposeFrame(const rw::math::Rotation3D<double>& r,\n                                                  const rw::math::Rotation3D<double>& rb)\n{\n    rw::math::Rotation3D<double> out;\n    for (std::size_t i = 0; i < 3; ++i) {\n        for (std::size_t j = 0; j < 3; ++j) {\n            double s = 0.0;\n            for (std::size_t k = 0; k < 3; ++k) { s += r(k, i) * rb(k, j); }\n            out(i, j) = s;\n        }\n    }\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotationAngleBetween",
+    "cap": "MATH-ROT",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationAngleBetween",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rotationAngleBetween",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationAngleBetween",
+      "startLine": 372,
+      "endLine": 390,
+      "sha256": "6da87b8ce90e5b8acd9b69b96a23f5ac3dbb7a473eb175f8395505471867e2a9"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+    "region": "double rotationAngleBetween(const rw::math::Rotation3D<double>& ra,\n                            const rw::math::Rotation3D<double>& rb)\n{\n    // Rrel = RAᵀ·RB（转置手工逐元素——Rotation3D::inverse 为外联符号面，\n    // 冒烟纪律；正交阵逆＝转置）。\n    rw::math::Rotation3D<double> rat;\n    for (std::size_t i = 0; i < 3; ++i) {\n        for (std::size_t j = 0; j < 3; ++j) {\n            rat(i, j) = ra(j, i);\n        }\n    }\n    const rw::math::Rotation3D<double> rel = rotMul(rat, rb);\n    const double s = std::sqrt(\n        (rel(2, 1) - rel(1, 2)) * (rel(2, 1) - rel(1, 2))\n        + (rel(0, 2) - rel(2, 0)) * (rel(0, 2) - rel(2, 0))\n        + (rel(1, 0) - rel(0, 1)) * (rel(1, 0) - rel(0, 1))) / 2.0;\n    const double c = (rel(0, 0) + rel(1, 1) + rel(2, 2) - 1.0) / 2.0;\n    return std::atan2(s, c);\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.dhCoreTransform",
+    "cap": "MATH-DH",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhCoreTransform",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "dhCoreTransform",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhCoreTransform",
+      "startLine": 260,
+      "endLine": 264,
+      "sha256": "22f301776c472452b90974678161712761d2263e00ba53c02abf32aaceb58346"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "DH段拼接候选，核标准/改进约定、theta offset和每段在链中的先后；不能误用craigDH替代标准DH",
+    "region": "rw::math::Transform3D<double> dhCoreTransform(double theta, double d)\n{\n    return rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.0, 0.0, d),\n                                         rotZ(theta));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.dhStaticSegment",
+    "cap": "MATH-DH",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhStaticSegment",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "dhStaticSegment",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhStaticSegment",
+      "startLine": 273,
+      "endLine": 277,
+      "sha256": "40a50af819fbcaf100b6548b49ed917315801d3ba0e793349fd6d7dc60f16f4a"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "DH段拼接候选，核标准/改进约定、theta offset和每段在链中的先后；不能误用craigDH替代标准DH",
+    "region": "rw::math::Transform3D<double> dhStaticSegment(double a, double alpha)\n{\n    return rw::math::Transform3D<double>(rw::math::Vector3D<double>(a, 0.0, 0.0),\n                                         rotX(alpha));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.dhRebuildStep",
+    "cap": "MATH-DH",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhRebuildStep",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "dhRebuildStep",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhRebuildStep",
+      "startLine": 300,
+      "endLine": 317,
+      "sha256": "d61c037fee4826aa9eff9cf8e46b1f8564e2e6b818cb9adbb52928e98e8aa65c"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "DH段拼接候选，核标准/改进约定、theta offset和每段在链中的先后；不能误用craigDH替代标准DH",
+    "region": "rw::math::Transform3D<double> dhRebuildStep(const std::vector<double>& x,\n                                            std::size_t j, std::size_t count)\n{\n    // 头部静段：上一关节的 a/α（x[4(j-1)+2]、x[4(j-1)+3]）；j=0 无头部\n    // （S_{-1}＝恒等——基座侧不在 DH 参数内，§7.4）。\n    rw::math::Transform3D<double> step = identityTransform();\n    if (j > 0) {\n        step = transformMul(step, dhStaticSegment(x[4 * (j - 1) + 2], x[4 * (j - 1) + 3]));\n    }\n    // 纯 z 螺旋核心（θ_offset 单独入几何，zeroOffset 不入——F-590 同步）。\n    step = transformMul(step, dhCoreTransform(x[4 * j], x[4 * j + 1]));\n    // 链尾静段：仅末关节携带本关节 a/α（中间关节的静段已作为下一关节\n    // 头部落位——同一静段不重复入链）。\n    if (j + 1 == count) {\n        step = transformMul(step, dhStaticSegment(x[4 * j + 2], x[4 * j + 3]));\n    }\n    return step;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.solveLinearSystem",
+    "cap": "NONE",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::solveLinearSystem",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "solveLinearSystem",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::solveLinearSystem",
+      "startLine": 504,
+      "endLine": 543,
+      "sha256": "acc613e41483a0d83ee98d1bcb461c148ac71bc09c669965283ab94e23dcd657"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+    "region": "bool solveLinearSystem(std::vector<double> a, std::vector<double> b, std::size_t n,\n                       double relativeTol, std::vector<double>& out)\n{\n    // 主元判据的绝对阈值＝系数矩阵最大绝对值×相对容差（确定性——比较序固定）。\n    double maxAbs = 0.0;\n    for (const double v : a) { maxAbs = std::max(maxAbs, std::abs(v)); }\n    const double pivotTol = maxAbs * relativeTol;\n    for (std::size_t col = 0; col < n; ++col) {\n        // 部分主元：当前列在剩余行中选最大幅值行（确定性比较：严格大于才换序）。\n        std::size_t pivot = col;\n        double best = std::abs(a[col * n + col]);\n        for (std::size_t row = col + 1; row < n; ++row) {\n            const double v = std::abs(a[row * n + col]);\n            if (v > best) {\n                best = v;\n                pivot = row;\n            }\n        }\n        if (!(best > pivotTol)) { return false; }  // 近奇异——主元不足\n        if (pivot != col) {\n            for (std::size_t j = 0; j < n; ++j) { std::swap(a[col * n + j], a[pivot * n + j]); }\n            std::swap(b[col], b[pivot]);\n        }\n        // 消元（固定运算序——行优先、逐列）。\n        for (std::size_t row = col + 1; row < n; ++row) {\n            const double factor = a[row * n + col] / a[col * n + col];\n            if (factor == 0.0) { continue; }\n            for (std::size_t j = col; j < n; ++j) { a[row * n + j] -= factor * a[col * n + j]; }\n            b[row] -= factor * b[col];\n        }\n    }\n    // 回代（列逆序固定）。\n    out.assign(n, 0.0);\n    for (std::size_t i = n; i-- > 0;) {\n        double s = b[i];\n        for (std::size_t j = i + 1; j < n; ++j) { s -= a[i * n + j] * out[j]; }\n        out[i] = s / a[i * n + i];\n    }\n    return true;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.numericJacobian",
+    "cap": "NONE",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::numericJacobian",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "numericJacobian",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::numericJacobian",
+      "startLine": 553,
+      "endLine": 584,
+      "sha256": "04a69f6837a314b7cf4f80df4056162261ba6b16a86bdcd3fbce3319b9e070b5"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+    "region": "std::vector<double> numericJacobian(const std::vector<double>& x,\n                                    const SolverTargets& targets)\n{\n    const std::vector<double> r0 = residualOf(x, targets);\n    const std::size_t m = r0.size();\n    const std::size_t n = x.size();\n    std::vector<double> j(m * n, 0.0);\n    std::vector<double> xa = x;\n    std::vector<double> xb = x;\n    for (std::size_t jCol = 0; jCol < n; ++jCol) {\n        xa = x;\n        xb = x;\n        const std::size_t coordinate = jCol % 4U;\n        // 长度坐标以 1 mm 作为零附近的相对步长下限，而不是直接使用整条\n        // 链的 positionScaleM；否则一个 2 mm 的 a 参数会被迫用 1 m 级步长，\n        // 小参数的导数被截断误差淹没。大参数仍按自身幅值放大步长。\n        const double referenceScale = (coordinate == 0U || coordinate == 3U)\n                                          ? 1.0\n                                          : std::max(kMinimumPositionScaleM,\n                                                     std::abs(x[jCol]));\n        const double h = kDerivativeRelativeStep\n                       * std::max(referenceScale, std::abs(x[jCol]));\n        xa[jCol] += h;\n        xb[jCol] -= h;\n        const std::vector<double> ra = residualOf(xa, targets);\n        const std::vector<double> rb = residualOf(xb, targets);\n        for (std::size_t iRow = 0; iRow < m; ++iRow) {\n            j[iRow * n + jCol] = (ra[iRow] - rb[iRow]) / (2.0 * h);\n        }\n    }\n    return j;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.lmSolve",
+    "cap": "NONE",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::lmSolve",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "lmSolve",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::lmSolve",
+      "startLine": 607,
+      "endLine": 723,
+      "sha256": "d55ec9434b5b4471aab56a7ef31f4807e7187f3f2fc693894202b5ec3722c190"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+    "region": "LmResult lmSolve(const SolverTargets& targets, std::vector<double> x0,\n                 const std::vector<bool>& optimizable)\n{\n    const std::size_t n = x0.size();\n    const std::size_t m = targets.size() * 6;\n\n    if (!std::isfinite(targets.positionScaleM)\n        || targets.positionScaleM > kMaximumPositionScaleM) {\n        return {DhConvergenceState::Diverged, x0};\n    }\n    std::vector<double> r = residualOf(x0, targets);\n    double cost = costOf(r);\n    // 初值即非有限（1e200 级溢出样本——AnalysisFailed UT 边界）：LM 迭代\n    // 无法在非有限代价面上进行，直接判发散（不产出参数——执行失败轴\n    // TASK-02，非语义结论）。\n    if (!std::isfinite(cost)) {\n        return {DhConvergenceState::Diverged, x0};  // 初值即溢出——发散\n    }\n\n    double lambda = kLambdaInit;\n    std::size_t stall = 0;\n    for (std::size_t iter = 0; iter < kMaxIterations; ++iter) {\n        // ---- 步 1：数值雅可比与正规方程系数（固定运算序）----\n        const std::vector<double> j = numericJacobian(x0, targets);\n        std::vector<double> jtj(n * n, 0.0);\n        std::vector<double> jtr(n, 0.0);\n        for (std::size_t iRow = 0; iRow < m; ++iRow) {\n            for (std::size_t jc = 0; jc < n; ++jc) {\n                const double v = j[iRow * n + jc];\n                if (v == 0.0) { continue; }  // 稀疏跳零——值恒等，仅省乘法\n                jtr[jc] += v * r[iRow];\n                for (std::size_t kc = jc; kc < n; ++kc) {\n                    jtj[jc * n + kc] += v * j[iRow * n + kc];\n                }\n            }\n        }\n        // 对称补全（上三角已累计——含自身转置项，确定性）。\n        for (std::size_t jc = 0; jc < n; ++jc) {\n            for (std::size_t kc = 0; kc < jc; ++kc) { jtj[jc * n + kc] = jtj[kc * n + jc]; }\n        }\n        // 有限性前置守卫：正规方程含 NaN/Inf（雅可比/残差溢出——数值\n        // 失败形态之一）即终止为 Diverged（AnalysisFailed——MDL-10），\n        // 绝不带非有限值进入求解（内层阻尼重试无界化的根源防线）。\n        bool finiteSystem = true;\n        for (std::size_t k = 0; finiteSystem && k < n; ++k) {\n            finiteSystem = std::isfinite(jtr[k]) && std::isfinite(jtj[k * n + k]);\n        }\n        if (!finiteSystem) {\n            return {DhConvergenceState::Diverged, x0};\n        }\n        // ---- 步 2：阻尼线搜索（λ 加速失败回退——有界尝试，确定性）----\n        std::vector<double> delta;\n        bool solved = false;\n        for (std::size_t attempt = 0; attempt < kMaxDampingAttempts; ++attempt) {\n            // LM 阻尼矩阵＝λ·diag(JᵀJ)（对角占优缩放；零对角元兜底 1——\n            // 防全零行（钉住坐标列恒零）致奇异）。\n            std::vector<double> damped = jtj;\n            for (std::size_t k = 0; k < n; ++k) {\n                const double diag = jtj[k * n + k];\n                damped[k * n + k] = diag + lambda * (diag > 0.0 ? diag : 1.0);\n            }\n            std::vector<double> negJtr(n, 0.0);\n            for (std::size_t k = 0; k < n; ++k) { negJtr[k] = -jtr[k]; }\n            if (solveLinearSystem(std::move(damped), std::move(negJtr), n,\n                                  kPivotRelativeTolerance, delta)) {\n                solved = true;\n                break;\n            }\n            lambda = std::min(lambda * 10.0, kLambdaMax);  // 奇异→加大阻尼重试\n        }\n        if (!solved) {\n            return {DhConvergenceState::Diverged, x0};  // 线性求解反复失败——发散\n        }\n        // 步长有限性守卫（奇异系统的病态解——非有限步长＝发散）。\n        for (std::size_t k = 0; k < n; ++k) {\n            if (!std::isfinite(delta[k])) {\n                return {DhConvergenceState::Diverged, x0};\n            }\n        }\n        // ---- 步 3：候选步评估（接受/拒绝——固定判据）----\n        std::vector<double> xNew = x0;\n        double maxStep = 0.0;\n        for (std::size_t k = 0; k < n; ++k) {\n            if (!optimizable[k]) { continue; }  // 钉住坐标不动（字典序定值约束）\n            xNew[k] += delta[k];\n            maxStep = std::max(maxStep, std::abs(delta[k]));\n        }\n        if (!std::isfinite(costOf(residualOf(xNew, targets)))) {\n            return {DhConvergenceState::Diverged, x0};  // 步进溢出——发散\n        }\n        const std::vector<double> rNew = residualOf(xNew, targets);\n        const double costNew = costOf(rNew);\n        if (!std::isfinite(costNew)) {\n            return {DhConvergenceState::Diverged, x0};\n        }\n        if (costNew < cost) {\n            // 接受：代价下降（严格比较——确定性）。\n            x0 = std::move(xNew);\n            r = std::move(rNew);\n            cost = costNew;\n            lambda = std::max(lambda / 10.0, kLambdaMin);\n            stall = 0;\n            if (maxStep <= kStepConvergenceBound || cost <= 0.0) {\n                return {DhConvergenceState::Converged, x0};  // 步长收敛\n            }\n        } else {\n            // 拒绝：加大阻尼收缩步长；连续停滞→数值极小点＝收敛。\n            lambda = std::min(lambda * 10.0, kLambdaMax);\n            if (++stall >= kStallLimit) {\n                return {DhConvergenceState::Converged, x0};\n            }\n        }\n    }\n    // 迭代预算耗尽仍未触发收敛判据＝不收敛（MDL-10\"不收敛/发散\"族——\n    // AnalysisFailed，不产出语义结论）。\n    return {DhConvergenceState::Diverged, x0};\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rankAndFreeColumns",
+    "cap": "NONE",
+    "requirements": [
+      "MDL-10"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rankAndFreeColumns",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "symbol": "rankAndFreeColumns",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rankAndFreeColumns",
+      "startLine": 735,
+      "endLine": 778,
+      "sha256": "9ebea29e7d49e4ad918732daa8842838128a9596edadc1300a648d9c4a5a08e9"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+    "region": "std::pair<std::size_t, std::vector<std::size_t>> rankAndFreeColumns(\n    const std::vector<double>& jacobian, std::size_t m, std::size_t n)\n{\n    std::vector<double> a = jacobian;  // 消元工作副本\n    double maxAbs = 0.0;\n    for (const double v : a) { maxAbs = std::max(maxAbs, std::abs(v)); }\n    const double pivotTol = maxAbs * kPivotRelativeTolerance;\n\n    std::vector<std::size_t> freeColumns;\n    std::size_t rank = 0;\n    std::size_t nextRow = 0;\n    for (std::size_t col = 0; col < n; ++col) {\n        // 在剩余行中找该列最大主元（确定性——严格大于才换序）。\n        std::size_t pivot = m;\n        double best = pivotTol;  // 低于容差＝无主元→自由列\n        for (std::size_t row = nextRow; row < m; ++row) {\n            const double v = std::abs(a[row * n + col]);\n            if (v > best) {\n                best = v;\n                pivot = row;\n            }\n        }\n        if (pivot == m) {\n            freeColumns.push_back(col);  // 该列无线性独立方向——自由\n            continue;\n        }\n        if (pivot != nextRow) {\n            for (std::size_t jc = 0; jc < n; ++jc) {\n                std::swap(a[nextRow * n + jc], a[pivot * n + jc]);\n            }\n        }\n        // 消去下方行对该列的分量（固定序）。\n        for (std::size_t row = nextRow + 1; row < m; ++row) {\n            const double factor = a[row * n + col] / a[nextRow * n + col];\n            if (factor == 0.0) { continue; }\n            for (std::size_t jc = col; jc < n; ++jc) {\n                a[row * n + jc] -= factor * a[nextRow * n + jc];\n            }\n        }\n        ++rank;\n        ++nextRow;\n    }\n    return {rank, freeColumns};\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "id": "modeling.rotateInertia",
+    "cap": "MATH-INERTIA",
+    "requirements": [
+      "MDL-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateInertia",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+      "symbol": "rotateInertia",
+      "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateInertia",
+      "startLine": 261,
+      "endLine": 296,
+      "sha256": "0b49beb12388dc41aaea2f85a431d0cabbadce215047295ca67d6cba04db125a"
+    },
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "URDF惯性系到连杆系手算RIR^T；复用InertiaMatrix旋转，保留质心参考点不平移及kg·m²",
+    "region": "InertiaTensor rotateInertia(const InertiaTensor& i, const rw::math::Rotation3D<double>& r)\n{\n    const double m[3][3] = {\n        { i.ixx, i.ixy, i.ixz },\n        { i.ixy, i.iyy, i.iyz },\n        { i.ixz, i.iyz, i.izz },\n    };\n    double acc[3][3] = {};  // R·I\n    for (int row = 0; row < 3; ++row) {\n        for (int col = 0; col < 3; ++col) {\n            double sum = 0.0;\n            for (int k = 0; k < 3; ++k) {\n                sum += r(row, k) * m[k][col];\n            }\n            acc[row][col] = sum;\n        }\n    }\n    double out3[3][3] = {};  // (R·I)·Rᵀ\n    for (int row = 0; row < 3; ++row) {\n        for (int col = 0; col < 3; ++col) {\n            double sum = 0.0;\n            for (int k = 0; k < 3; ++k) {\n                sum += acc[row][k] * r(col, k);  // Rᵀ(k,col)=R(col,k)\n            }\n            out3[row][col] = sum;\n        }\n    }\n    InertiaTensor out;\n    out.ixx = out3[0][0];\n    out.iyy = out3[1][1];\n    out.izz = out3[2][2];\n    out.ixy = out3[0][1];\n    out.ixz = out3[0][2];\n    out.iyz = out3[1][2];\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json",
+    "id": "optimization.generateSeededLhsCandidates",
+    "cap": "MATH-RANDOM",
+    "requirements": [
+      "OPT-06"
+    ],
+    "qualifiedSymbol": "sdurws::ird::optimization::generateSeededLhsCandidates",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+      "symbol": "generateSeededLhsCandidates",
+      "qualifiedSymbol": "sdurws::ird::optimization::generateSeededLhsCandidates",
+      "startLine": 404,
+      "endLine": 528,
+      "sha256": "4fd10f4f6fd33672c080888e4e450304025f557348530cd60e9c7386b2adeac5"
+    },
+    "targets": [
+      "sdurws_ird_optimization"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持SplitMix64与Fisher-Yates/LHS；继续查sandbox优化/采样能力，保留基线首位、变量授权/量化和候选身份",
+    "region": "generateSeededLhsCandidates(const OptimizationConfiguration& config)\n{\n    // 第 1 步：防御复验（种子 0 等在此拦截——生成器是种子的第一消费者）。\n    validateConfiguration(config);\n\n    // 第 2 步：采样维度集＝未锁定且授权的连续/量化/枚举绑定（§8.2 改型\n    // \"锁定集外扰动\"；DiscreteDevice 属 R2 组合空间采样——不进 R1），\n    // bindingId 字典序（确定性维度序）。\n    std::vector<const VariableBinding*> dims;\n    dims.reserve(config.variables.size());\n    for (const auto& b : config.variables) {\n        if (b.locked || !b.authorized) {\n            continue;  // 锁定/未授权维度不采样（§5.4——出现在补丁即拒绝）\n        }\n        if (b.kind == VariableKind::Continuous || b.kind == VariableKind::Quantized\n            || b.kind == VariableKind::Enumeration) {\n            dims.push_back(&b);\n        }\n    }\n    std::sort(dims.begin(), dims.end(),\n              [](const VariableBinding* a, const VariableBinding* b) {\n                  return a->bindingId < b->bindingId;\n              });\n\n    // 第 3 步：非基线候选数 n（预算上限——§8.2\"生成器受 OptimizationBudget\n    // 约束\"；maxCandidates≥1 已校验，无下溢）。\n    const std::uint32_t n = config.budget.maxCandidates - 1U;\n\n    std::vector<CandidatePatch> patches;\n    patches.reserve(static_cast<std::size_t>(n) + 1U);\n\n    // 第 8 步（前置落位）：基线候选恒为批首元素（§8.2——基线总是生成并\n    // 参与评估；空补丁有确定身份；label 不参与身份）。\n    CandidatePatch baseline;\n    baseline.label = \"baseline\";\n    patches.push_back(std::move(baseline));\n\n    if (n == 0U) {\n        return patches;  // 预算＝仅基线——合法退化\n    }\n\n    // 第 4 步：自持 splitmix64（状态＝种子——同种子同输出，跨平台确定）。\n    SplitMix64 rng;\n    rng.state = config.seed;\n\n    // 第 5 步：每维度独立的 n 层层序置换（Fisher-Yates，PRNG 驱动——\n    // 拉丁超立方正交性：每维度 n 个候选各占一层，空间填充）。\n    std::vector<std::vector<std::uint32_t>> perms(dims.size());\n    for (std::size_t d = 0; d < dims.size(); ++d) {\n        auto& perm = perms[d];\n        perm.resize(n);\n        for (std::uint32_t i = 0; i < n; ++i) {\n            perm[i] = i;  // 恒等层序初值\n        }\n        // Fisher-Yates 自后向前洗牌（i>n 下界防护：n==0 时循环体不执行）。\n        for (std::uint32_t i = n; i-- > 1U;) {\n            // j ∈ [0, i]（模减偏置存在但量级 ≤2⁻³²相对——采样均匀性足够，\n            // 确定性不受影响；精确无偏混洗非需求面）。\n            const std::uint32_t j = static_cast<std::uint32_t>(rng.nextU64() % (i + 1U));\n            std::swap(perm[i], perm[j]);\n        }\n    }\n\n    // 第 6~7 步：逐候选逐维度取值并经 makeCandidatePatch 构造（补丁\n    // canonical 唯一编码层——量化对齐/排序/规范化复用 T03 单点）。\n    for (std::uint32_t i = 0; i < n; ++i) {\n        std::vector<PatchItem> items;\n        items.reserve(dims.size());\n        for (std::size_t d = 0; d < dims.size(); ++d) {\n            const VariableBinding& b = *dims[d];\n            const std::uint32_t layer = perms[d][i];\n            const double u = rng.nextUnit();  // 层内均匀位置 [0,1)\n            PatchItem item;\n            item.bindingId = b.bindingId;\n            if (b.kind == VariableKind::Enumeration) {\n                // 枚举维度：PRNG 均匀取封闭值域下标（clamp 末位防 u≈1 时\n                // 越界——确定性；组合上限保护＝值域即词表封闭集）。\n                const std::size_t domain = b.enumValues.size();\n                if (domain == 0) {\n                    // 空值域枚举绑定属研究定义非法（validateBindings 面）——\n                    // 防御式拒绝，不静默跳过（fail-fast）。\n                    throw OptimizationError(\n                        kOptInputInvalid,\n                        \"OPT-INPUT-INVALID: 绑定 \" + b.bindingId\n                            + \" 为空值域枚举（enumValues 空）——研究定义非法\");\n                }\n                auto idx = static_cast<std::size_t>(\n                    static_cast<double>(domain) * u);\n                if (idx >= domain) {\n                    idx = domain - 1U;  // u 上界钳制（u<1 时理论不可达——防御）\n                }\n                item.enumIndex = static_cast<std::uint32_t>(idx);\n            } else if (b.kind == VariableKind::Quantized) {\n                // 量化维度：采样域收缩为 [lower+step, upper−step]（对齐偏差\n                // ≤step/2 ⇒ 对齐后必在界内——补丁构造器 round-half-even 后\n                // 验界不拒绝）；收缩域为空（区间窄于两步）时退化为绑定\n                // 默认值（采样设计的确定性退化——值仍是显式默认，非静默\n                // 纠错）。\n                const double lo = b.lowerBound + b.step;\n                const double hi = b.upperBound - b.step;\n                if (lo <= hi) {\n                    item.scalarValue = lo + (static_cast<double>(layer) + u)\n                            / static_cast<double>(n) * (hi - lo);\n                } else {\n                    item.scalarValue = b.defaultValue;\n                }\n            } else {\n                // 连续维度：层 [layer/n,(layer+1)/n) 映射到 [lower,upper]\n                // 层内均匀点（u<1 ⇒ 严格小于上界端点，含端点安全）。\n                item.scalarValue\n                    = b.lowerBound\n                    + (static_cast<double>(layer) + u) / static_cast<double>(n)\n                          * (b.upperBound - b.lowerBound);\n            }\n            items.push_back(std::move(item));\n        }\n        // 第 7 步：补丁构造（锁定拒绝不可能——采样域已排除；构造抛＝研究\n        // 定义与词表值域矛盾〔如正性维度配负区间〕——fail-fast 传播）。\n        CandidatePatch patch = makeCandidatePatch(\n            config.variables, config.stage, items, \"cand-\" + std::to_string(i));\n        patches.push_back(std::move(patch));\n    }\n\n    return patches;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "id": "testkit.parseJson",
+    "cap": "NONE",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "qualifiedSymbol": "sdurws::ird::testkit::parseJson",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "parseJson",
+      "qualifiedSymbol": "sdurws::ird::testkit::parseJson",
+      "startLine": 545,
+      "endLine": 549,
+      "sha256": "abe7da556a319be1b7d4ac60cfeb7a069f75f54b451c1a28e1c36294c52c81ff"
+    },
+    "targets": [
+      "sdurws_ird_testkit"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持递归下降Parser；继续核上游XML/PropertyTree与现有依赖是否满足JSON类型、重复键、BOM及定位；不能用testkit边界豁免重复工具",
+    "region": "JsonValue parseJson(std::string_view text)\n{\n    Parser p(text);\n    return p.run();\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "id": "testkit.dumpJson",
+    "cap": "NONE",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "qualifiedSymbol": "sdurws::ird::testkit::dumpJson",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "dumpJson",
+      "qualifiedSymbol": "sdurws::ird::testkit::dumpJson",
+      "startLine": 551,
+      "endLine": 600,
+      "sha256": "e29bb052ded45513439ef0549cf8e589f65c03af760df70f50b14539cd8bc4d5"
+    },
+    "targets": [
+      "sdurws_ird_testkit"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "自持JSON writer；与io生产JSON不可直接跨层互链。优先成熟依赖，经薄profile保留确定性键序/数值格式",
+    "region": "std::string dumpJson(const JsonValue& value, bool pretty)\n{\n    if (!pretty) {\n        std::string out;\n        dumpValue(value, &out);\n        return out;\n    }\n    // 简易 pretty 打印器：递归带深度。\n    struct P {\n        static void go(const JsonValue& v, int depth, std::string* o) {\n            const auto nl = [&](int d) { o->push_back('\\n'); o->append(static_cast<std::size_t>(d) * 2, ' '); };\n            switch (v.kind) {\n            case JsonValue::Kind::Null:   o->append(\"null\"); break;\n            case JsonValue::Kind::Bool:   o->append(v.boolean ? \"true\" : \"false\"); break;\n            case JsonValue::Kind::Number: dumpNumber(v.number, o); break;\n            case JsonValue::Kind::String: dumpEscaped(v.text, o); break;\n            case JsonValue::Kind::Array:\n                if (v.items.empty()) { o->append(\"[]\"); break; }\n                o->push_back('[');\n                for (std::size_t i = 0; i < v.items.size(); ++i) {\n                    if (i > 0) { o->push_back(','); }\n                    nl(depth + 1);\n                    go(v.items[i], depth + 1, o);\n                }\n                nl(depth);\n                o->push_back(']');\n                break;\n            case JsonValue::Kind::Object:\n                if (v.members.empty()) { o->append(\"{}\"); break; }\n                o->push_back('{');\n                for (std::size_t i = 0; i < v.members.size(); ++i) {\n                    if (i > 0) { o->push_back(','); }\n                    nl(depth + 1);\n                    dumpEscaped(v.members[i].first, o);\n                    o->append(\": \");\n                    go(v.members[i].second, depth + 1, o);\n                }\n                nl(depth);\n                o->push_back('}');\n                break;\n            default:\n                throw TestKitError(TestKitErrorKind::Usage, \"json-dump: 未知值类别（防御分支）\");\n            }\n        }\n    };\n    // 人读形态：两空格缩进，对象键后 \": \"。\n    std::string out;\n    P::go(value, 0, &out);\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.interpolateCartesianLine",
+    "cap": "TRAJ-SLERP",
+    "requirements": [
+      "TRJ-02"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::interpolateCartesianLine",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+      "symbol": "interpolateCartesianLine",
+      "qualifiedSymbol": "sdurws::ird::trajectory::interpolateCartesianLine",
+      "startLine": 191,
+      "endLine": 268,
+      "sha256": "c69d1989f4769a25653078a64acd08a7bb25baecb1f13778642782466663948e"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写最短弧slerp；Quaternion::slerp及LinearInterpolator可复用，端点位级快速路径、极小角及pi回归需保留",
+    "region": "rw::math::Transform3D<double> interpolateCartesianLine(\n    const rw::math::Transform3D<double>& ta,\n    const rw::math::Transform3D<double>& tb,\n    double s)\n{\n    // 前置：行程参数 ∈[0,1]（越界外推属几何语义破坏——§8.2 定义域）。\n    if (!(s >= 0.0 && s <= 1.0)) {\n        throw TrajectoryError(\"trajectory/cartesian/interpolate-range\",\n                              \"行程参数 s 须 ∈[0,1]，实际 \" + std::to_string(s));\n    }\n\n    // 端点快速路径：s=0/1 直接返回端点位姿——保证端点**位级**精确还原\n    // （V-04 断言依托；通用 slerp 公式在 s=0/1 时 sin(θ)/sinθ 的浮点除\n    // 不保证精确等于 1/0，会有 1 ULP 级姿态漂移，违反端点还原义务）。\n    if (s == 0.0) {\n        return ta;\n    }\n    if (s == 1.0) {\n        return tb;\n    }\n\n    // 位置：逐分量凸组合 p(s)=(1-s)·p_a+s·p_b——s=0/1 浮点下精确还原\n    // 端点（V-04 端点还原断言依托；与 PTP 插值同式的笛卡尔侧对应）。\n    const rw::math::Vector3D<double>& pa = ta.P();\n    const rw::math::Vector3D<double>& pb = tb.P();\n    const rw::math::Vector3D<double> p((1.0 - s) * pa[0] + s * pb[0],\n                                       (1.0 - s) * pa[1] + s * pb[1],\n                                       (1.0 - s) * pa[2] + s * pb[2]);\n\n    // 姿态：四元数最短路径 slerp（§8.2\"姿态最短弧 slerp（四元数最短\n    // 路径）\"）。手写显式实现以锁定口径（V-05 与显式四元数对照）：\n    // 两端各取单位四元数→点积为负时翻转一端（±q 同旋转成对，取非负\n    // 点积一支保证最短弧）→θ=acos(dot)→标准 slerp 公式。\n    QuatComponents qa = normalizedQuat(ta.R());\n    QuatComponents qb = normalizedQuat(tb.R());\n    double dot = qa.x * qb.x + qa.y * qb.y + qa.z * qb.z + qa.w * qb.w;\n    if (dot < 0.0) {\n        // 最短路径翻转：q 与 -q 表示同一旋转，翻转后插值走短弧（V-05\n        // 大弧样例锁定该分支——Rz(350°)→Rz(10°) 经 0° 而非绕行 340°）。\n        qb.x = -qb.x;\n        qb.y = -qb.y;\n        qb.z = -qb.z;\n        qb.w = -qb.w;\n        dot = -dot;\n    }\n    const double theta = safeAcos(dot);\n    QuatComponents qo = qa;\n    if (theta > 1e-12) {\n        // 常规 slerp：θ 大于极小角阈值——sin(θ) 远离 0，公式稳定。\n        const double sinTheta = std::sin(theta);\n        const double wa = std::sin((1.0 - s) * theta) / sinTheta;\n        const double wb = std::sin(s * theta) / sinTheta;\n        qo.x = wa * qa.x + wb * qb.x;\n        qo.y = wa * qa.y + wb * qb.y;\n        qo.z = wa * qa.z + wb * qb.z;\n        qo.w = wa * qa.w + wb * qb.w;\n    } else {\n        // 近共线分支：θ<1e-12 rad（约 5.7×10⁻¹¹°）时 sin(θ)≈θ 数值不稳，\n        // 回退线性插值后归一化（数学极限一致——θ→0 时 slerp→nlerp）。\n        qo.x = (1.0 - s) * qa.x + s * qb.x;\n        qo.y = (1.0 - s) * qa.y + s * qb.y;\n        qo.z = (1.0 - s) * qa.z + s * qb.z;\n        qo.w = (1.0 - s) * qa.w + s * qb.w;\n        const double len = std::sqrt(qo.x * qo.x + qo.y * qo.y + qo.z * qo.z + qo.w * qo.w);\n        if (len > 0.0) {\n            const double inv = 1.0 / len;\n            qo.x *= inv;\n            qo.y *= inv;\n            qo.z *= inv;\n            qo.w *= inv;\n        }\n    }\n\n    rw::math::Transform3D<double> out;\n    out.P() = p;\n    out.R() = rw::math::Quaternion<double>(qo.x, qo.y, qo.z, qo.w).toRotation3D();\n    return out;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.hermiteH000",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH000",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "symbol": "hermiteH000",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH000",
+      "startLine": 110,
+      "endLine": 113,
+      "sha256": "9a616c0f8de610e74396dde6ad3328208479052f3f591e018791a93d16a85355"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
+    "region": "inline double hermiteH000(double t)\n{\n    return 1.0 + t * t * t * (-10.0 + t * (15.0 - 6.0 * t));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.hermiteH100",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH100",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "symbol": "hermiteH100",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH100",
+      "startLine": 116,
+      "endLine": 119,
+      "sha256": "f921cdda921ed88c1ef3f30b551d9dcf3bf77791a1355df0db51fe128c70b5ea"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
+    "region": "inline double hermiteH100(double t)\n{\n    return t + t * t * t * (-6.0 + t * (8.0 - 3.0 * t));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.hermiteH001",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH001",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "symbol": "hermiteH001",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH001",
+      "startLine": 122,
+      "endLine": 126,
+      "sha256": "716c66e2ef454a741d5ee26cf4e9617d9205bc5abeccaac8eab1bf206c6ffbe6"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
+    "region": "inline double hermiteH001(double t)\n{\n    const double t2 = t * t;\n    return t2 * t * (10.0 + t * (-15.0 + 6.0 * t));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.hermiteH101",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-04"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH101",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "symbol": "hermiteH101",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH101",
+      "startLine": 129,
+      "endLine": 133,
+      "sha256": "e88402cbbf1056ba4808d260b5296fb7346ebdd7cbfe1ad0d596ec4273e9ee93"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
+    "region": "inline double hermiteH101(double t)\n{\n    const double t2 = t * t;\n    return t2 * t * (-4.0 + t * (7.0 - 3.0 * t));\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.basisH0000",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0000",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "basisH0000",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0000",
+      "startLine": 205,
+      "endLine": 221,
+      "sha256": "7af3040af18b868aac86f9be291ae76510f27e071c8783e27e775845013d123b"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues basisH0000(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    BasisValues b;\n    b.p = 1.0 - 10.0 * u3 + 15.0 * u2 * u2 - 6.0 * u3 * u2;\n    b.d1 = -30.0 * u2 + 60.0 * u3 - 30.0 * u2 * u2;\n    // 二阶导修正（WP-16-T14 批登记——T08 批遗留笔误）：d1 对 u 求导应为\n    // −60u+180u²−120u³，原实现误写 −60u+120u²−60u³。既有黄金算例未暴露\n    // 的原因：全部零起点（q0=0 → h0000 加权项为零）＋结点处各基 d2 端点\n    // 值两版本同为 0（C² 守卫不敏感）；数值实验（中心差分对照解析）定位。\n    // 修正后 h0000''+h0001'' 恒 0（值基和恒 1 的二阶导）恢复结构性成立。\n    b.d2 = -60.0 * u + 180.0 * u2 - 120.0 * u3;\n    // 三阶导（WP-16-T14 批）：d2 对 u 求导——常值 −60＋180·2u−120·3u²。\n    b.d3 = -60.0 + 360.0 * u - 360.0 * u2;\n    return b;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.basisH0010",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0010",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "basisH0010",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0010",
+      "startLine": 224,
+      "endLine": 235,
+      "sha256": "2fe664b08b4584832ae36950ee69d79057126d4130e7fc462491e0ad71422662"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues basisH0010(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    BasisValues b;\n    b.p = u - 6.0 * u3 + 8.0 * u2 * u2 - 3.0 * u3 * u2;\n    b.d1 = 1.0 - 18.0 * u2 + 32.0 * u3 - 15.0 * u2 * u2;\n    b.d2 = -36.0 * u + 96.0 * u2 - 60.0 * u3;\n    // 三阶导（WP-16-T14 批增列）。\n    b.d3 = -36.0 + 192.0 * u - 180.0 * u2;\n    return b;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.basisH0001",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0001",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "basisH0001",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0001",
+      "startLine": 238,
+      "endLine": 249,
+      "sha256": "f95d18774e4dd3e2c85edb1f4a7f8d2aeab283279372d7942c8dd98f3bd316da"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues basisH0001(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    BasisValues b;\n    b.p = 10.0 * u3 - 15.0 * u2 * u2 + 6.0 * u3 * u2;\n    b.d1 = 30.0 * u2 - 60.0 * u3 + 30.0 * u2 * u2;\n    b.d2 = 60.0 * u - 180.0 * u2 + 120.0 * u3;\n    // 三阶导（WP-16-T14 批增列）。\n    b.d3 = 60.0 - 360.0 * u + 360.0 * u2;\n    return b;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.basisH0011",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0011",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "basisH0011",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0011",
+      "startLine": 252,
+      "endLine": 263,
+      "sha256": "89db514b65c88474e7987a6c96cc6d3dcd36816460c43592e91f68791755ba2d"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues basisH0011(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    BasisValues b;\n    b.p = -4.0 * u3 + 7.0 * u2 * u2 - 3.0 * u3 * u2;\n    b.d1 = -12.0 * u2 + 28.0 * u3 - 15.0 * u2 * u2;\n    b.d2 = -24.0 * u + 84.0 * u2 - 60.0 * u3;\n    // 三阶导（WP-16-T14 批增列）。\n    b.d3 = -24.0 + 168.0 * u - 180.0 * u2;\n    return b;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.septicS0",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS0",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "septicS0",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS0",
+      "startLine": 274,
+      "endLine": 287,
+      "sha256": "68f4015e4b1dc15de3d1fc39bd15d05e5aed17a0fc5e9ae2ae6fb7c4f7909eca"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues septicS0(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    const double u4 = u2 * u2;\n    const double u5 = u4 * u;\n    const double u6 = u5 * u;\n    BasisValues b;\n    b.p = 1.0 - 35.0 * u4 + 84.0 * u5 - 70.0 * u6 + 20.0 * u5 * u2;\n    b.d1 = -140.0 * u3 + 420.0 * u4 - 420.0 * u5 + 140.0 * u6;\n    b.d2 = -420.0 * u2 + 1680.0 * u3 - 2100.0 * u4 + 840.0 * u5;\n    b.d3 = -840.0 * u + 5040.0 * u2 - 8400.0 * u3 + 4200.0 * u4;\n    return b;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.septicS1",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS1",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "septicS1",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS1",
+      "startLine": 291,
+      "endLine": 304,
+      "sha256": "728c474bbc34c18ae5f3aa29df1a4b944dac942781fcc98795eee1dc9b16955d"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues septicS1(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    const double u4 = u2 * u2;\n    const double u5 = u4 * u;\n    const double u6 = u5 * u;\n    BasisValues b;\n    b.p = u - 20.0 * u4 + 45.0 * u5 - 36.0 * u6 + 10.0 * u5 * u2;\n    b.d1 = 1.0 - 80.0 * u3 + 225.0 * u4 - 216.0 * u5 + 70.0 * u6;\n    b.d2 = -240.0 * u2 + 900.0 * u3 - 1080.0 * u4 + 420.0 * u5;\n    b.d3 = -480.0 * u + 2700.0 * u2 - 4320.0 * u3 + 2100.0 * u4;\n    return b;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.septicS2",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS2",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "septicS2",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS2",
+      "startLine": 308,
+      "endLine": 321,
+      "sha256": "9412b4e3054ea0fb58a1a8ded15442fa84b3358877d8947d319e910aa4ca41d2"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues septicS2(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    const double u4 = u2 * u2;\n    const double u5 = u4 * u;\n    const double u6 = u5 * u;\n    BasisValues b;\n    b.p = 35.0 * u4 - 84.0 * u5 + 70.0 * u6 - 20.0 * u5 * u2;\n    b.d1 = 140.0 * u3 - 420.0 * u4 + 420.0 * u5 - 140.0 * u6;\n    b.d2 = 420.0 * u2 - 1680.0 * u3 + 2100.0 * u4 - 840.0 * u5;\n    b.d3 = 840.0 * u - 5040.0 * u2 + 8400.0 * u3 - 4200.0 * u4;\n    return b;\n}"
+  },
+  {
+    "matrixPath": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "id": "trajectory.septicS3",
+    "cap": "MATH-POLYNOMIAL",
+    "requirements": [
+      "TRJ-05"
+    ],
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS3",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "symbol": "septicS3",
+      "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS3",
+      "startLine": 325,
+      "endLine": 341,
+      "sha256": "1c5ce7bfd3774824eb73c65dfc9f45029c81ccab1b1a811a1f4ddb575b513f48"
+    },
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "decision": "pending",
+    "status": "pending",
+    "hashMatches": true,
+    "inputsMatch": true,
+    "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
+    "region": "inline BasisValues septicS3(double u)\n{\n    const double u2 = u * u;\n    const double u3 = u2 * u;\n    const double u4 = u2 * u2;\n    const double u5 = u4 * u;\n    const double u6 = u5 * u;\n    BasisValues b;\n    b.p = -15.0 * u4 + 39.0 * u5 - 34.0 * u6 + 10.0 * u5 * u2;\n    b.d1 = -60.0 * u3 + 195.0 * u4 - 204.0 * u5 + 70.0 * u6;\n    // 二阶/三阶导（逐次求导：s3''＝−180u²+780u³−1020u⁴+420u⁵、\n    // s3'''＝−360u+2340u²−4080u³+2100u⁴；端点校验 s3''(1)=0、\n    // s3'''(1)=0——C³ 结构条件的基级前提，测试端点矩阵钉扎）。\n    b.d2 = -180.0 * u2 + 780.0 * u3 - 1020.0 * u4 + 420.0 * u5;\n    b.d3 = -360.0 * u + 2340.0 * u2 - 4080.0 * u3 + 2100.0 * u4;\n    return b;\n}"
+  }
+]

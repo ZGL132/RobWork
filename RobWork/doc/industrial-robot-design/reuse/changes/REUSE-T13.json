@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T13",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T13.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+      "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046",
+      "mode": "adapter",
+      "capabilities": [
+        "RUNTIME-WC-MODEL",
+        "RUNTIME-AXIS-ALIGN",
+        "RUNTIME-MESH-LOAD",
+        "RUNTIME-GEOMETRY-CARRIER"
+      ],
+      "boundary": "唯一owner模型编译/原上游关节与几何调用，删除offset旋转/轴角核心及逐三角复制；无新公共接口。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
+      "sha256": "a357b6e3ea0590a69a14de4e50a2da89e8a213cb070f244fb86a8f2df43fb48c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "编译器版本联动或原测试中的实际语义断言/独立oracle，沿既有构建/报告。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.hpp",
+      "sha256": "ff6730fbe214b428b662f2d14a512d9f9cdfb9dddb380e22983d365915bdd130",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "编译器版本联动或原测试中的实际语义断言/独立oracle，沿既有构建/报告。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
+      "sha256": "043d7bb5d4ed45fc1fda26ca80cc3a0b1df6b4cf225d6a3e924f6b01ddfbe773",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "编译器版本联动或原测试中的实际语义断言/独立oracle，沿既有构建/报告。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+      "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "编译器版本联动或原测试中的实际语义断言/独立oracle，沿既有构建/报告。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
+      "sha256": "a8227a8891061a2ca263745af6164ee126bbf91cba25d42311b11b6eac47de1f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "编译器版本联动或原测试中的实际语义断言/独立oracle，沿既有构建/报告。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp",
+      "sha256": "43b0994cbcf524ecbe03141bf8a944e32e311df6023dbfabdb4bd6fe2dc204e8",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "编译器版本联动或原测试中的实际语义断言/独立oracle，沿既有构建/报告。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/check-matrix.ps1",
+  "exitCode": 0,
+  "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/matrix-check.log"
+}

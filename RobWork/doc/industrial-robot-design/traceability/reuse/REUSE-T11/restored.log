@@ -1,0 +1,47 @@
+Note: Google Test filter = MdlTemplate.CreateEditChain_OriginEditField_UI_T53:MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlTemplate
+[ RUN      ] MdlTemplate.CreateEditChain_OriginEditField_UI_T53
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(660): error: Expected equality of these values:
+  origin.value().r()(2, 0)
+    Which is: 0
+  -std::sin(kPitch)
+    Which is: -0.19866933079506122
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(667): error: The difference between rollBack and kRoll is 0.10000000000000001, which exceeds 1e-12, where
+rollBack evaluates to 0,
+kRoll evaluates to 0.10000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(668): error: The difference between pitchBack and kPitch is 0.20000000000000001, which exceeds 1e-12, where
+pitchBack evaluates to -0,
+kPitch evaluates to 0.20000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(669): error: The difference between yawBack and kYaw is 0.29999999999999999, which exceeds 1e-12, where
+yawBack evaluates to 0,
+kYaw evaluates to 0.29999999999999999, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+[  FAILED  ] MdlTemplate.CreateEditChain_OriginEditField_UI_T53 (0 ms)
+[----------] 1 test from MdlTemplate (0 ms total)
+
+[----------] 1 test from MdlBasePlacementEdit
+[ RUN      ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(857): error: Value of: error.has_value()
+  Actual: true
+Expected: false
+basePlacement：preset=custom 而 EAA 旋转为恒等（preset≠ground 而 R=I——I-MDL-7 映射层拒绝，runtime InputInvalid 同口径）
+
+[  FAILED  ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37 (0 ms)
+[----------] 1 test from MdlBasePlacementEdit (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MdlTemplate.CreateEditChain_OriginEditField_UI_T53
+[  FAILED  ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37
+
+ 2 FAILED TESTS

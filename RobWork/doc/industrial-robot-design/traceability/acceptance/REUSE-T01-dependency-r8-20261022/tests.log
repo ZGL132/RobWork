@@ -1,0 +1,15 @@
+Note: Google Test filter = ReuseDependencyAudit.*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from ReuseDependencyAudit
+[ RUN      ] ReuseDependencyAudit.EndianPublicLoadStorePreserveWireBits
+[       OK ] ReuseDependencyAudit.EndianPublicLoadStorePreserveWireBits (0 ms)
+[ RUN      ] ReuseDependencyAudit.PropertyTreePublicDomErasesTypesAndEmptyShapes
+[       OK ] ReuseDependencyAudit.PropertyTreePublicDomErasesTypesAndEmptyShapes (0 ms)
+[ RUN      ] ReuseDependencyAudit.PropertyTreePublicReaderAcceptsDuplicateKeysAndBom
+[       OK ] ReuseDependencyAudit.PropertyTreePublicReaderAcceptsDuplicateKeysAndBom (0 ms)
+[----------] 3 tests from ReuseDependencyAudit (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 3 tests.

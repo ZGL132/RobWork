@@ -1,0 +1,11 @@
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:39:     * @brief Iterative inverse kinematics solved based on the QPController
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:42:     * of using a simple inverse Jacobian it uses the rw::algorithms::QPController
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:62:         * @param device [in] Device to solve for         * @param state [in] State of the workcell
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:67:         * @copydoc rw::invkin::IterativeIK::solve
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:69:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<>& baseTend,
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:74:      private:
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:81:        bool performLocalSearch (const rw::models::SerialDevice* device,
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:27:#include <rw/math/VelocityScrew6D.hpp>
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:79:        rw::math::Q solve (const rw::math::Q& q, const rw::math::Q& dq,
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:80:                           const rw::math::VelocityScrew6D<>& tcpscrew);
+RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:82:      private:

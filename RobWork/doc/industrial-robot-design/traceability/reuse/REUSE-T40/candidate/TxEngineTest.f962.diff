@@ -1,0 +1,126 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp
+index 4cef32ab2..5dc157b05 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp
+@@ -1420,3 +1420,121 @@ TEST_F(TxEngineTest, RecoveryScan_HealthyStore_NoFindings)
+     EXPECT_EQ(scan.danglingObjectCount, 0u);
+     EXPECT_TRUE(m_sink->reports.empty());  // 健康态零用户级诊断
+ }
++
++// =====================================================================
++// F-962 反例：HEAD 清单摘要校验（§7.4④"对象/清单哈希"的清单哈希半边）
++// =====================================================================
++
++/**
++ * 锚定：§7.4④／findings F-962 反例①——错误 HEAD.manifestDigest（64 小写
++ * hex 形态合法、parseHeadRecord 接受）扫描必须判损坏并定位到文件。修复前
++ * 扫描误报完整（B20 探测 2passed/4failed 独立复现在案——acceptance
++ * REUSE-T01-batch20-20261023）。
++ *
++ * 前置：健康种子（HEAD→r0，摘要与清单字节一致）。操作：裸写 HEAD 仅改
++ * manifestDigest 首字符（形态合法——只有摘要比对能拒它）。预期：
++ * headIntegrityVerified=false＋PRJ-STORE-CORRUPT（cause 定位到该清单
++ * 文件）＋开发诊断 mismatch 通道。
++ */
++TEST_F(TxEngineTest, RecoveryScan_WrongHeadDigest_StoreCorrupt)
++{
++    HeadRecord head = sdurws::ird::project::codec::parseHeadRecord(
++        readAll(m_proj / "HEAD"));
++    ASSERT_EQ(head.manifestDigest.size(), 64u);
++    head.manifestDigest[0] =
++        head.manifestDigest[0] == 'a' ? 'b' : 'a';  // 形态合法、值必异
++    ASSERT_TRUE(writeRaw(m_proj / "HEAD",
++                         sdurws::ird::project::codec::dump(head)));
++
++    TxEngine scanner(m_ops.get(), m_proj, m_objects.get(), m_index.get(),
++                     m_bus.get(), m_sink.get());
++    const TxRecoveryScan scan = scanner.scanForRecovery();
++    EXPECT_FALSE(scan.headIntegrityVerified);
++    EXPECT_TRUE(m_sink->hasUserCode("PRJ-STORE-CORRUPT"));
++    ASSERT_FALSE(m_sink->reports.empty());
++    EXPECT_NE(m_sink->reports.back().cause.find("manifest.json"),
++              std::string::npos)
++        << "cause 未定位到清单文件: " << m_sink->reports.back().cause;
++    EXPECT_TRUE(m_sink->devContains("recovery-head-manifest-digest-mismatch"));
++}
++
++/**
++ * 锚定：§7.4④／findings F-962 反例②——清单字节**合法**篡改
++ * （committedAtUtc 改为另一合法 ISO-8601 UTC 时刻）而 HEAD 摘要保持：
++ * parse 通过、闭包与对象校验全绿，只有摘要实算比对能拒。修复前扫描
++ * 误报完整（B20 独立复现在案）。
++ */
++TEST_F(TxEngineTest,
++       RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt)
++{
++    const fs::path manifestPath =
++        m_proj / "revisions" / m_seed.r0.toCanonical() / "manifest.json";
++    RevisionManifest manifest =
++        sdurws::ird::project::codec::parseRevisionManifest(
++            readAll(manifestPath));
++    manifest.committedAtUtc = "2026-09-16T00:00:01Z";  // 合法时刻、字节必异
++    ASSERT_TRUE(writeRaw(manifestPath,
++                         sdurws::ird::project::codec::dump(manifest)));
++
++    TxEngine scanner(m_ops.get(), m_proj, m_objects.get(), m_index.get(),
++                     m_bus.get(), m_sink.get());
++    const TxRecoveryScan scan = scanner.scanForRecovery();
++    EXPECT_FALSE(scan.headIntegrityVerified);
++    EXPECT_TRUE(m_sink->hasUserCode("PRJ-STORE-CORRUPT"));
++    EXPECT_TRUE(m_sink->devContains("recovery-head-manifest-digest-mismatch"));
++}
++
++/**
++ * 锚定：§7.4④"定位到文件"——HEAD 指向修订的清单文件缺失。修复前经
++ * "闭包行走失败"间接判损坏（cause 定位不达文件）；修复后首败钉扎使
++ * 记录 cause 直接给出缺失路径。损坏结论与诊断码两形态一致（行为兼容）。
++ */
++TEST_F(TxEngineTest, RecoveryScan_HeadManifestMissing_StoreCorrupt)
++{
++    const fs::path manifestPath =
++        m_proj / "revisions" / m_seed.r0.toCanonical() / "manifest.json";
++    ASSERT_TRUE(fs::remove(manifestPath));
++
++    TxEngine scanner(m_ops.get(), m_proj, m_objects.get(), m_index.get(),
++                     m_bus.get(), m_sink.get());
++    const TxRecoveryScan scan = scanner.scanForRecovery();
++    EXPECT_FALSE(scan.headIntegrityVerified);
++    EXPECT_TRUE(m_sink->hasUserCode("PRJ-STORE-CORRUPT"));
++    ASSERT_FALSE(m_sink->reports.empty());
++    EXPECT_NE(m_sink->reports.back().cause.find("缺失 path="),
++              std::string::npos)
++        << "cause 未定位缺失清单: " << m_sink->reports.back().cause;
++    EXPECT_TRUE(m_sink->devContains("recovery-head-manifest-missing"));
++}
++
++/**
++ * 锚定：§7.4④ 历史兼容／合法恢复——篡改后还原原字节，扫描恢复完整
++ * 判定且零诊断：损坏判定锚定**当前字节**与 HEAD 摘要的一致性，不存在
++ * 一次性损坏闩锁（合法备份恢复路径不受拦）。
++ */
++TEST_F(TxEngineTest, RecoveryScan_TamperThenRestore_ScanGreen)
++{
++    const fs::path manifestPath =
++        m_proj / "revisions" / m_seed.r0.toCanonical() / "manifest.json";
++    const std::string original = readAll(manifestPath);
++    RevisionManifest manifest =
++        sdurws::ird::project::codec::parseRevisionManifest(original);
++    manifest.committedAtUtc = "2026-09-16T00:00:01Z";
++    ASSERT_TRUE(writeRaw(manifestPath,
++                         sdurws::ird::project::codec::dump(manifest)));
++    TxEngine tampered(m_ops.get(), m_proj, m_objects.get(), m_index.get(),
++                      m_bus.get(), m_sink.get());
++    EXPECT_FALSE(tampered.scanForRecovery().headIntegrityVerified);
++
++    // 原字节还原（合法恢复）→ 新扫描会话恢复完整判定、零用户级诊断。
++    ASSERT_TRUE(writeRaw(manifestPath, original));
++    m_sink->reports.clear();  // 篡改腿的诊断不参与恢复腿断言（会话隔离）
++    m_sink->devs.clear();
++    TxEngine restored(m_ops.get(), m_proj, m_objects.get(), m_index.get(),
++                      m_bus.get(), m_sink.get());
++    const TxRecoveryScan scan = restored.scanForRecovery();
++    EXPECT_TRUE(scan.headIntegrityVerified);
++    EXPECT_TRUE(scan.uncommittedRevisions.empty());
++    EXPECT_EQ(scan.danglingObjectCount, 0u);
++    EXPECT_TRUE(m_sink->reports.empty());
++}

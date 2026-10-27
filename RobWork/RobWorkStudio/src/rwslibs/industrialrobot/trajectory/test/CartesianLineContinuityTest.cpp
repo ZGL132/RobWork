@@ -23,6 +23,7 @@
  */
 
 #include <rw/math/RPY.hpp>                  // RPY 姿态构造（测试黄金算例）
+#include <rw/math/Quaternion.hpp>           // REUSE-T26 上游直接对照，不充当独立 oracle
 
 #include <sdurws/ird/trajectory/CartesianLine.hpp>
 #include <sdurws/ird/trajectory/Continuity.hpp>
@@ -354,6 +355,91 @@ TEST(TrjCartesianLine, InterpolateSlerpShortestArc_WP16T05_ACC1)
 }
 
 // =====================================================================
+/**
+ * @brief TRJ-02／NFR-COR-01：轴角闭式独立对照与真实上游对照分开，
+ *        保持原 1e-12 旋转矩阵容差，不引用 EAA 的局部 1e-6。
+ */
+TEST(TrjCartesianLine, SlerpIndependentAxisOracle_REUSE_T26)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-02", "NFR-COR-01"},
+                  std::vector<std::string>{"AT-06"});
+    const double pi = std::acos(-1.0);
+    const double invSqrt3 = 1.0 / std::sqrt(3.0);
+    const rw::math::Vector3D<double> axes[] = {
+        {1, 0, 0}, {0, 1, 0}, {0, 0, 1},
+        {invSqrt3, invSqrt3, invSqrt3}, {-invSqrt3, invSqrt3, invSqrt3}
+    };
+    // 纯测试 oracle：轴已由字面值保证单位长度，公式不共享生产实现。
+    const auto rodrigues = [](const rw::math::Vector3D<double>& a, double angle) {
+        const double c = std::cos(angle), sn = std::sin(angle), v = 1.0 - c;
+        const double x = a[0], y = a[1], z = a[2];
+        return rw::math::Rotation3D<double>(
+            c+x*x*v, x*y*v-z*sn, x*z*v+y*sn,
+            y*x*v+z*sn, c+y*y*v, y*z*v-x*sn,
+            z*x*v-y*sn, z*y*v+x*sn, c+z*z*v);
+    };
+    const double angles[] = {0, 1e-12, 1e-8, 0.4, pi-1e-8, pi+1e-8, 2*pi-0.2};
+    const double samples[] = {0, 0.125, 0.25, 0.5, 0.75, 0.875, 1};
+    for (int base = 0; base < 3; ++base) {
+        const auto r0 = rw::math::RPY<double>(0.31*base, -0.27*base, 0.19*base).toRotation3D();
+        for (const auto& axis : axes) {
+            for (const double angle : angles) {
+                const auto r1 = r0 * rodrigues(axis, angle);
+                const auto ta = rw::math::Transform3D<double>({-2, 3, 1}, r0);
+                const auto tb = rw::math::Transform3D<double>({4, -1, 5}, r1);
+                const double shortAngle = angle > pi ? angle - 2*pi : angle;
+                for (const double t : samples) {
+                    SCOPED_TRACE(::testing::Message() << base << ":" << angle << ":" << t);
+                    const auto result = interpolateCartesianLine(ta, tb, t);
+                    const auto expected = r0 * rodrigues(axis, shortAngle*t);
+                    const auto repeat = interpolateCartesianLine(ta, tb, t);
+                    for (int r = 0; r < 3; ++r) {
+                        EXPECT_NEAR(result.P()[r], (1-t)*ta.P()[r]+t*tb.P()[r], 1e-12);
+                        for (int c = 0; c < 3; ++c) {
+                            EXPECT_NEAR(result.R()(r,c), expected(r,c), 1e-12);
+                            EXPECT_EQ(result.R()(r,c), repeat.R()(r,c));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** @brief TRJ-02：独立解析断言之外，单独核对实际安装上游调用的输入/结果。 */
+TEST(TrjCartesianLine, SlerpUpstreamAndBoundary_REUSE_T26)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-02"}, std::vector<std::string>{"AT-06"});
+    const double pi = std::acos(-1.0);
+    const auto ta = makePose(0, 0, 0, 0);
+    for (const double angle : {0.0, 1e-12, 0.6, pi, 2*pi-0.2}) {
+        const auto tb = makePose(1, 2, 3, angle);
+        rw::math::Quaternion<double> qa(ta.R()), qb(tb.R());
+        qa.normalize();
+        qb.normalize();
+        for (const double t : {0.125, 0.5, 0.875}) {
+            const auto expected = qa.slerp(qb, t).toRotation3D();
+            const auto actual = interpolateCartesianLine(ta, tb, t);
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    EXPECT_NEAR(actual.R()(r,c), expected(r,c), 1e-12);
+                }
+            }
+        }
+    }
+    // 位置保持凸组合，不能因姿态迁移退回会中间溢出的差分插值。
+    const double hi = std::numeric_limits<double>::max();
+    const auto bigA = makePose(hi, -hi, hi, 0);
+    const auto bigB = makePose(-hi, hi, hi, 0);
+    const auto mid = interpolateCartesianLine(bigA, bigB, 0.5);
+    EXPECT_EQ(mid.P()[0], 0.0);
+    EXPECT_EQ(mid.P()[1], 0.0);
+    EXPECT_EQ(mid.P()[2], hi);
+    EXPECT_THROW(interpolateCartesianLine(ta, ta, std::numeric_limits<double>::quiet_NaN()), TrajectoryError);
+}
+
+// REUSE-T26：解析 oracle 不调用 Quaternion/slerp；罗德里格斯矩阵按
+// 单位轴闭式构造，验证不同起始姿态、微小角、跨半周和最短弧方向。
 // 笛卡尔段规划——V-04 几何基准＋V-06 连续性（黄金算例）
 // =====================================================================
 

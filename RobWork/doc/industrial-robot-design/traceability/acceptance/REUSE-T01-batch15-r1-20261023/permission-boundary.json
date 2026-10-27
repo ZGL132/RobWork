@@ -1,0 +1,13 @@
+{
+  "authorityUnchanged": true,
+  "hostExceptionIds": [
+    "HOST-RENDER",
+    "HOST-PRESENT",
+    "HOST-COMPILE",
+    "HOST-GATEWAY"
+  ],
+  "grants": 0,
+  "allRowsPending": true,
+  "qtTextListedInHostExceptions": false,
+  "sourceDiffEmpty": true
+}

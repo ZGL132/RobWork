@@ -1,0 +1,2 @@
+verify-task-scope: SERIAL-T01 base=7be70580cc5a head=52f3cd31cbd8 changed=1 allowedRules=1 forbiddenRules=1
+verify-task-scope: PASS SERIAL-T01 —— 1 个路径全部在允许面内

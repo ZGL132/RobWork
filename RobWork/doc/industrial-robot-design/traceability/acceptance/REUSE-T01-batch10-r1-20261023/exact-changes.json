@@ -1,0 +1,234 @@
+[
+  {
+    "functionId": "core.TestMainReport.main",
+    "kind": "updated"
+  },
+  {
+    "functionId": "core.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "dynamics.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "evidence.TestMainReport.main",
+    "kind": "updated"
+  },
+  {
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "execution.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "execution.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "io.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "io.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "kinematics.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "modeling.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "optimization.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "policy.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "policy.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "project.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "project.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "reporting.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "requirements.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "runtime.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "selection.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "selection.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "testkit.test.TestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "testkit.TestRecordListener",
+    "kind": "added"
+  },
+  {
+    "functionId": "testkit.installTestRecordListener",
+    "kind": "added"
+  },
+  {
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "trajectory.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "ui.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "ui.CMake.ird_add_gtest",
+    "kind": "added"
+  },
+  {
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "workflow.test.TestMainReport.main",
+    "kind": "added"
+  },
+  {
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "kind": "added"
+  }
+]

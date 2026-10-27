@@ -1,0 +1,346 @@
+[
+  {
+    "functionId": "optimization.ParetoTest.makeCid",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCandidate",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeTwoObjectives",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "optimization.ParetoTest.idsOf",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asBytes",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.digestOf",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.existingNodeFor",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.missingNode",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.includeEdge",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeXacroSource",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asText",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.findDiag",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.rowAt",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makeIdentity",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.cancellationRequested",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.reportProgress",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.tryObjectBytes",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "compiled-test-helper"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.conditionIdHex",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.trapezoid",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.rneaReference",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.statValue",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mapCase",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mergeEnvelopeReference",
+    "target": "sdurws_ird_dynamics_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.aabb",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.splitmixNext",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.unitFrom",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.sha256Hex",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.patchCanonicalBytes",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.candidateIdHex",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.computeMetrics",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.generateBatch",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.statusOf",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.closeWithin",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominates",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.bindObjectives",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.buildFront",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominanceMatrix",
+    "target": "sdurws_ird_optimization_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  },
+  {
+    "functionId": "foundation-governance.make_import_expectations.fixtureGeneration",
+    "target": "sdurws_ird_modeling_test",
+    "cmakeMatches": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt"
+    ],
+    "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+  }
+]

@@ -1,0 +1,106 @@
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:40:class Simple: public FunctionType {
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:59:class Simple3D: public FunctionType {
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:78:class Simple10D: public FunctionType {
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:99:class Rosenbrock: public FunctionType {
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:147:	typename FunctionType::Ptr tfunction;
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:176:	FunctionType::Ptr function = new FunctionWithNumericalDerivative<double, Q,
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.hpp:53:	DownhillOptimizer(typename FunctionType::Ptr function, double simplexSize =
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.hpp:72:			ResultType& initialValue, double& initialError);
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.hpp:75:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.cpp:18:DownhillOptimizer::DownhillOptimizer(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.cpp:28:		ResultType& initialValue, double& initialError) {
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.cpp:52:void DownhillOptimizer::step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.cpp:54:	typename FunctionType::Ptr f = getFunction();
+RobWork/RobWork/src/sandbox/optimization\DirectionSetOptimizer.hpp:43:	DirectionSetOptimizer(typename FunctionType::Ptr function, double stepSize =
+RobWork/RobWork/src/sandbox/optimization\DirectionSetOptimizer.cpp:14:		typename FunctionType::Ptr function, double stepSize,
+RobWork/RobWork/src/sandbox/optimization\BFGSOptimizer.hpp:35:	BFGSOptimizer(typename FunctionType::Ptr function, double stepSize = 1.0,
+RobWork/RobWork/src/sandbox/optimization\BFGSOptimizer.hpp:54:			ResultType& initialValue, double& initialError);
+RobWork/RobWork/src/sandbox/optimization\BFGSOptimizer.hpp:57:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\BFGSOptimizer.cpp:13:BFGSOptimizer::BFGSOptimizer(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\BFGSOptimizer.cpp:32:		ResultType& initialValue, double& initialError) {
+RobWork/RobWork/src/sandbox/optimization\BFGSOptimizer.cpp:39:void BFGSOptimizer::step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.hpp:43:	GradientDescentOptimizer(typename FunctionType::Ptr function, double alpha =
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.hpp:72:			ResultType& initialValue, double& initialError);
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.hpp:75:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.cpp:14:		typename FunctionType::Ptr function, double alpha, double stepSizeLimit) :
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.cpp:23:		ResultType& initialValue, double& initialError) {
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.cpp:27:		ResultType& currentValue, double& currentError) {
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.cpp:28:	// this is neccesary, because by default returned type is FunctionType::Ptr
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.hpp:38:	GoldenSectionLineSearch(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.hpp:45:			ResultType& initialValue, double& initialError);
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.hpp:48:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.hpp:62:	ResultType _previousValue;
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.cpp:21:		typename FunctionType::Ptr function, VectorType direction,
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.cpp:27:		ResultType& initialValue, double& initialError) {
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.cpp:32:	typename FunctionType::Ptr f = getFunction();
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.cpp:44:void GoldenSectionLineSearch::step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\GoldenSectionLineSearch.cpp:48:	typename FunctionType::Ptr f = getFunction();
+RobWork/RobWork/src/sandbox/optimization\Types.hpp:21:typedef double ResultType;
+RobWork/RobWork/src/sandbox/optimization\Types.hpp:30:typedef rw::math::Function<double, VectorType> FunctionType;
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.hpp:30:	virtual Optimizer::Ptr makeOptimizer(typename FunctionType::Ptr function);
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.hpp:39:			typename FunctionType::Ptr function);
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.hpp:47:			typename FunctionType::Ptr function);
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.hpp:52:	virtual LineSearch::Ptr makeLineSearch(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.hpp:41:	TaxiCabOptimizer(typename FunctionType::Ptr function, double stepSize = 1.0,
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.hpp:52:			ResultType& initialValue, double& initialError);
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.hpp:55:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.hpp:64:	ResultType _previousValue;
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.cpp:20:		typename FunctionType::Ptr function) {
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.cpp:25:		typename FunctionType::Ptr function) {
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.cpp:30:		typename FunctionType::Ptr function) {
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.cpp:35:		typename FunctionType::Ptr function, VectorType direction,
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.cpp:17:TaxiCabOptimizer::TaxiCabOptimizer(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.cpp:29:		ResultType& initialValue, double& initialError) {
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.cpp:46:	typename FunctionType::Ptr f = getFunction();
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.cpp:52:void TaxiCabOptimizer::step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.cpp:75:		ResultType dValue = currentValue - _previousValue;
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:29: * Finds minima of Multi-Input Single-Output functions.
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:40:		ResultType value;
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:50:	Optimizer(typename FunctionType::Ptr function);
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:56:	typename FunctionType::Ptr getFunction() const {
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:61:	virtual void setFunction(typename FunctionType::Ptr function) {
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:88:	ResultType getCurrentValue() const {
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:128:			ResultType& initialValue, double& initialError) = 0;
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:137:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:141:	typename FunctionType::Ptr _function;
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:144:	ResultType _currentValue;
+RobWork/RobWork/src/sandbox/optimization\Optimizer.cpp:13:Optimizer::Optimizer(typename FunctionType::Ptr function) :
+RobWork/RobWork/src/sandbox/optimization\Optimizer.cpp:15:				ResultType()), _stepCount(0), _currentError(
+RobWork/RobWork/src/sandbox/optimization\LineSearch.hpp:42:	LineSearch(typename FunctionType::Ptr function, VectorType direction,
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.hpp:29:	SimulatedAnnealingOptimizer(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.hpp:53:			ResultType& initialValue, double& initialError);
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.hpp:56:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.hpp:78:	double calculateAcceptanceProbability(ResultType e0, ResultType e1,
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:18:		typename FunctionType::Ptr function, double dev, double T, double dT) :
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:26:		const VectorType& initialGuess, ResultType& initialValue,
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:31:	FunctionType::Ptr f = getFunction();
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:37:		ResultType& currentValue, double& currentError) {
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:42:	// ResultType previousValue = currentValue;  // not used
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:49:	FunctionType::Ptr f = getFunction();
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:50:	ResultType newValue = f->f(newState);
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.cpp:89:		ResultType e0, ResultType e1, double T) {
+RobWork/RobWork/src/sandbox/optimization\LineSearch.cpp:17:LineSearch::LineSearch(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.hpp:29:	PowellOptimizer(typename FunctionType::Ptr function, double stepSize = 1.0,
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.hpp:40:			ResultType& initialValue, double& initialError);
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.hpp:43:	virtual void step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.hpp:52:	ResultType _previousValue;
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:22:typedef typename rw::math::NumericalDerivative<ResultType, VectorType,
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:26:typedef typename rw::math::FirstDifferences<ResultType, VectorType, GradientType> FirstDifferencesMethod;
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:52:	GradientOptimizer(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:63:	virtual void setFunction(typename FunctionType::Ptr function);
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.cpp:20:PowellOptimizer::PowellOptimizer(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.cpp:32:		ResultType& initialValue, double& initialError) {
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.cpp:49:	typename FunctionType::Ptr f = getFunction();
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.cpp:55:void PowellOptimizer::step(VectorType& currentGuess, ResultType& currentValue,
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.cpp:81:		ResultType dValue = currentValue - _previousValue;
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.cpp:18:GradientOptimizer::GradientOptimizer(typename FunctionType::Ptr function,
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.cpp:24:void GradientOptimizer::setFunction(typename FunctionType::Ptr function) {
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.cpp:29:		function = new FunctionWithNumericalDerivative<ResultType, VectorType,
+RobWork/RobWorkSim/src\rwsim\util\CircleModel.cpp:118:    typedef std::pair< Eigen::MatrixXd, Eigen::VectorXd > ResultType;
+RobWork/RobWorkSim/src\rwsim\util\CircleModel.cpp:120:    ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWorkSim/src\rwsim\util\PlaneModel.cpp:65:        typedef std::pair< Eigen::MatrixXd, Eigen::VectorXd > ResultType;
+RobWork/RobWorkSim/src\rwsim\util\PlaneModel.cpp:67:        ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWorkSim/src\rwsimlibs\gui\TactileSensorDialog.cpp:56:    typedef std::pair< Eigen::MatrixXf, Eigen::VectorXf > ResultType;
+RobWork/RobWorkSim/src\rwsimlibs\gui\TactileSensorDialog.cpp:58:    ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWorkSim/src\rwsim\dynamics\OBRManifold.cpp:143:    typedef std::pair< Eigen::MatrixXd, Eigen::VectorXd > ResultType;
+RobWork/RobWorkSim/src\rwsim\dynamics\OBRManifold.cpp:145:    ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);

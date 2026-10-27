@@ -1,0 +1,4 @@
+suite DynamicWorkCellCompilerTest: tests=13 failures=2 errors=0
+suite DynamicWorkCellConstView: tests=1 failures=0 errors=0
+FAILCASE: CompiledPathBodiesAndExplicitValues_RT_T08  failure_count=6
+FAILCASE: DwcProductConsumableByUpstreamRne_REUSE_T30  failure_count=9

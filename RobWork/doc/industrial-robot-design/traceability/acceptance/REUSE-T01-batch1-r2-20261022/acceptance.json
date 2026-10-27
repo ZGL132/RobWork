@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "ird-independent-batch-acceptance/1",
+  "taskId": "REUSE-T01",
+  "attempt": "batch1-r2",
+  "verdict": "pass",
+  "reviewedCommit": "2b26f034c4ce24772239ff26697ac8ce38bb011e",
+  "baseCommit": "212226cfd2e2ca2fd12619dc57c458888f42534b",
+  "reworkBaseCommit": "8da272d79e8a0b89e3b1a60e3bcb3942dd59d1ae",
+  "priorAcceptance": {
+    "verdict": "fail",
+    "path": "C:/Users/zgl18/AppData/Local/Temp/ird-accept-t01-batch1-20261022-211635/acceptance.json",
+    "preserved": true
+  },
+  "scope": "仅首批6单元24条pending候选关系、3个新增candidate能力、10项公共API探测与相关docs/task；非T01全20单元完成，非生产复用通过，非T02准入",
+  "independentClone": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-batch1-r2-20261022-212641\\repo",
+  "trackedStatus": "",
+  "changedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/tests.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/configure.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/tests.log"
+  ],
+  "reworkFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/tests.log"
+  ],
+  "forbiddenScopeChanges": false,
+  "matrix": {
+    "rows": 24,
+    "distinctFunctions": 23,
+    "allPending": true,
+    "allHashesMatch": true,
+    "qualifiedSymbolRechecked": true
+  },
+  "catalog": {
+    "allCandidate": true,
+    "allBindingsMatch": true
+  },
+  "checks": {
+    "task": {
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "docs": {
+      "exitCode": 0,
+      "log": "docs.log"
+    },
+    "reuse": {
+      "exitCode": 0,
+      "log": "reuse.log"
+    },
+    "configure": {
+      "exitCode": 0,
+      "log": "configure.log"
+    },
+    "build": {
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    "tests": {
+      "exitCode": 0,
+      "log": "tests.log"
+    },
+    "semantic-configure": {
+      "exitCode": 0,
+      "log": "semantic-configure.log"
+    },
+    "semantic-build": {
+      "exitCode": 0,
+      "log": "semantic-build.log"
+    },
+    "semantic-test": {
+      "exitCode": 0,
+      "log": "semantic-test.log"
+    }
+  },
+  "probe": {
+    "xmlAttributes": {
+      "tests": "10",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.001",
+      "timestamp": "2026-10-22T21:29:01.219",
+      "name": "AllTests"
+    },
+    "testcaseCount": 10,
+    "nativeSummary": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "xml": "gtest.xml",
+    "nativeReport": "ird-test-report.json",
+    "limitations": "Bullet未实现、Jacobian误报为预期限制断言；RNE torque接口差异仍保留；不代表功能成功、DYN-05或生产复用通过"
+  },
+  "semanticProbe": {
+    "results": {
+      "yawDelta": 0,
+      "pitchDelta": 0,
+      "rollDelta": 0.5999999999999999,
+      "spatialError": [
+        0.42267978316535487,
+        0.3560182700168323,
+        -0.2336510053851902
+      ],
+      "oracleError": 2.897767167584095e-16,
+      "yzNorm": 0.4258424601930722,
+      "sampledZAxisResidual": 0,
+      "targetZ": -1,
+      "reportedConverged": true,
+      "halfTurnResidualRad": 3.141592653589793
+    },
+    "source": "semantic-probe/semantic.cpp",
+    "log": "semantic-test.log",
+    "counting": "附加独立语义核对，不并入原10项计数"
+  },
+  "reworkVerification": [
+    {
+      "id": "T01-B1-01",
+      "verdict": "pass",
+      "evidence": "runtime.json:89 now sdurws::ird::runtime::rotationFromCustomEaa; source namespace closes anonymous block at165 before definition207; unchanged source region hash matches."
+    },
+    {
+      "id": "T01-B1-02",
+      "verdict": "pass",
+      "evidence": "Target changed RPY(0,0,Pi)=Rx(pi). For all joint q, Rz(q)*Z=+Z, while Rx(pi)*Z=-Z; therefore unreachable. Supplement probe independently confirms reportedConverged=true and residual=pi."
+    },
+    {
+      "id": "T01-B1-03",
+      "verdict": "pass",
+      "evidence": "Target changes RPY(0.7,0.4,0.6) to RPY(0.7,0.4,1.2). yawDelta=0,pitchDelta=0,rollDelta=0.6; spatial log equals 0.6*Rz(0.7)*Ry(0.4)*X, oracleError<3e-16; yzNorm=0.4258424601930722."
+    }
+  ],
+  "findings": [],
+  "testkitReuse": "fresh build compiles existing industrialrobot/testkit and core/test/TestMainReport.cpp; no copied reporter",
+  "README": "Preserves probe/ initial results and documents invalid first-round RPY interpretations; probe-r2/ is separate, original FAIL unchanged.",
+  "notRun": [
+    "全20单元功能审计",
+    "完整上游集",
+    "生产迁移/断开实验",
+    "完整数值/性能",
+    "140治理自测",
+    "DeepEvidence全库索引",
+    "远程CI/推送/合入"
+  ],
+  "bindings": {
+    "RobWork/scripts/industrialrobot/validate-task.ps1": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55",
+    "RobWork/scripts/industrialrobot/validate-docs.ps1": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511",
+    "RobWork/scripts/industrialrobot/validate-reuse.ps1": "050709d142f038ad3fa7af8fac3adba7ec647f2ca8700b079d3ddfa8afce4857",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1": "09fe4502ddb348e18986f6b50ab2e9cbe4f8fbc9a8979e4b1767178223d165fa",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp": "ad9e784a95974d835fe9befb3d3b09b5579039243db113421a0ca19512e81917",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt": "40eedd725e605a8ab9c78735f1fc715b2d058706add309c11901f262350d76f1",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+  }
+}

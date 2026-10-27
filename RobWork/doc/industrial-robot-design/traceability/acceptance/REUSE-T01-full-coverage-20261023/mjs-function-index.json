@@ -1,0 +1,835 @@
+[
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.0.0/generate/make_dt_mapping_golden.mjs",
+    "dataset": "dt-mapping-golden",
+    "lineCount": 273,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "trapezoid",
+        "line": 43
+      },
+      {
+        "symbol": "mapCase",
+        "line": 52
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "eb59d09e1477f0b67fea26eaf8fdfbd757ba6a0fae0e1229771d91525840ac5f",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+    "dataset": "dyn-two-link-analytic",
+    "lineCount": 292,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "conditionIdHex",
+        "line": 57
+      },
+      {
+        "symbol": "trapezoid",
+        "line": 63
+      },
+      {
+        "symbol": "rneaReference",
+        "line": 77
+      },
+      {
+        "symbol": "statValue",
+        "line": 106
+      },
+      {
+        "symbol": "mapCase",
+        "line": 119
+      },
+      {
+        "symbol": "mergeEnvelopeReference",
+        "line": 213
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "e49d9e85fc41f568673aa1d2c9885dd21555646d169faa903b78acdd3b5f4cef",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/ev-slice-fixture/1.0.0/generate/make_ev_slice_fixture.mjs",
+    "dataset": "ev-slice-fixture",
+    "lineCount": 347,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "idBytes",
+        "line": 48
+      },
+      {
+        "symbol": "hexToBytes",
+        "line": 56
+      },
+      {
+        "symbol": "bytesToHex",
+        "line": 63
+      },
+      {
+        "symbol": "sha256Hex",
+        "line": 67
+      },
+      {
+        "symbol": "appendU16",
+        "line": 72
+      },
+      {
+        "symbol": "appendU32",
+        "line": 77
+      },
+      {
+        "symbol": "appendU64",
+        "line": 82
+      },
+      {
+        "symbol": "appendRaw",
+        "line": 90
+      },
+      {
+        "symbol": "appendLengthString",
+        "line": 97
+      },
+      {
+        "symbol": "encodeEntry",
+        "line": 125
+      },
+      {
+        "symbol": "encodeSnapshotRefsOnly",
+        "line": 176
+      },
+      {
+        "symbol": "encodeSliceFull",
+        "line": 243
+      },
+      {
+        "symbol": "encodeSliceBaseline",
+        "line": 266
+      },
+      {
+        "symbol": "printIntegrity",
+        "line": 331
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "637062f6db9c132e82891b9887e176cc5308e7923b57416e661c5149e42cad2f",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-coverage/1.0.0/generate/make_kin_coverage_golden.mjs",
+    "dataset": "kin-coverage",
+    "lineCount": 190,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "gridCenters",
+        "line": 78
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "cc53fc5dade8c96695b524392268aebb74f2f63b7b64562c2a8317678ed726d1",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/generate/make_kin_fk_golden.mjs",
+    "dataset": "kin-fk-analytic",
+    "lineCount": 332,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "rt",
+        "line": 46
+      },
+      {
+        "symbol": "mul",
+        "line": 62
+      },
+      {
+        "symbol": "refFk",
+        "line": 81
+      },
+      {
+        "symbol": "jacobiEigen",
+        "line": 130
+      },
+      {
+        "symbol": "singularValues",
+        "line": 162
+      },
+      {
+        "symbol": "planar2rInverse",
+        "line": 206
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "e2c98204a21de0e99b401d7e4a2ceb3ed5eec956007bdfd3321e812ba2b1e473",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-ik-dedup/1.0.0/generate/make_kin_ik_dedup_golden.mjs",
+    "dataset": "kin-ik-dedup",
+    "lineCount": 161,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "threeLinkBranches",
+        "line": 46
+      },
+      {
+        "symbol": "forward",
+        "line": 62
+      },
+      {
+        "symbol": "margin",
+        "line": 70
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "240edaabfdc649ceb81941ed977bda8e955e4f96a4a5fb0905534b2d16d91734",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-search-outcomes/1.0.0/generate/make_kin_search_outcomes_golden.mjs",
+    "dataset": "kin-search-outcomes",
+    "lineCount": 224,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "fk",
+        "line": 53
+      },
+      {
+        "symbol": "threeLinkBranches",
+        "line": 65
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "a493e11cc56e48c0170fc5f5954a1245d4a1b79029a27518585f82b0a208fb4c",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/generate/make_dh_equivalence.mjs",
+    "dataset": "mdl-dh-equivalence",
+    "lineCount": 212,
+    "sourceReferences": 0,
+    "functions": [],
+    "topLevelPresent": true,
+    "fileSha256": "e0b2b8ce68f31170112b92d37553b04648092246f420de92ba9380e6c8ab2a31",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/1.0.0/generate/make_not_expressible.mjs",
+    "dataset": "mdl-not-expressible",
+    "lineCount": 91,
+    "sourceReferences": 0,
+    "functions": [],
+    "topLevelPresent": true,
+    "fileSha256": "945c098dd6e191548ec5b4b523926de5ef35e08685b607b90ec2d511a1edd666",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/1.0.0/generate/make_template_golden.mjs",
+    "dataset": "mdl-template-6r",
+    "lineCount": 109,
+    "sourceReferences": 0,
+    "functions": [],
+    "topLevelPresent": true,
+    "fileSha256": "b158c07e223e97ee5f0164d26d7367521e7d80fbb0132f20b1bab39c1146a3a0",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs",
+    "dataset": "mdl-urdf-import",
+    "lineCount": 150,
+    "sourceReferences": 0,
+    "functions": [],
+    "topLevelPresent": true,
+    "fileSha256": "e0e7674bb52c36c3ab40991d14c8df6ab80b46f5456bf4db5ad4e54db5f3ab9a",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-adopt-golden/1.0.0/generate/make_opt_adopt_golden.mjs",
+    "dataset": "opt-adopt-golden",
+    "lineCount": 283,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "sha256Hex",
+        "line": 115
+      },
+      {
+        "symbol": "patchCanonicalBytes",
+        "line": 119
+      },
+      {
+        "symbol": "candidateIdHex",
+        "line": 141
+      },
+      {
+        "symbol": "designTableBytes",
+        "line": 153
+      },
+      {
+        "symbol": "diffEntries",
+        "line": 173
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "3fbf3052274d62821494321f158d40ea0aa245576d097eb9d462908675f29336",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-lhs-golden/1.0.0/generate/make_opt_lhs_golden.mjs",
+    "dataset": "opt-lhs-golden",
+    "lineCount": 364,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "splitmixNext",
+        "line": 135
+      },
+      {
+        "symbol": "unitFrom",
+        "line": 145
+      },
+      {
+        "symbol": "quantizeHalfEven",
+        "line": 150
+      },
+      {
+        "symbol": "samplingDims",
+        "line": 163
+      },
+      {
+        "symbol": "generateBatch",
+        "line": 178
+      },
+      {
+        "symbol": "patchCanonicalBytes",
+        "line": 245
+      },
+      {
+        "symbol": "sha256Hex",
+        "line": 288
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "43b63d1005567bb2a806a14ad879f7a87589d8114f15698073eabe86ecf8c434",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+    "dataset": "opt-pareto-golden",
+    "lineCount": 557,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "aabb",
+        "line": 106
+      },
+      {
+        "symbol": "splitmixNext",
+        "line": 210
+      },
+      {
+        "symbol": "unitFrom",
+        "line": 219
+      },
+      {
+        "symbol": "sha256Hex",
+        "line": 223
+      },
+      {
+        "symbol": "patchCanonicalBytes",
+        "line": 227
+      },
+      {
+        "symbol": "candidateIdHex",
+        "line": 250
+      },
+      {
+        "symbol": "computeMetrics",
+        "line": 261
+      },
+      {
+        "symbol": "generateBatch",
+        "line": 273
+      },
+      {
+        "symbol": "statusOf",
+        "line": 326
+      },
+      {
+        "symbol": "closeWithin",
+        "line": 353
+      },
+      {
+        "symbol": "dominates",
+        "line": 358
+      },
+      {
+        "symbol": "bindObjectives",
+        "line": 381
+      },
+      {
+        "symbol": "buildFront",
+        "line": 392
+      },
+      {
+        "symbol": "dominanceMatrix",
+        "line": 474
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "df5970b8ab0ae2001ef537e7955a852ecb4fa1543e8cee91bc7fc88ec5fff932",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs",
+    "dataset": "pol-collision-analytic",
+    "lineCount": 121,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "handDerived",
+        "line": 41
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "55c80e787e88ae08c4e18e0e648786d9b6f3add22676f302aa64bc3163e39026",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/generate/make_pol_policy_fixture.mjs",
+    "dataset": "pol-policy-codec-fixture",
+    "lineCount": 399,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "u32",
+        "line": 42
+      },
+      {
+        "symbol": "u8",
+        "line": 49
+      },
+      {
+        "symbol": "presence",
+        "line": 54
+      },
+      {
+        "symbol": "lpText",
+        "line": 59
+      },
+      {
+        "symbol": "id128",
+        "line": 65
+      },
+      {
+        "symbol": "f64",
+        "line": 72
+      },
+      {
+        "symbol": "toSi",
+        "line": 93
+      },
+      {
+        "symbol": "bytesLess",
+        "line": 104
+      },
+      {
+        "symbol": "scopeTargetLess",
+        "line": 109
+      },
+      {
+        "symbol": "normalizePairRules",
+        "line": 117
+      },
+      {
+        "symbol": "normalizedSet",
+        "line": 136
+      },
+      {
+        "symbol": "encScopeTarget",
+        "line": 145
+      },
+      {
+        "symbol": "encPairRule",
+        "line": 151
+      },
+      {
+        "symbol": "encPairRuleList",
+        "line": 160
+      },
+      {
+        "symbol": "encEnumSet",
+        "line": 166
+      },
+      {
+        "symbol": "encIdSet",
+        "line": 173
+      },
+      {
+        "symbol": "encOptionalRawThreshold",
+        "line": 179
+      },
+      {
+        "symbol": "encOptionalSemanticThreshold",
+        "line": 185
+      },
+      {
+        "symbol": "buildFrame",
+        "line": 191
+      },
+      {
+        "symbol": "encodeFull",
+        "line": 260
+      },
+      {
+        "symbol": "encodeSemanticProjection",
+        "line": 294
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "21725a1b7d8b6c339b6454a650951826afe93092a98e029508c1852adc45b561",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-partial-pose/1.0.0/generate/make_partial_pose_golden.mjs",
+    "dataset": "req-partial-pose",
+    "lineCount": 118,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "norm",
+        "line": 33
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "c3a79dd2204186c07837f868f7dc3095357672f6caf51715240671d88f0d4763",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-payload-events/1.0.0/generate/make_payload_events_golden.mjs",
+    "dataset": "req-payload-events",
+    "lineCount": 131,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "projectSourced",
+        "line": 40
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "a92c1ffeb1c0365b6943a21eb3b38be98c2d692beef37c262aba825a52bb36e0",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-region-sampling/1.0.0/generate/make_region_sampling_golden.mjs",
+    "dataset": "req-region-sampling",
+    "lineCount": 136,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "planByRegion",
+        "line": 68
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "67947e02b5a8e87c10172f4d62ba899a96c592ec0f6f5fcd511bb42b5d6d22a2",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-transport-task/1.0.0/generate/make_transport_task_golden.mjs",
+    "dataset": "req-transport-task",
+    "lineCount": 226,
+    "sourceReferences": 0,
+    "functions": [],
+    "topLevelPresent": true,
+    "fileSha256": "63e3cafa918fd77767152b79eafcb996808fe34ce06dda8db66e4ee06a1aa8de",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs",
+    "dataset": "rt-fk-equation",
+    "lineCount": 87,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "rz",
+        "line": 33
+      },
+      {
+        "symbol": "mulVec",
+        "line": 44
+      },
+      {
+        "symbol": "closedFormFk",
+        "line": 53
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "7cd0b216c7e42843d71ed93792f073da83d08a647071d53552951f777a60caab",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0/generate/make_namemap.mjs",
+    "dataset": "rt-namemap-roundtrip",
+    "lineCount": 105,
+    "sourceReferences": 0,
+    "functions": [],
+    "topLevelPresent": true,
+    "fileSha256": "9211cf6cc94092b7a98fb6b3b6a74a77805812c4d0098e558f8833adccee7417",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-backfill-golden/1.0.0/generate/make_sel_backfill_golden.mjs",
+    "dataset": "sel-backfill-golden",
+    "lineCount": 212,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "parallelAxis",
+        "line": 78
+      },
+      {
+        "symbol": "addI",
+        "line": 85
+      },
+      {
+        "symbol": "subI",
+        "line": 89
+      },
+      {
+        "symbol": "synthesize",
+        "line": 95
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "71c617d1be9e092e9713e90ac2ab9802636c1ba3b1f2cd8d28049c8171705928",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-catalog-golden/1.0.0/generate/make_sel_catalog_golden.mjs",
+    "dataset": "sel-catalog-golden",
+    "lineCount": 378,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "toCsv",
+        "line": 165
+      },
+      {
+        "symbol": "sha256",
+        "line": 169
+      },
+      {
+        "symbol": "editRow",
+        "line": 185
+      },
+      {
+        "symbol": "missingOf",
+        "line": 230
+      },
+      {
+        "symbol": "motorGolden",
+        "line": 239
+      },
+      {
+        "symbol": "gearboxGolden",
+        "line": 259
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "b3ef0375b815b136f6254257d490389c6f6533e07567a7d29f3f01c6b58357f0",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-combo-golden/1.0.0/generate/make_sel_combo_golden.mjs",
+    "dataset": "sel-combo-golden",
+    "lineCount": 355,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "mappingFactOf",
+        "line": 112
+      },
+      {
+        "symbol": "interp",
+        "line": 156
+      },
+      {
+        "symbol": "screenAxis",
+        "line": 169
+      },
+      {
+        "symbol": "sortReasons",
+        "line": 242
+      },
+      {
+        "symbol": "checkCombo",
+        "line": 255
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "2c9e2fb2f9f1d66cffa0864e78f7c1bd51da69b6e17bffa3c0a07a64dd9b9ff8",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/generate/make_sel_linear_golden.mjs",
+    "dataset": "sel-linear-golden",
+    "lineCount": 501,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "readCsv",
+        "line": 15
+      },
+      {
+        "symbol": "col",
+        "line": 28
+      },
+      {
+        "symbol": "num",
+        "line": 49
+      },
+      {
+        "symbol": "issue",
+        "line": 139
+      },
+      {
+        "symbol": "linearRowsOf",
+        "line": 143
+      },
+      {
+        "symbol": "validateLinearTable",
+        "line": 152
+      },
+      {
+        "symbol": "validateCurveTable",
+        "line": 207
+      },
+      {
+        "symbol": "validateLinearCurveRefs",
+        "line": 275
+      },
+      {
+        "symbol": "groupDecls",
+        "line": 294
+      },
+      {
+        "symbol": "makeCase",
+        "line": 310
+      },
+      {
+        "symbol": "interp",
+        "line": 359
+      },
+      {
+        "symbol": "exceeds",
+        "line": 372
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "df433eed2433ad8c2423bf2da6df6b4cc6c34f142a4eec59acdd0671795f26fc",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.0.0/generate/make_sel_screening_golden.mjs",
+    "dataset": "sel-screening-golden",
+    "lineCount": 604,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "interp",
+        "line": 130
+      },
+      {
+        "symbol": "interpAnalytic",
+        "line": 143
+      },
+      {
+        "symbol": "reason",
+        "line": 145
+      },
+      {
+        "symbol": "gap",
+        "line": 150
+      },
+      {
+        "symbol": "screenMotorCase",
+        "line": 156
+      },
+      {
+        "symbol": "screenGearboxCase",
+        "line": 327
+      },
+      {
+        "symbol": "sortReasons",
+        "line": 442
+      },
+      {
+        "symbol": "runCase",
+        "line": 517
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "cb64bddcf47596d41575c07f2c18b0507fe9a290271248429c0cabd0c2c19fbb",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/generate/make_trj_at06_golden.mjs",
+    "dataset": "trj-at06-recheck-golden",
+    "lineCount": 274,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "subdivisionPlan",
+        "line": 61
+      },
+      {
+        "symbol": "fk2R",
+        "line": 103
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "06a10a688b0c18783eecef4c098ca4a2d7f6ebe56d03791d03e3303d106bcb44",
+    "candidateOnly": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.0.0/generate/make_wf_gate_advice_fixture.mjs",
+    "dataset": "wf-gate-advice-fixture",
+    "lineCount": 367,
+    "sourceReferences": 0,
+    "functions": [
+      {
+        "symbol": "replayEvents",
+        "line": 92
+      },
+      {
+        "symbol": "sortedStale",
+        "line": 125
+      },
+      {
+        "symbol": "evaluateCase",
+        "line": 135
+      },
+      {
+        "symbol": "adviseFor",
+        "line": 229
+      },
+      {
+        "symbol": "mapInvalidation",
+        "line": 294
+      }
+    ],
+    "topLevelPresent": true,
+    "fileSha256": "4feb9899991dc77bedca136347650babd2262843646693ca3fa7d4152111bc2c",
+    "candidateOnly": true
+  }
+]

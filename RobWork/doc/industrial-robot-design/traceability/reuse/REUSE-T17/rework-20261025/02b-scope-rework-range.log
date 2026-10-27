@@ -1,0 +1,4 @@
+$ pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json -Base e8ee7d31d -Head HEAD
+verify-task-scope: REUSE-T17 base=e8ee7d31d624 head=0801488bcf86 changed=10 allowedRules=22 forbiddenRules=6
+verify-task-scope: PASS REUSE-T17 —— 10 个路径全部在允许面内
+exit=0

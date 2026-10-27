@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T51",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T51.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c",
+      "mode": "adapter",
+      "capabilities": [
+        "KIN-IK"
+      ],
+      "boundary": "WP-04（migration §13.3）：完整位姿普通模式（taskSpace==FullPose 且无 taskConstraint）迭代核迁移上游 rw::invkin::JacobianIKSolver——经 T17 锚（runtimeModelView→已编译 WorkCell）取 SerialDevice/每初值任务私有 State，solveLocal(bTed,min(posTol,oriTol),state,1) 单步循环逐步实测迭代数（与单次多步调用轨迹同一性有测试钉），SVD/不钳限位/不查限位默认显式登记（限位归产品硬过滤②契约区间直比），上游收敛解经 JointMapping 逆映射回权威角后由 FkEvaluator 独立 FK 复算双容差逐项判定（GAP-IK-01 §1『优先原API，结束后以任务实际位置/姿态容差独立复核』——假成功被 disconnected 红例实证拦截）；删除该模式自写 6 维 DLS/正规方程链（dampedLeastSquaresStep 收缩为仅位置 3 维专用并去 taskDim 参数）；锚缺失/设备未命中/上游异常→既有 IkFacilityFailure 值面（不抛承诺不破，F-746③ 同轨，无隐藏 fallback）；PositionOnly/约束模式仍走既有链（上游掩码入口待 runtime 视图权限审查——GAP-IK-01，归 WP-05）；kIkSolverContractVersion 4→5（CON-04）。整文件逐功能实审（1 adapter 行四套生产证据＋17 business-specific 行〔含 8 审计铺面〕逐行 nonOverlapEvidence——19 区段连续铺面覆盖全文件 1318 行）",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+      "sha256": "ab4c3b1c1785df2f830d807dff362d91630c47a59925bb5dfb1d3a542bd10825",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "REUSE-T51 单点 q 映射补互逆方向：qAuthoritativeFromRuntime（q_auth＝q_rw＋zeroOffset——上游收敛解回权威角，与既有 qRuntimeFromAuthoritative 同头互逆唯一权威点）；三行纯算术薄适配（H1——全库无既有公共转换入口，T18 检索在案），不建缓存/不建跨单元共享面；整文件三区段铺面（头/两函数）",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+      "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "kIkSolverContractVersion 4→5（CON-04——换核改变同请求数值结果，新旧解集不可假借同一版本身份；v5 注释登记换核边界与单步循环实测口径）＋文件头注释同步；请求/结局/统计契约面零变化；整文件七区段铺面（常量/策略词表/碰撞端口/请求/结果/接口/实现类）——契约面纯注释与常量值变更，零 API 形态变化",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+      "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "REUSE-T51 增链 sdurw_invkin：集成分支第四真实目标（GOV-T24 显式合法目标名形态延续），冒烟分支 RW::sdurw_invkin 同名 ALIAS（REUSE-T07/T12 先例形态；该目标名非集成模式判定符——全库 rg 零命中，不触 sdurw_kinematics 判定符禁令）；门禁词表 ^sdurw 已知族零改动；无新外部依赖（框架同包导出目标）",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+      "sha256": "1f5abeb77da3ef34cad133cf9ff59f3990591c368f66be7d65e6e54d064dc39b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "REUSE-T51 测试面：既有用例断言零放松（引擎无关面全绿）；新增 FullPose 上游路径组五用例（闭式独立 oracle/限位过滤〔AllCandidatesFiltered＋JointLimit 记录〕/不可达无假成功〔迭代数恰等预算〕/上游直接对照〔同模型同初值直接 JacobianIKSolver 消费逐位一致——IRD_HAVE_RUNTIME_COMPILE 门控〕/solveLocal 单步循环轨迹同一性钉）＋F-746③ 设施失败注释面同步（值面断言不变）；模型构造仍经 KinFkFixture 既有授权形态（真实编译 RuntimeSnapshotFactory 在 runtime owner 产品路径内），权限授予面 REUSE-T51-IkTest.cpp grant（task-private write-state＋solver 对照）",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/README.md"
+    }
+  ]
+}

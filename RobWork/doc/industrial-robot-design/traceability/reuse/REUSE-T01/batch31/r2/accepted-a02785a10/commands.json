@@ -1,0 +1,18 @@
+{
+  "reviewedCommit": "a02785a10eada414533d9789eedac3f5af654a71",
+  "base": "52285db6f0d276742531ecb7e7bcf73db283e563",
+  "original": "933dc6016c078b7d674fea68af19c038e0388979",
+  "clone": "git -c core.longpaths=true clone --no-hardlinks --no-checkout C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork <Temp>/clone",
+  "checkout": "git -c core.longpaths=true checkout --detach a02785a10eada414533d9789eedac3f5af654a71",
+  "commands": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head a02785a10eada414533d9789eedac3f5af654a71 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base 52285db6f0d276742531ecb7e7bcf73db283e563 -Head a02785a10eada414533d9789eedac3f5af654a71",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 52285db6f0d276742531ecb7e7bcf73db283e563..a02785a10eada414533d9789eedac3f5af654a71",
+    "git -c core.whitespace=cr-at-eol diff --check 52285db6f0d276742531ecb7e7bcf73db283e563 a02785a10eada414533d9789eedac3f5af654a71"
+  ],
+  "localOnly": true,
+  "sourceWrites": false,
+  "cppRerun": false
+}

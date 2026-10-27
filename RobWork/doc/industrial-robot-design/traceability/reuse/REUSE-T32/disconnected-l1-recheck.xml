@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-25T12:38:11.141" name="AllTests">
+  <testsuite name="TrjPlannerAvoidance" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-25T12:38:11.141">
+    <testcase name="DirectClearAdoptsStraightPath_WP16T06_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PlannerAvoidanceTest.cpp" line="546" status="run" result="completed" time="0." timestamp="2026-10-25T12:38:11.141" classname="TrjPlannerAvoidance" />
+  </testsuite>
+  <testsuite name="TrjPlannerReuse" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-25T12:38:11.142">
+    <testcase name="DirectAdoptPathLengthMatchesIndependentOracle_REUSE_T32" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PlannerReuseTest.cpp" line="172" status="run" result="completed" time="0." timestamp="2026-10-25T12:38:11.142" classname="TrjPlannerReuse" />
+  </testsuite>
+</testsuites>

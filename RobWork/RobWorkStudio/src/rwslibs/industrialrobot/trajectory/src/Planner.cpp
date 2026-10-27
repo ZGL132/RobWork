@@ -53,6 +53,7 @@
 #include <rw/models/Device.hpp>
 #include <rw/models/SerialDevice.hpp>
 #include <rw/models/WorkCell.hpp>
+#include <rw/pathplanning/PathAnalyzer.hpp>
 #include <rw/pathplanning/PlannerConstraint.hpp>
 #include <rw/pathplanning/QConstraint.hpp>
 #include <rw/pathplanning/QEdgeConstraint.hpp>
@@ -360,13 +361,12 @@ struct SampledPath {
 SampledPath sampleStraightPath(const rw::math::Q& fromQ, const rw::math::Q& toQ,
                                double resolution)
 {
-    // 欧氏长度（逐轴混合计量 rad|m——与规划器度量同源口径，§6.4）。
-    double length = 0.0;
-    for (std::size_t i = 0; i < fromQ.size(); ++i) {
-        const double delta = toQ[i] - fromQ[i];
-        length += delta * delta;
-    }
-    length = std::sqrt(length);
+    // 欧氏长度（rad|m 逐轴混合计量，§6.4 与规划器度量同源口径）：上游
+    // rw::math::MetricFactory::makeEuclidean 直接消费——单对 distance 的
+    // "平方和→sqrt"算式（MetricUtil::dist2，轴升序）与原手写循环逐位一
+    // 致，采样分段数与既有黄金算例的格点完全相同。
+    const rw::math::QMetric::Ptr euclidean = rw::math::MetricFactory::makeEuclidean<rw::math::Q>();
+    const double length = euclidean->distance(fromQ, toQ);
     // 分段数＝ceil(长度/分辨率)，下限 1（零长/极短段至少 1 段——样本数
     // ≥2，端点必含）；上限防病态小分辨率把样本数撑爆（分辨率来自显式
     // 配置，调用方对采样规模负责；此处仅防溢出级灾难）。
@@ -468,11 +468,14 @@ ReviewResult reviewPathSequence(const policy::CollisionEvaluationSession& sessio
 /// 相邻路点逐轴最大 |Δq|（延续性键——步进越平缓越好，升序；rad|m）。
 double maxAdjacentStep(const std::vector<rw::math::Q>& configurations)
 {
+    // 逐相邻对 Linf 距离：上游 rw::math::MetricFactory::makeInfinity 直接
+    // 消费——单对 distance（MetricUtil::distInf，轴升序 max|Δq|）与原手
+    // 写内层循环逐位一致；跨对取最大是产品稳定选择序的归约（max 归约与
+    // 结合成序无关），整体结果逐位不变，选择序不受影响。
+    const rw::math::QMetric::Ptr infinity = rw::math::MetricFactory::makeInfinity<rw::math::Q>();
     double maxStep = 0.0;
     for (std::size_t i = 1; i < configurations.size(); ++i) {
-        for (std::size_t j = 0; j < configurations[i].size(); ++j) {
-            maxStep = std::max(maxStep, std::abs(configurations[i][j] - configurations[i - 1][j]));
-        }
+        maxStep = std::max(maxStep, infinity->distance(configurations[i], configurations[i - 1]));
     }
     return maxStep;
 }
@@ -480,13 +483,15 @@ double maxAdjacentStep(const std::vector<rw::math::Q>& configurations)
 /// 关节空间路径长度 Σ|Δq|（路径长度键——升序；rad|m 逐轴混合计量）。
 double pathJointLength(const std::vector<rw::math::Q>& configurations)
 {
-    double length = 0.0;
-    for (std::size_t i = 1; i < configurations.size(); ++i) {
-        for (std::size_t j = 0; j < configurations[i].size(); ++j) {
-            length += std::abs(configurations[i][j] - configurations[i - 1][j]);
-        }
-    }
-    return length;
+    // L1 路径长度：上游 rw::pathplanning::PathAnalyzer::pathLength 折叠上
+    // 游 rw::math::MetricFactory::makeManhattan 的逐相邻对距离——单对
+    // Σ|Δq| 算式（MetricUtil::dist1，轴升序）与原手写内层循环逐位一致；
+    // 跨对归约由上游"逐对先归约再累加"替代原单累加器逐轴交错序，浮点
+    // 求和序变化属末位舍入差异（catalog MATH-METRIC boundary 在案），稳
+    // 定选择序仍为同一确定性全序，既有黄金算例由本包测试回归钉住。
+    const rw::math::QMetric::Ptr manhattan = rw::math::MetricFactory::makeManhattan<rw::math::Q>();
+    return rw::pathplanning::PathAnalyzer::pathLength(configurations.begin(),
+                                                      configurations.end(), *manhattan);
 }
 
 /// 候选最小归一化关节裕量（裕量键——降序；有界轴 margin=2·min(q−lo, hi−q)/
@@ -941,11 +946,10 @@ AvoidancePlanResult planPtpWithObstacleAvoidance(const AvoidancePlanRequest& req
         end.q = request.endQ;
         end.sourceTaskPoint = request.sourceTaskPoint;
         outcome.segment.waypoints = {start, end};
-        double length = 0.0;
-        for (std::size_t i = 0; i < request.startQ.size(); ++i) {
-            length += std::abs(request.endQ[i] - request.startQ[i]);
-        }
-        outcome.segment.pathLengthJoint = length;
+        // 段 L1 长度＝两端点的逐轴 |Δq| 之和——委托 pathJointLength（上
+        // 游 Manhattan 度量的单对距离；与原手写累加逐位一致）。
+        outcome.segment.pathLengthJoint =
+            pathJointLength({request.startQ, request.endQ});
         outcome.segment.pathLengthTcp = 0.0;  // FK 派生观察不计算——恒 0 不冒充
         validateTrajectorySegment(outcome.segment);  // 段构造保证的自证
         return outcome;
@@ -1002,13 +1006,10 @@ AvoidancePlanResult planPtpWithObstacleAvoidance(const AvoidancePlanRequest& req
         end.q = configurations.back();
         end.sourceTaskPoint = request.sourceTaskPoint;
         outcome.segment.waypoints.push_back(end);
-        double length = 0.0;
-        for (std::size_t i = 1; i < configurations.size(); ++i) {
-            for (std::size_t j = 0; j < configurations[i].size(); ++j) {
-                length += std::abs(configurations[i][j] - configurations[i - 1][j]);
-            }
-        }
-        outcome.segment.pathLengthJoint = length;
+        // 段 L1 长度＝候选路点序列的 Σ|Δq|——委托 pathJointLength（上游
+        // Manhattan 度量逐对距离的折叠；"同语义同一实现点"纪律，替代原
+        // 此处重复的手写累加循环）。
+        outcome.segment.pathLengthJoint = pathJointLength(configurations);
         outcome.segment.pathLengthTcp = 0.0;  // FK 派生观察不计算
     };
 

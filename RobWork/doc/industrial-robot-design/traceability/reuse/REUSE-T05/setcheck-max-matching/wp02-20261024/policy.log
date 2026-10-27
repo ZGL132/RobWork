@@ -1,0 +1,11 @@
+Note: Google Test filter = PolicyContractDoubles.ThreeEntries*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PolicyContractDoubles
+[ RUN      ] PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs
+[       OK ] PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs (17 ms)
+[----------] 1 test from PolicyContractDoubles (17 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (17 ms total)
+[  PASSED  ] 1 test.

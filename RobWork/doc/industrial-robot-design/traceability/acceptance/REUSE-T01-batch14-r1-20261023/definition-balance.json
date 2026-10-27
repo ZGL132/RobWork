@@ -1,0 +1,1451 @@
+[
+  {
+    "function": "project.Codec.anonymous.corrupt",
+    "start": 62,
+    "end": 65,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.checkSchemaVersion",
+    "start": 84,
+    "end": 110,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.checkFormatId",
+    "start": 117,
+    "end": 124,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.findMember",
+    "start": 144,
+    "end": 150,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.JsonParser",
+    "start": 162,
+    "end": 165,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseDocument",
+    "start": 169,
+    "end": 176,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.atEnd",
+    "start": 184,
+    "end": 184,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.peek",
+    "start": 187,
+    "end": 191,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.next",
+    "start": 194,
+    "end": 199,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.expect",
+    "start": 202,
+    "end": 209,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.printable",
+    "start": 212,
+    "end": 221,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseValue",
+    "start": 224,
+    "end": 252,
+    "opens": 5,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseObject",
+    "start": 255,
+    "end": 278,
+    "opens": 8,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseArray",
+    "start": 281,
+    "end": 296,
+    "opens": 5,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseString",
+    "start": 299,
+    "end": 320,
+    "opens": 7,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseEscape",
+    "start": 323,
+    "end": 340,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseHex4",
+    "start": 344,
+    "end": 356,
+    "opens": 6,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseUnicodeEscape",
+    "start": 360,
+    "end": 379,
+    "opens": 5,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.appendUtf8",
+    "start": 382,
+    "end": 399,
+    "opens": 5,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.JsonParser.parseNumber",
+    "start": 403,
+    "end": 441,
+    "opens": 12,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.decodeUtf8At",
+    "start": 454,
+    "end": 494,
+    "opens": 20,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.appendUnicodeEscape",
+    "start": 498,
+    "end": 515,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.appendJsonString",
+    "start": 527,
+    "end": 569,
+    "opens": 6,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.appendHexString",
+    "start": 578,
+    "end": 588,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.decodeHexString",
+    "start": 592,
+    "end": 614,
+    "opens": 7,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.appendRefPair",
+    "start": 637,
+    "end": 644,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireMember",
+    "start": 651,
+    "end": 655,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireStringField",
+    "start": 658,
+    "end": 665,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.hasMember",
+    "start": 668,
+    "end": 671,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.integerInRange",
+    "start": 675,
+    "end": 705,
+    "opens": 7,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireIntField",
+    "start": 708,
+    "end": 713,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireUint64Field",
+    "start": 716,
+    "end": 720,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireUint32Field",
+    "start": 723,
+    "end": 727,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireObjectField",
+    "start": 730,
+    "end": 737,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireArrayField",
+    "start": 740,
+    "end": 747,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireTokenField",
+    "start": 756,
+    "end": 771,
+    "opens": 5,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requirePathField",
+    "start": 779,
+    "end": 794,
+    "opens": 5,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireHex64Field",
+    "start": 799,
+    "end": 813,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireIdField",
+    "start": 818,
+    "end": 827,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.optionalIdField",
+    "start": 830,
+    "end": 835,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.parseRefPair",
+    "start": 845,
+    "end": 852,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.optionalRefPairField",
+    "start": 855,
+    "end": 860,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.requireTimestampField",
+    "start": 864,
+    "end": 867,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.rejectUnknownFields",
+    "start": 872,
+    "end": 889,
+    "opens": 6,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.anonymous.parsePreambleVersioned",
+    "start": 895,
+    "end": 904,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.canonical.ProjectId",
+    "start": 617,
+    "end": 617,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.canonical.BranchId",
+    "start": 620,
+    "end": 620,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.canonical.RevisionId",
+    "start": 623,
+    "end": 623,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.canonical.sdurws.ird.core.RunId",
+    "start": 628,
+    "end": 628,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.canonical.ObjectId",
+    "start": 631,
+    "end": 631,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.canonical.ContentVersion",
+    "start": 634,
+    "end": 634,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.dump.ProjectStaticIdentity",
+    "start": 914,
+    "end": 929,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.dump.HeadRecord",
+    "start": 931,
+    "end": 947,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.dump.RevisionManifest",
+    "start": 949,
+    "end": 988,
+    "opens": 7,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.dump.ProjectMetadataRecord",
+    "start": 990,
+    "end": 1032,
+    "opens": 7,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.dump.CommandRecord",
+    "start": 1034,
+    "end": 1086,
+    "opens": 5,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.dump.DraftDocument",
+    "start": 1088,
+    "end": 1126,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.dump.RunManifest",
+    "start": 1128,
+    "end": 1164,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.parseStaticIdentity",
+    "start": 1168,
+    "end": 1184,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.parseHeadRecord",
+    "start": 1186,
+    "end": 1204,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.parseRevisionManifest",
+    "start": 1206,
+    "end": 1260,
+    "opens": 12,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.parseMetadataRecord",
+    "start": 1262,
+    "end": 1309,
+    "opens": 10,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.parseCommandRecord",
+    "start": 1311,
+    "end": 1393,
+    "opens": 16,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.parseDraftDocument",
+    "start": 1395,
+    "end": 1445,
+    "opens": 8,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.parseRunManifest",
+    "start": 1447,
+    "end": 1506,
+    "opens": 10,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.contentVersionOf",
+    "start": 1510,
+    "end": 1520,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.toToken",
+    "start": 1529,
+    "end": 1537,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "project.Codec.public.draftOriginFromToken",
+    "start": 1539,
+    "end": 1545,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.u8",
+    "start": 53,
+    "end": 53,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.u16",
+    "start": 54,
+    "end": 58,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.u32",
+    "start": 59,
+    "end": 65,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.u64",
+    "start": 66,
+    "end": 71,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.i64",
+    "start": 74,
+    "end": 74,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.f64",
+    "start": 78,
+    "end": 88,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.boolean",
+    "start": 91,
+    "end": 91,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.presence",
+    "start": 94,
+    "end": 94,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.raw",
+    "start": 97,
+    "end": 100,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.string",
+    "start": 103,
+    "end": 111,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.unitToken",
+    "start": 115,
+    "end": 122,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.u8",
+    "start": 145,
+    "end": 149,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.u16",
+    "start": 150,
+    "end": 157,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.u32",
+    "start": 158,
+    "end": 167,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.u64",
+    "start": 168,
+    "end": 177,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.i64",
+    "start": 178,
+    "end": 178,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.f64",
+    "start": 181,
+    "end": 191,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.boolean",
+    "start": 193,
+    "end": 201,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.presence",
+    "start": 204,
+    "end": 212,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.raw",
+    "start": 215,
+    "end": 220,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.string",
+    "start": 230,
+    "end": 241,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.unitToken",
+    "start": 244,
+    "end": 253,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Writer.take",
+    "start": 125,
+    "end": 125,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.pointer",
+    "start": 138,
+    "end": 138,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.vector",
+    "start": 140,
+    "end": 143,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.rawArray",
+    "start": 222,
+    "end": 227,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.expectEnd",
+    "start": 256,
+    "end": 263,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Reader.need",
+    "start": 267,
+    "end": 274,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Header",
+    "start": 286,
+    "end": 290,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Header",
+    "start": 293,
+    "end": 308,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Time",
+    "start": 323,
+    "end": 327,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Time",
+    "start": 329,
+    "end": 337,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Enum",
+    "start": 344,
+    "end": 348,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Enum",
+    "start": 352,
+    "end": 362,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.OptionalIdentity",
+    "start": 381,
+    "end": 387,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.OptionalIdentity",
+    "start": 389,
+    "end": 397,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.TaskIdentity",
+    "start": 401,
+    "end": 408,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.TaskIdentity",
+    "start": 410,
+    "end": 419,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Provenance",
+    "start": 427,
+    "end": 442,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Provenance",
+    "start": 444,
+    "end": 462,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.SourcedDouble",
+    "start": 466,
+    "end": 481,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.SourcedDouble",
+    "start": 483,
+    "end": 500,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ComparativeValue",
+    "start": 503,
+    "end": 507,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ComparativeValue",
+    "start": 509,
+    "end": 515,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ComparativeFields",
+    "start": 518,
+    "end": 522,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ComparativeFields",
+    "start": 524,
+    "end": 530,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.InvalidationReason",
+    "start": 534,
+    "end": 539,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.InvalidationReason",
+    "start": 541,
+    "end": 549,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.BaselineResult",
+    "start": 553,
+    "end": 560,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.BaselineResult",
+    "start": 562,
+    "end": 574,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.FieldValue",
+    "start": 581,
+    "end": 593,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.FieldValue",
+    "start": 595,
+    "end": 607,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ResultBinding",
+    "start": 610,
+    "end": 614,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ResultBinding",
+    "start": 616,
+    "end": 622,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.EvidenceBinding",
+    "start": 625,
+    "end": 637,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.EvidenceBinding",
+    "start": 639,
+    "end": 656,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.JumpTarget",
+    "start": 659,
+    "end": 673,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.JumpTarget",
+    "start": 675,
+    "end": 694,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.SectionEntry",
+    "start": 698,
+    "end": 715,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.SectionEntry",
+    "start": 717,
+    "end": 741,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.MissingItem",
+    "start": 744,
+    "end": 748,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.MissingItem",
+    "start": 750,
+    "end": 756,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.EligibilityNote",
+    "start": 760,
+    "end": 765,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.EligibilityNote",
+    "start": 767,
+    "end": 774,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.DiagRefEntry",
+    "start": 779,
+    "end": 806,
+    "opens": 6,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.DiagRefEntry",
+    "start": 808,
+    "end": 838,
+    "opens": 6,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.CurrentnessSnapshot",
+    "start": 846,
+    "end": 867,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.CurrentnessSnapshot",
+    "start": 869,
+    "end": 887,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Section",
+    "start": 892,
+    "end": 928,
+    "opens": 8,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.Section",
+    "start": 930,
+    "end": 975,
+    "opens": 8,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ReviewComment",
+    "start": 982,
+    "end": 991,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ReviewComment",
+    "start": 993,
+    "end": 1003,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.SignOff",
+    "start": 1007,
+    "end": 1013,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.SignOff",
+    "start": 1015,
+    "end": 1023,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.TradeOff",
+    "start": 1026,
+    "end": 1034,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.TradeOff",
+    "start": 1036,
+    "end": 1045,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.VariantDiff",
+    "start": 1049,
+    "end": 1059,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.VariantDiff",
+    "start": 1061,
+    "end": 1074,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.VersionEntry",
+    "start": 1078,
+    "end": 1085,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.VersionEntry",
+    "start": 1087,
+    "end": 1096,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ReviewMetadata",
+    "start": 1101,
+    "end": 1126,
+    "opens": 6,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ReviewMetadata",
+    "start": 1128,
+    "end": 1154,
+    "opens": 6,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ResultDataSourceRef",
+    "start": 1164,
+    "end": 1174,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.ResultDataSourceRef",
+    "start": 1176,
+    "end": 1191,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.UnitPreference",
+    "start": 1195,
+    "end": 1202,
+    "opens": 2,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.UnitPreference",
+    "start": 1204,
+    "end": 1219,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.anonymous.digestBytes",
+    "start": 312,
+    "end": 319,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.public.ReportCodec.encodeData",
+    "start": 1227,
+    "end": 1253,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.public.ReportCodec.parseData",
+    "start": 1255,
+    "end": 1283,
+    "opens": 3,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.public.ReportCodec.digestData",
+    "start": 1285,
+    "end": 1290,
+    "opens": 1,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.public.ReportCodec.encodeFull",
+    "start": 1296,
+    "end": 1325,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.public.ReportCodec.parseFull",
+    "start": 1327,
+    "end": 1365,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  },
+  {
+    "function": "reporting.ReportCodec.public.ReportCodec.digestFull",
+    "start": 1367,
+    "end": 1390,
+    "opens": 4,
+    "depth": 0,
+    "minimum": 0,
+    "pass": true
+  }
+]

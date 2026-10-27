@@ -1,0 +1,181 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B16-generator-execution",
+  "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "comparisonBase": "a703b88225b1e094947b46723706b5be8af5159f",
+  "verdict": "PASS",
+  "scope": "仅29生成器隔离执行证据、91 dataset JSON对照与F-959复现及消费者源码核对；不含43行语义验收。",
+  "processExecution": {
+    "result": "PASS",
+    "expected": 29,
+    "executed": 29,
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "regenerationConsistency": {
+    "result": "FAIL",
+    "jsonComparisons": 91,
+    "passed": 90,
+    "failed": 1,
+    "skipped": 0,
+    "notRun": 0,
+    "datasetResults": {
+      "passed": 28,
+      "failed": 1
+    },
+    "rawEqual": 90,
+    "rawDifferent": 1,
+    "allComparedFilesAreGenerated": false,
+    "categories": {
+      "expected": 32,
+      "inputs": 30,
+      "manifest.json": 29
+    },
+    "differentPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected/import-report.json"
+    ]
+  },
+  "repeatConfirmation": {
+    "result": "PASS",
+    "executed": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "secondOutputRawEqualsFirst": true,
+    "outputRawSha256": "3d99e004dc2be24f57ec0ff8fd1fff7bdac4a438788a77172d3905957b22043b",
+    "scope": "只重复URDF漂移dataset，未将它混入主29脚本计数。"
+  },
+  "findings": [
+    {
+      "id": "F-959",
+      "status": "open",
+      "independentlyReproduced": true,
+      "newFinding": false,
+      "generatedUnsupported": 8,
+      "generatedJointVelocityLimit": 5,
+      "generatedMappedVelocityCountAbsent": true,
+      "frozenUnsupported": 3,
+      "frozenMappedVelocityCount": 5,
+      "consumerReadsCounts": true,
+      "consumerMissingFieldAddsFailure": true,
+      "productionVelocityMappingObservedStatically": true,
+      "cppConsumerExecuted": false
+    }
+  ],
+  "executionSummary": {
+    "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+    "comparisonBase": "a703b88225b1e094947b46723706b5be8af5159f",
+    "driverExit": 0,
+    "datasetsCopied": 29,
+    "scriptsExpected": 29,
+    "scriptsExecuted": 29,
+    "processResults": {
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    "jsonComparisons": {
+      "total": 91,
+      "normalizedEqual": 90,
+      "normalizedDifferent": 1,
+      "rawEqual": 90,
+      "rawDifferent": 1,
+      "result": "FAIL"
+    },
+    "differentPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected/import-report.json"
+    ],
+    "all91AreGeneratedFilesClaimed": false,
+    "secondConfirmExit": 0,
+    "secondEqualsFirst": true,
+    "sourceFilesHashed": 148,
+    "originalDataUnchanged": true,
+    "checkoutClean": true,
+    "recordedReviewedCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+    "independentWrapper": {
+      "initialExit": 1,
+      "reason": "全部生成/对照/第二目录确认已完成；首次收尾clean断言发现本次输出.cache未被Git忽略。保留run-replay.log，移动输出后继续收尾通过，未重新执行29脚本。",
+      "finishExit": 0
+    }
+  },
+  "evidenceFacts": {
+    "recordedEvidenceCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+    "frozenAcceptanceCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+    "recordedCommitIsAncestor": true,
+    "relevantSourceDiffEmpty": true,
+    "recordedScriptHashMatches": 29,
+    "driftEvidenceBindingsMatch": 3,
+    "findingStatus": "open",
+    "jsonPathCategories": {
+      "expected": 32,
+      "inputs": 30,
+      "manifest.json": 29
+    },
+    "urdfComparedPaths": [
+      "expected/import-report.json",
+      "expected/xacro-samples.json",
+      "manifest.json"
+    ],
+    "urdfGeneratorOnlyWrites": [
+      "expected/import-report.json",
+      "expected/xacro-samples.json"
+    ],
+    "consumerReadsExpectedCountsAndMappedVelocity": true,
+    "consumerMissingNumberTriggersAddFailure": true,
+    "productVelocityMappingConfirmedStatically": true,
+    "productCppRun": false
+  },
+  "recordedEvidenceIdentity": {
+    "recordedCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+    "isAncestor": true,
+    "relevantSourcesUnchanged": true,
+    "all29ScriptRawHashesMatch": true,
+    "currentIndependentRunBoundTo": "435dbdb716b9eb86d0932a478eb086642206ac76"
+  },
+  "sourceReadOnly": {
+    "filesBeforeAfterMatched": 148,
+    "originalDataUnchanged": true,
+    "finalCheckoutClean": true,
+    "cacheRelocatedTo": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\first-run-cache"
+  },
+  "wrapperIncident": {
+    "initialExit": 1,
+    "scope": "独立外层驱动末尾工作树检查；冻结replay脚本与29 Node进程均已exit0，第二目录确认已完成。",
+    "reason": "新建.cache未被Git忽略，驱动原clean断言不成立。",
+    "resolution": "保留原run-replay.log；只将独立输出.cache移动到Temp根first-run-cache，继续完成收尾核对，未重跑29脚本。",
+    "finishExit": 0
+  },
+  "reproduction": {
+    "unchangedFrozenScript": true,
+    "requiredPreparation": "从冻结repo根运行，先创建空.cache父目录且保证.cache/b16-golden-replay尚不存在。",
+    "commandRecord": "driver-command.json",
+    "nodeRuntime": {
+      "node": "D:\\software\\Nodev\\node.exe",
+      "nodeVersion": "v24.14.1",
+      "nodeRawSha256": "58e74bf02fc5bbacc41dcb8bef089961cd5bddd37830b87784e4fc624d145d1f",
+      "python": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe"
+    }
+  },
+  "repositoryModified": false,
+  "parentWorktreeModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "wholeT01Pass": false,
+  "newCoreApproved": false,
+  "notRun": [
+    "43行函数语义验收（另行负责）",
+    "产品C++构建/消费者执行",
+    "GUI/数值/性能验收",
+    "task/reuse/docs门禁（非本次分工）",
+    "全T01退出/T02准入",
+    "远程推送/CI"
+  ],
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690"
+}

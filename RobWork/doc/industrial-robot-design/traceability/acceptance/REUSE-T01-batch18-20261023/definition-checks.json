@@ -1,0 +1,462 @@
+[
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "range": "100-105",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "range": "111-121",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "range": "127-131",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "range": "148-162",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "range": "169-182",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "range": "198-258",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "range": "266-589",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "MODEL-BOUNDS"
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "range": "595-598",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "range": "80-85",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "range": "100-110",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "range": "113-122",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "range": "125-131",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "range": "134-146",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "range": "153-168",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "range": "171-184",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "range": "194-202",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "range": "213-227",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "range": "230-237",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "range": "246-270",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "range": "285-316",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "range": "322-329",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "range": "332-335",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "range": "341-350",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "range": "386-481",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "range": "489-844",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "range": "852-863",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "range": "865-872",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "range": "874-877",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "range": "59-73",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "range": "75-87",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "range": "109-116",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "range": "133-180",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "range": "196-228",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "range": "240-254",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "range": "262-273",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "range": "287-298",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "range": "275-285",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "range": "324-451",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "range": "462-490",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "range": "508-560",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "range": "568-729",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "range": "731-777",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "range": "53-72",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "range": "74-79",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "range": "95-101",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "range": "222-365",
+    "definitionHash": true,
+    "sameSource": true,
+    "pending": true,
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "COLLISION"
+  }
+]

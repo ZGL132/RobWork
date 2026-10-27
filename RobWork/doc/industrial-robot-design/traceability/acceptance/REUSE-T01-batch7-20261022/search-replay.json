@@ -1,0 +1,20 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true,
+    "actualHits": 110,
+    "expectedHits": 110
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true,
+    "actualHits": 31,
+    "expectedHits": 31
+  }
+]

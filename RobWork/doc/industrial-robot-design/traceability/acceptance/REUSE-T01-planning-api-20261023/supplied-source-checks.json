@@ -1,0 +1,42 @@
+[
+  {
+    "path": "rw/math/MetricFactory.hpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "91baf129bed7e315492ba1eb33ae73d7a0aa66903b2c7c98865f9cd571a37938"
+  },
+  {
+    "path": "rw/pathplanning/PathAnalyzer.hpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "fcc32299324fa2a48803559d3fdc5c3cc8356a0bbd4e546f3b6f0e81be4c266a"
+  },
+  {
+    "path": "rw/pathplanning/QSampler.cpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "2394ba333749fe446d727296e7b170d9568b3ad0c75be6ba140882b16f46b6ad"
+  },
+  {
+    "path": "rw/pathplanning/StopCriteria.cpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "ea70e447799465456665453bdf0ae0615af20546a8e3710a39fde583d19ca21e"
+  },
+  {
+    "path": "rwlibs/softbody/numerics/TrapMethod.hpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "246991b986e63d27c3523fa653cd71b9222f5f985f0cf02841272e40b58297e7"
+  },
+  {
+    "path": "rw/math/Random.cpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "bc65895a1714da14a023d0e55676cdbaa1854bf150903ffd27dac56d64d11425"
+  },
+  {
+    "path": "rw/math/Math.cpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "3b3b8b795f464137811509dad1625dfb67d68fdf20b4edcb665b2439306028b9"
+  },
+  {
+    "path": "rw/trajectory/Path.hpp",
+    "frozenVsSuppliedNormalizedEqual": true,
+    "suppliedRawSha256": "8a28dd4a3ffdbceb95ec78f59efea8ace16a7d156ab99c588f6ee3ba0bd654c9"
+  }
+]

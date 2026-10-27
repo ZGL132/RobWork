@@ -1,0 +1,28 @@
+--- frozen-original/expected/import-report.json
++++ second-confirm/expected/import-report.json
+@@ -40,11 +40,15 @@
+       "disable_collisions",
+       "material 'gray'"
+     ],
+-    "unsupported": 3,
++    "unsupported": 8,
+     "unsupportedKinds": [
+       {
+         "kind": "transmission",
+         "count": 1
++      },
++      {
++        "kind": "joint-velocity-limit",
++        "count": 5
+       },
+       {
+         "kind": "mesh-scale",
+@@ -55,8 +59,6 @@
+         "count": 1
+       }
+     ],
+-    "mappedVelocityCount": 5,
+-    "mappedVelocityNote": "F01/{1,1}：<limit velocity> 真实映射 joints[i].maxVelocity（5 轴——j1/j2/j4/j5/j6）；旧 joint-velocity-limit 未保留面随 schema 落位消亡",
+     "mappedCountAtLeast": 6,
+     "defaultsCountAtLeast": 3,
+     "submittable": true,

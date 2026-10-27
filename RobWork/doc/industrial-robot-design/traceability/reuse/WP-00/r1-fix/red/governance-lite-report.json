@@ -1,0 +1,66 @@
+{
+  "suite": "serial-mainline",
+  "expected": 12,
+  "executed": 9,
+  "passed": 8,
+  "failed": 1,
+  "skipped": 0,
+  "notRun": 3,
+  "complete": false,
+  "cases": [
+    {
+      "name": "serial-mainline",
+      "passed": true,
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "serial-task-branch",
+      "passed": true,
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "serial-main-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expectedExitCode": 1
+    },
+    {
+      "name": "serial-unknown-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expectedExitCode": 1
+    },
+    {
+      "name": "serial-base-required",
+      "passed": true,
+      "exitCode": 1,
+      "expectedExitCode": 1
+    },
+    {
+      "name": "serial-explicit-scope",
+      "passed": true,
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "serial-forbidden-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expectedExitCode": 1
+    },
+    {
+      "name": "serial-outside-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expectedExitCode": 1
+    },
+    {
+      "name": "serial-legacy-mainline-base-required",
+      "passed": false,
+      "exitCode": 0,
+      "expectedExitCode": 1
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "ird-reuse-search/1",
+  "taskId": "REUSE-T01",
+  "batch": "2-rework",
+  "scope": "只修正Windows不可执行路径；不改变原批次/首轮失败证据，不新增适用性结论",
+  "results": [
+    {
+      "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.hpp RobWork/RobWork/src/rw/geometry/HyperSphere.cpp RobWork/RobWork/gtest/geometry",
+      "exitCode": 0,
+      "stdout": "RobWork/RobWork/src/rw/geometry/HyperSphere.hpp:72:         * This uses #uniformDistributionSpherical and maps the spherical coordinates to Cartesian\nRobWork/RobWork/src/rw/geometry/HyperSphere.hpp:80:        std::vector< Eigen::VectorXd > uniformDistributionCartesian (double delta) const;\nRobWork/RobWork/src/rw/geometry/HyperSphere.hpp:93:        std::vector< Eigen::VectorXd > uniformDistributionSpherical (double delta) const;\nRobWork/RobWork/src/rw/geometry/HyperSphere.cpp:34:std::vector< Eigen::VectorXd > HyperSphere::uniformDistributionCartesian (double delta) const\nRobWork/RobWork/src/rw/geometry/HyperSphere.cpp:36:    const std::vector< Eigen::VectorXd > vWec = uniformDistributionSpherical (delta);\nRobWork/RobWork/src/rw/geometry/HyperSphere.cpp:58:std::vector< Eigen::VectorXd > HyperSphere::uniformDistributionSpherical (double delta) const\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:38:\tconst std::vector<Eigen::VectorXd> spherical = sphere.uniformDistributionSpherical(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:39:\tconst std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:60:\tconst std::vector<Eigen::VectorXd> spherical = sphere.uniformDistributionSpherical(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:61:\tconst std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:81:\tconst std::vector<Eigen::VectorXd> spherical = sphere.uniformDistributionSpherical(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:82:\tconst std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:104:\tconst std::vector<Eigen::VectorXd> spherical = sphere.uniformDistributionSpherical(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:105:\tconst std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:127:\tconst std::vector<Eigen::VectorXd> spherical = sphere.uniformDistributionSpherical(delta);\nRobWork/RobWork/gtest/geometry\\HyperSphereTest.cpp:128:\tconst std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);\n",
+      "stderr": ""
+    }
+  ]
+}

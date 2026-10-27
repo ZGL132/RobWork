@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" time="13.905" timestamp="2026-10-24T10:47:56.253" name="AllTests">
+  <testsuite name="KinGoldenIkDedup" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.057" timestamp="2026-10-24T10:47:56.253">
+    <testcase name="V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="597" status="run" result="completed" time="0.054" timestamp="2026-10-24T10:47:56.253" classname="KinGoldenIkDedup" />
+    <testcase name="V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="650" status="run" result="completed" time="0.001" timestamp="2026-10-24T10:47:56.307" classname="KinGoldenIkDedup" />
+    <testcase name="ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="682" status="run" result="completed" time="0.001" timestamp="2026-10-24T10:47:56.309" classname="KinGoldenIkDedup" />
+  </testsuite>
+  <testsuite name="KinGoldenCoverage" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="13.847" timestamp="2026-10-24T10:47:56.311">
+    <testcase name="ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="1164" status="run" result="completed" time="4.566" timestamp="2026-10-24T10:47:56.311" classname="KinGoldenCoverage" />
+    <testcase name="ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="1227" status="run" result="completed" time="9.281" timestamp="2026-10-24T10:48:00.877" classname="KinGoldenCoverage" />
+  </testsuite>
+</testsuites>

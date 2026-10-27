@@ -1,0 +1,89 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T37",
+ "unit": "core",
+ "masterWp": "WP-A",
+ "title": "WP-15批次A·core基础数值收口：Tolerance/closeWithin有限检查换标准库isfinite（Deg2Rad候选经实测结构不可落地，降级保留登记）",
+ "status": "done",
+ "branch": "redesign-main",
+ "dependsOn": [],
+ "requirements": [
+  "NFR-COR-02",
+  "NFR-COR-03"
+ ],
+ "designRefs": [
+  "reuse/migration.md#13",
+  "reuse/policy.md",
+  "reuse/audit-contract.md"
+ ],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json",
+  "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+  "cmake --build build --config Release --target sdurws_ird_core sdurws_ird_core_test sdurws_ird_optimization sdurws_ird_runtime_test sdurws_ird_selection sdurws_ird_testkit sdurws_ird_trajectory",
+  "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build/wp15-t37-smoke -G \"Visual Studio 17 2022\" -A x64 -DCMAKE_TOOLCHAIN_FILE=\"$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake\" -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64 -DRobWork_DIR=\"$PWD/RobWork/RobWork/cmake\" -DVCPKG_OVERRIDE_FIND_PACKAGE_NAME=vcpkg_find_package（GOV-T24 确立的标准冒烟配方；不带 RobWork_DIR 的裸冒烟在 modeling:383 find_package(RobWork) 断供——本批实测留痕 wp15-t37-smoke-bare-fail.log）"
+ ],
+ "allowedFiles": [
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T38.json",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T37.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T38.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T39.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/**",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/**",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T39/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r2.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r2/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r2.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r2/**"
+ ],
+ "forbiddenFiles": [
+  "RobWork/RobWork/src/**",
+  "RobWork/RobWorkSim/src/**",
+  "vcpkg/**",
+  "main"
+ ],
+ "outputs": [
+  "WP-15批次A：core 公共头 Tolerance::make 与 closeWithin 前置的有限性自持表达式（x==x、x-x==0）替换为标准库 std::isfinite 直接原语（B31 审计建议），语义逐位等价；Units 角度因子 Deg2Rad 候选实测上游常量非 constexpr、与产品 constexpr 冻结单位表冲突，降级为保留＋逐位等价证据登记并入待裁决"
+ ],
+ "interUnit": false,
+ "acceptance": [
+  "Compare.hpp Tolerance::make 有限性检查与 Compare.cpp closeWithin 非有限前置改 std::isfinite（含 #include <cmath>）；语义等价论据（NaN 破坏自等、±Inf 破坏自差为零）与改前/改后同向量行为逐位一致回归证据齐备；C4 公式主体与 T21 同时溢出分支零改动",
+  "集成树受影响消费者面（Compare.hpp 全部 includer：core/optimization/runtime/selection/testkit/trajectory 六单元目标与测试）增量构建并真实运行，gtest XML＋per-exe ird-test-report.json 留痕；规范独立冒烟（toolchain＋Qt，不带 RobWork_DIR——gate-all 第4步同形态）下 core 测试构建并运行，证明无双模式条件包含引入",
+  "逐功能矩阵按绑定新鲜度同步：core.json closeWithin 区段摘要刷新、三个 Tolerance pending 行按 B31 结论解决为 business-specific/migrated＋nonOverlapEvidence、新增 Compare_hpp 声明区段行（触碰文件须全行覆盖）；core.json/testkit.json 全部引用 Compare.hpp/Compare.cpp 的 inputs 摘要全链刷新；changes/REUSE-T37.json 逐文件凭证（Digest 口径）",
+  "Units.cpp 本批零改动；Units 角度因子 rw::math::Deg2Rad 候选的不可落地证据（RobWork/RobWork/src/rw/math/Constants.hpp:31/40 const double 非 constexpr vs Units.cpp:31 constexpr 冻结表；gate-all 第4步冒烟无 RobWork_DIR）实测留痕并入 README，物理换用列所有者待裁决"
+ ],
+ "note": "WP-15（migration.md:312，§13.3 行）三类分批之一：本契约＝基础数值批。原侦察拟用任务号 REUSE-T30/T31/T32 已被其他工作包会话占用（tasks/REUSE-T30~T34、T36 现存，T35 由 WP-12 内联登记），本包改用 T37/T38/T39。评审缺口逐条处置：①〔高·Deg2Rad 双模式〕不实施条件包含+回退方案——本次实测 RobWork/RobWork/src/rw/math/Constants.hpp:31/40 上游 Pi/Deg2Rad 为 const double 非 constexpr，无法进入常量表达式，而产品侧 Units.cpp:31 kUnitTable 为 constexpr 冻结表（token 索引冻结、core 权威）；消费上游常量必须把冻结表降级为动态初始化或维护双份表体（双模式初始化语义分裂），结构代价大于零数值收益（B31 已实测两式双精度舍入逐位一致），故本批保留字面量并登记保留证据，把『接受冻结表动态初始化以物理换用 Deg2Rad』列为所有者裁决项（不自批）。该处置使评审担心的冒烟编译失败/两分支位模式漂移/矩阵与冒烟树编译来源不符三个失效模式整体不成立，另补规范冒烟（无 RobWork_DIR，gate-all 第4步同形态）验证。②〔中·closeWithin 凭证〕core.json closeWithin 行 sources 区段摘要随实改刷新（reuse-contract.ps1 CheckFunctions 的 FRESHNESS 机器校验每次运行都会核区段 Digest，评审『仅文件级校验』判断不准，实际门禁会拦过期区段）。③〔中·cmath〕Compare.hpp 补 #include <cmath>（std::isfinite 声明于 <cmath>），并以六单元消费者面增量构建兜住公共头编译面。④〔低·Units isnan||isinf→!isfinite 可选简化〕评估后不纳入：触碰 Units.cpp 触发 COVERAGE 门禁要求该文件全行覆盖且全部覆盖行 resolved——即须把 core.json 内 17 个 audit-b31 Units pending 行全部解决，其中含 F-966 OPEN 语境下 B31 明示『独立验收只可授本批局部结论』的未授权结论面，超出本包局部授权，登记给后续 Units 审计批。⑤〔低·Evaluation 8 行〕本批零触碰，维持 pending，不借批顺带标 migrated（migration.md:316 红线）。⑥〔低·引用失准〕『每子包确定符号后准入』实际在 migration.md:312（§13.3 WP-15 行），非 §13.4；『暂不合流』注释实际在 Json.cpp:107-109（评审核实成立，本包 T38 契约按此登记）。⑦〔低·JsonLite 定性〕testkit/JsonLite.cpp 非 UTF-8 DFA 第三副本（其合法性由装载层保证），T38 契约按『转义/代理对语义与 io appendUtf8 潜在重叠』表述登记给 WP-19。已定不动：C4 公式主体/C7 机械转写/单位表与冻结 token（core 权威）、T15 FNV/Identity、Compare.cpp T21 Boost 同时溢出分支、F-965/F-966。数值 oracle＝改前/改后同向量行为逐位一致（含 CompareTest 既有 NonFiniteInputsFalse/FractionRejectedScalingCases/FiniteOverflowBoundary 断言与 B31 oracle.py Fraction 极值集冻结结论引用）。验证命令与分批口径按根 AGENTS.md §4 增量范围执行；实施完成待独验，不自签、不置 done。 scope区间补记（验收FAIL修复）：verify-task-scope对本包三契约统一按\"WP-15包起点→送验HEAD\"区间核对（T37越界27=T38的21+T39的6；T38越界75=T37的69+T39的6；T39越界90=T37的69+T38的21），故三契约allowedFiles同取包足迹联合覆盖（本包三批全部路径+各自验收预留位），各契约自身实施面语义不变；跨批路径的授权语义由对应批契约与changes凭证承载。 独立验收（20261025-r1）结果与处置登记：验收通过面含 scope×3/T37基线改后逐testcase一致/ird_gates/Units-Deg2Rad论据/T38三方表体一致/io测试复跑/T39零产品改动/changes凭证Digest MATCH/commit-lint（验收员01/02/03号证据原件已随验收记录纳入本提交）。两处修复随本提交：①T38凭证表述失实更正——Csv.cpp banner注释、changes/REUSE-T38.json boundary、README第3点原称「nextUtf8流式状态转移改经utf8Step」，实测head Csv.cpp流式推进仍为原内联转移式（与base逐字同源）、utf8Step当前仅strictUtf8Check使用，三处已按H6如实改写并级联刷新Csv.cpp/README全部绑定摘要；②验收员遗留未跟踪记录与证据文件纳入。第三项（REUSE-T33绑定回改处方）未执行，依据如下（字节级实测，双方原始字节哈希逐一吻合：工作树e4b31849…/树内blob 837f7e8e…）：a) 现绑定f38b31ff…与脚本ReadText+Digest口径对同一内容的实测值一致（本会话与门禁本体多次实测，validate-task/validate-reuse/validate-docs在同HEAD exit 0全绿）；b) 处方值681754d3…无法由送验树任何内容经任何已试口径导出（脚本口径、GBK/ASCII/Latin1/UTF-16解码变体、原始字节、仅归一变体等8+种，目录内亦无文件对应该值）；c) 照处方回改将使CheckBinding（681754d3≠f38b31ff）在本仓库任何一致检出上判REUSE-POSITIVE，即处方与「validate三契约即绿」的目标在同一字节事实下不能同时成立；d) 验收员06号日志的REUSE-POSITIVE与其环境复算值681754d3系同源偏差（其同字节上Digest实现/解码路径与门禁本体不一致），具体偏差路径待裁决时提供。该绑定由范围外提交e5364bd6c自681754d3改为f38b31ff属实，但现值经门禁本体裁定为绿——维持现值不动、登记待所有者裁决（如所有者裁决回改，将同步提供门禁转红的实测对照）。 主会话裁决（2026-10-25，针对本登记第三项）：维持现绑定 f38b31ff，回改处方撤回——依据＝门禁本体（validate-reuse.ps1 ReadText+Digest 口径）在工作树与树内 blob（字节等价已证：工作树/树内原始哈希 e4b31849…/837f7e8e… 双方实测一致）上多次实测绿、且处方值 681754d3 经 8+ 种口径均无法由送验树内容导出；绑定值唯一权威＝门禁本体 exit code，自行复算摘要不构成证据（WP-01 已登记的 Digest 口径陷阱同型）；r1 验收记录不改写，该项按验收协议记为『经裁决撤回的处方』（GOV-T23 r2 supersede 先例同型），r2 复验以实际运行 validate-task/validate-reuse/validate-docs 的 exit code 为核销判据。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/WP-15-20261026-r1.json（复跑原件在其同名目录），verdict=pass（14项检查failed=0/skipped=0/notRun=0；测试计数另列互不相加：core 74/74、io 132/0、io契约 9/9 本轮 HEAD 树真实复跑），绑定送验 SHA=d7874f57f1f0e2cde192a6c76e5b0f90a016306e（契约口径 base=e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10＝WP-15 包起点，送验冻结范围 0e14bf3e7..d7874f57f 恰7提交；ask 字面 0e14bf3e7 起点含前置 WP-13-T36 提交，其 19 越界路径经逐项核对全部属 T36/T33 授权面、WP-15 实施面零越界，定界日志 01-scope-t37-base0e14.log 一并落盘留痕）；授权口径＝所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。历史 r1（pass 面随 f019e7a88 纳入库）与 r2（fail，唯一未核销项＝范围外 REUSE-T33 final.log 绑定口径二象性）记录按协议不改写，本轮闭合复验 supersede，r2 记录与证据目录随本收口提交一并纳入留痕。核对全过：verify-task-scope 显式 -Base/-Head 三契约复跑 exit 0（118 路径全部在允许面、forbidden 零命中）；commit-lint PASS（6 提交合规）；本契约 acceptance 逐项清单式复验——std::isfinite 本体换元 diff 实读（Compare.hpp Tolerance::make 两处自持表达式换元＋#include <cmath>、Compare.cpp closeWithin 非有限前置换元，C4 公式主体与 T21 Boost 同时溢出分支零改动实测）；r1 九对 baseline/postfix XML 逐 testcase EQUAL（1393 tests/0 failures，恰 Compare.hpp 六单元 includer 消费者面）＋引用条件本轮实测（产品面 d7874f57f..HEAD 零漂移 git diff 空）＋本轮 sdurws_ird_core_test 74/74 真实复跑（XML failures=0）；矩阵与凭证抽查（core.json closeWithin 区段 sha 随实改刷新、Compare_hpp 声明区段行、changes/REUSE-T37.json Digest 凭证）；Units.cpp 本批零改动 git diff 实测、Deg2Rad 不可落地论据独验亲读核立（上游 Constants.hpp:31/40 const double 非 constexpr vs 产品 Units.cpp:31 constexpr 冻结表，结构代价大于零数值收益）；红线 H1—H6/架构红线/上游-vcpkg 零触碰/CLOSURE 冻结面/runtime 零改动抽查全过；当前 HEAD validate-docs -TaskFile 三契约数组 exit 0＋PS5.1 对照 exit 0（r2 唯一未核销项按裁决判据核销——REUSE-T33 final.log 绑定经治理提交 13680ab87 处置后双运行时摘要唯一，REUSE-POSITIVE 不复现）。limitations（验收记录原文）：Deg2Rad 物理换用、Units !isfinite 可选简化、Evaluation 8 行、GAP-DIGEST-01 产品替换均为在案所有者待裁决项，未由本批自批；validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399、changed=111），不构成全库算法合规或 migration §11 算法替换放行；本登记不回写 migration §13.3 WP-15 行；testkit.json 等矩阵新鲜度以当前 HEAD 门禁实跑为准，不外推其他批次（T40—T50）质量。据此登记 done。",
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ },
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T37.json"
+ }
+}

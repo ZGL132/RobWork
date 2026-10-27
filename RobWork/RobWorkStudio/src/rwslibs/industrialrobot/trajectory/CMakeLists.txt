@@ -436,6 +436,13 @@ if(TARGET sdurw_kinematics)
                                         #   C8 重规划/搜索未果素材轨/取消/
                                         #   选型 fail-fast/④端口直穿）
     target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/PlannerReuseTest.cpp)      # REUSE-T32：WP-11 其余工具复用收口
+                                        #   （度量换核 MetricFactory/PathAna-
+                                        #   lyzer 的直连采纳 L1 独立 oracle＋
+                                        #   近 pi 分支边界反例证据——零模型
+                                        #   构造红线内的纯数学面，集成条件，
+                                        #   同上）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
         test/SmoothTest.cpp)            # WP-16-T07 平滑半区：TRJ-04（解析黄
                                         #   金算例/四态词表/TCP 派生维门控/
                                         #   FK 端口错误传播——零 policy 装

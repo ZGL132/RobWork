@@ -1,0 +1,11 @@
+[
+  {
+    "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.hpp RobWork/RobWork/src/rw/geometry/HyperSphere.cpp RobWork/RobWork/gtest/geometry",
+    "expectedExitCode": 0,
+    "actualExitCode": 0,
+    "stdoutExactMatches": true,
+    "stdoutLinesMatch": true,
+    "stderrMatches": true,
+    "implementationHits": true
+  }
+]

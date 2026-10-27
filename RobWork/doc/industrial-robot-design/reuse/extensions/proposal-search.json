@@ -1,0 +1,172 @@
+{
+  "taskId": "REUSE-T01",
+  "status": "draft-proposals-not-approved",
+  "baselineCommit": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "reviewedProductCommit": "877f6afee38446ab43c5e6a6fd9b09593925aedb",
+  "scope": "已读候选头/实现/构建/测试/示例；搜索无命中不是能力缺失证明；本机cache仅为环境事实",
+  "increments": [
+    {
+      "taskId": "REUSE-T31",
+      "date": "2026-10-25",
+      "headCommit": "e74886dfcb972a2bbcc4f1336e22ab146037ffde",
+      "topic": "GAP-FD-BUILD-01 供给定向探测（WP-08）：vcpkg port/安装状态/力驱动 API 链/负面证据/部署握手，全部只读实核",
+      "results": [
+        {
+          "command": "cat vcpkg/ports/ode/vcpkg.json; head -40 vcpkg/ports/ode/portfile.cmake; grep -rn 'DOUBLE\\|PRECISION' vcpkg/ports/ode/",
+          "exitCode": 0,
+          "stdoutSummary": "ode 0.16.6；license=BSD-3-Clause OR LGPL-2.1-or-later；supports=!uwp；依赖 vcpkg-cmake/vcpkg-cmake-config(host)；portfile：vcpkg_from_bitbucket SHA512 锁定、-DODE_WITH_DEMOS=OFF -DODE_WITH_TESTS=OFF、vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/ode-${VERSION})（安装后 config 落 share/ode）；port 无精度选项覆盖（零 DOUBLE/PRECISION 命中）",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §A"
+        },
+        {
+          "command": "ls vcpkg/installed/x64-windows/lib/ | grep -i ode; ls vcpkg/installed/x64-windows/share/ | grep -iE '^(bullet3|fcl|ode)$'; grep -n 'BUILD_sdurwsim_ode\\|ODE_DIR:\\|ODE_INCLUDE_DIR\\|ODE_LIBRARY_TMP' build/CMakeCache.txt; grep -n 'VCPKG_MANIFEST_MODE\\|VCPKG_TARGET_TRIPLET:' build/CMakeCache.txt; grep -n 'pqp\\|PQP' build/CMakeCache.txt | head -6; grep -n 'BUILD_sdurwsim_bullet' build/CMakeCache.txt",
+          "exitCode": 0,
+          "stdoutSummary": "installed lib 零 ode 命中（未安装）；share 下 bullet3、fcl 在位、ode 无；build/CMakeCache.txt:240 BUILD_sdurwsim_ode:BOOL=OFF、:600 ODE_DIR-NOTFOUND、:603/:606 NOTFOUND、:942 VCPKG_MANIFEST_MODE:BOOL=OFF、:953 triplet x64-windows、:834 RW_USE_PQP:BOOL=ON、:228 BUILD_sdurwsim_bullet:BOOL=ON",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §B"
+        },
+        {
+          "command": "grep -n 'void RigidDevice::setMotorForceTargets\\|void RigidDevice::setJointVelocities' RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.cpp; grep -n '_odeJoints\\[i\\]->setForce' RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp; grep -n 'RigidDevice\\* rdev = dynamic_cast' RobWork/RobWorkSim/src/rwsimlibs/ode/ODESimulator.cpp; grep -n 'virtual void step\\|virtual void resetScene\\|virtual void initPhysics\\|virtual void exitPhysics\\|virtual double getTime' RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp",
+          "exitCode": 0,
+          "stdoutSummary": "RigidDevice.cpp:234 setMotorForceTargets（写 _target 并置 modes=1=Force）、:260 setJointVelocities（clamp 速度限位写 State）；ODEVelocityDevice.cpp:166 setForce（:113 每步 getMotorModes 读回）；ODESimulator.cpp:1214 RigidDevice dynamic_cast→new ODEVelocityDevice；PhysicsEngine.hpp:99/105/110/115/120 纯虚",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §C"
+        },
+        {
+          "command": "sed -n '580,595p' RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp; sed -n '128,140p' RobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp; sed -n '1,40p' RobWork/RobWorkSim/src/rwsim/rwphysics/RK4Integrator.hpp",
+          "exitCode": 0,
+          "stdoutSummary": "BtSimulator.cpp:585-588 addDevice RW_THROW(\"not implemented yet!\")；RWSimulator.cpp:132-135 RigidDevice 分支打印 \"NO SUPPORT FOR RIGID DEVICES!\"；RK4Integrator.hpp:22-36 class RK4Integrator : public BodyIntegrator（ctor 收 dynamics::RigidBody*）——单刚体 BodyIntegrator，非关节 ODE 求解器",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §D"
+        },
+        {
+          "command": "head -16 RobWork/RobWorkSim/cmake/Modules/FindODE.cmake; tail -50 RobWork/RobWorkSim/cmake/Modules/FindODE.cmake; grep -n 'ODE_WITH_THREADING_IMPL' RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt; sed -n '170,230p' RobWork/RobWorkSim/cmake/RobWorkSimSetup.cmake",
+          "exitCode": 0,
+          "stdoutSummary": "FindODE.cmake:10-16 find_package(ODE QUIET PATHS .../lib/cmake/ode-* NO_MODULE) config 优先；config 命中走 tail else 分支（ODE_BUILD_WITH=DOUBLE、ODE_INCLUDE_DIR=${ODE_INCLUDE_DIRS}）；rwsimlibs/ode/CMakeLists.txt:65-86 检测 ODE_WITH_THREADING_IMPL、:118-123 手工 dDOUBLE/dSINGLE 仅 <0.13；RobWorkSimSetup.cmake:175-231 RWSIM_HAVE_ODE=find_package 命中且 PQP/FCL 在位，WIN32 未命中走 :206-221 ExternalProject git 拉 0.16.2（须规避）、未命中禁用走 :230-232 静默 disabled",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §E"
+        },
+        {
+          "command": "head -30 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp; grep -n 'class ForwardDynamicsValidator' RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp; grep -n 'evalAcceleration' RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp | head -3; sed -n '340,352p' RobWork/doc/industrial-robot-design/units/dynamics.md; sed -n '40,75p' RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp; sed -n '63,73p' RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "exitCode": 0,
+          "stdoutSummary": "DynamicWorkCellCompiler.cpp 文件头＝S7 编译器/集成模式编译/单位纪律（产品承接面在位）；ForwardDynamics.hpp:303 class ForwardDynamicsValidator；ForwardDynamics.cpp:510 evalAcceleration、:612-692 RK4 子步；units/dynamics.md:345 integratorToken 封闭词表锁定 rk4-fixed；ODEControlTest.cpp:45 movePTP 速度控制（:73 起注释 _FC 变体）、gtest/CMakeLists.txt:63-73 TARGET sdurwsim_ode 门控 sdurwsim_ode-gtest（ODEControlTest+ODESimpleTest，无关节力输入用例）；tasks/REUSE-T04.json status=planned",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §F-§G"
+        }
+      ],
+      "conclusion": "GAP §2『若该渠道当前无适用port』的不确定已收窄：port ode 0.16.6 在位而未安装；力驱动直连 API 链与部署握手行号级核验完成；Bullet/RWPhysics/RK4Integrator 负面证据落位。仅适用性与供给提案（GAP-FD-BUILD-01.md 修订为可裁决提案），阶段 B 新依赖启用未获批不实施，不解除 WP-09/T04 阻断"
+    }
+  ],
+  "bindings": [
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/IterativeIK.hpp",
+      "sha256": "2bcc2ad67f439252d170276dda4228d7c45b2f151177e789769106b3e77c857b"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp",
+      "sha256": "3084ff3b5c8856d3721df26e4406d11815851acd01b2703757333d2296b83c94"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp",
+      "sha256": "d7fb14651f95de267ec6d2529775b1e3bb627ca73a103f8786ff19b766b1d56d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp",
+      "sha256": "2fda9476ef9aeec23a8b8129ae19d127e8bf936e231c14db91e9251010b03b07"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/ParallelIKSolver.cpp",
+      "sha256": "d009b1d88a7f9a0029e17f65f89874ba88e9c906d72e449388bec1c98c511255"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/CMakeLists.txt",
+      "sha256": "5a37689be67e9055010d4e52b28619921c67ec46703f3ac54a7a8f3e5bb50cb4"
+    },
+    {
+      "path": "RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp",
+      "sha256": "35c7d38f0e7d10e27a8e3fbd052b4c765b62e1b291f8a0d23326a97773439f55"
+    },
+    {
+      "path": "RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp",
+      "sha256": "2817d666c747b37f6ac7cc8403dbe2dfe9e48a9724a76d82a477977ced8a2125"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp",
+      "sha256": "ed954e0b2e7b50249962c08e4b4cc19d6fa25bdbd09aa9d6044005163d2c97b8"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt",
+      "sha256": "92bfd527716898db4e070ad20f8f5435a0c360992343e78559f6fb3f0d4df700"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp",
+      "sha256": "5a7459723a2cd571724327bc133efb2ef4667f986ecb26efb74d99671995cae9"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp",
+      "sha256": "d605f1c73c051264c9d494b519fcf7cc57aea581d8a9d240850016f64ff86d57"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp",
+      "sha256": "1afa3007cd8719c2fd13e6ddd7448438305c713b730844ed0152ea0b475aa4bf"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp",
+      "sha256": "2b9ab30a30368a2f1e175f992230afbb5b244d381cedd93766e674a8334ca23a"
+    },
+    {
+      "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+      "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+    },
+    {
+      "path": "RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp",
+      "sha256": "7f35ad6c6978def4f7f7405ade38bbcd7a69d16d8c3ff06621ec94515922538c"
+    },
+    {
+      "path": "RobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp",
+      "sha256": "37fa7b818ea878ab22a8a0b6dd50c253f0d28e921aa2b84164cb9da73401b33e"
+    },
+    {
+      "path": "RobWork/RobWorkSim/example/cpp/ex-ode-simloop.cpp",
+      "sha256": "0b408972dcb8112fee3a20a48826eac4a3f268924d366acadfb895bc19eacd1b"
+    }
+  ],
+  "results": [
+    {
+      "command": "rg -n \"solveLocal|setMax|MaxIterations|MaxError|updateDeltaX|updateJacobian|enabled|private:\" RobWork/RobWork/src/rw/invkin/IterativeIK.hpp RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp",
+      "exitCode": 0,
+      "stdout": "RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:48:     * enabled then this algorithm might contain joint values that are out of bounds.\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:93:     * enabled then this algorithm might contain joint values that are out of bounds.\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:169:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:204:      private:\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:41:    setMaxIterations (15);\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:51:    int maxIterations = getMaxIterations ();\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:52:    double maxError   = getMaxError ();\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:63:            /* bool found = */ solveLocal (bTed_via, maxError * 1000, state, 5);\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:69:    if (solveLocal (bTed, maxError, state, maxIterations)) {\nRobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:81:bool JacobianIKSolver::solveLocal (const Transform3D<>& bTed, double maxError, State& state,\nRobWork/RobWork/src/rw/invkin/IterativeIK.hpp:76:        virtual void setMaxError (double maxError);\nRobWork/RobWork/src/rw/invkin/IterativeIK.hpp:83:        virtual double getMaxError () const;\nRobWork/RobWork/src/rw/invkin/IterativeIK.hpp:90:        virtual void setMaxIterations (int maxIterations);\nRobWork/RobWork/src/rw/invkin/IterativeIK.hpp:95:        virtual int getMaxIterations () const;\nRobWork/RobWork/src/rw/invkin/IterativeIK.hpp:125:      private:\nRobWork/RobWork/src/rw/invkin/IterativeIK.hpp:131:      private:\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:107:            //! @brief Constructor with all directions enabled initially.\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:111:                    enabled[i] = true;\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:125:                    enabled[i] = true;\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:130:             * directions are not \\b enabled.\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:133:             * @param enabled [in] 6 values specifying if the x, y, z and EAA x, y, z directions\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:134:             * should be enabled.\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:138:                    const rw::math::VectorND< 6, bool >& enabled) :\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:140:                tcpFrame (frame), refTtcp (refTtcp), enabled (enabled)\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:144:             * @brief Get the number directions enabled.\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:145:             * @return number of directions enabled.\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:151:                    if (enabled[i])\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:168:            rw::math::VectorND< 6, bool > enabled;\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:207:      private:\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:208:        void updateDeltaX (\nRobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:214:        void updateJacobian (\n",
+      "stderr": ""
+    },
+    {
+      "command": "rg -n \"solve|performLocalSearch|private:|VelocityScrew|Jacobian\" RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp",
+      "exitCode": 0,
+      "stdout": "RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:27:#include <rw/math/VelocityScrew6D.hpp>\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:79:        rw::math::Q solve (const rw::math::Q& q, const rw::math::Q& dq,\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:80:                           const rw::math::VelocityScrew6D<>& tcpscrew);\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp:82:      private:\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:39:     * @brief Iterative inverse kinematics solved based on the QPController\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:42:     * of using a simple inverse Jacobian it uses the rw::algorithms::QPController\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:62:         * @param device [in] Device to solve for         * @param state [in] State of the workcell\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:67:         * @copydoc rw::invkin::IterativeIK::solve\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:69:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<>& baseTend,\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:74:      private:\nRobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp:81:        bool performLocalSearch (const rw::models::SerialDevice* device,\n",
+      "stderr": ""
+    },
+    {
+      "command": "rg -n \"Force|setForce|MotorControlMode|setMotorForceTarget|step|initPhysics|resetScene|exitPhysics\" RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp",
+      "exitCode": 0,
+      "stdout": "RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:58:     * The general step looks like this:;\nRobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:97:         * @brief Performs a step and updates the state\nRobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:99:        virtual void step (double dt, rw::kinematics::State& state) = 0;\nRobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:105:        virtual void resetScene (rw::kinematics::State& state) = 0;\nRobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:110:        virtual void initPhysics (rw::kinematics::State& state) = 0;\nRobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:115:        virtual void exitPhysics () = 0;\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:66:        void setMotorForceLimits (const rw::math::Q& force);\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:71:        rw::math::Q getMotorForceLimits ();\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:106:            Force,      //!< For force control.\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:108:        } MotorControlMode;\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:113:        std::vector< MotorControlMode > getMotorModes (const rw::kinematics::State& state);\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:121:        MotorControlMode getMotorMode (int i, const rw::kinematics::State& state);\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:150:        void setMotorForceTargets (const rw::math::Q& force, rw::kinematics::State& state);\nRobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:174:        void setMotorForceTarget (double force, int i, rw::kinematics::State& state);\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:47:            Q maxForce):\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:50:        _maxForce(maxForce)\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:69:    rw::math::Q flim = _rdev->getMotorForceLimits ();\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:80:        _odeJoints[i]->setMaxForce (flim (qi));\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:113:        std::vector< RigidDevice::MotorControlMode > mstate = _rdev->getMotorModes (state);\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:120:        rw::math::Q flim = _rdev->getMotorForceLimits ();\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:121:        if (MetricUtil::dist1 (flim, _maxForce) > 0.0001) {\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:123:            _maxForce   = flim;\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:155:            _odeJoints[i]->setMaxForce (_maxForce (qi));\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:166:            _odeJoints[i]->setForce (targets[qi]);\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:188:            // in the next timestep will match that of the other joint\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:251:                _odeJoints[i]->setMaxForce( _maxForce(qi)*1.5);\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:254:            _odeJoints[i]->setMaxForce( _maxForce(qi) );\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:274:    _modes (rdev->getMotorForceLimits ().size (), RigidDevice::Velocity), _sim (sim)\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:280:    _maxForce = rdev->getMotorForceLimits ();\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:451:    Q maxForce                        = rdev->getMotorForceLimits ();\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:458:        odeJoint->setMaxForce (maxForce (i));\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:497:        odeJoint->setMaxForce( maxForce(i) );\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:514:    Q maxForce = rDev->getForceLimit();\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:515:    // std::cout  << \"Max force: \" << maxForce << std::endl;\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:562:             dJointSetAMotorParam(motor,dParamFMax, maxForce(i) );\nRobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:593:             dJointSetAMotorParam(motor,dParamFMax, maxForce(i) );\n",
+      "stderr": ""
+    },
+    {
+      "command": "rg -n \"sdurwsim_ode|RWSIM_HAVE_ODE|ODE_TEST|add_rwsim_gtest|ODEControlTest|ODESimpleTest\" RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt RobWork/RobWorkSim/gtest/CMakeLists.txt RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp RobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp",
+      "exitCode": 0,
+      "stdout": "RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp:45:TEST(ODEControlTest, ODEControlDeviceTest )\nRobWork/RobWorkSim/gtest/CMakeLists.txt:44:    add_rwsim_gtest(sdurwsim_common-gtest)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:57:    add_rwsim_gtest(sdurwsim_dynamics-gtest)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:63:if(TARGET sdurwsim_ode)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:65:    set(ODE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}\nRobWork/RobWorkSim/gtest/CMakeLists.txt:69:    set(ODE_TEST_SRC ode/ODEControlTest.cpp ode/ODESimpleTest)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:71:    add_executable(sdurwsim_ode-gtest ${ODE_TEST_SRC})\nRobWork/RobWorkSim/gtest/CMakeLists.txt:72:    target_link_libraries(sdurwsim_ode-gtest ${ODE_TEST_LIBRARIES})\nRobWork/RobWorkSim/gtest/CMakeLists.txt:73:    add_rwsim_gtest(sdurwsim_ode-gtest)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:81:if(TARGET sdurwsim_ode)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:83:    set(PERFORMANCE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode\nRobWork/RobWorkSim/gtest/CMakeLists.txt:92:    add_rwsim_gtest(sdurwsim_performance-gtest)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:99:if(TARGET sdurwsim_ode)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:101:    set(SENSORS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}\nRobWork/RobWorkSim/gtest/CMakeLists.txt:109:    add_rwsim_gtest(sdurwsim_sensors-gtest)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:122:    add_rwsim_gtest(sdurwsim_simulator-gtest)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:129:if(TARGET sdurwsim_ode)\nRobWork/RobWorkSim/gtest/CMakeLists.txt:130:    set(TASKSIMULATION_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode\nRobWork/RobWorkSim/gtest/CMakeLists.txt:137:    add_rwsim_gtest(sdurwsim_tasksimulation-gtest)\nRobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:1:set(SUBSYS_NAME sdurwsim_ode)\nRobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:19:set(DEFAULT ${RWSIM_HAVE_ODE})\nRobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:114:        target_link_libraries(${SUBSYS_NAME_PLUGIN} PRIVATE sdurwsim_ode)\nRobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:120:            target_compile_definitions(sdurwsim_ode PUBLIC dDOUBLE)\nRobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:122:            target_compile_definitions(sdurwsim_ode PUBLIC dSINGLE)\nRobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp:36:TEST (ODESimpleTest, SimpleDropObjectTest)\nRobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp:77:TEST (ODESimpleTest, OnTrayObjectStabilityTest)\nRobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp:134:TEST (ODESimpleTest, MultiOnTrayObjectStabilityTest)\n",
+      "stderr": ""
+    },
+    {
+      "command": "rg -n \"RigidDevice|not supported|not implemented|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp",
+      "exitCode": 0,
+      "stdout": "RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:43:#include <rwsim/dynamics/RigidDevice.hpp>\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:338:\t\tif( device.cast<RigidDevice>()!=NULL ){\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:339:\t\t\tstd::cout << \"RigidDevice....\" << std::endl;\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:341:\t\t\tRigidDevice::Ptr fDev = device.cast<RigidDevice>();\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:435:\t\t\t\t\t\tRW_WARN(\"Joint type not supported!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:453:\t\t\tRW_WARN(\"Controller not supported!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:542:    RW_THROW (\"BtSimulator (setEnabled): not implemented yet!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:547:    RW_THROW (\"BtSimulator (setDynamicsEnabled): not implemented yet!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:562:    RW_THROW (\"BtSimulator (emitPropertyChanged): not implemented yet!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:585:void BtSimulator::addDevice (DynamicDevice::Ptr dev, State& nstate)\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:587:    RW_THROW (\"BtSimulator (addDevice): not implemented yet!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:652:        RW_THROW (\"BtSimulator (addSensor): the type of sensor is not supported yet!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:658:    RW_THROW (\"BtSimulator (removeSensor): not implemented yet!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:663:    RW_THROW (\"BtSimulator (attach): not implemented yet!\");\nRobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:668:    RW_THROW (\"BtSimulator (detach): not implemented yet!\");\nRobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp:18:#include <rwsim/dynamics/RigidDevice.hpp>\nRobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp:133:        if (dynamic_cast< RigidDevice* > (dev.get ())) {\n",
+      "stderr": ""
+    },
+    {
+      "command": "rg -n \"ODE_DIR|ODE_INCLUDE_DIR|ODE_LIBRARY_TMP|BUILD_sdurwsim_ode\" D:/10_Source_Repos/21_robot/RobWork/build/CMakeCache.txt",
+      "exitCode": 0,
+      "stdout": "240:BUILD_sdurwsim_ode:BOOL=OFF\n600:ODE_DIR:PATH=ODE_DIR-NOTFOUND\n603:ODE_INCLUDE_DIR:PATH=ODE_INCLUDE_DIR-NOTFOUND\n606:ODE_LIBRARY_TMP:FILEPATH=ODE_LIBRARY_TMP-NOTFOUND\n2771:RW_SUBSYS_BUILD_sdurwsim_ode:INTERNAL=FALSE\n",
+      "stderr": ""
+    },
+    {
+      "command": "rg --files RobWork/RobWork/gtest/invkin RobWork/RobWorkSim/gtest/ode RobWork/RobWorkSim/example/cpp",
+      "exitCode": 0,
+      "stdout": "RobWork/RobWorkSim/gtest/ode\\ODESimpleTest.cpp\nRobWork/RobWorkSim/gtest/ode\\ODEControlTest.cpp\nRobWork/RobWork/gtest/invkin\\ParallelIKSolverTest.cpp\nRobWork/RobWork/gtest/invkin\\JacobianIKSolverTest.cpp\nRobWork/RobWork/gtest/invkin\\InvKinTest.cpp\nRobWork/RobWork/gtest/invkin\\ClosedFormIKSolverURTest.cpp\nRobWork/RobWork/gtest/invkin\\ClosedFormIKSolverKukaIIWATest.cpp\nRobWork/RobWorkSim/example/cpp\\ex-ode-simloop.cpp\nRobWork/RobWorkSim/example/cpp\\CMakeLists.txt\n",
+      "stderr": ""
+    }
+  ]
+}

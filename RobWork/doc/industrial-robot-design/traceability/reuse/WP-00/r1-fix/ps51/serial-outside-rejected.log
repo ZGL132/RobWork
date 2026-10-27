@@ -1,0 +1,3 @@
+verify-task-scope: SERIAL-T01 base=34e5da83a035 head=c48f92238164 changed=1 allowedRules=1 forbiddenRules=1
+  [out-of-scope] fixture.txt（未命中任何 allowedFiles 模式）
+verify-task-scope: FAIL SERIAL-T01 —— 1 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）

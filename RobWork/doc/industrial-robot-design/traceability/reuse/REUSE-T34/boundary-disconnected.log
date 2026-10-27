@@ -1,0 +1,29 @@
+Note: Google Test filter = CouplingValidation.ExactSingularBoundaryDiscrimination_T34:CouplingValidation.SingularCBlocked_RT_CPL_1
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from CouplingValidation
+[ RUN      ] CouplingValidation.SingularCBlocked_RT_CPL_1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(310): error: Expected: (issue->comparison->threshold) > (4e-12), actual: 5.0000000000000002e-14 vs 3.9999999999999999e-12
+
+[  FAILED  ] CouplingValidation.SingularCBlocked_RT_CPL_1 (0 ms)
+[ RUN      ] CouplingValidation.ExactSingularBoundaryDiscrimination_T34
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(364): error: Expected equality of these values:
+  issue->comparison->quantity
+    Which is: "coupling-condition-number"
+  "coupling-min-singular-value"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(366): error: Expected: (issue->comparison->actual) <= (2e-12), actual: 1000000000000 vs 2e-12
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(393): error: Expected: (issue->comparison->threshold) >= (1.9e-12), actual: 2e-14 vs 1.9e-12
+
+[  FAILED  ] CouplingValidation.ExactSingularBoundaryDiscrimination_T34 (0 ms)
+[----------] 2 tests from CouplingValidation (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] CouplingValidation.SingularCBlocked_RT_CPL_1
+[  FAILED  ] CouplingValidation.ExactSingularBoundaryDiscrimination_T34
+
+ 2 FAILED TESTS

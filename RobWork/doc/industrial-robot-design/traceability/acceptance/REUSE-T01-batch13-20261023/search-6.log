@@ -1,0 +1,14 @@
+280:	PUGIXML_INLINE_VAR const unsigned int format_raw = 0x04;
+286:	PUGIXML_INLINE_VAR const unsigned int format_no_escapes = 0x10;
+354:	class PUGIXML_CLASS xml_writer
+364:	class PUGIXML_CLASS xml_writer_file: public xml_writer
+378:	class PUGIXML_CLASS xml_writer_stream: public xml_writer
+780:		void print(xml_writer& writer, const char_t* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default, xml_encoding encoding = encoding_auto, unsigned int depth = 0) const;
+784:		void print(std::basic_ostream<char>& os, const char_t* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default, xml_encoding encoding = encoding_auto, unsigned int depth = 0) const;
+785:		void print(std::basic_ostream<wchar_t>& os, const char_t* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default, unsigned int depth = 0) const;
+1178:		xml_parse_result load_buffer(const void* contents, size_t size, unsigned int options = parse_default, xml_encoding encoding = encoding_auto);
+1182:		xml_parse_result load_buffer_inplace(void* contents, size_t size, unsigned int options = parse_default, xml_encoding encoding = encoding_auto);
+1186:		xml_parse_result load_buffer_inplace_own(void* contents, size_t size, unsigned int options = parse_default, xml_encoding encoding = encoding_auto);
+1189:		void save(xml_writer& writer, const char_t* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default, xml_encoding encoding = encoding_auto) const;
+1193:		void save(std::basic_ostream<char>& stream, const char_t* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default, xml_encoding encoding = encoding_auto) const;
+1194:		void save(std::basic_ostream<wchar_t>& stream, const char_t* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default) const;

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.001" timestamp="2026-10-26T21:22:45.237" name="AllTests">
+  <testsuite name="DynRnea" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-26T21:22:45.237">
+    <testcase name="StaticGravityTwoLinkAnalytic" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp" line="187" status="run" result="completed" time="0.001" timestamp="2026-10-26T21:22:45.237" classname="DynRnea">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp:135&#x0A;The difference between actual and expected is 3.9240000000000013, which exceeds tol, where&#x0A;actual evaluates to -6.3765000000000001,&#x0A;expected evaluates to -10.300500000000001, and&#x0A;tol evaluates to 1.0300500000000002e-08.&#x0A;关节 1 静态重力矩（实得 -6.3765000000000001，期望 -10.300500000000001）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp:135
+The difference between actual and expected is 3.9240000000000013, which exceeds tol, where
+actual evaluates to -6.3765000000000001,
+expected evaluates to -10.300500000000001, and
+tol evaluates to 1.0300500000000002e-08.
+关节 1 静态重力矩（实得 -6.3765000000000001，期望 -10.300500000000001）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp:135&#x0A;The difference between actual and expected is 3.9240000000000013, which exceeds tol, where&#x0A;actual evaluates to -6.3765000000000001,&#x0A;expected evaluates to -10.300500000000001, and&#x0A;tol evaluates to 1.0300500000000002e-08.&#x0A;关节 1 静态总力矩（实得 -6.3765000000000001，期望 -10.300500000000001）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp:135
+The difference between actual and expected is 3.9240000000000013, which exceeds tol, where
+actual evaluates to -6.3765000000000001,
+expected evaluates to -10.300500000000001, and
+tol evaluates to 1.0300500000000002e-08.
+关节 1 静态总力矩（实得 -6.3765000000000001，期望 -10.300500000000001）
+]]></failure>
+    </testcase>
+    <testcase name="BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp" line="589" status="run" result="completed" time="0." timestamp="2026-10-26T21:22:45.238" classname="DynRnea">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp:135&#x0A;The difference between actual and expected is 2.5891190923897813, which exceeds tol, where&#x0A;actual evaluates to -10.753128993710742,&#x0A;expected evaluates to -13.342248086100524, and&#x0A;tol evaluates to 1.3342248086100524e-08.&#x0A;弯曲构型关节 1 平衡矩（含负载）（实得 -10.753128993710742，期望 -13.342248086100524）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp:135
+The difference between actual and expected is 2.5891190923897813, which exceeds tol, where
+actual evaluates to -10.753128993710742,
+expected evaluates to -13.342248086100524, and
+tol evaluates to 1.3342248086100524e-08.
+弯曲构型关节 1 平衡矩（含负载）（实得 -10.753128993710742，期望 -13.342248086100524）
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

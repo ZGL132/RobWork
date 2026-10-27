@@ -1,0 +1,4 @@
+1f4a871a889995eadeae1621a0715bdc29858295:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:82:class AnchorRuntimeView final : public IKinRuntimeView {
+1f4a871a889995eadeae1621a0715bdc29858295:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp:428:class TestView final : public IKinRuntimeView {
+1f4a871a889995eadeae1621a0715bdc29858295:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:87:class FixtureView final : public IKinRuntimeView {
+1f4a871a889995eadeae1621a0715bdc29858295:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:965:    class ObservedView final : public IKinRuntimeView {

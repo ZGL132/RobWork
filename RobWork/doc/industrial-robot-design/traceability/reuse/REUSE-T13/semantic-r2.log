@@ -1,0 +1,22 @@
+Note: Google Test filter = WorkCellGeometryTest.LoaderRestoresThreadLocale*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkCellGeometryTest
+[ RUN      ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellGeometryTest.cpp(1037): error: Expected equality of these values:
+  job.get()
+    Which is: "\xE5\xAE\x9E\xE9\x99\x85\xE7\xBD\x91\xE6\xA0\xBC\xE6\x95\xB0\xE4\xB8\x8D\xE4\xB8\x80\xE8\x87\xB4\xEF\xBC\x9A" "2"
+    As Text: "实际网格数不一致：2"
+  ""
+加载器必须恢复调用前locale/模式、真实消费网格并清理临时文件
+
+[  FAILED  ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13 (66 ms)
+[----------] 1 test from WorkCellGeometryTest (66 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (66 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13
+
+ 1 FAILED TEST

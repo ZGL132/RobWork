@@ -1,0 +1,328 @@
+{
+  "taskId": "REUSE-T01",
+  "findingId": "B16-P2-01",
+  "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "originalAcceptance": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/acceptance.json",
+  "archives": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+      "files": [
+        "acceptance.json",
+        "acceptance.md",
+        "archive-checks.json",
+        "audit-b16.exit.txt",
+        "audit-b16.log",
+        "audit-b16.py",
+        "changed-files.log",
+        "checkout.exit.txt",
+        "checkout.log",
+        "clone.log",
+        "definition-checks.json",
+        "diff-check-exclusions.log",
+        "docs.exit.txt",
+        "docs.log",
+        "dynamics-rows.json",
+        "facts.json",
+        "foundation-governance-rows.json",
+        "freshness-probe.exit.txt",
+        "freshness-probe.json",
+        "freshness-probe.log",
+        "freshness-probe.py",
+        "git-status-end.log",
+        "hash-checks.json",
+        "modeling-rows.json",
+        "optimization-rows.json",
+        "product-upstream-diff.log",
+        "reuse.exit.txt",
+        "reuse.log",
+        "scoped-diff-check-initial.log",
+        "scoped-diff-check.exit.txt",
+        "scoped-diff-check.log",
+        "search-0.log",
+        "search-1.log",
+        "search-2.log",
+        "search-3.log",
+        "search-4.log",
+        "search-5.log",
+        "search-replays.json",
+        "semantic-checks.json",
+        "target-checks.json",
+        "task.exit.txt",
+        "task.log",
+        "write-acceptance.exit.txt",
+        "write-acceptance.log",
+        "write-acceptance.py"
+      ]
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+      "files": [
+        "acceptance.json",
+        "acceptance.md",
+        "artifact-relocation.json",
+        "check-f959.exit.txt",
+        "check-f959.log",
+        "check-f959.py",
+        "checkout.exit.txt",
+        "checkout.log",
+        "clone.exit.txt",
+        "clone.log",
+        "comparison-base.txt",
+        "drift-evidence-bindings.json",
+        "driver-command.json",
+        "execution-summary.json",
+        "F-959-facts.json",
+        "F-959-frozen.json",
+        "F-959-source-evidence.log",
+        "finalize.exit.txt",
+        "finalize.log",
+        "finalize.py",
+        "finish-execution.exit.txt",
+        "finish-execution.log",
+        "finish-execution.py",
+        "frozen-sha.txt",
+        "generator-01.stderr.log",
+        "generator-01.stdout.log",
+        "generator-02.stderr.log",
+        "generator-02.stdout.log",
+        "generator-03.stderr.log",
+        "generator-03.stdout.log",
+        "generator-04.stderr.log",
+        "generator-04.stdout.log",
+        "generator-05.stderr.log",
+        "generator-05.stdout.log",
+        "generator-06.stderr.log",
+        "generator-06.stdout.log",
+        "generator-07.stderr.log",
+        "generator-07.stdout.log",
+        "generator-08.stderr.log",
+        "generator-08.stdout.log",
+        "generator-09.stderr.log",
+        "generator-09.stdout.log",
+        "generator-10.stderr.log",
+        "generator-10.stdout.log",
+        "generator-11.stderr.log",
+        "generator-11.stdout.log",
+        "generator-12.stderr.log",
+        "generator-12.stdout.log",
+        "generator-13.stderr.log",
+        "generator-13.stdout.log",
+        "generator-14.stderr.log",
+        "generator-14.stdout.log",
+        "generator-15.stderr.log",
+        "generator-15.stdout.log",
+        "generator-16.stderr.log",
+        "generator-16.stdout.log",
+        "generator-17.stderr.log",
+        "generator-17.stdout.log",
+        "generator-18.stderr.log",
+        "generator-18.stdout.log",
+        "generator-19.stderr.log",
+        "generator-19.stdout.log",
+        "generator-20.stderr.log",
+        "generator-20.stdout.log",
+        "generator-21.stderr.log",
+        "generator-21.stdout.log",
+        "generator-22.stderr.log",
+        "generator-22.stdout.log",
+        "generator-23.stderr.log",
+        "generator-23.stdout.log",
+        "generator-24.stderr.log",
+        "generator-24.stdout.log",
+        "generator-25.stderr.log",
+        "generator-25.stdout.log",
+        "generator-26.stderr.log",
+        "generator-26.stdout.log",
+        "generator-27.stderr.log",
+        "generator-27.stdout.log",
+        "generator-28.stderr.log",
+        "generator-28.stdout.log",
+        "generator-29.stderr.log",
+        "generator-29.stdout.log",
+        "git-status-end.log",
+        "git-status-start.log",
+        "git-status-with-generated-cache.log",
+        "independent-drift-confirm.json",
+        "independent-generator-drift.diff",
+        "independent-generator-replay.json",
+        "independent-json-comparisons.json",
+        "product-upstream-diff.log",
+        "recorded-baseline-source-diff.log",
+        "recorded-generator-source-hashes.json",
+        "recorded-replay-cross-check.json",
+        "replay-driver.exit.txt",
+        "replay-driver.stderr.log",
+        "replay-driver.stdout.log",
+        "run-replay.exit.txt",
+        "run-replay.log",
+        "run-replay.py",
+        "runtime.json",
+        "second-confirm.exit.txt",
+        "second-confirm.stderr.log",
+        "second-confirm.stdout.log",
+        "source-after-hashes.json",
+        "source-before-hashes.json",
+        "urdf-generator-write-sites.log"
+      ]
+    }
+  ],
+  "change": "保留精确sources，为本批22个C++辅助函数补来源全文inputs；覆盖函数外常量/raw字符串/相邻helper，未变产品、测试或门禁",
+  "bindings": [
+    {
+      "functionId": "dynamics.StatisticsTest.expectNearRel",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.rowAt",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.makeIdentity",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.prismAxialForce",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.revTorque",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.cancellationRequested",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.reportProgress",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "dynamics.StatisticsTest.tryObjectBytes",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.asBytes",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.digestOf",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.existingNodeFor",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.missingNode",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.includeEdge",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.makeXacroSource",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.asText",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.findDiag",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "modeling.XacroExpandTest.makeBasicSource",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.makeCid",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.makeCandidate",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.makeTwoObjectives",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.idsOf",
+      "input": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+      }
+    }
+  ],
+  "productChanged": false,
+  "fullStagePass": false
+}

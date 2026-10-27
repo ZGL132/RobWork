@@ -1,0 +1,13 @@
+Note: Google Test filter = TrjCartesianLine.*REUSE_T26
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from TrjCartesianLine
+[ RUN      ] TrjCartesianLine.SlerpIndependentAxisOracle_REUSE_T26
+[       OK ] TrjCartesianLine.SlerpIndependentAxisOracle_REUSE_T26 (1 ms)
+[ RUN      ] TrjCartesianLine.SlerpUpstreamAndBoundary_REUSE_T26
+[       OK ] TrjCartesianLine.SlerpUpstreamAndBoundary_REUSE_T26 (0 ms)
+[----------] 2 tests from TrjCartesianLine (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 2 tests.

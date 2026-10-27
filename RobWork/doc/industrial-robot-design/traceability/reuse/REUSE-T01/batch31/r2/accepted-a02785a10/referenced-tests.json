@@ -1,0 +1,13 @@
+{
+  "total": 22,
+  "passed": 19,
+  "failed": 3,
+  "skipped": 0,
+  "notRun": 0,
+  "failedNames": [
+    "ReuseUnitsAudit.ScalarFiniteOverflowMustReject_CORE_T05",
+    "ReuseUnitsAudit.VectorFiniteOverflowMustReject_CORE_T05",
+    "ReuseUnitsAudit.QFiniteOverflowMustReject_CORE_T05"
+  ],
+  "execution": "referenced original independent execution; no C++ rerun"
+}

@@ -1,0 +1,12 @@
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+reuse supplement: schema/permission/function evidence checked; functions=1889 closedFiles=1 (semantic review required)
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=113 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+validate-task: PASS (1 tasks)

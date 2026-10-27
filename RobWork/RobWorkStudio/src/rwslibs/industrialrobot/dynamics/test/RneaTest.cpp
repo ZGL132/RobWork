@@ -28,6 +28,19 @@
 #include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // gravityToBase——重力投影规则单点
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
+// REUSE-T52 用例 15（上游直接对照）的直连消费面——仅测试目标（产品侧
+// 上游消费仍集中 InverseDynamics.cpp 单点）。
+#include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/Kinematics.hpp>
+#include <rw/kinematics/StateStructure.hpp>
+#include <rw/models/PrismaticJoint.hpp>
+#include <rw/models/RevoluteJoint.hpp>
+#include <rw/models/RigidObject.hpp>
+#include <rw/models/SerialDevice.hpp>
+#include <rwsim/dynamics/FixedBody.hpp>
+#include <rwsim/dynamics/RigidDevice.hpp>
+#include <rwsim/util/RecursiveNewtonEuler.hpp>
+
 #include <gtest/gtest.h>
 
 #include <cmath>
@@ -568,6 +581,110 @@ TEST(DynRnea, SplitChannelsMatchAnalyticModelAndSumIdentity)
 }
 
 // =====================================================================
+// 用例 4b：任意构型静力平衡叉积 oracle（REUSE-T52——独立物理基准：静力
+// 平衡 Σr×F 手算逐关节核对；弯曲构型＋挂载负载＝GAP-RNE-FRAME「构型相关
+// 项缺失（bent==rest）」失败形态的定向探针——权威轴≠z 薄适配核心面）。
+// =====================================================================
+
+TEST(DynRnea, BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-01", "DYN-02"}, std::vector<std::string>{});
+    // 本用例验证：y 轴二连杆在弯曲构型（q2≠0）＋已挂负载下，静态驱动矩与
+    // 手算叉积平衡解逐关节一致。推导（全部在基座系，重力 (0,0,−g)）：
+    //   各质心世界 x 分量（轴沿 +Y，链在 X-Z 平面；x 为绕 +Y 重力矩的力臂）：
+    //     x1 = c1·cos q1；x2 = L1·cos q1 + c2·cos(q1+q2)；xp = L1·cos q1 + p·cos(q1+q2)
+    //   对 +Y 轴的重力矩＝+m·g·x（r×F 展开），驱动矩取反（持住对抗重力）：
+    //     τ1 = −g·(m1·x1 + m2·x2 + mp·xp)；τ2 = −g·(m2·c2 + mp·p)·cos(q1+q2)
+    // 期望值不引用被测实现、不引用拉格朗日形式（与用例 4 独立双轨）。
+    constexpr double kMp = 0.8;    ///< 挂载负载质量，kg
+    constexpr double kP = 0.22;    ///< 负载质心距法兰原点（法兰系 +X），m
+    const CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const ObjectId condition = idFrom<ObjectId>("cond-bent");
+
+    EndEffectorPayload payload;
+    payload.objectId = idFrom<ObjectId>("payload-bent");
+    payload.mass = val(kMp);  // kg（必填）
+    payload.centerOfMass = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(kP, 0.0, 0.0), userProv());  // TCP 系（无工具＝法兰原点），m
+    // inertia 保持 NotProvided——点质量模型（D-DYN-6；平衡面与惯量无关）。
+    payload.initiallyMounted = true;
+    InverseDynRequest req = makeRequest(
+        model, condition, {sampleAt(0.0, {0.3, 0.9}, {0.0, 0.0}, {0.0, 0.0})});
+    req.payloads.push_back(payload);
+
+    FakeContext ctx;
+    const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+    ASSERT_EQ(out.samples.size(), 2u);
+
+    const double q1 = 0.3, q2 = 0.9;
+    const double x1 = kC1 * std::cos(q1);
+    const double x2 = kL1 * std::cos(q1) + kC2 * std::cos(q1 + q2);
+    const double xp = kL1 * std::cos(q1) + kP * std::cos(q1 + q2);
+    const double expectedTau1 = -kG * (kM1 * x1 + kM2 * x2 + kMp * xp);  // N·m
+    const double expectedTau2 = -kG * (kM2 * kC2 + kMp * kP) * std::cos(q1 + q2);
+    expectNearRel(out.samples[0].tauTotal, expectedTau1, "弯曲构型关节 1 平衡矩（含负载）");
+    expectNearRel(out.samples[1].tauTotal, expectedTau2, "弯曲构型关节 2 平衡矩（含负载）");
+    // 弯曲≠伸直：构型相关项显式断言（GAP-RNE-FRAME「bent==rest」失败形态
+    // ——若薄适配丢失，本断言与上方解析同时红）。
+    EXPECT_GT(std::abs(expectedTau1 - (-kG * (kM1 * kC1 + kM2 * (kL1 + kC2) + kMp * (kL1 + kP)))),
+              1.0)
+        << "判别裕度须显著（弯曲与伸直构型力矩差 >1 N·m）";
+    EXPECT_EQ(out.samples[0].numericState, SampleNumericState::Ok);
+}
+
+// =====================================================================
+// 用例 4c：准静态扫掠能量平衡 oracle（REUSE-T52——独立物理基准：评估器
+// 机械功率梯形积分＝手算势能差的负值；能量守恒闭环，禁自比）。
+// =====================================================================
+
+TEST(DynRnea, QuasiStaticEnergyBalancePotentialDelta_REUSE_T52)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-01"}, std::vector<std::string>{});
+    // 本用例验证：无摩擦、q̈=0、仅关节 1 匀速扫掠（q̇2=0——离心矩 τ2≠0 但
+    // 功率 τ2·q̇2 恒 0）时，τ_total·q̇ 的时间积分＝−ΔU（势能手算式
+    //   U(q1) = −g·[m1·c1·sin q1 + m2·(L1·sin q1 + c2·sin(q1+q2))]，
+    // 高度取世界 z 坐标——与被测实现零共享路径）。关节 2 能量恒 0 恰为
+    // 「非零力矩×零速度＝零功率」的物理钉。
+    const CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const ObjectId condition = idFrom<ObjectId>("cond-energy");
+
+    const double q2 = 0.7;      // 关节 2 固定（rad）
+    const double w1 = 0.4;      // 关节 1 匀速（rad/s）
+    const double q1Start = 0.2; // 起始角（rad）
+    const double dt = 0.01;     // 采样间隔（s）
+    const int kSteps = 200;     // 200 步→扫掠 0.8 rad
+    std::vector<InverseDynSampleInput> samples;
+    samples.reserve(kSteps + 1);
+    for (int k = 0; k <= kSteps; ++k) {
+        const double t = k * dt;
+        samples.push_back(sampleAt(t, {q1Start + w1 * t, q2}, {w1, 0.0}, {0.0, 0.0}));
+    }
+    InverseDynRequest req = makeRequest(model, condition, samples);
+    FakeContext ctx;
+    const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+    ASSERT_EQ(out.samples.size(), 2u * samples.size());
+
+    const double q1End = q1Start + w1 * kSteps * dt;
+    // 手算势能（独立物理式——高度差×重力，无被测实现参与）。静态平衡时
+    // 驱动矩 τ＝∂U/∂q（重力广义力 −∂U/∂q 的平衡量，静态解析式同源可核），
+    // 故执行器做功 ∫τ·q̇ dt＝ΔU＝U(end)−U(start)（下降段 ΔU<0＝执行器吸能）。
+    auto potential = [](double q1v, double q2v) {
+        return -kG * (kM1 * kC1 * std::sin(q1v)
+                      + kM2 * (kL1 * std::sin(q1v) + kC2 * std::sin(q1v + q2v)));  // J
+    };
+    const double expectedE1 = potential(q1End, q2) - potential(q1Start, q2);  // ＝ΔU（J）
+    // 梯形积分对光滑被积函数的离散误差 O(dt²)——绝对 5×10⁻⁴ J 远宽于误差
+    // 量级（≈1e-5），又远窄于任何物理性偏差。
+    const double lastJoint1Energy = out.samples[2 * kSteps].energyIntegralJ;
+    EXPECT_NEAR(lastJoint1Energy, expectedE1, 5e-4) << "关节 1 能量积分＝ΔU（能量守恒）";
+    // 关节 2：q̇2=0 → 每样本功率恰 0 → 能量积分恒 0（离心矩非零不作功）。
+    EXPECT_DOUBLE_EQ(out.samples[2 * kSteps + 1].energyIntegralJ, 0.0);
+    // 扫掠全程无失败/非有限（能量链有效的前提面）。
+    EXPECT_EQ(out.validity.completeness, DynamicsValidity::Completeness::Complete);
+    EXPECT_EQ(out.validity.nonFiniteCount, 0u);
+}
+
+// =====================================================================
 // 用例 5：摩擦符号约定与零速库仑项（DYN-02/MDL-16；§5.5 sgn₀(0)=0——
 // 静摩擦不在 R1 模型，黄金算例覆盖 q̇=0 行为）。
 // =====================================================================
@@ -1055,4 +1172,118 @@ TEST(DynRnea, CancelReturnsPartialWithoutError)
     EXPECT_TRUE(out.samples.empty());
     EXPECT_EQ(out.validity.completeness, DynamicsValidity::Completeness::Empty);
     EXPECT_TRUE(out.diagnostics.empty());  // 取消非错误——零诊断（模型面无降级素材）
+}
+
+// =====================================================================
+// 用例 15：上游直接对照（REUSE-T52——REUSE-T51『上游直接对照』同型：
+// 同模型同 State 下，测试侧内联构建与产品实现同构的 RNE 面设备并直接
+// 调用上游 RecursiveNewtonEuler::solve，与产品评估器输出逐位一致——
+// 证明生产路径真实路由经上游求解（§6 生产正向证据的上游对照轨））。
+// =====================================================================
+
+TEST(DynRnea, UpstreamDirectComparison_REUSE_T52)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-01"}, std::vector<std::string>{});
+    // 本用例验证：非平凡激励（q̇/q̈ 全非零、y 轴非退化）下，产品评估器的
+    // 全量通道 τ 与"测试侧直连上游 solve"逐位一致（上游 Wrench 投影按
+    // 关节类型——转动 dot(torque,z)／移动 dot(force,z)——与实现同式）。
+    const CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    const ObjectId condition = idFrom<ObjectId>("cond-upstream-cmp");
+    InverseDynRequest req = makeRequest(
+        model, condition,
+        {sampleAt(0.0, {0.0, 0.0}, {0.7, -1.2}, {1.5, -0.8})});
+    FakeContext ctx;
+    const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+    ASSERT_EQ(out.samples.size(), 2u);
+
+    // 测试侧内联：与产品实现同构的消费面（StateStructure＋关节帧
+    // tAligned＝origin·R_align＋offset 烘焙＋连杆帧 R_alignᵀ＋RigidDevice）。
+    // 期望的权威质心/惯量→关节帧换算与产品薄适配同式（R_alignᵀ·com／
+    // R_alignᵀ·I·R_align——GAP-RNE-FRAME 消费边界，见 REUSE-T52 契约）。
+    const auto& chain = model.chain();
+    rw::kinematics::StateStructure tree;
+    rw::core::Ptr<rw::kinematics::FixedFrame> base =
+        rw::core::ownedPtr(new rw::kinematics::FixedFrame("cmp/base", rw::math::Transform3D<>()));
+    tree.addFrame(base);
+    rw::core::Ptr<rw::kinematics::Frame> prev = base;
+    std::vector<rw::kinematics::Frame*> serialChain{base.get()};
+    std::vector<std::pair<rwsim::dynamics::BodyInfo, rw::models::Object::Ptr>> bodies;
+    std::vector<rw::core::Ptr<rw::kinematics::Frame>> linkFrames;
+    for (std::size_t i = 0; i < chain.joints.size(); ++i) {
+        const sdurws::ird::runtime::CanonicalJoint& cj = chain.joints.at(i);
+        // 轴对齐（S6 同源公式——含 ±z 精确分支；本夹具全 +y 轴，分支覆盖
+        // 由既有 y 轴 oracle 承担，此处同构仅为忠实镜像）。
+        const rw::math::Rotation3D<double> rAlign =
+            (cj.axis[0] == 0.0 && cj.axis[1] == 0.0)
+                ? (cj.axis[2] > 0.0 ? rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1)
+                                    : rw::math::Rotation3D<double>(1, 0, 0, 0, -1, 0, 0, 0, -1))
+                : rw::math::Transform3D<double>::makeLookAt(
+                    rw::math::Vector3D<double>(0, 0, 0), -cj.axis,
+                    std::abs(cj.axis[1]) < 0.9 ? rw::math::Vector3D<double>(0, 1, 0)
+                                               : rw::math::Vector3D<double>(1, 0, 0)).R();
+        const rw::math::Transform3D<double> tAligned =
+            cj.origin * rw::math::Transform3D<double>(rw::math::Vector3D<double>(0, 0, 0), rAlign);
+        rw::core::Ptr<rw::models::Joint> joint;
+        if (cj.type == sdurws::ird::runtime::JointType::Prismatic) {
+            auto moving = rw::core::ownedPtr(new rw::models::PrismaticJoint(
+                "cmp/j" + std::to_string(i), tAligned));
+            moving->setFixedTransform(moving->getTransform(cj.zeroOffset));
+            joint = moving;
+        } else {
+            auto rotating = rw::core::ownedPtr(new rw::models::RevoluteJoint(
+                "cmp/j" + std::to_string(i), tAligned));
+            rotating->setFixedTransform(rotating->getTransform(cj.zeroOffset));
+            joint = rotating;
+        }
+        tree.addFrame(joint, prev);
+        const rw::math::Rotation3D<double> rAlignT = rw::math::inverse(rAlign);
+        auto linkFrame = rw::core::ownedPtr(new rw::kinematics::FixedFrame(
+            "cmp/l" + std::to_string(i + 1),
+            rw::math::Transform3D<>(rw::math::Vector3D<double>(0, 0, 0), rAlignT)));
+        tree.addFrame(linkFrame, joint);
+        prev = linkFrame;
+        linkFrames.push_back(linkFrame);
+        serialChain.push_back(joint.get());
+        serialChain.push_back(linkFrame.get());
+        const sdurws::ird::runtime::CanonicalLink& link = chain.links.at(i + 1);
+        rwsim::dynamics::BodyInfo info;
+        info.mass = link.mass.tryValue().value_or(0.0);
+        info.masscenter = rAlignT * link.centerOfMass.tryValue().value_or(
+            rw::math::Vector3D<double>(0, 0, 0));
+        info.inertia = rAlignT * link.inertia.tryValue().value_or(
+            rw::math::InertiaMatrix<double>()) * rAlign;
+        bodies.emplace_back(info, rw::core::ownedPtr(
+            new rw::models::RigidObject(rw::core::Ptr<rw::kinematics::Frame>(linkFrame))));
+    }
+    rw::core::Ptr<rwsim::dynamics::RigidDevice> rdev = rw::core::ownedPtr(
+        new rwsim::dynamics::RigidDevice(
+            rw::core::ownedPtr(new rwsim::dynamics::FixedBody(
+                rwsim::dynamics::BodyInfo(),
+                rw::core::ownedPtr(new rw::models::RigidObject(
+                    rw::core::Ptr<rw::kinematics::Frame>(base))))),
+            bodies,
+            rw::core::ownedPtr(new rw::models::SerialDevice(serialChain, "cmp/dev", tree.getDefaultState()))));
+    rwsim::util::RecursiveNewtonEuler solver(rdev);
+    // 对照位形＝默认 State（q_auth＝zeroOffset＝0）：路由钉扎不依赖位置写入
+    // （质心/惯量关节帧换算为位形无关量，dq/ddq 全非零仍逐位穿透全链）；
+    // 构型相关面（弯曲/偏置）由产品路径用例与工厂断开实验承担——本用例免
+    // State 写（权限面：test-fixture 授权不带 write-state）。
+    const rw::kinematics::State state = tree.getDefaultState();
+    solver.setGravity(rw::math::Vector3D<double>(
+        req.gravityBase[0], req.gravityBase[1], req.gravityBase[2]));
+    const std::vector<rw::math::Wrench6D<>> wrenches = [&]{
+        rw::math::Q qdQ(2), qddQ(2);
+        qdQ[0] = 0.7;  qdQ[1] = -1.2;   // rad/s（与产品请求同激励）
+        qddQ[0] = 1.5; qddQ[1] = -0.8;  // rad/s²
+        return solver.solve(state, qdQ, qddQ);
+    }();
+    // 逐关节投影对照（转动 dot(torque,z)；本夹具全转动）。
+    for (std::size_t i = 0; i < 2; ++i) {
+        const rw::models::Joint* j = rdev->getJointDevice()->getJoints()[i];
+        const rw::math::Vector3D<double> z = rw::kinematics::Kinematics::frameTframe(
+            rdev->getJointDevice()->getBase(), j, state).R().getCol(2);
+        const double tau = rw::math::dot(wrenches[i].torque(), z);
+        EXPECT_EQ(out.samples[i].tauTotal, tau)
+            << "关节 " << i << " 上游直接对照（全量通道逐位一致）";
+    }
 }

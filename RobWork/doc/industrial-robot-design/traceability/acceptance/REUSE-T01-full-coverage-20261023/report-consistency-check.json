@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "jsonFilesParsed": 12,
+  "frozenCommit": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+  "repositoryClean": true,
+  "definitionsVerified": 27,
+  "topGapsWithoutSources": 20,
+  "supplementalWithoutIntervalOverlap": 7,
+  "inventoryFiles": 1401,
+  "unreferencedCandidates": 1263,
+  "mjsIndexes": 29,
+  "gateExitCodes": {
+    "task": 0,
+    "reuse": 0,
+    "docs": 0
+  }
+}

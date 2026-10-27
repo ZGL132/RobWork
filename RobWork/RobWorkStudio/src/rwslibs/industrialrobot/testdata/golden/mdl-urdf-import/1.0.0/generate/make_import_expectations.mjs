@@ -9,9 +9,13 @@
  *     <disable_collisions>（实现语义：顶层扫描入外来扩展面、全树收集入
  *     自碰撞候选——双登记面，ImportTest 包含式断言同口径）＋robot 级
  *     <material> 定义（元素名 "material 'gray'"——无落点无密度语义）；
- *   - 不支持清单（8）：<transmission>（R2）×1＋<limit velocity>（§4.3-A
- *     无落点，不发明 schema）×5（j1/j2/j4/j5/j6 携带 velocity）＋非单位
- *     scale（schema 无落点）×1＋package:// ROS URI（引导改相对路径）×1；
+ *   - 不支持清单（3）：<transmission>（R2）×1＋非单位 scale（schema 无
+ *     落点）×1＋package:// ROS URI（引导改相对路径）×1；
+ *   - 速度限位映射锚（F01/{1,1}——WP-13-T25 期望面同批落位）：
+ *     <limit velocity>×5（j1/j2/j4/j5/j6）真实映射 joints[i].maxVelocity，
+ *     mappedVelocityCount=5 精确计数锚；旧 joint-velocity-limit 未保留面
+ *     随 schema 落位消亡（F-959 生成器同步批 REUSE-T49——脚本随入库正确
+ *     期望面更新，不反向重产旧错误黄金数据洗绿）；
  *   - 待确认清单（2）：j2 缺 axis（MDL-11 默认局部 +X 待确认）＋j3 缺
  *     limit（MDL-06④ revolute 限位必填面）——subject 为定位主体稳定
  *     文本 "joint '<净化后名>'"（T05 实现语义，ImportTest 同源）；
@@ -59,13 +63,14 @@ const importReport = {
     ],
     ignored: 3,
     ignoredElements: ['gazebo', 'disable_collisions', "material 'gray'"],
-    unsupported: 8,
+    unsupported: 3,
     unsupportedKinds: [
       { kind: 'transmission', count: 1 },
-      { kind: 'joint-velocity-limit', count: 5 },
       { kind: 'mesh-scale', count: 1 },
       { kind: 'ros-uri', count: 1 },
     ],
+    mappedVelocityCount: 5,
+    mappedVelocityNote: 'F01/{1,1}：<limit velocity> 真实映射 joints[i].maxVelocity（5 轴——j1/j2/j4/j5/j6）；旧 joint-velocity-limit 未保留面随 schema 落位消亡',
     mappedCountAtLeast: 6,
     defaultsCountAtLeast: 3,
     submittable: true,

@@ -1,0 +1,42 @@
+[
+  {
+    "area": "定义与作用域",
+    "status": "PASS",
+    "observation": "43条新增关系与43个定义逐一一致。直接审读3份C++测试上下文、2个ESModule的全部20个命名函数及URDF顶层fixture组；匿名namespace、FakeContext成员作用域及模块身份正确。makeXacroSource:128–158包含默认includeBytes={}之后的真实函数体；makeBasicSource:202–205无raw字符串误截，fixtureGeneration:42–149明确是顶层语义组。此项不消除B16-P2-01的函数外上下文绑定缺口。"
+  },
+  {
+    "area": "Pareto测试helper",
+    "status": "PASS",
+    "observation": "makeCid仅固定字节身份，candidate装两个指标槽，makeTwoObjectives调用生产makeObjectiveSet，idsOf仅投影既有entries。测试断言针对实际Pareto生产接口，无第二生产支配核心。"
+  },
+  {
+    "area": "Xacro测试helper",
+    "status": "PASS_WITH_FINDING",
+    "observation": "真实复用ContentDigester、标准容器和sort；fake路径/mtime、缺叶/环是防御注入，不证明真实IO安全。makeBasicSource的raw常量缺绑定见B16-P2-01。"
+  },
+  {
+    "area": "Statistics测试oracle",
+    "status": "PASS_WITH_FINDING",
+    "observation": "独立max(1e-15,1e-12*abs(expected))与core C4不同；rowAt五分项零而tauTotal可非零，登记没有继承旧恒等式注释。解析支撑力与回转力矩限定竖直移动静止/水平回转，单位N/N·m正确；CanonicalModelBuilder构模及FakeContext替身用途准确。相关决定性常量缺绑定见B16-P2-01。"
+  },
+  {
+    "area": "动力学黄金oracle",
+    "status": "PASS",
+    "observation": "二连杆rneaReference实际为Y轴Lagrange标量M/C/G+摩擦、外力零，非递归RNE；非均匀逐区间梯形、严格大于首峰、JS===不保证逐bit等值、Complete与mandatory全在场限制均如实登记。消费者DynGoldenDatasetTest.cpp:432起读取expected，501–510有独立r×F第三静力矩锚。TrapMethod.hpp:38–49统一h及求和序、Random全局unsigned种子不等价，未授权新生产核心。"
+  },
+  {
+    "area": "优化黄金oracle",
+    "status": "PASS",
+    "observation": "Node crypto/Buffer LE/-0归零、64位SplitMix与53bit采样、两维LHS和基线首位、9事实6可行、C4以b为reference、去重首见/非支配分层/严格三键排序均与源码一致。该独立定义式仅用于测试；零筛选固定事实不证明全优化编排。"
+  },
+  {
+    "area": "生成器执行与消费target",
+    "status": "PASS",
+    "observation": "Node是已登记运行器，CMake实际编译3个消费测试目标，不编译或自动执行mjs。全部21条生成器关系targetRelation明确generated-artifact-consumer；对应CMake包含DynGoldenDatasetTest/OptGoldenDatasetTest/GoldenImportTest，消费者读取真实dataset expected。未重跑29脚本，其独立执行验收由另一验收者负责。"
+  },
+  {
+    "area": "F-959与历史结论",
+    "status": "PASS",
+    "observation": "旧URDF脚本仍写unsupported=8和joint-velocity-limit×5，缺mappedVelocityCount；当前expected为unsupported=3/mappedVelocityCount=5，GoldenImportTest.cpp:430–440消费映射计数。登记明确29进程exit0不等于JSON一致/数学PASS，未宣称已运行C++消费者复现失败。保留F-959 open，B14/B15返工PASS仅关闭各自单项；全覆盖NOT PASS没有被抹除。"
+  }
+]

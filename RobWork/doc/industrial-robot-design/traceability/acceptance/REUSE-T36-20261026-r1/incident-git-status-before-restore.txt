@@ -1,0 +1,12 @@
+ D RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+ D RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp
+ D RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp
+ D RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp
+ D RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp
+ D RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/final.log
+ D RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/collision-capability-review.json
+ D RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/production-RobWorkCollisionEvaluator.json
+ D RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/production-buildPolicyProximitySetup.json
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261025-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261025-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/

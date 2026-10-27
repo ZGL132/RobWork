@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="16" failures="0" disabled="0" errors="0" time="0.153" timestamp="2026-10-23T09:18:17.900" name="AllTests">
+  <testsuite name="EAA" tests="13" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T09:18:17.900">
+    <testcase name="Test_ADL" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="CastTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="41" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="CrossProductTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="55" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="MiscTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="71" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="scalarOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="301" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="Vector3DOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="319" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="EAAOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="358" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="EigenOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="392" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="MathOperators" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="430" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="SmallAngleMatrixPrecision_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="454" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="SmallAngleVectorConversion_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="468" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="NearlyParallelVectors_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="478" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+    <testcase name="SmallFloatAngle_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="488" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="EAA" />
+  </testsuite>
+  <testsuite name="RPYTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T09:18:17.900">
+    <testcase name="Test" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\RPYTest.cpp" line="25" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:17.900" classname="RPYTest" />
+  </testsuite>
+  <testsuite name="QuaternionTest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.153" timestamp="2026-10-23T09:18:17.900">
+    <testcase name="Conversion" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\QuaternionTest.cpp" line="152" status="run" result="completed" time="0.152" timestamp="2026-10-23T09:18:17.900" classname="QuaternionTest" />
+    <testcase name="MiscTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\QuaternionTest.cpp" line="178" status="run" result="completed" time="0." timestamp="2026-10-23T09:18:18.053" classname="QuaternionTest" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "ird-independent-audit-acceptance/1",
+  "batch": "REUSE-T01/B33",
+  "verdict": "PASS_LOCAL_AUDIT_ONLY",
+  "reviewedCommit": "e5c58aa0b6b3958b90e3a22ef42c36e4c9a4dc7e",
+  "directParent": "88cae2102d16a338c5f0a7725d080f1c0d802f95",
+  "productBaseline": "549a61834bea9755b873dde478ee80c5b9f4b15a",
+  "scopeFiles": 26,
+  "reviewer": "independent acceptance subagent; user-authorized acceptance only",
+  "reviewedAt": "2026-10-23T07:33:57.6979462+08:00",
+  "gates": {
+    "configure": 0,
+    "build": 0,
+    "task": 0,
+    "docs": 0,
+    "reuse": 0,
+    "scope": 0,
+    "commit-lint": 0,
+    "diff-check-cr-at-eol": 0
+  },
+  "tests": {
+    "status": "EXPECTED_FAIL_REPRODUCED",
+    "executableExit": 1,
+    "total": 43,
+    "passed": 42,
+    "failed": 1,
+    "skipped": 0,
+    "original": {
+      "total": 38,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0
+    },
+    "new": {
+      "total": 5,
+      "passed": 4,
+      "failed": 1,
+      "skipped": 0
+    },
+    "failureTest": "EveryFailureMustClearNames_DT_REG_5",
+    "failedAssertions": 4
+  },
+  "evidence": {
+    "newRows": 7,
+    "refreshedRows": 1,
+    "sectionChecks": 8,
+    "normalizedBindings": 256,
+    "rawOriginals": 21,
+    "externalDependencyRawHashes": 4,
+    "manifestGitBlobRawSha256": "7837bd073c6cf717b22b58649cfe2925f3b6ba07be22aaa501754042fcef5091",
+    "findingsPreservedPrefixBytes": 1289777,
+    "allTouchedRowsPending": true,
+    "capabilityNONEIsExemption": false,
+    "catalogChanged": false,
+    "protectedChanges": 0
+  },
+  "limitations": [
+    "Only B33 audit evidence accepted; does not complete all REUSE-T01 or authorize REUSE-T02.",
+    "F-968 remains open; no product correction or new parser/backend approved.",
+    "Private output contract only; no demonstrated public diagnostic-object contamination.",
+    "Full logging/redaction/catalog, cross-locale behavior and remote sync not run."
+  ],
+  "environment": {
+    "clone": "local --no-hardlinks; core.longpaths=true; detached frozen HEAD",
+    "developerEnvironment": "Visual Studio 2022 amd64/amd64",
+    "qpa": "windows",
+    "executables": "one absolute executable per launch",
+    "externalDependencies": "existing read-only installed channel, no network/install",
+    "sourceWorkspace": "read-only; parent/unrelated untracked work preserved"
+  },
+  "whitespace": {
+    "defaultDiffCheckExit": 2,
+    "explanation": "Default Git treats preserved CRLF raw evidence as whitespace; core.whitespace=cr-at-eol check exits 0. Both logs retained."
+  },
+  "remote": "NOT RUN",
+  "implementation": "NOT PERFORMED"
+}

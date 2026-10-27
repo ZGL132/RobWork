@@ -1,0 +1,45 @@
+Note: Google Test filter = DynForward.AnalyticStraightConfigurationPassed_DYN05:DynForward.DeterministicRepeat_NFR_COR_02:DynForward.PayloadEventSameSourceConsistency_DYN05
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from DynForward
+[ RUN      ] DynForward.AnalyticStraightConfigurationPassed_DYN05
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 0000016F81F916B0
+set motor 0 ird-rne/joint1 id: 0000016F81F91990
+[       OK ] DynForward.AnalyticStraightConfigurationPassed_DYN05 (65 ms)
+[ RUN      ] DynForward.DeterministicRepeat_NFR_COR_02
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+set motor 0 ird-rne/joint0 id: 0000016F82B80670
+set motor 0 ird-rne/joint1 id: 0000016F82B80AF0
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 0000016F82FDF9F0
+set motor 0 ird-rne/joint1 id: 0000016F82FDFE70
+[       OK ] DynForward.DeterministicRepeat_NFR_COR_02 (131 ms)
+[ RUN      ] DynForward.PayloadEventSameSourceConsistency_DYN05
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 0000016F81E3B560
+set motor 0 ird-rne/joint1 id: 0000016F81E3B9E0
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 0000016F82EBD550
+set motor 0 ird-rne/joint1 id: 0000016F82EBE690
+[       OK ] DynForward.PayloadEventSameSourceConsistency_DYN05 (120 ms)
+[----------] 3 tests from DynForward (318 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (318 ms total)
+[  PASSED  ] 3 tests.

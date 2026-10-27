@@ -1,6 +1,6 @@
 # 工业机械臂设计软件 · io 单元详细设计（阶段 A）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 
 > 2026-09-10 同步：本单元详设编写完成（第一批 11/20）；保留本文 Draft/Draft-Structured 评审状态，不代表接口已冻结或实现通过。当前任务与准入结论见 [阶段一同步记录](../traceability/phase-one-readiness.md)；历史磁盘调查仅表示编写时事实，现状以该记录为准。
@@ -589,6 +589,8 @@ NFR-SEC-03（R5）要求：本软件导出的 CSV 携带**方言标识（文件�
 ### 5.9 JSON 与结构化数据（受限读写器）
 
 io 提供产品级 JSON 读写器（`Json.*`；testkit JsonLite **不用于产品格式**——WP-11-T05 禁止项）。JSON 通道服务对象：REQ-12 需求 JSON、OPT-12 研究结果/审计 JSON、`manifest.json`/`rwpack.json`（§7）、future 工件。
+
+**REUSE-T01 审计补正（待迁移，不是保留手写解析核的批准）**：产品与测试 profile 的差异不豁免底层工具复用。已核上游 DOMParser 默认 XML 工厂和 StringUtil；仅在列明检索范围未找到完整 JSON/严格 Unicode 能力。已安装 Boost.PropertyTree 的公开 DOM 会丢失数值/布尔/null 与字符串及空对象/空数组的区别，公开 reader 接受重复键与 BOM，不能直接代替本节契约（实跑见 `../traceability/reuse/REUSE-T01/probe-r8/`）。后续继续核同一 vcpkg 渠道成熟 JSON/Unicode 候选，以最薄 profile 适配保持 SourceSpan 的 UTF-8 字节列、超 int64 原文透传、预算/取消、canonical 身份及 diagnostics 权威；不将 testkit 链接进产品，也不另建 DOM 平台。CSV 与 JSON 的 UTF-8 DFA 重复和各内部函数已在 `../reuse/functions/io.json` 登记，未完成适用性与供给批准前保持 pending。
 
 #### 5.9.1 受限 DOM 与安全限制
 

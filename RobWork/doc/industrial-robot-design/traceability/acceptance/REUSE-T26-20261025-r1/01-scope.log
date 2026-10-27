@@ -1,0 +1,2 @@
+verify-task-scope: REUSE-T26 base=507db46bba83 head=704667b59896 changed=42 allowedRules=7 forbiddenRules=3
+verify-task-scope: PASS REUSE-T26 —— 42 个路径全部在允许面内

@@ -1,0 +1,3 @@
+verify-task-scope: GOV-T21 base=b12e8503cc1c head=64ef0fd07755 changed=343 allowedRules=8 forbiddenRules=5
+verify-task-scope: PASS GOV-T21 —— 343 个路径全部在允许面内
+EXIT=0

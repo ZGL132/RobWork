@@ -43,6 +43,7 @@
 #include <rw/core/Ptr.hpp>
 #include <rw/geometry/Box.hpp>              // 标记盒参数读取（getParameters）
 #include <rw/geometry/Cylinder.hpp>         // 连杆圆柱参数读取（getRadius/getHeight）
+#include <rw/geometry/TriMesh.hpp>
 #include <rw/geometry/Geometry.hpp>         // 帧绑定/帧内位姿读取
 #include <rw/kinematics/FixedFrame.hpp>
 #include <rw/kinematics/Frame.hpp>
@@ -61,8 +62,11 @@
 
 #include <algorithm>
 #include <cmath>
+#include <clocale>
 #include <cstddef>
 #include <cstdint>
+#include <future>
+#include <filesystem>
 #include <map>
 #include <string>
 #include <vector>
@@ -819,13 +823,13 @@ TEST(WorkCellGeometryTest, ResourceMeshStlAttachedEndToEnd_RT_GEO_7)
 
 /**
  * MA-01 OBJ 端到端：文本 OBJ（v/f 三角）经 LoaderOBJ 解析合并挂接——
- * 同名面存在且类型＝PlainTriMesh。
+ * 同名面存在，使用上游IndexedTriMesh，并验证实际三角顶点。
  */
 TEST(WorkCellGeometryTest, ResourceMeshObjAttachedEndToEnd_RT_GEO_7)
 {
     Fixture f = threeSpanRichFixture();
     const std::string objText =
-        "v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\nf 1 2 3\nf 1 2 4\n";
+        "v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\ng first\nf 1 2 3\ng second\nf 1 2 4\n";
     const std::vector<std::uint8_t> objBytes(objText.begin(), objText.end());
     rebindResource(f, 0, digestOfBytes(objBytes), "m1.obj");
     const CanonicalModel model = f.build();
@@ -841,9 +845,40 @@ TEST(WorkCellGeometryTest, ResourceMeshObjAttachedEndToEnd_RT_GEO_7)
         scopedName(map, f.chain.links.at(1).objectId, NameScope::LinkFrame) + ".visual";
     ASSERT_TRUE(geoms.count(link1Visual) != 0)
         << "OBJ 网格缺失（名字面=" << link1Visual << "）";
-    EXPECT_EQ(geoms.at(link1Visual).type,
-              rw::geometry::GeometryData::PlainTriMesh)
-        << "OBJ 挂接非网格几何（解析合并面违约）";
+    EXPECT_EQ(geoms.at(link1Visual).type, rw::geometry::GeometryData::IdxTriMesh);
+    // REUSE-T13：物理顶点/三角面是业务契约，Plain/Indexed的内部存储不是。
+    // 不依赖上游的面顺序，独立检查两个三角的面积、顶点范围和总数。
+    std::size_t checked = 0;
+    for (const auto& object : out.workCell->getObjects()) {
+        for (const auto& geometry : object->getGeometry()) {
+            if (geometry->getName() != link1Visual) { continue; }
+            const auto mesh = geometry->getGeometryData()->getTriMesh(false);
+            ASSERT_EQ(mesh->size(), 2u);
+            double totalArea = 0.0;
+            bool xyFace = false, xzFace = false;
+            for (std::size_t i = 0; i < mesh->size(); ++i) {
+                const auto tri = mesh->getTriangle(i);
+                const auto normal = rw::math::cross(tri[1]-tri[0], tri[2]-tri[0]);
+                totalArea += normal.norm2()/2.0;
+                // 独立解析期望：两个g对象各一面，保留顶点与绕序；允许对象遍历换序。
+                EXPECT_EQ(tri[0], rw::math::Vector3D<double>(0,0,0));
+                EXPECT_EQ(tri[1], rw::math::Vector3D<double>(1,0,0));
+                if (tri[2] == rw::math::Vector3D<double>(0,1,0)) {
+                    EXPECT_EQ(normal, rw::math::Vector3D<double>(0,0,1)); xyFace = true;
+                } else {
+                    EXPECT_EQ(tri[2], rw::math::Vector3D<double>(0,0,1));
+                    EXPECT_EQ(normal, rw::math::Vector3D<double>(0,-1,0)); xzFace = true;
+                }
+                for (int v=0; v<3; ++v) { for (int c=0; c<3; ++c) {
+                    EXPECT_GE(tri[v][c], 0.0); EXPECT_LE(tri[v][c], 1.0);
+                } }
+            }
+            EXPECT_NEAR(totalArea, 1.0, 1e-9); // 两个直角单位三角，各0.5m²。
+            EXPECT_TRUE(xyFace && xzFace) << "多对象合并丢面或重复面";
+            ++checked;
+        }
+    }
+    EXPECT_EQ(checked, 1u);
 }
 
 /**
@@ -912,7 +947,97 @@ TEST(WorkCellGeometryTest, ContentMeshesWithoutPathHint_T30)
         const auto out=compileWorkCell(f.build(),&provider);ASSERT_FALSE(out.workCell.isNull());
         std::map<std::string,GeometryView> geoms;collectGeometries(*out.workCell,geoms);
         EXPECT_TRUE(std::any_of(geoms.begin(),geoms.end(),[](const auto& entry){
-            return entry.second.type==rw::geometry::GeometryData::PlainTriMesh;
+            return entry.second.type==rw::geometry::GeometryData::PlainTriMesh
+                || entry.second.type==rw::geometry::GeometryData::IdxTriMesh;
         }))<<"有真实内容却因缺hint丢失网格";
     }
 }
+
+/**
+ * @brief REUSE-T13/MDL-04：同摘要资源并发编译不得相互truncate/remove。
+ * 每个任务独占provider、WC与State；共享的只有不可变输入，重复8路×8次，
+ * 每次验证真实STL有3个三角，不能以代理回退或工作线程异常代替成功。
+ */
+TEST(WorkCellGeometryTest, ConcurrentSameMeshCompiles_REUSE_T13)
+{
+    const auto bytes = makeBinaryStl(3);
+    auto f = threeSpanRichFixture();
+    rebindResource(f, 0, digestOfBytes(bytes), "same.stl");
+    const auto model = f.build();
+    const auto id = f.manifest[0].resourceId;
+    std::vector<std::future<bool>> jobs;
+    for (int i=0; i<8; ++i) {
+        jobs.push_back(std::async(std::launch::async, [&model, &bytes, id]() {
+            InMemoryMeshProvider provider({{id, bytes}});
+            for (int run=0; run<8; ++run) {
+                const auto out = compileWorkCell(model, &provider);
+                bool found = false;
+                for (const auto& object : out.workCell->getObjects()) {
+                    for (const auto& geometry : object->getGeometry()) {
+                        if (geometry->getGeometryData()->getType() == rw::geometry::GeometryData::PlainTriMesh) {
+                            if (geometry->getGeometryData()->getTriMesh(false)->size()!=3) { return false; }
+                            found = true;
+                        }
+                    }
+                }
+                if (!found) { return false; }
+            }
+            return true;
+        }));
+    }
+    for (auto& job : jobs) { EXPECT_TRUE(job.get()); }
+}
+
+#ifdef _WIN32
+/**
+ * @brief REUSE-T13：上游加载成功/抛错后均保持任务线程原locale。
+ * 仅新建测试线程启用UCRT线程locale，线程退出即释放；不修改进程全局。
+ * 缺endsolid的ASCII STL真实触发上游异常，runtime须回退代理且恢复环境。
+ */
+TEST(WorkCellGeometryTest, LoaderRestoresThreadLocale_REUSE_T13)
+{
+    auto job = std::async(std::launch::async, []() -> std::string {
+        _configthreadlocale(_ENABLE_PER_THREAD_LOCALE);
+        const char* locale = std::setlocale(LC_ALL, ".UTF8");
+        if (locale == nullptr) { return "测试前置：.UTF8 locale不可用"; }
+        // 只快照本包前缀目录；本用例在并发用例结束后执行，不删除任何他人资源。
+        const auto meshDirectories = []() {
+            std::vector<std::filesystem::path> paths;
+            for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::temp_directory_path())) {
+                if (entry.path().filename().string().rfind("ird-mesh-",0)==0) { paths.push_back(entry.path()); }
+            }
+            std::sort(paths.begin(),paths.end()); return paths;
+        };
+        const auto directoriesBefore = meshDirectories();
+        for (const int mode : {_ENABLE_PER_THREAD_LOCALE, _DISABLE_PER_THREAD_LOCALE}) {
+          _configthreadlocale(mode);
+          const std::string expectedLocale(std::setlocale(LC_ALL,nullptr));
+          for (const std::string text : {std::string("solid broken\n"),
+             std::string("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n")}) {
+            const std::vector<std::uint8_t> bytes(text.begin(), text.end());
+            auto f=threeSpanRichFixture();
+            rebindResource(f, 0, digestOfBytes(bytes), text[0]=='s' ? "bad.stl" : "good.obj");
+            InMemoryMeshProvider provider({{f.manifest[0].resourceId, bytes}});
+            const auto model = f.build();
+            const auto expectedName = scopedName(buildRuntimeNameMap(model),
+                f.chain.links.at(1).objectId, NameScope::LinkFrame) + ".visual";
+            const auto out=compileWorkCell(model, &provider);
+            if (out.workCell.isNull() || std::string(std::setlocale(LC_ALL,nullptr))!=expectedLocale
+                || _configthreadlocale(0)!=mode) { return "生产加载后locale/模式不一致：mode="+std::to_string(mode)
+                    +" expected="+expectedLocale+" actual="+std::setlocale(LC_ALL,nullptr); }
+            // 异常必须回退为图元，有效OBJ必须真挂网格；不能仅凭编译成功证明加载路径。
+            std::size_t meshes = 0;
+            for (const auto& object : out.workCell->getObjects()) {
+                for (const auto& geometry : object->getGeometry()) {
+                    if (geometry->getName()==expectedName
+                        && geometry->getGeometryData()->getType()==rw::geometry::GeometryData::IdxTriMesh) { ++meshes; }
+                }
+            }
+            if (meshes != (text[0]=='s' ? 0u : 1u)) { return "实际网格数不一致："+std::to_string(meshes); }
+          }
+        }
+        return meshDirectories()==directoriesBefore ? "" : "加载成功/异常后遗留临时目录";
+    });
+    EXPECT_EQ(job.get(), "") << "加载器必须恢复调用前locale/模式、真实消费网格并清理临时文件";
+}
+#endif

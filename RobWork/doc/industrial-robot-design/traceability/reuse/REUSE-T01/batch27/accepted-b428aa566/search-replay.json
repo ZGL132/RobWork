@@ -1,0 +1,85 @@
+{
+  "executed": 8,
+  "passed": 8,
+  "failed": 0,
+  "cases": [
+    {
+      "command": [
+        "rg",
+        "-n",
+        "context.pack|fingerprint|evidence.index|git hash-object|Get-IndexedContent",
+        "RobWork/scripts/industrialrobot",
+        "-g",
+        "*.ps1"
+      ],
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "readFile|resolveFileName|getFilesInFolder",
+        "RobWork/RobWork/src/rw/core/IOUtil.hpp"
+      ],
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "class InputArchive|readEnterScope|readBool",
+        "RobWork/RobWork/src/rw/common/InputArchive.hpp"
+      ],
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "ADD_RW_GTEST|sdurw-gtest-main",
+        "RobWork/RobWork/gtest/CMakeLists.txt"
+      ],
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "context.pack|evidence.index|fingerprint",
+        "RobWork/RobWork/src",
+        "RobWork/RobWorkSim/src",
+        "-g",
+        "*.hpp"
+      ],
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "passed": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/IOUtil.hpp",
+      "expected": "a23aec22355ee093e6ed9c2a89ab09c346443ed3154cb1d85c86908142ff6eef",
+      "actual": "a23aec22355ee093e6ed9c2a89ab09c346443ed3154cb1d85c86908142ff6eef",
+      "passed": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/common/InputArchive.hpp",
+      "expected": "8034286242b16555e13008fe6f707be1972163edabeb0b1b8334886999bced2a",
+      "actual": "8034286242b16555e13008fe6f707be1972163edabeb0b1b8334886999bced2a",
+      "passed": true
+    },
+    {
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "expected": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3",
+      "actual": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+43:    \struct non_hex_input
+47:    \struct not_enough_input
+52:struct BOOST_SYMBOL_VISIBLE not_enough_input : virtual hex_decode_error {};
+53:struct BOOST_SYMBOL_VISIBLE non_hex_input    : virtual hex_decode_error {};
+70:    unsigned char hex_char_to_int ( T val ) {
+76:        else BOOST_THROW_EXCEPTION (non_hex_input() << bad_char (c));
+131:                BOOST_THROW_EXCEPTION (not_enough_input ());
+132:            res = ( 16 * res ) + hex_char_to_int (*first);
+159:/// \fn hex_lower ( InputIterator first, InputIterator last, OutputIterator out )
+169:hex_lower ( InputIterator first, InputIterator last, OutputIterator out ) {
+192:/// \fn hex_lower ( const T *ptr, OutputIterator out )
+201:hex_lower ( const T *ptr, OutputIterator out ) {
+222:/// \fn hex_lower ( const Range &r, OutputIterator out )
+231:hex_lower ( const Range &r, OutputIterator out ) {
+232:    return hex_lower (boost::begin(r), boost::end(r), out);
+236:/// \fn unhex ( InputIterator first, InputIterator last, OutputIterator out )
+245:OutputIterator unhex ( InputIterator first, InputIterator last, OutputIterator out ) {
+252:/// \fn unhex ( const T *ptr, OutputIterator out )
+260:OutputIterator unhex ( const T *ptr, OutputIterator out ) {
+270:/// \fn OutputIterator unhex ( const Range &r, OutputIterator out )
+278:OutputIterator unhex ( const Range &r, OutputIterator out ) {
+279:    return unhex (boost::begin(r), boost::end(r), out);
+297:/// \fn String hex_lower ( const String &input )
+303:String hex_lower ( const String &input ) {
+306:    (void) hex_lower (input, std::back_inserter (output));
+311:/// \fn String unhex ( const String &input )
+317:String unhex ( const String &input ) {
+320:    (void) unhex (input, std::back_inserter (output));

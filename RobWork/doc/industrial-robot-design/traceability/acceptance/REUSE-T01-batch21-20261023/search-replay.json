@@ -1,0 +1,96 @@
+[
+  {
+    "argv": [
+      "rg",
+      "--files",
+      "RobWork/RobWork",
+      "RobWork/RobWorkSim",
+      "RobWork/RobWorkStudio",
+      "-g",
+      "*.ps1",
+      "-g",
+      "*test*.py",
+      "-g",
+      "*CTest*",
+      "-g",
+      "*gtest*CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "exitMatches": true,
+    "outputMatchesAfterCRLF": false,
+    "stderr": "",
+    "sameHitLinesIgnoringOrderAndCRLF": true,
+    "orderingNote": "rg 并行文件遍历次序不同；命中行集合及退出码相同"
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "commit-lint|validate-task|verify-task|DeepEvidence|Test-AnchorExists|Test-CommitMessage",
+      "RobWork/RobWork",
+      "RobWork/RobWorkSim",
+      "-g",
+      "*.cmake",
+      "-g",
+      "CMakeLists.txt",
+      "-g",
+      "*.py",
+      "-g",
+      "*.ps1",
+      "-g",
+      "*.yml"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "exitMatches": true,
+    "outputMatchesAfterCRLF": true,
+    "stderr": "",
+    "sameHitLinesIgnoringOrderAndCRLF": true,
+    "orderingNote": "输出次序也相同"
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "find_package.*[Gg][Tt]est|add_test|ADD_TEST|test-main|RUN_ALL_TESTS",
+      "RobWork/RobWork/gtest/CMakeLists.txt",
+      "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+      "RobWork/RobWork/gtest/test-main.cpp"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "exitMatches": true,
+    "outputMatchesAfterCRLF": false,
+    "stderr": "",
+    "sameHitLinesIgnoringOrderAndCRLF": true,
+    "orderingNote": "rg 并行文件遍历次序不同；命中行集合及退出码相同"
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "commit-lint|validate-task|verify-task|DeepEvidence|Test-AnchorExists|Test-CommitMessage",
+      "RobWork/RobWorkStudio",
+      "-g",
+      "!**/industrialrobot/**",
+      "-g",
+      "*.cmake",
+      "-g",
+      "CMakeLists.txt",
+      "-g",
+      "*.py",
+      "-g",
+      "*.ps1",
+      "-g",
+      "*.yml"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "exitMatches": true,
+    "outputMatchesAfterCRLF": true,
+    "stderr": "",
+    "sameHitLinesIgnoringOrderAndCRLF": true,
+    "orderingNote": "输出次序也相同"
+  }
+]

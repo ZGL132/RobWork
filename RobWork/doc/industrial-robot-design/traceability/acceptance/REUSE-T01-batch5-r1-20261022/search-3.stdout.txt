@@ -1,0 +1,36 @@
+RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt:30:        RenderLines.cpp
+RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt:56:        RenderLines.hpp
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:18:#include "RenderLines.hpp"
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:30:    glVertex3f (static_cast< float > (vec (0)),
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:40:        // TODO: better to use glVertex3fv
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:48:RenderLines::RenderLines () : _r (1), _g (0), _b (0), _alpha (1), _thickness (1)
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:55:RenderLines::RenderLines (const std::vector< Line >& lines) :
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:56:    _lines (lines), _r (1), _g (0), _b (0), _alpha (1), _thickness (1)
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:62:RenderLines::~RenderLines ()
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:67:void RenderLines::draw (const DrawableNode::RenderInfo& info, DrawableNode::DrawType type,
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:68:                        double alpha) const
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:71:    glPushAttrib (GL_CURRENT_BIT | GL_LINE_BIT);
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:73:    glColor4f (_r, _g, _b, _alpha);
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:80:void RenderLines::rerender ()
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:87:void RenderLines::addLine (const Vector3D<>& start, const Vector3D<>& end)
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:93:void RenderLines::addLines (const std::vector< Line >& lines)
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:101:void RenderLines::setColor (float r, float g, float b, float alpha)
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:106:    _alpha = alpha;
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:109:void RenderLines::setThickness (float thickness)
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp:114:void RenderLines::clear ()
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:21://! @file RenderLines.hpp
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:37:    class RenderLines : public rw::graphics::Render
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:41:        typedef rw::core::Ptr< RenderLines > Ptr;
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:46:        RenderLines ();
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:53:        RenderLines (const std::vector< rw::geometry::Line >& lines);
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:58:        virtual ~RenderLines ();
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:66:        void addLine (const rw::math::Vector3D<>& v1, const rw::math::Vector3D<>& v2);
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:73:        void addLines (const std::vector< rw::geometry::Line >& lines);
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:78:         * The influence of the alpha value depends on how opengl is configured.
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:83:         * @param alpha [in] alpha [0;1]
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:85:        void setColor (float r, float g, float b, float alpha);
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:93:        void setThickness (float thickness);
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:103:        //! DrawableNode::DrawType type, double alpha) const
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:105:                   rw::graphics::DrawableNode::DrawType type, double alpha) const;
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:117:        float _alpha;
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp:122:    typedef rw::core::Ptr< RenderLines > RenderLinesPtr;

@@ -273,6 +273,78 @@ TEST(CanonicalModelBuilderTest, RejectsIllegalProvidedValues)
     expectBuildThrows(nonSpd.toBuilder(), RuntimeErrorCode::InputInvalid, "非正定惯量");
 }
 
+/**
+ * REUSE-T34 终审证据（S5 builder 侧见证回归——矩阵记录"仍须完整不对称/
+ * 平衡/非法极值与诊断消费者回归"的补齐面）：
+ * ①混合尺度小正轴（probe-r6 谱解反例域）：diag(0.01,0.02,1e-300) 与含最小次正
+ *   规数 diag(1,1,5e-324) 的合法 SPD 惯量必须被接受——自持见证按轴二进制
+ *   平衡（frexp/scalbn）逐轴规格化，全局缩放/谱解路线会吞掉小正轴
+ *   （probe-r6 实测记录在案，runtime.json MATH-EIGEN 条目）；
+ * ②非法极值：半正定 diag(1,1,0)（见证=0 严格拒绝）、Cauchy 违例
+ *   |S01|>2（平衡后交叉项超界）、秩 1 外积矩阵（pivot2=0）与既有的负轴
+ *   反例同被拒绝；
+ * ③相对不对称阈两侧：1e-14 级不对称（比值 ~2.9e-13<1e-12）接受、1e-11 级
+ *   （比值 ~3e-12>1e-12）拒绝——无量纲阈值两侧各一。
+ */
+TEST(CanonicalModelBuilderTest, InertiaWitnessMixedScaleAndExtremes_T34)
+{
+    IRD_TEST_INFO("MDL-06", {}, std::nullopt);
+
+    // ①混合尺度合法 SPD 接受（含次正规最小正轴）。
+    for (const double tiny : {1e-300, 5e-324}) {
+        Fixture f = richFixture();
+        f.chain.links.at(1).inertia =
+            core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+                rw::math::InertiaMatrix<double>(0.01, 0, 0, 0, 0.02, 0, 0, 0, tiny),
+                userProv());
+        EXPECT_NO_THROW(f.toBuilder().build())
+            << "混合尺度小正轴（tiny=" << tiny << "）为合法 SPD——须接受";
+    }
+
+    // ②非法极值拒绝。
+    Fixture semiDefinite = richFixture();
+    semiDefinite.chain.links.at(1).inertia =
+        core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            rw::math::InertiaMatrix<double>(0.01, 0, 0, 0, 0.02, 0, 0, 0, 0.0),
+            userProv());
+    expectBuildThrows(semiDefinite.toBuilder(), RuntimeErrorCode::InputInvalid,
+                      "非正定惯量");
+
+    Fixture cauchy = richFixture();
+    cauchy.chain.links.at(1).inertia =
+        core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            rw::math::InertiaMatrix<double>(0.01, 0.5, 0, 0.5, 0.02, 0, 0, 0, 0.03),
+            userProv());
+    // |S01|=0.5 ≤2 未触超界早退；二阶主子式 0.01×0.02−0.25<0 → 拒绝。
+    expectBuildThrows(cauchy.toBuilder(), RuntimeErrorCode::InputInvalid,
+                      "非正定惯量");
+
+    Fixture rankOne = richFixture();
+    rankOne.chain.links.at(1).inertia =
+        core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            rw::math::InertiaMatrix<double>(0.01, 0.01, 0.01, 0.01, 0.01, 0.01,
+                                            0.01, 0.01, 0.01),
+            userProv());
+    expectBuildThrows(rankOne.toBuilder(), RuntimeErrorCode::InputInvalid,
+                      "非正定惯量");
+
+    // ③相对不对称阈值两侧。
+    Fixture tinyAsym = richFixture();
+    tinyAsym.chain.links.at(1).inertia =
+        core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            rw::math::InertiaMatrix<double>(0.01, 1e-14, 0, 0, 0.02, 0, 0, 0, 0.03),
+            userProv());
+    EXPECT_NO_THROW(tinyAsym.toBuilder().build())
+        << "1e-14 级不对称（比值 ~2.9e-13，scale=0.03 归一）在 1e-12 阈内——须接受";
+    Fixture grossAsym = richFixture();
+    grossAsym.chain.links.at(1).inertia =
+        core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            rw::math::InertiaMatrix<double>(0.01, 1e-11, 0, 0, 0.02, 0, 0, 0, 0.03),
+            userProv());
+    expectBuildThrows(grossAsym.toBuilder(), RuntimeErrorCode::InputInvalid,
+                      "不对称");
+}
+
 /** RT-T16/CON-05：对称化仅用于校验，不回写输入值或内容身份字节。 */
 TEST(CanonicalModelBuilderTest, InertiaOriginalBitsPreserved_F784_AT01)
 {

@@ -1,0 +1,2050 @@
+policy.JointLimits.(anonymous namespace).formatRawDouble
+std::string formatRawDouble(double v)
+{
+    char buf[40] = {};
+    std::snprintf(buf, sizeof(buf), "%.17g", v);
+    return std::string{buf};
+}
+
+DIFFERENCES: std::snprintf %.17g原文保真；依赖进程locale约束，不自建数值格式器
+
+policy.JointLimits.(anonymous namespace).radUnit
+core::UnitToken radUnit()
+{
+    // "rad" 在 core R1 冻结单位表中（Units.cpp 注册表行 1）——find 必命中；
+    // nullopt 分支为防御（注册表被改才可达），命中失败即快速失败不静默。
+    const std::optional<core::UnitToken> unit = core::UnitToken::find("rad");
+    if (!unit.has_value()) {
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "core 单位注册表缺少冻结 token 'rad'（内部不变量违约）");
+    }
+    return *unit;
+}
+
+DIFFERENCES: 真实core UnitToken注册表查rad，非第二单位权威
+
+policy.JointLimits.(anonymous namespace).marginProvenance
+core::ValueProvenance marginProvenance()
+{
+    return core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly, {},
+                                       {}, std::string{kMarginProvenanceTag});
+}
+
+DIFFERENCES: 现有core ValueProvenance提供计算来源；不自定证据可信等级
+
+policy.JointLimits.(anonymous namespace).makeJointDiagnostic
+core::DiagnosticRecord
+makeJointDiagnostic(std::string_view code, const std::optional<core::ObjectId>& subject,
+                    const std::string& localName, const std::string& runtimeName,
+                    std::string cause, std::string recommendedAction,
+                    std::optional<core::ComparativeFields> comparison = std::nullopt)
+{
+    return core::DiagnosticRecord::make(
+        std::string{code}, subject,
+        localName.empty() ? std::optional<std::string>(std::nullopt)
+                          : std::optional<std::string>(localName),
+        runtimeName.empty() ? std::optional<std::string>(std::nullopt)
+                            : std::optional<std::string>(runtimeName),
+        std::string{kEvalContext}, std::move(cause), std::move(recommendedAction),
+        std::move(comparison));
+}
+
+DIFFERENCES: 登记码通过policyDiagCode引用、记录经core DiagnosticRecord::make；context/cause/action为本TU中文文本，按SA-12/19须核与diagnostics正式模板职责，不能判已合规
+
+policy.JointLimits.(anonymous namespace).comparativeValue
+core::ComparativeValue comparativeValue(double v)
+{
+    core::ComparativeValue side;
+    if (std::isfinite(v)) {
+        side.quantity = core::SourcedValue<double>::provided(v, marginProvenance());
+    }
+    else {
+        // 非有限端点（连续关节工程范围——MDL-12 有限性检出的对象）：
+        // Invalid 态保留原串，诊断消费方可见 "nan"/"inf" 字面量。
+        side.quantity = core::SourcedValue<double>::invalid(formatRawDouble(v));
+    }
+    side.unit = radUnit();
+    return side;
+}
+
+DIFFERENCES: 有限Provided/非有限Invalid原串，SI rad与provenance；未伪造0
+
+policy.JointLimits.(anonymous namespace).validateQueryShape
+void validateQueryShape(const JointLimitQuery& q)
+{
+    // ① 空关节表：无关节可评估——空表不是"全部合格"，是装配违约。
+    if (q.joints.empty()) {
+        throw PolicyError(PolicyErrorCode::QueryInvalid,
+                          "关节表为空（JointLimitQuery.joints 至少 1 条目——"
+                          "空表属调用方装配违约，§9.4）");
+    }
+    // ② 空构型序列：同 §6.2 POL-EXC-1 口径——空序列无构型语义可言。
+    if (q.configurations.empty()) {
+        throw PolicyError(PolicyErrorCode::QueryInvalid,
+                          "构型序列为空（JointLimitQuery.configurations 至少 1 构型——"
+                          "空序列属调用方装配违约）");
+    }
+    // ③④ 身份有效性与唯一性（全零保留值＝未分配身份；重复条目使输出定位
+    // 键歧义——两者都是装配违约，fail-fast 优于评估期歧义输出）。
+    std::set<core::ObjectId> seen;
+    for (std::size_t i = 0; i < q.joints.size(); ++i) {
+        const JointLimitSpec& spec = q.joints[i];
+        if (!spec.jointObject.isValid()) {
+            throw PolicyError(PolicyErrorCode::QueryInvalid,
+                              "关节表条目 " + std::to_string(i)
+                                  + " 的 jointObject 无效（全零保留值——project 分配者"
+                                    "纪律，§9.4 JointLimitSpec）");
+        }
+        if (!seen.insert(spec.jointObject).second) {
+            throw PolicyError(PolicyErrorCode::QueryInvalid,
+                              "关节表存在重复 jointObject（表内必须唯一——输出定位"
+                              "键歧义防护）: obj=" + spec.jointObject.toCanonical());
+        }
+        // ⑤ 限位端同有同无（§9.4 Spec 注释"二者须同时有/无"——单侧出现使
+        // 区间/行程/裕量的数学语义不完整，装配期拒绝）。
+        if (spec.qMin.has_value() != spec.qMax.has_value()) {
+            throw PolicyError(PolicyErrorCode::QueryInvalid,
+                              "关节表条目 " + std::to_string(i)
+                                  + " 的 qMin/qMax 须同时有/无（单侧限位属装配违约，"
+                                    "§9.4 JointLimitSpec）: obj="
+                                  + spec.jointObject.toCanonical());
+        }
+        // ⑥ continuous 必填工程工作范围（"必填"半边＝装配契约——缺失在此
+        // 拒绝；已提供但 min≥max/端点非有限的"有限性"检出归评估主体诊断级
+        // 发现——§9.4 边界段，两分登记于 policy.md §15.4 v0.9）。
+        if (spec.isContinuous && !spec.engineeringRange.has_value()) {
+            throw PolicyError(PolicyErrorCode::QueryInvalid,
+                              "continuous 关节缺少必填的 engineeringRange（工程工作"
+                              "范围必填有限区间，§9.4 JointLimitSpec）: obj="
+                                  + spec.jointObject.toCanonical());
+        }
+    }
+    // ⑦ 构型维度（内层向量与 joints 等长同序——第一个越界样本即报告，不
+    // 全量扫描：fail-fast 定位首要违约即可）。
+    for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+        if (q.configurations[s].size() != q.joints.size()) {
+            throw PolicyError(PolicyErrorCode::QueryInvalid,
+                              "构型维度与关节表长度不符（内层与 joints 等长同序，"
+                              "单位 rad）: configurations[" + std::to_string(s)
+                                  + "].size=" + std::to_string(q.configurations[s].size())
+                                  + ", joints=" + std::to_string(q.joints.size()));
+        }
+    }
+}
+
+DIFFERENCES: 装配形状、对象唯一、限位成对、continuous工程范围必填，标准set；与已提供非法范围的诊断级发现分轨
+
+policy.JointLimits.JointLimitEvaluator.evaluate
+JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,
+                                                   const EngineeringPolicySet& policy,
+                                                   const IPolicyNameContext& names) const
+{
+    // ---- 输出基座预填（全部出口共用——缺省态＝Failed 非终态：任何提前出口
+    // ---- 不得虚标 Completed，逐出口显式覆写；与 CollisionQuery.cpp 同纪律）。
+    JointLimitEvaluation out;
+    out.status = CollisionEvaluationStatus::Failed;
+    out.finalized = false;
+
+    // ---- ① policy 发布态复检（调用方契约违约 fail-fast——与会话侧
+    // ---- createSession ① 同码同语义：把未发布对象当策略传入＝装配违约）。
+    if (policy.validationState != PolicyValidationState::Valid
+        || !policy.policyObject.isValid() || !policy.contentIdentity.isValid()) {
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "policy 发布态复检失败（须为 Valid 已发布对象且身份有效——"
+                          "§9.4 前置；validationState="
+                              + std::to_string(static_cast<int>(policy.validationState))
+                              + "）");
+    }
+
+    // ---- ② 查询契约校验（唯一抛出点之二——装配违约 fail-fast，见上）。
+    validateQueryShape(q);
+
+    // ---- ③ 构型位置有限性（§7.5 数值异常行同构——NaN/±Inf 不伪造、不入
+    // ---- findings：任一构型任一关节位置非有限，本次评估整体 Failed；
+    // ---- 原文 %.17g 保留于诊断 cause，NFR-COR-03）。
+    //     全表先验扫描（含将被跳过的关节——数据级非法不因检查豁免而合法）。
+    for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+        for (std::size_t j = 0; j < q.joints.size(); ++j) {
+            const double pos = q.configurations[s][j];
+            if (!std::isfinite(pos)) {
+                out.diagnostics.push_back(makeJointDiagnostic(
+                    kCodeEvaluationFailed, q.joints[j].jointObject, q.joints[j].localName,
+                    std::string{},
+                    "构型位置非有限（原文=" + formatRawDouble(pos)
+                        + "，SI rad）: sample=" + std::to_string(s) + ", joint="
+                        + q.joints[j].jointObject.toCanonical()
+                        + "——§7.5 不伪造、不入 findings/margins",
+                    "排查构型数据来源（IK/采样器）后重评；失败输出不入正式证据"
+                    "（finalized=false）"));
+                return out;   // status=Failed，finalized=false
+            }
+        }
+    }
+
+    // ---- ④ 名称解析（规范序遍历＝jointObject 字典序——输出与装配顺序无关；
+    // ---- 不可解析→Failed＋诊断定位，不猜测——ARC-04）。
+    // 规范序下标表（关节表承载序 → 处理序；排序键＝ObjectId 字节序）。
+    std::vector<std::size_t> canonicalOrder(q.joints.size());
+    std::iota(canonicalOrder.begin(), canonicalOrder.end(), std::size_t{0});
+    std::stable_sort(canonicalOrder.begin(), canonicalOrder.end(),
+                     [&q](std::size_t l, std::size_t r) {
+                         return q.joints[l].jointObject < q.joints[r].jointObject;
+                     });
+    // 运行时名固化表（后续发现/裕量/诊断共用——一次解析，评估期零重复查询；
+    // IPolicyNameContext 幂等契约使其正确性不依赖缓存，仅为确定性遍历服务）。
+    std::map<core::ObjectId, std::string> runtimeNames;
+    for (const std::size_t idx : canonicalOrder) {
+        const JointLimitSpec& spec = q.joints[idx];
+        const std::optional<std::string> runtimeName = names.tryRuntimeName(spec.jointObject);
+        if (!runtimeName.has_value()) {
+            out.diagnostics.push_back(makeJointDiagnostic(
+                kCodeNameUnresolved, spec.jointObject, spec.localName, std::string{},
+                "关节对象经名称上下文不可解析（nullopt 原样呈现——不猜测，ARC-04）: obj="
+                    + spec.jointObject.toCanonical(),
+                "核对名称映射与模型编译产物的一致性后重评；失败输出不入正式证据"));
+            return out;   // status=Failed，finalized=false
+        }
+        runtimeNames.emplace(spec.jointObject, *runtimeName);
+    }
+
+    // ---- ⑤ 检查级不适用标记预填（acceptance 3 载体——Check 枚举序固定
+    // ---- 产出；P-POL-2/O-10 保守口径：阈值未设置＝该检查显式不适用，
+    // ---- 不伪造数值；开关关闭＝策略显式停用，同样如实标记）。
+    // ⑤a 近限位比：无冻结默认（P-POL-2）——nullopt 即检查不适用。
+    if (!policy.jointThresholds.nearLimitRatio.has_value()) {
+        JointCheckNotApplicable marker;
+        marker.check = JointCheckNotApplicable::Check::NearLimitRatio;
+        marker.cause = "近限位比阈值未设置（nullopt——无冻结默认，P-POL-2/O-10 保守"
+                       "口径）：该检查显式不适用，不伪造数值（policy.md §4.4/§7.4）";
+        out.notApplicableChecks.push_back(std::move(marker));
+    }
+    // ⑤b 条件数警告：无冻结默认（P-POL-2）；本评估器无条件数检查种类
+    // （§9.4 Kind 五值不含之——权威唯一 R-6，其计算归所属单元），仅在
+    // 阈值未设置时按 acceptance 3 同口径输出标记。
+    if (!policy.jointThresholds.conditionNumberWarning.has_value()) {
+        JointCheckNotApplicable marker;
+        marker.check = JointCheckNotApplicable::Check::ConditionNumberWarning;
+        marker.cause = "条件数警告阈值未设置（nullopt——无冻结默认，P-POL-2/O-10 保守"
+                       "口径）：该检查显式不适用，不伪造数值（policy.md §4.4）";
+        out.notApplicableChecks.push_back(std::move(marker));
+    }
+    // ⑤c 行程上限校验开关（§4.4 travelLimitCheckEnabled——false＝策略显式
+    // 停用 MDL-06④ 策略校验，非阈值缺席，语义分列）。
+    if (!policy.jointThresholds.travelLimitCheckEnabled) {
+        JointCheckNotApplicable marker;
+        marker.check = JointCheckNotApplicable::Check::TravelLimit;
+        marker.cause = "行程上限校验被策略显式关闭（travelLimitCheckEnabled=false"
+                       "——policy.md §4.4 校验开关行）";
+        out.notApplicableChecks.push_back(std::move(marker));
+    }
+
+    // ---- ⑥ 逐关节检查（规范序遍历——与名称解析同序，输出与装配顺序无关）。
+    // 阈值取值（KIN-13/R-POL-5：阈值唯一来自 policy——API 无阈值参数）。
+    const double travelLimitRad = policy.jointThresholds.finiteRotationTravelLimit.siValue();
+    const bool nearRatioPresent = policy.jointThresholds.nearLimitRatio.has_value();
+    const double nearRatio = nearRatioPresent ? policy.jointThresholds.nearLimitRatio->siValue()
+                                              : 0.0;
+    const bool travelCheckEnabled = policy.jointThresholds.travelLimitCheckEnabled;
+
+    for (const std::size_t idx : canonicalOrder) {
+        const JointLimitSpec& spec = q.joints[idx];
+        const std::string& runtimeName = runtimeNames.at(spec.jointObject);
+        const bool limitsPresent = spec.qMin.has_value();   // 同有同无——②已保证
+
+        // ---- 分支 A：有限限位关节（!continuous）----
+        if (!spec.isContinuous) {
+            if (limitsPresent) {
+                const double qmin = *spec.qMin;   // SI rad（非度——Spec 契约）
+                const double qmax = *spec.qMax;   // SI rad
+                // ---- A1 区间有效性（qmin＜qmax——硬断言的检出侧：违约→
+                // 诊断级发现＋跳过该关节，状态仍 Completed——D-13：判定权归
+                // 命令处理器，本评估器不阻断、不伪造裕量）。NaN 端点经
+                // "NaN 参与的 ＜ 比较恒 false"自然落入本分支（确定性）。
+                if (!(qmin < qmax)) {
+                    JointLimitFinding finding;
+                    finding.jointObject = spec.jointObject;
+                    finding.localName = spec.localName;
+                    finding.runtimeName = runtimeName;
+                    finding.kind = JointLimitFindingKind::IntervalInvalid;
+                    finding.actualValue = qmin;      // 比较三要素：qmin ≥ qmax（rad）
+                    finding.thresholdValue = qmax;   // （口径见 JointLimitFindingKind 注释表）
+                    finding.level = PolicyRuleLevel::Must;   // 供处理器就地阻断
+                    out.findings.push_back(std::move(finding));
+                    // 伴随稳定诊断（比较型三要素齐备——处理器可直接构造
+                    // ConfirmableFinding 素材；码＝§9.6 JNT 家族）。
+                    core::ComparativeFields comparison;
+                    comparison.actual = comparativeValue(qmin);
+                    comparison.expected = comparativeValue(qmax);
+                    out.diagnostics.push_back(makeJointDiagnostic(
+                        kCodeJntTableInvalid, spec.jointObject, spec.localName, runtimeName,
+                        "关节区间非法（qmin ≥ qmax，须 qmin＜qmax——硬断言的检出侧，"
+                        "MDL-06）：qmin=" + formatRawDouble(qmin)
+                            + ", qmax=" + formatRawDouble(qmax) + "（SI rad）——该关节"
+                            "已跳过（不产出裕量，D-13 判定权归命令处理器）",
+                        "由建模/project 处理器按硬断言语义就地处置（D-13）；修正区间后"
+                        "重评",
+                        std::move(comparison)));
+                    continue;   // 跳过：无行程/违例/近限位检查、无裕量记录
+                }
+                // ---- A2 行程上限比较（§7.4 行程上限行：T＝|qmax−qmin|，
+                // T＞L 才超限；T＝L 不超限——边界含于合规侧，D-08；开关关闭
+                // 时整段跳过——⑤c 标记已声明）。
+                if (travelCheckEnabled) {
+                    const double travel = std::fabs(qmax - qmin);   // T，SI rad
+                    if (travel > travelLimitRad) {
+                        JointLimitFinding finding;
+                        finding.jointObject = spec.jointObject;
+                        finding.localName = spec.localName;
+                        finding.runtimeName = runtimeName;
+                        finding.kind = JointLimitFindingKind::TravelLimitExceeded;
+                        finding.actualValue = travel;          // 比较三要素：实际行程（rad）
+                        finding.thresholdValue = travelLimitRad;  // 阈值 L（rad）
+                        finding.level = PolicyRuleLevel::Must;  // 供 SA-15 ConfirmableFinding
+                        out.findings.push_back(std::move(finding));
+                        // policy 止于比较型结果供给（§10.4）——不放行、不阻断、
+                        // 不产生"可确认/已确认"语义（确认流归 project 处理器）。
+                    }
+                }
+                // ---- A3 逐构型扫描：限位违例（首个命中）＋近限位（首个命中）
+                // ＋逐构型裕量记录（每样本一条——KIN-01 逐构型逐关节口径）。
+                const double halfWidth = (qmax - qmin) / 2.0;   // 区间半宽，SI rad（＞0——A1 保证）
+                bool limitViolatedEmitted = false;   // 每关节每 kind 至多一条——首个命中
+                bool nearLimitEmitted = false;
+                for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+                    const double pos = q.configurations[s][idx];   // 内层与表序对齐
+                    // 有符号裕量与近限位比（§7.4 口径——区间内 ∈[0,半宽]/[0,1]，
+                    // 越限为负有符号事实；计算恒执行——记录必须逐样本齐备）。
+                    const double margin = std::min(pos - qmin, qmax - pos);   // SI rad
+                    const double ratio = margin / halfWidth;                  // 无量纲 r
+                    // 限位违例（q ∉ [qmin,qmax]——闭区间端点不违例；硬过滤
+                    // 素材，过滤动作归 kinematics KIN-02；阈值侧＝被越过的端）。
+                    if (!limitViolatedEmitted && (pos < qmin || pos > qmax)) {
+                        const double crossedLimit = (pos < qmin) ? qmin : qmax;
+                        JointLimitFinding finding;
+                        finding.jointObject = spec.jointObject;
+                        finding.localName = spec.localName;
+                        finding.runtimeName = runtimeName;
+                        finding.kind = JointLimitFindingKind::LimitViolated;
+                        finding.actualValue = pos;            // 违例位置（rad）
+                        finding.thresholdValue = crossedLimit;  // 被越过的限位端（rad）
+                        finding.level = PolicyRuleLevel::Must;
+                        out.findings.push_back(std::move(finding));
+                        limitViolatedEmitted = true;   // 后续样本事实由 margins 承载
+                    }
+                    // 近限位警告（§7.4：r＜阈值才警告——严格小于，r＝阈值不
+                    // 警告〔同 D-08 边界含于安全侧〕；Should 级默认；阈值
+                    // nullopt 时整段不评估——⑤a 标记已声明；越限样本的负
+                    // 裕量不参与警告判定——违例已由上支承载）。
+                    if (!nearLimitEmitted && nearRatioPresent && margin >= 0.0
+                        && ratio < nearRatio) {
+                        JointLimitFinding finding;
+                        finding.jointObject = spec.jointObject;
+                        finding.localName = spec.localName;
+                        finding.runtimeName = runtimeName;
+                        finding.kind = JointLimitFindingKind::NearLimit;
+                        finding.actualValue = ratio;      // 比较三要素：r（无量纲）
+                        finding.thresholdValue = nearRatio;  // 阈值（无量纲）
+                        finding.level = PolicyRuleLevel::Should;  // §7.4"Should 级默认"
+                        out.findings.push_back(std::move(finding));
+                        nearLimitEmitted = true;
+                    }
+                    // 裕量记录（Provided——有限限位且区间有效且位置有限，②③保证）。
+                    JointMarginRecord record;
+                    record.jointObject = spec.jointObject;
+                    record.localName = spec.localName;
+                    record.runtimeName = runtimeName;
+                    record.sampleIndex = s;
+                    record.marginToNearestLimit =
+                        core::SourcedValue<double>::provided(margin, marginProvenance());
+                    record.nearLimitRatioValue =
+                        core::SourcedValue<double>::provided(ratio, marginProvenance());
+                    out.margins.push_back(std::move(record));
+                }
+            }
+            else {
+                // ---- 分支 B：未声明限位的有限关节（qMin/qMax 均缺——类型层
+                // 合法形态）：无限位可比→全部检查不适用；裕量记录以
+                // NotApplicable 显式标记（不伪造数值——§4.5/ERR-01；KIN-01
+                // 消费方可区分"不适用"与"缺失"）。
+                for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+                    JointMarginRecord record;
+                    record.jointObject = spec.jointObject;
+                    record.localName = spec.localName;
+                    record.runtimeName = runtimeName;
+                    record.sampleIndex = s;
+                    record.marginToNearestLimit = core::SourcedValue<double>::notApplicable();
+                    record.nearLimitRatioValue = core::SourcedValue<double>::notApplicable();
+                    out.margins.push_back(std::move(record));
+                }
+            }
+        }
+        // ---- 分支 C：continuous 关节（MDL-12——行程上限豁免，§7.4"continuous
+        // ---- 关节免除"；工程工作范围有限性在此检出）。
+        else {
+            const std::pair<double, double>& range = *spec.engineeringRange;   // ②必填已保证
+            // 范围有限性（MDL-12：双端有限且 first＜second——"已提供但非法"
+            // 的语义检出→诊断级发现＋跳过〔D-13〕；"必填"缺失已在②fail-fast，
+            // 两分登记于 policy.md §15.4 v0.9）。
+            const bool endsFinite = std::isfinite(range.first) && std::isfinite(range.second);
+            if (!endsFinite || !(range.first < range.second)) {
+                JointLimitFinding finding;
+                finding.jointObject = spec.jointObject;
+                finding.localName = spec.localName;
+                finding.runtimeName = runtimeName;
+                finding.kind = JointLimitFindingKind::EngineeringRangeInvalid;
+                finding.actualValue = range.first;    // 比较三要素：范围端（rad，可能
+                finding.thresholdValue = range.second;  // 非有限——原文经诊断保留）
+                finding.level = PolicyRuleLevel::Must;   // 供处理器就地阻断
+                out.findings.push_back(std::move(finding));
+                // 伴随稳定诊断（非有限端点以 Invalid 态保留 %.17g 原文——
+                // NFR-COR-03 不静默转 0；有限端点 Provided 携带数值）。
+                core::ComparativeFields comparison;
+                comparison.actual = comparativeValue(range.first);
+                comparison.expected = comparativeValue(range.second);
+                out.diagnostics.push_back(makeJointDiagnostic(
+                    kCodeJntEngineeringRangeInvalid, spec.jointObject, spec.localName,
+                    runtimeName,
+                    "continuous 关节工程工作范围非法（须双端有限且 first＜second——"
+                    "MDL-12 有限性）：first=" + formatRawDouble(range.first)
+                        + ", second=" + formatRawDouble(range.second)
+                        + "（SI rad）——该关节已跳过（不产出裕量，D-13 判定权归命令"
+                          "处理器）",
+                    "由建模/project 处理器按硬断言语义就地处置（D-13）；修正工程工作"
+                    "范围后重评",
+                    std::move(comparison)));
+                continue;   // 跳过：无裕量记录（§9.4"不伪造裕量"）
+            }
+            // 合法 continuous：行程上限豁免（§7.4）、无限位可比→裕量记录
+            // NotApplicable 显式标记（逐构型齐备——KIN-01 口径；工程范围
+            // 越界无对应检查种类〔§9.4 Kind 五值不含〕，不发明新判定——
+            // 范围事实随 JointLimitSpec 由消费方取用）。
+            for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+                JointMarginRecord record;
+                record.jointObject = spec.jointObject;
+                record.localName = spec.localName;
+                record.runtimeName = runtimeName;
+                record.sampleIndex = s;
+                record.marginToNearestLimit = core::SourcedValue<double>::notApplicable();
+                record.nearLimitRatioValue = core::SourcedValue<double>::notApplicable();
+                out.margins.push_back(std::move(record));
+            }
+        }
+    }
+
+    // ---- ⑦ 稳定排序＋终态化（§9.4"稳定排序（对象字典序×kind）"——输出
+    // ---- 与装配顺序无关，三入口跨进程逐字节一致，NFR-COR-05/AT-19）。
+    // findings 键序：(jointObject 字节字典序, kind)——生成序已与键序同向
+    // （规范序遍历），stable_sort 为契约兜底（同键重复元保持生成序——每
+    // 关节每 kind 至多一条，无同键重复，防御性声明）。
+    std::stable_sort(out.findings.begin(), out.findings.end(),
+                     [](const JointLimitFinding& l, const JointLimitFinding& r) {
+                         if (l.jointObject != r.jointObject) {
+                             return l.jointObject < r.jointObject;
+                         }
+                         return static_cast<int>(l.kind) < static_cast<int>(r.kind);
+                     });
+    // margins 键序：(sampleIndex 升序, jointObject 字典序)——实现冻结口径
+    // （JointMarginRecord 注释；policy.md §15.4 v0.9 登记）。
+    std::stable_sort(out.margins.begin(), out.margins.end(),
+                     [](const JointMarginRecord& l, const JointMarginRecord& r) {
+                         if (l.sampleIndex != r.sampleIndex) {
+                             return l.sampleIndex < r.sampleIndex;
+                         }
+                         return l.jointObject < r.jointObject;
+                     });
+    // notApplicableChecks 生成序即 Check 枚举序（⑤固定产出序）——无第二排序点。
+    // 检出非法（IntervalInvalid/EngineeringRangeInvalid）不改变评估状态——
+    // D-13 诊断级不阻断：评估已完成（发现齐备），阻断决策归命令处理器。
+    out.status = CollisionEvaluationStatus::Completed;
+    out.finalized = true;
+    return out;
+}
+
+DIFFERENCES: 发布/形状/非有限/名称守卫；ObjectId规范序，有限闭区间首违例+有符号裕量/严格近限位，continuous豁免/NA；Models::inBounds可供基础过滤但不等价这些业务事实。有限端点缺显式isfinite、差/半宽极值溢出仅静态风险未实测，finalized仅本评估DTO非ResultEnvelope
+
+policy.JointLimits.makeJointLimitEvaluator
+std::unique_ptr<IJointLimitEvaluator> makeJointLimitEvaluator()
+{
+    return std::make_unique<JointLimitEvaluator>();
+}
+
+DIFFERENCES: 无状态接口工厂，std::make_unique，不新建框架模型
+
+policy.PolicyParsing.(anonymous namespace).formatNumber
+std::string formatNumber(double v)
+{
+    char buf[40] = {};
+    std::snprintf(buf, sizeof(buf), "%.17g", v);
+    return std::string{buf};
+}
+
+DIFFERENCES: std::snprintf %.17g，诊断格式非持久化，C locale约束
+
+policy.PolicyParsing.(anonymous namespace).makeErrorDiag
+core::DiagnosticRecord makeErrorDiag(PolicyErrorCode code, core::ObjectId subject,
+                                     std::string localName, std::string context,
+                                     std::string cause, std::string action,
+                                     std::optional<core::ComparativeFields> comparison = std::nullopt)
+{
+    return core::DiagnosticRecord::make(
+        std::string{registryCode(code)}, subject,
+        localName.empty() ? std::nullopt : std::optional<std::string>(std::move(localName)),
+        std::nullopt,   // runtimeName：解析期无⑥端口名称上下文——会话侧诊断才携带
+        std::move(context), std::move(cause), std::move(action), std::move(comparison));
+}
+
+DIFFERENCES: registryCode+core DiagnosticRecord::make单一数据构造；正式中文文案仍由调用点注入，需与diagnostics权威分清
+
+policy.PolicyParsing.(anonymous namespace).comparativeValue
+core::ComparativeValue comparativeValue(double siValue, core::UnitToken unit)
+{
+    core::ComparativeValue v;
+    // 来源标注：解析期诊断的实际值来自用户/模板提供的策略输入——UserProvided
+    // 是五类词表中最贴近的承载（值来源事实记录，不构成可信等级——DYN-06）。
+    v.quantity = core::SourcedValue<double>::provided(
+        siValue, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    v.unit = unit;
+    return v;
+}
+
+DIFFERENCES: 显式SI/单位与UserProvided来源；不虚增可信度
+
+policy.PolicyParsing.(anonymous namespace).comparison
+core::ComparativeFields comparison(double actualSi, double expectedSi, core::UnitToken unit)
+{
+    core::ComparativeFields f;
+    f.actual = comparativeValue(actualSi, unit);
+    f.expected = comparativeValue(expectedSi, unit);
+    return f;
+}
+
+DIFFERENCES: 仅复用comparativeValue组比较字段，不自算单位
+
+policy.PolicyParsing.(anonymous namespace).siUnitToken
+core::UnitToken siUnitToken(PolicyThresholdDomain domain)
+{
+    switch (domain) {
+    case PolicyThresholdDomain::SafetyClearance:
+        return *core::UnitToken::find("m");    // 安全间距：SI m
+    case PolicyThresholdDomain::NearLimitRatio:
+    case PolicyThresholdDomain::ConditionNumberWarning:
+        return *core::UnitToken::find("1");    // 无量纲（注册表 token "1"）
+    case PolicyThresholdDomain::FiniteRotationTravelLimit:
+        return *core::UnitToken::find("rad");  // 行程上限：SI rad（不是度）
+    }
+    return *core::UnitToken::find("1");        // 不可达（全枚举覆盖——编译器出口）
+}
+
+DIFFERENCES: 四字段域到core注册m/1/rad映射，策略域语义非新单位表
+
+policy.PolicyParsing.(anonymous namespace).expectedBound
+std::optional<double> expectedBound(PolicyThresholdDomain domain, PolicyErrorCode code)
+{
+    // 各域合法窗（PolicyThresholdDomain 注释）：SafetyClearance [0,+∞)；
+    // NearLimitRatio (0,1]；ConditionNumberWarning [1,+∞)；行程上限 (0,+∞)。
+    // 非正类诊断的期望界一律为 0（方向由 cause 说明">0"或"≥0"）；
+    // 越窗类诊断的期望界为被越的窗界（1）。
+    switch (code) {
+    case PolicyErrorCode::ThresholdNonPositive:
+        (void)domain;
+        return 0.0;
+    case PolicyErrorCode::ThresholdOutOfRange:
+        return 1.0;   // 仅 NearLimitRatio(≤1)/ConditionNumberWarning(≥1) 会发越窗码
+    default:
+        return std::nullopt;
+    }
+}
+
+DIFFERENCES: 错误码到合法窗0/1边界；阈值真值仍PolicyThreshold::make
+
+policy.PolicyParsing.(anonymous namespace).domainWindowText
+std::string_view domainWindowText(PolicyThresholdDomain domain)
+{
+    switch (domain) {
+    case PolicyThresholdDomain::SafetyClearance:
+        return "安全间距域窗 [0,+∞) m";
+    case PolicyThresholdDomain::NearLimitRatio:
+        return "近限位比域窗 (0,1]（无量纲）";
+    case PolicyThresholdDomain::ConditionNumberWarning:
+        return "条件数警告域窗 [1,+∞)（无量纲）";
+    case PolicyThresholdDomain::FiniteRotationTravelLimit:
+        return "行程上限域窗 (0,+∞) rad";
+    }
+    return "未知域窗";
+}
+
+DIFFERENCES: 重复域窗中文描述；应保留结构化domain/界值由diagnostics渲染，非上游数学核心
+
+policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken
+bool isRegisteredRoleToken(std::string_view token)
+{
+    for (const std::string_view t : kRoleTokens) {
+        if (t == token) {
+            return true;
+        }
+    }
+    return false;
+}
+
+DIFFERENCES: 五角色静态词表精确匹配，CollisionEvaluator switch另份同字面维护风险
+
+policy.PolicyParsing.(anonymous namespace).scopeTargetLess
+bool scopeTargetLess(const ScopeTarget& a, const ScopeTarget& b)
+{
+    if (a.kind != b.kind) {
+        return static_cast<std::uint8_t>(a.kind) < static_cast<std::uint8_t>(b.kind);
+    }
+    switch (a.kind) {
+    case ScopeTargetKind::Object:
+        return a.object.bytes < b.object.bytes;   // Id128 字节字典序
+    case ScopeTargetKind::Role:
+        return a.roleToken < b.roleToken;         // 字节字典序
+    case ScopeTargetKind::Group:
+        return a.groupName < b.groupName;
+    }
+    return false;   // 不可达（全枚举覆盖——编译器出口）
+}
+
+DIFFERENCES: 产品Object<Role<Group规范键，std字段比较；与codec同键实现需单源消歧
+
+policy.PolicyParsing.(anonymous namespace).orderedPairEnds
+std::pair<ScopeTarget, ScopeTarget> orderedPairEnds(const ScopeTarget& first,
+                                                    const ScopeTarget& second)
+{
+    if (scopeTargetLess(second, first)) {
+        return {second, first};
+    }
+    return {first, second};
+}
+
+DIFFERENCES: 复用scopeTargetLess规范无序端，不用框架Frame名代替ObjectId
+
+policy.PolicyParsing.(anonymous namespace).normalizedPairRules
+std::vector<PairRule> normalizedPairRules(const std::vector<PairRule>& rules)
+{
+    std::vector<PairRule> out;
+    out.reserve(rules.size());
+    for (const auto& r : rules) {
+        PairRule copy = r;
+        const auto ends = orderedPairEnds(copy.first, copy.second);
+        copy.first = ends.first;
+        copy.second = ends.second;
+        out.push_back(std::move(copy));
+    }
+    std::sort(out.begin(), out.end(), [](const PairRule& a, const PairRule& b) {
+        if (scopeTargetLess(a.first, b.first) || scopeTargetLess(b.first, a.first)) {
+            return scopeTargetLess(a.first, b.first);
+        }
+        if (scopeTargetLess(a.second, b.second) || scopeTargetLess(b.second, a.second)) {
+            return scopeTargetLess(a.second, b.second);
+        }
+        if (a.level != b.level) {
+            return static_cast<std::uint8_t>(a.level) < static_cast<std::uint8_t>(b.level);
+        }
+        return a.reason < b.reason;
+    });
+    return out;
+}
+
+DIFFERENCES: 拷贝输入，标准sort按first/second/level/reason；与codec重复排序谓词，不发明规则求解器
+
+policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent
+bool endsCoverEquivalent(const ScopeTarget& a, const ScopeTarget& b,
+                         const IPolicyValidationContext& context)
+{
+    if (a.kind == b.kind) {
+        switch (a.kind) {
+        case ScopeTargetKind::Object:
+            return a.object == b.object;             // Id128 精确等值
+        case ScopeTargetKind::Role:
+            return a.roleToken == b.roleToken;       // token 字节精确等值
+        case ScopeTargetKind::Group:
+            return a.groupName == b.groupName;       // 组名字节精确等值
+        }
+        return false;
+    }
+    // 异 kind：仅 Object×Role 可经建模角色判定（Group 成员不可见——见函数注释）。
+    const ScopeTarget* obj = nullptr;
+    const ScopeTarget* role = nullptr;
+    if (a.kind == ScopeTargetKind::Object && b.kind == ScopeTargetKind::Role) {
+        obj = &a;
+        role = &b;
+    } else if (a.kind == ScopeTargetKind::Role && b.kind == ScopeTargetKind::Object) {
+        obj = &b;
+        role = &a;
+    }
+    if (obj == nullptr) {
+        return false;   // 含 Group 的异 kind 组合——解析期不可判定
+    }
+    // 角色查询失败（对象不存在/无角色）→ 不等价（不猜测——ARC-04）；
+    // 对象存在性本身由⑤的 POLICY-SCOPE-OBJECT-MISSING 检查单独报告。
+    const std::optional<std::string> objectRole = context.objectRole(obj->object);
+    return objectRole.has_value() && *objectRole == role->roleToken;
+}
+
+DIFFERENCES: 同kind精确载荷与Object×Role上下文，Group异kind不可判定；非完整对象集等价且非传递
+
+policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent
+bool pairsCoverEquivalent(const PairRule& a, const PairRule& b,
+                          const IPolicyValidationContext& context)
+{
+    return (endsCoverEquivalent(a.first, b.first, context)
+            && endsCoverEquivalent(a.second, b.second, context))
+        || (endsCoverEquivalent(a.first, b.second, context)
+            && endsCoverEquivalent(a.second, b.first, context));
+}
+
+DIFFERENCES: 两种无序端摆放委托单端覆盖相交，非通用集合求交核心
+
+policy.PolicyParsing.(anonymous namespace).levelText
+std::string_view levelText(PolicyRuleLevel level)
+{
+    return level == PolicyRuleLevel::Must ? "必检（Must）" : "可过滤（Should）";
+}
+
+DIFFERENCES: 中文级别文本在policy本地，SA-12要求正式文案收口，待真实消费核对
+
+policy.PolicyParsing.(anonymous namespace).normalizedSet
+template <typename T, typename Compare>
+std::vector<T> normalizedSet(const std::vector<T>& items, Compare comp)
+{
+    std::vector<T> out(items);
+    std::sort(out.begin(), out.end(), comp);
+    out.erase(std::unique(out.begin(), out.end(),
+                          [&comp](const T& a, const T& b) { return !comp(a, b) && !comp(b, a); }),
+              out.end());
+    return out;
+}
+
+DIFFERENCES: 模板复用std sort/unique，等价由比较器双向非小于；不以模板免审
+
+policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot
+std::optional<PolicyThreshold> resolveThresholdSlot(const std::optional<RawThresholdInput>& raw,
+                                                    PolicyThresholdDomain domain,
+                                                    std::string_view fieldPath,
+                                                    core::ObjectId subject,
+                                                    std::string_view contextPrefix,
+                                                    ParseOutcome& outcome)
+{
+    if (!raw.has_value()) {
+        return std::nullopt;   // 未提供——默认/必填语义归调用方（③/行 5）
+    }
+    const RawThresholdInput& slot = *raw;
+    const core::UnitToken siUnit = siUnitToken(domain);
+
+    // 第 1 步：非有限原文先判（行 3——NaN/±Inf 拒绝，原文保留）。
+    // 注意顺序：必须在 core convert 之前——convert 对非有限输入抛
+    // CoreError，若先换算会把行 3 的阈值错误误分类为行 6 的单位错误。
+    if (!std::isfinite(slot.value)) {
+        outcome.hasError = true;
+        outcome.diagnostics.push_back(makeErrorDiag(
+            PolicyErrorCode::ThresholdNonFinite, subject, std::string{fieldPath},
+            std::string{contextPrefix},
+            "阈值为非有限值（NaN/±Inf），原文 " + formatNumber(slot.value)
+                + (slot.unitToken.empty() ? "（未携带单位 token）"
+                                          : " 单位 '" + slot.unitToken + "'")
+                + "（原文保留于 RawPolicyInput——NFR-COR-03）",
+            "修正为有限数值后重新解析（比较型阈值不接受 NaN/±Inf）"));
+        return std::nullopt;
+    }
+
+    // 第 2 步：显示单位归一 SI（SA-12——换算唯一经 core convert）。
+    double siValue = 0.0;
+    if (slot.unitToken.empty()) {
+        // 空 token＝输入未提供单位——按字段域默认 SI 单位解释（factor 1；
+        // RawThresholdInput 注释"空 token 合法承载"的解析期落点）。
+        siValue = slot.value;
+    } else {
+        const std::optional<core::UnitToken> unit = core::UnitToken::find(slot.unitToken);
+        if (!unit.has_value()) {
+            // 未注册 token（行 6"未注册 token"分支）：无换算可转发——
+            // 直接给词表核对失败的 cause（字段域期望量纲随文说明）。
+            outcome.hasError = true;
+            outcome.diagnostics.push_back(makeErrorDiag(
+                PolicyErrorCode::UnitMismatch, subject, std::string{fieldPath},
+                std::string{contextPrefix},
+                "未注册单位 token '" + slot.unitToken + "'（字段域期望量纲："
+                    + std::string{domainWindowText(domain)} + "）",
+                "改用已注册单位 token（如 m/mm/rad/deg/1）后重新解析"));
+            return std::nullopt;
+        }
+        // 已注册 token——经 core convert 归一；任何 CoreError（量纲不符/
+        // 溢出等）原文转发为行 6 诊断（"core convert 错误转发"）。
+        try {
+            siValue = core::convert(slot.value, *unit, siUnit);
+        } catch (const core::CoreError& e) {
+            outcome.hasError = true;
+            outcome.diagnostics.push_back(makeErrorDiag(
+                PolicyErrorCode::UnitMismatch, subject, std::string{fieldPath},
+                std::string{contextPrefix},
+                "单位归一失败（输入 " + formatNumber(slot.value) + " '"
+                    + slot.unitToken + "' → 字段 SI 单位）：core convert 转发——"
+                    + e.what(),
+                "修正单位量纲与字段域一致后重新解析（SA-12：换算唯一权威在 core）"));
+            return std::nullopt;
+        }
+    }
+
+    // 第 3 步：域窗校验（PolicyThreshold::make 单点——实现纪律 4）。
+    // 来源＝Explicit：解析③只给"未提供"的行程上限标 DefaultAppendixD，
+    // 显式提供的值一律 Explicit（§4.4 来源三分）。
+    try {
+        return PolicyThreshold::make(siValue, PolicyValueOrigin::Explicit, domain);
+    } catch (const PolicyError& e) {
+        // 仅转译行 4 的两码（本层入参已保证有限——NonFinite 理论不可达，
+        // 其余码原样重抛，不吞错）。
+        if (e.code() != PolicyErrorCode::ThresholdNonPositive
+            && e.code() != PolicyErrorCode::ThresholdOutOfRange) {
+            throw;
+        }
+        outcome.hasError = true;
+        std::optional<core::ComparativeFields> cmp;
+        const std::optional<double> bound = expectedBound(domain, e.code());
+        if (bound.has_value()) {
+            cmp = comparison(siValue, *bound, siUnit);
+        }
+        outcome.diagnostics.push_back(makeErrorDiag(
+            e.code(), subject, std::string{fieldPath}, std::string{contextPrefix},
+            "阈值越域（归一后 " + formatNumber(siValue) + " SI，原文 "
+                + formatNumber(slot.value)
+                + (slot.unitToken.empty() ? "（未携带单位 token）"
+                                          : " '" + slot.unitToken + "'")
+                + "）：期望 " + std::string{domainWindowText(domain)},
+            "修正到字段域窗内后重新解析（比较型三要素见 comparison——ERR-01）",
+            std::move(cmp)));
+        return std::nullopt;
+    }
+}
+
+DIFFERENCES: 非有限优先错误分类，再真实core UnitToken/convert到SI，再PolicyThreshold::make域窗；不混入上游默认
+
+policy.PolicyParsing.(anonymous namespace).runParsePipeline
+ParseOutcome runParsePipeline(const RawPolicyInput& input,
+                              const IPolicyValidationContext& context)
+{
+    ParseOutcome outcome;
+    const core::ObjectId subject = input.policyObject;   // 诊断主体默认＝策略对象
+
+    // ---- 契约违约复检（fail-fast，不入诊断轨——合法解码不可产生的实例） ----
+    // 全零 policyObject／空锚：project 分配/§4.2 必填列的装配侧契约。
+    if (!input.policyObject.isValid()) {
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "policyObject 身份无效（全零保留值——project 分配契约违约）");
+    }
+    if (input.numericContractAnchor.empty()) {
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "numericContractAnchor 为空（§4.2 必填列——装配契约违约）");
+    }
+    // 规则结构复检（同 PolicyCodec::encode 口径——detail 谓词单源）：
+    // reason 空/kind↔字段不一致在装配层（PairRule::make）已拒绝，此处为
+    // 防御性复检（聚合初始化可绕过工厂——复检保证 fail-fast 面完整）。
+    const std::string_view where = "resolvePolicy";
+    for (const auto& r : input.collision.mandatoryPairs) {
+        detail::requirePairRuleWellFormed(r, where);
+    }
+    for (const auto& r : input.collision.excludedPairs) {
+        detail::requirePairRuleWellFormed(r, where);
+    }
+
+    // ---- 版本门（§5.2 行 2）：未来/未知代拒绝——不前向猜测解析字段 ----
+    // 行 2 处置语义：未知布局的字段解释无意义且危险（可能把未知字节当合法
+    // 值），故命中即返回（比较型：实际/期望代——schema 代无量纲，单位 "1"）。
+    if (input.schemaVersion > kPolicySchemaVersionCurrent) {
+        outcome.hasError = true;
+        outcome.diagnostics.push_back(makeErrorDiag(
+            PolicyErrorCode::SchemaVersionFuture, subject, "schemaVersion",
+            "schema 校验（§5.2 行 2）",
+            "策略 schema 代 " + formatNumber(static_cast<double>(input.schemaVersion))
+                + " 高于当前代 " + formatNumber(static_cast<double>(kPolicySchemaVersionCurrent))
+                + "（未来版本不前向猜测解析——PM-06 同源只读拒绝）",
+            "用当前版本应用打开并重新保存该策略（升级指引——PM-06 同源；"
+            "不自动升级、不降级解析）",
+            comparison(static_cast<double>(input.schemaVersion),
+                       static_cast<double>(kPolicySchemaVersionCurrent),
+                       *core::UnitToken::find("1"))));
+        return outcome;
+    }
+    if (input.schemaVersion < kPolicySchemaVersionCurrent) {
+        outcome.hasError = true;
+        outcome.diagnostics.push_back(makeErrorDiag(
+            PolicyErrorCode::SchemaVersionUnknown, subject, "schemaVersion",
+            "schema 校验（§5.2 行 2）",
+            "策略 schema 代 " + formatNumber(static_cast<double>(input.schemaVersion))
+                + " 低于已知最低代 "
+                + formatNumber(static_cast<double>(kPolicySchemaVersionCurrent))
+                + "（未知旧代——不猜测其字段布局）",
+            "用写入该代的版本应用升级后再以当前版本保存（PM-06 同源）",
+            comparison(static_cast<double>(input.schemaVersion),
+                       static_cast<double>(kPolicySchemaVersionCurrent),
+                       *core::UnitToken::find("1"))));
+        return outcome;
+    }
+
+    // ---- ① 语法与 schema 校验：角色 token 词表核对（行 1 的活性检测面） ----
+    // Role 端 token 不在五值词表 → POLICY-SCHEMA-UNKNOWN-FIELD：拼写错误的
+    // 角色会静默收窄必检集（展开为空集），必须拒绝而非忽略（行 1"不静默
+    // 忽略——防拼写错误降级为默认值"）。强类型字段的未知键在类型层不可表达，
+    // 字节层等价拒绝由 PolicyCodec::decode 精确耗尽契约承担（头文件落点登记）。
+    const auto checkRoleVocabulary = [&](const std::vector<PairRule>& rules,
+                                         std::string_view listPath) {
+        for (std::size_t i = 0; i < rules.size(); ++i) {
+            // 端序按输入承载序核对（定位面向调用方的原文——规范化仅用于④判定）。
+            const ScopeTarget* ends[2] = {&rules[i].first, &rules[i].second};
+            for (int end = 0; end < 2; ++end) {
+                const ScopeTarget& t = *ends[end];
+                if (t.kind == ScopeTargetKind::Role
+                    && !isRegisteredRoleToken(t.roleToken)) {
+                    outcome.hasError = true;
+                    // 定位下标＝输入承载序下标（词表核对面向调用方原文）。
+                    const std::string localName = std::string{listPath} + "["
+                        + std::to_string(i) + (end == 0 ? "].first" : "].second");
+                    outcome.diagnostics.push_back(makeErrorDiag(
+                        PolicyErrorCode::SchemaUnknownField, subject, localName,
+                        "语法与 schema 校验（§5.1①/§5.2 行 1）",
+                        "角色 token '" + t.roleToken
+                            + "' 不在场景对象角色词表（RobotLink|Tool|Payload|"
+                              "EnvironmentObject|Workpiece——§6.1 同源）",
+                        "修正为词表内角色 token（拼写错误会静默收窄必检集——"
+                        "不静默忽略）"));
+                }
+            }
+        }
+    };
+    checkRoleVocabulary(input.collision.mandatoryPairs, "collision.mandatoryPairs");
+    checkRoleVocabulary(input.collision.excludedPairs, "collision.excludedPairs");
+
+    // ---- ② 规范化与单位校验（逐槽位，struct 序——确定性发射序） ----
+    // 安全间距（P-POL-2：无冻结默认——缺失＋enabled 的必填拒绝在槽位缺省分支）。
+    std::optional<PolicyThreshold> safetyClearance = resolveThresholdSlot(
+        input.collision.safetyClearance, PolicyThresholdDomain::SafetyClearance,
+        "collision.safetyClearance", subject, "阈值规范化与单位校验（§5.1②/§5.2 行 3/4/6）",
+        outcome);
+    if (input.collision.enabled && !input.collision.safetyClearance.has_value()) {
+        // 行 5：必填阈值缺省——无冻结默认项不得静默省略（P-POL-2 保守口径，
+        // 契约 acceptance 2 的拒绝面；enabled=false 时间距检查随总开关停用）。
+        outcome.hasError = true;
+        outcome.diagnostics.push_back(makeErrorDiag(
+            PolicyErrorCode::ThresholdRequiredMissing, subject,
+            "collision.safetyClearance", "阈值规范化与单位校验（§5.2 行 5）",
+            "碰撞已启用而安全间距未设置（无冻结默认——P-POL-2 保守口径："
+            "缺失即拒绝发布，不发明数值）",
+            "显式设置安全间距后重新解析（如需空缺语义走 P-POL-2 裁决——"
+            "解析器不越权）"));
+    }
+    // 近限位比／条件数警告（P-POL-2：无冻结默认——未提供保持 nullopt＝显式
+    // 不适用，不发明数值、不设第二默认——契约 acceptance 2）。
+    std::optional<PolicyThreshold> nearLimitRatio = resolveThresholdSlot(
+        input.jointThresholds.nearLimitRatio, PolicyThresholdDomain::NearLimitRatio,
+        "jointThresholds.nearLimitRatio", subject,
+        "阈值规范化与单位校验（§5.1②/§5.2 行 3/4/6）", outcome);
+    std::optional<PolicyThreshold> conditionNumberWarning = resolveThresholdSlot(
+        input.jointThresholds.conditionNumberWarning,
+        PolicyThresholdDomain::ConditionNumberWarning,
+        "jointThresholds.conditionNumberWarning", subject,
+        "阈值规范化与单位校验（§5.1②/§5.2 行 3/4/6）", outcome);
+    // 行程上限（唯一冻结默认 4π 的显式提供分支——缺省分支在③）。
+    std::optional<PolicyThreshold> travelLimit = resolveThresholdSlot(
+        input.jointThresholds.finiteRotationTravelLimit,
+        PolicyThresholdDomain::FiniteRotationTravelLimit,
+        "jointThresholds.finiteRotationTravelLimit", subject,
+        "阈值规范化与单位校验（§5.1②/§5.2 行 3/4/6）", outcome);
+
+    // ---- ③ 默认值解析（O-10/P-POL-2 保守口径——契约 acceptance 2） ----
+    // 唯一冻结默认＝附录 D 第 11 项行程上限 4π rad（kDefaultFiniteRotationTravelLimit
+    // ——与 PolicySet.hpp 同源常量，无第二数值源）。输入未提供 → 填入并标
+    // DefaultAppendixD＋告知性诊断（§5.2 行 12）；其余槽位无冻结默认——
+    // 保持 nullopt（上面未提供分支已返回 nullopt，此处不补任何数值）。
+    if (!travelLimit.has_value() && !input.jointThresholds.finiteRotationTravelLimit.has_value()) {
+        // 输入确实未提供（而非提供但校验失败——后者已发错误诊断，不发布）。
+        travelLimit = JointThresholds::defaultFiniteRotationTravelLimit();
+        core::DiagnosticRecord info = core::DiagnosticRecord::make(
+            std::string{kInfoDefaultAppliedCode}, subject,
+            std::optional<std::string>{"jointThresholds.finiteRotationTravelLimit"},
+            std::nullopt, "默认值解析（§5.1③/§5.2 行 12）",
+            "有限限位旋转关节行程上限未提供，已按附录 D 第 11 项唯一冻结默认 "
+            "4π rad 填入（origin=DefaultAppendixD）",
+            "如需其他上限请显式设置（策略编辑命令——UX-08 入口）");
+        outcome.diagnostics.push_back(std::move(info));
+    }
+
+    // ---- ④ 规则集检查（行 7 重复／行 8 冲突／行 9 组引用） ----
+    // 规范化拷贝（端序＋列表序——判定与发布共用同一承载序，发射序确定）。
+    const std::vector<PairRule> mandatory = normalizedPairRules(input.collision.mandatoryPairs);
+    const std::vector<PairRule> excluded = normalizedPairRules(input.collision.excludedPairs);
+
+    // 行 7：重复规则——同一清单内"级别相同且对端覆盖等价"的后续条目
+    // （成对比较：覆盖等价非传递有序，相邻比较会漏——O(n²)，策略规模可接受）。
+    const auto checkDuplicates = [&](const std::vector<PairRule>& rules,
+                                     std::string_view listPath) {
+        for (std::size_t j = 0; j < rules.size(); ++j) {
+            for (std::size_t i = 0; i < j; ++i) {
+                if (rules[i].level == rules[j].level
+                    && pairsCoverEquivalent(rules[i], rules[j], context)) {
+                    // 每个重复条目发一条（列出重复双方——"列出重复条目"）；
+                    // 同一条目与多条先前条目等价时只发一次（异常在"重复登记"）。
+                    outcome.hasError = true;
+                    const std::string localName = std::string{listPath} + "["
+                        + std::to_string(j) + "]";
+                    outcome.diagnostics.push_back(makeErrorDiag(
+                        PolicyErrorCode::RuleDuplicate, subject, localName,
+                        "规则集检查（§5.2 行 7）",
+                        "与条目 [" + std::to_string(i) + "] 为同一对同类型重复登记"
+                        "（级别 " + std::string{levelText(rules[j].level)}
+                            + "；理由分别为 '" + rules[i].reason + "' / '"
+                            + rules[j].reason + "'）",
+                        "删除重复条目（同对同类型只保留一条——理由合并到保留条目）"));
+                    break;
+                }
+            }
+        }
+    };
+    checkDuplicates(mandatory, "collision.mandatoryPairs");
+    checkDuplicates(excluded, "collision.excludedPairs");
+
+    // 行 8：排除∩必检冲突——两清单间存在对端覆盖等价的规则对（级别无关——
+    // "排除覆盖必检"即结构矛盾；定位冲突双方）。
+    for (std::size_t i = 0; i < mandatory.size(); ++i) {
+        for (std::size_t j = 0; j < excluded.size(); ++j) {
+            if (pairsCoverEquivalent(mandatory[i], excluded[j], context)) {
+                outcome.hasError = true;
+                outcome.diagnostics.push_back(makeErrorDiag(
+                    PolicyErrorCode::RuleConflict, subject,
+                    "collision.mandatoryPairs[" + std::to_string(i) + "] × collision.excludedPairs["
+                        + std::to_string(j) + "]",
+                    "规则集检查（§5.2 行 8/§7.2）",
+                    "排除规则覆盖必检对（经 Role/Group 展开等价——必检理由 '"
+                        + mandatory[i].reason + "'，排除理由 '" + excluded[j].reason
+                        + "'）：结构上不允许存在可隐藏必检的合法策略（D-06）",
+                    "删除冲突的排除规则（必检对不可过滤；如确需排除先修订必检"
+                    "登记——走策略编辑命令）"));
+            }
+        }
+    }
+
+    // 行 9：组引用——Group 端组名必须已在本策略定义（context 应答）；未定义
+    // → POLICY-RULE-CYCLE（循环/未定义组共用本码；"组引用组"在扁平组 schema
+    // 层不可表达，本检查为其纵深防御的活性面——头文件落点登记）。
+    const auto checkGroupDefined = [&](const std::vector<PairRule>& rules,
+                                       std::string_view listPath) {
+        for (std::size_t i = 0; i < rules.size(); ++i) {
+            const ScopeTarget* ends[2] = {&rules[i].first, &rules[i].second};
+            for (int end = 0; end < 2; ++end) {
+                const ScopeTarget& t = *ends[end];
+                if (t.kind == ScopeTargetKind::Group
+                    && !context.groupDefined(t.groupName)) {
+                    outcome.hasError = true;
+                    const std::string localName = std::string{listPath} + "["
+                        + std::to_string(i) + (end == 0 ? "].first" : "].second");
+                    outcome.diagnostics.push_back(makeErrorDiag(
+                        PolicyErrorCode::RuleCycle, subject, localName,
+                        "规则集检查（§5.2 行 9）",
+                        "引用未定义组 '" + t.groupName
+                            + "'（组仅可引用对象、不可引用组——扁平组 schema 层"
+                              "无嵌套，本检查为纵深防御）",
+                        "先在本策略定义该组或改用对象/角色目标"));
+                }
+            }
+        }
+    };
+    checkGroupDefined(mandatory, "collision.mandatoryPairs");
+    checkGroupDefined(excluded, "collision.excludedPairs");
+
+    // ---- ⑤ 适用范围验证（行 10 对象存在性／行 11 空域启用） ----
+    // 规则 Object 端存在性（经 context——闭包内查无＝已删除/跨修订混入；
+    // subject 绑定缺失对象 ID——POL-PARSE-6）。
+    const auto checkObjectExists = [&](const std::vector<PairRule>& rules,
+                                       std::string_view listPath) {
+        for (std::size_t i = 0; i < rules.size(); ++i) {
+            const ScopeTarget* ends[2] = {&rules[i].first, &rules[i].second};
+            for (int end = 0; end < 2; ++end) {
+                const ScopeTarget& t = *ends[end];
+                if (t.kind == ScopeTargetKind::Object
+                    && !context.objectExists(t.object)) {
+                    outcome.hasError = true;
+                    const std::string localName = std::string{listPath} + "["
+                        + std::to_string(i) + (end == 0 ? "].first" : "].second");
+                    outcome.diagnostics.push_back(makeErrorDiag(
+                        PolicyErrorCode::ScopeObjectMissing, t.object, localName,
+                        "适用范围验证（§5.2 行 10）",
+                        "规则适用对象在修订闭包内不存在（对象已删除或跨修订混入"
+                        "——身份 " + t.object.toCanonical() + "）",
+                        "从规则中移除该对象或恢复其所在修订（定位字段见 localName）"));
+                }
+            }
+        }
+    };
+    checkObjectExists(mandatory, "collision.mandatoryPairs");
+    checkObjectExists(excluded, "collision.excludedPairs");
+
+    // 适用范围对象集存在性（model/task/case 顺序发射；下标按规范化序——与
+    // 发布对象承载序一致，定位下标即发布对象内下标）。
+    const auto checkApplicabilityObjects = [&](const std::vector<core::ObjectId>& objects,
+                                               std::string_view fieldPath) {
+        const std::vector<core::ObjectId> normalized = normalizedSet(
+            objects, [](const core::ObjectId& a, const core::ObjectId& b) {
+                return a.bytes < b.bytes;
+            });
+        for (std::size_t i = 0; i < normalized.size(); ++i) {
+            if (!context.objectExists(normalized[i])) {
+                outcome.hasError = true;
+                const std::string localName = std::string{fieldPath} + "["
+                    + std::to_string(i) + "]";
+                outcome.diagnostics.push_back(makeErrorDiag(
+                    PolicyErrorCode::ScopeObjectMissing, normalized[i], localName,
+                    "适用范围验证（§5.2 行 10）",
+                    "适用范围对象在修订闭包内不存在（对象已删除或跨修订混入"
+                    "——身份 " + normalized[i].toCanonical() + "）",
+                    "从适用范围中移除该对象或恢复其所在修订"));
+            }
+        }
+    };
+    checkApplicabilityObjects(input.applicability.modelObjects, "applicability.modelObjects");
+    checkApplicabilityObjects(input.applicability.taskObjects, "applicability.taskObjects");
+    checkApplicabilityObjects(input.applicability.caseObjects, "applicability.caseObjects");
+
+    // 行 11：空域启用（§5.1④"无域可检"——enabledDomains 空集无法与"显式
+    // 清空"区分，§5.1④ 为解析期权威语义：不填默认、直接拒绝；{Self,
+    // Environment,Tool} 的模板默认归装配侧——头文件落点登记）。
+    if (input.collision.enabled && input.collision.enabledDomains.empty()) {
+        outcome.hasError = true;
+        outcome.diagnostics.push_back(makeErrorDiag(
+            PolicyErrorCode::ApplicabilityInvalid, subject, "collision.enabledDomains",
+            "适用范围验证（§5.2 行 11/§5.1④）",
+            "碰撞已启用而启用域为空（无域可检——空集与显式清空不可区分，"
+            "§5.1④ 权威语义为拒绝）",
+            "显式设置启用域（Self/Environment/Tool/Scene 子集）后重新解析"));
+    }
+    // modes：core::EvaluationMode 强类型枚举——"合法子集"由类型层保证
+    // （未知模式 token 不可表达）；空集＝全部模式适用（§4.2.1 空集语义）。
+
+    // ---- 发布门（⑦的前置）：有错误级诊断 → 不发布（policy 空） ----
+    if (outcome.hasError) {
+        return outcome;   // 诊断全量已收集——不短路；policy=nullopt（§5.1⑦）
+    }
+
+    // ---- ⑥⑦ 内容身份生成与发布（全部校验通过路径） ----
+    // 组装规范化子模型：对端字典序承载（②——消除顺序歧义）、集合升序去重
+    // （集合语义）、阈值取②产物＋③默认。
+    CollisionRules collision;
+    collision.enabled = input.collision.enabled;
+    collision.enabledDomains = normalizedSet(
+        input.collision.enabledDomains,
+        [](CollisionDomain a, CollisionDomain b) {
+            return static_cast<std::uint8_t>(a) < static_cast<std::uint8_t>(b);
+        });
+    collision.safetyClearance = std::move(safetyClearance);
+    collision.excludeAdjacentLinksByDefault = input.collision.excludeAdjacentLinksByDefault;
+    collision.mandatoryPairs = mandatory;      // 已规范化（端序＋列表序）
+    collision.excludedPairs = excluded;
+
+    JointThresholds jointThresholds;
+    jointThresholds.nearLimitRatio = std::move(nearLimitRatio);
+    jointThresholds.conditionNumberWarning = std::move(conditionNumberWarning);
+    jointThresholds.finiteRotationTravelLimit = *std::move(travelLimit);   // ②产物或③默认
+    jointThresholds.travelLimitCheckEnabled = input.jointThresholds.travelLimitCheckEnabled;
+
+    PolicyApplicability applicability;
+    applicability.modes = normalizedSet(
+        input.applicability.modes, [](core::EvaluationMode a, core::EvaluationMode b) {
+            return a < b;
+        });
+    const auto byIdBytes = [](const core::ObjectId& a, const core::ObjectId& b) {
+        return a.bytes < b.bytes;
+    };
+    applicability.modelObjects = normalizedSet(input.applicability.modelObjects, byIdBytes);
+    applicability.taskObjects = normalizedSet(input.applicability.taskObjects, byIdBytes);
+    applicability.caseObjects = normalizedSet(input.applicability.caseObjects, byIdBytes);
+
+    // ⑥ 内容身份：PolicyCodec::contentIdentity——语义闭包 canonical 编码 →
+    // SHA-256（CR-02 摘要单点；发布路径唯一调用——"只对通过校验并发布的
+    // 策略计算"，§4.1）。
+    const core::ContentIdentity identity = PolicyCodec::contentIdentity(
+        input.schemaVersion, collision, jointThresholds, applicability,
+        input.numericContractAnchor);
+
+    // ⑦ 发布：EngineeringPolicySet::make（发布门只产出 Valid 实例——
+    // 校验序①~⑦与其门内核对互补：此处入参已满足全部前置，门校验若因
+    // 逻辑缺陷触发异常将 fail-fast 传播——不吞错）。
+    // 就地构造（emplace）：EngineeringPolicySet 全成员 const——拷贝/移动
+    // 赋值被编译期删除（§4.6 不可变性的类型层强制），optional 的赋值算子
+    // 相应不可用；构造途径（拷贝/移动构造）不受影响。
+    outcome.policy.emplace(EngineeringPolicySet::make(
+        input.policyObject, input.schemaVersion, identity, std::move(collision),
+        std::move(jointThresholds), std::move(applicability), input.origin,
+        PolicyValidationState::Valid, outcome.diagnostics,   // 全量诊断随发布对象附带（此时仅 Info）
+        input.compatibilityNotes, input.numericContractAnchor));
+    return outcome;
+}
+
+DIFFERENCES: 单一七段管线含版本/角色/阈值/4pi缺省/重复冲突/范围，PolicyCodec contentIdentity和EngineeringPolicySet::make发布；hasError拒发布，组引用解析放行不等于会话可展开
+
+policy.PolicyParsing.resolvePolicy
+PolicyParseResult resolvePolicy(const RawPolicyInput& input,
+                                const IPolicyValidationContext& context)
+{
+    // 单一管线实现；sourceVersion 恒 nullopt（对象字节版本归 Provider 填充——
+    // PolicyParseResult 注释；PA-1 不越权计算对象字节摘要）。
+    // 聚合初始化＋移动构造（optional<EngineeringPolicySet> 因发布对象全成员
+    // const 而无赋值算子——构造途径可用，见 runParsePipeline 发布点注释）。
+    ParseOutcome outcome = runParsePipeline(input, context);
+    PolicyParseResult result{std::move(outcome.policy), std::move(outcome.diagnostics),
+                             std::nullopt};
+    return result;
+}
+
+DIFFERENCES: 委托唯一管线，移动输出；不另算sourceVersion/对象字节身份
+
+policy.PolicyParsing.PolicyValidator.validate
+std::vector<core::DiagnosticRecord>
+PolicyValidator::validate(const RawPolicyInput& input,
+                          const IPolicyValidationContext& context) const
+{
+    // 只校验不发布（§9.2）：同一管线的诊断轨——policy 产物弃用（无发布
+    // 副作用；类型层防误用由 IPolicyValidator::validate 无 policy 返回保证）。
+    return std::move(runParsePipeline(input, context).diagnostics);
+}
+
+DIFFERENCES: 委托同管线只回诊断，计算出的发布对象丢弃，无外部持久化副作用
+
+policy.PolicyParsing.sceneObjectRoleTokens
+std::vector<std::string_view> sceneObjectRoleTokens()
+{
+    return {kRoleTokens, kRoleTokens + sizeof(kRoleTokens) / sizeof(kRoleTokens[0])};
+}
+
+DIFFERENCES: 只暴露本TU五词表值拷贝，不声明会话switch已经机械单源
+
+policy.CollisionEvaluator.sceneObjectRoleToken
+std::string_view sceneObjectRoleToken(SceneObjectRole role) noexcept
+{
+    // 编译期固定 switch 全枚举（无 default——遗漏即编译器告警）；串与
+    // PolicyParsing kRoleTokens 逐字一致（POL-SCOPE 展开与解析期词表核对
+    // 同词表——单一事实源约束的运行期保证）。
+    switch (role) {
+    case SceneObjectRole::RobotLink: return "RobotLink";
+    case SceneObjectRole::Tool: return "Tool";
+    case SceneObjectRole::Payload: return "Payload";
+    case SceneObjectRole::EnvironmentObject: return "EnvironmentObject";
+    case SceneObjectRole::Workpiece: return "Workpiece";
+    }
+    // 不可达路径：全枚举已覆盖（满足编译器出口要求；全表用例钉住）。
+    return {};
+}
+
+DIFFERENCES: 五枚举到字面switch，和解析词表重复需防漂移
+
+policy.CollisionEvaluator.trySceneObjectRole
+std::optional<SceneObjectRole> trySceneObjectRole(std::string_view token) noexcept
+{
+    // 精确等值匹配（附录 D 第 12 项——无大小写折叠/无空白容忍；词表外
+    // 一律 nullopt，由调用方按场景校验语义拒绝——ARC-04 不猜测）。
+    for (const SceneObjectRole role :
+         {SceneObjectRole::RobotLink, SceneObjectRole::Tool, SceneObjectRole::Payload,
+          SceneObjectRole::EnvironmentObject, SceneObjectRole::Workpiece}) {
+        if (sceneObjectRoleToken(role) == token) {
+            return role;
+        }
+    }
+    return std::nullopt;
+}
+
+DIFFERENCES: 精确反查该switch，未知nullopt不猜测
+
+policy.CollisionEvaluator.detail.canonicalPair
+inline std::pair<core::ObjectId, core::ObjectId>
+canonicalPair(const core::ObjectId& a, const core::ObjectId& b)
+{
+    if (a < b) {
+        return {a, b};
+    }
+    return {b, a};
+}
+
+DIFFERENCES: ObjectId字节序无序对，纯标准pair，不以Frame名规范化
+
+policy.CollisionEvaluator.detail.classifyDomainPair
+std::optional<CollisionDomain> classifyDomainPair(SceneObjectRole a, SceneObjectRole b)
+{
+    // 无序对规范化：按枚举值序重排（分类表的行数减半——与 canonicalPair
+    // 同方向的确定性手段）。
+    if (static_cast<int>(b) < static_cast<int>(a)) {
+        std::swap(a, b);
+    }
+    // 重排后 (a,b) 升序——逐行判定（每行注释标注矩阵原文行）。
+    switch (a) {
+    case SceneObjectRole::RobotLink:
+        switch (b) {
+        case SceneObjectRole::RobotLink:         return CollisionDomain::Self;        // 机器人非相邻/相邻连杆
+        case SceneObjectRole::Tool:              return CollisionDomain::Tool;        // 工具 vs 连杆（安装侧相邻/非相邻）
+        case SceneObjectRole::Payload:           return CollisionDomain::Tool;        // 负载 vs 连杆
+        case SceneObjectRole::EnvironmentObject: return CollisionDomain::Environment; // 连杆 vs 环境对象
+        case SceneObjectRole::Workpiece:         return CollisionDomain::Environment; // 连杆 vs 工件（工件归环境侧）
+        }
+        break;
+    case SceneObjectRole::Tool:
+        switch (b) {
+        case SceneObjectRole::Tool:              return std::nullopt;                 // 工具×工具——矩阵未列
+        case SceneObjectRole::Payload:           return std::nullopt;                 // 工具×负载——矩阵未列
+        case SceneObjectRole::EnvironmentObject: return CollisionDomain::Environment; // 机器人侧 vs 环境对象
+        case SceneObjectRole::Workpiece:         return CollisionDomain::Tool;        // 工具 vs 工件（Tool 域显式行）
+        }
+        break;
+    case SceneObjectRole::Payload:
+        switch (b) {
+        case SceneObjectRole::Payload:           return std::nullopt;                 // 负载×负载——矩阵未列
+        case SceneObjectRole::EnvironmentObject: return CollisionDomain::Environment; // 机器人侧 vs 环境对象
+        case SceneObjectRole::Workpiece:         return CollisionDomain::Tool;        // 负载 vs 工件
+        }
+        break;
+    case SceneObjectRole::EnvironmentObject:
+        switch (b) {
+        case SceneObjectRole::EnvironmentObject: return CollisionDomain::Scene;      // 环境 vs 环境（默认不检）
+        case SceneObjectRole::Workpiece:         return CollisionDomain::Scene;      // 环境 vs 工件（环境侧对象间）
+        }
+        break;
+    case SceneObjectRole::Workpiece:
+        break;   // (Workpiece, Workpiece)——环境侧对象间
+    }
+    // 工件×工件＝环境侧对象间（Scene 域——同"环境 vs 环境"行）。
+    if (a == SceneObjectRole::Workpiece && b == SceneObjectRole::Workpiece) {
+        return CollisionDomain::Scene;
+    }
+    return std::nullopt;
+}
+
+DIFFERENCES: policy §7.1角色矩阵机械转写，Tool×Payload等未列nullopt；不是碰撞算法
+
+policy.CollisionEvaluator.detail.computeSessionIdentity
+core::ContentIdentity computeSessionIdentity(const core::ContentIdentity& policyCid,
+                                             const core::ContentIdentity& sceneCid,
+                                             const core::ContentIdentity& nameMapCid,
+                                             const CollisionBackendDescriptor& backend)
+{
+    // 增量摘要器栈上各持（非线程安全——本函数为纯函数局部使用，POL-T03
+    // 同款"每线程各持实例"纪律）。
+    core::ContentDigester digester;
+    digester.update(kSessionIdentityMagic.data(), kSessionIdentityMagic.size());
+    digester.update(&kSessionIdentityForm, sizeof(kSessionIdentityForm));
+    // 三个内容身份按 §6.4 f() 参数序固定排列（顺序即语义——组成变化升
+    // kSessionIdentityForm，旧身份与新身份不可比）。
+    digester.update(policyCid.bytes.data(), policyCid.bytes.size());
+    digester.update(sceneCid.bytes.data(), sceneCid.bytes.size());
+    digester.update(nameMapCid.bytes.data(), nameMapCid.bytes.size());
+    // 后端复现要素三串：u32 大端长度前缀＋原文字节（无终止符——长度即界，
+    // 与 PolicyCodec lengthPrefixedText 同构；空串合法——长度 0）。
+    const std::string* backendParts[] = {&backend.backendId, &backend.backendVersion,
+                                         &backend.toleranceModel};
+    for (const std::string* part : backendParts) {
+        const std::array<std::uint8_t, 4> lenBigEndian{
+            static_cast<std::uint8_t>((part->size() >> 24) & 0xFFu),
+            static_cast<std::uint8_t>((part->size() >> 16) & 0xFFu),
+            static_cast<std::uint8_t>((part->size() >> 8) & 0xFFu),
+            static_cast<std::uint8_t>(part->size() & 0xFFu)};
+        digester.update(lenBigEndian.data(), lenBigEndian.size());
+        digester.update(part->data(), part->size());
+    }
+    // finalize 即结束（幂等禁止——core §5.2）；SHA-256 输出不可能全零。
+    core::ContentIdentity identity;
+    identity.bytes = digester.finalize();
+    return identity;
+}
+
+DIFFERENCES: core ContentDigester真摘要；8Bmagic/1Bform/3x32B身份/3个u32BE长度串。手写编码可复用既有endian原语但不改组成；SHA不可能全零是旧错误注释，不作为保证
+
+policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor
+CollisionBackendDescriptor makeBuiltinBackendDescriptor(std::string backendVersion)
+{
+    // 复现要素冻结值（§6.5/§8.1）：backendId＝§6.5 原文取值；backendVersion
+    // ＝调用方注入的基线冻结值（kFrozenBuiltinBackendVersion——P-POL-5，
+    // WP-24-T01 基线 ird/share/baseline.md §3 登记值；原"暂取 RW_VERSION
+    // 构建版本"临时口径已消账）；toleranceModel＝后端固有数值分辨率登记串
+    // （复现要素非工程阈值——R-7/§7.4 三分；登记事实不发明数值）。
+    CollisionBackendDescriptor descriptor;
+    descriptor.backendId = "rw.proximity.builtin-rw";
+    descriptor.backendVersion = std::move(backendVersion);
+    descriptor.toleranceModel =
+        "builtin-rw/bvtree;binary-collision+distance;numeric-resolution=backend-internal"
+        "(not-an-engineering-threshold;P-POL-5 frozen@WP-24-T01:ird/share/baseline.md)";
+    return descriptor;
+}
+
+DIFFERENCES: 冻结版本事实与描述符值，binary-collision+distance字面不等于实际距离能力
+
+policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all
+std::size_t ResolvedCollisionScope::inScopePairCount() const noexcept
+{
+    // 线性遍历计数（状态谓词——与展开序无关的确定性结果）。
+    std::size_t count = 0;
+    for (const ScopedCollisionPair& p : pairs) {
+        if (p.status == ScopePairStatus::Mandatory
+            || p.status == ScopePairStatus::InScopeDefault) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+DIFFERENCES: 线性标准遍历计Mandatory/InScopeDefault，domain重载再过滤域，非另算碰撞
+
+policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain
+std::size_t ResolvedCollisionScope::inScopePairCount(CollisionDomain domain) const noexcept
+{
+    std::size_t count = 0;
+    for (const ScopedCollisionPair& p : pairs) {
+        if (p.domain == domain
+            && (p.status == ScopePairStatus::Mandatory
+                || p.status == ScopePairStatus::InScopeDefault)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+DIFFERENCES: 线性标准遍历计Mandatory/InScopeDefault，domain重载再过滤域，非另算碰撞
+
+policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount
+std::size_t ResolvedCollisionScope::excludedPairCount() const noexcept
+{
+    std::size_t count = 0;
+    for (const ScopedCollisionPair& p : pairs) {
+        if (p.status == ScopePairStatus::ExcludedByRule
+            || p.status == ScopePairStatus::ExcludedByAdjacencyDefault) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+DIFFERENCES: 仅ExcludedByRule/ExcludedByAdjacencyDefault计数，无另个过滤核心
+
+policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy
+void validateSceneAndPolicy(const EngineeringPolicySet& policy, const CollisionScene& scene,
+                            const IPolicyNameContext& names,
+                            const std::shared_ptr<rw::proximity::CollisionStrategy>& strategy,
+                            SceneObjectIndex& objectIndex)
+{
+    // ① policy 发布态复检（§9.3 前置行"policy 为已发布（Valid）对象"——
+    // 把未发布对象当策略传入＝调用方契约违约 fail-fast；与解析管线首段
+    // "契约违约复检"同款纪律）。
+    if (!policy.policyObject.isValid() || !policy.contentIdentity.isValid()
+        || policy.validationState != PolicyValidationState::Valid) {
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "会话构建：policy 非已发布对象（Valid 态＋双身份有效——§9.3 前置行）");
+    }
+    // 后端实例非空（§6.4"内置后端实例"——空指针＝装配违约，fail-fast）。
+    if (!strategy) {
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "会话构建：检测器后端实例为空（装配违约——§6.4 检测器两半）");
+    }
+    // ② sceneContentIdentity 非空（§6.1 场景校验第 4 项——编译产物必有
+    // 内容身份；CR-04：值来自 runtime workCellCompileIdentity，policy 只
+    // 核对有效性不重算）。
+    if (!scene.sceneContentIdentity.isValid()) {
+        throw PolicyError(PolicyErrorCode::SceneInvalid,
+                          "会话构建：sceneContentIdentity 非空核对失败（§6.1——"
+                          "编译产物内容身份缺失）");
+    }
+    // workcell 编译产物在场（shared_ptr<const WorkCell>——空＝调用方未装配
+    // 编译产物，违反 §6.1"输入是运行时快照（编译产物）"的前提）。
+    if (!scene.workcell) {
+        throw PolicyError(PolicyErrorCode::SceneInvalid,
+                          "会话构建：workcell 编译产物缺失（空指针——§6.1 输入模型前提）");
+    }
+    // objects 的 objectId 唯一（§6.1 场景校验第 1 项；全零保留值＝未分配
+    // 身份，同为装配违约——一并拒绝）。subject 绑定违规对象（ERR-01）。
+    objectIndex.clear();
+    for (const SceneObjectEntry& entry : scene.objects) {
+        if (!entry.objectId.isValid()) {
+            throw PolicyError(PolicyErrorCode::SceneInvalid,
+                              "会话构建：场景对象身份无效（全零保留值）: localName='"
+                                  + entry.localName + "'");
+        }
+        const auto inserted = objectIndex.emplace(entry.objectId, &entry);
+        if (!inserted.second) {
+            throw PolicyError(
+                PolicyErrorCode::SceneInvalid,
+                "会话构建：场景对象身份重复（§6.1 objectId 唯一）: localName='"
+                    + entry.localName + "' 与 '" + inserted.first->second->localName
+                    + "'（obj=" + entry.objectId.toCanonical() + "）");
+        }
+    }
+    // ③ primaryDevice 可经名称上下文解析到 workcell 内设备（§6.1 场景校验
+    // 第 3 项）——两级：名称上下文应答（CR-04：runtime Expected 错误→
+    // nullopt 原样呈现，不猜测）＋解析名在 workcell 内确有对应设备（场景
+    // Frame↔对象 ID 断链＝§7.5"名称不可解析"行，会话构建失败同码）。
+    if (!scene.primaryDevice.isValid()) {
+        throw PolicyError(PolicyErrorCode::SceneInvalid,
+                          "会话构建：primaryDevice 身份无效（全零保留值）");
+    }
+    const std::optional<std::string> deviceName = names.tryRuntimeName(scene.primaryDevice);
+    if (!deviceName.has_value()) {
+        throw PolicyError(PolicyErrorCode::NameUnresolved,
+                          "会话构建：primaryDevice 经名称上下文不可解析（§6.1——"
+                          "不猜测，ARC-04; obj=" + scene.primaryDevice.toCanonical() + "）");
+    }
+    // 完整名精确匹配设备（findDevice——只读查询；空＝名称在映射内但
+    // workcell 无此设备＝编译产物与名称映射断链，同码拒绝）。
+    if (scene.workcell->findDevice(*deviceName).isNull()) {
+        throw PolicyError(PolicyErrorCode::NameUnresolved,
+                          "会话构建：primaryDevice 解析名在 workcell 内无对应设备（§7.5 "
+                          "名称不可解析——场景 Frame↔对象 ID 断链）: name='" + *deviceName
+                              + "'");
+    }
+    // ④ 策略规则引用的对象 ⊆ objects（§6.1 场景校验第 2 项）——逐规则
+    // 逐目标核对（mandatory 在前、excluded 在后，各按承载序——诊断定位
+    // 可复现）。Object 目标核对清单成员；Role 目标做词表防御复检（解析期⑤
+    // 已拒词表外——构建期复检为纵深防御）；Group 目标保守拒绝（组定义
+    // 数据不在会话输入内——见枚举码注释）。
+    const auto checkTarget = [&](const ScopeTarget& target, bool isMandatory,
+                                 std::size_t ruleIndex) {
+        switch (target.kind) {
+        case ScopeTargetKind::Object: {
+            // 对象目标必须在场景清单内（§6.1 第 2 项——缺失即会话构建失败；
+            // 定位信息＝规则清单/下标/端侧＋对象规范文本——ERR-01 可追溯，
+            // 调用方凭此对齐场景装配与规则对象编址）。
+            if (objectIndex.find(target.object) == objectIndex.end()) {
+                throw PolicyError(
+                    PolicyErrorCode::SceneInvalid,
+                    "会话构建：策略规则引用对象不在场景清单（§6.1 规则引用 ⊆ objects）: "
+                        + std::string{isMandatory ? "mandatoryPairs" : "excludedPairs"} + "["
+                        + std::to_string(ruleIndex) + "]（obj=" + target.object.toCanonical()
+                        + "）");
+            }
+            break;
+        }
+        case ScopeTargetKind::Role: {
+            // 角色目标词表防御复检（五值词表——解析期⑤同表；词表外不可达
+            // 除非场景装配与解析上下文不一致）。
+            if (!trySceneObjectRole(target.roleToken).has_value()) {
+                throw PolicyError(PolicyErrorCode::SceneInvalid,
+                                  "会话构建：规则角色目标不在场景对象角色词表（防御复检）: '"
+                                      + target.roleToken + "'");
+            }
+            break;
+        }
+        case ScopeTargetKind::Group: {
+            // Group 目标保守拒绝：组成员数据不在 (policy, scene, names) 任一
+            // 会话输入内（RawPolicyInput v1 无组定义字段——policy.md v0.5 ⑥
+            // 登记"组定义数据由装配侧持有"）。不可核对即拒绝——静默跳过会
+            // 违反"过滤不得隐藏必检"（§7.2），猜测违反 ARC-04。数据通道
+            // （schema v1.1 组定义字段或装配侧预展开）留待所有者裁决。
+            std::string cause = "会话构建：Group 规则目标在会话内不可展开（组成员数据不在";
+            cause += "policy/scene/names 任一输入内——v1 schema 无组定义字段，";
+            cause += "policy.md v0.5 ⑥ 登记）：groupName='" + target.groupName + "'（";
+            cause += isMandatory ? "mandatoryPairs" : "excludedPairs";
+            cause += "[" + std::to_string(ruleIndex) + "]）——保守拒绝，不猜测（ARC-04）";
+            throw PolicyError(PolicyErrorCode::SceneInvalid, cause);
+        }
+        }
+    };
+    for (std::size_t i = 0; i < policy.collision.mandatoryPairs.size(); ++i) {
+        checkTarget(policy.collision.mandatoryPairs[i].first, true, i);
+        checkTarget(policy.collision.mandatoryPairs[i].second, true, i);
+    }
+    for (std::size_t i = 0; i < policy.collision.excludedPairs.size(); ++i) {
+        checkTarget(policy.collision.excludedPairs[i].first, false, i);
+        checkTarget(policy.collision.excludedPairs[i].second, false, i);
+    }
+}
+
+DIFFERENCES: 复检Valid/双身份/后端/WC/对象唯一和主设备；真实WC::findDevice只读；Object规则须在场、Role核词表，Group会话无成员数据直接拒绝
+
+policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget
+std::vector<core::ObjectId>
+expandRuleTarget(const ScopeTarget& target, const SceneObjectIndex& objectIndex)
+{
+    std::vector<core::ObjectId> expanded;
+    switch (target.kind) {
+    case ScopeTargetKind::Object:
+        // 对象目标→对象本身（已在清单——查表取回）。
+        expanded.push_back(target.object);
+        break;
+    case ScopeTargetKind::Role: {
+        // 角色目标→场景内该角色全部对象（§7.2"展开为对象集后比对"——
+        // 场景装配事实为准，非解析上下文应答：两层防御的第二层差异面）。
+        const SceneObjectRole role = *trySceneObjectRole(target.roleToken);
+        for (const auto& [id, entry] : objectIndex) {
+            if (entry->role == role) {
+                expanded.push_back(id);
+            }
+        }
+        break;
+    }
+    case ScopeTargetKind::Group:
+        // 不可达：Group 目标在场景校验期已保守拒绝（validateSceneAndPolicy
+        // 第④步）。到达此处＝内部不变式破坏——fail-fast 暴露而非静默空集
+        // （空集会让规则"消失"，违反过滤可追溯性）。
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "会话构建内部不变式破坏：Group 目标应已在场景校验期拒绝");
+    }
+    return expanded;
+}
+
+DIFFERENCES: Object单点/Role场景清单展开；Group不可达显式异常，不猜空集
+
+policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts
+void expandRulesAndCheckConflicts(const EngineeringPolicySet& policy,
+                                  const SceneObjectIndex& objectIndex,
+                                  std::map<PairKey, std::size_t>& mandatoryExpanded,
+                                  std::map<PairKey, std::pair<std::size_t, std::string>>&
+                                      excludedExpanded)
+{
+    // 必检规则展开（承载序遍历；map 首条准入——重复对确定性吸收）。
+    for (std::size_t i = 0; i < policy.collision.mandatoryPairs.size(); ++i) {
+        const PairRule& rule = policy.collision.mandatoryPairs[i];
+        const std::vector<core::ObjectId> first = expandRuleTarget(rule.first, objectIndex);
+        const std::vector<core::ObjectId> second = expandRuleTarget(rule.second, objectIndex);
+        for (const core::ObjectId& a : first) {
+            for (const core::ObjectId& b : second) {
+                if (a == b) {
+                    continue;   // 自对无碰撞语义（同一对象不与自己检测）
+                }
+                mandatoryExpanded.emplace(detail::canonicalPair(a, b), i);
+            }
+        }
+    }
+    // 排除规则展开（同上；携带下标＋理由——AppliedFilterRecord 素材）。
+    for (std::size_t i = 0; i < policy.collision.excludedPairs.size(); ++i) {
+        const PairRule& rule = policy.collision.excludedPairs[i];
+        const std::vector<core::ObjectId> first = expandRuleTarget(rule.first, objectIndex);
+        const std::vector<core::ObjectId> second = expandRuleTarget(rule.second, objectIndex);
+        for (const core::ObjectId& a : first) {
+            for (const core::ObjectId& b : second) {
+                if (a == b) {
+                    continue;
+                }
+                excludedExpanded.emplace(detail::canonicalPair(a, b),
+                                         std::make_pair(i, rule.reason));
+            }
+        }
+    }
+    // 冲突同码复核（§7.2："排除∩必检=∅ 必须成立……违反→POLICY-RULE-
+    // CONFLICT"——按必检集承载序定位首个冲突对，确定性诊断；定位信息＝
+    // 双方规则清单/下标/理由＋冲突对象对规范文本——ERR-01 可追溯）。
+    for (const auto& [pairKey, mandatoryIndex] : mandatoryExpanded) {
+        const auto excludedIt = excludedExpanded.find(pairKey);
+        if (excludedIt != excludedExpanded.end()) {
+            throw PolicyError(
+                PolicyErrorCode::RuleConflict,
+                "会话构建冲突复核（§7.2 两层防御第二层）: excludedPairs["
+                    + std::to_string(excludedIt->second.first) + "]（理由'"
+                    + excludedIt->second.second + "'）展开后覆盖 mandatoryPairs["
+                    + std::to_string(mandatoryIndex) + "]（理由'"
+                    + policy.collision.mandatoryPairs[mandatoryIndex].reason
+                    + "'）的对象对（objA=" + pairKey.first.toCanonical()
+                    + ", objB=" + pairKey.second.toCanonical() + "）——过滤不得隐藏必检");
+        }
+    }
+}
+
+DIFFERENCES: 展开笛卡尔积去自对、ObjectId map首条确定性吸收，排除∩必检冲突；这是policy规则权威，不能复用上游默认过滤偷换
+
+policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession
+CollisionEvaluationSession::CollisionEvaluationSession(
+    const EngineeringPolicySet& policy, const CollisionScene& scene,
+    const IPolicyNameContext& names, CollisionBackendDescriptor backend,
+    std::shared_ptr<rw::proximity::CollisionStrategy> strategy,
+    std::shared_ptr<std::mutex> backendQueryMutex)
+    : m_policy(policy)
+    , m_scene(scene)
+    , m_nameMapIdentity(names.nameMapContentIdentity())
+    , m_backend(std::move(backend))
+    , m_strategy(std::move(strategy))
+    , m_collisionEnabled(policy.collision.enabled)
+    , m_device()                  // 评估半区（POL-T07——buildEvaluationHalf 填充）
+    , m_distanceCapable(false)    // 默认无距离能力（探测后更新）
+    , m_backendQueryMutex(std::move(backendQueryMutex))
+{
+    // ---- 第一步：场景校验（§6.1——失败即无会话；对象索引同时装配） ----
+    SceneObjectIndex objectIndex;
+    validateSceneAndPolicy(m_policy, m_scene, names, m_strategy, objectIndex);
+
+    // ---- 第二步前半：规则展开＋冲突同码复核（§7.2 两层防御第二层） ----
+    // 无条件执行（结构性 policy×场景一致性核对——与碰撞总开关无关：
+    // "enabled=false 时其余碰撞字段仍须完整合法"§4.3）。
+    std::map<PairKey, std::size_t> mandatoryExpanded;
+    std::map<PairKey, std::pair<std::size_t, std::string>> excludedExpanded;
+    expandRulesAndCheckConflicts(m_policy, objectIndex, mandatoryExpanded, excludedExpanded);
+
+    // ---- 第二步后半：作用域矩阵展开（§7.1 可执行规则） ----
+    // 相邻对集合（模型事实——默认相邻过滤的消费源；规范化键）。
+    std::set<PairKey> adjacentSet;
+    for (const auto& adj : m_scene.adjacentLinkPairs) {
+        adjacentSet.insert(detail::canonicalPair(adj.first, adj.second));
+    }
+    // 启用域查集（§4.3 enabledDomains——解析③不预填默认，值即装配侧预填
+    // 结果；域禁用 voids 该域全部对——§7.1 不适用条件列，含必检对）。
+    const std::set<CollisionDomain> enabledDomains(m_policy.collision.enabledDomains.begin(),
+                                                   m_policy.collision.enabledDomains.end());
+
+    // 逐对象对枚举（i<j 下标组合——对集与对象两两组合一一对应），归类后
+    // 统一规范排序（结果序与场景清单承载序无关——NFR-COR-02）。
+    std::vector<ScopedCollisionPair> expanded;
+    for (std::size_t i = 0; i < m_scene.objects.size(); ++i) {
+        for (std::size_t j = i + 1; j < m_scene.objects.size(); ++j) {
+            const SceneObjectEntry& entryA = m_scene.objects[i];
+            const SceneObjectEntry& entryB = m_scene.objects[j];
+            // 矩阵行归属（§7.1——矩阵未列的组合不入作用域，classifyDomainPair
+            // 返回 nullopt）。
+            const std::optional<CollisionDomain> domain =
+                detail::classifyDomainPair(entryA.role, entryB.role);
+            if (!domain.has_value()) {
+                // F-808：矩阵未列组合不再无条件静默 continue——若该对象对
+                // ∈mandatoryExpanded（必检对），静默丢弃即「过滤隐藏必检」
+                // （§7.2"结构上不存在可隐藏必检的合法策略"承诺击穿：必检对
+                // 无痕丢弃且零输出资格不可观测）。按 Group 支同款保守拒绝
+                // （PolicyError PolicyObjectInvalid——策略自相矛盾＝调用方
+                // 契约违约面）；非必检对维持原口径（矩阵未列＝不入作用域，
+                // §7.1）。
+                const PairKey droppedKey
+                    = detail::canonicalPair(entryA.objectId, entryB.objectId);
+                if (mandatoryExpanded.find(droppedKey)
+                    != mandatoryExpanded.end()) {
+                    throw PolicyError(
+                        PolicyErrorCode::PolicyObjectInvalid,
+                        "policy/collision: mandatoryPairs 含矩阵未列组合（角色"
+                        "对不入任何评估域——必检对被作用域定义隐藏，保守拒绝"
+                        " F-808）");
+                }
+                continue;
+            }
+            // 域门控（§7.1 不适用条件"域禁用"——该域全部对不适用，必检对
+            // 亦然；碰撞总开关关闭＝整体停用，作用域为空——评估期应答
+            // DisabledByPolicy（§6.2），本层只如实产出空作用域）。
+            if (!m_collisionEnabled || enabledDomains.find(*domain) == enabledDomains.end()) {
+                continue;
+            }
+            // 状态判定序（§7.2 评估顺序框的展开语义——必检优先于一切过滤；
+            // 相邻默认过滤仅 Self/Tool 域适用——Environment 行只允许逐对
+            // 显式排除，Scene 行默认不检）：
+            const PairKey key = detail::canonicalPair(entryA.objectId, entryB.objectId);
+            ScopedCollisionPair pair;
+            pair.objectA = key.first;
+            pair.objectB = key.second;
+            // 角色随规范序归位（A<B 的展开形态——coverage 分域计数素材）。
+            if (key.first == entryA.objectId) {
+                pair.roleA = entryA.role;
+                pair.roleB = entryB.role;
+            }
+            else {
+                pair.roleA = entryB.role;
+                pair.roleB = entryA.role;
+            }
+            pair.domain = *domain;
+            const auto mandatoryIt = mandatoryExpanded.find(key);
+            const auto excludedIt = excludedExpanded.find(key);
+            if (mandatoryIt != mandatoryExpanded.end()) {
+                // ① 必检对集（mandatoryPairs 展开——不可被任何过滤覆盖，
+                // §7.2"结构上不存在可隐藏必检的合法策略"）。
+                pair.status = ScopePairStatus::Mandatory;
+                pair.ruleIndex = mandatoryIt->second;
+            }
+            else if (excludedIt != excludedExpanded.end()) {
+                // ② 显式排除对跳过（记录 ruleOrigin＝"policy.excludedPairs[i]
+                // .reason"——评估期随 appliedFilters 全量输出）。
+                pair.status = ScopePairStatus::ExcludedByRule;
+                pair.ruleIndex = excludedIt->second.first;
+                pair.filterReason = excludedIt->second.second;
+            }
+            else if (adjacentSet.find(key) != adjacentSet.end()
+                     && (*domain == CollisionDomain::Self
+                         || *domain == CollisionDomain::Tool)
+                     && m_policy.collision.excludeAdjacentLinksByDefault) {
+                // ③ 默认相邻过滤（消费模型相邻事实——excludeAdjacentLinks-
+                // ByDefault 开启且域为 Self/Tool；ruleOrigin=
+                // "default.adjacent-links"；必检对不受此滤（已在①分支））。
+                pair.status = ScopePairStatus::ExcludedByAdjacencyDefault;
+                pair.ruleIndex = 0;
+                pair.filterReason = "default.adjacent-links";
+            }
+            else if (*domain == CollisionDomain::Scene) {
+                // ④ Scene 域默认不检（静态场景无相对运动——§7.1 必须检测列
+                // "显式 mandatoryPairs 可启用"；未命中必检/排除的 Scene 对
+                // 不入作用域）。
+                continue;
+            }
+            else {
+                // ⑤ 域默认必检对（域启用即默认必检且未被合法排除——
+                // §7.1 必须检测列；无规则来源，ruleIndex 恒 0）。
+                pair.status = ScopePairStatus::InScopeDefault;
+                pair.ruleIndex = 0;
+            }
+            expanded.push_back(std::move(pair));
+        }
+    }
+    // 规范排序（(objectA, objectB) 字节字典序——同语义场景展开结果逐字节
+    // 一致；establishes findings/appliedFilters 的稳定排序基础，§6.4）。
+    std::sort(expanded.begin(), expanded.end(),
+              [](const ScopedCollisionPair& l, const ScopedCollisionPair& r) {
+                  if (l.objectA != r.objectA) {
+                      return l.objectA < r.objectA;
+                  }
+                  return l.objectB < r.objectB;
+              });
+    m_scope.pairs = std::move(expanded);
+
+    // ---- 第三步：检测器初始化（§6.4——ProximitySetup 由策略规则生成） ----
+    // R-POL-3：不取 RobWork 默认设置（不调用 ProximitySetup::get(workcell)
+    // ——文件内嵌 CollisionSetup/默认过滤不进产品策略）；默认构造后显式
+    // 关闭"静态对排除"（RobWork 默认过滤开关——产品过滤面唯一来源是策略
+    // 规则）；useIncludeAll 保持开启（候选集＝全部几何帧对，再由规则裁剪
+    // ——与"默认必检、排除例外"的策略语义同向；显式赋值以固定其值）。
+    m_proximitySetup = std::make_shared<const rw::proximity::ProximitySetup>(
+        buildPolicyProximitySetup(names));
+
+    // ---- 第三步：会话身份（§6.4——f(policy, scene, names, backend)） ----
+    m_sessionIdentity = detail::computeSessionIdentity(m_policy.contentIdentity,
+                                                       m_scene.sceneContentIdentity,
+                                                       m_nameMapIdentity, m_backend);
+
+    // ---- 评估半区装配（POL-T07——§6.4 createSession 的评估半区延伸：
+    //      设备/Frame/名称/几何固化与距离能力探测；实现见 CollisionQuery.cpp。
+    //      置于三步之后：评估半区消费三步产物（作用域/策略/互斥缺省自建）。 ----
+    buildEvaluationHalf(names);
+}
+
+DIFFERENCES: 只借持传入WC，策略/名称/场景身份和backend/锁保活；角色域门控→必检优先→显式排除→相邻→Scene缺省，标准容器排序；仅构造任务私有setup/后端会话缓存不构造权威WC/DWC；作用域后委托buildEvaluationHalf
+
+policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup
+rw::proximity::ProximitySetup
+CollisionEvaluationSession::buildPolicyProximitySetup(const IPolicyNameContext& names) const
+{
+    // 规则集＝作用域展开产物中带规则来源的对（必检/排除/相邻默认过滤）——
+    // 域默认必检对不产生规则（RobWork 层语义：include-all 候选集默认含之）。
+    // 规则插入序＝展开产物规范序（确定性——同会话输入同 setup 规则序）。
+    rw::proximity::ProximitySetup setup;
+    setup.setUseExcludeStaticPairs(false);
+    setup.setUseIncludeAll(true);
+    for (const ScopedCollisionPair& pair : m_scope.pairs) {
+        const bool isExclude = pair.status == ScopePairStatus::ExcludedByRule
+                            || pair.status == ScopePairStatus::ExcludedByAdjacencyDefault;
+        const bool isInclude = pair.status == ScopePairStatus::Mandatory;
+        if (!isExclude && !isInclude) {
+            continue;   // 域默认必检对——无 RobWork 层规则（语义默认已含）
+        }
+        // 完整名精确匹配（§6.4"规则经名称上下文以完整名精确匹配转为
+        // RobWork 规则，不做模式拼接"——R-4：只转发解析结果，无任何前缀
+        // 拼接/剥离）。解析失败＝场景 Frame↔对象 ID 断链（§7.5）→ 会话
+        // 构建失败（POLICY-CLL-NAME-UNRESOLVED）——不猜测。
+        const std::optional<std::string> nameA = names.tryRuntimeName(pair.objectA);
+        if (!nameA.has_value()) {
+            throw PolicyError(PolicyErrorCode::NameUnresolved,
+                              "会话构建：作用域对端 A 经名称上下文不可解析（§7.5——"
+                              "不猜测，ARC-04; obj=" + pair.objectA.toCanonical() + "）");
+        }
+        const std::optional<std::string> nameB = names.tryRuntimeName(pair.objectB);
+        if (!nameB.has_value()) {
+            throw PolicyError(PolicyErrorCode::NameUnresolved,
+                              "会话构建：作用域对端 B 经名称上下文不可解析（§7.5——"
+                              "不猜测，ARC-04; obj=" + pair.objectB.toCanonical() + "）");
+        }
+        // 精确名规则（非通配/正则模式——词面即完整名，regex 精确匹配语义
+        // 下等价于全等；ProximitySetupRule 的 pattern 即完整名字面量）。
+        if (isExclude) {
+            setup.addProximitySetupRule(
+                rw::proximity::ProximitySetupRule::makeExclude(*nameA, *nameB));
+        }
+        else {
+            // 必检对显式 INCLUDE（RobWork 层 include 规则优先于排除——必检
+            // "不可被过滤覆盖"在基线过滤层同样成立，纵深防御）。
+            setup.addProximitySetupRule(
+                rw::proximity::ProximitySetupRule::makeInclude(*nameA, *nameB));
+        }
+    }
+    return setup;
+}
+
+DIFFERENCES: 真实上游setup关闭静态默认过滤并include-all，再按名称转规则；makeExclude不是字面API，合法REGEX前缀已原policy实测匹配失败F-961；setup目前公开输出，evaluate逐scope对直接query，不能据此声称碰撞实际误判
+
+policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator
+RobWorkCollisionEvaluator::RobWorkCollisionEvaluator(const BackendConfig& config)
+{
+    // config 当前无字段（内置唯一后端——BackendConfig 注释）；参数保留为
+    // 唯一构造入口的签名锚（消费以 static_cast<void> 抑制未用告警）。
+    static_cast<void>(config);
+    // 内置后端实例化（sdurw_proximity——R-5 例外许可的唯一消费点；构造
+    // 不做几何注册——模型注册归会话构建期，POL-T07 评估半区装配）。
+    m_strategy = std::make_shared<rw::proximity::ProximityStrategyRW>();
+    // 后端查询互斥（评估器级单实例——其全部会话共享同一把锁：同一后端
+    // 实例的构建期注册与评估期查询全部串行化，跨会话并发亦无数据竞争；
+    // RobWork 检测器查询面非线程安全——见会话构造参数注释）。
+    m_queryMutex = std::make_shared<std::mutex>();
+    // 复现要素（§8.1/P-POL-5）：冻结值与容差模型登记串由字面量单点
+    // （detail::makeBuiltinBackendDescriptor——CollisionEvaluator.cpp）供给；
+    // backendVersion 注入 kFrozenBuiltinBackendVersion（基线冻结版本常量
+    // ——WP-24-T01 基线 ird/share/baseline.md §3 登记值；头经
+    // CollisionEvaluator.hpp 取得，本 TU 保持零字符串字面量纪律）。
+    m_descriptor = detail::makeBuiltinBackendDescriptor(
+        std::string(kFrozenBuiltinBackendVersion));
+}
+
+DIFFERENCES: 原ProximityStrategyRW直接构造，所有会话共享一个后端和一把锁，descriptor单点；无第二碰撞核心
+
+policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend
+CollisionBackendDescriptor RobWorkCollisionEvaluator::backend() const
+{
+    // 装配期固化值（const 成员——每次返回同值；与 PolicyProvider 装配的
+    // backend 同源推荐口径，§9.1）。
+    return m_descriptor;
+}
+
+DIFFERENCES: 只返回构造期固化descriptor，不探测/承诺distance
+
+policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator
+std::unique_ptr<ICollisionEvaluator>
+makeRobWorkCollisionEvaluator(const BackendConfig& config)
+{
+    // 唯一构造入口（§6.5——业务单元不得自行实现碰撞算法/构造本类之外的
+    // 第二实现，R-POL-1；unique_ptr 删除器在此完整类型可见点实例化）。
+    return std::make_unique<RobWorkCollisionEvaluator>(config);
+}
+
+DIFFERENCES: std::make_unique唯一生产入口；createSession既有行不重复登记
+
+policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf
+void CollisionEvaluationSession::buildEvaluationHalf(const IPolicyNameContext& names)
+{
+    // ---- ②（先行）：后端查询互斥缺省自建 ----
+    // 共享形态由装配方（评估器）经构造参数传入（跨会话安全）；缺省自建
+    // 覆盖单会话形态（直构会话/测试）——两种形态下"同一后端实例的全部
+    // 访问经同一把锁"的不变式都成立。
+    if (!m_backendQueryMutex) {
+        m_backendQueryMutex = std::make_shared<std::mutex>();
+    }
+
+    // ---- ①：主链设备固化（evaluate 的 setState 消费）----
+    // POL-T06 第三步已验证 primaryDevice 可解析到 workcell 内设备——此处
+    // 重新解析并持有 Device 指针（防御复检同码：解析链与构建期事实不一
+    // 致＝装配违约面，宁可失败也不在评估期裸奔）。
+    const std::optional<std::string> deviceName = names.tryRuntimeName(m_scene.primaryDevice);
+    if (!deviceName.has_value()) {
+        throw PolicyError(PolicyErrorCode::NameUnresolved,
+                          "评估半区装配：primaryDevice 经名称上下文不可解析（§7.5——"
+                          "不猜测，ARC-04; obj=" + m_scene.primaryDevice.toCanonical() + "）");
+    }
+    m_device = m_scene.workcell->findDevice(*deviceName);
+    if (m_device.isNull()) {
+        throw PolicyError(PolicyErrorCode::NameUnresolved,
+                          "评估半区装配：primaryDevice 解析名在 workcell 内无对应设备"
+                          "（§7.5 名称不可解析——场景 Frame↔对象 ID 断链）: name='"
+                              + *deviceName + "'");
+    }
+
+    // ---- ③：作用域内对象固化（规范序＝objectKey 字节升序）----
+    // 对象集＝作用域展开产物中必检/域默认对的端点（被过滤对不经评估——
+    // 其留痕由 scope 直接导出，无需 Frame/几何）。
+    std::set<core::ObjectId> inScopeObjects;
+    for (const ScopedCollisionPair& p : m_scope.pairs) {
+        if (p.status == ScopePairStatus::Mandatory
+            || p.status == ScopePairStatus::InScopeDefault) {
+            inScopeObjects.insert(p.objectA);
+            inScopeObjects.insert(p.objectB);
+        }
+    }
+    // 场景条目索引（声明几何事实源——§6.1 场景事实，调用方装配）。
+    std::map<core::ObjectId, const SceneObjectEntry*> sceneEntries;
+    for (const SceneObjectEntry& entry : m_scene.objects) {
+        sceneEntries.emplace(entry.objectId, &entry);
+    }
+    // 编译产物 Object 索引（几何承载——rw 以 Object 持有几何并挂接
+    // Frame；按基帧指针匹配，不按名称猜配——ARC-04）。
+    std::map<const rw::kinematics::Frame*, rw::core::Ptr<rw::models::Object>> objectByFrame;
+    for (const rw::core::Ptr<rw::models::Object>& obj : m_scene.workcell->getObjects()) {
+        if (obj->getBase() != nullptr) {
+            // getBase() 返回裸 Frame*（RW_USE_PTR 未定义形态——Object.hpp
+            // 条件编译；构建树实测无此宏）——直接作键。
+            objectByFrame.emplace(obj->getBase(), obj);
+        }
+    }
+
+    for (const core::ObjectId& id : inScopeObjects) {
+        SceneObjectEvaluation record;
+        record.object = id;
+        // 声明几何事实（场景事实——KIN-05 coverage 缺口的声明侧来源）。
+        const auto entryIt = sceneEntries.find(id);
+        record.declaredGeometry =
+            entryIt != sceneEntries.end() && entryIt->second->hasCollisionGeometry;
+        // 名称解析＋Frame 定位（两级——§7.5"名称不可解析"行：映射缺失与
+        // 编译产物断链同码拒绝；不猜测——ARC-04）。
+        const std::optional<std::string> runtimeName = names.tryRuntimeName(id);
+        if (!runtimeName.has_value()) {
+            throw PolicyError(PolicyErrorCode::NameUnresolved,
+                              "评估半区装配：作用域对象经名称上下文不可解析（§7.5——"
+                              "不猜测，ARC-04; obj=" + id.toCanonical() + "）");
+        }
+        record.runtimeName = *runtimeName;
+        rw::kinematics::Frame* frame = m_scene.workcell->findFrame(*runtimeName);
+        if (frame == nullptr) {
+            throw PolicyError(PolicyErrorCode::NameUnresolved,
+                              "评估半区装配：作用域对象解析名在 workcell 内无对应 Frame"
+                              "（§7.5 场景 Frame↔对象 ID 断链）: name='" + *runtimeName
+                                  + "'（obj=" + id.toCanonical() + "）");
+        }
+        record.frame = frame;
+        // 几何注册（声明有几何才尝试；全程持互斥——共享后端实例的构建期
+        // 注册与其他会话的评估查询串行化）。注册核对以 hasModel 为准——
+        // "声明有几何"而产物无 Object/无几何 → registeredGeometry=false：
+        // 评估期以 coverage 缺口＋POLICY-CLL-GEOMETRY-MISSING 显式化
+        // （§7.5 几何缺失行——不伪装已检、不输出无碰撞结论，KIN-05），
+        // 不在此 fail-fast（几何缺失是数据覆盖事实，非装配异常）。
+        record.registeredGeometry = false;
+        if (record.declaredGeometry) {
+            std::lock_guard<std::mutex> lock(*m_backendQueryMutex);
+            const auto objIt = objectByFrame.find(frame);
+            if (objIt != objectByFrame.end() && !m_strategy->hasModel(frame)) {
+                // 幂等注册（hasModel 先核对——同一后端实例可能已被同 Frame
+                // 的其他会话注册；重复 addModel 会叠加几何，破坏确定性）。
+                m_strategy->addModel(objIt->second);
+            }
+            record.registeredGeometry = m_strategy->hasModel(frame);
+        }
+        m_evaluationObjects.push_back(std::move(record));
+    }
+
+    // 对象→固化记录下标（对记录以下标引用端点——值语义，拷贝安全）。
+    std::map<core::ObjectId, std::size_t> objectIndex;
+    for (std::size_t i = 0; i < m_evaluationObjects.size(); ++i) {
+        objectIndex.emplace(m_evaluationObjects[i].object, i);
+    }
+
+    // ---- ④：作用域对固化（仅必检/域默认对；保持 scope 规范相对序）----
+    for (const ScopedCollisionPair& p : m_scope.pairs) {
+        if (p.status != ScopePairStatus::Mandatory
+            && p.status != ScopePairStatus::InScopeDefault) {
+            continue;   // 被过滤对不经评估（§7.2②——跳过并留痕，留痕见 evaluate 预填）
+        }
+        ScopedPairEvaluation record;
+        record.objectA = p.objectA;
+        record.objectB = p.objectB;
+        const std::size_t indexA = objectIndex.at(p.objectA);
+        const std::size_t indexB = objectIndex.at(p.objectB);
+        record.endAIndex = indexA;
+        record.endBIndex = indexB;
+        record.runtimeNameA = m_evaluationObjects[indexA].runtimeName;
+        record.runtimeNameB = m_evaluationObjects[indexB].runtimeName;
+        record.frameA = m_evaluationObjects[indexA].frame;
+        record.frameB = m_evaluationObjects[indexB].frame;
+        record.bothEndsGeometry =
+            m_evaluationObjects[indexA].registeredGeometry
+            && m_evaluationObjects[indexB].registeredGeometry;
+        // 发现级别（§6.2 level 语义）：必检对＝其规则的 authored 级别；
+        // 域默认对＝Must（§6.2"无规则命中=域默认 Must"）。
+        record.level = (p.status == ScopePairStatus::Mandatory)
+                           ? m_policy.collision.mandatoryPairs.at(p.ruleIndex).level
+                           : PolicyRuleLevel::Must;
+        m_evaluationPairs.push_back(std::move(record));
+    }
+
+    // ---- ⑤：距离能力探测（P-POL-11 保守口径的判定源）----
+    // 注入后端若同时实现 DistanceStrategy（rw 多接口策略惯用法——
+    // 策略类可同时继承碰撞与距离接口），间距检查/最小距离查询可用；否则
+    // 显式不可用（需要距离的评估 → Failed＋POLICY-CLL-DETECTOR-UNAVAILABLE
+    // ——§6.3"检测器不可用"触发器，KIN-05：不伪造、不静默收窄）。
+    // 现内置后端（ProximityStrategyRW）为二值碰撞策略——探测为无能力；
+    // WP-24 冻结 NFR-DEP-05 后端基线后如换装距离能力后端，本探测自适应，
+    // evaluate 语义零变化（单元卡 §15.3 P-POL-11 登记待裁决）。
+    m_distanceStrategy = dynamic_cast<rw::proximity::DistanceStrategy*>(m_strategy.get());
+    m_distanceCapable = m_distanceStrategy != nullptr;
+}
+
+DIFFERENCES: 真实WC findDevice/findFrame/getObjects只读，按scope固化帧、hasModel/addModel共享锁注册、几何缺失显式coverage、dynamic_cast探distance；每条对象只索引首个base Object需核多Object模型，直构共享backend未共锁有风险，未实测并发错

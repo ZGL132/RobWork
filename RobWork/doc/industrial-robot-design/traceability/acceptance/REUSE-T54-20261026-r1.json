@@ -1,0 +1,83 @@
+{
+  "taskId": "REUSE-T54",
+  "baseCommit": "e21d617141607d2cf13ef3a4ca92325a9dfeaaf0",
+  "reviewedCommit": "88d7d180fea80a16f3b631cc9a976711ed2c1efb",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-27T04:30:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T54 独立验收会话（单次验收子智能体「独立验收·P5·r1」，未参与实施）",
+    "authorization": "所有者 2026-10-26 指令「A1~A4 全按推荐」（独立冒烟授权脉络，REUSE-T43 byte-primitives-decision §6 同批在案）及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型）；实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（REUSE-T54-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未远程操作；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件；独立 oracle 驱动（oracle/acc_oracle.cpp＋build_oracle.bat）与探针复现产物落本目录，属验收证据非产品改动。"
+  },
+  "scope": "独立复验 e21d6171..88d7d180（冻结范围，单提交 88d7d180f「[WP-16-T54] P5 Codec 解析家族迁移 Boost.JSON 收口：词法门自持＋DOM 换核＋全文件解决批」）：①逐契约 verify-task-scope 显式 Base/Head 落盘；②acceptance 六项清单式增量复验——设计判断（policy §1.1 保留/删除/适配/职责）、三件套前置（渠道批准＋行为基线＋逐用例对照＋断开红转绿）、contract 行为保持、Boost.JSON 渠道接线、全文件解决批逐行区段与生产证据、验证分列；③红线抽查（H1—H6、L2 零 Qt、runtime 唯一模型 owner、CLOSURE 冻结、无平行实现回流、test-fixture 未越界用于非 test 路径）；④当前 HEAD 门禁实测 validate-docs -TaskFile 全部契约（单值逐个传参）。数值迁移独立 oracle＝本人独立构造期望（黄金字节按 units/project.md §4.4.1 表列序独立推导、数值边界为数学常量，不引用产品测试代码）驱动迁移后 codec 真实执行＋第三方 .NET JSON 解析器交叉核对＋Boost.JSON 探针从提交源码独立重编译复现。",
+  "counts": {
+    "failed": 0,
+    "passed": 15,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "15 项验收检查；测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场与范围：HEAD=88d7d180fea8（redesign-main），工作区仅本验收产物目录（未跟踪），零受跟踪文件改动。verify-task-scope 显式 -Base e21d61714160 -Head 88d7d180fea8 exit 0：changed=34 全部落在契约 allowedFiles（15 规则）内、forbiddenFiles（4 规则：RobWork/RobWork/src、RobWorkSim/src、project/include、main）零命中（verify-task-scope-t54.log）；commit-lint -Range e21d61714..HEAD PASS（1 提交合规，commit-lint.log）。",
+    "逐文件凭证生产证据核验（validate-reuse.ps1 同款 Digest 口径：UTF-8 解码→剥 BOM→CRLF→LF→尾部单换行，本人按 validate-reuse.ps1:40-45 权威实现复算）：changes/REUSE-T54.json 五文件凭证 5/5 MATCH——Codec.cpp=46d0bbf3…、Codec.hpp=2a77e2d2…、project/CMakeLists.txt=983c594a…、test/CodecMigrationChannelTest.cpp=0c727fbb…、ird_gates_whitelist.cmake=779ac34c…，均为 HEAD 实际文件；断开变异副本 mutated-whitespace-gate-off.cpp Digest=d3ab12ae… 与 disconnect-evidence.json 声明一致；恢复态产品源码摘要与 mutation.originalSha256（Codec.cpp=46d0bbf3…）逐位一致——断开实验对最终送验代码态执行的声明成立。",
+    "dump 侧逐字节不变（acceptance 1 保留项）：旧 Codec.cpp（git show e21d6171）dump 区段（7 个 dump 函数全身体，旧行 914-1167）与新文件（932-1186）diff 仅两行区段分界注释差异——appendJsonString/decodeUtf8At/appendUnicodeEscape/appendHexString 与六个 dump 函数体逐字节一致；contentVersionOf/toToken/draftOriginFromToken 公共实现同段未变；头契约（7 dump＋7 parse＋contentVersionOf 签名）零变化。",
+    "解析家族删除与适配等价（acceptance 1 删除/适配项）：旧实现 JsonValue DOM（:132）/findMember（:144）/JsonParser 递归下降全族（:160 起，parseValue/parseObject/parseArray/parseString/parseEscape/parseHex4/parseUnicodeEscape/appendUtf8/parseNumber＋atEnd/peek/next/expect/printable）在新 Codec.cpp 全部不存在；新 scanCanonical 族（scanString/scanNumber/scanHex4/scanUnicodeEscape/appendUtf8CodePoint，Codec.cpp:161-417）与被删旧函数逐条同语义（转义对称表/孤立代理三分支拒绝/前导零/负号后须数字/裸控制字符与非 ASCII 拒绝）；语义提取辅助函数清单两版一一对应（28 匿名辅助＋6 canonical＋其余，载体 JsonValue→bj::value）；integerInRange 负数侧等价性核对：旧 magLimit=-lo（INT64_MIN 特例 2^63）⇔ 新 n≥lo 判定（n<0 时 n≥lo ⇔ -n≤-lo；INT64_MIN 经 int64 kind 直判通过），正数侧 magnitude>hi ⇔ (uint64)n>hi，越界整数落 double kind→'must be an integer' 同码 StoreCorrupt（README §6 如实登记文案差异）；Boost.JSON 仅承担 DOM 构建与结构/转义/整数词法（boost::json::parse 显式 max_depth=64，system_error/bad_alloc 一律转 corrupt——Codec.cpp:432-445），错误契约稳定为 StoreError。",
+    "三件套前置核验（acceptance 2）：渠道批准＝REUSE-T43 byte-primitives-decision.md §6 原文在案（所有者 2026-10-26 A4「Boost.Endian／Boost.JSON 消费渠道已批准——经 vcpkg 公共依赖渠道引入，不新增本仓 vendored 依赖」＋三件套前置要求）；行为基线＝baseline/project-test-baseline.log 287 passed exit 0＋contract-test-baseline.log 32/32（改动前捕获）；逐用例对照＝迁移后 290/290（287 既有＋3 新增通道钉扎）＋32/32，本人独立重跑同结果（见 integrationTest）；断开红转绿＝disconnect-red.log 真实红例（锚点用例 CodecMigrationChannel.WhitespaceInValidDocument_Rejected 1 failed exit 1）→恢复后 t54-final-project-test.log 290/290 exit 0；methodNote 如实登记单点变异不转红的教训与锚点选择理由（PersistenceFormatReject.WhitespaceInDocument_Rejected 缺 schemaVersion 不可归因，故新增结构完整锚点）——红例真实性与不可归因性成立。",
+    "contract 行为保持与新增用例边界（acceptance 3）：PersistenceFormatTest.cpp 不在本包改动集（34 文件清单核验）——'零删改既有断言语义'以更强形态成立；新增仅 test/CodecMigrationChannelTest.cpp 三用例（孤立代理三分支拒绝/\\u0000 往返＋\\/ 与大写 hex 转义对称/结构完整带空白合法文档拒绝），恰为契约限定的新增边界；本人重跑全量中逐用例确认真实执行且 OK：黄金字节 HeadRecord_GoldenBytes_FieldOrderFixed＋ValueAndDeterministicBytes、round-trip 全类型/中转义/AstralPlane 代理对、拒绝矩阵（IntegerOverflowAndNegative/LeadingZero/DuplicateKey/FloatAndExponent/BooleanAndNull/NonAsciiRawBytes/TrailingContent/Whitespace/TypeMismatch/GarbageAndEmpty/Truncated×2）、未知字段拒绝＋次版本容忍（含嵌套）、SchemaFuture 升级指引三键、FormatLegacy/负版本/FormatIdMismatch、origin 三值、commandType 语法、身份回归 CoreContractConsumption.IdStrictness＋BadCanonicalIdentity、CR-02 ContentDigestBoundary.ContentVersionOf 两向量；0 skip。",
+    "Boost.JSON 渠道接线核验（acceptance 4）：project/CMakeLists.txt find_package(Boost CONFIG COMPONENTS json REQUIRED)＋target_link_libraries(sdurws_ird_project PRIVATE Boost::json)（仅产品库目标，STATIC PRIVATE 经 LINK_ONLY 传递测试可执行文件，boost_json DLL 随 $<TARGET_RUNTIME_DLLS> 既有机制——bin/Release 实见 boost_json-vc143-mt-x64-1_92.dll）；diff 零新局部 CMake 变量（IRD-GATE-LIB 口径）；ird_gates_whitelist IRD_THIRDPARTY_ALLOWED_TARGETS 增登 \"Boost::json\"（Boost::headers REUSE-T19 先例同型，授权脉络注释在案）；vcpkg installed 树不入库（.gitignore 口径——34 改动文件清单零 vcpkg/installed 条目）；公共头零 Boost 暴露（rg project/include/ 零 boost 命中）；零 testkit/io/其他单元边由 ird_gates GRAPH/LIB 零命中独立复跑承载。",
+    "全文件解决批逐行区段核验（acceptance 5）：旧 functions/project.json project.Codec.* 68 行全 pending（git show e21d6171 实测），新 61 行全部 status=migrated/0 pending；行集演算＝68−17 删除（findMember＋JsonParser.* 16 行）＋10 新增（scan.* 词法门族 7＋CodecMigrationChannelTest 3 行）＝61，51 重锚＋17 删除＋7 新行与凭证/README 声明逐项一致；抽查矩阵 sources 行号与 HEAD 源码吻合（scanCanonical=327-337、scanString=246-256、parseCanonicalJson=419-432、requireTokenField=765-772、parseRunManifest=1470-1470）；inputs 摘要级联＝project.json 绑定 CMakeLists.txt 的矩阵行 sha256=983c594a… 与凭证及 HEAD 文件一致；foundation-governance.json L6 区段 whitelist 增登在 diff 中确认。",
+    "文档与父任务登记核验（acceptance 5）：units/project.md 文档头 v0.27→v0.28（含 scanCanonical 族规则/boost max_depth=64/dump 侧不换依据）、§1.4 第三方运行库唯一例外＝Boost.JSON（A4 批准+渠道登记）、§3.2 依赖图 Boost::json PRIVATE 行、§4.8 实现渠道登记、§15.4 v0.28 历史行——依赖契约修订与实际实现逐项对应；tasks/REUSE-T05.json note 增 2026-10-27 REUSE-T54 scope 消费登记（父任务 status=planned 未动，符合'父任务状态收口批归位，本包不改'）；changes/REUSE-T54.json mode/边界/sha256 完整。",
+    "独立 oracle 真实执行＋关键数值抽查（验收指令数值迁移项）：本人编写独立驱动 oracle/acc_oracle.cpp（期望值独立构造：黄金字节按 §4.4.1 表列序手拼、数值边界为数学常量 2^64-1/2^63/2^64/2^31/INT32_MAX/-10000/-1，不引用产品测试代码）链接 HEAD 构建产品静态库真实执行——16/16 PASS exit 0（oracle/acc_oracle-run.log）：黄金字节（含 revisionSeq=18446744073709551615 字节面）逐字节一致、uint64 上界 round-trip 值保真＋dump(parse) 幂等、2^63（boost uint64 kind 界点）接受且 round-trip、2^64 越界拒绝（detail='must be an integer'——与探针 double kind 声明闭环）、负 revisionSeq/前导零/浮点/指数/true 字面量/重复键/结构空白全部 code-match StoreCorrupt、schemaVersion 2^31 拒绝／INT32_MAX→SchemaFuture（detail 三键 document=2147483647 supported=10000 upgrade=ISchemaUpgrader-stage-b）／-10000→FormatLegacy、detail 前缀 project/codec: 全程保持。",
+    "第三方独立解析器交叉核对＋探针复现：①黄金字节文本经 .NET（pwsh ConvertFrom-Json/System.Text.Json）独立解析——revisionSeq=18446744073709551615 BigInteger 精确（u64max-exact=True）、字段序 formatId,schemaVersion,projectId,revisionId,revisionSeq,branchId,manifestDigest 与 §4.4.1 表列序一致、纯 ASCII 正则确认；②Boost.JSON 行为探针从提交源件 probe/p6.cpp 独立重编译（vcpkg boost_json 1.92）真实运行 exit 0（p6-acc-run.log）：重复键解析坍缩 size=1（词法门必须自持的依据）、浮点/指数 kind=4/bool kind=1/null kind=0 被 boost 接受（词法门自持）、uint64max kind=3/uint64over+int64under kind=4（越界落 double——与 oracle reject-2^64 行为闭环）、孤立代理/前导零/深度 65（max_depth=64）boost 自拒（双重防线）——probe-run-output.log 的决策敏感声明全部独立复现。",
+    "红线抽查（H1—H6/L2/runtime owner/CLOSURE/回流/fixture）：H1＝Boost.JSON 渠道经所有者 2026-10-26 A4 裁决批准（REUSE-T43 §6 原文核读），经 vcpkg 公共依赖渠道、installed 树不入库；H2＝无平行实现——旧核符号 rg 定性：project/src 仅两处'旧族已删除'追溯注释（Codec.cpp:28,154），reporting/src/Consistency.cpp 的 class JsonParser 经 git show 基线核实为 e21d6171 既有的 reporting 自有解析器（不在本包范围），testkit JsonLite 等为各自单元既有，34 改动文件内零旧核代码符号回流；H3＝find_package(CONFIG)＋vcpkg 先例、命名空间 sdurws::ird::project::codec 与中文契约/注释保持、头契约零变化；H4＝代码/测试/文档/矩阵/凭证/门禁同批收口（检查 7/8/9）；H5＝migration.md 不在改动集（CLOSURE 冻结）、WP-16 串行批次脉络（§13.3）与三件套前置在案；H6＝逐文件凭证（5/5）＋逐功能行（61 行区段抽查吻合）＋inputs 级联三级绑定可追溯。L2 零 Qt＝Codec.cpp/hpp rg 零 Qt 命中＋project_test ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 真实通过；runtime 唯一模型 owner＝codec 全纯函数（无共享可变状态、无模型类型触碰），runtime 树零改动；test-fixture 未越界＝产品 src/ 对 testkit 零 include（命中均为设计依据注释），新测试文件仅注册于 sdurws_ird_project_test 目标。",
+    "④ 门禁实测（单值逐个传参，非数组）：validate-docs -TaskFile REUSE-T54.json exit 0（validate-task PASS (1 tasks)；validate-reuse PASS governance only; inventory=1401 units=20 changed=135 DEBT=16 UNRESOLVED=1399；validate-docs PASS 20 units/12 trace/428 task files——validate-docs-t54.log）；validate-docs -TaskFile REUSE-T05.json exit 0（同构 PASS——validate-docs-t05.log）。REUSE-AD-PENDING 各行为 AD 审计既有 pending 提示（ui/plugin 等文件，GOV-T24/T36 独验已同样定性），非本包阻断。",
+    "ird_gates 双形态实测：契约形态 cmake -DIRD_ROOT=… -P ird_gates.cmake exit 0「R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」＋自测 fail_* 11 例全部'按预期检出'（ird-gates-standalone.log）；构建形态随 cmake --build --target ird_gates 同口径（acc-build.log 尾部 validate-reuse PASS governance only）。",
+    "实施记录与现场一致性：traceability/reuse/REUSE-T54/README.md 声明的全部数字（287+32 基线/290+32 终版/61 行收口构成/51+17+7+3）与本人独立实测逐一吻合；probe/README 事故记录（heredoc 转义/未捕获异常）如实且与库行为无关的定性经探针复现佐证。"
+  ],
+  "integrationTest": {
+    "project": { "tests": 290, "passed": 290, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "acc-project-test.log", "xml": "acc-project-test.xml", "note": "本人从 HEAD 源码重建（cmake --build --target sdurws_ird_project sdurws_ird_project_test sdurws_ird_project_contract_test ird_gates，exit 0）后亲跑全量；287 既有＋3 新增通道钉扎全绿" },
+    "projectContract": { "tests": 32, "passed": 32, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "acc-contract-test.log", "xml": "acc-contract-test.xml", "note": "契约面全量亲跑" },
+    "independentOracle": { "cases": 16, "passed": 16, "failed": 0, "exitCode": 0, "log": "oracle/acc_oracle-run.log", "note": "独立期望（黄金字节独立推导＋数学常量边界）驱动 HEAD 产品库真实执行；含 uint64 上界 round-trip/2^63 接受/2^64 与 2^31 拒绝/版本判定三态/词法门七拒绝" },
+    "dotnetCrossCheck": { "passed": true, "note": "黄金字节经 .NET 独立 JSON 解析：u64max BigInteger 精确、字段序 §4.4.1 一致、纯 ASCII" },
+    "probeReproduction": { "exitCode": 0, "log": "oracle/p6-acc-run.log", "note": "probe/p6.cpp 从提交源件独立重编译运行：重复键坍缩/浮点 bool null 接受/越界 double kind/孤立代理·前导零·深度 boost 自拒全部复现" },
+    "irdGates": { "exitCode": 0, "log": "ird-gates-standalone.log", "result": "R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中；自测 fail_* 按预期检出" }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T54.json -Base e21d617141607d2cf13ef3a4ca92325a9dfeaaf0 -Head 88d7d180fea80a16f3b631cc9a976711ed2c1efb", "exitCode": 0, "passed": true, "log": "verify-task-scope-t54.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e21d61714..HEAD", "exitCode": 0, "passed": true, "log": "commit-lint.log" },
+    { "name": "credential-digest-recompute", "command": "pwsh 按 validate-reuse.ps1:40-45 Digest 口径复算 changes/REUSE-T54.json 五凭证＋变异副本 → 6/6 MATCH（输出见 checks 2）", "exitCode": 0, "passed": true },
+    { "name": "dump-side-byte-diff", "command": "git show e21d6171:…/Codec.cpp 段落 diff 对 HEAD：dump 区段仅两行分界注释差异", "exitCode": 1, "passed": true, "note": "diff exit 1＝存在唯一注释差异（预期产物）；语义即'逐字节不变'成立" },
+    { "name": "build", "command": "cmake --build build --config Release --target sdurws_ird_project sdurws_ird_project_test sdurws_ird_project_contract_test ird_gates", "exitCode": 0, "passed": true, "log": "acc-build.log" },
+    { "name": "int-project-test", "command": "cd build/RobWorkStudio/bin/Release && QT_QPA_PLATFORM=windows ./sdurws_ird_project_test.exe --gtest_output=xml:<acc>/acc-project-test.xml", "exitCode": 0, "passed": true, "log": "acc-project-test.log" },
+    { "name": "int-project-contract-test", "command": "cd build/RobWorkStudio/bin/Release && QT_QPA_PLATFORM=windows ./sdurws_ird_project_contract_test.exe --gtest_output=xml:<acc>/acc-contract-test.xml", "exitCode": 0, "passed": true, "log": "acc-contract-test.log" },
+    { "name": "independent-oracle", "command": "cmd //c oracle/build_oracle.bat（cl /MD 链接 HEAD 产品静态库）→ PATH+=vcpkg/bin oracle/acc_oracle.exe", "exitCode": 0, "passed": true, "log": "oracle/acc_oracle-run.log" },
+    { "name": "probe-reproduction", "command": "cl 编译 traceability/reuse/REUSE-T54/probe/p6.cpp（提交源件）→ 运行", "exitCode": 0, "passed": true, "log": "oracle/p6-acc-run.log" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates-standalone.log" },
+    { "name": "validate-docs-t54", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T54.json", "exitCode": 0, "passed": true, "log": "validate-docs-t54.log" },
+    { "name": "validate-docs-t05", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T05.json", "exitCode": 0, "passed": true, "log": "validate-docs-t05.log" },
+    { "name": "redline-rg-audit", "command": "rg JsonParser|JsonValue|findMember / testkit include / Qt / boost 于 project 源树＋34 改动文件定性（输出见 checks 4/12）", "exitCode": 0, "passed": true }
+  ],
+  "issues": [],
+  "observations": [
+    "disconnect-evidence.json 的 restored.log 字段指向不存在的文件名 restore-green.log（该文件未入库）；note 段已自洽说明恢复复验由 t54-final-*.log 承载且本人核实恢复态源码 Digest=mutation.originalSha256——纯记录字段瑕疵，不构成证据缺口，留给实施者在后续批次顺手订正。",
+    "oracle/acc_oracle-run.log 中 detail 中文经 bash 管道显示为 GBK 乱码——显示端代码页现象；oracle 判定只比对 StoreErrorCode（全部 code-match），字节面 detail 前缀 project/codec: 确认无误。"
+  ],
+  "notRun": [
+    {
+      "item": "独立冒烟配置构建（cmake -S industrialrobot -B build/t54-smoke）",
+      "reason": "实施侧已于 2026-10-27 完成并在契约 note 登记（配置零错＋三目标构建零错＋smoke 套件 290/290＋32/32，smoke/ 原件在案）；独立验收以集成模式 HEAD 源码重建＋全量真实执行＋find_package(Boost CONFIG COMPONENTS json) 在集成与 oracle 两条独立链路解析成功承载，AGENTS §4 CMake/依赖变化行的独立冒烟已由实施原件覆盖，不重复执行。"
+    },
+    {
+      "item": "性能微基准（sdurws_ird_project_perf_test）",
+      "reason": "纯解析通道迁移，契约与 AGENTS §4 未列性能验收面；实施 README §4 同口径声明不适用。"
+    }
+  ],
+  "binding": {
+    "passCommit": "88d7d180fea80a16f3b631cc9a976711ed2c1efb",
+    "taskContract": "RobWork/doc/industrial-robot-design/tasks/REUSE-T54.json",
+    "changeManifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T54.json",
+    "evidenceDir": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T54-20261026-r1/"
+  }
+}

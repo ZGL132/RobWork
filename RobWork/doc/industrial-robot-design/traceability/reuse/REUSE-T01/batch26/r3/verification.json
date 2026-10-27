@@ -1,0 +1,17 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B26-r3",
+  "rejectedCommit": "4b9977f096d0b3d58687ecc94013f435e5b0502c",
+  "red": {
+    "pwsh": 0,
+    "powershell": 1
+  },
+  "green": {
+    "pwsh": 0,
+    "powershell": 0
+  },
+  "boundariesPerShell": 4,
+  "productionChanges": false,
+  "independentAcceptance": "pending",
+  "remoteSync": "not executed per owner"
+}

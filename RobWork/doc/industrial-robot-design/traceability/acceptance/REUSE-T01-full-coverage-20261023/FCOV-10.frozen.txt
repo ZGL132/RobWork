@@ -1,0 +1,233 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp
+sdurws::ird::execution::ResultAdmission::runArchiveTransaction
+581: ResultAdmission::ArchiveResult ResultAdmission::runArchiveTransaction(
+582:     const RunRegistration& record, const core::TaskIdentity& identity,
+583:     const std::vector<std::uint8_t>& payloadBytes, const std::string& itemName,
+584:     bool doFinalize, AdmissionOutcome& outcome)
+585: {
+586:     const core::RunId run = record.identity.run;
+587:     IRunArchiveGateway& gateway = *record.resourceContext.archive;
+588:     // 当前写面（指针形态——A7 重取成功后重绑到网关交付的新写面；引用
+589:     // 无法重绑定，见下方 A7 防御分支）。
+590:     project::IResultArchivePort* port = &gateway.port();
+591: 
+592:     // 退避等待（D-11"退避 1 s/4 s"：第 1 次重试等 1 s、第 2 次等 4 s——
+593:     // 指数底 4、封顶 cap）。DelayFn 缺省 sleep_for（生产形态）；测试注入
+594:     // no-op 虚拟推进——不真实等待（testkit §6.5 同纪律）。
+595:     const auto backoff = [this](std::uint32_t attemptIndex) {
+596:         std::chrono::milliseconds wait = m_config.archiveBackoffInitial;
+597:         for (std::uint32_t i = 0; i < attemptIndex && wait < m_config.archiveBackoffCap; ++i) {
+598:             wait *= 4;
+599:         }
+600:         if (wait > m_config.archiveBackoffCap) {
+601:             wait = m_config.archiveBackoffCap;
+602:         }
+603:         if (m_delay) {
+604:             m_delay(wait);
+605:         } else {
+606:             std::this_thread::sleep_for(wait);
+607:         }
+608:     };
+609: 
+610:     // ---- ① 会话取得：预留优先，缺失补建（§9.5"派发期预留"行）----
+611:     // Preparing 段的空会话预留由调度派发建立并写入登记记录（EX-T05）；
+612:     // EX-T04 直纳路径（无预留）在此补建。复用预留绝不二次 begin——同一
+613:     // runDir 的并发第二会话被 project 拒绝（单写者纪律）。
+614:     project::ArchiveSessionRef session = record.resourceContext.archiveSession;
+615:     if (!session) {
+616:         project::ArchiveRequest request;
+617:         request.task = identity;
+618:         request.runDir = record.runDir;   // 归档位置取登记记录原值（A8——不重新推导）
+619:         request.runKind = record.runKind;
+620:         request.evaluationKey = record.evaluatorKey;
+621:         try {
+622:             session = port->begin(request);
+623:         } catch (const project::StoreError& e) {
+624:             if (e.code() != project::StoreErrorCode::ContextClosed) {
+625:                 // 非"上下文关闭"类 begin 失败（环境/数据错误）：责任尚未
+626:                 // 建立（无会话可 abandon）——EX-ARCHIVE-FAILED 透传
+627:                 // StoreError 细节＋阶段 ArchiveFailed；任务终态不变。
+628:                 const core::DiagnosticRecord diag = admissionDiag(
+629:                     "EX-ARCHIVE-FAILED",
+630:                     std::string{"归档 begin 失败："}.append(e.what()),
+631:                     "检查存储介质与项目写锁状态；结果可重跑");
+632:                 outcome.decision.diagnostics.push_back(diag);
+633:                 m_diagnostics.report(diag);
+634:                 m_diagnostics.reportDev("EX-ARCHIVE-FAILED",
+635:                                         "execution/admission: begin 失败（run=" + run.toCanonical()
+636:                                             + "）：" + e.what());
+637:                 m_registry.noteArchivePhase(run, ArchivePhase::ArchiveFailed);
+638:                 outcome.archivePhaseAfter = ArchivePhase::ArchiveFailed;
+639:                 return ArchiveResult::Failed;
+640:             }
+641:             // ---- A7 防御（§9.3/ARCH §6.8）----
+642:             // 上下文已释放的迟到写：正常不应发生（execution 持引用期间
+643:             // 上下文不 Closed），防御路径＝先尝试重新取得写权限（重新
+644:             // open writable）；成功→照常归档；失败（锁被他持/介质只读）
+645:             // →拒绝归档＋EX-ARCHIVE-AUTHORITY-LOST（结果不落盘，用户可
+646:             // 重跑；开发诊断记录丢失细节）。
+647:             if (!gateway.reacquireWriteAuthority()) {
+648:                 const core::DiagnosticRecord diag = admissionDiag(
+649:                     "EX-ARCHIVE-AUTHORITY-LOST",
+650:                     "存储上下文已 Closed 且重新取得写权限失败（A7 防御）——归档被拒绝，结果不落盘",
+651:                     "结果可重跑；检查项目写锁归属与介质只读状态");
+652:                 outcome.decision.diagnostics.push_back(diag);
+653:                 m_diagnostics.report(diag);
+654:                 m_diagnostics.reportDev("EX-ARCHIVE-AUTHORITY-LOST",
+655:                                         "execution/admission: 迟到归档重取权限失败（run="
+656:                                             + run.toCanonical() + "）");
+657:                 m_registry.noteArchivePhase(run, ArchivePhase::ArchiveFailed);
+658:                 outcome.archivePhaseAfter = ArchivePhase::ArchiveFailed;
+659:                 return ArchiveResult::AuthorityLost;
+660:             }
+661:             try {
+662:                 // 重取成功后从网关取**新**写面重试 begin（旧端口引用随旧
+663:                 // 上下文失效——重绑定是本防御路径的一部分）。
+664:                 session = gateway.port().begin(request);
+665:                 port = &gateway.port();
+666:             } catch (const project::StoreError& e2) {
+667:                 const core::DiagnosticRecord diag = admissionDiag(
+668:                     "EX-ARCHIVE-AUTHORITY-LOST",
+669:                     std::string{"重新取得写权限后 begin 仍失败（A7 防御）："}.append(e2.what()),
+670:                     "结果可重跑；检查存储上下文重建后的白名单与权限");
+671:                 outcome.decision.diagnostics.push_back(diag);
+672:                 m_diagnostics.report(diag);
+673:                 m_diagnostics.reportDev("EX-ARCHIVE-AUTHORITY-LOST",
+674:                                         "execution/admission: 重取后 begin 失败（run="
+675:                                             + run.toCanonical() + "）：" + e2.what());
+676:                 m_registry.noteArchivePhase(run, ArchivePhase::ArchiveFailed);
+677:                 outcome.archivePhaseAfter = ArchivePhase::ArchiveFailed;
+678:                 return ArchiveResult::AuthorityLost;
+679:             }
+680:         }
+681:         // 补建会话回写登记记录（§9.1 resourceContext"归档会话引用"——
+682:         // 后续到达复用同一会话；finalize/abandon 后回写空句柄清除）。
+683:         m_registry.noteArchiveSession(run, session);
+684:         m_registry.noteArchivePhase(run, ArchivePhase::Reserved);
+685:     }
+686: 
+687:     // ---- ② 批次写入（有界重试 D-11；冲突不重试——数据冲突非瞬态）----
+688:     project::ArchiveBatch batch;
+689:     batch.items.push_back(project::ArchiveItem{itemName, payloadBytes});
+690:     for (std::uint32_t attempt = 0;; ++attempt) {
+691:         const project::ArchiveStatus st = port->writeBatch(session, batch);
+692:         if (st.ok) {
+693:             break;
+694:         }
+695:         const project::StoreErrorCode code = st.error->code();
+696:         if (code == project::StoreErrorCode::ArchiveConflict) {
+697:             // 内容冲突（D-14）：不覆盖既有文件；活动运行的会话保留（运行
+698:             // 可继续、终结路径负责回收），已完成运行的会话立即以 Failed
+699:             // abandon 终结（不会再有后续写入——不存在无 abandon 的终结路径）。
+700:             if (record.currentState == core::TaskState::Completed) {
+701:                 port->abandon(session, project::ArchiveEndReason::Failed);
+702:                 m_registry.noteArchiveSession(run, {});
+703:             }
+704:             const core::DiagnosticRecord diag = admissionDiag(
+705:                 "PRJ-ARCHIVE-CONFLICT",
+706:                 "批次写入检出内容冲突（D-14：目标已存在且摘要不一致）——既有文件不被覆盖",
+707:                 "核对回传通道批次内容与序号一致性；既有数据保持原样");
+708:             outcome.decision.diagnostics.push_back(diag);
+709:             m_diagnostics.report(diag);
+710:             m_diagnostics.reportDev("PRJ-ARCHIVE-CONFLICT",
+711:                                     "execution/admission: writeBatch 冲突（run=" + run.toCanonical()
+712:                                         + "，item=" + itemName + "）");
+713:             return ArchiveResult::Conflict;
+714:         }
+715:         if (attempt >= m_config.archiveRetries) {
+716:             // 有界重试耗尽：abandon(Failed) 终结归档责任（§9.3 末行——
+717:             // "责任终结＝finalize 成功或 abandon"）＋EX-ARCHIVE-FAILED
+718:             // 透传 StoreError 细节；任务终态不变（调用方保持 Completed）。
+719:             port->abandon(session, project::ArchiveEndReason::Failed);
+720:             m_registry.noteArchiveSession(run, {});
+721:             const core::DiagnosticRecord diag = admissionDiag(
+722:                 "EX-ARCHIVE-FAILED",
+723:                 std::string{"批次写入在有界重试后仍失败："}.append(st.error->what()),
+724:                 "检查磁盘空间与介质状态；任务结果保持（归档可经重跑恢复）");
+725:             outcome.decision.diagnostics.push_back(diag);
+726:             m_diagnostics.report(diag);
+727:             m_diagnostics.reportDev("EX-ARCHIVE-FAILED",
+728:                                     "execution/admission: writeBatch 重试耗尽（run="
+729:                                         + run.toCanonical() + "）：" + st.error->what());
+730:             m_registry.noteArchivePhase(run, ArchivePhase::ArchiveFailed);
+731:             outcome.archivePhaseAfter = ArchivePhase::ArchiveFailed;
+732:             return ArchiveResult::Failed;
+733:         }
+734:         backoff(attempt);
+735:     }
+736:     m_registry.noteArchivePhase(run, ArchivePhase::Archiving);
+737:     outcome.archivePhaseAfter = ArchivePhase::Archiving;
+738: 
+739:     // ---- 批次路径收尾（无 finalize）----
+740:     if (!doFinalize) {
+741:         // 已完成运行的迟到批次（跨进程恢复窗口）：写完即以 Completed
+742:         // abandon 终结会话——"不经 finalize 而以 Completed abandon 是
+743:         // execution 侧声明'以 abandon 终结且原因记完成'的形态"（project
+744:         // ArchiveEndReason 注）；活动运行保留会话给后续批次/最终 finalize。
+745:         if (record.currentState == core::TaskState::Completed) {
+746:             port->abandon(session, project::ArchiveEndReason::Completed);
+747:             m_registry.noteArchiveSession(run, {});
+748:         }
+749:         return ArchiveResult::BatchWritten;
+750:     }
+751: 
+752:     // ---- ③ finalize：manifest 原子发布＝"完整"（D-13 唯一完整性判据；
+753:     //      §9.5"分批与最终发布"行）----
+754:     project::RunManifest manifest;
+755:     manifest.taskIdentity = identity;                // 登记五元组（project 仍校验与会话一致）
+756:     manifest.items.push_back(project::RunManifestItem{
+757:         itemName, sha256Hex(payloadBytes), static_cast<std::uint64_t>(payloadBytes.size())});
+758:     manifest.runKind = record.runKind;
+759:     manifest.evaluationKey = record.evaluatorKey;
+760:     manifest.finalizedAtUtc = iso8601Utc(m_clock ? m_clock() : std::chrono::system_clock::now());
+761:     // manifestDigest 留空——由 project 在 finalize 计算回填（"自身规范化
+762:     // 摘要"，调用方该字段不参与——ArchivePort finalize 注）。
+763:     for (std::uint32_t attempt = 0;; ++attempt) {
+764:         const project::ArchiveStatus st = port->finalize(session, manifest);
+765:         if (st.ok) {
+766:             break;
+767:         }
+768:         const project::StoreErrorCode code = st.error->code();
+769:         if (code == project::StoreErrorCode::ArchiveConflict) {
+770:             // D-14 摘要不一致（跨进程窗口的冲突面）：abandon(Failed) 终结
+771:             // 责任——既有 manifest 保持权威，本次内容被拒绝（不覆盖）。
+772:             port->abandon(session, project::ArchiveEndReason::Failed);
+773:             m_registry.noteArchiveSession(run, {});
+774:             const core::DiagnosticRecord diag = admissionDiag(
+775:                 "PRJ-ARCHIVE-CONFLICT",
+776:                 "finalize 检出 manifest 摘要与既有归档不一致（D-14）——既有发布保持权威",
+777:                 "核对重投递内容与既有归档差异；需变更请产生新运行");
+778:             outcome.decision.diagnostics.push_back(diag);
+779:             m_diagnostics.report(diag);
+780:             m_diagnostics.reportDev("PRJ-ARCHIVE-CONFLICT",
+781:                                     "execution/admission: finalize 冲突（run="
+782:                                         + run.toCanonical() + "）");
+783:             return ArchiveResult::Conflict;
+784:         }
+785:         if (attempt >= m_config.archiveRetries) {
+786:             // 重试耗尽：abandon(Failed)＋EX-ARCHIVE-FAILED（透传细节）；
+787:             // 任务终态不变（Completed 保持——§9.3 末行/EX-ARC-5）。
+788:             port->abandon(session, project::ArchiveEndReason::Failed);
+789:             m_registry.noteArchiveSession(run, {});
+790:             const core::DiagnosticRecord diag = admissionDiag(
+791:                 "EX-ARCHIVE-FAILED",
+792:                 std::string{"finalize 在有界重试后仍失败："}.append(st.error->what()),
+793:                 "检查磁盘空间与介质状态；任务已完成（归档残留按未完整处置）");
+794:             outcome.decision.diagnostics.push_back(diag);
+795:             m_diagnostics.report(diag);
+796:             m_diagnostics.reportDev("EX-ARCHIVE-FAILED",
+797:                                     "execution/admission: finalize 重试耗尽（run="
+798:                                         + run.toCanonical() + "）：" + st.error->what());
+799:             m_registry.noteArchivePhase(run, ArchivePhase::ArchiveFailed);
+800:             outcome.archivePhaseAfter = ArchivePhase::ArchiveFailed;
+801:             return ArchiveResult::Failed;
+802:         }
+803:         backoff(attempt);
+804:     }
+805: 
+806:     // ---- finalize 成功：会话已终结（句柄失效）——回写清除；阶段 Archived ----
+807:     m_registry.noteArchiveSession(run, {});
+808:     m_registry.noteArchivePhase(run, ArchivePhase::Archived);
+809:     outcome.archivePhaseAfter = ArchivePhase::Archived;
+810:     return ArchiveResult::Finalized;
+811: }

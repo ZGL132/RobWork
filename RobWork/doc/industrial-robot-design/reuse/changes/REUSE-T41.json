@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T41",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T41.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "sha256": "75fe95cea890c3e6b206474ea4a4dc2fde398e7041df2f06c265a22ea672b834",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "F-967 落地（所有者 2026-10-26 批量批准落地裁决表第 1~4 项，治理前置批 1cb967892 扩宿主例外 HOST-WORKBENCH）：候选 diff 对 cf00a7dc9 干净应用，post-blob 9ccf33f23 与 candidate/UiPlugin.cpp.diff index 头逐位一致。生产装配换核＝m_eventBus 由越界的 core::ReferenceEventBus（Events.hpp 明文非生产组件）改 make_shared<execution::DomainEventBusImpl>（H1 直接复用仓内生产实现——units/execution.md §10.4/§13 交接；include 经公共头 EventBus.hpp，R-2 公共面）；投递线程转接修正＝两 sink 适配器快照读取移入互斥访问器 snapshotEventStoreAdapter()（与打开拍写侧同锁 m_eventAdapterMutex，返回值拷贝随队列转移所有权），队列转投改 QMetaObject::invokeMethod(receiver, …, Qt::QueuedConnection)（投递线程→UI 线程显式排队，宿主销毁时未投递排队体自动丢弃）；迟到守卫（adapter==source/isClosed/projectId）与 PM-04/REQ-10『事务发布持写锁不得同步回查 HEAD』语义逐字保持；关停/析构 drain 序＝先停发布源→两订阅句柄 reset（RAII 退订幂等）→waitForIdle 确定性排空（装配者向下转型，唯一写入点＝make_shared）→成员逆序销毁（句柄→sink→总线 drain join），总线保留到成员析构（store 适配器持非 owning 裸指针）。不造第三总线；ReferenceEventBus 产品使用点归零（仅剩 core 定义与测试）。宿主受限面授权＝permissions.json REUSE-T41-UiPlugin.cpp 精确 grant（host-presentation/HOST-WORKBENCH；write-state 唯一点＝既有 D8 Jog 桥任务私有 setQ，本批零新增受限类别）。整文件行覆盖载体＝ui.IrdWorkbenchHostPlugin＋功能行 productionWiring 四区段实改。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T41/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+      "sha256": "db30dc7f8b95f758280f98c81c9513457c10b32075a519964298b6b5fd0fc6be",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "F-967 落地（候选 diff 干净应用，post-blob de2b38445 与 candidate/UiPlugin.hpp.diff index 头逐位一致）：m_eventBus 类型 shared_ptr<core::ReferenceEventBus>→shared_ptr<core::IDomainEventBus>（头文件保持接口类型——适配器裸指针/订阅/ShellWiring 注入四处消费面零改动，头文件零 execution 依赖）；成员序保证句柄→sink→总线 drain 销毁纪律（快照互斥声明于总线之前）；新增 m_eventAdapterMutex 与 snapshotEventStoreAdapter() 声明（投递线程快照互斥访问器）。宿主受限面授权＝permissions.json REUSE-T41-UiPlugin.hpp 精确 grant（host-presentation/HOST-WORKBENCH；categories host,model/borrow——model 类别来自 open(rw::models::WorkCell*) 框架回调借持形参，只读借用非构造）。整文件行覆盖载体＝ui.IrdWorkbenchHostPlugin。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T41/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+      "sha256": "2555c4a5895b56058199557cc0ed977ab74cb23870b704939cec20df310cee6a",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "ui_plugin 链接段增 sdurws_ird_execution 一行＋逐边注释（WP-18/F-967 事件总线装配边——目标级装配边与源面修改同批，ASM-PLUG 先例；候选 diff 干净应用，post-blob 45bad6709 逐位一致）。ui 产品库 sdurws_ird_ui 链接块零 execution 红线 O-31/C-3/4/5 不动；单元级白名单 IRD_ALLOWED_UNIT_EDGES 零新增（目标级登记先于单元级判定，ird_gates 第 2b 步 asm_edge 分支承载）；宏体与测试目标零改动。整文件行覆盖载体＝ui.CMake.targetWiring（新增）；ird_gates 正例 exit 0 零命中＋撤登记负例恰一条 SUB 命中证明放行面唯一（landing-ird-gates-* 原件）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/wp18-t41-gate-registrations.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp",
+      "sha256": "48874e1107ce13d5be803770ce6944d6fc2c103d4830b2ec2ae7282ddcf971d5",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "subscribe 注释更正（候选 diff 干净应用，post-blob 72c24df31 逐位一致）：原『core ReferenceEventBus 同语义』失实——core removeSink 删该 sink 全部订阅位（Events.cpp std::remove 全删），execution 只删一个订阅位；生产用法单订阅位下两者等价，多订阅位语义不互换，消费方按此差异选型。零行为变化（纯注释更正）；EventBus.cpp（11 行 pending 审计行）零触碰——全文件解决超本包边界，待所有者批准 execution 迁移批后同批更正（待裁决登记不变）。整文件行覆盖载体＝execution.EventBusContractHeader（新增，行覆盖不充当语义完备证明——契约语义由 §10.4 头注与既有 audit-b32.EventBus.* 实现行承载）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T41/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+      "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "IRD_TARGET_LEVEL_EDGES（L10 段）新增目标级装配边 sdurws_ird_ui_plugin->sdurws_ird_execution＋段注释依据（REUSE-T18 工具边登记同型，非放宽）：宿主装配目标（MODULE）消费 execution 单元事件总线实现 DomainEventBusImpl（公共头 EventBus.hpp，R-2 公共面——4a 步跨单元公共头检查零命中）；架构依据＝core Events.hpp §4.9『总线实现归 execution·ui 并由 L5 装配注入』＋execution.md §10.4/§13 交接行。登记与源面修改同批；登记正本＝traceability/wp18-t41-gate-registrations.md。机器验证＝ird_gates 正例 exit 0 零命中；撤登记负例 exit 1 恰一条真实 IRD-GATE-SUB 命中（仅移除边数据保留 set 闭合——放行面未扩大到该边之外）；恢复复验 exit 0（landing-ird-gates-* 原件）。数据面区段登记＝foundation-governance.ird_gates_whitelist.L10 行（580-601 区段重定位随批）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/wp18-t41-gate-registrations.md"
+    }
+  ]
+}

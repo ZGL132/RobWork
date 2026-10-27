@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="5" disabled="0" errors="0" time="0.13" timestamp="2026-10-25T20:41:14.183" name="AllTests">
+  <testsuite name="TxEngineTest" tests="4" failures="4" disabled="0" skipped="0" errors="0" time="0.099" timestamp="2026-10-25T20:41:14.183">
+    <testcase name="RecoveryScan_WrongHeadDigest_StoreCorrupt" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp" line="1439" status="run" result="completed" time="0.031" timestamp="2026-10-25T20:41:14.183" classname="TxEngineTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1452&#x0A;Value of: scan.headIntegrityVerified&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1452
+Value of: scan.headIntegrityVerified
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1453&#x0A;Value of: m_sink-&gt;hasUserCode(&quot;PRJ-STORE-CORRUPT&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1453
+Value of: m_sink->hasUserCode("PRJ-STORE-CORRUPT")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1454&#x0A;Value of: m_sink-&gt;reports.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1454
+Value of: m_sink->reports.empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp" line="1468" status="run" result="completed" time="0.034" timestamp="2026-10-25T20:41:14.215" classname="TxEngineTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1482&#x0A;Value of: scan.headIntegrityVerified&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1482
+Value of: scan.headIntegrityVerified
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1483&#x0A;Value of: m_sink-&gt;hasUserCode(&quot;PRJ-STORE-CORRUPT&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1483
+Value of: m_sink->hasUserCode("PRJ-STORE-CORRUPT")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1484&#x0A;Value of: m_sink-&gt;devContains(&quot;recovery-head-manifest-digest-mismatch&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1484
+Value of: m_sink->devContains("recovery-head-manifest-digest-mismatch")
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="RecoveryScan_HeadManifestMissing_StoreCorrupt" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp" line="1492" status="run" result="completed" time="0.014" timestamp="2026-10-25T20:41:14.250" classname="TxEngineTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1505&#x0A;Expected: (m_sink-&gt;reports.back().cause.find(&quot;缺失 path=&quot;)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615&#x0A;cause 未定位缺失清单: project/tx-engine: 闭包行走失败 detail=project/revindex: 闭包行走遇未注册修订 revision=rev-684e489d3ad51b751d1d4f5fba01f5c4&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1505
+Expected: (m_sink->reports.back().cause.find("缺失 path=")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+cause 未定位缺失清单: project/tx-engine: 闭包行走失败 detail=project/revindex: 闭包行走遇未注册修订 revision=rev-684e489d3ad51b751d1d4f5fba01f5c4
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1507&#x0A;Value of: m_sink-&gt;devContains(&quot;recovery-head-manifest-missing&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1507
+Value of: m_sink->devContains("recovery-head-manifest-missing")
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="RecoveryScan_TamperThenRestore_ScanGreen" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp" line="1515" status="run" result="completed" time="0.017" timestamp="2026-10-25T20:41:14.264" classname="TxEngineTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1527&#x0A;Value of: tampered.scanForRecovery().headIntegrityVerified&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:1527
+Value of: tampered.scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ProjectStoreTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.022" timestamp="2026-10-25T20:41:14.288">
+    <testcase name="Open_WrongHeadManifestDigest_Rejected" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProjectStoreTest.cpp" line="976" status="run" result="completed" time="0.022" timestamp="2026-10-25T20:41:14.288" classname="ProjectStoreTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProjectStoreTest.cpp:189&#x0A;Failed&#x0A;期望 StoreError(6) 未抛出&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProjectStoreTest.cpp:189
+Failed
+期望 StoreError(6) 未抛出
+]]></failure>
+      <failure message="unknown file&#x0A;C++ exception with description &quot;expectStoreError: action did not throw&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "expectStoreError: action did not throw" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

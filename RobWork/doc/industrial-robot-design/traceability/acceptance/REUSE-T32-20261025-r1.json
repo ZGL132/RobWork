@@ -1,0 +1,107 @@
+{
+  "taskId": "REUSE-T32",
+  "baseCommit": "c65ffc4fc495da0b01b2060ff3049eb127091d72",
+  "reviewedCommit": "b3e0cd1349edbd8c497f6fc2d9874433bd3efc3f",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T13:20:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T32/WP-11 单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配构建树（仅对既有 build 树增量构建契约 verify 所列两个测试目标）；只验收不修复、不改任务状态、不推进下一任务；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立验收 c65ffc4fc..b3e0cd134 送验范围（REUSE-T32 契约，WP-11 残包：REUSE-T22 登记缺口的候选2定案＋REUSE-T26 直线之外的其余路径轨迹工具收口，两提交）：现场与送验提交定位、verify-task-scope 显式 Base/Head 复跑、commit-lint 与提交正文一致性、validate-docs（validate-task＋validate-reuse）复跑、契约四条 acceptance 逐项清单式增量复验（增量构建两个测试目标并真实运行 193+69 项；上游算式逐位亲读；suitability/production/红例原件哈希亲算；性能裁决）、红线抽查（H1—H6、L2 零 Qt、六类端口/runtime 唯一模型 owner、CLOSURE 冻结、治理脚本与上游/vcpkg 零改动、Ptp.cpp/Continuity.cpp/Smooth/TimeParameterization 未重写）。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 5,
+    "skipped": 0,
+    "unit": "12 项验收检查（验收员亲跑）；引用实施方 NOT RUN 登记的 5 项另列 notRun（任务交付口径，非验收缺口），不计入本表"
+  },
+  "checks": [
+    "现场与送验定位：分支 redesign-main，HEAD=b3e0cd1349ed（即送验 head，无后续提交）；git log c65ffc4fc..b3e0cd134 恰 2 个提交——ac86bb002「[WP-11-T32] GAP候选2定案」（git show --stat 确认纯文档：GAP-TRJ-LINEAR-01.md＋tasks/REUSE-T32.json 两文件）与 b3e0cd134「[WP-11-T32] 其余路径轨迹工具收口」（产品三文件＋矩阵/catalog/凭证/证据），与契约 note「两提交拆分：其一纯文档、其二代码＋矩阵＋catalog＋证据」一致；工作区无已跟踪文件修改（仅各验收会话验收产物未跟踪，本会话同型新增）。",
+    "范围：verify-task-scope 显式 -Base c65ffc4fc495da0b01b2060ff3049eb127091d72 -Head b3e0cd1349edbd8c497f6fc2d9874433bd3efc3f -TaskFile REUSE-T32.json exit 0，「PASS REUSE-T32 —— 70 个路径全部在允许面内」（changed=70 allowedRules=14 forbiddenRules=3），日志 02-scope.log；diff 文件面与契约 allowedFiles 14 项逐一对齐（产品仅 Planner.cpp/CMakeLists.txt/PlannerReuseTest.cpp）。",
+    "逐文件与冻结核对：forbiddenFiles 三 glob（RobWork/RobWork/src/**、RobWork/RobWorkSim/src/**、vcpkg/**）范围 diff 零命中（--exit-code 亲跑 exit 0）；closeout/ 冻结零触碰、scripts/industrialrobot/ 门禁零改动（均 --exit-code exit 0）；Ptp.cpp、Continuity.cpp、Smooth.cpp、TimeParameterization.cpp 四文件范围 diff 零差异——「候选3批准前不改 Ptp.cpp」「rotationAngleBetween 保留（Continuity.cpp 零改动）」「Smooth/TimeParam Polynomial 成果不重写」由 diff 事实直接成立。",
+    "提交链：commit-lint -Range c65ffc4fc..b3e0cd134 exit 0 PASS（2 个提交全部合规，[WP-11-T32] 前缀），日志 05-commit-lint.log；两提交正文与 diff 实际内容逐项一致（第一提交正文声明纯文档零构建与 stat 一致；第二提交正文所列三处换核/两处委托/矩阵 95 行/catalog 升级/grant/指纹刷新/193+69/红例/性能均逐一实测在案）。",
+    "文档/契约/复用门禁：validate-docs -TaskFile REUSE-T32.json exit 0——validate-task: PASS（1 tasks）、validate-reuse: PASS governance only（inventory=1401 units=20 changed=99 DEBT=16 UNRESOLVED=1399，not algorithm compliance）、validate-docs: PASS（20 units, 12 trace entries, 407 task files）；REUSE-AD-PENDING 9 行为 policy/reporting/runtime/ui 既有 pending 提示（与 GOV-T24/T22 先例同类，非本包 trajectory 面），「NOT RUN: 全库证据索引审计」为按需 -DeepEvidence 提示，按 AGENTS §4 普通提交不要求。",
+    "数值验收（真实执行）：cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test exit 0（增量构建）；验收员亲跑 sdurws_ird_trajectory_test.exe：193 tests / 193 PASSED / 0 failed / 0 skipped，exit 0（08-trajectory-test.log+xml）；亲跑 sdurws_ird_trajectory_contract_test.exe：69 tests / 69 PASSED / 0 failed / 0 skipped，exit 0（08-trajectory-contract.log+xml）——与实施方 final.xml/contract.xml 登记计数一致；两新增用例 DirectAdoptPathLengthMatchesIndependentOracle_REUSE_T32（PlannerReuseTest.cpp:171）与 RotationAngleCounterExampleKeepsAtan2_REUSE_T32（:231）在本人 XML 中 status=run result=completed 无 failure。",
+    "acceptance 第 1 条（三处度量手写核换上游直接消费＋选择序/词表/身份面不变＋Ptp/Smooth/TimeParam 不重写）逐项实测：Planner.cpp diff 恰五处——sampleStraightPath 手写 ΣΔq²→sqrt 删除改 MetricFactory::makeEuclidean<Q>()->distance 单对（:361-372）、maxAdjacentStep 手写双循环删除改 makeInfinity<Q>()->distance 逐相邻对＋跨对 max 归约保留（:469-479）、pathJointLength 手写双循环删除改 PathAnalyzer::pathLength(begin,end,*makeManhattan<Q>())（:484-496）、planPtpWithObstacleAvoidance 两处内联 Σ|Δq| 循环删除委托 pathJointLength（:949-952、:1009-1012）；上游算式逐位亲读——MetricUtil.hpp:61-70 dist1＝单累加器 Σfabs(a[i]-b[i])、:132-150 dist2Sqr＝单累加器 Σ(a[i]-b[i])²＋dist2＝sqrt、:227-239 distInf＝轴升序 max|差|、PathAnalyzer.hpp:214-227 pathLength＝逐相邻对 result+=metric.distance 逐对折叠——单对算式与原手写逐位同式属实，pathJointLength 的「逐对先归约再累加」替代原单累加器逐轴交错的求和序变化如实登记（微基准 1.9e-15 末位舍入，catalog MATH-METRIC boundary 在案）；diff 中无排序比较/词表/身份面改动；检查 3 四文件零差异证明成果不重写。",
+    "acceptance 第 2 条（rotationAngleBetween 反例定案保留 2·atan2＋ird_add_gtest business-specific＋被否候选逐条登记）逐项实测：反例用例亲跑通过——轴对齐 Δ=1e-6 与一般轴 Δ=π−3e-6 两点 EAA(Rrel).angle() 偏差 EXPECT_GT 1e-12 真实断言（PlannerReuseTest.cpp:231-298，输入经 Quaternion 半角精确构造规避 EAA::toRotation3D θ<1e-6 死区），产品 2·atan2 于 4 轴×12 角全网格（0/1e-12/1e-9/1e-6/1e-3/0.1/0.5/1.2/2.5/π−1e-9/π−1e-6/π）EXPECT_NEAR 1e-12 内命中解析期望＋零差边界恰 0；矩阵行 trajectory.rotationAngleBetween＝decision business-specific/status audited，differences 记录实测偏差（4.4e-11/1.6e-10，超 C7 容差约 40~160 倍）与 EAA 0/π 邻域补偿带精确的结案说明；trajectory.CMake.ird_add_gtest＝business-specific，TEST-HARNESS capability 保持 candidate（无 adapter 行消费）；被否候选三条（EAA/Rotation3DAngleMetric、PathAnalyzer 单用于 pathJointLength 已采用、ird_add_gtest 换上游宏）在 README §被否候选逐条登记。",
+    "acceptance 第 3 条（GAP 候选2按检索口径定案落档＋候选3 维持待裁决＋批准前不改 Ptp.cpp 与矩阵迁移状态＋真实Q NOT RUN 如实分列）逐项实测：GAP-TRJ-LINEAR-01.md 新增「候选2定案」节——逐入口核对实际算式（LinearInterpolator.hpp:70-76/86 差分式、Rotation3D 特化 slerp :139-239、RampInterpolator 差分＋梯形、SQUAD 仅四元数、Polynomial Horner 同构差分、lerp/凸组合式 rg 零命中），定案「无现有上游稳定求值入口」；候选3＝「待所有者裁决（唯一剩余路径）」批准前不改 Ptp.cpp 或矩阵迁移状态；矩阵行 trajectory.interpolateJointLinear＝pending/pending 未改、TRAJ-LINEAR capability 保持 candidate 均亲核；真实 Q 模板路径极值探测 NOT RUN 在 GAP/README/migration.md 三处分列不冒称；第一提交纯文档由 git show --stat 直接成立。",
+    "acceptance 第 4 条（catalog 升 verified 绑定 suitability＋review.version 逐字节一致＋migrated 行逐行绑定四次真实运行＋全行矩阵与逐文件凭证）逐项实测：catalog MATH-METRIC/PATH-PLANNING review.status=verified、version=c65ffc4fc（本包起点）、suitability 原件 sha256 亲算一致（d5de7a5a…/2dee61a9…）；verify-review-version.ps1 亲跑 ALL-MATCH exit 0（10 个树内上游文件与现状逐字节一致，09-verify-review-version.log），三个核心上游文件范围 diff 零差异双确认；5 个 adapter migrated 行（maxAdjacentStep/pathJointLength/sampleStraightPath/search/doInCollision）逐行绑定 ird-reuse-production/1 报告 ×5，四运行齐备（normal exit 0、disconnected exit 1、oracle、upstreamComparison）；三组断开红例真实——disconnected-l1.xml 1 failure（pathLengthJoint=2 vs 独立参考 6.3976，L1 折叠断开为 Linf 被检出）、disconnected-l2.xml 2 failures（直连漏检中间碰撞 directPathAdopted/directCollision＋SearchExhausted）、disconnected-cll.xml 1 failure（CollisionThenRework 状态错），Planner.mutated-l1.cpp 抽查确认真实变异（makeManhattan→makeInfinity＋DISCONNECT 标注），三份 -recheck.xml 恢复复测全绿 failures=0；证据哈希抽查亲算一致（final.xml/disconnected-l1.xml/log）；changes/REUSE-T32.json 三文件凭证 sha256 按门禁 Digest 规范化口径（BOM/CRLF）亲算全部一致（755109ca…/f64cff76…/2561162a…）；矩阵行 sources 区段哈希抽查三项（:161-195/:464-482/:483-498）与现状源码 Digest 一致且符号在场；矩阵 95 行含 audit-t32 24 条三改动文件全行铺面；permissions.json REUSE-T32-Planner.cpp grant（ARCH:3.6.1、categories model+solver、operations query+borrow、origin runtime-borrow）与本包改动触发全量 AD 检查的精确登记自洽；T26/T09 三份 production.json 指纹刷新抽查确认为 CMakeLists.txt 摘要 e5ce8b36→f64cff76 机械同步（xml/log/结论原样）。",
+    "红线抽查汇总：H1 复用优先——三处均为上游直接 API（MetricFactory/PathAnalyzer），无薄适配外扩展；H2 禁止平行实现——手写算术删除、无隐藏 fallback/双核心（diff 与 README 边界声明一致，被否候选明确否决产品自建插值类）；H3 适配上游——沿用 rw::math::QMetric::Ptr、rw/pathplanning 头与 sdurw_pathplanning/sdurw_pathplanners 既有链接，产品中文契约与命名空间不变；H4 全面适用——文档门禁/复用检查/架构门禁/测试全部亲跑 PASS；H5 阶段执行——无新核心、无上游扩展（候选3 blocked 待所有者裁决），catalog 升级绑定 suitability 原件与起点 SHA 核验；H6 可追溯——上游文件/符号/目标/版本（review.version=c65ffc4fc）/检索证据（GAP 定案节＋矩阵 search.command）逐项绑定亲核；架构红线——L2 零 Qt（Planner.cpp 无 Qt include，亲 grep 零命中）、业务域互链经端口（policy 会话经④端口 QConstraint 适配器直穿、runtime WorkCellConstView 只读借持＝grant runtime-borrow、零模型构造红线自测在案）、runtime 唯一模型 owner（测试纯数学面零模型构造，grant 无 construct-model 写权）；CLOSURE 冻结、治理脚本、上游/vcpkg 零触碰均 --exit-code 亲跑；门禁未越权放宽——ird_gates.cmake 引擎直跑 exit 0「R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」（06-gate-engine.log）。",
+    "性能裁决（契约 note 与 README 明示「接受与否交独验裁决」，本验收裁决如下）：performance.log 三轮交替 200k 次/轮亲读——pathL1(50 节点) 相对 +40.7%/+23.5%/+36.4%（登记 +24~41% 吻合），绝对差 +0.038~0.046 µs/次（≈登记 +40ns）；maxStep(50n) -18.6%~+7.6%、L2(1pair) +6.2%~+20.5%（绝对 3ns 级）、maxStep(4n) +46.9%（绝对 +3.5ns 级）均在噪声/亚噪声区；求和序折叠差实测 1.9e-15（末位舍入）。裁决：接受，不构成阻断——依据：①新增开销绝对量纳秒级，生产面每次 search 仅 K 次（默认 candidateAttempts=3）键计算，合计 ~120ns/search，被 RRT 碰撞查询（毫秒级，黄金算例预算 5s）主导，占比可忽略；②无任何 NFR 性能契约声明这些 helper 的量化预算；③选择序数值语义（全序结论）由 PlannerAvoidance 黄金算例与 193 项全量回归钉住；④换核收益（删除手写算术、单一实现点、上游算式同一性）明确且为 WP-11 阶段目标本体。"
+  ],
+  "integrationTest": {
+    "trajectory": {
+      "tests": 193,
+      "passed": 193,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "08-trajectory-test.xml"
+    },
+    "trajectoryContract": {
+      "tests": 69,
+      "passed": 69,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "08-trajectory-contract.xml"
+    }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T32.json' -Base c65ffc4fc495da0b01b2060ff3049eb127091d72 -Head b3e0cd1349edbd8c497f6fc2d9874433bd3efc3f; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "build", "command": "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test", "exitCode": 0, "passed": true },
+    { "name": "unit-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe --gtest_output=xml:（PATH 前置框架/vcpkg/Qt DLL 目录，pwsh 运行）", "exitCode": 0, "passed": true, "log": "08-trajectory-test.log", "xml": "08-trajectory-test.xml" },
+    { "name": "contract-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_contract_test.exe --gtest_output=xml:（同上 PATH）", "exitCode": 0, "passed": true, "log": "08-trajectory-contract.log", "xml": "08-trajectory-contract.xml" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T32.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/commit-lint.ps1' -Range 'c65ffc4fc495da0b01b2060ff3049eb127091d72..b3e0cd1349edbd8c497f6fc2d9874433bd3efc3f'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "gate-engine", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=%TEMP%/ird-t32-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "06-gate-engine.log" },
+    { "name": "verify-review-version", "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/verify-review-version.ps1", "exitCode": 0, "passed": true, "log": "09-verify-review-version.log" },
+    { "name": "freeze-and-redline", "command": "git diff --exit-code c65ffc4fc..b3e0cd134 -- closeout/ ＆ scripts/industrialrobot/ ＆ Ptp.cpp ＆ Continuity.cpp ＆ Smooth.cpp/TimeParameterization.cpp ＆ RobWork/RobWork/src/＋RobWorkSim/src/＋vcpkg/（六组逐一 exit 0）；grep -n Qt Planner.cpp 零命中", "exitCode": 0, "passed": true },
+    { "name": "evidence-reads", "command": "静态核对（无命令产物）：Planner.cpp diff 五处、MetricUtil.hpp:61-70/132-150/227-239、PathAnalyzer.hpp:214-227、PlannerReuseTest.cpp:171-298、GAP-TRJ-LINEAR-01.md 全文、README.md 全文、suitability 两原件、production-*.json ×5 四运行结构、disconnected-*.xml 红例与 -recheck 绿、Planner.mutated-l1.cpp 变异区、catalog 四 capability、矩阵 95 行 roles/statuses、changes/REUSE-T32.json、permissions.json grant、migration.md diff、performance.log/perf.cpp、Digest 口径 sha256 重算（changes 三凭证＋production 三证据哈希＋矩阵三区段）", "passed": true }
+  ],
+  "executionNotes": [
+    "首次亲跑两测试 exe 时 --gtest_output 采用 MSYS 风格路径（xml:/d/...），Windows gtest 未写出 XML（两次运行本体均 193/193 与 69/69 全绿 exit 0，日志已存 08-*.log）；随后以 pwsh＋Windows 绝对路径重跑同一 exe 生成 XML 原件（08-*.xml），运行计数与首跑一致，无内容差异。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "真实 Q 模板路径 PTP 线性插值极值探测",
+      "reason": "GAP-TRJ-LINEAR-01 候选3（SA-02 最小上游扩展）待所有者裁决维持 blocked，批准前不实施不探测；GAP/README/migration.md 三处如实分列 NOT RUN，属任务交付口径非验收缺口（本验收已核实 Ptp.cpp 零改动）。"
+    },
+    {
+      "item": "sampleStraightPath 采样计数公式级直接观测与 maxAdjacentStep/candidatePreferred RRT 选择序直接 oracle",
+      "reason": "IRD-GATE-AD 业务域零模型构造红线（治理自测 grant-business-construction-rejected 在案）：非 runtime 单元测试 grant 不得 construct-model，夹具不可建；观测面由既有 PlannerAvoidance 黄金算例（直连筛查分辨率敏感性、同种子重放逐点相等、选择序全序结论回归）与三组断开红例承载（README 覆盖限制节）。如所有者要求装置级直接 oracle，需先裁决红线适用性。"
+    },
+    {
+      "item": "1e6 分段上限护栏测试",
+      "reason": "登记不测：触发即 ≥10⁶ 样本，生产规模不可执行；属病态输入防溢出面（README/契约 note 分列）。"
+    },
+    {
+      "item": "独立冒烟目标对 Planner.cpp 算法面的运行覆盖",
+      "reason": "Planner.cpp 为集成条件源（if(TARGET sdurw_kinematics)），冒烟模式不编入；smoke-build.log 仅证注册/include/依赖与冒烟构建通过，未声称覆盖其算法——集成面由 193+69 项亲跑承载。"
+    },
+    {
+      "item": "上游原测试目标（LinearInterpolatorTest 等）重跑",
+      "reason": "未改上游（范围 diff 零命中），仅引用上游构造/折叠/规划器夹具；按增量口径不重跑无关全库夹具（AGENTS §4），catalog tests 引用在案。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 REUSE-T32 送验范围（c65ffc4fc..b3e0cd134，两提交）：GAP-TRJ-LINEAR-01 候选2定案与契约编制（纯文档）＋Planner 三处度量换核与全行铺面。性能差异（pathL1 相对 +24~41%、绝对 +40ns/次）经本验收裁决接受（依据见 checks 第 12 条），不构成阻断；该裁决限于当前生产面调用频度（每次 search 仅 K 次键计算），若未来调用频度发生量级变化应重新评估。REUSE-T22 登记的 PTP 极值缺口本体未关闭（候选3 待所有者裁决，Ptp.cpp 未动），WP-11 残余以 GAP blocked 登记延续，不在本包验收范围内宣称关闭。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭，changed=99 相对基线增量来自其他已登记批次），不构成整单元全域正确性证明或 REUSE-T02/算法替换（migration §11）的放行。矩阵 95 行为复用判断/实施记录；逐功能 migrated 表示该功能面已绑定四次真实运行证据，audit-t26/audit-t32 各 business-specific 行为覆盖铺面登记。T09 两份与 T26 一份 production.json 仅机械指纹刷新（CMakeLists.txt 摘要），其运行内容原件未触碰。本验收未执行远程操作、未提交、未修改任何被验文件。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/06-gate-engine.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/07-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/08-trajectory-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/08-trajectory-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/08-trajectory-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/08-trajectory-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/09-verify-review-version.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1.json"
+  ]
+}

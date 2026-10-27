@@ -1,0 +1,2 @@
+verify-task-scope: REUSE-T32 base=c65ffc4fc495 head=b3e0cd1349ed changed=70 allowedRules=14 forbiddenRules=3
+verify-task-scope: PASS REUSE-T32 —— 70 个路径全部在允许面内

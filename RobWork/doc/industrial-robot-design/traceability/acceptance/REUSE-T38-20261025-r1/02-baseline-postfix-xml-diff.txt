@@ -1,0 +1,2 @@
+EQUAL baseline-sdurws_ird_io_contract_test.xml tests=0-> testcase 对象=9
+EQUAL baseline-sdurws_ird_io_test.xml tests=0-> testcase 对象=132

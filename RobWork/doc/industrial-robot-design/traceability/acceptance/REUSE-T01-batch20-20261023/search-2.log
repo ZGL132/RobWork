@@ -1,0 +1,10 @@
+RobWork/RobWork/src/rw/core/IOUtil.cpp:49:void IOUtil::readFile (const std::string& file_name, std::vector< char >& result)
+RobWork/RobWork/src/rw/core/IOUtil.cpp:195:void IOUtil::getFilesInFolder (const std::string& path, const std::string& fileMask, bool recursive,
+RobWork/RobWork/src/rw/core/IOUtil.cpp:217:                    getFilesInFolder (it->path ().string (), fileMask, recursive, addPath, result);
+RobWork/RobWork/src/rw/core/IOUtil.cpp:247:std::vector< std::string > IOUtil::getFilesInFolder (const std::string& path, bool recursive,
+RobWork/RobWork/src/rw/core/IOUtil.cpp:251:    getFilesInFolder (path, fileMask, recursive, addPath, result);
+RobWork/RobWork/src/rw/core/IOUtil.cpp:255:size_t IOUtil::getFileSize (const std::string& filename)
+RobWork/RobWork/src/rw/core/IOUtil.hpp:56:        static void readFile (const std::string& file_name, std::vector< char >& result);
+RobWork/RobWork/src/rw/core/IOUtil.hpp:122:        static std::vector< std::string > getFilesInFolder (const std::string& path, bool recursive,
+RobWork/RobWork/src/rw/core/IOUtil.hpp:134:        static void getFilesInFolder (const std::string& path, const std::string& fileMask,
+RobWork/RobWork/src/rw/core/IOUtil.hpp:143:        static size_t getFileSize (const std::string& filename);

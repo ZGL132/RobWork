@@ -1,0 +1,13 @@
+round=0 current=0 overflow=0 loops=5000000 us/call=0.00178356
+round=0 current=1 overflow=0 loops=5000000 us/call=0.00352084
+round=0 current=0 overflow=1 loops=20000 us/call=0.002185
+round=0 current=1 overflow=1 loops=20000 us/call=9.779855
+round=1 current=0 overflow=0 loops=5000000 us/call=0.0020851
+round=1 current=1 overflow=0 loops=5000000 us/call=0.00353524
+round=1 current=0 overflow=1 loops=20000 us/call=0.00214
+round=1 current=1 overflow=1 loops=20000 us/call=10.205905
+round=2 current=0 overflow=0 loops=5000000 us/call=0.00226522
+round=2 current=1 overflow=0 loops=5000000 us/call=0.00476988
+round=2 current=0 overflow=1 loops=20000 us/call=0.00235
+round=2 current=1 overflow=1 loops=20000 us/call=10.11502
+checksum=30060000

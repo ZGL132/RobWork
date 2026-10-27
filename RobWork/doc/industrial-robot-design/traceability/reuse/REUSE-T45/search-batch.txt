@@ -1,0 +1,5 @@
+== S1: 上游归档/版本化发布同义物检索
+S1 exit=0
+
+== S2: ReportCodec 受限类别命中源核实（rw/kinematics include 与 State 字命中）
+S2 exit=0

@@ -1,0 +1,332 @@
+[
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "qualifiedSymbol": "sdurws::ird::dynamics::PowerEnergyCalculator::compute",
+    "completeBalancedDefinition": true,
+    "startLine": 63,
+    "endLine": 186,
+    "returnSignature": "PowerEnergySummary PowerEnergyCalculator::compute(const DynamicsSeries& series) const",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "kinematics.Envelope.probeSeedFor",
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeSeedFor",
+    "completeBalancedDefinition": true,
+    "startLine": 63,
+    "endLine": 66,
+    "returnSignature": "std::uint64_t probeSeedFor(std::uint64_t seed, std::uint64_t probeSerial)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "kinematics.Envelope.failCaller",
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::failCaller",
+    "completeBalancedDefinition": true,
+    "startLine": 69,
+    "endLine": 72,
+    "returnSignature": "[[noreturn]] void failCaller(const std::string& what)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "kinematics.Envelope.probeReachability",
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeReachability",
+    "completeBalancedDefinition": true,
+    "startLine": 127,
+    "endLine": 209,
+    "returnSignature": "ProbeVerdict probeReachability(double t,\n                               const rw::math::Vector3D<double>& direction,\n                               const IKinRuntimeView& view,\n                               const TcpRef& tcp,\n                               const EnvelopeQuery& query,\n                               const std::vector<JointInterval>& intervals,\n                               std::uint64_t& probeSerial,\n                               std::uint32_t& rayProbeCount,\n                               IkFacilityFailure* facilityOut)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+    "qualifiedSymbol": "sdurws::ird::kinematics::computeApproximateEnvelope",
+    "completeBalancedDefinition": true,
+    "startLine": 217,
+    "endLine": 481,
+    "returnSignature": "Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,\n                                                    const TcpRef& tcp,\n                                                    const EnvelopeQuery& query)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::slotValue",
+    "completeBalancedDefinition": true,
+    "startLine": 30,
+    "endLine": 33,
+    "returnSignature": "double slotValue(const FeasibleCandidate& c, MetricId id) noexcept",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::notWorse",
+    "completeBalancedDefinition": true,
+    "startLine": 37,
+    "endLine": 46,
+    "returnSignature": "bool notWorse(double a, double b, MetricDirection d, const core::Tolerance& t) noexcept",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::strictlyBetter",
+    "completeBalancedDefinition": true,
+    "startLine": 50,
+    "endLine": 57,
+    "returnSignature": "bool strictlyBetter(double a, double b, MetricDirection d,\n                    const core::Tolerance& t) noexcept",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "qualifiedSymbol": "sdurws::ird::optimization::dominates",
+    "completeBalancedDefinition": true,
+    "startLine": 65,
+    "endLine": 88,
+    "returnSignature": "bool dominates(const FeasibleCandidate& a, const FeasibleCandidate& b,\n               const ObjectiveSet& objectives) noexcept",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "qualifiedSymbol": "sdurws::ird::optimization::ParetoFrontBuilder::buildFront",
+    "completeBalancedDefinition": true,
+    "startLine": 94,
+    "endLine": 291,
+    "returnSignature": "ParetoFrontResult ParetoFrontBuilder::buildFront(\n    const std::vector<FeasibleCandidate>& candidates,\n    const ObjectiveSet& objectives) const",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::strategyId",
+    "completeBalancedDefinition": true,
+    "startLine": 32,
+    "endLine": 37,
+    "returnSignature": "std::string SeededLhsGenerator::strategyId() const",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::generateNextBatch",
+    "completeBalancedDefinition": true,
+    "startLine": 39,
+    "endLine": 61,
+    "returnSignature": "GenerationBatch SeededLhsGenerator::generateNextBatch(const GenerationContext& ctx)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "qualifiedSymbol": "sdurws::ird::optimization::validateBaselinePerturbParams",
+    "completeBalancedDefinition": true,
+    "startLine": 67,
+    "endLine": 98,
+    "returnSignature": "void validateBaselinePerturbParams(const BaselinePerturbParams& params)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::strategyId",
+    "completeBalancedDefinition": true,
+    "startLine": 105,
+    "endLine": 108,
+    "returnSignature": "std::string BaselinePerturbGenerator::strategyId() const",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::generateNextBatch",
+    "completeBalancedDefinition": true,
+    "startLine": 110,
+    "endLine": 229,
+    "returnSignature": "GenerationBatch BaselinePerturbGenerator::generateNextBatch(const GenerationContext& ctx)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "qualifiedSymbol": "sdurws::ird::optimization::builtInStrategyIds",
+    "completeBalancedDefinition": true,
+    "startLine": 235,
+    "endLine": 246,
+    "returnSignature": "const std::vector<std::string_view>& builtInStrategyIds()",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "qualifiedSymbol": "sdurws::ird::optimization::generateWithBuiltInStrategy",
+    "completeBalancedDefinition": true,
+    "startLine": 248,
+    "endLine": 280,
+    "returnSignature": "GenerationBatch generateWithBuiltInStrategy(const std::string& strategyId,\n                                            const GenerationContext& ctx,\n                                            const BaselinePerturbParams& perturbParams)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.cancellationRequested",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::cancellationRequested",
+    "completeBalancedDefinition": true,
+    "startLine": 106,
+    "endLine": 109,
+    "returnSignature": "bool cancellationRequested() const override",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.alive",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::alive",
+    "completeBalancedDefinition": true,
+    "startLine": 112,
+    "endLine": 112,
+    "returnSignature": "bool alive() const override",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.doSetLog",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doSetLog",
+    "completeBalancedDefinition": true,
+    "startLine": 158,
+    "endLine": 158,
+    "returnSignature": "void doSetLog(rw::core::Log::Ptr) override",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.doInCollision",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doInCollision",
+    "completeBalancedDefinition": true,
+    "startLine": 161,
+    "endLine": 193,
+    "returnSignature": "bool doInCollision(const rw::math::Q& q) const override",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.parsePlannerSelection",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::parsePlannerSelection",
+    "completeBalancedDefinition": true,
+    "startLine": 235,
+    "endLine": 298,
+    "returnSignature": "PlannerTuning parsePlannerSelection(const std::string& familyToken,\n                                    const std::map<std::string, std::string>& params)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::validateConfigPairAndBounds",
+    "completeBalancedDefinition": true,
+    "startLine": 310,
+    "endLine": 340,
+    "returnSignature": "void validateConfigPairAndBounds(const rw::math::Q& fromQ, const rw::math::Q& toQ,\n                                 const rw::math::Q& lowerBoundQ,\n                                 const rw::math::Q& upperBoundQ,\n                                 const char* errorTokenPrefix)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.sampleStraightPath",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::sampleStraightPath",
+    "completeBalancedDefinition": true,
+    "startLine": 360,
+    "endLine": 387,
+    "returnSignature": "SampledPath sampleStraightPath(const rw::math::Q& fromQ, const rw::math::Q& toQ,\n                               double resolution)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.reviewPathSequence",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::reviewPathSequence",
+    "completeBalancedDefinition": true,
+    "startLine": 419,
+    "endLine": 462,
+    "returnSignature": "ReviewResult reviewPathSequence(const policy::CollisionEvaluationSession& session,\n                                const AdapterCallContext& ctx,\n                                const std::vector<rw::math::Q>& configurations,\n                                const std::vector<double>& pathParameters)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.maxAdjacentStep",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::maxAdjacentStep",
+    "completeBalancedDefinition": true,
+    "startLine": 469,
+    "endLine": 478,
+    "returnSignature": "double maxAdjacentStep(const std::vector<rw::math::Q>& configurations)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.pathJointLength",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::pathJointLength",
+    "completeBalancedDefinition": true,
+    "startLine": 481,
+    "endLine": 490,
+    "returnSignature": "double pathJointLength(const std::vector<rw::math::Q>& configurations)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.minNormalizedMargin",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::minNormalizedMargin",
+    "completeBalancedDefinition": true,
+    "startLine": 494,
+    "endLine": 510,
+    "returnSignature": "double minNormalizedMargin(const std::vector<rw::math::Q>& configurations,\n                           const rw::math::Q& lowerBoundQ, const rw::math::Q& upperBoundQ)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.candidatePreferred",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::candidatePreferred",
+    "completeBalancedDefinition": true,
+    "startLine": 516,
+    "endLine": 533,
+    "returnSignature": "bool candidatePreferred(const PathCandidate& lhs, const PathCandidate& rhs,\n                        const rw::math::Q& lowerBoundQ, const rw::math::Q& upperBoundQ)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.makeAvoidFailure",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::makeAvoidFailure",
+    "completeBalancedDefinition": true,
+    "startLine": 543,
+    "endLine": 555,
+    "returnSignature": "FailedSegmentRecord makeAvoidFailure(std::uint32_t segmentIndex,\n                                     const std::string& reasonToken,\n                                     const std::string& cause,\n                                     const std::string& recommendedAction)",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.search",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PathPlannerAdapterImpl::search",
+    "completeBalancedDefinition": true,
+    "startLine": 580,
+    "endLine": 819,
+    "returnSignature": "PlanSearchResult search(const PlannerSearchRequest& request) override",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.makePathPlannerAdapter",
+    "qualifiedSymbol": "sdurws::ird::trajectory::makePathPlannerAdapter",
+    "completeBalancedDefinition": true,
+    "startLine": 828,
+    "endLine": 831,
+    "returnSignature": "std::unique_ptr<IPathPlannerAdapter> makePathPlannerAdapter()",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+    "qualifiedSymbol": "sdurws::ird::trajectory::planPtpWithObstacleAvoidance",
+    "completeBalancedDefinition": true,
+    "startLine": 837,
+    "endLine": 1088,
+    "returnSignature": "AvoidancePlanResult planPtpWithObstacleAvoidance(const AvoidancePlanRequest& request,\n                                                 IPathPlannerAdapter& adapter)",
+    "decision": "pending",
+    "status": "pending"
+  }
+]

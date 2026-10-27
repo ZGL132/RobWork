@@ -1,0 +1,15 @@
+135:     expectedErrorCode: 'IncludeCycle',
+136:     expectedDiagnosticCode: 'IO-FORMAT-XML-CYCLE',
+137:     expandedBytesAbsent: true,
+138:     noDraftProduced: true,
+139:     note: 'include 相互循环（a→b→a）——io 契约本应拦截；本服务防御性复核透传 V-09 码面（无草稿、无对象写入）',
+140:   },
+141: };
+142: 
+143: fs.writeFileSync(
+144:   path.join(thisDir, '..', 'expected', 'import-report.json'),
+145:   JSON.stringify(importReport, null, 2) + '\n', 'utf8');
+146: fs.writeFileSync(
+147:   path.join(thisDir, '..', 'expected', 'xacro-samples.json'),
+148:   JSON.stringify(xacroSamples, null, 2) + '\n', 'utf8');
+149: console.log('mdl-urdf-import: expected/import-report.json + expected/xacro-samples.json 已生成');

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T09",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "sha256": "dfd0533dc6fd6477183df5b070105bf89fccd72d8811ae4dfcf48858f298af04",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-POLYNOMIAL"
+      ],
+      "boundary": "五次Hermite基值求值上游化（升幂系数表+evaluate Horner）；λ收缩、端点/必经点、共线零偏差NoChange位级判定、公共接口与诊断不变",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-smooth.json"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "sha256": "43d945a6864e7ac81a50cf0e84dee6ad56aab546faee229359cd6f46f3115bdd",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-POLYNOMIAL"
+      ],
+      "boundary": "五次/七次基族表与导数链上游化（derivative+evaluate）；驻留分支/结点高阶导恒0/限值缩放/C²C³守卫/素材不变；evaluateDerivatives不入热路径（测试侧对照）",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-timeparam.json"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/SmoothTest.cpp",
+      "sha256": "87f045c75848a89fda647238ce3f8219bc2088a32b255b193079152d4b7fe81c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "独立解析oracle保持＋上游evaluateDerivatives对照＋非有限路点拒绝用例",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-run.log"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp",
+      "sha256": "1efc3ed949f0a0372e64a104123d6873fe42da7391363f7251d574b316324aec",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "独立解析oracle保持＋上游对照三件（五次/七次/非零切线）＋退化段/短时长用例",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-run.log"
+    }
+  ]
+}

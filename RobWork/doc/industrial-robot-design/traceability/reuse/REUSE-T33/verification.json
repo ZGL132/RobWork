@@ -1,0 +1,115 @@
+{
+  "taskId": "REUSE-T33",
+  "wp": "migration §13 WP-12 modeling 面一（缩减批）；DTB masterWp WP-E",
+  "base": "2f0ee6dcc581da0e0f18ffacbdfa60080af5b062",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+      "sha256": "515b941198602601f5ad341b1901ded32086a6bd9aeec798631c28a42c2addc2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+      "sha256": "d20522e50446e3227865dedff16ff881194b5a94b31d72564fde6248e94e0655"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+      "sha256": "0d49064f439164f740673ca05e54eab7945f19c81d86de91b4a830927621de0b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md",
+      "sha256": "fccb39acb856e64d29007b1e9eb796d9078019947e9ecd58f24fcab3781bf43f"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/production-rpy.json",
+      "sha256": "d2e0af4dd84ce69d1d0eb6e266e9292e40d39d890ff5924d3b31df4056e22210"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+      "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+      "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+      "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+      "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+      "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+      "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    }
+  ],
+  "runs": {
+    "fullSuite": {
+      "label": "final",
+      "tests": 480,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/final.xml"
+    },
+    "contractSuite": {
+      "label": "contract",
+      "tests": 17,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/contract.xml"
+    },
+    "disconnected": {
+      "label": "rpy-disconnected",
+      "failures": 1,
+      "exitCode": 1,
+      "mutation": "rpyview 通支 roll×2",
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-disconnected.xml"
+    },
+    "restoredGreen": {
+      "label": "restored-green",
+      "failures": 0,
+      "exitCode": 0,
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/restored-green.xml"
+    },
+    "pluginLinkFace": {
+      "targets": [
+        "sdurws_ird_modeling_plugin",
+        "sdurws_ird_modeling_app"
+      ],
+      "result": "STATIC $<LINK_ONLY> 集成构建实证；独立冒烟树无插件目标（G4/G6 边界）"
+    },
+    "candidateEvidenceNotLanded": [
+      "import-rotated-*（A）",
+      "template-*（D）",
+      "canonicalbridge-fold/dhconvert-order/dhconvert-disconnected（C-lib 预演）"
+    ]
+  },
+  "blocked": "A（Import.cpp rotateInertia）与 D（Template.cpp 占位圆柱）被 UI-T53 closures 冻结面拦截（acceptedPaths 逐字节比对），候选+oracle+断开证据已完成留存本目录，移交 REUSE-T35；解冻须所有者对 closed 行启动验收（超实施者权限）。",
+  "summary": "落地 rotationToRpy→adapter（MATH-ROT verified 面）与 G1 收口；A/D closures-blocked 移交 T35。独立验收 NOT RUN。",
+  "candidateEvidenceNotLanded": "A/D/C-lib 候选实现与全套 oracle/断开证据原件存 git 历史 01b770ae6（production-rotateinertia/production-template 含旧树 final.log 绑定已从 tip 移除，防孤儿绑定触发 POSITIVE）；REUSE-T35 落地时按同 SHA 恢复"
+}

@@ -1,0 +1,55 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp
+sdurws::ird::project::CommandServiceImpl::submit
+169: CommandResult CommandServiceImpl::submit(const CommandEnvelope& envelope,
+170:                                          ICommandInteraction* interaction)
+171: {
+172:     // ---- 命令执行槽（§6.1"每存储上下文一个命令执行槽（互斥）"）：
+173:     //      全程持锁——S3～S6 的处理器代码、确认等待与编译都在槽内；
+174:     //      并发 submit 在此排队（PRJ-TX-1"第二个等待"）。
+175:     std::lock_guard<std::mutex> slotGuard(m_slot);
+176: 
+177:     // ---- 在途票据（§9.7 引用持有者清单）：本命令在途期间 requestClose
+178:     //      的排空等待不完成——票据析构（本函数任何返回路径）释放引用并
+179:     //      可能触发排空收尾。票据在槽内获取、随栈帧析构——生命周期与
+180:     //      命令严格同界。
+181:     std::shared_ptr<void> inFlight = m_host.acquireInFlight();
+182: 
+183:     CommandResult result;
+184:     ICommandHandler* handler = nullptr;
+185:     RevisionView baseView;
+186: 
+187:     // ---- StoreError 的统一映射面（私有头实现口径②）：S1～S6 的查询/
+188:     //      门卫/事务失败在此收敛——ContextClosed＝执行中被关闭（§6.7
+189:     //      排空中止）；其余环境/数据侧码＝Failed 透传。处理器与 core 的
+190:     //      非 StoreError 异常不捕获（处理器缺陷＝调用方错误 fail-fast——
+191:     //      §5.3.2 契约"不吞不改"）。
+192:     try {
+193:         // [S1] 形式校验（type→payload 版本→branch→writable）。
+194:         if (!runFormChecks(envelope, interaction, handler, result)) {
+195:             return result;
+196:         }
+197:         // [S2] 基线解析与并发校验（expectedRevision vs tip——§6.2）。
+198:         if (!resolveBaseline(envelope, baseView, result)) {
+199:             return result;
+200:         }
+201:         // [S3] prepare ／ [S4] 确认放行 ／ [S5] 双编译 ／ [S6] 事务提交
+202:         // （S7 事件发布在事务第 6 步内——TxEngine，D-18 口径）。
+203:         executePlan(envelope, *handler, baseView, interaction, result);
+204:         return result;
+205:     } catch (const StoreError& e) {
+206:         // 失败重建结果（半填充的中间态不外泄——Result 四态互斥）。
+207:         result = CommandResult{};
+208:         if (e.code() == StoreErrorCode::ContextClosed) {
+209:             // 执行中排空（门卫拒绝）＝中止而非拒绝：命令已过 S1 形式
+210:             // 校验、被会话关闭打断（§6.7"context-closing 路径"）。
+211:             // error 保留原码供开发定位（Aborted 面附 error＝实现口径②）。
+212:             result.status.kind = CommandStatus::Kind::Aborted;
+213:             result.status.abort = CommandStatus::Abort::ContextClosing;
+214:             result.error = e;
+215:             return result;
+216:         }
+217:         result.status.kind = CommandStatus::Kind::Failed;
+218:         result.error = e;
+219:         return result;
+220:     }
+221: }

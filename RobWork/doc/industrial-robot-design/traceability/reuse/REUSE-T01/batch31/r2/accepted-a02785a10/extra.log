@@ -1,0 +1,1 @@
+{"f966Status": "open", "candidate": "candidate", "ruleVerified": true, "scriptHashesMatch": true, "oracle": {"inputsFinite": true, "diffDivM": "2", "limitDivM": "3/2", "expectedClose": false, "implementationFloatDiff": "inf", "implementationFloatLimit": "inf"}}

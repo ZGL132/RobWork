@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-24T13:17:46.517" name="AllTests">
+  <testsuite name="TrjCartesianLine" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-24T13:17:46.517">
+    <testcase name="SlerpIndependentAxisOracle_REUSE_T26" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\CartesianLineContinuityTest.cpp" line="362" status="run" result="completed" time="0.001" timestamp="2026-10-24T13:17:46.517" classname="TrjCartesianLine" />
+    <testcase name="SlerpUpstreamAndBoundary_REUSE_T26" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\CartesianLineContinuityTest.cpp" line="410" status="run" result="completed" time="0." timestamp="2026-10-24T13:17:46.519" classname="TrjCartesianLine" />
+  </testsuite>
+</testsuites>

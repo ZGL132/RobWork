@@ -1,0 +1,105 @@
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:58:                                             bool noInertia = false)
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:116:        if (!noInertia) {
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:138:    if (!noInertia) {
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:149:                                 bool noInertia = false)
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:153:    const ProjectionIntegrals p = compProjectionIntegrals (f, t3d, noInertia);
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:180:    if (!noInertia) {
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:202:                          bool noInertia = false)
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:228:        const FaceIntegrals f = compFaceIntegrals (face, t3d, noInertia);
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:236:        if (!noInertia) {
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:247:    if (!noInertia) {
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:257:    InertiaMatrix<> inertia;
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:261:InertiaMatrix<> moveInertiaPoint(double mass, const InertiaMatrix<>& inertia, const Vector3D<>& cog)
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:262:{ InertiaMatrix<> J = inertia; J(0,0) -= mass * (cog[1]*cog[1] + cog[2]*cog[2]); J(1,1) -= mass *
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:270:                                      bool noInertia = false)
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:279:    compVolumeIntegrals (trimesh, t3d, par.volume, T1, T2, TP, noInertia);
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:285:    if (!noInertia) {
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:287:        InertiaMatrix<>& J   = par.inertia;
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:461:std::pair< Vector3D<>, InertiaMatrix<> >
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:462:GeometryUtil::estimateInertiaCOG (double mass, const std::vector< Geometry::Ptr >& geoms,
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:471:    const InertiaMatrix<> inertia = estimateInertia (mass, geoms, refframe, state, nref);
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:475:InertiaMatrix<> GeometryUtil::estimateInertia (double mass,
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:501:    InertiaMatrix<> inertia;
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:504:        const InertiaMatrix<>& J = par[i].inertia;
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:514:InertiaMatrix<> GeometryUtil::estimateInertia (double mass,
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:534:    InertiaMatrix<> inertia;
+RobWork/RobWork/src/rw/geometry/GeometryUtil.cpp:537:        const InertiaMatrix<>& J = par[i].inertia;
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:22: * @file InertiaMatrix.hpp
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:42:    template< class T = double > class InertiaMatrix
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:75:        InertiaMatrix (T r11, T r12, T r13, T r21, T r22, T r23, T r31, T r32, T r33)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:105:        InertiaMatrix (const rw::math::Vector3D< T >& i, const rw::math::Vector3D< T >& j,
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:125:        InertiaMatrix (T i = 0.0, T j = 0.0, T k = 0.0)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:143:        explicit InertiaMatrix (const Base& r) : _matrix (r) {}
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:181:        friend InertiaMatrix operator* (const rw::math::Rotation3D< T >& aRb,
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:182:                                        const InertiaMatrix& bRc)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:184:            return InertiaMatrix (aRb.e () * bRc.e ());
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:196:        InertiaMatrix operator* (const rw::math::Rotation3D< T >& bRc) const
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:198:            return InertiaMatrix (this->e () * bRc.e ());
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:202:         * @brief Calculates the addition between the two InertiaMatrices
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:204:        InertiaMatrix operator+ (const InertiaMatrix& I2) const
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:206:            return InertiaMatrix (this->e () + I2.e ());
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:226:        friend std::ostream& operator<< (std::ostream& os, const InertiaMatrix& r)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:231:        TOSTRING (rw::math::InertiaMatrix< T >);
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:241:         * @param rhs [in] InertiaMatrix to compare with
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:244:        bool operator== (const InertiaMatrix& rhs) const
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:259:         * @param rhs [in] InertiaMatrix to compare with
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:262:        bool operator!= (const InertiaMatrix& rhs) const { return !(*this == rhs); }
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:271:        static InertiaMatrix< T > makeSolidSphereInertia (T mass, T radi)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:274:            return InertiaMatrix< T > (tmpV, 0, 0, 0, tmpV, 0, 0, 0, tmpV);
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:283:        static InertiaMatrix< T > makeHollowSphereInertia (T mass, T radi)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:286:            return InertiaMatrix< T > (tmpV, 0, 0, 0, tmpV, 0, 0, 0, tmpV);
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:290:         * @brief calculates the inertia of a cuboid where the reference frame is in the
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:298:        static InertiaMatrix< T > makeCuboidInertia (T mass, T x, T y, T z)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:300:            return InertiaMatrix< T > ((T) (1 / 12.0 * mass * (y * y + z * z)),
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:339:    template< class Q > InertiaMatrix< Q > inverse (const InertiaMatrix< Q >& aRb)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:341:        return InertiaMatrix< Q > (aRb.e ().inverse ());
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:345:     * @brief Casts InertiaMatrix<T> to InertiaMatrix<Q>
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:346:     * @param rot [in] InertiaMatrix with type T
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:347:     * @return InertiaMatrix with type Q
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:349:    template< class Q, class T > InertiaMatrix< Q > cast (const InertiaMatrix< T >& rot)
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:351:        InertiaMatrix< Q > res;
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:358:    extern template class rw::math::InertiaMatrix< double >;
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:359:    extern template class rw::math::InertiaMatrix< float >;
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:361:    SWIG_DECLARE_TEMPLATE (InertiaMatrixd, rw::math::InertiaMatrix< double >);
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:362:    SWIG_DECLARE_TEMPLATE (InertiaMatrixf, rw::math::InertiaMatrix< float >);
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:365:    using InertiaMatrixd = InertiaMatrix< double >;
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:366:    using InertiaMatrixf = InertiaMatrix< float >;
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:377:         * @relatedalso rw::math::InertiaMatrix
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:380:        void write (const rw::math::InertiaMatrix< double >& sobject,
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:385:         * @relatedalso rw::math::InertiaMatrix
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:388:        void write (const rw::math::InertiaMatrix< float >& sobject,
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:393:         * @relatedalso rw::math::InertiaMatrix
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:396:        void read (rw::math::InertiaMatrix< double >& sobject, rw::common::InputArchive& iarchive,
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:401:         * @relatedalso rw::math::InertiaMatrix
+RobWork/RobWork/src/rw/math/InertiaMatrix.hpp:404:        void read (rw::math::InertiaMatrix< float >& sobject, rw::common::InputArchive& iarchive,
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:23:#include <rw/math/InertiaMatrix.hpp>
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:78:         * The inertia is described relative to the ref coordinate system translated to COG.
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:92:        static std::pair< rw::math::Vector3D<double>, rw::math::InertiaMatrix<> > estimateInertiaCOG (
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:113:        static rw::math::InertiaMatrix<> estimateInertia (
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:133:        static rw::math::InertiaMatrix<> estimateInertia (
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:139:         * @param inertia [in] the inertia matrix to calculate principal values for.
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:145:        calculatePrincipalInertia (const rw::math::InertiaMatrix< T >& inertia)
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:151:            const rw::math::Vector3D< T > principalInertia = rw::math::Vector3D< T > (dec.second);
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:160:                rotation, principalInertia);
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:203:         * @brief calculates the max distance to any triangle in the geoms, from some point \b
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:206:         * @param center [in] the point to calculate the distance from
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:230:         * @brief calculates volume of k-simplex
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:236:         * Volume of k-dimensional simplex (triangle is 2-simplex) is calculated as:
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:264:            // calculate volume
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:304:         * Volume of a N-simplex is calculated as:
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:310:         * If only N vertices are given, then the volume is calculated with the origo as the
+RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp:332:            // calculate volume
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:29:#include <rw/math/InertiaMatrix.hpp>
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:60:        rw::math::InertiaMatrix<> inertia;
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:104:     * The body interface is used to add impulses, calculate basic velocity
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:194:        const rw::math::InertiaMatrix<>& getInertia () const { return _info.inertia; }
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:252:        void setMass (double m, const rw::math::InertiaMatrix<>& inertia)
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:266:        void setMass (double m, const rw::math::InertiaMatrix<>& inertia,
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:288:         * @brief calculates the relative velocity of a point p on the body
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:345:         *  - if not specified, no potential energy is calculated.
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:447:            // calculate the center force contribution
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:450:            // calculate the torque contribution
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:469:            // calculate the center force contribution
+RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp:473:            // calculate the torque contribution
+RobWork/RobWork/gtest/math\MathSerializationTest.cpp:77:    		const InertiaMatrix<> write(R.e());
+RobWork/RobWork/gtest/math\MathSerializationTest.cpp:78:    		InertiaMatrix<> read;

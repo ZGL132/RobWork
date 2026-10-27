@@ -1,0 +1,27 @@
+{
+  "rowDeltaCount": 31,
+  "coverage": [
+    {
+      "label": "original37",
+      "missingFromManifest": [],
+      "nonexistentManifestEntries": [],
+      "selfReferenced": false,
+      "count": 37
+    },
+    {
+      "label": "rejected57",
+      "missingFromManifest": [],
+      "nonexistentManifestEntries": [],
+      "selfReferenced": false,
+      "count": 57
+    },
+    {
+      "label": "r2original66",
+      "missingFromManifest": [],
+      "nonexistentManifestEntries": [],
+      "selfReferenced": false,
+      "count": 66
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,10 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::(anonymous namespace)::requireBool
+67: bool requireBool(const JsonValue& obj, const std::string& key)
+68: {
+69:     const JsonValue* v = obj.find(key);
+70:     if (v == nullptr || !v->isBool()) {
+71:         failField(key, "必填布尔字段缺失或非布尔");
+72:     }
+73:     return v->boolean;
+74: }

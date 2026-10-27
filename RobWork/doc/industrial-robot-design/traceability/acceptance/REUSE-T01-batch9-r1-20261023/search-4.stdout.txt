@@ -1,0 +1,28 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:74:class FrozenRuntimeView final : public IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:77:        : m_model(source.model()), m_worldToBase(source.worldToBase())
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:81:    const runtime::CanonicalModel& model() const override { return m_model; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:85:        return m_worldToBase;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:89:    runtime::CanonicalModel m_model;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:90:    rw::math::Transform3D<double> m_worldToBase;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:61:class SnapshotViewAdapter final : public kinematics::IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:65:        : m_snapshot(std::move(snapshot))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:70:        return m_snapshot->model();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:74:        return m_snapshot->worldToBase();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:79:    std::shared_ptr<const runtime::RuntimeSnapshot> m_snapshot;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:122:    m_snapshot = view;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:125:    m_snapshotId = snapshotId;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:260:        tBaseWorld = runtime::invertWorldBase(m_snapshot->worldToBase());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:336:        const auto& tools = m_snapshot->model().tools();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:379:    const runtime::CanonicalModel& model = m_snapshot->model();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:481:    if (m_snapshot == nullptr) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:486:    if (!(request.snapshotId == m_snapshotId)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:578:    // m_snapshotId——回投侧的绑定键取提交时值，迟到任务绝不打上新锚）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:742:    std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:882:    std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:978:    std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:1047:                if(self->m_snapshotId!=snapshotIdAtSubmit || self->m_epoch!=epoch) { return; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:1071:    const runtime::CanonicalModel& model = m_snapshot->model();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:1089:    const runtime::CanonicalModel& model = m_snapshot->model();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:1111:        kinematics::evaluationIntervals(*m_snapshot);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:1143:    slice.request.requestIdentity.snapshotId = m_snapshotId;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:1169:    const runtime::CanonicalModel& model = m_snapshot->model();

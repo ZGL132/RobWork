@@ -1,0 +1,133 @@
+{
+  "taskId": "REUSE-T09",
+  "baseCommit": "54f0beda6fa6142c707b154d4d0d6ad5d5743169",
+  "reviewedCommit": "b0997f8d8f568edf7ec48b403f3f454b09cc1aaa",
+  "branch": "redesign-main",
+  "verdict": "fail",
+  "createdAt": "2026-10-25T00:33:04+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T09/WP-03 单次验收子智能体（r1）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何产品/治理/契约文件、未提交、未切分支、未建工作树、未远程操作、未重配或重建集成构建树（仅增量编译受影响目标）；bench 编译副产物（acc-bench-rerun.exe/polynomial-replace-bench.obj）已从实施侧 benchmark 证据目录移入本产物目录留痕；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 54f0beda6..b0997f8d8 送验范围（ask 指定：base 取契约 note 记载冻结起点 54f0beda6，reviewHead 系 git log 推导、migration.md §13.2 第 272 行记载 T09 三提交 8db7a7e78/aee6ac5bf/b0997f8d8）：范围含 18 提交（其中 REUSE-T11/T12/GOV 等非 T09 提交 14 个，系主线串行集成链）；T09 实施链＝340dc88a4（原始）＋9e1fe9c2e（修订重放，文件面与原始一致）＋8db7a7e78/a63157aec（集成收口）＋aee6ac5bf（主会话整合 catalog 翻转）＋357d19e3d（门禁留痕）＋b0997f8d8（merge）。验收内容：全范围 verify-task-scope 复跑与 T09 实施面拆分机器核对、契约 verify 三连、集成构建与 trajectory 双测试真实复跑、ird_gates 直跑、性能基准独立重跑（生产同款 MSVC /O2）、SHA 绑定链核对（manifest/production/变异 originalSha256/catalog evidence 对送验 head blob）、红线抽查（H1—H6、L2 零 Qt、CLOSURE 冻结、平行实现零残留、门禁与 permissions 零触碰）、提交链规范与正文-证据一致性、契约五条 acceptance 映射。",
+  "counts": {
+    "failed": 1,
+    "passed": 13,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "14 项验收检查；集成测试与基准复跑计数另列（integrationTest、benchEvidence、disconnectedEvidence），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 干净（HEAD=7227e387c，送验 head 之后仅有 T01/T07/T25/T26/GOV 等其他任务治理提交，trajectory 的 T09 四源文件 b0997f8d8..HEAD 零改动——git diff --stat 核实仅 CartesianLine 系 T26 变动）；分支 redesign-main。",
+    "范围①（全量复跑）：verify-task-scope -TaskFile REUSE-T09.json -Base 54f0beda6 -Head b0997f8d8 实测 FAIL（exit 1，134 改动路径中 97 个越界）——逐项核对 03-fullrange-diff-files.txt 与 02-scope-fullrange.log：越界项全部属于送验范围内非 T09 提交（REUSE-T11 modeling 证据/矩阵、drivetrain-linalg=T12、治理脚本 reuse-contract.ps1/verify-task.ps1、units/modeling.md、RPY/EAA 债务关闭等），无一项来自 T09 实施提交；系送验范围推导包含主线其他串行任务提交所致（ask 已声明 reviewHead 系推导）。",
+    "范围②（T09 实施面拆分核对）：git show --name-only 对 T09 四提交（340dc88a4/9e1fe9c2e/aee6ac5bf/357d19e3d）去重 38 文件，以 verify-task-scope 同款正则口径逐路径比对契约 allowedFiles/forbiddenFiles（03b-t09-commits-scope-check.log）：37 个全部命中 allowedFiles；唯一 forbidden 命中＝aee6ac5bf 的 reuse/catalog.json——该提交为 [governance] 主会话整合提交（契约 note 预登记「catalog MATH-POLYNOMIAL verified 翻转属主会话统一整合项」；主线 a63157aec 同款整合），实施者提交 340dc88a4/9e1fe9c2e 零触碰 catalog/permissions；closures.json 范围内新增 20 行来自 T11 债务关闭提交 2daace508，T09 零触碰。",
+    "提交规范（本轮唯一 FAIL）：commit-lint -Range 54f0beda6..b0997f8d8 实测 FAIL 3/18（09-commit-lint.log）——340dc88a4 与 9e1fe9c2e 两个 T09 实施提交标题前缀 [REUSE-T09] 不在合法前缀集（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]），对照同范围 f74f483d5 以 [units]+任务号形态 PASS；第 3 个 FAIL（3e8cec6ef「并入主会话reuse-t01最新进展…」）系范围推导带入的非 T09 提交。",
+    "治理自测：test-reuse-governance -OutputDir .cache/t09-governance-independent 实测 reuse selftests passed=152 skipped=0 failed=0（exit 0，04-test-reuse-governance.log）。",
+    "复用全量：validate-reuse -TaskFile REUSE-T09.json 实测 PASS（exit 0：inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399，governance only；05-validate-reuse.log）；契约 note 预告的「整合前对两 migrated 行 SUITABILITY 失败」已因 aee6ac5bf/a63157aec 完成 catalog verified 翻转而不再出现；REUSE-AD-PENDING 为 AD 审计既有 pending 提示（GOV-T24 同结论），非本包阻断。",
+    "文档门禁：validate-docs 实测 PASS（exit 0：20 units, 12 trace entries, 404 task files, 30 registered assets, 6 notes, 7 skills, 2 packs；06-validate-docs.log）。",
+    "门禁引擎直跑：cmake -P ird_gates.cmake 实测 exit 0「全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」（07-ird-gates.log）；首次运行 exit 1 系本人以 Git Bash 字面量 %TEMP% 传 -DIRD_SELFTEST_DIR 所致（17 处 IRD-GATE-SELF 自测夹具路径错误），改传真实路径 C:\\Users\\zgl18\\AppData\\Local\\Temp\\t09-acc-selftest 后一次通过，非产品红线命中。",
+    "集成构建与测试真实复跑：cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test 实测 exit 0（08-build-trajectory.log，增量 up-to-date——exe 构建于 2026-10-24 13:21、T09 四源文件自 9e1fe9c2e 后零改动，exe 与送验 head 源一致）；PATH 前置框架/vcpkg DLL 后双 exe 真实执行：trajectory test 191 tests＝191 passed/0 failed/0 skipped（exit 0）、contract test 69 tests＝69 passed/0 failed（exit 0），gtest XML＋ird-test-report 落盘（10-*）；与实施侧 normal 原件 189+69 的差集经用例名比对＝2 个 *_REUSE_T26 用例（送验 head 之后 T26 新增，与 T09 无关），T09 面（含 4 个上游 evaluateDerivatives 对照用例、独立解析 oracle、C²/C³ 守卫、端点还原、退化/非有限用例）全部通过。",
+    "性能基准独立重跑（数值/性能项真实执行）：以生产同款 MSVC /O2 /DNDEBUG /std:c++17 编译 benchmark/polynomial-replace-bench.cpp（链接 sdurw_math+sdurw_core）并真实运行（exit 0，11-bench-rerun-result.txt）——独立复现原件全部定性主张：生产形态 allocs/scene=0；新旧 rerun bit-equal 均 yes；checksum rel-drift 9.888e-16/9.910e-15 与原件位级同值（9.888e-16/9.910e-16）；五次/七次同量级劣化 +27.5%/+37.4%（原件 +17.7%/+34.3%；绝对差 0.31/0.49ms 对原件 0.24/0.51ms，旧式绝对值同受本机负载影响，量级结论一致）；被否决 evalderivs 形态 +476%/+486% 慢约 5 倍＋allocs/scene=244800 与原件一致。",
+    "SHA 绑定链核对：送验 head blob SHA256（git show b0997f8d8:path）与凭证逐处吻合——Smooth.cpp=dfd0533d…＝changes/REUSE-T09.json＝production-smooth.json bindings＝disconnected mutation originalSha256；TimeParam.cpp=43d945a6…＝manifest＝production-timeparam.json bindings＋originalSha256；SmoothTest=87f045c7…、TimeParamTest=1efc3ed9…＝manifest；上游 Polynomial.hpp=cc1e51fa…/PolynomialND.hpp=cfd670ab…＝production bindings（上游头未改）；catalog MATH-POLYNOMIAL review.evidence.sha256=7b0f46e7…＝送验 head 迁移文档 blob SHA（翻转证据绑定有效）；工作树文件 SHA 与 blob 差异纯为 CRLF 行尾。",
+    "断开证据原件核对（reviewedOnly）：disconnected/timeparam/gtest.xml 与 disconnected/smooth/gtest.xml 均 tests=1 failures=1（变异下筛选用例真实失败、exit 1），TimeParam 变异＝evalBasis 丢弃上游二阶导、Smooth 变异＝sampleAt 基选择扰动，originalSha256 绑定送验 head 生产源（上条已核）——「断开生产调用必须真实失败」以原件+SHA 绑定核验采信；变异重跑需改写生产源，超出验收员不改文件边界，未重跑。",
+    "红线抽查：H1 直接 API（rw::math::Polynomial::evaluate/derivative，MATH-POLYNOMIAL catalog 检索证据在册）无新实现；H2 12 个手写基符号（hermiteH000/H100/H001/H101、basisH0000/H0010/H0001/H0011、septicS0~S3）rg 于 industrialrobot 产品源码零残留（exit 1 无匹配）、无运行时旧算法回退（消费处 sampleAt/evaluateSpanDerivs 已改上游、旧函数物理删除）；H3 沿用上游类型与构建（CMake 零改动——T09 四提交 name-only 无任何 CMakeLists/cmake 文件）、中文注释完备（基族表注含位级精确性论证）；H5 migration §12.11 批准序列原文由契约 note 与迁移文档引用；H6 逐文件凭证/矩阵/catalog evidence 绑定完整（上条）；L2 零 Qt——trajectory/src 唯一 'qt' 命中为 Planner.cpp 的上游类名 QToQPlanner 且本包零改动；六类端口/runtime 模型 owner 本包无跨单元接线（interUnit=false、无新依赖）；门禁脚本与 permissions.json 对 T09 提交零改动（四提交 name-only 无 scripts/、无 cmake/，grep exit 1）；closures.json（CLOSURE 冻结面）T09 零触碰。",
+    "契约 acceptance 映射：①policy §1.1 与迁移文档处置表（12 删除/业务专属保留/evaluateDerivatives 热路径否决/预装配方案否决各有论证）＋性能前后测量与应用预算（原件+独立复现）——满足；②生产链消费上游 evaluate/derivative＋12 手写基删除＋零回退——代码亲核满足；③语义保持（182 既有用例零改动通过＋新增 7 用例达 189+69；位级论证在迁移文档 §2）——实测满足；④上游对照/独立 oracle 通过＋断开真实失败（原件+SHA 绑定）＋集成/ird_gates/复用证据通过＋catalog 翻转整合完成（validate-reuse 放行）——满足；⑤独验即本记录、实施者未自签（T09 实施提交无 acceptance 登记）、无远程操作、无 GAP——满足；提交正文与证据一致（189+69/+17.7%/+34.3%/152/152/待整合项均与原件吻合；观察项：aee6ac5bf 正文「version=d50e824c7」与 catalog 实际 review.version 字段值 b12e8503c（保持条目基线）表述有出入，不影响 evidence 绑定有效性）。"
+  ],
+  "integrationTest": {
+    "trajectory": {
+      "tests": 191,
+      "passed": 191,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "note": "含送验 head 之后 T26 新增 2 例（SlerpIndependentAxisOracle/SlerpUpstreamAndBoundary_REUSE_T26，经用例名差集核实与 T09 无关）；T09 面＝实施侧同源 189 例全部通过",
+      "exitCode": 0,
+      "xml": "10-int-trajectory-test.xml",
+      "report": "10-int-trajectory-test-report.json"
+    },
+    "trajectoryContract": {
+      "tests": 69,
+      "passed": 69,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "10-int-trajectory-contract.xml",
+      "report": "10-int-trajectory-contract-report.json"
+    }
+  },
+  "benchEvidence": {
+    "independentlyRerun": true,
+    "toolchain": "MSVC 19.42.34433 /O2 /DNDEBUG /std:c++17（与生产及原件同款），链接 build/RobWork/libs/Release 的 sdurw_math+sdurw_core",
+    "rerun": {
+      "quintic": { "upstreamEvalMs": 1.412, "oldHandMs": 1.107, "relative": "+27.5%", "allocsPerScene": 0, "evalderivsMs": 8.134, "evalderivsRelative": "+476.1%", "evalderivsAllocs": 244800, "determinismBitEqual": true, "checksumRelDrift": "9.888e-16" },
+      "septic": { "upstreamEvalMs": 1.784, "oldHandMs": 1.299, "relative": "+37.4%", "allocsPerScene": 0, "evalderivsMs": 10.455, "evalderivsRelative": "+485.9%", "evalderivsAllocs": 244800, "determinismBitEqual": true, "checksumRelDrift": "9.910e-16" }
+    },
+    "original": { "quintic": "+17.7% (1.590 vs 1.351ms)", "septic": "+34.3% (1.987 vs 1.480ms)", "evalderivs": "+541.7%/+489.6%, allocs 244800/场景", "checksumRelDrift": "9.888e-16/9.910e-16" },
+    "verdict": "定性主张全部复现：生产形态零分配、位级确定性（rerun bit-equal＋checksum 漂移位级同值）、同量级劣化（<+40%）、evalderivs 慢约 5 倍＋24 万分配/场景（否决依据成立）；相对百分比差异属计时噪声（旧式绝对值同受本机状态影响）"
+  },
+  "disconnectedEvidence": {
+    "reviewedOnly": true,
+    "timeparam": "gtest.xml tests=1 failures=1（变异＝evalBasis 丢弃上游二阶导→C3KnotContinuityWithDwell 连续性守卫真实判 LawFailed；全量形态 21 用例 43 断言失败记载于 README）",
+    "smooth": "gtest.xml tests=1 failures=1（变异＝sampleAt 基选择扰动→SmoothAnalyticGoldenCase 状态断言失败）",
+    "shaBinding": "两变异 originalSha256（dfd0533d…/43d945a6…）经送验 head blob 重算核实一致；变异重跑需改写生产源，超出验收员不改文件边界，以原件+SHA 绑定采信"
+  },
+  "commands": [
+    { "name": "scope-fullrange", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json -Base 54f0beda6fa6142c707b154d4d0d6ad5d5743169 -Head b0997f8d8f568edf7ec48b403f3f454b09cc1aaa", "exitCode": 1, "passed": false, "log": "02-scope-fullrange.log", "note": "97 越界全部为非 T09 提交路径（送验范围推导含其他任务），T09 实施面另经 03b 拆分核对" },
+    { "name": "scope-t09-commits", "command": "git show --name-only --format= 340dc88a4 9e1fe9c2e aee6ac5bf 357d19e3d ＋ verify-task-scope 同款正则逐路径比对契约 allowedFiles/forbiddenFiles", "exitCode": 0, "passed": true, "log": "03b-t09-commits-scope-check.log" },
+    { "name": "test-reuse-governance", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t09-governance-independent", "exitCode": 0, "passed": true, "log": "04-test-reuse-governance.log" },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json", "exitCode": 0, "passed": true, "log": "05-validate-reuse.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1", "exitCode": 0, "passed": true, "log": "06-validate-docs.log" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=C:/Users/zgl18/AppData/Local/Temp/t09-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "07-ird-gates.log" },
+    { "name": "build-trajectory", "command": "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test", "exitCode": 0, "passed": true, "log": "08-build-trajectory.log" },
+    { "name": "int-trajectory-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe --gtest_output=xml:…/10-int-trajectory-test.xml --ird_report=…/10-int-trajectory-test-report.json（PATH 前置 build/RobWork/bin/Release＋vcpkg installed/x64-windows/bin）", "exitCode": 0, "passed": true, "log": "10-int-trajectory-test.log", "xml": "10-int-trajectory-test.xml" },
+    { "name": "int-trajectory-contract", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_contract_test.exe --gtest_output=xml:…/10-int-trajectory-contract.xml --ird_report=…/10-int-trajectory-contract-report.json（PATH 前置同上）", "exitCode": 0, "passed": true, "log": "10-int-trajectory-contract.log", "xml": "10-int-trajectory-contract.xml" },
+    { "name": "bench-rerun", "command": "11-bench-run.bat：vcvars64 后 cl /O2 /DNDEBUG /std:c++17 /utf-8 /EHsc /I RobWork/RobWork/src /I vcpkg/installed/x64-windows/include/eigen3 polynomial-replace-bench.cpp /link sdurw_math.lib sdurw_core.lib 并运行", "exitCode": 0, "passed": true, "log": "11-bench-rerun-result.txt" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 54f0beda6fa6142c707b154d4d0d6ad5d5743169..b0997f8d8f568edf7ec48b403f3f454b09cc1aaa", "exitCode": 1, "passed": false, "log": "09-commit-lint.log" }
+  ],
+  "executionNotes": [
+    "ird_gates 首次运行 exit 1（17 处 IRD-GATE-SELF）系本人以 Git Bash 字面量 %TEMP% 传 -DIRD_SELFTEST_DIR 之误，修正为真实路径后 exit 0 零命中；误建的仓库根 %TEMP%/ 字面量目录已删除，工作区恢复仅剩本产物目录未跟踪。",
+    "bench 重跑第一次因 rw::core 符号未链接 LNK2019（PolynomialND 头内 RW_ASSERT 消费 Message/Exception/Log），补链 sdurw_core.lib 后成功；bench.cpp 注释「头内模板零 rw 库符号依赖」在拷贝构造路径上不成立，属实施侧文档小瑕疵，不影响基准结论。",
+    "验收基于当前工作树（HEAD=7227e387c）：trajectory 的 T09 四源文件经 git diff --stat b0997f8d8..HEAD 核实零改动（仅 CartesianLine 系 T26 变动），故当前树构建运行的 T09 面与送验 head 同源；测试差集 2 例均为 _REUSE_T26 用例。",
+    " verdict=fail 仅由 commit-lint 提交前缀违规触发（处置见 issues）；技术实质面（acceptance 五条、数值/性能独立复现、门禁、SHA 绑定、红线）全部通过——所有者按先例补登处置后可低成本 r2 复核（对照 REUSE-T01/T07 r1 返工先例）。"
+  ],
+  "issues": [
+    "commit-lint 实测 FAIL（09-commit-lint.log）：T09 两个实施提交 340dc88a4、9e1fe9c2e 标题前缀 [REUSE-T09] 不在合法前缀集（AGENTS §6.3 与 commit-lint 的 [WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]），同范围 [units]+任务号形态（f74f483d5）可合规；历史不可改写（AGENTS §6.2），可执行处置＝所有者按 F-012 豁免同型在治理记录补登该两提交的前缀豁免/整改登记（或按 REUSE-T01 r1 四项处置先例收敛），r2 复核时验 commit-lint 对该两提交的 FAIL 有登记依据即视为收口。证据：09-commit-lint.log（FAIL 3/18，其中 3e8cec6ef 系送验范围推导带入的非 T09 提交，处置随范围口径一并登记）。",
+    "（随附建议，非阻断）送验范围口径：54f0beda6..b0997f8d8 全范围 verify-task-scope 实测 FAIL 97 项均属非 T09 提交（02-scope-fullrange.log＋03-fullrange-diff-files.txt），T09 实施面已经 03b-t09-commits-scope-check.log 机器核对合规；建议后续登记固化 T09 专属送验范围口径（T09 提交集 340dc88a4/9e1fe9c2e/aee6ac5bf/357d19e3d＋集成链 8db7a7e78/a63157aec/b0997f8d8），并在治理记录登记全范围 FAIL 归因，避免复验重复混淆。"
+  ],
+  "notRun": [
+    {
+      "item": "冒烟树独立构建（integration 之外的 fresh smoke 配置）",
+      "reason": "本包 CMake/链接面零改动（T09 四提交无任何 CMakeLists/cmake 文件，Polynomial 为 sdurw_math 头内模板、trajectory 既有链接面覆盖——迁移文档 §4），受影响集成构建已真实增量执行并通过；无公共接口/依赖变化，不触发 AGENTS §4 冒烟扩面条件。"
+    },
+    {
+      "item": "断开变异实验重跑（mutated TU 另编另跑）",
+      "reason": "重跑需改写生产源，超出验收员不修改文件的独立性边界；以 disconnected/ 原件（双 gtest.xml 各 1/1 真实失败、exit 1）＋originalSha256 对送验 head blob 重算一致（dfd0533d…/43d945a6…）采信，恢复后全绿复跑由实施侧 normal 原件＋本次 191+69 实测双重覆盖。"
+    }
+  ],
+  "limitations": "fail 仅覆盖提交规范面（issues 第 1 条）；PASS 各项仅覆盖 54f0beda6..b0997f8d8 送验范围内的 REUSE-T09 能力包（基函数求值上游化）。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭）；REUSE-AD-PENDING 为既有 pending 提示；不构成 WP-04 及后续包、算法替换（migration §11）或 REUSE-T02 的放行；catalog 翻转虽已完成，migration §12.11 序列的后续能力仍需各自送验。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/02-scope-fullrange.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/03-fullrange-diff-files.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/03b-t09-commits-scope-check.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/04-test-reuse-governance.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/05-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/06-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/07-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/08-build-trajectory.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/09-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/10-int-trajectory-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/10-int-trajectory-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/10-int-trajectory-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/10-int-trajectory-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/10-int-trajectory-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/10-int-trajectory-contract-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/11-bench-run.bat",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/11-bench-rerun-result.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/acc-bench-rerun.exe",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1/polynomial-replace-bench.obj",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T09-20261025-r1.json"
+  ]
+}

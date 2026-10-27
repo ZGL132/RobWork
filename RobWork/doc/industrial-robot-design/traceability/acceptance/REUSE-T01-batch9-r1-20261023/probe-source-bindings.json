@@ -1,0 +1,26 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/RuntimeOffsetAuditTest.cpp",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelFixture.hpp",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+    "matches": true
+  }
+]

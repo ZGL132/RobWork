@@ -673,8 +673,22 @@ TEST_F(RunRegistryAdmissionTest, MarkTerminatedWritesOnceAndMirrorsState)
     // Completed 终结必须经接纳路径（T8）——走本方法属编排违约。
     const core::TaskIdentity other = makeIdentity();
     (void)registerStandardRun(other);
+    const auto before = m_registry.tryRun(other.run);
+    ASSERT_TRUE(before.has_value());
     EXPECT_THROW(m_registry.markTerminated(other.run, TerminationCause::Completed),
                  ExecutionError);
+    // REUSE-T23/F-964：拒绝调用不能留下半写标记，否则下一次合法取消会被误拒。
+    const auto rejected = m_registry.tryRun(other.run);
+    ASSERT_TRUE(rejected.has_value());
+    EXPECT_EQ(rejected->terminationCause, before->terminationCause);
+    EXPECT_EQ(rejected->currentState, before->currentState);
+    EXPECT_NO_THROW(m_registry.markTerminated(other.run, TerminationCause::Canceled));
+    const auto canceled = m_registry.tryRun(other.run);
+    ASSERT_TRUE(canceled.has_value());
+    EXPECT_EQ(canceled->terminationCause, TerminationCause::Canceled);
+    EXPECT_EQ(canceled->currentState, core::TaskState::Canceled);
+    // 恢复合法路径后仍只能终结一次，不能以修复错误调用为由放宽原约束。
+    EXPECT_THROW(m_registry.markTerminated(other.run, TerminationCause::Failed), ExecutionError);
 }
 
 // =====================================================================

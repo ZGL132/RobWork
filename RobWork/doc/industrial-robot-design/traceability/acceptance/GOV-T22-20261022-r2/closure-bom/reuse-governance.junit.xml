@@ -1,0 +1,7 @@
+<testsuite name="reuse-governance" tests="2" failures="1" skipped="0">
+  <testcase name="independent-closure-no-bom-control" />
+  <testcase name="independent-closure-bom-same-accepted-bytes">
+    <failure>REUSE-CLOSURE : RobWork/doc/industrial-robot-design/reuse/fixture-suitability.txt : accepted version mismatch
+</failure>
+  </testcase>
+</testsuite>

@@ -1,0 +1,72 @@
+[
+  {
+    "name": "ps51-no-bom-lf-red",
+    "passed": true,
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "pattern": "ParserError|Unexpected token"
+  },
+  {
+    "name": "pwsh-lf-valid",
+    "passed": true,
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "pattern": "validate-b1-batch: PASS"
+  },
+  {
+    "name": "pwsh-lf-invalid",
+    "passed": true,
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "pattern": "ird-pipeline-batch/1"
+  },
+  {
+    "name": "pwsh-crlf-valid",
+    "passed": true,
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "pattern": "validate-b1-batch: PASS"
+  },
+  {
+    "name": "pwsh-crlf-invalid",
+    "passed": true,
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "pattern": "ird-pipeline-batch/1"
+  },
+  {
+    "name": "powershell-lf-valid",
+    "passed": true,
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "pattern": "validate-b1-batch: PASS"
+  },
+  {
+    "name": "powershell-lf-invalid",
+    "passed": true,
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "pattern": "ird-pipeline-batch/1"
+  },
+  {
+    "name": "powershell-crlf-valid",
+    "passed": true,
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "pattern": "validate-b1-batch: PASS"
+  },
+  {
+    "name": "powershell-crlf-invalid",
+    "passed": true,
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "pattern": "ird-pipeline-batch/1"
+  },
+  {
+    "name": "ps51-live-invoke-probe-parser-rejected",
+    "passed": true,
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "pattern": "GUARD-REJECTED-PARSER-ERROR"
+  }
+]

@@ -1,0 +1,2 @@
+verify-task-scope: REUSE-T13 base=a04512054770 head=f378f01c5199 changed=105 allowedRules=16 forbiddenRules=3
+verify-task-scope: PASS REUSE-T13 —— 105 个路径全部在允许面内

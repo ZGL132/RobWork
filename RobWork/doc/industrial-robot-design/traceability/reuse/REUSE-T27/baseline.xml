@@ -1,0 +1,1136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.004" timestamp="2026-10-24T13:43:25.456" name="AllTests">
+  <testsuite name="MdlInertiaReuse" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-10-24T13:43:25.456">
+    <testcase name="KnownSpectrumAcrossScales_REUSE_T27" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp" line="848" status="run" result="completed" time="0.003" timestamp="2026-10-24T13:43:25.456" classname="MdlInertiaReuse">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828507184, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 2.9997585627317149,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828507184, which exceeds 1e-12, where
+actual[k]/scale evaluates to 2.9997585627317149,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828462775, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 5.0002414372682846,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828462775, which exceeds 1e-12, where
+actual[k]/scale evaluates to 5.0002414372682846,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828472099, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -0.00024143726828472099,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828472099, which exceeds 1e-12, where
+actual[k]/scale evaluates to -0.00024143726828472099,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828507184, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 2.0002414372682851,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828507184, which exceeds 1e-12, where
+actual[k]/scale evaluates to 2.0002414372682851,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 1, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 1, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 3.666666666666667, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666667,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 3.666666666666667, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666667,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1.3333333333333333, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666667,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1.3333333333333333, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666667,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 2.333333333333333, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666667,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 2.333333333333333, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666667,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 6.645365075241827e-05, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -2.0000664536507524,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 6.645365075241827e-05, which exceeds 1e-12, where
+actual[k]/scale evaluates to -2.0000664536507524,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00014495811572334816, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 2.9998550418842767,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00014495811572334816, which exceeds 1e-12, where
+actual[k]/scale evaluates to 2.9998550418842767,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00021141176647621052, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4.0002114117664762,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00021141176647621052, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4.0002114117664762,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00049975693299542101, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 3.0004997569329954,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00049975693299542101, which exceeds 1e-12, where
+actual[k]/scale evaluates to 3.0004997569329954,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.0004997569329958651, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4.9995002430670041,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.0004997569329958651, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4.9995002430670041,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00049975693299587009, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 0.00049975693299587009,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00049975693299587009, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0.00049975693299587009,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00049975693299564306, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.9995002430670044,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00049975693299564306, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.9995002430670044,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 1, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 1, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 3.666666666666667, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666667,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 3.666666666666667, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666667,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1.3333333333333333, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666667,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1.3333333333333333, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666667,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 2.333333333333333, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666667,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 2.333333333333333, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666667,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 6.645365075241827e-05, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -2.0000664536507524,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 6.645365075241827e-05, which exceeds 1e-12, where
+actual[k]/scale evaluates to -2.0000664536507524,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00014495811572201589, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 2.999855041884278,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00014495811572201589, which exceeds 1e-12, where
+actual[k]/scale evaluates to 2.999855041884278,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00021141176647532234, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4.0002114117664753,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00021141176647532234, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4.0002114117664753,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.99999999999999956, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 3.9999999999999996,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.99999999999999956, which exceeds 1e-12, where
+actual[k]/scale evaluates to 3.9999999999999996,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1.0000000000000004, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 3.9999999999999996,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1.0000000000000004, which exceeds 1e-12, where
+actual[k]/scale evaluates to 3.9999999999999996,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828551593, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 2.9997585627317145,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828551593, which exceeds 1e-12, where
+actual[k]/scale evaluates to 2.9997585627317145,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828462775, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 5.0002414372682846,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828462775, which exceeds 1e-12, where
+actual[k]/scale evaluates to 5.0002414372682846,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.99999999999999989, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 0.99999999999999989,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.99999999999999989, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0.99999999999999989,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 0.99999999999999989,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0.99999999999999989,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828472099, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -0.00024143726828472099,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828472099, which exceeds 1e-12, where
+actual[k]/scale evaluates to -0.00024143726828472099,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00024143726828507184, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 2.0002414372682851,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00024143726828507184, which exceeds 1e-12, where
+actual[k]/scale evaluates to 2.0002414372682851,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 1, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 1, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 3.6666666666666665, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666665,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 3.6666666666666665, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666665,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 1.3333333333333335, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666665,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 1.3333333333333335, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666665,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 2.3333333333333335, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 1.6666666666666665,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 2.3333333333333335, which exceeds 1e-12, where
+actual[k]/scale evaluates to 1.6666666666666665,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 6.645365075241827e-05, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -2.0000664536507524,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 6.645365075241827e-05, which exceeds 1e-12, where
+actual[k]/scale evaluates to -2.0000664536507524,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00014495811572379225, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 2.9998550418842762,&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00014495811572379225, which exceeds 1e-12, where
+actual[k]/scale evaluates to 2.9998550418842762,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is 0.00021141176647621052, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to 4.0002114117664762,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is 0.00021141176647621052, which exceeds 1e-12, where
+actual[k]/scale evaluates to 4.0002114117664762,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1e+160&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876&#x0A;Expected equality of these values:&#x0A;  actual&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)&#x0A;    Which is: { -inf, -nan(ind), inf }&#x0A;当前相同输入/工具链须重复位级一致&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:876
+Expected equality of these values:
+  actual
+    Which is: { -inf, -nan(ind), inf }
+  sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t)
+    Which is: { -inf, -nan(ind), inf }
+当前相同输入/工具链须重复位级一致
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -inf,&#x0A;spectrum[k] evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to -inf,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to -nan(ind),&#x0A;spectrum[k] evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is nan, which exceeds 1e-12, where
+actual[k]/scale evaluates to -nan(ind),
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879&#x0A;Value of: std::isfinite(actual[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:879
+Value of: std::isfinite(actual[k])
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880&#x0A;The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where&#x0A;actual[k]/scale evaluates to inf,&#x0A;spectrum[k] evaluates to 4, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:880
+The difference between actual[k]/scale and spectrum[k] is inf, which exceeds 1e-12, where
+actual[k]/scale evaluates to inf,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+]]></failure>
+    </testcase>
+    <testcase name="UpstreamAndAssertionConsumers_REUSE_T27" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp" line="889" status="run" result="completed" time="0." timestamp="2026-10-24T13:43:25.460" classname="MdlInertiaReuse">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 4.0000000000000001e-300&#x0A;  direct[k]&#x0A;    Which is: 2.9999999999999996e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899
+Expected equality of these values:
+  actual[k]
+    Which is: 4.0000000000000001e-300
+  direct[k]
+    Which is: 2.9999999999999996e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 4.0000000000000001e-300&#x0A;  direct[k]&#x0A;    Which is: 4.9999999999999993e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899
+Expected equality of these values:
+  actual[k]
+    Which is: 4.0000000000000001e-300
+  direct[k]
+    Which is: 4.9999999999999993e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: -inf&#x0A;  direct[k]&#x0A;    Which is: 2.9999999999999996e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899
+Expected equality of these values:
+  actual[k]
+    Which is: -inf
+  direct[k]
+    Which is: 2.9999999999999996e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: -nan(ind)&#x0A;  direct[k]&#x0A;    Which is: 4.0000000000000002e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899
+Expected equality of these values:
+  actual[k]
+    Which is: -nan(ind)
+  direct[k]
+    Which is: 4.0000000000000002e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: inf&#x0A;  direct[k]&#x0A;    Which is: 4.9999999999999997e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:899
+Expected equality of these values:
+  actual[k]
+    Which is: inf
+  direct[k]
+    Which is: 4.9999999999999997e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:904&#x0A;Value of: violations.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正定且三角有裕量的非对角张量应被原消费者接受&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:904
+Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

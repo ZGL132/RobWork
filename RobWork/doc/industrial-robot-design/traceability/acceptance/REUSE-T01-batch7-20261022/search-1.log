@@ -1,0 +1,110 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp:64:void appendU32(std::vector<std::uint8_t>& out, std::uint32_t value)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp:73:void appendLenStr(std::vector<std::uint8_t>& out, const std::string& text)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp:75:    appendU32(out, static_cast<std::uint32_t>(text.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp:107:    appendU32(encoding, static_cast<std::uint32_t>(entries.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp:111:        appendLenStr(encoding, entry.key);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp:112:        appendU32(encoding, entry.contractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:51:void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:60:void appendLenStr(std::vector<std::uint8_t>& out, const std::string& s)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:62:    appendU32(out, static_cast<std::uint32_t>(s.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:69:    appendLenStr(out, item.itemId);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:76:        appendLenStr(out, item.applicability->conditionToken);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:77:        appendU32(out, static_cast<std::uint32_t>(item.applicability->referencedKeys.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:79:            appendLenStr(out, key);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:84:    appendLenStr(out, item.description);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:240:    appendLenStr(encoding, profile.profileId);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:241:    appendLenStr(encoding, profile.version);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp:244:        appendU32(encoding, static_cast<std::uint32_t>(items.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:97:void appendU16(std::vector<std::uint8_t>& out, std::uint16_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:104:void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:113:void appendU64(std::vector<std::uint8_t>& out, std::uint64_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:130:void appendLengthString(std::vector<std::uint8_t>& out, const std::string& s)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:141:    appendU16(out, static_cast<std::uint16_t>(s.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:148:void appendLengthBytes(std::vector<std::uint8_t>& out, const std::vector<std::uint8_t>& bytes)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:155:    appendU32(out, static_cast<std::uint32_t>(bytes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:166:struct Reader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:187:    std::uint16_t readU16()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:196:    std::uint32_t readU32()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:207:    std::uint64_t readU64()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:227:    std::string readLengthString()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:229:        const std::uint16_t len = readU16();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:241:    std::vector<std::uint8_t> readLengthBytes()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:243:        const std::uint32_t len = readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:287:    appendU32(buf, static_cast<std::uint32_t>(sortedEntries.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:290:        appendLengthString(buf, e.label);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:352:    appendU32(out, static_cast<std::uint32_t>(s.objectClosure.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:356:        appendLengthString(out, e.objectTypeToken);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:361:    appendU32(out, static_cast<std::uint32_t>(s.configurationRefs.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:363:        appendLengthString(out, e.configKindToken);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:364:        appendLengthBytes(out, e.canonicalBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:375:    appendU32(out, static_cast<std::uint32_t>(s.caseSet.entries.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:378:        appendLengthString(out, e.label);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:384:    appendU32(out, static_cast<std::uint32_t>(s.externalResources.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:398:    appendU32(out, static_cast<std::uint32_t>(s.samplingPlans.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:403:        appendU64(out, e.plannedPositionSamples);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:404:        appendU64(out, e.plannedPoseSamples);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:409:    appendLengthString(out, s.reproduction.productVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:410:    appendLengthString(out, s.reproduction.evidenceContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:411:    appendU32(out, static_cast<std::uint32_t>(s.reproduction.codecVersions.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:413:        appendLengthString(out, v);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:417:        appendLengthString(out, *s.reproduction.compilerContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:423:        appendLengthString(out, *s.reproduction.collisionBackendVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:441:    const std::uint32_t closureCount = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:447:        e.objectTypeToken = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:452:    const std::uint32_t configCount = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:456:        e.configKindToken = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:457:        e.canonicalBytes = r.readLengthBytes();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:469:    const std::uint32_t caseCount = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:474:        e.label = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:481:    const std::uint32_t resourceCount = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:505:    const std::uint32_t planCount = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:512:        e.plannedPositionSamples = r.readU64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:513:        e.plannedPoseSamples = r.readU64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:518:    s.reproduction.productVersion = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:519:    s.reproduction.evidenceContractVersion = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:520:    const std::uint32_t codecVersionCount = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:523:        s.reproduction.codecVersions[i] = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:526:        s.reproduction.compilerContractVersion = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:529:        s.reproduction.collisionBackendVersion = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:934:    appendU32(out, static_cast<std::uint32_t>(payloads.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:937:        appendLengthBytes(out, entry.second);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:955:    const std::uint32_t payloadCount = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:959:        std::vector<std::uint8_t> bytes = r.readLengthBytes();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:122:void appendU16(std::vector<std::uint8_t>& out, std::uint16_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:129:void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:138:void appendU64(std::vector<std::uint8_t>& out, std::uint64_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:167:void appendLengthString(std::vector<std::uint8_t>& out, const std::string& s)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:178:    appendU16(out, static_cast<std::uint16_t>(s.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:185:void appendLengthBytes(std::vector<std::uint8_t>& out,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:193:    appendU32(out, static_cast<std::uint32_t>(bytes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:204:struct Reader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:225:    std::uint16_t readU16()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:234:    std::uint32_t readU32()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:245:    std::uint64_t readU64()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:281:    std::string readLengthString()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:283:        const std::uint16_t len = readU16();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:295:    std::vector<std::uint8_t> readLengthBytes()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:297:        const std::uint32_t len = readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:349:    appendLengthString(out, e.key);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:361:        appendLengthString(out, *e.notAppliedReason);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:372:        appendLengthString(out, p.objectTypeToken);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:377:        appendLengthString(out, p.configKindToken);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:378:        appendLengthBytes(out, p.canonicalBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:400:        appendLengthString(out, p.upstreamKey);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:414:        appendLengthString(out, p.token);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:415:        appendLengthString(out, p.valueToken);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:435:    e.key = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:451:        e.notAppliedReason = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:460:        p.objectTypeToken = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:466:        p.configKindToken = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:467:        p.canonicalBytes = r.readLengthBytes();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:493:        p.upstreamKey = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:510:        p.token = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:511:        p.valueToken = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:528:    appendLengthString(out, slice.evaluationKey);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:529:    appendU32(out, slice.evaluatorContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:533:    appendU32(out, static_cast<std::uint32_t>(slice.entries.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:569:    appendU32(out, static_cast<std::uint32_t>(baseline.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:808:    slice.evaluationKey = r.readLengthString();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:809:    slice.evaluatorContractVersion = r.readU32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:811:    const std::uint32_t entryCount = r.readU32();

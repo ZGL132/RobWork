@@ -1,0 +1,16 @@
+verify-task: RepoRoot=C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a1379cb7051c49398874aa1a919e4c6b
+fixture gate rejected
+powershell.exe : H1-H6 task reuse contract failed
+At D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\scripts\industrialrobot\test-governance-lite.ps1:18 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (H1-H6 task reuse contract failed:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a1379cb7051c49398874aa1a919e4c6b\RobWork\scripts\industrialrobot\vali
+date-task.ps1:136 char:30
++ ... if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
++                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (H1-H6 task reuse contract failed:String) [], RuntimeException
+    + FullyQualifiedErrorId : H1-H6 task reuse contract failed
+ 

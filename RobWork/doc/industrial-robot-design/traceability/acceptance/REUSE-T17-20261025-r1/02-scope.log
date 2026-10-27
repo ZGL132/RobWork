@@ -1,0 +1,10 @@
+verify-task-scope: REUSE-T17 base=adaf89003119 head=1f4a871a8899 changed=34 allowedRules=16 forbiddenRules=6
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/extensions/GAP-CORE-C4-01.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/functions/runtime.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/20261023-recheck/README.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/20261023-recheck/batch-docs-t13-t15-t16-r2.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/20261023-recheck/batch-docs-t13-t15-t16-t17.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/20261023-recheck/reuse-t17-planned-gate.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/20261023-recheck/reuse-t17-ready-gate.log（未命中任何 allowedFiles 模式）
+verify-task-scope: FAIL REUSE-T17 —— 8 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）

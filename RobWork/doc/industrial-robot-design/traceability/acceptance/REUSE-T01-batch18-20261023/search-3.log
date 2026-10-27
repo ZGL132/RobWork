@@ -1,0 +1,182 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:3: * @brief  碰撞评估唯一实现的评估半区——会话构建的评估装配（buildEvaluationHalf）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:14: *     AT-19）、§6.6（调用时序：setState→逐对 inCollision/distance→取消
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:34: *   执行的 rw 基线调用（setQ/worldTframe/inCollision/distance——框架
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:67:#include <rw/proximity/DistanceStrategy.hpp>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:222:void CollisionEvaluationSession::buildEvaluationHalf(const IPolicyNameContext& names)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:302:        // 注册与其他会话的评估查询串行化）。注册核对以 hasModel 为准——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:311:            if (objIt != objectByFrame.end() && !m_strategy->hasModel(frame)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:312:                // 幂等注册（hasModel 先核对——同一后端实例可能已被同 Frame
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:313:                // 的其他会话注册；重复 addModel 会叠加几何，破坏确定性）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:314:                m_strategy->addModel(objIt->second);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:316:            record.registeredGeometry = m_strategy->hasModel(frame);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:356:    // 注入后端若同时实现 DistanceStrategy（rw 多接口策略惯用法——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:360:    // 现内置后端（ProximityStrategyRW）为二值碰撞策略——探测为无能力；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:363:    m_distanceStrategy = dynamic_cast<rw::proximity::DistanceStrategy*>(m_strategy.get());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:463:            "注入后端无距离查询能力（DistanceStrategy 探测为否——内置二值碰撞后端；"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:550:                    colliding = m_strategy->inCollision(pair.frameA, wTa, pair.frameB, wTb,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionEvaluator.cpp:579:    , m_device()                  // 评估半区（POL-T07——buildEvaluationHalf 填充）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionEvaluator.cpp:717:    m_proximitySetup = std::make_shared<const rw::proximity::ProximitySetup>(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionEvaluator.cpp:718:        buildPolicyProximitySetup(names));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionEvaluator.cpp:728:    buildEvaluationHalf(names);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionEvaluator.cpp:732:CollisionEvaluationSession::buildPolicyProximitySetup(const IPolicyNameContext& names) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Compatibility.cpp:84: *        ProximityStrategyRW 为默认且唯一注册后端"）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\RobWorkCollisionEvaluator.cpp:8: *     {builtin ProximityStrategyRW})——唯一实现的唯一构造入口）、§9.3
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\RobWorkCollisionEvaluator.cpp:41:#include <rw/proximity/rwstrategy/ProximityStrategyRW.hpp>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\RobWorkCollisionEvaluator.cpp:60:    m_strategy = std::make_shared<rw::proximity::ProximityStrategyRW>();
+RobWork/RobWork/src/rw/proximity\CollisionDetector.cpp:32:#include <rw/proximity/rwstrategy/ProximityStrategyRW.hpp>
+RobWork/RobWork/src/rw/proximity\CollisionDetector.cpp:58:bool CollisionDetector::inCollision (const kinematics::State& state, ProximityData& proxdata) const
+RobWork/RobWork/src/rw/proximity\CollisionDetector.cpp:80:        if (proxdata._collisionData._fullInfo.front ().inCollision ()) {
+RobWork/RobWork/src/rw/proximity\CollisionDetector.cpp:97:            if (d.inCollision ()) {
+RobWork/RobWork/src/rw/proximity\CollisionDetector.cpp:110:bool CollisionDetector::inCollision (const State& state, QueryResult* result,
+RobWork/RobWork/src/rw/proximity\CollisionDetector.cpp:128:    bool coliding = inCollision (state, res);
+RobWork/RobWork/src/rw/proximity\CollisionDetector.hpp:168:        bool inCollision (const kinematics::State& state, QueryResult* result = 0,
+RobWork/RobWork/src/rw/proximity\CollisionDetector.hpp:178:        bool inCollision (const kinematics::State& state, rw::proximity::ProximityData& data) const;
+RobWork/RobWork/src/rw/proximity\CollisionDetector.hpp:191:        bool inCollision (
+RobWork/RobWork/src/rw/proximity\CollisionDetector.hpp:198:            success = this->inCollision (state, &data, stopAtFirstContact);
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:24:#include <rw/proximity/rwstrategy/ProximityStrategyRW.hpp>
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:98:        data.inCollision () = _strategy->isWithinDistance (a, wTa, b, wTb, _tolerance, data);
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:99:        return data.inCollision ();
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:125:bool CollisionStrategy::inCollision (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa, const rw::core::Ptr<Frame> b,
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:132:    data.inCollision () = inCollision (getModel (a), wTa, getModel (b), wTb, data);
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:133:    return data.inCollision ();
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:136:bool CollisionStrategy::inCollision (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa, const rw::core::Ptr<Frame> b,
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:143:    data.inCollision () = inCollision (getModel (a), wTa, getModel (b), wTb, data);
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:144:    return data.inCollision ();
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:147:bool CollisionStrategy::inCollision (ProximityModel::Ptr a, const math::Transform3D<>& wTa,
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:152:    data.inCollision () = doInCollision (a, wTa, b, wTb, data);
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:153:    return data.inCollision ();
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.cpp:195:        return ownedPtr (new ProximityStrategyRW ());
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.hpp:142:        bool inCollision (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.hpp:158:        bool inCollision (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.hpp:172:        bool inCollision (ProximityModel::Ptr a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity\CollisionStrategy.hpp:238:         *  - RW - rw::proximity::ProximityStrategyRW - Internal RobWork proximity strategy
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:59:DistanceCalculator::DistanceCalculator (WorkCell::Ptr workcell, DistanceStrategy::Ptr strategy) :
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:77:                                        DistanceStrategy::Ptr strategy, const State& initialState) :
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:98:                                        DistanceStrategy::Ptr strategy) :
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:116:            _strategy->addModel (frame, geom);
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:135:        if (_strategy->hasModel (*from)) {
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:138:                if (_strategy->hasModel (*to)) {
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:172:DistanceStrategy::Result
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:174:                              std::vector< DistanceStrategy::Result >* result) const
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:184:    DistanceStrategy::Result distance;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:192:        DistanceStrategy::Result* dist;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:277:DistanceStrategy::Result
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:279:                              std::vector< DistanceStrategy::Result >* result) const
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:288:    DistanceStrategy::Result distance;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:296:            DistanceStrategy::Result* dist;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:319:void DistanceCalculator::setDistanceStrategy (DistanceStrategy::Ptr strategy)
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.cpp:327:    bool res = _strategy->addModel (frame, faces);
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:22:#include <rw/proximity/DistanceStrategy.hpp>
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:49:     * The method of used for distance calculation relies on the DistanceStrategy
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:83:                            rw::core::Ptr<rw::proximity::DistanceStrategy> strategy,
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:97:                            rw::core::Ptr<rw::proximity::DistanceStrategy> strategy);
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:111:        DistanceCalculator (const kinematics::FramePairList& pairs, rw::core::Ptr<rw::proximity::DistanceStrategy> strategy);
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:128:        rw::proximity::DistanceStrategy::Result
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:130:                  std::vector< rw::proximity::DistanceStrategy::Result >* result = 0) const;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:132:        rw::proximity::DistanceStrategy::Result
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:134:                     std::vector< rw::proximity::DistanceStrategy::Result >* result = 0) const;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:148:        rw::proximity::DistanceStrategy::Result
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:150:                  std::vector< rw::proximity::DistanceStrategy::Result >* result = 0) const;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:161:        void setDistanceStrategy (rw::core::Ptr<rw::proximity::DistanceStrategy> strategy);
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:198:        rw::core::Ptr<rw::proximity::DistanceStrategy> _strategy;
+RobWork/RobWork/src/rw/proximity\DistanceCalculator.hpp:199:        rw::core::Ptr<rw::proximity::DistanceStrategy> _thresholdStrategy;
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:21: * @file DistanceStrategy.hpp
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:46:    class DistanceStrategy : public virtual ProximityStrategy
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:50:        typedef rw::core::Ptr< DistanceStrategy > Ptr;
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:117:            friend std::ostream& operator<< (std::ostream& out, const DistanceStrategy::Result& o)
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:119:                return out << "DistanceStrategy::Result("       //
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:134:            TOSTRING (rw::proximity::DistanceStrategy::Result);
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:141:        virtual ~DistanceStrategy ();
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:230:        DistanceStrategy::Result& distance (const rw::core::Ptr<kinematics::Frame> a,
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:252:        DistanceStrategy::Result& distance (ProximityModel::Ptr a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:261:         * @extensionpoint{rw::proximity::DistanceStrategy::Factory,rw::proximity::DistanceStrategy,rw.proximity.DistanceStrategy}
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:265:         * @brief A factory for a DistanceStrategy. This factory also defines an ExtensionPoint.
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:267:         * Extensions providing a DistanceStrategy implementation can extend this factory by
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:268:         * registering the extension using the id "rw.proximity.DistanceStrategy".
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:270:         * Typically one or more of the following DistanceStrategy types will be available:
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:271:         *  - RW - rw::proximity::ProximityStrategyRW - Internal RobWork proximity strategy
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:276:        class Factory : public rw::core::ExtensionPoint< DistanceStrategy >
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:295:             * @return a pointer to a new DistanceStrategy.
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:297:            static DistanceStrategy::Ptr makeStrategy (const std::string& strategy);
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:335:        virtual DistanceStrategy::Result&
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:344:        DistanceStrategy (const DistanceStrategy&);
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:345:        DistanceStrategy& operator= (const DistanceStrategy&);
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.hpp:351:        DistanceStrategy ();
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:18:#include "DistanceStrategy.hpp"
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:30:DistanceStrategy::DistanceStrategy ()
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:32:DistanceStrategy::~DistanceStrategy ()
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:35:DistanceStrategy::Result DistanceStrategy::distance (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa,
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:48:DistanceStrategy::Result& DistanceStrategy::distance (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa,
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:61:DistanceStrategy::Result DistanceStrategy::distance (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa,
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:73:DistanceStrategy::Result& DistanceStrategy::distance (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa,
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:84:DistanceStrategy::Factory::Factory () :
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:85:    ExtensionPoint< DistanceStrategy > ("rw.proximity.DistanceStrategy",
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:89:std::vector< std::string > DistanceStrategy::Factory::getStrategies ()
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:92:    DistanceStrategy::Factory ep;
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:100:bool DistanceStrategy::Factory::hasStrategy (const std::string& strategy)
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:104:    DistanceStrategy::Factory ep;
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:115:DistanceStrategy::Ptr DistanceStrategy::Factory::makeStrategy (const std::string& strategy)
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:119:    DistanceStrategy::Factory ep;
+RobWork/RobWork/src/rw/proximity\DistanceStrategy.cpp:125:            return ext->getObject ().cast< DistanceStrategy > ();
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:34:#include <rw/proximity/DistanceStrategy.hpp>
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:182:                res = _strategy->inCollision (a, aT, b, bT, data);
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:201:    ProximityStrategyData ProximityCalculator< DistanceStrategy >::calculate (
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:211:            RW_THROW ("Proximity Calculator<DistanceStrategy>::calculate settings are ignored");
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:348:            res = _strategy->addModel (frame.get (), geometry);
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:375:            if (!_strategy->hasModel (frame.get ())) {
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:454:                _strategy->addModel (frame, geom);
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:476:            if (_strategy->hasModel (*from)) {
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:479:                    if (_strategy->hasModel (*to)) {
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.cpp:526:    template class ProximityCalculator< DistanceStrategy >;
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:57:     * DistanceStrategy
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:58:     * MultiDistanceStrategy
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:77:     * The method of used for distance calculation relies on the DistanceStrategy
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:144:         * For DistanceStrategy no settings are used and it is expected to be null, otherwise an
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:235:         * @brief Get the computation time used in the inCollision functions.
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:241:         * @brief Get the number of times the inCollision functions have been called.
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:242:         * @return number of calls to inCollision functions.
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:247:         * @brief Reset the counter for inCollision invocations and the computation timer.
+RobWork/RobWork/src/rw/proximity\ProximityCalculator.hpp:324:        SWIG_DECLARE_TEMPLATE(ProximityCalculatorDistance,rw::proximity::ProximityCalculator<rw::proximity::DistanceStrategy>);
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.hpp:76:        // virtual bool addModel(const rw::core::Ptr<kinematics::Frame> frame);
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.hpp:77:        virtual bool addModel (rw::core::Ptr< rw::models::Object > object);
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.hpp:90:        virtual bool addModel (const rw::core::Ptr<rw::kinematics::Frame> frame,
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.hpp:105:        virtual bool addModel (const rw::core::Ptr<rw::kinematics::Frame> frame,
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.hpp:118:        virtual bool hasModel (const rw::core::Ptr<rw::kinematics::Frame> frame);
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.hpp:217:         *  - RW - rw::proximity::ProximityStrategyRW - Internal RobWork proximity strategy
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:23:#include <rw/proximity/rwstrategy/ProximityStrategyRW.hpp>
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:48:bool ProximityStrategy::addModel (rw::models::Object::Ptr object)
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:54:            if (!hasModel (geoframe)) {
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:66:            if (!hasModel (geoframe)) {
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:78:bool ProximityStrategy::addModel (const rw::core::Ptr<Frame> frame, const rw::geometry::Geometry& geom)
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:92:bool ProximityStrategy::addModel (const rw::core::Ptr<Frame> frame, rw::geometry::Geometry::Ptr geom,
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:107:bool ProximityStrategy::hasModel (const rw::core::Ptr<rw::kinematics::Frame> frame)
+RobWork/RobWork/src/rw/proximity\ProximityStrategy.cpp:172:        return ownedPtr (new ProximityStrategyRW ());
+RobWork/RobWork/src/rw/proximity\ProximityStrategyData.hpp:28:#include <rw/proximity/DistanceStrategy.hpp>
+RobWork/RobWork/src/rw/proximity\ProximityStrategyData.hpp:45:    typedef rw::proximity::DistanceStrategy::Result DistanceResult;
+RobWork/RobWork/src/rw/proximity\ProximityStrategyData.hpp:127:        bool& inCollision () { return _collides; }
+RobWork/RobWork/src/rw/proximity\ProximityStrategyData.hpp:146:        rw::proximity::DistanceStrategy::Result& getDistanceData () { return _distanceData; }
+RobWork/RobWork/src/rw/proximity\ProximityStrategyData.hpp:153:        const rw::proximity::DistanceStrategy::Result& getDistanceData () const { return _distanceData; }
+RobWork/RobWork/src/rw/proximity\ProximityStrategyData.hpp:199:        rw::proximity::DistanceStrategy::Result _distanceData;
+RobWork/RobWork/src/rw/proximity\Raycaster.cpp:83:        if (_cdstrategy->inCollision (
+RobWork/RobWork/src/rw/proximity\rwstrategy\BVTreeToleranceCollider.hpp:288:                        _bvCollider->inCollision (cbvA, cbvB, aATtB * cbvB.getTransform ());
+RobWork/RobWork/src/rw/proximity\rwstrategy\BVTreeToleranceCollider.hpp:304:                                    if (_primCollider->inCollision (tria, trib, tATtB)) {
+RobWork/RobWork/src/rw/proximity\rwstrategy\OBVTreeDFSCollider.hpp:218:            bool incol = _bvCollider->inCollision (cbvA, cbvB, aATtB * cbvB.getTransform ());
+RobWork/RobWork/src/rw/proximity\rwstrategy\OBVTreeDFSCollider.hpp:241:                        if (_primCollider->inCollision (tria, trib, tATtB)) {
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:18:#include "ProximityStrategyRW.hpp"
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:39:// ProximityStrategyRW
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:41:ProximityStrategyRW::ProximityStrategyRW ()
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:46:rw::proximity::ProximityModel::Ptr ProximityStrategyRW::createModel ()
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:52:void ProximityStrategyRW::destroyModel (rw::proximity::ProximityModel* model)
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:58:bool ProximityStrategyRW::addGeometry (rw::proximity::ProximityModel* model,
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:101:bool ProximityStrategyRW::addGeometry (ProximityModel* model, const Geometry& geom)
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:106:bool ProximityStrategyRW::removeGeometry (rw::proximity::ProximityModel* model,
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:134:ProximityStrategyRW::QueryData ProximityStrategyRW::initQuery (ProximityModel::Ptr& aModel,
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:154:ProximityStrategyRW::getGeometryIDs (rw::proximity::ProximityModel* model)
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:165:ProximityStrategyRW::getGeometrys (rw::proximity::ProximityModel* model)
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:175:bool ProximityStrategyRW::doInCollision (ProximityModel::Ptr aModel, const Transform3D<>& wTa,
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:228:void ProximityStrategyRW::getCollisionContacts (std::vector< CollisionStrategy::Contact >& contacts,
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.cpp:234:void ProximityStrategyRW::clear ()
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.hpp:22: * @file ProximityStrategyRW.hpp
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.hpp:49:    class ProximityStrategyRW : public rw::proximity::CollisionStrategy
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.hpp:53:        typedef rw::core::Ptr< ProximityStrategyRW > Ptr;
+RobWork/RobWork/src/rw/proximity\rwstrategy\ProximityStrategyRW.hpp:109:        ProximityStrategyRW ();

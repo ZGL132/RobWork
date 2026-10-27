@@ -1,0 +1,91 @@
+169:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,
+176:        void setClampToBounds (bool enableClamping) { _useJointClamping = enableClamping; };
+182:        void setSolverType (JacobianSolverType type) { _solverType = type; };
+51:     * By default it solves the problem beginning at the robot base and
+76:        virtual void setMaxError (double maxError);
+86:         * @brief Sets the maximal number of iterations allowed
+88:         * @param maxIterations [in] maximal number of iterations
+90:        virtual void setMaxIterations (int maxIterations);
+93:         * @brief Returns the maximal number of iterations
+110:           @brief Default iterative inverse kinematics solver for a device and
+113:           @param device [in] Device for which to solve IK.
+114:           @param state [in] Fixed state for which IK is solved.
+1:set(SUBSYS_NAME sdurw_invkin)
+20:        ParallelIKSolver.cpp
+23:        JacobianIKSolver.cpp
+24:        JacobianIKSolverM.cpp
+38:        ParallelIKSolver.hpp
+42:        JacobianIKSolver.hpp
+43:        JacobianIKSolverM.hpp
+48:    rw_add_library(${SUBSYS_NAME} ${FILES_CPP} ${FILES_HPP})
+47:    _checkJointLimits (false)
+62:    return solve (std::vector< Target > (1, Target (_device->getEnd (), dest)), wstate);
+65:void ParallelIKSolver::updateDeltaX (const std::vector< Target >& targets,
+74:            (targets[ti].refFrame == NULL) ? rw::core::Ptr<const Frame>(_device->getBase ()) : targets[ti].refFrame.cptr();
+104:void ParallelIKSolver::updateJacobian (const std::vector< Target >& targets,
+122:            (targets[ti].refFrame == NULL) ? rw::core::Ptr<const Frame>(_device->getBase ()) : targets[ti].refFrame.cptr();
+190:        rw::core::Ptr<Frame> refFrame = NULL;
+192:            (targets[i].refFrame == NULL) ? rw::core::Ptr<const Frame>(_device->getBase ()) : targets[i].refFrame.cptr();
+199:                while (searchFrame != NULL && refFrame == NULL) {
+201:                        refFrame = searchFrame;
+207:        if (refFrame == NULL)
+213:        while (frame != NULL && tcpFrame == NULL) {
+227:                Kinematics::parentToChildChain (refFrame, tcpFrame, wstate);
+259:    updateDeltaX (targets, targetLegs, state, deltaX, nCon * 6);
+262:    updateJacobian (targets, targetLegs, state, jacobian);
+305:        updateDeltaX (targets, targetLegs, state, deltaX, nCon * 6);
+306:        updateJacobian (targets, targetLegs, state, jacobian);
+311:    } while (maxerror < error && iterations < maxiterations);
+322:    if (!_checkJointLimits) {
+329:    return sol;
+334:    _checkJointLimits = check;
+344:    return _device->getEnd ();
+18:#include "ODEVelocityDevice.hpp"
+44:ODEVelocityDevice::ODEVelocityDevice(
+55:ODEVelocityDevice::~ODEVelocityDevice ()
+66:void ODEVelocityDevice::reset (rw::kinematics::State& state)
+72:        _odeJoints[i]->setVelocity (0);
+103:void ODEVelocityDevice::update (const rwlibs::simulation::Simulator::UpdateInfo& info,
+132:    // rw::math::Q velQ = _rdev->getVelocity(state);
+134:    // std::cout << velQ << "\n";
+145:        // double vel = velQ(qi);
+146:        // double avel = _odeJoints[i]->getActualVelocity();
+147:        // double acc = (vel-avel)/dt;
+148:        // std::cout << avel << ",";
+151:        // vel = acc*dt+avel;
+157:        if (_modes[qi] == RigidDevice::Velocity) {
+159:                _odeJoints[i]->setMotorEnabled (true);
+160:            _odeJoints[i]->setVelocity (targets[qi]);
+165:                _odeJoints[i]->setMotorEnabled (false);
+180:            double ov  = _odeJoints[i]->getOwner ()->getVelocity ();
+184:            // double v = _odeJoints[i]->getVelocity();
+191:            // cancelled by adding a velocity
+194:            double averr = aerr / dt;    // velocity that will cancel the error
+206:                _odeJoints[i]->setVelocity (2 * ov * s /*+ aerr_pg70/dt*/);
+209:                _odeJoints[i]->getOwner ()->setVelocity (0.5 * oaerr_n / dt);
+211:                // std::cout << "Setting velocity og PG70 : " << 2*ov*s << std::endl;
+212:                // std::cout << "Setting velocity og PG70 owner: " << 0.5*oaerr_n/dt << std::endl;
+216:                //_odeJoints[i]->getOwner()->setVelocity( 2*aerr_n/dt );
+217:                //_odeJoints[i]->getOwner()->setVelocity( 0 );
+218:                //_odeJoints[i]->setVelocity( /*2*ov*s +*/ aerr_pg70/dt );
+224:                // now we add the velocity that we expect the joint to have
+228:                //_odeJoints[i]->getOwner()->setVelocity(ov-0.1*averr/s);
+229:                _odeJoints[i]->setVelocity (ov * s + averr);
+235:void ODEVelocityDevice::postUpdate (rw::kinematics::State& state)
+237:    rw::math::Q velQ      = _rdev->getVelocity (state);
+239:    rw::math::Q actualVel = velQ;
+245:        actualVel (qi) = _odeJoints[i]->getActualVelocity ();
+247:        /*if( !equalSign(_odeJoints[i]->getVelocity(),velQ(qi) ) ){
+248:            double diff = fabs( velQ(qi) );
+261:    // std::cout  << "Actual vel: " << actualVel << std::endl;
+271:ODEVelocityDevice::ODEVelocityDevice (ODEBody* base, RigidDevice* rdev,
+274:    _modes (rdev->getMotorForceLimits ().size (), RigidDevice::Velocity), _sim (sim)
+277:    // relatively few bodies
+343:void ODEVelocityDevice::init (RigidDevice* rdev, const rw::kinematics::State& state,
+507:ODEVelocityDevice* ODEVelocityDevice::makeDevice(RigidDevice *rdev,
+18:#include <rwsim/dynamics/RigidDevice.hpp>
+133:        if (dynamic_cast< RigidDevice* > (dev.get ())) {
+RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp:19: * This file tests the force torque sensor
+RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp:61:    devctrl->movePTP( target, 100);
+RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp:96:    // the selection 1 means force control, 0 means position control
+RobWork/RobWorkSim/example/cpp/ex-ode-simloop.cpp:32:    devctrl->movePTP( target, 100);

@@ -1,0 +1,87 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch8-search.json",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/DependencySuitabilityTest.cpp",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/environment-artifacts.json",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/gtest.xml",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/ird-test-report.json",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\version.hpp",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser.hpp",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser\\detail\\standard_callbacks.hpp",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser\\detail\\narrow_encoding.hpp",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\conversion.hpp",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\detail\\endian_load.hpp",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\detail\\endian_store.hpp",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_endian\\boost_endian-config.cmake",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_endian\\boost_endian-targets.cmake",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_property_tree\\boost_property_tree-config.cmake",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_property_tree\\boost_property_tree-targets.cmake",
+    "kind": "dependency-raw",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/DependencySuitabilityTest.cpp",
+    "kind": "probe-source",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "kind": "probe-source",
+    "matches": true
+  }
+]

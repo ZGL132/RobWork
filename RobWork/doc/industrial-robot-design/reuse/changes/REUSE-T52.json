@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T52",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T52.json",
+  "files": [
+    {
+      "mode": "adapter",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+      "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+      "capabilities": [
+        "DYN-RNE"
+      ],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/README.md",
+      "boundary": "WP-07（migration §13.3）逆动力学换核：上游 rwsim::util::RecursiveNewtonEuler（H1 直接 API）消费边界薄适配——StateStructure+SerialDevice+RigidDevice 一次性物化（S6 tAligned/R_alignᵀ/offset 烘焙同源语义镜像，独立 oracle 钉住）＋GAP-RNE-FRAME 质心/惯量关节帧换算（A2 裁决落点，S7/§8.2/modeling 导出零触碰）＋setGravity 显式传递＋按关节类型投影（不盲用 solveMotorTorques）；删除自写旧核 Vec3/Mat3/RneaChain/buildRneaChain/SampleGeometry/computeGeometry/rneaTorques 全清单；kRneaAlgorithmVersion 1→2（CON-04）；断开实验＝薄适配去除→y 轴静态/弯曲平衡真实失败"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp",
+      "sha256": "12e2964ecb801b8a7730276dd35d8c80d81b0d08930db83253f382e87de04a59",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/README.md",
+      "boundary": "契约头注释同步（WP-07 换核设计依据/职责执行序/上游边界）＋kRneaAlgorithmVersion 1→2（CON-04）；请求/结局/接口契约面零变化（kInverseDynContractVersion=1）"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+      "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/README.md",
+      "boundary": "冒烟分支框架供给（REUSE-T51 同款）：find_package(RobWork)＋sdurw_math/sdurw_models 同名 ALIAS＋sdurwsim 直含 targets/sdurwsim.cmake 导入目标（RobWorkSimConfig 非安装树 REQUIRED RobWorkStudio 探针在案）；sdurwsim 非集成判定符（全库零命中）；门禁代码/词表零改动；集成分支零改动"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
+      "sha256": "39b298bba8bd1e55a8d91af869f332cfcfdba326a61423a724fd992d2ba6af04",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/README.md",
+      "boundary": "既有 116 项 oracle 断言零放松全绿；REUSE-T52 增测：任意构型平衡叉积＋准静态能量平衡（独立物理 oracle）＋上游直接对照（内联同构设备直连 solve 逐位一致——test-fixture 授权面）；断开实验负例承载"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
+      "sha256": "27d1b17a72611ce4bded8939f1ab92b5a124dc5e1d088009b00c6f3a3c868f84",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/README.md",
+      "boundary": "runtime RNE 载体工厂公共契约头（2026-10-26 所有者构造面上收裁决——模型构造权归 runtime；消费者 WP-07 dynamics 已落位/WP-09 预留）：载体值聚合＋所有权生命周期＋GAP-RNE-FRAME 契约注释"
+    },
+    {
+      "mode": "adapter",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
+      "sha256": "6c284faa7234ccd632e501de06fc9eeeaeec7b78f16ac8d6d70bfa477accd1d4",
+      "capabilities": [
+        "DYN-RNE"
+      ],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/README.md",
+      "boundary": "RNE 载体工厂实现：CanonicalModel→StateStructure+SerialDevice+RigidDevice 一次性载体＋GAP-RNE-FRAME 关节帧换算（A2 裁决薄适配落点，构造面上收后归 runtime 单点；§8.2/S7 产品映射/modeling 导出零触碰）；轴对齐与 WorkCellCompiler.cpp 同源（最小授权面镜像）；断开实验＝换算行去除→dynamics oracle 真实失败"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/README.md",
+      "boundary": "runtime REUSE-T52 增列：集成 target_sources 工厂 TU＋冒烟分支框架供给（REUSE-T51 同款同名 ALIAS＋sdurwsim 直含 targets/sdurwsim.cmake）；工厂 TU 双模式编译＝单一实现；门禁代码/词表零改动"
+    }
+  ]
+}

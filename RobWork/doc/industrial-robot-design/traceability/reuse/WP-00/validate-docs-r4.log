@@ -1,0 +1,5 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+validate-task: PASS (3 tasks)
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md', LF will be replaced by CRLF the next time Git touches it
+REUSE-FRESHNESS : RobWork/doc/industrial-robot-design/automation-pipeline.md
+Write-Error: H1-H6 reuse governance failed

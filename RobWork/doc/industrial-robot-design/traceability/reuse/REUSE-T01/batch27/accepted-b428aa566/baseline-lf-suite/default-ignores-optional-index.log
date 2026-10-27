@@ -1,0 +1,21 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+powershell.exe : warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md', LF will
+ be replaced by CRLF the next time Git touches it
+At C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\baseline-lf\RobWork\scripts\industrialrobot\test-governa
+nce-lite.ps1:17 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+REUSE-MISSING : RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json
+C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-1a87b745e0d84f00ab954e3c9b496043\RobWork\scripts\industrialrobot\validat
+e-docs.ps1 : B.1 batch manifest validation failed
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-docs.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-1a87b745e0d84f00ab954e3c9b496043\RobWork\scripts\industrialrobot\validat
+e-docs.ps1 : H1-H6 reuse governance failed
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-docs.ps1
+ 

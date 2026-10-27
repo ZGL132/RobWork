@@ -1,6 +1,6 @@
 # 工业机械臂设计软件 · modeling 单元详细设计（阶段 B）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 
 > 2026-09-22 新建（WP-13-T01 承接）。本文是 modeling 单元的唯一详细设计：依据 REQUIREMENTS MDL-01～22 与 ARCHITECTURE §3.1/§3.3/§7.1～§7.10 的分配，把 RobotDesign 数据模型、模板与参数化、URDF/Xacro/WorkCell 导入映射、双权威参数化、物性估算、DH↔显式转换、传动耦合输入、模型就绪校验、CanonicalModel 交接、建模命令与撤销/重做写到可直接实现的深度。本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收。
@@ -818,6 +818,13 @@ DH 权威 ──(展开，无损，允许)──> 显式权威        显式权�
 | Stage B 阶段锁 | 阶段锁消费口径与 OPT StageB 一致（传动比 ratioPerJoint 为 StageB 连续变量可编辑；耦合矩阵归阶段 D）——V12-02"参数可编辑"与"性能可评估"两阶段口径 |
 | 消费边界 | runtime：编译进 CanonicalModel；drivetrain：虚功映射与工作点（DYN-04/SEL-05）；dynamics：关节侧 RNEA＋驱动端映射入口；selection：反射惯量/惯量比校核——四消费者经各自端口读同一对象，modeling 不代替任何一方计算 |
 | 变更传播 | 耦合/传动比变更→新修订→依赖声明含传动键的切片失效（限位校验经映射的域自行声明） |
+
+REUSE-T07 数值来源：`src/CouplingMath.hpp` 仅作行主序/尺度/容器适配，直接调用
+`rw::math::LinearAlgebra::svd`（`sdurw_math`）；原 Jacobi 扫描核和迭代常量删除，
+不保留旧算法回退。`Parts.cpp::checkCouplingMatrix` 及编辑/就绪调用链继续负责
+结构、有限性、窗口、奇异/病态阈值和稳定诊断。纯值运算不取得模型所有权。
+历史版本记录中的“各自实现/header-only”只描述当时实现，不能作为继续重复算法的许可。
+当前实现、验证与独验边界见 [耦合 SVD 迁移](../reuse/coupling-svd-migration.md)。
 
 ### 8.2 模型就绪校验（分层、状态机、结果流向）
 
@@ -1780,3 +1787,11 @@ T30完整分组表单设计续接：所有者确认第5批高亮人工通过后�
 ## GOV-T21 迁移约束与旧规则勘误
 
 CouplingMath.hpp、CanonicalBridge/DhConvert/RpyMath 为待迁移/审计；SVD/旋转优先用 rw::math，DH 拟合不因仅找到 DHParameterSet 元数据就认定已有完整能力。
+
+### REUSE-T10：原版EAA转换容差决议（2026-10-23）
+
+按所有者撤销上游补丁并适当放宽阈值的指令，后续MDL-22欧拉→EAA适配采用REQUIREMENTS附录D第13项：矩阵→EAA、EAA→矩阵及相关往返的等价旋转矩阵元素绝对误差统一1e-6（所有者明确数值裁决）。参数顺序仍为业务roll/pitch/yaw→上游yaw/pitch/roll，单位rad，runtime是唯一矩阵/模型权威。不改普通RPY正向/预设精确矩阵、矩阵合法性或非法输入原子拒绝；仍须核完整真实生产链和非零自定义姿态语义。这里登记验收口径，尚未宣称产品旋转迁移完成。
+
+### REUSE-T11：RPY/EAA薄适配（2026-10-23）
+
+`src/RpyMath.hpp` 的两处私有兼容入口直接连接 `RPY(yaw,pitch,roll).toRotation3D()` 与 `EAA(rotation).toVector3D()`，删除自写矩阵展开和半角四元数核。仅保留字段换序；URDF/Origin/基座编辑、诊断、Custom 身份、原子拒绝和 runtime 唯一模型/矩阵权威不变。仅 EulerCompilesAndCodecRoundTrips 的表示往返断言按批准值1e-6，其余阈值不变。范围、准确性/真实消费/清理/运行证据见 `traceability/reuse/REUSE-T11/README.md`；实施与独立验收状态以实际记录为准，不把适配实施视为全文件债务关闭。

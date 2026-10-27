@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" disabled="0" errors="0" time="0.001" timestamp="2026-10-25T22:49:33.526" name="AllTests">
+  <testsuite name="ReuseT42UpstreamForward" tests="2" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-25T22:49:33.527">
+    <testcase name="BitwiseEqualsBaselineExpansion" file="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T42\probe-upstream-forward.cpp" line="70" status="run" result="completed" time="0." timestamp="2026-10-25T22:49:33.527" classname="ReuseT42UpstreamForward" />
+    <testcase name="UpstreamResultIsProperRotation" file="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T42\probe-upstream-forward.cpp" line="82" status="run" result="completed" time="0." timestamp="2026-10-25T22:49:33.527" classname="ReuseT42UpstreamForward">
+      <failure message="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T42\probe-upstream-forward.cpp:87&#x0A;Value of: up.isProperRotation()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;case general-3&#x0A;" type=""><![CDATA[RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T42\probe-upstream-forward.cpp:87
+Value of: up.isProperRotation()
+  Actual: false
+Expected: true
+case general-3
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

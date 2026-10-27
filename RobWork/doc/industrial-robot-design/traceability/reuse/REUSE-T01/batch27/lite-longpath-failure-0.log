@@ -1,0 +1,12 @@
+PASS short-doc
+PASS free-body
+PASS no-prefix
+PASS generic-title
+PASS empty-title
+PASS unknown-prefix
+fatal: cannot create directory at 'RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/r3/rejected-4b9977f09/fixtures-v2/pwsh-note-case/RobWork/doc/industrial-robot-design/traceability': Filename too long
+Exception: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:53
+Line |
+  53 |      if ($LASTEXITCODE) { throw 'fixture checkout failed' }
+     |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | fixture checkout failed

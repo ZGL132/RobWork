@@ -1,0 +1,15 @@
+{
+  "reviewedCommit": "0900751718849863af1190ece61c8ddb1f1cf547",
+  "baseCommit": "bb283be1dbb6ae62c59d6563e3c7dac0a4ae5103",
+  "branch": "detached HEAD",
+  "cloneSource": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork",
+  "cloneCommand": "git -c core.longpaths=true clone --local --no-hardlinks --no-checkout <source> <temp>/clone; git -C <temp>/clone -c core.longpaths=true checkout --detach 0900751718849863af1190ece61c8ddb1f1cf547",
+  "localOnly": true,
+  "networkUsed": false,
+  "gitVersion": "git version 2.47.1.windows.1",
+  "powershellVersion": "7.6.5",
+  "cmakeVersion": "cmake version 4.3.1",
+  "python": "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+  "qtGuiTests": false,
+  "archiveRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b30-accept-20261023-064215\\evidence"
+}

@@ -1,0 +1,16 @@
+Note: Google Test filter = KinSessionAnchor.*:KinAnchorCapture.*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from KinSessionAnchor
+[ RUN      ] KinSessionAnchor.ValueDelegateExposesNullAnchor_DefaultPreserved_REUSE_T17
+[       OK ] KinSessionAnchor.ValueDelegateExposesNullAnchor_DefaultPreserved_REUSE_T17 (0 ms)
+[----------] 1 test from KinSessionAnchor (0 ms total)
+
+[----------] 1 test from KinAnchorCapture
+[ RUN      ] KinAnchorCapture.RebindKeepsOldTaskModelAndLifetime_REUSE_T17
+[       OK ] KinAnchorCapture.RebindKeepsOldTaskModelAndLifetime_REUSE_T17 (0 ms)
+[----------] 1 test from KinAnchorCapture (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (1 ms total)
+[  PASSED  ] 2 tests.

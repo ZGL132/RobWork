@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01-gate-fix",
+  "verdict": "pass",
+  "reviewedCommit": "b4c03401e12400a095cc4639f9f9ecefff0a9dac",
+  "reviewedBase": "0d0d3ca3ecedd7649b7f7b9b60dcaabd7a89cb5c",
+  "createdAt": "2026-10-22T21:05:29.8993167+08:00",
+  "scope": "仅存量未决审计权限门禁修正、4夹具、自包含修复、T01 ready契约与文档；不构成T01全功能审计完成",
+  "checkout": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b4c034-20261022-205721\\repo",
+  "checkoutClean": true,
+  "method": "独立本地shared clone，detached冻结SHA；本次重跑，不以归档日志代替",
+  "runtimeVersions": {
+    "ps7": "7.6.5",
+    "ps51": "5.1.26100.9444"
+  },
+  "scriptSha256": {
+    "test-reuse-governance.ps1": "FEB78507AD3F73CA554A6483EF499023E2E4FF2B57BAF7744055FC6473188F5D",
+    "validate-reuse.ps1": "179A2B287CDA2491E5F780463A735083CF2AA0888B76A01639383DCF38DD7B4A",
+    "reuse-contract.ps1": "25F27251FAFA9CB40146243AFC4916EA82B93CDF8708B6FA050C4B37D77F0E57"
+  },
+  "selftests": [
+    {
+      "runtime": "PS7",
+      "expected": 140,
+      "passed": 140,
+      "skipped": 0,
+      "notRun": 0,
+      "junit": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b4c034-20261022-205721\\ps7\\reuse-governance.junit.xml",
+      "exitCode": 0,
+      "report": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b4c034-20261022-205721\\ps7\\reuse-test-report.json",
+      "executed": 140,
+      "failed": 0
+    },
+    {
+      "runtime": "PS5.1",
+      "expected": 140,
+      "passed": 140,
+      "skipped": 0,
+      "notRun": 0,
+      "junit": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b4c034-20261022-205721\\ps51\\reuse-governance.junit.xml",
+      "exitCode": 0,
+      "report": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b4c034-20261022-205721\\ps51\\reuse-test-report.json",
+      "executed": 140,
+      "failed": 0
+    }
+  ],
+  "independentProbes": {
+    "notRun": 0,
+    "report": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b4c034-20261022-205721\\independent-probes.json",
+    "script": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b4c034-20261022-205721\\probe.ps1",
+    "executed": 14,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0
+  },
+  "commands": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir <reportRoot>/ps7",
+    "powershell -NoProfile -ExecutionPolicy Bypass -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir <reportRoot>/ps51",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Head b4c03401e12400a095cc4639f9f9ecefff0a9dac",
+    "pwsh -NoProfile -File <reportRoot>/probe.ps1 -Root <reportRoot>",
+    "git diff --check 0d0d3ca3ecedd7649b7f7b9b60dcaabd7a89cb5c b4c03401e12400a095cc4639f9f9ecefff0a9dac"
+  ],
+  "checks": {
+    "productFrameworkVcpkgDiff": "none",
+    "diffCheck": "PASS exit0",
+    "docs": "PASS exit0; DeepEvidence NOT RUN",
+    "hashIdentity": "PS7/PS5.1 driver+validator+helper all match frozen checkout",
+    "frozenReuse": "PASS exit0; functions=0; DEBT=16; UNRESOLVED=1399",
+    "task": "PASS exit0"
+  },
+  "findings": [],
+  "limitations": [
+    "仅本地冻结修正验收；未运行远程CI，已知代理127.0.0.1:17890不可达，不宣称远程交付",
+    "全库历史证据DeepEvidence未执行；普通docs门禁显式报告NOT RUN",
+    "未修改/构建产品，未做生产算法数值验收；T01仍audit-in-progress，后续T02仍需T01全审计及独立验收",
+    "验收探针首次因临时目录前提不全中断，修正仅验收脚本后完整重跑14/14通过；非产品缺陷"
+  ],
+  "manualReview": [
+    "AuditOnly仅由CheckFunctions依据固定基线成员、整个文件不在changedSources、decision/status均pending或proposal计算；无grant创建路径",
+    "对抗探针四种未决组合PASS并出现REUSE-AD-PENDING；audited/已解决decision均REUSE-AD拒绝",
+    "修改基线、新文件在工作树及冻结树均REUSE-AD拒绝；最终模式未决项REUSE-MIGRATION拒绝",
+    "新增4夹具及原21/29/BOM冻结夹具自包含前提与ready契约一致；驱动真实执行140例",
+    "H1-H6/SA-19 runtime owner与精确授权未扩大；当前修改无产品、上游、vcpkg差异；政策未把债务声明成授权或算法合规"
+  ]
+}

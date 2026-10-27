@@ -1,0 +1,11 @@
+{
+  "macros": 20,
+  "failedTargets": 0,
+  "removedUnits": 10,
+  "removedTargets": 13,
+  "evidenceRows": 58,
+  "inventoryReferences": 58,
+  "hashChecks": 466,
+  "failedHashes": 0,
+  "mainInventoryUnchanged": true
+}

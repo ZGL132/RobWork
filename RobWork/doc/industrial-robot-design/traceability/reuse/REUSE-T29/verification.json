@@ -1,0 +1,245 @@
+{
+  "taskId": "REUSE-T29",
+  "wp": "migration §13 WP-12; DTB WP-A; owner runtime",
+  "base": "ea8ac53baa8923d93c6233ca88db77f8e8778291",
+  "status": "BLOCKED: owner declined measured performance",
+  "candidateBindings": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/BaseWorldTransform.candidate.cpp",
+      "sha256": "0557f040aefa7c879df5857b15610ae1df68ed18cb3f9fa8b17ae50c66395741"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/BaseWorldTransformTest.candidate.cpp",
+      "sha256": "8ec0b1991d91cf947561b83939d19b7fc4d8997e430e19452ae693c6e0f03b7b"
+    }
+  ],
+  "restoredProductionBindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp",
+      "sha256": "36df8178557006370173dd992090550574fae12ec32762ef90dfa77fafdbbe5f"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/BaseWorldTransformTest.cpp",
+      "sha256": "9495a85f35e4d90ba98858a3ce918dc4921441b47e3c1c70d2a7fdea6e55792a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/BaseWorldTransform.hpp",
+      "sha256": "9214ee5ce280c37c2ebca50a002bc0ea917bbfe5823ec891fb0a7ccdd5e41f66"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+      "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+      "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Geometry/AngleAxis.h",
+      "sha256": "61a5a83fef8b28a7b2b2cc021ddfcf214723d58e0860ccf245ba0f2341ee335d"
+    }
+  ],
+  "configuration": {
+    "path": "build/CMakeCache.txt",
+    "sha256": "1ceac342dfb771cb69a614438ee407221ecef933b8a378d78b24dadbfb745c86"
+  },
+  "toolchain": "VS2022 x64 / C++17 Release; microbench /O2 /MD /DNDEBUG /DEIGEN_DONT_ALIGN_STATICALLY=1",
+  "results": {
+    "baseline": {
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 45
+    },
+    "final": {
+      "tests": 53,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 53
+    },
+    "modeling": {
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 19
+    },
+    "eaa-disconnected": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 0
+    },
+    "geometry-disconnected": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 0
+    },
+    "validation-disconnected": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 0
+    }
+  },
+  "runs": [
+    {
+      "label": "baseline",
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label baseline -Filter PresetRotationTest.*:CustomEaaTest.*:ResolveTest.*:ValidateTest.*:PresetConsistencyTest.*:InverseAndPointTest.*:ComposeTest.*:BaseMountConsistencyTest.*:BaseWorldReuse.*",
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/baseline.xml",
+        "sha256": "924ad43b65c93c28b68ef3e127e7da739fb1e99fe41b8d9b30849bd1ff10b734"
+      },
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/baseline.log",
+        "sha256": "4c8d0f309456e0e4552bbf5abae1188874d7229b8d82f9c9c6308929cb449294"
+      },
+      "exitCode": 0
+    },
+    {
+      "label": "final",
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter PresetRotationTest.*:CustomEaaTest.*:ResolveTest.*:ValidateTest.*:PresetConsistencyTest.*:InverseAndPointTest.*:ComposeTest.*:BaseMountConsistencyTest.*:BaseWorldReuse.*:WorkCellCompilerTest.*RT_BW_4:WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37:WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1:CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly:SnapshotTest.CreatePublishesSnapshotFields_RT_T09:SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1",
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/final.xml",
+        "sha256": "346265b5a04d40179ce54b8940d7e904c22f7785a59413508ea2153d2eed2fd3"
+      },
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/final.log",
+        "sha256": "deec5ec0de37cff084016c16358063453b923e7a3a02d3a08bc035e479bcfd3a"
+      },
+      "exitCode": 0
+    },
+    {
+      "label": "modeling",
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-modeling.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label modeling -Filter MdlBasePlacementEdit.*:MdlRobotDesign.IMdl7*:MdlTemplate.CreateDraft*:MdlTemplate.SixAxisDefaults*",
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/modeling.xml",
+        "sha256": "e198825ad35d180f61845c52f0ceb477860bb0c83d04463304c1b2878992d81d"
+      },
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/modeling.log",
+        "sha256": "4d659b9f52d60e532ba3c2a33d85cc4ea83857495fb64c46a1d2c441a775b266"
+      },
+      "exitCode": 0
+    },
+    {
+      "label": "eaa-disconnected",
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label eaa-disconnected -Filter BaseWorldReuse.TinyAngleAndAxisOracle_REUSE_T29",
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/eaa-disconnected.xml",
+        "sha256": "df8f8d98a1291142e2cb03bb0365fe8be35c9efe93026000c71ffc4f00cef906"
+      },
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/eaa-disconnected.log",
+        "sha256": "afa45d2ec495a86cd1a3b12ad64b078ae92653019b66b5a41e421ebea0d05ec9"
+      },
+      "exitCode": 1
+    },
+    {
+      "label": "geometry-disconnected",
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label geometry-disconnected -Filter BaseWorldReuse.RationalTransformConsumers_REUSE_T29",
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/geometry-disconnected.xml",
+        "sha256": "8e17e834ae6184f30cde9f0131856561f10616d9f132d50855e457d86ce3a64b"
+      },
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/geometry-disconnected.log",
+        "sha256": "64646fdb9fd78a2b09e66fdd092932293107cbfadca67edd4ff35156e1f7f6a5"
+      },
+      "exitCode": 1
+    },
+    {
+      "label": "validation-disconnected",
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label validation-disconnected -Filter BaseWorldReuse.ValidationMetricBoundary_REUSE_T29",
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/validation-disconnected.xml",
+        "sha256": "798955fbbddca0196dbb214370dde684dcc81f207f7fe37492acd027e47176d7"
+      },
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/validation-disconnected.log",
+        "sha256": "428797716e5593882499147b778d0e8a6c1d5b2ccebf6a95882f636271da3aee"
+      },
+      "exitCode": 1
+    }
+  ],
+  "performance": {
+    "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-performance.cmd",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/performance.log",
+      "sha256": "ad1d5bfbb2ecaf901d916b4268f966c1e9c803dd61318e27c812e23d44b369ee"
+    },
+    "sources": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/perf-new.cpp",
+        "sha256": "c9578274541924a418f3f16982982a3ccdacf5c5facb0f5847b31a602aae9632"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/perf-old.cpp",
+        "sha256": "9f53638a9f74e620a69bab8f9b8d73c2d3c4385f6487deae0ce15e514ab325c2"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/perf.cpp",
+        "sha256": "6ca3d4f115b41624012f73b0f3a94ae959eac37bad6209359650f34d4e03c432"
+      }
+    ],
+    "ownerDecision": "暂不接受，保留性能阻断"
+  },
+  "decisions": {
+    "implementation": "批准方案A及明确保留表达债务",
+    "performance": "暂不接受，保留性能阻断"
+  },
+  "candidateBuild": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/final-build.log",
+    "sha256": "816124cb983343f206253bbc293b83660034df79392235133d5170af55ce5e52"
+  },
+  "smokeBuild": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/smoke-build.log",
+    "sha256": "ce0535d74f63f0b2c5ce7fe50d3c4af1e3f7e5e761525aa32b7de063a35aca09"
+  },
+  "architecture": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/architecture-gates.log",
+    "sha256": "fa594dd1b297db71cbc670b3df70556dd0feb41614a6e73c7df9d98380ad344c"
+  },
+  "independentAcceptance": "NOT RUN",
+  "progress": {
+    "completedDirectReuse": 0,
+    "productionSupportFixes": 0,
+    "independentDefects": 0,
+    "blockedCandidate": 1
+  },
+  "sourceApplicability": "final/modeling/mutations验证归保存候选，不是恢复后的生产；恢复源等于起点，相同依赖的原证据引用，不重复无关基线测试。",
+  "digestConvention": "UTF-8 text; remove BOM; normalize CRLF to LF; exactly one final LF; SHA-256",
+  "restorationBuild": {
+    "command": "cmake --build build --config Release --target sdurws_ird_runtime_test sdurws_ird_modeling_test -- /nologo /verbosity:minimal",
+    "exitCode": 0,
+    "result": "PASS",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/restore-build.log",
+      "sha256": "686e3236c12d6a2bc505eae91bf670e8f72d15f78e412ce65b275796ff41cf2c"
+    }
+  }
+}

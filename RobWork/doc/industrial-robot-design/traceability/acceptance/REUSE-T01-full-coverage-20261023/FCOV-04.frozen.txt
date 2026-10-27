@@ -1,0 +1,215 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp
+sdurws::ird::project::ArchiveServiceImpl::finalize
+853: ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,
+854:                                            const RunManifest& manifest)
+855: {
+856:     // 会话解析（空/未知/已终结＝fail-fast）＋调用方契约校验：
+857:     const std::shared_ptr<ArchiveSessionState> state
+858:         = resolveActiveSession(session);
+859:     // taskIdentity 与会话五元组一致（会话绑定 begin 登记事实——finalize
+860:     // 不得改写；不符＝调用方契约违约）。
+861:     if (!(manifest.taskIdentity == state->task)) {
+862:         throw std::invalid_argument(
+863:             "project/archive: manifest.taskIdentity 与会话五元组不一致");
+864:     }
+865:     validateManifestFields(manifest);
+866: 
+867:     // 失权防护（§9.6②——同 writeBatch）。
+868:     if (!requireWriteAuthority("finalize")) {
+869:         return ArchiveStatus{
+870:             false,
+871:             StoreError{StoreErrorCode::WriteRejected,
+872:                        "project/archive: write authority check failed"
+873:                        "（finalize——句柄已释放或已失权）"}};
+874:     }
+875: 
+876:     // ---- 第 1 步（锁外，纯 CPU）：manifestDigest 计算（实现口径③——
+877:     // 编码归 project，§4.8；调用方该字段不参与）。摘要同时用于发布
+878:     // 字节与幂等判定；canonical 编码的 UTF-8 契约违约（runKind 等
+879:     // 理论上 ASCII——防御面）在此抛 invalid_argument 透传。
+880:     RunManifest out = manifest;
+881:     out.manifestDigest = computeManifestDigestHex(manifest);
+882:     const std::string canonical = codec::dump(out);
+883: 
+884:     // ---- writer 互斥段（§9.8——磁盘核验与发布原子于互斥内：并发
+885:     // finalize/abandon/批次写在互斥外排队，终局以本段为准）。
+886:     const std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+887: 
+888:     // F-805：终局仲裁复核（锁内——abandon 已同取本锁，两终局路径自此
+889:     // 串行化）：会话若已被 abandon 终结（登记摘除），finalize 失去发布
+890:     // 资格——诚实走 not-ok 值轨，不再为已终结会话发布 manifest（「先到
+891:     // 者定终局」自注释承诺变锁内事实；修复前本复核缺席，abandon 先至时
+892:     // 本函数仍继续发布＝已弃运程变完整运程）。
+893:     {
+894:         std::lock_guard<std::mutex> guard(m_sessionsMutex);
+895:         if (m_sessions.find(state.get()) == m_sessions.end()) {
+896:             return ArchiveStatus{
+897:                 false,
+898:                 StoreError{StoreErrorCode::WriteRejected,
+899:                            "project/archive: 会话已终结（abandon 先至定终局"
+900:                            "——finalize 失去发布资格，F-805）"}};
+901:         }
+902:     }
+903: 
+904:     // 第 2 步：同 run 已有 manifest 的 D-14 摘要比对（§10.1"重投递幂等
+905:     // 与内容冲突"行）。比对先于磁盘核验（顺序语义）：manifest 在＝该
+906:     // 运行已完整（D-13），重投递只与"已发布事实"比对——摘要一致＝幂等、
+907:     // 不一致＝冲突；磁盘核验仅把守发布路径（无 manifest 时才需要——
+908:     // 否则"声明了未写入文件"的分歧重投递会被误判为 store-corrupt 而非
+909:     // archive-conflict）。
+910:     const std::filesystem::path manifestFile
+911:         = state->runDir / std::string{kManifestFileName};
+912:     std::error_code ec;
+913:     if (std::filesystem::exists(manifestFile, ec) && !ec) {
+914:         const auto bytes = readSmallFile(manifestFile);
+915:         if (!bytes.has_value()) {
+916:             return ArchiveStatus{
+917:                 false,
+918:                 StoreError{StoreErrorCode::StoreCorrupt,
+919:                            "project/archive: 既有 manifest 不可读 path="
+920:                                + manifestFile.string()}};
+921:         }
+922:         RunManifest existing;
+923:         try {
+924:             existing = codec::parseRunManifest(*bytes);
+925:         } catch (const StoreError& e) {
+926:             return ArchiveStatus{
+927:                 false,
+928:                 StoreError{StoreErrorCode::StoreCorrupt,
+929:                            "project/archive: 既有 manifest 解析拒绝 path="
+930:                                + manifestFile.string() + " detail="
+931:                                + e.what()}};
+932:         }
+933:         // 幂等判据＝既有摘要 vs 本次重算摘要（同一摘要函数下等价于
+934:         // "内容全同"）。一致＝幂等成功：不重写磁盘、不重复发布事件
+935:         // （实现口径⑥——进程内总线恰一次），会话终结释放引用。
+936:         if (existing.manifestDigest == out.manifestDigest) {
+937:             reportDev("project/archive",
+938:                       "finalize idempotent（D-14 摘要一致——不重写） run="
+939:                           + state->task.run.toCanonical());
+940:             endSession(state, true);
+941:             return ArchiveStatus{true, std::nullopt};
+942:         }
+943:         // 不一致＝冲突拒绝＋PRJ-ARCHIVE-CONFLICT（数据分歧不掩盖，既有
+944:         // manifest 不覆盖）；会话不终结（调用方按任务状态机处置）。
+945:         if (m_host.m_sink != nullptr) {
+946:             try {
+947:                 m_host.m_sink->report(diagrec::makeArchiveConflict(
+948:                     "project/archive: manifest 摘要冲突 run="
+949:                         + state->task.run.toCanonical()));
+950:             } catch (...) {
+951:             }
+952:         }
+953:         return ArchiveStatus{
+954:             false,
+955:             StoreError{StoreErrorCode::ArchiveConflict,
+956:                        "project/archive: 同 attempt 重投递 manifest 内容"
+957:                        "不一致（D-14 冲突拒绝） run="
+958:                            + state->task.run.toCanonical()}};
+959:     }
+960:     if (ec) {
+961:         return ArchiveStatus{
+962:             false,
+963:             StoreError{mapOsError(static_cast<unsigned long>(ec.value())),
+964:                        "project/archive: stat manifest failed path="
+965:                            + manifestFile.string() + " osError="
+966:                            + std::to_string(ec.value())}};
+967:     }
+968: 
+969:     // 第 3 步：items 逐条对照磁盘（实现口径④——manifest 是"完整"的
+970:     // 声明（D-13），不发布与磁盘不符的声明（O-12 完整性发布义务）；
+971:     // 不符＝StoreCorrupt（数据侧），会话不终结（调用方可修复后重试或
+972:     // abandon）。仅发布路径到达此处（manifest 缺席——第 2 步已分流）。
+973:     for (const RunManifestItem& item : out.items) {
+974:         const std::filesystem::path file
+975:             = state->runDir / relPathToPath(item.relPath);
+976:         const auto bytes = readSmallFile(file);
+977:         if (!bytes.has_value()) {
+978:             reportDev("project/archive",
+979:                       "finalize verify failed（批次文件缺失/不可读） relPath="
+980:                           + item.relPath);
+981:             return ArchiveStatus{
+982:                 false,
+983:                 StoreError{StoreErrorCode::StoreCorrupt,
+984:                            "project/archive: manifest 条目缺失或不可读"
+985:                            " relPath=" + item.relPath}};
+986:         }
+987:         if (bytes->size() != item.sizeBytes) {
+988:             reportDev("project/archive",
+989:                       "finalize verify failed（size 不符） relPath="
+990:                           + item.relPath + " disk="
+991:                           + std::to_string(bytes->size()) + " declared="
+992:                           + std::to_string(item.sizeBytes));
+993:             return ArchiveStatus{
+994:                 false,
+995:                 StoreError{StoreErrorCode::StoreCorrupt,
+996:                            "project/archive: manifest 条目 size 与磁盘不符"
+997:                            " relPath=" + item.relPath}};
+998:         }
+999:         const core::ContentVersion diskDigest
+1000:             = codec::contentVersionOf(*bytes);
+1001:         // 声明 hex 与磁盘字节实算摘要比对（cv- 前缀剥离后逐字符——
+1002:         // CR-02：声明的摘要只透传不重算，实算对象是磁盘字节）。
+1003:         if (diskDigest.toCanonical().substr(3) != item.sha256) {
+1004:             reportDev("project/archive",
+1005:                       "finalize verify failed（sha256 不符） relPath="
+1006:                           + item.relPath);
+1007:             return ArchiveStatus{
+1008:                 false,
+1009:                 StoreError{StoreErrorCode::StoreCorrupt,
+1010:                            "project/archive: manifest 条目 sha256 与磁盘不符"
+1011:                            " relPath=" + item.relPath}};
+1012:         }
+1013:     }
+1014: 
+1015:     // 第 4 步：原子发布（§4.1 results 行"manifest 原子替换"；§7.2 行 3
+1016:     // ——write-through 暂存→replaceFile 原子就位＝D-13 提交点：发布前
+1017:     // 目录"不完整"、发布后"完整"，读者只见其一）。失败即返回环境错误，
+1018:     // 会话不终结（manifest 缺失＝仍不完整——失败不产生"假完整"）。
+1019:     const std::wstring temp = tempPathOf(manifestFile);
+1020:     const auto written
+1021:         = m_file.writeThrough(temp, canonical.data(), canonical.size());
+1022:     if (!written.ok) {
+1023:         std::error_code rmEc;
+1024:         std::filesystem::remove(temp, rmEc);
+1025:         reportDev("project/archive",
+1026:                   "finalize temp cleanup after write-failure file="
+1027:                       + manifestFile.string() + " osError="
+1028:                       + std::to_string(written.osError));
+1029:         return ArchiveStatus{
+1030:             false,
+1031:             StoreError{mapOsError(written.osError),
+1032:                        "project/archive: manifest writeThrough failed"}};
+1033:     }
+1034:     const auto published
+1035:         = m_file.replaceFile(temp, manifestFile.wstring());
+1036:     if (!published.ok) {
+1037:         std::error_code rmEc;
+1038:         std::filesystem::remove(temp, rmEc);
+1039:         reportDev("project/archive",
+1040:                   "finalize publish failed file=" + manifestFile.string()
+1041:                       + " osError=" + std::to_string(published.osError));
+1042:         return ArchiveStatus{
+1043:             false,
+1044:             StoreError{mapOsError(published.osError),
+1045:                        "project/archive: manifest 原子发布失败"}};
+1046:     }
+1047: 
+1048:     // ---- 第 5 步：终结→事件→票据释放（§10.2 流程序：manifest 发布＝
+1049:     // 完成事实→ResultArchived 事件→引用释放→（排空归零则）Closed）。
+1050:     // 锁内置态摘登记（幂等面收敛），事件在终结态下发布（观察者看到的
+1051:     // 已是"已归档"事实），票据最后锁外释放（排空触发点——锁序纪律）。
+1052:     {
+1053:         std::lock_guard<std::mutex> guard(m_sessionsMutex);
+1054:         state->finalized = true;
+1055:         state->ended = true;
+1056:         m_sessions.erase(state.get());
+1057:     }
+1058:     reportDev("project/archive",
+1059:               "finalize ok run=" + state->task.run.toCanonical()
+1060:                   + " manifest=" + manifestFile.string());
+1061:     publishResultArchived(state->task);
+1062:     state->inFlight.reset();  // 锁外释放（§9.7——排空归零的触发点之一）
+1063: 
+1064:     return ArchiveStatus{true, std::nullopt};
+1065: }

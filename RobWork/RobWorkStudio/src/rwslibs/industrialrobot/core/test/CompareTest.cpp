@@ -60,6 +60,68 @@ TEST(CompareFormula, NonFiniteInputsFalse_UT_UNIT)
     EXPECT_FALSE(closeWithin(qnan, qnan, t));     // NaN 对 NaN 也是 false（非有限）
 }
 
+/** @brief F-966：有限两侧同时溢出仍须按原非对称C4判定，不把Inf<=Inf当通过。 */
+TEST(CompareFormula, FiniteOverflowBoundary_UT_UNIT)
+{
+    const double maximum = std::numeric_limits<double>::max();
+    // 精确式为2*M <= relative*M；参考方向取反时同样成立，不能靠符号碰巧通过。
+    for (const double sign : {1.0, -1.0}) {
+        EXPECT_FALSE(closeWithin(sign * maximum, -sign * maximum,
+                                 Tolerance::make(1.5, 0.0)));
+        EXPECT_FALSE(closeWithin(sign * maximum, -sign * maximum,
+                                 Tolerance::make(std::nextafter(2.0, 0.0), 0.0)));
+        EXPECT_TRUE(closeWithin(sign * maximum, -sign * maximum,
+                                Tolerance::make(2.0, 0.0)));
+        EXPECT_TRUE(closeWithin(sign * maximum, -sign * maximum,
+                                Tolerance::make(1.0, maximum)));
+    }
+}
+
+/** @brief 保留原缩放候选被Fraction否决的六个输入；不以放宽阈值回避舍入边界。 */
+TEST(CompareFormula, FractionRejectedScalingCases_UT_UNIT)
+{
+    // B31/T14精确Fraction原件：三个基本边界及其符号镜像，期望全部false。
+    const double maximum = 0x1.fffffffffffffp+1023;
+    const double below = 0x1.ffffffffffffep+1023;
+    const double relative = 0x1.fffffffffffffp+0;
+    for (const double sign : {1.0, -1.0}) {
+        EXPECT_FALSE(closeWithin(sign * maximum, -sign * maximum / 2,
+                                 Tolerance::make(relative, maximum / 2)));
+        EXPECT_FALSE(closeWithin(sign * below, -sign * maximum,
+                                 Tolerance::make(relative, 0.0)));
+        EXPECT_FALSE(closeWithin(sign * below, -sign * maximum,
+                                 Tolerance::make(relative,
+                                     std::numeric_limits<double>::denorm_min())));
+    }
+}
+
+/** @brief R3边界：保留正常浮点舍入、次正规绝对项、符号零和非法聚合既有行为。 */
+TEST(CompareFormula, NormalPathAndSubnormalRemain_UT_UNIT)
+{
+    const double maximum = std::numeric_limits<double>::max();
+    const double smallest = std::numeric_limits<double>::denorm_min();
+    // 该正常路径历史上因减法舍入而为true；批准只修同时溢出，不能扩大语义。
+    EXPECT_TRUE(closeWithin(-maximum, smallest, Tolerance::make(0.0, maximum)));
+    EXPECT_TRUE(closeWithin(smallest, 0.0, Tolerance::make(0.0, smallest)));
+    EXPECT_FALSE(closeWithin(2 * smallest, 0.0, Tolerance::make(0.0, smallest)));
+    EXPECT_TRUE(closeWithin(-0.0, 0.0, Tolerance::make(0.0, 0.0)));
+    // 聚合构造可绕过工厂；本包不改这一存量前置或另设诊断。
+    EXPECT_FALSE(closeWithin(0.0, 0.0, Tolerance{-1.0, -1.0}));
+    EXPECT_TRUE(closeWithin(maximum, -maximum, Tolerance{1.5, inf}));
+}
+
+/** @brief vector必须委托同一修正入口，禁止在消费者侧补偿F-966。 */
+TEST(AllCloseWithin, FiniteOverflowDelegates_UT_UNIT)
+{
+    const double maximum = std::numeric_limits<double>::max();
+    EXPECT_FALSE(allCloseWithin(std::vector<double>{maximum, 0.0},
+                                std::vector<double>{-maximum, 0.0},
+                                Tolerance::make(1.5, 0.0)));
+    EXPECT_TRUE(allCloseWithin(std::vector<double>{maximum, 0.0},
+                               std::vector<double>{-maximum, 0.0},
+                               Tolerance::make(2.0, 0.0)));
+}
+
 /** 正负抵消反例：逐元素判定不被差值总和替代（C4 明文——UT 核心反例）。 */
 TEST(AllCloseWithin, ElementWiseNotSummed_UT_UNIT)
 {
@@ -135,6 +197,16 @@ TEST(RuntimeAbsoluteTolerance, C7Transcription_UT_UNIT)
 }
 
 #ifdef IRD_CORE_HAS_RW_Q
+/** @brief 真实rw::math::Q路径同样修正，不能以仅测vector代替产品Q调用形态。 */
+TEST(AllCloseWithinQ, FiniteOverflowDelegates_UT_UNIT)
+{
+    const double maximum = std::numeric_limits<double>::max();
+    const rw::math::Q value(2, maximum, 0.0);
+    const rw::math::Q reference(2, -maximum, 0.0);
+    EXPECT_FALSE(allCloseWithin(value, reference, Tolerance::make(1.5, 0.0)));
+    EXPECT_TRUE(allCloseWithin(value, reference, Tolerance::make(2.0, 0.0)));
+}
+
 /** Q 重载：逐元素语义同 vector 版（长度不等抛＋逐元素判定）。 */
 TEST(AllCloseWithinQ, QOverloadSemantics_UT_UNIT)
 {

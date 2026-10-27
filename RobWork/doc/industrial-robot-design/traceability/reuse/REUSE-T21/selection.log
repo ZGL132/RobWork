@@ -1,0 +1,245 @@
+Note: Google Test filter = SelCombinationCheck.*:SelCombinationCheckEvaluator.*:SelScreeningMotor.*:SelScreeningGearbox.*:SelLinearScreening.*
+[==========] Running 112 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 45 tests from SelScreeningMotor
+[ RUN      ] SelScreeningMotor.GoldenFeasibleBaseline
+[       OK ] SelScreeningMotor.GoldenFeasibleBaseline (0 ms)
+[ RUN      ] SelScreeningMotor.ContinuousTorqueExactBoundaryPasses
+[       OK ] SelScreeningMotor.ContinuousTorqueExactBoundaryPasses (0 ms)
+[ RUN      ] SelScreeningMotor.ContinuousTorqueInsufficientGoldenRow
+[       OK ] SelScreeningMotor.ContinuousTorqueInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.PeakTorqueInsufficientGoldenRow
+[       OK ] SelScreeningMotor.PeakTorqueInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.SpeedPeakInsufficientGoldenRow
+[       OK ] SelScreeningMotor.SpeedPeakInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.SpeedRmsInsufficientGoldenRow
+[       OK ] SelScreeningMotor.SpeedRmsInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.PowerInsufficientRatedFieldGoldenRow
+[       OK ] SelScreeningMotor.PowerInsufficientRatedFieldGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.PowerCurveWithinPassesWithCurveSource
+[       OK ] SelScreeningMotor.PowerCurveWithinPassesWithCurveSource (0 ms)
+[ RUN      ] SelScreeningMotor.PowerCurveExceededGoldenRow
+[       OK ] SelScreeningMotor.PowerCurveExceededGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.PowerCurveExtrapolationBecomesDataGap
+[       OK ] SelScreeningMotor.PowerCurveExtrapolationBecomesDataGap (0 ms)
+[ RUN      ] SelScreeningMotor.OverloadTimeInsufficientGoldenRow
+[       OK ] SelScreeningMotor.OverloadTimeInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.OverloadDimensionNotTriggeredInContinuousZone
+[       OK ] SelScreeningMotor.OverloadDimensionNotTriggeredInContinuousZone (0 ms)
+[ RUN      ] SelScreeningMotor.OverloadZoneWithoutCatalogSpecIsDataGap
+[       OK ] SelScreeningMotor.OverloadZoneWithoutCatalogSpecIsDataGap (0 ms)
+[ RUN      ] SelScreeningMotor.DutyMismatchGoldenRow
+[       OK ] SelScreeningMotor.DutyMismatchGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.VoltageMismatchGoldenRow
+[       OK ] SelScreeningMotor.VoltageMismatchGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.VoltageWithinTolerancePasses
+[       OK ] SelScreeningMotor.VoltageWithinTolerancePasses (0 ms)
+[ RUN      ] SelScreeningMotor.VoltageMissingInCatalogIsDataGap
+[       OK ] SelScreeningMotor.VoltageMissingInCatalogIsDataGap (0 ms)
+[ RUN      ] SelScreeningMotor.ThermalDeratingInsufficientGoldenRow
+[       OK ] SelScreeningMotor.ThermalDeratingInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.ThermalDeratingHalfStepRoundsUp
+[       OK ] SelScreeningMotor.ThermalDeratingHalfStepRoundsUp (0 ms)
+[ RUN      ] SelScreeningMotor.ThermalDeratingExtremeAmbientSaturatesNoInversion_F641
+[       OK ] SelScreeningMotor.ThermalDeratingExtremeAmbientSaturatesNoInversion_F641 (0 ms)
+[ RUN      ] SelScreeningMotor.ThermalDeratingBelowReferenceNoDerating
+[       OK ] SelScreeningMotor.ThermalDeratingBelowReferenceNoDerating (0 ms)
+[ RUN      ] SelScreeningMotor.ThermalMissingInCatalogIsDataGap
+[       OK ] SelScreeningMotor.ThermalMissingInCatalogIsDataGap (0 ms)
+[ RUN      ] SelScreeningMotor.BrakeInsufficientGoldenRow
+[       OK ] SelScreeningMotor.BrakeInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.HoldingInsufficientWithBrakeBothRecorded
+[       OK ] SelScreeningMotor.HoldingInsufficientWithBrakeBothRecorded (0 ms)
+[ RUN      ] SelScreeningMotor.HoldingDimensionsNotApplicableWithoutDemand
+[       OK ] SelScreeningMotor.HoldingDimensionsNotApplicableWithoutDemand (0 ms)
+[ RUN      ] SelScreeningMotor.BrakeMissingInCatalogIsDataGap
+[       OK ] SelScreeningMotor.BrakeMissingInCatalogIsDataGap (0 ms)
+[ RUN      ] SelScreeningMotor.SafetyFactorInsufficientGoldenRow
+[       OK ] SelScreeningMotor.SafetyFactorInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.SafetyFactorWithinPasses
+[       OK ] SelScreeningMotor.SafetyFactorWithinPasses (0 ms)
+[ RUN      ] SelScreeningMotor.SafetyFactorOneDoesNotAddDimension
+[       OK ] SelScreeningMotor.SafetyFactorOneDoesNotAddDimension (0 ms)
+[ RUN      ] SelScreeningMotor.MountingIncompatibleGoldenRow
+[       OK ] SelScreeningMotor.MountingIncompatibleGoldenRow (0 ms)
+[ RUN      ] SelScreeningMotor.MountingMissingInCatalogIsDataGap
+[       OK ] SelScreeningMotor.MountingMissingInCatalogIsDataGap (0 ms)
+[ RUN      ] SelScreeningMotor.MountingNotApplicableWithoutRequirement
+[       OK ] SelScreeningMotor.MountingNotApplicableWithoutRequirement (0 ms)
+[ RUN      ] SelScreeningMotor.MultiDimensionFailuresAllRecordedInLexicographicOrder
+[       OK ] SelScreeningMotor.MultiDimensionFailuresAllRecordedInLexicographicOrder (0 ms)
+[ RUN      ] SelScreeningMotor.MultiCaseMergedIntoSingleRecordWithCaseIds
+[       OK ] SelScreeningMotor.MultiCaseMergedIntoSingleRecordWithCaseIds (0 ms)
+[ RUN      ] SelScreeningMotor.MultiAxisProducesRecordPerAxis
+[       OK ] SelScreeningMotor.MultiAxisProducesRecordPerAxis (0 ms)
+[ RUN      ] SelScreeningMotor.DeterministicSameInputSameOutput
+[       OK ] SelScreeningMotor.DeterministicSameInputSameOutput (0 ms)
+[ RUN      ] SelScreeningMotor.AllWorkpointsMissingBecomesDataInsufficient
+[       OK ] SelScreeningMotor.AllWorkpointsMissingBecomesDataInsufficient (0 ms)
+[ RUN      ] SelScreeningMotor.EndToEndFromCatalogImportToScreening
+[       OK ] SelScreeningMotor.EndToEndFromCatalogImportToScreening (0 ms)
+[ RUN      ] SelScreeningMotor.InvalidEntryIsSkipped
+[       OK ] SelScreeningMotor.InvalidEntryIsSkipped (0 ms)
+[ RUN      ] SelScreeningMotor.SafetyFactorBelowOneFailsFast
+[       OK ] SelScreeningMotor.SafetyFactorBelowOneFailsFast (0 ms)
+[ RUN      ] SelScreeningMotor.NonFiniteWorkpointFailsFast
+[       OK ] SelScreeningMotor.NonFiniteWorkpointFailsFast (0 ms)
+[ RUN      ] SelScreeningMotor.MinEfficiencyOutOfRangeFailsFast
+[       OK ] SelScreeningMotor.MinEfficiencyOutOfRangeFailsFast (0 ms)
+[ RUN      ] SelScreeningMotor.NegativeTorqueWorkpointRejectedByMagnitude_F_814_SEL_03
+[       OK ] SelScreeningMotor.NegativeTorqueWorkpointRejectedByMagnitude_F_814_SEL_03 (0 ms)
+[ RUN      ] SelScreeningMotor.NegativePowerWorkpointRejectedByMagnitude_F_814_SEL_03
+[       OK ] SelScreeningMotor.NegativePowerWorkpointRejectedByMagnitude_F_814_SEL_03 (0 ms)
+[ RUN      ] SelScreeningMotor.NegativeWorkpointWithinLimitPasses_F_814_SEL_03
+[       OK ] SelScreeningMotor.NegativeWorkpointWithinLimitPasses_F_814_SEL_03 (0 ms)
+[----------] 45 tests from SelScreeningMotor (1 ms total)
+
+[----------] 30 tests from SelScreeningGearbox
+[ RUN      ] SelScreeningGearbox.GoldenFeasibleBaseline
+[       OK ] SelScreeningGearbox.GoldenFeasibleBaseline (0 ms)
+[ RUN      ] SelScreeningGearbox.RatedTorqueInsufficientGoldenRow
+[       OK ] SelScreeningGearbox.RatedTorqueInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.PeakTorqueInsufficientGoldenRow
+[       OK ] SelScreeningGearbox.PeakTorqueInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.InputSpeedExceededViaRatioConversion
+[       OK ] SelScreeningGearbox.InputSpeedExceededViaRatioConversion (0 ms)
+[ RUN      ] SelScreeningGearbox.InputSpeedPrefersMappingFactOverConversion
+[       OK ] SelScreeningGearbox.InputSpeedPrefersMappingFactOverConversion (0 ms)
+[ RUN      ] SelScreeningGearbox.InputSpeedMissingFactsIsDataGap
+[       OK ] SelScreeningGearbox.InputSpeedMissingFactsIsDataGap (0 ms)
+[ RUN      ] SelScreeningGearbox.RatioBelowRangeGoldenRow
+[       OK ] SelScreeningGearbox.RatioBelowRangeGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.RatioAboveRangeGoldenRow
+[       OK ] SelScreeningGearbox.RatioAboveRangeGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.RatioAtRangeBoundaryPasses
+[       OK ] SelScreeningGearbox.RatioAtRangeBoundaryPasses (0 ms)
+[ RUN      ] SelScreeningGearbox.RatioDimensionNotApplicableWithoutCriterion
+[       OK ] SelScreeningGearbox.RatioDimensionNotApplicableWithoutCriterion (0 ms)
+[ RUN      ] SelScreeningGearbox.EfficiencyInsufficientGoldenRow
+[       OK ] SelScreeningGearbox.EfficiencyInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.BacklashExceededGoldenRow
+[       OK ] SelScreeningGearbox.BacklashExceededGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.BacklashMissingInCatalogIsDataGap
+[       OK ] SelScreeningGearbox.BacklashMissingInCatalogIsDataGap (0 ms)
+[ RUN      ] SelScreeningGearbox.LifeInsufficientGoldenRow
+[       OK ] SelScreeningGearbox.LifeInsufficientGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.LifeMissingInCatalogIsDataGap
+[       OK ] SelScreeningGearbox.LifeMissingInCatalogIsDataGap (0 ms)
+[ RUN      ] SelScreeningGearbox.OrientationMismatchGoldenRow
+[       OK ] SelScreeningGearbox.OrientationMismatchGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.FlangeAndOrientationBothRecorded
+[       OK ] SelScreeningGearbox.FlangeAndOrientationBothRecorded (0 ms)
+[ RUN      ] SelScreeningGearbox.AxialLoadExceededGoldenRow
+[       OK ] SelScreeningGearbox.AxialLoadExceededGoldenRow (0 ms)
+[ RUN      ] SelScreeningGearbox.RadialLoadLeverArmReductionExceeded
+[       OK ] SelScreeningGearbox.RadialLoadLeverArmReductionExceeded (0 ms)
+[ RUN      ] SelScreeningGearbox.RadialLoadWithinReducedLimitPasses
+[       OK ] SelScreeningGearbox.RadialLoadWithinReducedLimitPasses (0 ms)
+[ RUN      ] SelScreeningGearbox.RadialLoadCloserThanRatedNoReduction
+[       OK ] SelScreeningGearbox.RadialLoadCloserThanRatedNoReduction (0 ms)
+[ RUN      ] SelScreeningGearbox.ExternalLoadMissingInCatalogIsDataGap
+[       OK ] SelScreeningGearbox.ExternalLoadMissingInCatalogIsDataGap (0 ms)
+[ RUN      ] SelScreeningGearbox.ExternalLoadNotApplicableWhenUndeclaredBothSides
+[       OK ] SelScreeningGearbox.ExternalLoadNotApplicableWhenUndeclaredBothSides (0 ms)
+[ RUN      ] SelScreeningGearbox.MultiDimensionFailuresAllRecorded
+[       OK ] SelScreeningGearbox.MultiDimensionFailuresAllRecorded (0 ms)
+[ RUN      ] SelScreeningGearbox.MultiCaseMergedIntoSingleRecord
+[       OK ] SelScreeningGearbox.MultiCaseMergedIntoSingleRecord (0 ms)
+[ RUN      ] SelScreeningGearbox.DeterministicSameInputSameOutput
+[       OK ] SelScreeningGearbox.DeterministicSameInputSameOutput (0 ms)
+[ RUN      ] SelScreeningGearbox.AllConditionsOffWithSparseEntryFeasible
+[       OK ] SelScreeningGearbox.AllConditionsOffWithSparseEntryFeasible (0 ms)
+[ RUN      ] SelScreeningGearbox.EndToEndFromCatalogImportToScreening
+[       OK ] SelScreeningGearbox.EndToEndFromCatalogImportToScreening (0 ms)
+[ RUN      ] SelScreeningGearbox.InvertedRatioRangeFailsFast
+[       OK ] SelScreeningGearbox.InvertedRatioRangeFailsFast (0 ms)
+[ RUN      ] SelScreeningGearbox.NonFiniteJointWorkpointFailsFast
+[       OK ] SelScreeningGearbox.NonFiniteJointWorkpointFailsFast (0 ms)
+[----------] 30 tests from SelScreeningGearbox (0 ms total)
+
+[----------] 25 tests from SelCombinationCheck
+[ RUN      ] SelCombinationCheck.FeasibleCombinationWithUnsettledInertia
+[       OK ] SelCombinationCheck.FeasibleCombinationWithUnsettledInertia (0 ms)
+[ RUN      ] SelCombinationCheck.RejectsOnSpeedDimensions
+[       OK ] SelCombinationCheck.RejectsOnSpeedDimensions (0 ms)
+[ RUN      ] SelCombinationCheck.RejectsOnMotorTorqueDimensions
+[       OK ] SelCombinationCheck.RejectsOnMotorTorqueDimensions (0 ms)
+[ RUN      ] SelCombinationCheck.ReferenceThresholdNeverRejects
+[       OK ] SelCombinationCheck.ReferenceThresholdNeverRejects (0 ms)
+[ RUN      ] SelCombinationCheck.ConfiguredRuleWithMissingFactYieldsGap
+[       OK ] SelCombinationCheck.ConfiguredRuleWithMissingFactYieldsGap (0 ms)
+[ RUN      ] SelCombinationCheck.MissingMappingBatchIsDataInsufficient
+[       OK ] SelCombinationCheck.MissingMappingBatchIsDataInsufficient (0 ms)
+[ RUN      ] SelCombinationCheck.MappingFailureIsTransparentNotRejection
+[       OK ] SelCombinationCheck.MappingFailureIsTransparentNotRejection (0 ms)
+[ RUN      ] SelCombinationCheck.PartialMappingAddsGaps
+[       OK ] SelCombinationCheck.PartialMappingAddsGaps (0 ms)
+[ RUN      ] SelCombinationCheck.PartialWithoutMissingItemsRejected
+[       OK ] SelCombinationCheck.PartialWithoutMissingItemsRejected (0 ms)
+[ RUN      ] SelCombinationCheck.CatalogVersionMismatchIsPerCombinationReason
+[       OK ] SelCombinationCheck.CatalogVersionMismatchIsPerCombinationReason (0 ms)
+[ RUN      ] SelCombinationCheck.AxisMappingIncompleteDetected
+[       OK ] SelCombinationCheck.AxisMappingIncompleteDetected (0 ms)
+[ RUN      ] SelCombinationCheck.CaseMatrixAggregatesAllRequiredCases
+[       OK ] SelCombinationCheck.CaseMatrixAggregatesAllRequiredCases (0 ms)
+[ RUN      ] SelCombinationCheck.EfficiencyDegradedYieldsGap
+[       OK ] SelCombinationCheck.EfficiencyDegradedYieldsGap (0 ms)
+[ RUN      ] SelCombinationCheck.EfficiencyGapFilteredByCase_F_811_SEL_05
+[       OK ] SelCombinationCheck.EfficiencyGapFilteredByCase_F_811_SEL_05 (0 ms)
+[ RUN      ] SelCombinationCheck.CaseCellDataInsufficientOnWorkpointGap_F_812_SEL_05
+[       OK ] SelCombinationCheck.CaseCellDataInsufficientOnWorkpointGap_F_812_SEL_05 (0 ms)
+[ RUN      ] SelCombinationCheck.CaseCellDataInsufficientOnCandidateGap_F_812_SEL_05
+[       OK ] SelCombinationCheck.CaseCellDataInsufficientOnCandidateGap_F_812_SEL_05 (0 ms)
+[ RUN      ] SelCombinationCheck.CaseCellDataInsufficientOnEfficiencyGap_F_812_SEL_05
+[       OK ] SelCombinationCheck.CaseCellDataInsufficientOnEfficiencyGap_F_812_SEL_05 (0 ms)
+[ RUN      ] SelCombinationCheck.RejectsNullSnapshot
+[       OK ] SelCombinationCheck.RejectsNullSnapshot (0 ms)
+[ RUN      ] SelCombinationCheck.RejectsNonfiniteCriteria
+[       OK ] SelCombinationCheck.RejectsNonfiniteCriteria (0 ms)
+[ RUN      ] SelCombinationCheck.RejectsBadInertiaRule
+[       OK ] SelCombinationCheck.RejectsBadInertiaRule (0 ms)
+[ RUN      ] SelCombinationCheck.MappingBatchVersionSemantics
+[       OK ] SelCombinationCheck.MappingBatchVersionSemantics (0 ms)
+[ RUN      ] SelCombinationCheck.DeterministicForSameInput
+[       OK ] SelCombinationCheck.DeterministicForSameInput (0 ms)
+[ RUN      ] SelCombinationCheck.PrismaticCombinationBlockedAtCombinationLevel
+[       OK ] SelCombinationCheck.PrismaticCombinationBlockedAtCombinationLevel (0 ms)
+[ RUN      ] SelCombinationCheck.MixedChainKeepsRotatingAxisRejection
+[       OK ] SelCombinationCheck.MixedChainKeepsRotatingAxisRejection (0 ms)
+[ RUN      ] SelCombinationCheck.JointKindConflictFailsFastAtCore
+[       OK ] SelCombinationCheck.JointKindConflictFailsFastAtCore (0 ms)
+[----------] 25 tests from SelCombinationCheck (2 ms total)
+
+[----------] 9 tests from SelCombinationCheckEvaluator
+[ RUN      ] SelCombinationCheckEvaluator.DescriptorShape
+[       OK ] SelCombinationCheckEvaluator.DescriptorShape (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.SliceKeyMismatchThrows
+[       OK ] SelCombinationCheckEvaluator.SliceKeyMismatchThrows (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.MissingEntryThrows
+[       OK ] SelCombinationCheckEvaluator.MissingEntryThrows (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.ObjectBytesUnavailableYieldsEmptyOutput
+[       OK ] SelCombinationCheckEvaluator.ObjectBytesUnavailableYieldsEmptyOutput (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.IdentityMismatchRejected
+[       OK ] SelCombinationCheckEvaluator.IdentityMismatchRejected (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.FullPathAssemblesPayloadAndEvidence
+[       OK ] SelCombinationCheckEvaluator.FullPathAssemblesPayloadAndEvidence (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.UpstreamDiagnosticsPassThrough
+[       OK ] SelCombinationCheckEvaluator.UpstreamDiagnosticsPassThrough (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.EvaluatorPathBlocksPrismaticAxis
+[       OK ] SelCombinationCheckEvaluator.EvaluatorPathBlocksPrismaticAxis (0 ms)
+[ RUN      ] SelCombinationCheckEvaluator.FactoryCreatesEvaluator
+[       OK ] SelCombinationCheckEvaluator.FactoryCreatesEvaluator (0 ms)
+[----------] 9 tests from SelCombinationCheckEvaluator (0 ms total)
+
+[----------] 3 tests from SelLinearScreening
+[ RUN      ] SelLinearScreening.LinearScreeningGolden_WP19T12_ACC1
+[       OK ] SelLinearScreening.LinearScreeningGolden_WP19T12_ACC1 (230 ms)
+[ RUN      ] SelLinearScreening.LinearScreeningDeterministic_WP19T12_ACC2
+[       OK ] SelLinearScreening.LinearScreeningDeterministic_WP19T12_ACC2 (3 ms)
+[ RUN      ] SelLinearScreening.RotationChainUnchangedByLinearCatalog_WP19T12_ACC3
+[       OK ] SelLinearScreening.RotationChainUnchangedByLinearCatalog_WP19T12_ACC3 (2 ms)
+[----------] 3 tests from SelLinearScreening (235 ms total)
+
+[----------] Global test environment tear-down
+[==========] 112 tests from 5 test suites ran. (240 ms total)
+[  PASSED  ] 112 tests.

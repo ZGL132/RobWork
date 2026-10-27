@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T20",
+  "unit": "testkit",
+  "masterWp": "WP-A",
+  "title": "SetCheck 最大匹配内核复用Boost薄适配",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "units/testkit.md#5.4",
+    "traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+    "traceability/reuse/REUSE-T01/probe-r17",
+    "traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/SetCheckMatch.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T20.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/**",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "等价结论/缺失多余计数与替换前逐 case 一致，多解配对见证确定性保持，消费者只断言等价/计数",
+    "ird_gates转绿；F-594双向回归随套件通过",
+    "分开测量相容边求值、建图、Boost算法及转表；性能退化未满足既有标准或未获所有者明确接受时不得结项",
+    "Boost第三方来源与上游RobWork来源分开记录；schema表达缺口不冒充已解决，不以NONE或business标签豁免真实复用审查",
+    "独立验收由所有者另开独立会话执行；整体准入由所有者裁决"
+  ],
+  "note": "WP-02承接：主工作树redesign-main，本轮起点7be67a6a59912ec243f2251dd3a127b8b5c7e679；旧codex/reuse-testkit-setcheck仅作历史溯源，不同步远程。任务ready表示可在精确范围实施，不是已完成。保留SetCheck公开契约、C4相容边、身份/歧义/诊断和唯一匹配接缝；无自写贪心快路径/旧Kuhn fallback。本轮已复用Boost公开matching策略（库greedy初始化/Edmonds增广/最大性验证器），在原模板边谓词增加单次标准map解析缓存；不增加公共接口、依赖渠道或算法核心。原README§9绑定数值oracle、生产mate扰动及受影响消费者；所有者已针对1024稠密118.73ms对旧3.26ms及O(E)图内存明确接受开销并交独验；schema选择原README§8.3.4方案一且债务保留。独验NOT RUN。纠正标题后实现SHA9276f19b26bfe095cbe2ccf460a64dec39bf45e9，代码树/正文与原881f576c完全一致，原/新lint及显式scope原件保留。第三方schema缺口按原README§8.3保留并以真实来源/正向证据订正，未经批准不改schema/门禁、不假关。本次具体性能接受已记录；后续新增实质退化仍需另行裁决；完成后独验，不自签done。仅覆盖SetCheck匹配内核，不代表testkit整体迁移完成。编号沿用T20，原T19撞号历史保留。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T20-20261025-r1.json（11件复跑原件在其同名目录），verdict=pass（notRun=0），绑定送验 SHA=9276f19b26bfe095cbe2ccf460a64dec39bf45e9（base=7be67a6a59912ec243f2251dd3a127b8b5c7e679，树e98cf3deb与标题更正前881f576c逐字一致）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；12项检查全过——verify-task-scope显式Base/Head复跑exit 0（78路径全在允许面）、源绑定哈希6文件与inputs.txt/manifest逐字一致、testkit全量套件真实重跑121/121（独立穷举oracle/网格族/F-594双向/贪婪陷阱/多解见证确定性/新增缓存两例在列，decisive=true）、kinematics消费者抽检5/5（其余消费者原件引用）、ird_gates直跑11类零命中、性能分项以送验树git archive导出真实复跑（10案例匹配基数与登记逐case一致；本机机态差异使复跑绝对值一致性高于登记原件≈5.3×/2.5-3×，如实披露于performanceObservation，登记原件与复跑原件同时留档，不推翻已获所有者接受的1024稠密118.73ms登记口径）、红线抽查（上游bipartite零命中/无平行实现回流/白名单零改动/CLOSURE冻结/L2零Qt）、commit-lint PASS且2ac114f33登记提交零产品码核实；契约5条acceptance逐项PASS（整体准入仍由所有者裁决）。limitations：仅覆盖SetCheck匹配内核，不代表testkit整体迁移完成；validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399既有总量）；稠密性能接受仅限当前1024稠密/4096稀疏登记范围，后续新增实质退化另行裁决；testkit.md版本表最新行v1.0.0、WP-02现状以§5.4.2新增段承载的轻微登记滞后不构成阻断。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T20.json"
+  },
+  "outputs": [
+    "SetCheck匹配内核Boost薄适配、oracle回归、治理登记与待独验交接"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T32",
+  "unit": "trajectory",
+  "masterWp": "WP-A",
+  "title": "WP-11其余路径轨迹工具收口与PTP极值缺口定案登记",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22",
+    "REUSE-T22"
+  ],
+  "requirements": [
+    "TRJ-02",
+    "TRJ-03",
+    "TRJ-06",
+    "NFR-COR-01",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/trajectory.md#9.1",
+    "units/trajectory.md#10.4",
+    "units/trajectory.md#15.5",
+    "reuse/migration.md#13.3",
+    "reuse/extensions/GAP-TRJ-LINEAR-01.md"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T32.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T32.json -Base c65ffc4fc495da0b01b2060ff3049eb127091d72 -Head <送验SHA>"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T32.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T32.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-TRJ-LINEAR-01.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/production.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-smooth.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-timeparam.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-*.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-*/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "Planner三处度量手写核（逐对Linf最大步长、L1路径长度、直连采样L2）换核为上游MetricFactory/PathAnalyzer直接消费并删除手写算术；稳定选择序四键全序、词表与身份面不变；Ptp/Smooth/TimeParam Polynomial成果不重写",
+    "rotationAngleBetween按0/微小角/π邻域/轴对称网格实测EAA::angle与Rotation3DAngleMetric候选，反例落在案则保留2·atan2实现并登记business-specific；ird_add_gtest按上游宏非CONFIG导出登记business-specific保留薄宏；被否候选逐条登记",
+    "GAP-TRJ-LINEAR-01候选2（上游稳定求值入口）按检索口径定案落档；候选3（SA-02最小上游扩展）维持待所有者裁决，批准前不修改Ptp.cpp与矩阵迁移状态，真实Q生产验证NOT RUN如实分列",
+    "MATH-METRIC与PATH-PLANNING升verified须绑定suitability原件且review.version树内上游文件与现状逐字节一致；migrated行逐行绑定ird-reuse-production/1报告（normal/disconnected/oracle/upstreamComparison四次真实运行，disconnected为真实变异红例后恢复复测）；改动产品文件全行矩阵覆盖与逐文件凭证齐备"
+  ],
+  "note": "WP-11残包（其余路径轨迹工具＋PTP缺口定案）；起点c65ffc4fc495da0b01b2060ff3049eb127091d72。两提交拆分：其一GAP候选2定案与PTP缺口登记（纯文档），其二其余工具收口（代码＋矩阵＋catalog＋证据）。直线已由REUSE-T26交付，本包不重做；REUSE-T22登记缺口由本包定案候选2。候选3（SA-02 patch）待所有者裁决维持blocked，批准前不改Ptp.cpp；真实Q模板路径极值探测NOT RUN。覆盖限制：新增测试受IRD-GATE-AD零模型构造红线约束（非runtime单元grant禁construct-model，治理自测grant-business-construction-rejected在案），PlannerReuseTest为纯数学面；采样计数公式级与RRT选择序直接oracle未建，观测面由既有PlannerAvoidance黄金算例与三组断开红例承载（README覆盖限制节）。最终193项全量＋69项契约全过、三组断开红例真实失败后恢复复测绿；性能微基准在案（pathL1相对+24~41%、绝对+40ns/次），接受与否交独验裁决。独立验收NOT RUN，不操作远程。原件traceability/reuse/REUSE-T32/README.md。 【验收登记（2026-10-25收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T32-20261025-r1.json，verdict=pass，绑定送验 SHA=b3e0cd1349edbd8c497f6fc2d9874433bd3efc3f（base=c65ffc4fc，两提交）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签；验收员亲跑 12/12 项通过（5 项 NOT RUN 为实施方任务交付口径另列，复跑原件在其同名目录：02-scope/05-commit-lint/06-gate-engine/07-validate-docs/08-trajectory-contract/08-trajectory-test/09-verify-review-version）。裁决要点：性能差异（pathL1 相对+24~41%、绝对+40ns/次）经本验收接受，限于当前调用频度，量级变化应重估；PTP 极值缺口本体未关闭（候选3 待所有者裁决，Ptp.cpp 未动），WP-11 残余以 GAP blocked 登记延续；T09/T26 三份 production.json 仅机械指纹刷新，运行内容原件未触碰。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T32.json"
+  },
+  "outputs": [
+    "Planner度量换核（MetricFactory/PathAnalyzer直接消费）与全行矩阵覆盖、逐文件凭证、MATH-METRIC/PATH-PLANNING suitability原件",
+    "rotationAngleBetween/ird_add_gtest定案登记与反例证据；GAP候选2定案落档与候选3待裁决登记；交独验"
+  ]
+}

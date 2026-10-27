@@ -1,0 +1,119 @@
+{
+  "baseline": "123bbc397df5b3aab4e72a385bf15b5341737067",
+  "searches": [
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "CodeTableManifest|StableCodeRegistry|diag.*code|little.?endian|class BINArchive|toLower|write.*uint32",
+        "RobWork/RobWork/src/rw/core",
+        "RobWork/RobWork/src/rw/common",
+        "RobWork/RobWorkSim/src",
+        "-g",
+        "*.hpp",
+        "-g",
+        "*.cpp"
+      ],
+      "exit": 0,
+      "stdout": "RobWork/RobWork/src/rw/core\\IOUtil.hpp:108:        static bool isLittleEndian ();\nRobWork/RobWork/src/rw/core\\IOUtil.cpp:103:    const std::string& v2 = raw_filename + StringUtil::toLower (suffix);\nRobWork/RobWork/src/rw/core\\IOUtil.cpp:179:bool IOUtil::isLittleEndian ()\nRobWork/RobWork/src/rw/core\\StringUtil.hpp:126:        static std::string toLower (const std::string& str);\nRobWork/RobWork/src/rw/core\\StringUtil.cpp:146:std::string StringUtil::toLower (const std::string& str)\nRobWork/RobWork/src/rw/core\\StringUtil.cpp:150:        result[i] = tolower (str[i]);\nRobWork/RobWork/src/rw/common\\BINArchive.hpp:36:    class BINArchive : public InputArchive\nRobWork/RobWork/src/rw/common\\BINArchive.hpp:38:    class BINArchive : public InputArchive, public virtual OutputArchive\nRobWork/RobWork/src/rw/common\\BINArchive.hpp:98:        void doWrite (uint32_t val, const std::string& id) { writeValue (val, id); };\nRobWork/RobWork/src/rw/common\\BINArchive.hpp:129:        void doWrite (const std::vector< uint32_t >& val, const std::string& id)\nRobWork/RobWork/src/rw/common\\OutputArchive.hpp:134:        virtual void doWrite (uint32_t val, const std::string& id) = 0;\nRobWork/RobWork/src/rw/common\\OutputArchive.hpp:163:        virtual void doWrite (const std::vector< uint32_t >& val, const std::string& id) = 0;\nRobWork/RobWork/src/rw/common\\INIArchive.hpp:111:        void doWrite (uint32_t val, const std::string& id) { writeValue (val, id); };\nRobWork/RobWork/src/rw/common\\INIArchive.hpp:142:        void doWrite (const std::vector< uint32_t >& val, const std::string& id)\nRobWork/RobWork/src/rw/common\\INIArchive.cpp:137:    // doWrite((boost::uint32_t)val,id);\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "BINArchive|StringUtil|toLower|LogTest|little.?endian|stable.*code",
+        "RobWork/RobWork/gtest",
+        "RobWork/RobWorkSim/gtest",
+        "RobWork/RobWork/example",
+        "RobWork/RobWorkSim/example",
+        "-g",
+        "*.cpp",
+        "-g",
+        "*.hpp",
+        "-g",
+        "CMakeLists.txt"
+      ],
+      "exit": 0,
+      "stdout": "RobWork/RobWorkSim/example\\tools\\src\\ConvertSimTask.cpp:269:        //state.dir = StringUtil::getDirectoryName(file);\nRobWork/RobWork/gtest\\CMakeLists.txt:82:        core/StringUtilTest.cpp\nRobWork/RobWork/gtest\\CMakeLists.txt:112:        common/StringUtilTest.cpp\nRobWork/RobWork/gtest\\CMakeLists.txt:119:        common/LogTestSuite.cpp\nRobWork/RobWork/gtest\\common\\LogTestSuite.cpp:33:TEST(LogTestSuite, LogTest) {\nRobWork/RobWork/gtest\\math\\MathSerializationTest.cpp:21:#include <rw/common/BINArchive.hpp>\nRobWork/RobWork/gtest\\math\\MathSerializationTest.cpp:37:    archives.push_back(new BINArchive());\nRobWork/RobWork/gtest\\common\\SerializationTest.cpp:24:#include <rw/common/BINArchive.hpp>\nRobWork/RobWork/gtest\\common\\SerializationTest.cpp:203:TEST(SerializationTest, BINArchiveTest )\nRobWork/RobWork/gtest\\common\\SerializationTest.cpp:209:        BINArchive iniarchive;\nRobWork/RobWork/gtest\\common\\SerializationTest.cpp:217:        BINArchive iniarchive;\nRobWork/RobWork/gtest\\common\\SerializationTest.cpp:227:        BINArchive(std::cout).write(sdata,\"sdata\");\nRobWork/RobWork/gtest\\common\\SerializationTest.cpp:228:        BINArchive(std::cout).write(sdata_in,\"sdata_in\");\nRobWork/RobWork/gtest\\common\\SerializationTest.cpp:229:        BINArchive(std::cout) << sdata;\nRobWork/RobWork/gtest\\common\\StringUtilTest.cpp:19:#include <rw/core/StringUtil.hpp>\nRobWork/RobWork/gtest\\common\\StringUtilTest.cpp:23:TEST(StringUtilTest, StringUtilGetFileExtensionTest )\nRobWork/RobWork/gtest\\common\\StringUtilTest.cpp:43:        EXPECT_EQ(StringUtil::getFileExtension(pair.first) , pair.second);\nRobWork/RobWork/gtest\\common\\StringUtilTest.cpp:48:TEST(StrinUtilTest, StringUtilGetFileNameTest )\nRobWork/RobWork/gtest\\common\\StringUtilTest.cpp:50:    EXPECT_EQ(StringUtil::getFileName(\"d:\\\\test\\\\folder1\\\\filename.txt\") , \"filename.txt\");\nRobWork/RobWork/gtest\\common\\StringUtilTest.cpp:51:    EXPECT_EQ(StringUtil::getFileName(\"/test/folder1/filename.txt\") , \"filename.txt\");\nRobWork/RobWork/gtest\\common\\StringUtilTest.cpp:52:    EXPECT_EQ(StringUtil::getFileName(\"d:\\\\test\\\\folder1\\\\filename\") , \"filename\");\nRobWork/RobWork/gtest\\core\\StringUtilTest.cpp:22:#include <rw/core/StringUtil.hpp>\nRobWork/RobWork/gtest\\core\\StringUtilTest.cpp:24:using rw::core::StringUtil;\nRobWork/RobWork/gtest\\core\\StringUtilTest.cpp:26:TEST(StringUtil, GetRelativeDirectoryNameTest_HardcodedPathTest) {\nRobWork/RobWork/gtest\\core\\StringUtilTest.cpp:30:    const std::string result = StringUtil::getRelativeDirectoryName(robotGeometryTestString, StringUtil::getDirectoryName(wcPath));\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "BINArchive|StringUtil|little.?endian|stable.*code|diagnostic.*code",
+        "RobWork/doc/apidoc",
+        "RobWork/doc/gfx",
+        "RobWork/doc/layout",
+        "RobWork/doc/manual",
+        "RobWork/doc/ressources",
+        "RobWork/doc/sphinx",
+        "RobWork/doc/topics",
+        "RobWork/doc/tutorials",
+        "-g",
+        "*.md",
+        "-g",
+        "*.rst",
+        "-g",
+        "*.cpp",
+        "-g",
+        "*.hpp"
+      ],
+      "exit": 0,
+      "stdout": "RobWork/doc/sphinx\\manual\\programming_conventions.rst:218:* an rw::common::BINArchive which prints in binary compressed format \n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "BINArchive|StringUtil|LogTest",
+        "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+        "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+        "RobWork/RobWork/gtest/CMakeLists.txt"
+      ],
+      "exit": 0,
+      "stdout": "RobWork/RobWork/gtest/CMakeLists.txt:82:        core/StringUtilTest.cpp\nRobWork/RobWork/gtest/CMakeLists.txt:112:        common/StringUtilTest.cpp\nRobWork/RobWork/gtest/CMakeLists.txt:119:        common/LogTestSuite.cpp\nRobWork/RobWork/src/rw/core/CMakeLists.txt:35:        StringUtil.cpp\nRobWork/RobWork/src/rw/core/CMakeLists.txt:71:        StringUtil.hpp\nRobWork/RobWork/src/rw/common/CMakeLists.txt:18:        BINArchive.cpp\nRobWork/RobWork/src/rw/common/CMakeLists.txt:45:        BINArchive.hpp\nRobWork/RobWork/src/rw/common/CMakeLists.txt:81:        StringUtil.hpp\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "derivedTextKey|codeLower|codeSyntaxOk|isValidDiagCodeSyntax|feedU32le|feedString|feedBool",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src",
+        "-g",
+        "*.hpp",
+        "-g",
+        "*.cpp"
+      ],
+      "exit": 0,
+      "stdout": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp:16:bool codeSyntaxOk(const std::string& code) noexcept\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp:48:    if (!codeSyntaxOk(code)) {\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:70:void feedU32le(core::ContentDigester& digester, std::uint32_t value)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:81:void feedString(core::ContentDigester& digester, std::string_view text)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:83:    feedU32le(digester, static_cast<std::uint32_t>(text.size()));\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:88:void feedBool(core::ContentDigester& digester, bool value)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:203:std::string derivedTextKey(std::string_view code, std::string_view suffix)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:237:    d.titleKey = derivedTextKey(spec.code, \"title\");\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:238:    d.detailKey = derivedTextKey(spec.code, \"detail\");\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:569:bool isValidDiagCodeSyntax(std::string_view code) noexcept\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:618:    if (!isValidDiagCodeSyntax(descriptor.code)) {\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:648:    // 内置表经 derivedTextKey 单点派生全表合规；注册 API 的硬约束＝a/b，\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:660:    if (descriptor.titleKey != derivedTextKey(descriptor.code, \"title\")\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:661:        || descriptor.detailKey != derivedTextKey(descriptor.code, \"detail\")) {\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:762:        feedString(digester, d.code);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:763:        feedString(digester, d.ownerUnit);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:764:        feedString(digester, categoryToken(d.category));\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:765:        feedString(digester, severityToken(d.severity));\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:766:        feedString(digester, d.titleKey);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:767:        feedString(digester, d.detailKey);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:768:        feedString(digester, d.paramSchema);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:769:        feedBool(digester, d.confirmable);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:770:        feedBool(digester, d.requiresComparison);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:771:        feedString(digester, retryKindToken(d.retryable));\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:772:        feedBool(digester, d.userVisible);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:773:        feedBool(digester, d.reportable);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:774:        feedBool(digester, d.historical);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:775:        feedU32le(digester, d.registryVersion);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:776:        feedBool(digester, d.deprecated);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:778:            feedBool(digester, true);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:779:            feedString(digester, *d.supersededBy);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\DiagCodes.cpp:781:            feedBool(digester, false);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\EntryDetail.hpp:33:inline std::string codeLower(std::string_view code)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Catalog.cpp:482:        const std::string lower = detail::codeLower(entry.record.code);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Catalog.cpp:553:        line += detail::codeLower(entry.record.code);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:54:void feedU32le(core::ContentDigester& digester, std::uint32_t value)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:80:void feedString(core::ContentDigester& digester, std::string_view text)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:82:    feedU32le(digester, static_cast<std::uint32_t>(text.size()));\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:118:        feedString(digester, value.quantity.invalidRawInput());\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:139:            feedString(digester, *provenance.methodTag);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:145:    feedString(digester, value.unit.symbol());\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:152:std::string codeLowerOf(std::string_view code)\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:191:    feedString(digester, record.code);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:198:        feedString(digester, *record.localName);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:202:        feedString(digester, *record.runtimeName);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:204:    feedString(digester, record.context);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:205:    feedString(digester, record.cause);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:206:    feedString(digester, record.recommendedAction);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\\Confirmable.cpp:456:    record.confirmTextKey = \"diag.\" + codeLowerOf(code) + \".confirm\";\n",
+      "stderr": ""
+    }
+  ],
+  "read": [
+    {
+      "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+      "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+      "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "sha256": "f15c1a2fd2f05aed7d019decb06d76f26b7100ab6e9a905f113d0472f1e8d0db"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "sha256": "4bd197469683229eb5fa5f5cdb408fd77c34f4d2f2eacc66304ec40a8e7a3fb1"
+    }
+  ],
+  "conclusion": "码表/词表/owner属于diagnostics；BINArchive归档类型/布尔宽度与IRDDCM2不等价，不能替换格式。StringUtil toLower依赖tolower，不提供固定ASCII不受locale影响保证；既有同单元codeLower可复用但本批不改。core codeSyntaxOk与registry同文法重复，先复用现有判定而非另写第三份。"
+}

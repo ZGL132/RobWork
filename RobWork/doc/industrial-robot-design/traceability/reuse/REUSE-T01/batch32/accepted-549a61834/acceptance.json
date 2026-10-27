@@ -1,0 +1,171 @@
+{
+  "checks": [
+    {
+      "log": "configure.log",
+      "exit": 0,
+      "verdict": "PASS",
+      "name": "configure"
+    },
+    {
+      "log": "build.log",
+      "exit": 0,
+      "verdict": "PASS",
+      "name": "build"
+    },
+    {
+      "log": "task.log",
+      "exit": 0,
+      "verdict": "PASS",
+      "name": "task"
+    },
+    {
+      "log": "docs.log",
+      "exit": 0,
+      "verdict": "PASS",
+      "name": "docs"
+    },
+    {
+      "log": "reuse.log",
+      "exit": 0,
+      "verdict": "PASS",
+      "name": "reuse"
+    },
+    {
+      "log": "commit-lint.log",
+      "exit": 0,
+      "verdict": "PASS",
+      "name": "commit-lint"
+    },
+    {
+      "log": "diff-check.log",
+      "exit": 0,
+      "verdict": "PASS",
+      "name": "diff-check"
+    }
+  ],
+  "scopeFiles": 39,
+  "notRun": [
+    "真实GUI用户会话",
+    "最终生产插件DLL符号留存",
+    "UI替换execution后的线程/项目切换回归",
+    "并发退订与在投回调生命周期",
+    "全部SourcedValue消费者泛型约束",
+    "生产修正",
+    "全REUSE-T01验收",
+    "远程同步"
+  ],
+  "originalArtifacts": {
+    "manifestSelfHashSeparatelyRecorded": true,
+    "cloneCheckout": "core.autocrlf converted seven text files and manifest; original/raw blob separately checked, not treated as corruption",
+    "entries": 32,
+    "frozenBlobAndOriginalRawBytes": "33/33 PASS"
+  },
+  "findings": {
+    "status": "open",
+    "onlyNewFinding": true,
+    "rawSha256": "a751ddefc1b3e6a2f557016af32862cc5e79c01d5f87e2e07f3a9744ee2c72b6",
+    "preservedPrefixBytes": 1289098,
+    "prefixUnchanged": true,
+    "id": "F-967"
+  },
+  "scope": "仅B32审计记录及证据的局部独立验收；不授予全REUSE-T01/T02或生产修复权限",
+  "rerun": {
+    "originalPassed": 17,
+    "classification": "FAIL为既有产品RAII缺陷的预期反例，未代修，非审计证据失败",
+    "failedTest": "EventLifetimeAudit.ReferenceHandleDestructionMustUnsubscribe_UT_EVT",
+    "runExit": 1,
+    "failedObservations": [
+      "subscriberCount()==1, expected 0",
+      "sink.count==1 after publish, expected 0"
+    ],
+    "originalTests": 17,
+    "qtPlatform": "windows",
+    "summary": {
+      "total": 23,
+      "passed": 22,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "absoluteExecutable": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b32-accept-549a618/build/Release/ird_event_lifetime_audit.exe",
+    "developerEnvironment": "Visual Studio 2022 x64 Hostx64/x64 MSVC 19.42.34433"
+  },
+  "newFunctions": 31,
+  "refreshedFunctions": 7,
+  "base": "a02785a10eada414533d9789eedac3f5af654a71",
+  "safety": {
+    "subagents": false,
+    "vcpkgEdited": false,
+    "manifestDoesNotHashItself": true,
+    "protectedDiffCount": 0,
+    "network": false,
+    "writes": "仅Temp审计目录",
+    "remote": false,
+    "upstreamEdited": false,
+    "safeEvidenceExcludes": [
+      "repo/ clone",
+      ".git/",
+      "build/",
+      "fixture/"
+    ],
+    "install": false,
+    "sharedTreeEdited": false,
+    "clone": "本地clone --no-hardlinks，core.longpaths=true，detached冻结SHA"
+  },
+  "reviewedCommit": "549a61834bea9755b873dde478ee80c5b9f4b15a",
+  "allPending": true,
+  "validatorRecords": [
+    {
+      "executedCloneRawSha256": "4161db742d876d18b1d477c5ccd83bcc1598403f05cafd013a11527c8497ec89",
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "frozenGitBlobId": "a3b5f82f00553854cce60d0216e8de6a20db40fd",
+      "originalRawSha256": "4161db742d876d18b1d477c5ccd83bcc1598403f05cafd013a11527c8497ec89"
+    },
+    {
+      "executedCloneRawSha256": "e9a46c913f6ed8afc84cb04caffb119411bf77aa967eade090fe7f16d2cf0462",
+      "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "frozenGitBlobId": "f19b80f287e07a11c44f6b2d20c5c0429bda6dca",
+      "originalRawSha256": "e9a46c913f6ed8afc84cb04caffb119411bf77aa967eade090fe7f16d2cf0462"
+    },
+    {
+      "executedCloneRawSha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f",
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "frozenGitBlobId": "60a7bf523fa7e7e22b50c821562d1badd5b1a767",
+      "originalRawSha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f"
+    },
+    {
+      "executedCloneRawSha256": "60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3",
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "frozenGitBlobId": "cd31898c3a3c410092f53e3483093bab7a0e9d9f",
+      "originalRawSha256": "60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3"
+    },
+    {
+      "executedCloneRawSha256": "990686380ffa2408ca696b80217de2d86b53d2b544f1cfdce378f53d9779aae4",
+      "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "frozenGitBlobId": "38af503bc7bd4ddea872a174e2a4078dd053f351",
+      "originalRawSha256": "990686380ffa2408ca696b80217de2d86b53d2b544f1cfdce378f53d9779aae4"
+    }
+  ],
+  "taskId": "REUSE-T01",
+  "sourceAndInputDigests": "PASS",
+  "sourceRanges": 41,
+  "verdict": "PASS",
+  "staticErrors": [],
+  "diffCheckBoundary": {
+    "sourceCheck": "PASS，14个md/json/cpp/CMake源材料；core.whitespace=cr-at-eol",
+    "allFilesFinding": "两份保留的原始失败build日志含行36尾空白及EOF空行；不改历史原始日志，不算源材料缺陷",
+    "allFilesCheckExit": 2,
+    "rawLog": "diff-check-all.log"
+  },
+  "batch": "B32",
+  "semanticReview": [
+    "生产静态链：UiPlugin.cpp 749/755/845/925/1022、UiPlugin.hpp 614/617、ui/CMakeLists.txt 919/920/987及依赖列表真实；未运行GUI或证明最终DLL符号",
+    "ReferenceSubscription无析构退订；existing execution析构退订成功，重复订阅删一项而Reference删全部，回调专用线程不同于Reference发布线程；不能直接替换",
+    "SourcedValue两死亡测试固定terminate退出73，只确认合法泛型抛复制/比较进入noexcept终止，不证明所有消费者适用或崩溃",
+    "CORE-EVENT仍candidate，core仅math依赖权限未扩张；未复制或创建第三总线",
+    "输入覆盖core/execution/ui跨文件与上游Event原头/原两用例/构建入口；原测试原文件直接编译，报告沿用testkit/TestMainReport"
+  ]
+}

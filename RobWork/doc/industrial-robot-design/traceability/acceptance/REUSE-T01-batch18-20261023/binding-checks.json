@@ -1,0 +1,3038 @@
+[
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch18-search.json",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "group": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/environment-artifacts.json",
+    "match": true
+  }
+]

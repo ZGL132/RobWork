@@ -1,0 +1,78 @@
+{
+  "taskId": "UI-T86",
+  "baseCommit": "28973eeee43b43dbe907ccf02bbc0a10ca1064b8",
+  "reviewedCommit": "e536adc1079e848315be61dc72828f6a0ccfa9c9",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-27T05:35:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "UI-T86 独立验收会话（单次验收子智能体「独立验收·P6·r1」，未参与实施）",
+    "authorization": "所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型，REUSE-T54 独验同型在案）；实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（UI-T86-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未远程操作；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件；对送验范围 28973eeee..e536adc10（冻结，单提交 e536adc10）作增量复验，未变且不受影响面引用原始记录不重跑。"
+  },
+  "scope": "独立复验 28973eeee..e536adc10（冻结范围，单提交 e536adc10「[WP-18-T86] ui 13项数值链失败诊断返工：12/13核销＋NamedTcpClosure门禁锁死blocked」）：①逐契约 verify-task-scope 显式 Base/Head 落盘；②acceptance 三项清单式增量复验——13 项失败逐项对账（我方 HEAD 复跑×green13 修复树×final 终态树×F-973 登记清单四方对读）、ui_test 全量 345 项真实执行（本会话亲建亲跑，PASS/FAIL 分列）、数值链独立核验（compileRealSnapshot 真实编译路径亲读＋关键数值解析抽查）、全文件解决批逐行区段与生产证据（区段摘要独立复算）、产品 FK/IK 零触碰（diff name-status＋rg 无回流）；③红线抽查（H1—H6、L2 零 Qt、runtime 唯一模型 owner、CLOSURE 冻结/门禁锁静态核验、无平行实现回流、test-fixture 未越界用于非 test 路径）；④当前 HEAD 门禁实测 validate-docs -TaskFile 全部涉及契约（UI-T86＋失败清单来源 REUSE-T41）单值逐个传参。数值迁移核验口径＝测试期望独立于产品输出（解析几何常量构造）＋本人独立重跑真实执行链，未另建 oracle 驱动（本批为测试夹具诊断返工，非产品数值核换——期望面独立性与真实执行两面均已亲核）。",
+  "counts": {
+    "failed": 0,
+    "passed": 14,
+    "notRun": 1,
+    "skipped": 0,
+    "unit": "14 项验收检查＋1 项 notRun（门禁阻断变异复现）；测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场与范围：HEAD=e536adc1079e（redesign-main），工作区仅本验收产物目录（未跟踪），零受跟踪文件改动；冻结范围内恰 1 提交。verify-task-scope 显式 -Base 28973eeee43b4 -Head e536adc1079e exit 0：changed=17 全部落在契约 allowedFiles（10 规则）内、forbiddenFiles（7 规则：RobWork/RobWork/src、RobWorkSim/src、vcpkg、main、kinematics/src、runtime/src、scripts/industrialrobot）零命中（verify-task-scope-t86.log）；allowedFiles 中的 HostCompilePipelineTest.cpp 未出现在 diff（第 13 项修复已按增量回退——与 blocked 声明一致）；commit-lint -Range 28973eeee..HEAD PASS（1 提交合规，commit-lint.log）。",
+    "逐文件凭证生产证据核验（Digest 口径按 validate-reuse.ps1 Digest 权威实现：ReadAllText→剥 BOM→CRLF→LF→尾部单换行，本人独立复算）：changes/UI-T86.json 两凭证 2/2 MATCH——ui/test/KinEvaluationChannelTest.cpp=91d9a2df…、ui/CMakeLists.txt=5395c6f2…，均为 HEAD 实际文件摘要；permissions.json 三处 build 绑定（REUSE-T17/REUSE-T41-UiPlugin hpp/UiPlugin cpp）同一 CMake 摘要 5395c6f2… 重钉＋REUSE-T17 source 91d9a2df… 重钉，与凭证一致。",
+    "13 项失败逐项对账（acceptance 1——WP-18 REUSE-T41 失败清单减 F-560）：三方名单逐项一致＝①F-973 登记清单（findings.json:9827，14 failed＝F-560×1＋数值链×13）；②traceability/reuse/UI-T86/README.md §1 表 13 项；③green13-full-suite.xml 逐 testcase。我方 HEAD 复跑逐项断言：12 项 KinEvaluationChannel 家族全部 [OK]（SolveChannel_BackgroundRealSolve/BatchChannel_RealComputation/BatchFixedMixedRpyWithRotatedFrames/BatchAlignFrameResolves/RegionNamedTcpAndMissingKey/BatchNamedTcpRealNumerics/BatchHonorsEveryConstraintMask/BatchDirectionRulesDoNotFallBack/OppositeDirectionRejected/DirectionCorrectionFromZero/BatchDirectionRulesFreeToolRoll/EnabledCollisionWithoutFacility——acc-full-suite.log 逐行 [OK]）；NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15 如实 [FAILED]（blocked 项不冒收）。修复树证据 green13＝345 项恰 1 失败（DefectPinning…F560），NamedTcpClosure testcase result=completed 无 failure 子节点——候选修复同树实证 PASS 后回退的声明成立；final 证据＝345/2（F-560＋NamedTcpClosure），与我方复跑逐项一致。",
+    "ui_test 全量真实执行（acceptance 2）：本人 cmake --build --target sdurws_ird_ui_test（exit 0，acc-build.log）后亲跑全量 345 项（QT_QPA_PLATFORM=windows，--gtest_output=xml）：343 passed/2 failed/0 skipped/0 notRun、exit 1 如实非零（acc-full-suite.log/xml＋acc-ird-test-report.json total=345 passed=343 failed=2 decisive=true）——与契约终态声明（343/2＝预存 F-560＋NamedTcpClosure blocked）逐项吻合；ird-test-report.json 机制留存（实施侧 green13/final 两份原件在案＋我方 acc 副本）。",
+    "数值链真实执行＋关键数值抽查（验收指令数值迁移项）：①真实编译锚路径亲读——FixtureView::runtimeModelView() 懒编译经 testfixture::compileRealSnapshot（kinematics/test/KinFkFixture.hpp:343-405：FixtureModelCompiler 只注入 CanonicalModel，S6-S10 全部经产品 RuntimeSnapshotFactory；非 Published 即抛 fail-fast——不伪造编译能力），T18 TestView:513-515 同款模式（H1 在案复用）；②关键数值抽查——BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15 目标点独立解析构造 1.1·cos(0.3)＋0.7·cos(−0.2)（x）、z 仅取自命名 TCP 偏移，与 twoLinkModel L1=1.1/L2=0.7（KinFkFixture.hpp:242-253）几何一致，且「wrong-default」对照点（默认 TCP z=0 必须实际求解失败）排除只查信封字段的假绿；NamedTcpClosure 断言 Rz(q) 解析期望 1e-12 容差＋IK 独立目标不复用 FK 输出（HostCompilePipelineTest.cpp:344-352 亲读）；③T17 无锚值替身语义不混同——KinSessionAnchor.ValueDelegateExposesNullAnchor_DefaultPreserved_REUSE_T17（AnchorlessValueView，:1751）在我方复跑 [OK]。12 项 PASS 均为真实编译模型上的产品 FK/IK/批量链执行（SolveChannel 25ms/BatchAlign 45ms 等真实耗时佐证非空转）。",
+    "F-560「预存」声明核验（acceptance 2 如实分列项）：失败体位于 DefectPinningTest.cpp:559（源分支扫描 countOccurrences(applyPreview)≥1 actual 0）——该 TU 不在本批 diff、不消费 KinFkFixture.hpp（rg 消费面清单核实），IRD_HAVE_RUNTIME_COMPILE 宏对其无编译面影响，基线态结构性等同；在案登记链完整＝F-973 登记（2026-10-25，14 failed 含 F-560×1）＋migration.md §13.1 行 291/306「UI F-560 字符串钉扎历史失败保留（未受影响 UI 不返工）」＋REUSE-T41 落地行「ui_test 331/14＝F-560×1＋F-973×13 与本包零因果」。本批对该失败零触碰、如实分列，合规。",
+    "全文件解决批逐行区段与生产证据（acceptance 3 治理面）：functions/ui.json 重定位抽查两区段行号与 HEAD 源码吻合——ui.FixtureView 77..153（段首＝FixtureView 文档注释、段尾＝m_anchor 成员＋类闭括号）、ui.ObservedView 992..1006（ObservedView 类体）；两区段 blob 摘要按 Digest 口径独立复算 2/2 MATCH（b355ad3d…/dc426020…，与 ui.json 新值逐位一致）；整文件行载体 1..1311（ui/CMakeLists.txt 实际总行 1311）、1..1955（KinEvaluationChannelTest.cpp 实际总行 1955）吻合；摘要重钉计数＝CMake 41/41、KinEval 4/4（旧值 2555c4a5…/48c6a19d… 与新值一一对应）；行集演算＝pending 19→19、migrated 21→21（纯重定位批，无新增 migrated 行——与本包只动测试夹具的边界一致）。",
+    "第 13 项 blocked/CLOSURE 冻结核验（acceptance 1 分流项）：①回退确认——HostCompilePipelineTest.cpp 零改动＋rg runtimeModelView 零命中（本地 View :337-343 仍为 model()/worldToBase() 两方法），该用例在 HEAD 如实失败；②门禁锁静态核验——HostCompilePipelineTest.cpp:72 #include <rw/graphics/DrawableNode.hpp> → reuse-contract.ps1 :133 提取表 graphics 类别 → :96 grant 含 graphics 必须 origin=host-presentation → :100-104 须 path∈hostExceptions[].files → :80 hostSeen.Count≠5 即 Fail（硬校验恰五对）；permissions.json hostExceptions 实测恰 5 对全为 ui/plugin/ 文件族（含 HOST-WORKBENCH=UiPlugin.{hpp,cpp}），测试路径恒不可入——「无任何合法 grant 形态」声明成立；③门禁本体实录 gate-ad-blocked.log＝9 条既有 REUSE-AD-PENDING＋恰 1 条 REUSE-AD 硬阻断（仅 HostCompilePipelineTest.cpp，IRD-GATE-AD）——9 条 PENDING 与我方 HEAD 门禁运行的 PENDING 集一致（既有在案提示，T54 独验同批定性）；④F-975 新登记 open（三选一待所有者裁决），候选补丁全文＋通过证据留 README §3 不入树。本会话未对工作树施加候选变异复跑门禁（见 notRun）。",
+    "产品 FK/IK 零触碰与无回流（acceptance 3）：diff name-status 全 17 文件中产品源仅 ui 测试 TU＋ui CMakeLists 两件，kinematics/src、runtime/src 及其余单元产品源零改动（ forbiddenFiles 零命中同证）；本批产品面新增仅 FixtureView 覆盖函数与测试目标编译定义，无任何 FK/IK 数学回流、无旧手写链符号重现（diff 逐行亲读：+27 行全为文档注释/覆盖函数/成员）；FixtureView 数值能力全部委托产品 RuntimeSnapshotFactory＋产品 FkEvaluator/IkEvaluator——无平行实现（H2）。",
+    "test-fixture 未越界用于非 test 路径：KinFkFixture.hpp 消费面 rg 清单全部为 test/contract_test/gui_test TU＋两单元 CMakeLists（include 目录注册），产品 src/ 零消费；IRD_HAVE_RUNTIME_COMPILE=1 全树仅三处且均为测试目标——kinematics_test:515、kinematics_contract_test:692、ui_test:442；ui 侧定义位于 if(TARGET sdurws) 集成守卫块内（:413-442，冒烟树整块不注册）——「冒烟面零影响」经 CMake 结构亲读核验；KinEvaluationChannelTest.cpp 对 ../kinematics/test 的 include 目录为 UI-T64 既有注册（本批未扩）。",
+    "红线汇总（H1—H6/L2/owner）：H1＝T18 KinFkFixture 在案函数直接复用（compileRealSnapshot/TestView 同款懒构造纪律），零新机制；H2＝无平行实现（见检查 9）；H3＝kinematics_test:515 先例同款 CMake 机制、上游类型与命名不动、中文契约注释保持；H4＝代码/测试/矩阵/凭证/findings/migration 同提交收口（检查 2/7/13）；H5＝P6 批次按 migration §13 串行计划实施，阶段门＝本独立验收（未提前自宣收口——契约 status=ready、migration 行「待独验」）；H6＝两级绑定可追溯（changes 凭证 2/2＋ui.json 区段/摘要重钉独立复算 MATCH＋permissions lifetime 锚能力迁移登记）。L2 零 Qt＝改动集内零 L2 计算库文件（仅 ui 单元测试面——ui 为呈现单元），ird_gates LIB/GRAPH 零命中独立复跑承载；runtime 唯一模型 owner＝WC 构造在 RuntimeSnapshotFactory 产品路径内，替身只注入模型值（KinFkFixture.hpp 契约注释与实现一致），permissions.json lifetime 明示「无模型所有权主张」。",
+    "④ 门禁实测（单值逐个传参，非数组）：validate-docs -TaskFile tasks/foundation/UI-T86.json exit 0（validate-task PASS (1 tasks)；validate-reuse PASS governance only; inventory=1401 units=20 changed=135 DEBT=16 UNRESOLVED=1399；validate-docs PASS 20 units/12 trace/429 task files——validate-docs-t86.log）；validate-docs -TaskFile tasks/REUSE-T41.json exit 0（同构 PASS——validate-docs-t41.log；REUSE-T41＝本包失败清单来源契约，acceptance 1 对账对象）。范围改动集内仅此两契约（UI-T86 本包新增、REUSE-T41 为被消费登记），「全部契约」按本批涉及面计。",
+    "ird_gates 独立复跑：cmake -DIRD_ROOT=… -P ird_gates.cmake exit 0「R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」＋自测 fail_* 按预期检出（acc-ird-gates.log）；HEAD 门禁面零 REUSE-AD 硬阻断（与 gate-ad-blocked.log 的单条硬阻断形成「候选在位即锁、回退后即绿」的闭环）。",
+    "相邻消费者回归：ui_contract_test 亲建亲跑 63/63 exit 0（acc-ui-contract-test.log/xml）——README §5「63/63」声明吻合；kinematics/runtime 产品面零改动，其既有证据按增量口径引用不重跑（AGENTS §4 增量默认口径）。",
+    "实施记录与现场一致性：README.md 全部关键数字（345=344+1 修复树/345=343+2 终态树/12+1 分流/区段 77..153、992..1006/1311、1955 整文件行）与本人独立实测逐一吻合；findings F-973→fixed（fixedAt 2026-10-27，处置叙述与实测一致）/F-975→open 新登记/迁移 §13.3 P6 行「待独验」——治理面与代码面同批且状态词如实（实施待独验，不冒称 done）。"
+  ],
+  "integrationTest": {
+    "uiTest": { "tests": 345, "passed": 343, "failed": 2, "skipped": 0, "notRun": 0, "exitCode": 1, "log": "acc-full-suite.log", "xml": "acc-full-suite.xml", "report": "acc-ird-test-report.json", "note": "本人从 HEAD 增量构建（sdurws_ird_ui_test，exit 0）后亲跑全量；2 failed＝预存 F-560（DefectPinningTest.cpp:559，未触碰 TU）＋NamedTcpClosure（F-975 blocked，如实失败）——与契约终态声明逐项一致，exit 1 为失败如实非零" },
+    "uiContractTest": { "tests": 63, "passed": 63, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "acc-ui-contract-test.log", "xml": "acc-ui-contract-test.xml", "note": "相邻面全量亲跑，README 声明吻合" },
+    "irdGates": { "exitCode": 0, "log": "acc-ird-gates.log", "result": "R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中；自测 fail_* 按预期检出" }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/UI-T86.json -Base 28973eeee43b43dbe907ccf02bbc0a10ca1064b8 -Head e536adc1079e848315be61dc72828f6a0ccfa9c9", "exitCode": 0, "passed": true, "log": "verify-task-scope-t86.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 28973eeee43b43dbe907ccf02bbc0a10ca1064b8..HEAD", "exitCode": 0, "passed": true, "log": "commit-lint.log" },
+    { "name": "credential-digest-recompute", "command": "pwsh 按 validate-reuse.ps1 Digest 口径复算 changes/UI-T86.json 两凭证＋ui.json 两区段摘要 → 4/4 MATCH（输出见 checks 2/7）", "exitCode": 0, "passed": true },
+    { "name": "build", "command": "cmake --build build --config Release --target sdurws_ird_ui_test（随后 --target sdurws_ird_ui_contract_test）", "exitCode": 0, "passed": true, "log": "acc-build.log / acc-build-contract.log" },
+    { "name": "int-ui-test", "command": "cd build/RobWorkStudio/bin/Release && QT_QPA_PLATFORM=windows ./sdurws_ird_ui_test.exe --gtest_output=xml:<acc>/acc-full-suite.xml", "exitCode": 1, "passed": true, "note": "exit 1＝2 failed 如实非零（F-560 预存＋NamedTcpClosure blocked），343 passed 与终态声明一致" },
+    { "name": "int-ui-contract-test", "command": "cd build/RobWorkStudio/bin/Release && QT_QPA_PLATFORM=windows ./sdurws_ird_ui_contract_test.exe --gtest_output=xml:<acc>/acc-ui-contract-test.xml", "exitCode": 0, "passed": true, "log": "acc-ui-contract-test.log" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "acc-ird-gates.log" },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1", "exitCode": 0, "passed": true, "log": "acc-validate-reuse.log" },
+    { "name": "validate-task", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/UI-T86.json", "exitCode": 0, "passed": true, "log": "acc-validate-task.log" },
+    { "name": "validate-docs-t86", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/UI-T86.json", "exitCode": 0, "passed": true, "log": "validate-docs-t86.log" },
+    { "name": "validate-docs-t41", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T41.json", "exitCode": 0, "passed": true, "log": "validate-docs-t41.log" },
+    { "name": "redline-rg-audit", "command": "rg KinFkFixture 消费面 / IRD_HAVE_RUNTIME_COMPILE 定义面 / runtimeModelView 于 HostCompilePipelineTest / ui 产品源对夹具宏的消费（输出见 checks 8/9/10）", "exitCode": 0, "passed": true },
+    { "name": "gate-lock-static-audit", "command": "亲读 reuse-contract.ps1 :80/:96/:100-104/:133 门禁链＋permissions.json hostExceptions 五对实测＋gate-ad-blocked.log 比对我方 HEAD 门禁 PENDING 集（输出见 checks 8）", "exitCode": 0, "passed": true }
+  ],
+  "issues": [],
+  "observations": [
+    "README §4 称 functions/ui.json「CMakeLists.txt 40 处 inputs 重钉」，实测该文件内新 CMake 摘要出现 41 处（差 1 处为整文件行载体绑定或计数口径差异）；机器核查以 validate-reuse 全量 PASS 为准，非证据缺口，留给实施者后续批次顺手统一口径。",
+    "F-560 在 findings.json 本体 status=fixed（原缺陷 2026-10-16 翻牌），其常驻钉扎 DefectPinning…F560 当前失败的处理链登记于 F-973 resolution＋migration.md §13.1 行 291/306「字符串钉扎历史失败保留」，链路可追溯但钉扎回归本体无独立 finding ID——归所有者后续归类（与本包零因果，不构成本包验收阻断）。",
+    "gate-ad-blocked.log 中 9 条 REUSE-AD-PENDING 为 policy/reporting/runtime/ui plugin 等文件的既有审计 pending 提示（与 T54 独验同批定性），非本包产物；其消账归 REUSE-AD-PENDING 既有治理线。"
+  ],
+  "notRun": [
+    {
+      "item": "IRD-GATE-AD 阻断的工作树变异复现（对 HostCompilePipelineTest.cpp 施加候选补丁后重跑门禁）",
+      "reason": "只验收不修复约束下不对受跟踪文件施加临时变异；阻断真实性以三重独立证据承载——实施侧 gate-ad-blocked.log 门禁本体实录、本会话对 reuse-contract.ps1:80/:96/:100-104/:133 门禁链＋hostExceptions 恰五对的静态核验（测试路径无合法 grant 形态为机器必然）、本会话 HEAD 门禁运行（零硬阻断＋PENDING 集与实施侧日志一致）证明回退后状态。"
+    }
+  ],
+  "binding": {
+    "passCommit": "e536adc1079e848315be61dc72828f6a0ccfa9c9",
+    "taskContract": "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T86.json",
+    "changeManifest": "RobWork/doc/industrial-robot-design/reuse/changes/UI-T86.json",
+    "evidenceDir": "RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T86-20261026-r1/",
+    "blockedFollowUp": "F-975（NamedTcpClosure 修复面 IRD-GATE-AD graphics 锁死）维持 open，三选一裁决归所有者：①门禁为 /test/ 路径开 graphics 允许面；②宿主例外扩族；③UI-T78 渲染面用例重组"
+  }
+}

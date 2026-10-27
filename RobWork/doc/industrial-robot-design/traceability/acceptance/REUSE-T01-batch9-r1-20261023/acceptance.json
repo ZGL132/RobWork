@@ -1,0 +1,54 @@
+{
+  "sha": "dd27799a1afd6ba080c7ad7b4ec9d6db9da86e38",
+  "base": "6d4c254548d2784aa25a2b87978e3d7fc0ab60af",
+  "scope": "batch9-only",
+  "result": "FAIL",
+  "findings": [
+    {
+      "id": "B9-P2-01",
+      "priority": 2,
+      "description": "三处qualifiedSymbol作用域错绑",
+      "functionIds": [
+        "runtime.jointStaticTransform",
+        "kinematics.MidSolveDegradedView",
+        "ui.ObservedView"
+      ]
+    },
+    {
+      "id": "B9-P2-02",
+      "priority": 2,
+      "description": "findDevice source遗漏997 const Ptr返回类型，正确区段997-1003",
+      "expectedSha256": "86fa247a2b003a68f5fd67c54a293c61926414cc76c285d468b52db6a91a2967"
+    }
+  ],
+  "rows": 19,
+  "allNewPending": true,
+  "semanticBindings": {
+    "failed": 4,
+    "passed": 15,
+    "skipped": 0
+  },
+  "gates": {
+    "failed": 0,
+    "passed": 3,
+    "skipped": 0
+  },
+  "searchReplay": {
+    "failed": 0,
+    "passed": 8,
+    "skipped": 0
+  },
+  "currentRelations": {
+    "closedFiles": 0,
+    "total": 239,
+    "pending": 236,
+    "proposal": 3
+  },
+  "notRun": [
+    "C++反例，另一验收者负责",
+    "GUI/全量产品",
+    "全库DeepEvidence",
+    "全T01退出"
+  ],
+  "archiveExclusion": "repo/"
+}

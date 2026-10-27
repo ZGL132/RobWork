@@ -1,0 +1,71 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp
+sdurws::ird::project::win32::AtomicFile::writeThrough
+226: FileResult AtomicFile::writeThrough(const std::wstring& path,
+227:                                     const char* data, std::size_t length)
+228: {
+229:     // ---- 第 1 步：打开（故障点 open；失败即无文件，调用方路径上无残留）。
+230:     HANDLE handle = nullptr;
+231:     const FileResult openResult = m_ops->openWriteThrough(path, &handle);
+232:     if (!openResult.ok) {
+233:         return openResult;  // 打开失败：错误码透传，无任何半写（连文件都没有）
+234:     }
+235: 
+236:     // ---- RAII 句柄守卫：后续任何步骤失败/提前返回都必须关句柄。
+237:     // closeHandle 的返回值在守卫内被记住：若 flush 已成功而关闭失败，
+238:     // 整体仍报失败（保守方向——数据可能已落盘但本原语不作成功承诺，
+239:     // 调用方按失败处置＝放弃发布，安全侧出错；不会出现"报成功但句柄
+240:     // 异常"的误导性成功）。
+241:     struct HandleGuard {
+242:         IFileOps* ops;
+243:         HANDLE handle;
+244:         FileResult closeResult{};
+245:         bool dismissed = false;  // 正常收尾时抑制重复关闭
+246:         ~HandleGuard()
+247:         {
+248:             if (!dismissed && handle != nullptr) {
+249:                 closeResult = ops->closeHandle(handle);
+250:             }
+251:         }
+252:     } guard{m_ops, handle, {}, false};
+253: 
+254:     // ---- 第 2 步：分块写出全部字节（故障点 write-chunk——F2 写中途失败
+255:     // 的注入边界；块大小见 kWriteChunkSize 注释）。
+256:     std::size_t offset = 0;
+257:     while (offset < length) {
+258:         // 尾块不足 kWriteChunkSize 时取剩余量（min 手写避免 windows.h
+259:         // 的 min/max 宏与本编译单元内 STL 头的交互）。
+260:         const std::size_t chunk =
+261:             (length - offset < kWriteChunkSize) ? (length - offset)
+262:                                                 : kWriteChunkSize;
+263:         const FileResult writeResult =
+264:             m_ops->writeChunk(handle, data + offset, chunk);
+265:         if (!writeResult.ok) {
+266:             // 写中途失败：直接返回（守卫关句柄）。已写入部分**有意留在
+267:             // 磁盘上**＝暂存残留语义（§7.1 第 2 步"残留部分文件"）——
+268:             // 由启动恢复扫描忽略＋报告，本原语不删除（删除是新的失败面）。
+269:             return writeResult;
+270:         }
+271:         offset += chunk;
+272:     }
+273: 
+274:     // ---- 第 3 步：持久性闸门（故障点 flush）——FlushFileBuffers 成功
+275:     // 才允许调用方进入发布/替换（原子/持久性分离的时序表达：闸门失败
+276:     // 绝不进入可见性切换）。
+277:     const FileResult flushResult = m_ops->flush(handle);
+278:     if (!flushResult.ok) {
+279:         return flushResult;  // 闸门失败：字节已在文件里但未承诺持久——按失败处置
+280:     }
+281: 
+282:     // ---- 第 4 步：正常收尾关闭（守卫抑制，取真实关闭结果参与成败判定）。
+283:     guard.dismissed = true;
+284:     const FileResult closeResult = m_ops->closeHandle(handle);
+285:     if (!closeResult.ok) {
+286:         // flush 后关闭失败：极异常环境（句柄表损坏类），保守报失败——
+287:         // 事务层按暂存失败处置（残留被恢复扫描忽略），不会误提交。
+288:         return closeResult;
+289:     }
+290: 
+291:     FileResult r;
+292:     r.ok = true;
+293:     return r;
+294: }

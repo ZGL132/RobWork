@@ -1,0 +1,295 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:122:    /// u32 定宽（显式小端：低位字节在前——跨平台字节序一致，F-777）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:123:    void u32(std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:132:    /// f64 定宽（IEEE754 位模式经 memcpy 取位后显式小端 8 字节；F-777：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:134:    void f64(double v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:138:        std::memcpy(&bits, &v, sizeof(bits));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:144:    /// string＝u32 字节长＋UTF-8 字节。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:147:        u32(static_cast<std::uint32_t>(s.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:158:        f64(t.ixx);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:159:        f64(t.iyy);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:160:        f64(t.izz);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:161:        f64(t.ixy);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:162:        f64(t.ixz);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:163:        f64(t.iyz);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:168:        f64(v.x);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:169:        f64(v.y);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:170:        f64(v.z);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:193:    /// 头部校验：8 字节 magic＋u32 codec 版本。版本不符＝版本轨（升级
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:202:        const std::uint32_t v = u32At(8);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:215:        std::memcpy(out, m_bytes.data() + m_pos, n);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:218:    std::uint32_t u32()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:234:    /// f64 读取＋非有限拒绝（对称于编码入口——防旁路字节注入；显式小端组装）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:235:    double f64()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:244:        std::memcpy(&v, &bits, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:252:        const std::uint32_t n = u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:281:        t.ixx = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:282:        t.iyy = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:283:        t.izz = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:284:        t.ixy = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:285:        t.ixz = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:286:        t.iyz = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:292:        v.x = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:293:        v.y = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:294:        v.z = f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:332:    std::uint32_t u32At(std::size_t pos) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:335:        std::memcpy(&v, m_bytes.data() + pos, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:361:    w.f64(a.appliedRatio);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:362:    w.f64(a.linkMassKg);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:366:    w.f64(a.motorHousingMassKg);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:369:    w.f64(a.gearboxHousingMassKg);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:371:    w.f64(a.rotorInertiaKgM2);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:386:    a.appliedRatio = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:387:    a.linkMassKg = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:391:    a.motorHousingMassKg = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:394:    a.gearboxHousingMassKg = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:396:    a.rotorInertiaKgM2 = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:649:    w.u32(kBackfillPayloadCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:651:    w.u32(static_cast<std::uint32_t>(request.axes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:670:    const std::uint32_t axisCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:747:    w.u32(kBackfillPayloadCodecVersion);  // 记录与命令同版本演进（同批冻结 v1）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:758:    w.u32(static_cast<std::uint32_t>(record.axes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:762:        w.f64(s.massKg);                          // 合成结果（记录面）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:765:        w.f64(s.rotorInertiaKgM2);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:799:    const std::uint32_t axisCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:809:        s.massKg = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:812:        s.rotorInertiaKgM2 = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:176:    /// u32 定宽（显式小端：低位字节在前——跨平台字节序一致，F-777）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:177:    void u32(std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:189:    /// f64 定宽（IEEE754 位模式经 memcpy 取位后显式小端 8 字节；F-777）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:190:    void f64(double v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:194:        std::memcpy(&bits, &v, sizeof(bits));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:200:    /// string＝u32 字节长＋UTF-8 字节。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:203:        u32(static_cast<std::uint32_t>(s.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:216:    /// optional<double>＝u8 有无标志＋有值时 f64。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:221:            f64(*v);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:249:    /// 头部校验：8 字节 magic＋u32 codec 版本（协议冻结面——违约即协议
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:258:        const std::uint32_t v = u32At(8);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:270:        std::memcpy(out, m_bytes.data() + m_pos, n);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:273:    std::uint32_t u32()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:289:    /// f64 读取（显式小端组装；非有限拒绝对称于编码入口）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:290:    double f64()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:299:        std::memcpy(&v, &bits, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:308:        const std::uint32_t n = u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:332:        return f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:367:    std::uint32_t u32At(std::size_t pos) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:370:        std::memcpy(&v, m_bytes.data() + pos, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:427:    w.f64(c.safetyFactor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:430:    w.f64(c.voltageRelativeTolerance);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:438:        w.f64(c.ratioRange->minRatio);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:439:        w.f64(c.ratioRange->maxRatio);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:446:    c.safetyFactor = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:449:    c.voltageRelativeTolerance = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:456:        range.minRatio = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:457:        range.maxRatio = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:483:        w.f64(f.externalLoad->radial);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:484:        w.f64(f.externalLoad->axial);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:485:        w.f64(f.externalLoad->distance);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:493:    w.f64(f.atTime);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:518:        load.radial = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:519:        load.axial = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:520:        load.distance = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:530:    f.atTime = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:572:    w.f64(reason.atTime);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:574:    w.f64(reason.actual);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:575:    w.f64(reason.required);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:594:    reason.atTime = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:596:    reason.actual = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:597:    reason.required = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:620:    w.u32(static_cast<std::uint32_t>(rec.reasons.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:624:    w.u32(static_cast<std::uint32_t>(rec.gaps.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:641:    const std::uint32_t reasonCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:646:    const std::uint32_t gapCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:660:    w.f64(e.atTime);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:672:    e.atTime = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:957:    w.u32(kCatalogLockCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:981:    w.u32(kScreeningCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:999:    w.u32(kAxisFactsCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1000:    w.u32(static_cast<std::uint32_t>(bundle.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1011:    const std::uint32_t n = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1025:    w.u32(kMappingBatchCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1026:    w.u32(facts.mappingContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1027:    w.u32(facts.mappingAlgorithmVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1031:    w.u32(static_cast<std::uint32_t>(facts.missingItems.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1035:    w.u32(static_cast<std::uint32_t>(facts.diagnosticCodes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1041:    w.u32(static_cast<std::uint32_t>(facts.combinations.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1045:        w.u32(static_cast<std::uint32_t>(c.axes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1052:    w.u32(static_cast<std::uint32_t>(facts.axes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1065:        w.f64(a.peakAtTime);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1080:    facts.mappingContractVersion = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1081:    facts.mappingAlgorithmVersion = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1085:    const std::uint32_t missingCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1090:    const std::uint32_t diagCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1095:    const std::uint32_t comboCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1101:        const std::uint32_t assignCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1112:    const std::uint32_t axisCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1126:        a.peakAtTime = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1141:    w.u32(kCheckResultCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1142:    w.u32(static_cast<std::uint32_t>(result.records.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1146:    w.u32(static_cast<std::uint32_t>(result.coverage.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1154:    w.u32(static_cast<std::uint32_t>(result.missingItems.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1158:    w.u32(static_cast<std::uint32_t>(result.diagnosticCodes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1170:    const std::uint32_t recordCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1175:    const std::uint32_t coverageCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1184:    const std::uint32_t missingCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1189:    const std::uint32_t diagCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1203:    w.u32(kDtComboSetCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1204:    w.u32(static_cast<std::uint32_t>(inputs.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1207:        w.u32(static_cast<std::uint32_t>(in.axes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1216:            w.f64(a.ratioC);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1217:            w.f64(a.etaForward);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1218:            w.f64(a.etaBackward);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1219:            w.f64(a.rotorInertia);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1231:    const std::uint32_t comboCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1237:        const std::uint32_t axisCount = r.u32();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1242:            axis.ratioC = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1243:            axis.etaForward = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1244:            axis.etaBackward = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1245:            axis.rotorInertia = r.f64();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:80:void appendU16(std::vector<std::uint8_t>& out, std::uint16_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:87:void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:96:void appendU64(std::vector<std::uint8_t>& out, std::uint64_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:129:void appendString(std::vector<std::uint8_t>& out, const std::string& s)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:131:    appendU64(out, static_cast<std::uint64_t>(s.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:176:    appendU64(out, f.revisionSeq);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:182:    appendU32(out, f.nameMapRuleVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:190:    appendU32(out, static_cast<std::uint32_t>(f.skippedDynamicObjects.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:196:    appendU32(out, f.compilerContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:197:    appendString(out, f.compilerVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:198:    appendString(out, f.robworkBaselineVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:201:    appendU16(out, f.codecVersions.canonicalModelMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:202:    appendU16(out, f.codecVersions.canonicalModelMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:203:    appendU16(out, f.codecVersions.nameMapMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:204:    appendU16(out, f.codecVersions.nameMapMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:205:    appendU16(out, f.codecVersions.snapshotMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:206:    appendU16(out, f.codecVersions.snapshotMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:211:    appendU32(out, static_cast<std::uint32_t>(f.compileOptions.geometryDetail));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:218:    appendU32(out, static_cast<std::uint32_t>(f.resourceManifest.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:223:        appendU32(out, r.accessVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:236:    appendU32(out, static_cast<std::uint32_t>(f.capabilities.jointTypesPresent.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:282:    appendU32(out, compilerContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:283:    appendString(out, compilerVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:284:    appendString(out, robworkBaselineVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:285:    appendU32(out, nameMapRuleVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:288:    appendU32(out, kBaseWorldRuleVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:289:    appendU16(out, codecVersions.canonicalModelMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:290:    appendU16(out, codecVersions.canonicalModelMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:291:    appendU16(out, codecVersions.nameMapMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:292:    appendU16(out, codecVersions.nameMapMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:293:    appendU16(out, codecVersions.snapshotMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:294:    appendU16(out, codecVersions.snapshotMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:298:    appendU32(out, static_cast<std::uint32_t>(options.geometryDetail));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:325:    /// 剩余可读字节数（长度前缀预算防线用——readString/readRevision）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:329:    bool readU8(std::uint8_t* v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:337:    bool readU16(std::uint16_t* v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:347:    bool readU32(std::uint32_t* v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:359:    bool readU64(std::uint64_t* v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:382:    bool readString(std::string* s)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:385:        if (!readU64(&len)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:427:    if (!r.readU64(&rev->seq)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:429:    if (!r.readU8(&parentPresent)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:439:    if (!r.readU32(&refCount)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:450:        if (!r.readString(&e.objectTypeToken)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:460:    if (!r.readU8(&b)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:464:    if (!r.readU32(&detail)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:469:    if (!r.readU8(&b)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:497:    appendU16(out, kVersionMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:498:    appendU16(out, kVersionMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:502:    appendU64(out, payload.revision.seq);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:510:    appendU32(out, static_cast<std::uint32_t>(payload.revision.objectRefs.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:514:        appendString(out, e.objectTypeToken);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:519:    appendU64(out, static_cast<std::uint64_t>(payload.canonicalModelBytes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:521:    appendU64(out, static_cast<std::uint64_t>(payload.nameMapBytes.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:526:    appendU32(out, static_cast<std::uint32_t>(payload.options.geometryDetail));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:530:    appendU32(out, payload.compilerContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:531:    appendString(out, payload.compilerVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:565:    if (!r.readU64(&modelLen) || modelLen > r.remaining()) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:578:    if (!r.readU64(&mapLen) || mapLen > r.remaining()) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:592:    if (!r.readU32(&payload.compilerContractVersion)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:596:    if (!r.readString(&payload.compilerVersion)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:41:// 写原语（大端；f64 写入口拒绝非有限——§4.5"数值"行）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:65:    void u16(std::uint16_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:72:    void u32(std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:80:    void u64(std::uint64_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:91:    void f64(double v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:98:        std::memcpy(&bits, &v, sizeof(bits));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:99:        u64(bits);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:102:    /// 长度前缀 UTF-8 字符串（u32 长度＋原始字节）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:105:        u32(static_cast<std::uint32_t>(s.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:137:        std::memcpy(out, m_data + m_off, n);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:150:    bool u16(std::uint16_t& v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:158:    bool u32(std::uint32_t& v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:169:    bool u64(std::uint64_t& v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:180:    bool f64(double& v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:183:        if (!u64(bits)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:184:        std::memcpy(&v, &bits, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:196:        if (!u32(n)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:271:        w.f64(*v.tryValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:290:        for (int i = 0; i < 3; ++i) { w.f64(x(i)); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:310:            for (int j = 0; j < 3; ++j) { w.f64(m(i, j)); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:345:        for (int j = 0; j < 3; ++j) { w.f64(t.R()(i, j)); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:347:    for (int i = 0; i < 3; ++i) { w.f64(t.P()(i)); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:352:    for (int i = 0; i < 3; ++i) { w.f64(v(i)); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:368:    w.u32(r.accessVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:420:    w.u32(static_cast<std::uint32_t>(c.jointTypesPresent.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:463:        if (!r.f64(x)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:498:            if (!r.f64(xi)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:530:            if (!r.f64(e)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:594:        if (!r.f64(e)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:597:        if (!r.f64(e)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:610:        if (!r.f64(e)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:630:    return r.u32(ref.accessVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:705:    if (!r.u32(n)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:737:    w.u16(kVersionMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:738:    w.u16(kVersionMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:739:    w.u16(domain);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:747:    if (!identityDomain) { w.u64(h.revisionSeq); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:748:    w.u32(static_cast<std::uint32_t>(h.objectRefs.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:755:    w.u32(h.descriptionContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:756:    w.u32(h.compilerContractVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:769:    w.u32(static_cast<std::uint32_t>(chain.joints.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:776:        w.f64(j.zeroOffset);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:779:            w.f64(j.bounds->lower);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:780:            w.f64(j.bounds->upper);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:784:            w.f64(j.workingRange->lower);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:785:            w.f64(j.workingRange->upper);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:793:    w.u32(static_cast<std::uint32_t>(chain.links.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:808:    w.u32(static_cast<std::uint32_t>(tools.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:819:        w.u32(static_cast<std::uint32_t>(t.namedTcpOffsets.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:826:    if (model.defaultTcpIndex()) { w.u32(*model.defaultTcpIndex()); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:828:    w.u32(static_cast<std::uint32_t>(scene.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:840:    w.u32(static_cast<std::uint32_t>(dt.ratioPerJoint.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:847:        w.u32(c.rows);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:848:        w.u32(c.cols);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:849:        w.u32(static_cast<std::uint32_t>(c.c.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:850:        for (const double e : c.c) { w.f64(e); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:851:        w.u32(c.jointRange.firstIndex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:852:        w.u32(c.jointRange.count);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:854:        if (c.conditionNumber) { w.f64(*c.conditionNumber); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:859:    w.u32(static_cast<std::uint32_t>(manifest.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:865:        w.u32(static_cast<std::uint32_t>(diags.size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:914:        if (!r.u16(major) || !r.u16(minor) || !r.u16(domain)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:953:        if (!r.u64(h.revisionSeq)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:955:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:963:        if (!r.u32(h.descriptionContractVersion) || !r.u32(h.compilerContractVersion)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:976:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:983:            if (!readVec3(r, j.axis) || !readTransform(r, j.origin) || !r.f64(j.zeroOffset)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:990:                if (!r.f64(b.lower) || !r.f64(b.upper)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:996:                if (!r.f64(wr.lower) || !r.f64(wr.upper)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1006:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1029:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1047:            if (!r.u32(count)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1066:            if (!r.u32(idx)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1069:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1087:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1097:            if (!r.u32(c.rows) || !r.u32(c.cols) || !r.u32(nElem)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1100:                if (!r.f64(e)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1102:            if (!r.u32(c.jointRange.firstIndex) || !r.u32(c.jointRange.count)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1109:                if (!r.f64(cond)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1115:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1121:        if (!r.u32(n)) { return failed(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1199:    w.u16(kNameMapVersionMajor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1200:    w.u16(kNameMapVersionMinor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1201:    w.u32(map.ruleVersion());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1204:    w.u32(static_cast<std::uint32_t>(map.entries().size()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1237:        if (!r.u16(major) || !r.u16(minor) || !r.u32(ruleVersion)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1250:        if (!r.u32(count)) {

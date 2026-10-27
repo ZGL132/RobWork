@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "trajectory.Planner.pathJointLength",
+  "target": "sdurws_ird_trajectory",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+      "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+      "sha256": "6c229db1508971fe667071d3ee490212cd6c558132c50b6b2b72cfd46586f411"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "sha256": "79736cb31891c2a8ba98bec9f4324102226ea6b0e3ba56e44ec806d8e8eb1ce0"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp",
+      "sha256": "26deb95e77f4d73d949cfd1f3e5f047b783883b9fd864a8826349553022ab4ec"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+      "sha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+    }
+  ],
+  "normal": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/disconnected-l1.xml",
+      "sha256": "cc0092d3b18aed8753b37a063061c64317d7cc97f75e0addf69e87c22f2f33e4"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/disconnected-l1.log",
+      "sha256": "cc48438c73fc312cfc9231afbab22a6930545e4bad7f576e86008249c49fe518"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "originalSha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b",
+      "description": "真实生产变异：pathJointLength 的上游 Manhattan 折叠断开为 Infinity（L1 键变 Linf）——六轴非对称端点的 L1 oracle 断言真实失败（exit 1），恢复最终源码后重建复测绿（disconnected-l1-recheck）。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/Planner.mutated-l1.cpp",
+      "sha256": "e903197830c4171e940d092087892f822cb2598c5a3b52b1c8d358290ff1fac6"
+    }
+  },
+  "oracle": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjPlannerReuse.DirectAdoptPathLengthMatchesIndependentOracle_REUSE_T32",
+      "TrjPlannerAvoidance.DirectClearAdoptsStraightPath_WP16T06_ACC1"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjPlannerReuse.DirectAdoptPathLengthMatchesIndependentOracle_REUSE_T32"
+    ]
+  },
+  "note": "PathAnalyzer::pathLength 折叠 makeManhattan 逐相邻对距离；直连采纳 L1 与独立参考逐位对照（六轴非对称端点）；求和序变化（逐对先归约）为 catalog boundary 在案事项，50 节点实测相对差 1.9e-15（performance.log）。"
+}

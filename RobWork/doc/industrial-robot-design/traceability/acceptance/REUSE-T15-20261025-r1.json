@@ -1,0 +1,95 @@
+{
+  "taskId": "REUSE-T15",
+  "baseCommit": "f378f01c5199032e08c2cce7ba0251a2f783d505",
+  "reviewedCommit": "adaf890031190c71d7705335bcac220c3e31780f",
+  "branch": "codex/reuse-foundation（送验谱系；adaf89003 已并入 redesign-main，经 git merge-base --is-ancestor 验证为当前 HEAD e8ee7d31d 祖先）",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T04:39:33.827926+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T15/单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与 .cache/t15-accept 临时探针构建目录（gitignored）外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配主构建树缓存（仅增量构建既有目标）；oracle-rerun.py 相对原件仅输出路径 1 行适配（写入本验收目录而非实施证据目录），其余逐字节一致；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立验收 f378f01c5199032e08c2cce7ba0251a2f783d505..adaf890031190c71d7705335bcac220c3e31780f（REUSE-T15 冻结 FNV128 成熟定宽算术薄适配＋日志 keep 边界收口批次送验范围）：verify-task-scope 显式 Base/Head 复跑与字面 FAIL 归因分解、产品源码零变化链核验、契约三条 acceptance 逐条映射、FNV 数值 oracle 与性能真实执行（现编生产探针）、core 受影响目标增量构建与测试复跑、ird_gates 引擎直跑、validate 批次复跑、H1—H6/架构红线/CLOSURE 冻结/平行实现/门禁未放宽/计数分列抽查、提交链与正文-证据一致性核对。",
+  "counts": {
+    "failed": 0,
+    "passed": 13,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "13 项验收检查；其中第 2 项 verify-task-scope 的字面命令结果为 FAIL（161 越界路径），经逐文件归因全部落于非 T15 自有面（同提交 T16 批次包、T14 失败候选证据与三个治理提交），T15 自有 53 文件全在 allowed 面、禁止面零命中，故按 T15 范围实质合规计入通过并在 checks[1]/limitations 显式登记字面结果；测试/套件计数另列于 tests 列，互不相加"
+  },
+  "checks": [
+    "现场与范围构成：HEAD=e8ee7d31d（送验 head 之后仅 T09/T12 治理登记提交，非被验内容）；base=f378f01c5 系 091e53353 之父、reviewHead=adaf89003 系范围末提交，与送验说明一致；范围含 5 提交（091e53353 实施、439f410c7 批次门禁工具、6fb26b31d 合并 T12 drivetrain 收口、adaf89003 独验收口核对）；工作树仅本验收产物目录未跟踪。",
+    "范围复跑：verify-task-scope.ps1 -TaskFile REUSE-T15.json -Base f378f01c5 -Head adaf89003 exit 1——字面 FAIL 161 路径越界；逐文件归因（git diff 按提交取交集）：52=091e53353 内 T16 自有面（diagnostics 5 文件＋T16 契约/manifest/矩阵/units＋30 证据）＋13 个 REUSE-T14 失败候选证据、79=439f410c7 批次工具与 validation-batch 证据、16=6fb26b31d drivetrain-linalg 收口证据、17=adaf89003 文档同步/复检日志，无未归属文件；T15 自有面 53 文件（core 5＋契约/manifest/矩阵/units 4＋REUSE-T15 证据 38＋GAP 提案 4＋execution/ui 绑定 2）全部命中 allowedFiles、零越界；forbiddenFiles（RobWork/RobWork/src/**、RobWorkSim/src/**、vcpkg/**）零命中（grep exit 1 无匹配）。与契约 note「两个有界能力包作为一个本地交付提交」及 policy §1.3 批次收口口径一致，同批 T16 面亦经 verify-task-scope -TaskFile REUSE-T16.json 复核（其自身越界 171 亦为治理提交文件）。",
+    "证据适用性零变化链：git diff 091e53353..adaf89003 -- industrialrobot/ 为空——实施提交到送验 head 产品源码零变化，原始五套件证据输入适用；git diff adaf89003..HEAD 对 Identity.cpp/Identity.hpp/IdentityTest.cpp/DigestTest.cpp 零差异（仅 core/CMakeLists.txt +29 系后续任务），故现树复跑探针/测试直接代表送验 FNV 实现；逐文件凭证 sha256（changes/REUSE-T15.json）五文件与 adaf89003 提交 blob 全部一致（Identity.cpp 63479dfb…、Identity.hpp 14ee2044…、IdentityTest.cpp e2ba8731…、DigestTest.cpp 07e6c324…、CMakeLists.txt e390bffe…，现树工作区差异仅 autocrlf）。",
+    "契约第1条（GAP授权边界、原公开协议与owner不变）：GAP-CORE-FNV-01.md 所有者授权节「批准候选A范围」（2026-10-23，提案规范 SHA-256 5ad4738e…锁定）且本包未越界（未动上游/vcpkg、未换协议、未新建整数类）；Identity.hpp diff 仅注释（fnv1a128 签名/ABI、hi/lo 两 uint64 公共边界、六个 Id 强类型/保留值/解析格式全不变）；Identity.cpp 仅 2 hunk（Boost include＋fnv1a128 本体薄适配 boost::multiprecision::uint128_t 定宽 unchecked/void 后端）；add/addShifted/mulHi64/addMulSmall 已删除且 industrialrobot/ 全树 grep 零残留；core/CMakeLists.txt 以 target_include_directories PRIVATE 取 Boost::headers 头目录，不进链接许可表、公共头不暴露 Boost；core 仍仅值契约（Identity.cpp 无模型/状态/诊断权威，runtime/execution/project 未被 T15 触碰）。",
+    "数值 oracle 真实执行：以现树 Identity.cpp（与送验 SHA 逐字节同源）＋FnvProbe.cpp 现编生产探针（cl /std:c++17 /O2 /DNDEBUG /EHsc /utf-8，exit 0，03-probe-build.log；/utf-8 与 core/CMakeLists.txt:56 项目自带开关一致）；oracle-rerun.py（Python 整数模 2^128 独立期望，固定种子 20261023）实跑 1017 passed/0 skipped/0 failed（04-oracle-rerun.log），输出 04-production-oracle-rerun.json seed=20261023、corpusSha256=bc846054…与实施原件 production-oracle.json 完全一致——同一 corpus 确定性复现，非复述旧值。",
+    "性能项真实执行：同探针 perf 模式（100 万次/轮、分配观测开启）3 轮：16 字节 0.2676/0.2830/0.2691 s、32 字节 0.4973/0.5401/0.5021 s，即 16B≈0.268–0.283µs、32B≈0.497–0.540µs/次，落在所有者已接受区间（performance-release.json 0.296–0.306/0.546–0.573µs，README 登记所有者 2026-10-23「接受本次 FNV128 开销，保留候选并交独验」）内或更快；三轮分配计数均 0、exit 0（05-perf-rerun.log）。无未授权的进一步重写。",
+    "原始套件证据直接引用（输入仍适用）：五套件 gtest XML 原件逐一核验无 failures/disabled/errors/skipped 非零项——core.xml 69、runtime.xml 305（运行表/哈希消费回归）、execution.xml 27、project.xml 282（对象版本键/修订表回归）、smoke.xml 67；verification.json 分列计数（passed/failed/skipped/notRun/envUnavailable/datasetInvalid/decisive）与 XML 一致，冒烟 67 与集成 69 之差按原条件编列、非 skip。",
+    "增量受影响目标构建＋测试复跑：cmake --build build --config Release --target sdurws_ird_core_test exit 0 零 error（08-core-test-build.log）；PATH 前置框架/vcpkg DLL 后实跑 74 tests＝74 passed/0 failed/0 skipped/0 notRun、exit 0（09-core-test-rerun.xml/log；74>69 系后续任务新增 5 例，IdentityTest/DigestTest 源与送验 SHA 零差异），含 IdentityFnv/DigestFnv/IdentityStrictParse/IdentityRoundtrip/IdentityReserved/IdentityStrongTyping/DigestCanonical/Sha256*/BuildRedLine 全套；per-exe ird-test-report.json（09-ird-test-report-rerun.json）total=74/passed=74 分列。",
+    "门禁引擎复跑：cmake -P ird_gates.cmake（IRD_ROOT 指向本仓库 industrialrobot、独立自测目录）exit 0，输出「全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」，17 项自测正负例（10 fail_* 按预期检出＋7 pass_* 无误报）行为符合预期（07-ird-gates.log）。",
+    "文档/契约/复用批次复跑：validate-docs.ps1 -TaskFile[T13,T15,T16]（与送验期 20261023-recheck 批次同形命令）exit 0——validate-reuse: PASS governance only（exit 0；inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399；余 REUSE-AD-PENDING 权限待授权警告为分支既有状态，对照送验期 batch-docs-t13-t15-t16.log 同为 10 条非本包引入）、validate-task: PASS（3 tasks）、validate-docs: PASS（20 units, 12 trace entries, 404 task files）（06-validate-batch.log）。",
+    "契约第3条（全量继承缺口保留、不伪报PASS）：verification.json 如实登记实施期 validate-reuse/validate-docs/validate-task 均 FAIL（exitCode 1，原因「继承drivetrain/CMakeLists.txt REUSE-COVERAGE；本会话不接管」）、independentAcceptance=「NOT RUN」、mergeReadiness=「NOT APPROVED」；该阻断后由范围内 6fb26b31d 合入清除（T15 README 独验状态核对节＋20261023-recheck 批次日志登记 PASS），本轮复跑 validate-reuse PASS（第 10 项）——继承缺口未被伪报、清除路径有据。",
+    "红线抽查：L2 零 Qt——core 全目录 grep 仅命中红线注释与执行该红线的 BuildRedLine.NoQtInclude_NFR_MNT_01_R3 测试（第 8 项复跑中通过），无任何 Qt include；六类端口/runtime 唯一模型 owner——T15 未触碰 runtime/execution/project 源码，core 仅值契约无模型/状态权威，functions/core.json 241 处绑定 ownerUnit=core；CLOSURE 冻结——reuse/closures.json 在 f378f01c..adaf89003 零 diff（git diff --exit-code 通过），冻结文件 modeling RpyMath.hpp（REUSE-T11 闭包）未动，validate-reuse PASS 含闭包一致性校验（closedFiles=1）；平行实现回流——已删自持算术全树零残留、FNV 单点实现于 Identity.cpp；门禁/性能/权限未放宽——范围 5 个治理脚本 diff 逐一审读：validate-reuse/validate-task/validate-docs 批次化不减少任何检查（坏契约仍阻断、纯历史契约批次仍跑全量复用门禁、注释明示「不增加跳过门禁的开关」）、verify-task 复用前置限开头严格相同＋同宿主＋-NoProfile 且单列 reusedPreflight 计数、test-governance-lite 新增 23 例正负例含失败传播/不隐藏负例；PASS/FAIL/SKIP/NOT RUN 未混列——verification.json、ird-test-report.json、governance-lite-report.json 计数全部分列。",
+    "提交链：commit-lint.ps1 -Range f378f01c5..adaf89003 exit 0（5 个提交全部合规，10-commit-lint.log）；标题均为 [governance] 中文前缀；091e53353 一包一组（T15+T16 同批交付＋T14 失败候选证据，整体回退边界在正文/README 声明，与契约 note 及 policy §1.3 批次收口登记一致）；正文与证据一致——69/305/27/282/67、oracle 1017×2（候选 boost-oracle.json 与生产 production-oracle.json 各 1017，未混算 2034）、实施期三门禁 FAIL 与独验 NOT RUN 均与原件相符；439f410c7/6fb26b31d/adaf89003 各自正文与 validation-batch、drivetrain-linalg、20261023-recheck 原件对应。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T15.json -Base f378f01c5199032e08c2cce7ba0251a2f783d505 -Head adaf890031190c71d7705335bcac220c3e31780f", "exitCode": 1, "passed": "literal-FAIL-decomposed（161 越界路径全数归因非 T15 自有面；T15 面 53 文件全合规、禁止面零命中，见 checks[1]/limitations）", "log": "02-scope.log" },
+    { "name": "scope-sibling-t16", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T16.json -Base f378f01c5199032e08c2cce7ba0251a2f783d505 -Head adaf890031190c71d7705335bcac220c3e31780f", "exitCode": 1, "passed": "literal-FAIL-decomposed（同上归因）", "log": "02b-scope-t16.log" },
+    { "name": "forbidden-zero-hit", "command": "git diff --name-only f378f01c..adaf89003 | grep -E '^RobWork/RobWork/src/|^RobWork/RobWorkSim/src/|^vcpkg/'", "exitCode": 1, "passed": true },
+    { "name": "product-zero-diff-impl-to-head", "command": "git diff 091e53353..adaf89003 -- RobWork/RobWorkStudio/src/rwslibs/industrialrobot/", "exitCode": 0, "passed": true },
+    { "name": "manifest-sha256", "command": "git show adaf89003:<core 五文件> | sha256sum 对照 changes/REUSE-T15.json", "exitCode": 0, "passed": true },
+    { "name": "probe-build", "command": "cl /std:c++17 /O2 /DNDEBUG /EHsc /utf-8（vcvars64 x64）Identity.cpp＋FnvProbe.cpp → .cache/t15-accept/fnv-production-r1.exe", "exitCode": 0, "passed": true, "log": "03-probe-build.log" },
+    { "name": "fnv-oracle", "command": "Miniconda3 python.exe oracle-rerun.py .cache/t15-accept/fnv-production-r1.exe 04-production-oracle-rerun.json（1017 组、seed=20261023、corpusSha256 与原件一致）", "exitCode": 0, "passed": true, "log": "04-oracle-rerun.log" },
+    { "name": "fnv-perf", "command": ".cache/t15-accept/fnv-production-r1.exe perf ×3 轮（1M 次/轮、分配观测）", "exitCode": 0, "passed": true, "log": "05-perf-rerun.log" },
+    { "name": "core-test-build", "command": "cmake --build build --config Release --target sdurws_ird_core_test", "exitCode": 0, "passed": true, "log": "08-core-test-build.log" },
+    { "name": "core-test-run", "command": "sdurws_ird_core_test.exe --gtest_output=xml:（PATH 前置 build/RobWork/bin|libs/Release＋vcpkg bin）", "exitCode": 0, "passed": true, "log": "09-core-test-rerun.log", "xml": "09-core-test-rerun.xml" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=$TEMP/t15-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "07-ird-gates.log" },
+    { "name": "validate-batch", "command": "pwsh -NoProfile validate-docs.ps1 -TaskFile @('…/REUSE-T13.json','…/REUSE-T15.json','…/REUSE-T16.json')", "exitCode": 0, "passed": true, "log": "06-validate-batch.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range f378f01c5199032e08c2cce7ba0251a2f783d505..adaf890031190c71d7705335bcac220c3e31780f", "exitCode": 0, "passed": true, "log": "10-commit-lint.log" }
+  ],
+  "tests": {
+    "coreRerun": { "total": 74, "passed": 74, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "xml": "09-core-test-rerun.xml", "note": "74>69 系后续任务新增 5 例；IdentityTest/DigestTest 源与送验 SHA 零差异，含全部 FNV/身份/摘要用例" },
+    "fnvOracle": { "count": 1017, "passed": 1017, "skipped": 0, "failed": 0, "seed": 20261023, "corpusSha256": "bc8460543d443ffebc97243a7677169146f49768061f4cc47f31fb5af7734fad", "json": "04-production-oracle-rerun.json" },
+    "fnvPerfRounds": [
+      { "round": 0, "16B_seconds_per_1M": 0.267578, "32B_seconds_per_1M": 0.497308, "allocations": 0, "exitCode": 0 },
+      { "round": 1, "16B_seconds_per_1M": 0.283021, "32B_seconds_per_1M": 0.540116, "allocations": 0, "exitCode": 0 },
+      { "round": 2, "16B_seconds_per_1M": 0.269063, "32B_seconds_per_1M": 0.502136, "allocations": 0, "exitCode": 0 }
+    ],
+    "originalEvidenceCited": {
+      "applicability": "git diff 091e53353..adaf89003 -- industrialrobot/ 为空：实施提交→送验 head 产品源码零变化，同机同工具链，原始证据输入仍适用（AGENTS §4 增量口径）",
+      "core": "69 passed / 0 skipped / 0 failed（core.xml）",
+      "runtime": "305 passed / 0 skipped / 0 failed（runtime.xml）",
+      "execution": "27 passed / 0 skipped / 0 failed（execution.xml）",
+      "project": "282 passed / 0 skipped / 0 failed（project.xml）",
+      "smoke": "67 passed / 0 skipped / 0 failed（smoke.xml）"
+    }
+  },
+  "issues": [],
+  "notRun": [
+    { "item": "runtime/execution/project 受影响消费套件现树重跑", "reason": "按增量口径直接引用原始证据（runtime 305/execution 27/project 282，零失败零跳过）：送验树产品源码与实施提交零差异已实测核验，现树重跑反而叠加后续任务代码、超出本包受影响面。" },
+    { "item": "全库证据索引审计（validate-docs -DeepEvidence）", "reason": "按需运行项，本轮无深查要求，送验期批次日志同样登记 NOT RUN。" },
+    { "item": "GAP-CORE-C4-01 修订提案 R2（F-966）处置", "reason": "属 T14/GOV-T26 范围的文档提案，待所有者批准，不在本包验收面；F-966 保持 OPEN 与送验说明一致。" }
+  ],
+  "limitations": "PASS 绑定送验 head adaf890031190c71d7705335bcac220c3e31780f，仅覆盖 REUSE-T15 送验范围的 T15 自有面。verify-task-scope 对该范围的字面结果为 FAIL（161 越界路径）：逐文件归因全部落于同交付提交的 T16 批次包自有面（各有独立契约与验收流程）、REUSE-T14 失败候选证据，以及 439f410c7（批次门禁工具，自含 23 例正负例证据）、6fb26b31d（T12 drivetrain 收口合并，随批证据）、adaf89003（独验收口核对/文档同步）三个治理提交；T15 自有 53 文件全部在 allowed 面内、forbiddenFiles 零命中，未修改任何文件或门禁迁就。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399、REUSE-AD-PENDING 权限待授权为分支既有状态），不构成算法合规或全量准入结论。FNV 性能区间为所有者 2026-10-23 已接受的裁决（16B/32B 实测与接受区间一致或更快），本轮不新设阈值。实施期继承的 drivetrain REUSE-COVERAGE 阻断已由范围内 6fb26b31d 合入清除并有批次日志佐证。记录与证据仅落盘未提交，由登记步骤统一提交。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/02b-scope-t16.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/03-probe-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/03-build-probe-r1.bat.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/04-oracle-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/04-production-oracle-rerun.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/05-perf-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/06-validate-batch.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/07-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/08-core-test-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/09-core-test-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/09-core-test-rerun.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/09-ird-test-report-rerun.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/10-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T15-20261025-r1/oracle-rerun.py"
+  ]
+}

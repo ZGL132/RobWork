@@ -1,0 +1,22 @@
+FCOV-01 project/src/TxEngine.cpp:287-797 sdurws::ird::project::tx::TxEngine::commit
+FCOV-02 project/src/CommandServiceImpl.cpp:169-221 sdurws::ird::project::CommandServiceImpl::submit
+FCOV-03 project/src/QueryPortImpl.cpp:347-394 sdurws::ird::project::QueryPortImpl::branchHistory
+FCOV-04 project/src/ArchiveServiceImpl.cpp:853-1065 sdurws::ird::project::ArchiveServiceImpl::finalize
+FCOV-05 project/src/win32/AtomicFile.cpp:226-294 sdurws::ird::project::win32::AtomicFile::writeThrough
+FCOV-06 policy/src/PolicyParsing.cpp:489-844 sdurws::ird::policy::(anonymous namespace)::runParsePipeline
+FCOV-07 policy/src/JointLimits.cpp:266-589 sdurws::ird::policy::JointLimitEvaluator::evaluate
+FCOV-08 policy/src/CollisionEvaluator.cpp:508-560 sdurws::ird::policy::(anonymous namespace)::expandRulesAndCheckConflicts
+FCOV-09 execution/worker/main.cpp:613-783 ::wWinMain
+FCOV-10 execution/src/Admission.cpp:581-811 sdurws::ird::execution::ResultAdmission::runArchiveTransaction
+FCOV-11 execution/src/Controller.cpp:686-729 sdurws::ird::execution::TaskController::forceKillSequence
+FCOV-12 diagnostics/src/Confirmable.cpp:498-547 sdurws::ird::diagnostics::ConfirmableService::submitConfirmation
+FCOV-13 diagnostics/src/Redaction.cpp:580-595 sdurws::ird::diagnostics::RedactionService::redact
+FCOV-14 testkit/src/Dataset.cpp:197-486 sdurws::ird::testkit::GoldenDataset::load
+FCOV-15 testkit/include/sdurws/ird/testkit/SetCheck.hpp:163-392 sdurws::ird::testkit::checkSetEquivalent<T>
+FCOV-16 core/src/Compare.cpp:18-33 sdurws::ird::core::closeWithin
+FCOV-17 cmake/ird_gates.cmake:152-169 ird_classify_target
+FCOV-18 testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs:53-69 <ES module>::closedFormFk
+FCOV-19 testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs:77-103 <ES module>::rneaReference
+FCOV-20 testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs:41-60 <ES module>::handDerived
+old16 anchors: COV-01=4/4, COV-02=4/4, COV-03=3/3, COV-04=1/1, COV-05=2/2, COV-06=4/4, COV-07=5/5, COV-08=3/4, COV-09=3/4, COV-10=3/3, COV-11=5/5, COV-12=0/5, COV-13=0/4, COV-14=0/5, COV-15=0/2, COV-16=2/2
+mjs=29 scripts=19

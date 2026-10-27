@@ -1,0 +1,6 @@
+RobWork/RobWork/src/rw/math/Quaternion.cpp:50:template< class T > Quaternion< T > Quaternion< T >::ln () const
+RobWork/RobWork/src/rw/math/EAA.cpp:28:template< class T > Vector3D< T > angleAxis (const Rotation3D< T >& R)
+RobWork/RobWork/src/rw/math/EAA.cpp:97:template< class T > EAA< T >::EAA (const Rotation3D< T >& R) : _eaa (angleAxis (R))
+RobWork/RobWork/src/rw/math/EAA.cpp:130:template< class T > const Rotation3D< T > EAA< T >::toRotation3D () const
+RobWork/RobWork/src/rw/math/RPY.cpp:74:template< class T > const Rotation3D< T > RPY< T >::toRotation3D () const
+RobWork/RobWork/cmake/RobWorkSetup.cmake:830:    add_definitions("-DEIGEN_DONT_ALIGN_STATICALLY=1")

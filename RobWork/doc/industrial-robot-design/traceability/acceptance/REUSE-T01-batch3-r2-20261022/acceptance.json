@@ -1,0 +1,69 @@
+{
+  "task": "REUSE-T01 batch3 rework two-findings acceptance",
+  "reviewedCommit": "f6ee77c91c36f40a4cd573a24335405afc06f68b",
+  "baseCommit": "dfc317f234d9253b2e07bdea89a9bb3028e6db9d",
+  "verdict": "PASS",
+  "scope": "仅第三批首轮两项P2的追溯返工；不重新验收其他并行证据或API探测",
+  "findings": [],
+  "checks": [
+    {
+      "functionId": "diagnostics.FileLogFileOps.appendLine",
+      "requirements": [
+        "NFR-REL-05"
+      ],
+      "designRefs": [
+        "units/diagnostics.md#7",
+        "units/diagnostics.md#9.6",
+        "tasks/foundation/DIAG-T07.json"
+      ],
+      "status": "pending",
+      "decision": "pending",
+      "passed": true
+    },
+    {
+      "functionId": "diagnostics.LoggingPipeline.log",
+      "requirements": [
+        "NFR-REL-05"
+      ],
+      "designRefs": [
+        "units/diagnostics.md#7",
+        "units/diagnostics.md#9.6",
+        "tasks/foundation/DIAG-T07.json"
+      ],
+      "status": "pending",
+      "decision": "pending",
+      "passed": true
+    },
+    {
+      "functionId": "execution.WorkerSupervisor.spawnNewWorker",
+      "permissionRef": "ARCH:3.6.4",
+      "status": "pending",
+      "decision": "pending",
+      "passed": true
+    }
+  ],
+  "priorFailure": {
+    "comparisonFile": "fail-preservation.json",
+    "verdict": "FAIL",
+    "reviewedCommit": "dfc317f234d9253b2e07bdea89a9bb3028e6db9d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r1-20261022/acceptance.json"
+  },
+  "gates": {
+    "reuse": 0,
+    "docs": 0,
+    "task": 0,
+    "diff": 2
+  },
+  "counts": {
+    "closedFiles": 0,
+    "functions": 95,
+    "pending": 95
+  },
+  "limitations": [
+    "REUSE-T01全功能审计尚未完成，不是20单元全功能审计PASS或T02准入",
+    "仅文档追溯变更；未重建C++/API/GUI或运行新适用性实验，远程CI未执行",
+    "HOST锚和State仍pending，不授予新权限；全部候选关系仍pending",
+    "父树未修改；独立克隆冻结checkout干净；未提交/推送/合入"
+  ],
+  "evidenceDirectory": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22"
+}

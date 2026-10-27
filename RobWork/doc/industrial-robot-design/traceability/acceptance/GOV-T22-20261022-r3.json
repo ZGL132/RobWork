@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "GOV-T22",
+  "verdict": "pass",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6",
+  "parentCommit": "39b57abd5",
+  "reviewer": "独立验收代理 accept_gov_t22_r3（未参与实施，未派子代理）",
+  "date": "2026-10-22",
+  "worktree": "C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork",
+  "branch": "acc/GOV-T22/3",
+  "workingDirectory": "C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork",
+  "scope": "GOV-T22 治理补强冻结验收：原12个治理/CI文件及两轮返工；不是算法迁移或全功能语义审计",
+  "previousAcceptances": [
+    "GOV-T22-20261022.json",
+    "GOV-T22-20261022-r2.json"
+  ],
+  "findings": [],
+  "previousFindings": [
+    {
+      "id": "GOV-T22-ACC-01",
+      "result": "本轮独立复现通过，已修复",
+      "evidence": "双PS各10项独立探针：真实CommandPalette完整文件及Qt原片段无grant允许；StateData/setQ共享写负例拒绝，明确写权限正例允许。官方完整入口ad-real-qt-item-positive及StateData写正负例同样通过。"
+    },
+    {
+      "id": "GOV-T22-ACC-02",
+      "result": "本轮独立复现通过，已修复",
+      "evidence": "真实被追踪且EF BB BF开头的validate-reuse.ps1，工作树和固定SHA的ReadText全文及Digest一致；双PS实测。官方含BOM脚本工作树/冻结入口正例通过。"
+    },
+    {
+      "id": "GOV-T22-ACC-03",
+      "result": "本轮独立复现通过，已修复",
+      "evidence": "从r2复制并仅适配当前SHA/136计数的independent-closure-bom.ps1，给同一完整关闭夹具自己的suitability文本注入真实BOM，提交原字节并经真实validate-reuse入口比较acceptedPaths；PS7/PS5.1各无BOM控制与BOM正例2/2通过。官方closure-bom-log-positive也通过。"
+    }
+  ],
+  "commands": [
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -RepoRoot . -OutputDir .cache/accept-gov-t22-r3/ps7",
+      "exitCode": 0,
+      "expected": 136,
+      "executed": 136,
+      "passed": 136,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "report": "GOV-T22-20261022-r3/ps7/reuse-test-report.json",
+      "junit": "GOV-T22-20261022-r3/ps7/reuse-governance.junit.xml",
+      "log": "GOV-T22-20261022-r3/ps7-driver.log"
+    },
+    {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -RepoRoot . -OutputDir .cache/accept-gov-t22-r3/ps51",
+      "exitCode": 0,
+      "expected": 136,
+      "executed": 136,
+      "passed": 136,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "report": "GOV-T22-20261022-r3/ps51/reuse-test-report.json",
+      "junit": "GOV-T22-20261022-r3/ps51/reuse-governance.junit.xml",
+      "log": "GOV-T22-20261022-r3/ps51-driver.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head e6f06e5b9451357b10001a4677b10b4ad9e454a6",
+      "exitCode": 0,
+      "expected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "log": "GOV-T22-20261022-r3/validate-reuse.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T22.json",
+      "exitCode": 0,
+      "expected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "log": "GOV-T22-20261022-r3/validate-task.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "exitCode": 0,
+      "expected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "log": "GOV-T22-20261022-r3/validate-docs.log"
+    },
+    {
+      "command": "cmake -DIRD_ROOT=C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork/.cache/accept-gov-t22-r3/ird-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+      "exitCode": 0,
+      "expected": 17,
+      "executed": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "log": "GOV-T22-20261022-r3/ird-gates.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3/independent-probes.ps1 -RepoRoot C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork -OutputDir C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork/.cache/accept-gov-t22-r3/probes-ps7",
+      "exitCode": 0,
+      "expected": 10,
+      "executed": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "report": "GOV-T22-20261022-r3/probes-ps7/independent-probes.json",
+      "log": "GOV-T22-20261022-r3/probes-ps7.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3/independent-closure-bom.ps1 -RepoRoot C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork -OutputDir C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork/.cache/accept-gov-t22-r3/closure-bom-ps7",
+      "exitCode": 0,
+      "expected": 2,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "report": "GOV-T22-20261022-r3/closure-bom-ps7/reuse-test-report.json",
+      "log": "GOV-T22-20261022-r3/closure-bom-ps7.log",
+      "junit": "GOV-T22-20261022-r3/closure-bom-ps7/reuse-governance.junit.xml"
+    },
+    {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3/independent-probes.ps1 -RepoRoot C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork -OutputDir C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork/.cache/accept-gov-t22-r3/probes-ps51",
+      "exitCode": 0,
+      "expected": 10,
+      "executed": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "report": "GOV-T22-20261022-r3/probes-ps51/independent-probes.json",
+      "log": "GOV-T22-20261022-r3/probes-ps51.log"
+    },
+    {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3/independent-closure-bom.ps1 -RepoRoot C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork -OutputDir C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22-r3/RobWork/.cache/accept-gov-t22-r3/closure-bom-ps51",
+      "exitCode": 0,
+      "expected": 2,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "driverFailure": "",
+      "complete": true,
+      "report": "GOV-T22-20261022-r3/closure-bom-ps51/reuse-test-report.json",
+      "log": "GOV-T22-20261022-r3/closure-bom-ps51.log",
+      "junit": "GOV-T22-20261022-r3/closure-bom-ps51/reuse-governance.junit.xml"
+    }
+  ],
+  "scriptDigests": {
+    "algorithm": "SHA256 raw file bytes",
+    "validator": "179A2B287CDA2491E5F780463A735083CF2AA0888B76A01639383DCF38DD7B4A",
+    "helper": "C17D5E62E7F4D153F6D37C0162CC4D2DFF2604452EB389F1F06D7CCD7A6B5D4A",
+    "driver": "CFAC17AAB9E6E53E03BE5118A3DBF07D7689BFC64915BD8DC3346294B5D02CEC",
+    "independentPermissionDriver": "251332EDB7F863EABC824AD6300B2C965CFBE5479FEB5A87A78D85617C025867",
+    "independentClosureDriver": "E43814A5BB06CAC8FAB955D5D812941DD2A59DB3EB6B76582C4E463CF7015093"
+  },
+  "review": {
+    "scope": "git diff 39b57abd5..e6f06e5b9排除历史验收证据后恰为契约12个允许文件；两轮返工仅audit-contract及治理脚本，无产品、框架或vcpkg改动。本验收只新增r3证据。",
+    "catalog": "10项全部candidate，基点、能力ID与上游绑定保留；functions=0 closedFiles=0 inventory=1401 units=20 DEBT=16 UNRESOLVED=1399保持。未宣称1401功能已审计。",
+    "permissions": "定向对照ARCH3.6及四组HOST精确hpp/cpp、ui_plugin目标、permissionRef；owner/borrow/task-private/worker边界由双PS真实正负夹具及原ird_gates守护。宿主既有全部实际操作未逐项审计。",
+    "evidenceAndClosure": "复核生产entry/upstream/consumer/target绑定、源区段/输入摘要、真实XML节点计数、断开失败断言、版本新鲜度、关闭记录及验收Git对象。公共Digest统一剥BOM，关闭比较和reviewed upstream直接Git分支共用该入口；后者本轮仅代码复核，未额外制作上游BOM探针。合成报告只验解析器结构。",
+    "productionGate": "独立探针直接复验原权限函数；官方双PS136项测试通过真实validate-reuse完整入口，包含真实Qt完整文件、StateData/setQ与工作树/冻结BOM正例。独立关闭复现同样执行完整生产校验入口，未只验证Digest单位函数。",
+    "cmake": "核对CMakeLists.txt:423的ird_gates原目标：原cmake -P与validate-reuse两条命令均实际运行；新验收树未配置build，不做无关C++构建。17个自测加产品静态扫描通过，夹具输出仅在.cache。",
+    "ci": "GitHub工作流与脚本镜像逐字节相同，既有validate-reuse与私有helper保持唯一入口，PS7/PS5.1输出目录分离。远程CI与保护设置未读取或执行。",
+    "preservation": "首轮、二轮失败记录与证据原样保留；不操作父实施树或旧验收树。不提交272个逐例重复日志及.cache生成树，完整逐例output保留在JSON。",
+    "log": "GOV-T22-20261022-r3/scope-review.log"
+  },
+  "limitations": [
+    "本次pass只验收GOV-T22治理补强及两轮返工，不代表算法批准、全功能审计或完整迁移完成。后续阶段仍须其余既有前置、真实功能证据和独立语义验收。",
+    "静态规则不能完备证明别名、间接工厂、条件编译、句柄生命周期/逃逸、真实结果消费或报告作者身份；1401库存、16债务及1399未决不因此合规。",
+    "无产品算法改动；C++构建、数值/性能/GUI产品测试及真实产品mutation实验NOT RUN。合成XML、关闭记录及断开数据只用于门禁解析器测试。",
+    "cmake --build build --config Release --target ird_gates本身NOT RUN；按治理影响直接执行并核对该目标的两个原始命令，不宣称完成集成构建。",
+    "全库DeepEvidence、远程CI运行和分支保护设置NOT RUN；推送单独如实报告，不更改代理配置、强推或合入main/redesign-main。"
+  ],
+  "next": "治理补强可作为后续阶段的本项独立验收证据；仍须所有者决定集成与阶段推进，不在本记录改任务状态或自动批准算法。",
+  "recordValidation": {
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "exitCode": 0,
+    "expected": 1,
+    "executed": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "driverFailure": "",
+    "complete": true,
+    "log": "GOV-T22-20261022-r3/record-docs.log",
+    "note": "新增本轮验收证据后的文档校验；不重复产品或全量测试。"
+  }
+}

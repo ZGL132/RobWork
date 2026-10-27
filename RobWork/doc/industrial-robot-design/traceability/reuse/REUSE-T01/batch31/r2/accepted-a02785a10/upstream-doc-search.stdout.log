@@ -1,0 +1,11 @@
+RobWork/doc/topics\softbodysimulation.hpp.md:118:    boost::numeric::ublas::vector<double> avec(M); 	// angle of each cross section in radians
+RobWork/doc/sphinx\file_formats\workcell.rst:442:- **alpha:** in degrees
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:32:This robot has 6 degrees of freedom, and the solver will provide up to 8 solutions.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:33:Notice that for every joint there is a solution where the joint is rotated 360 degrees.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:34:Than means that each of the 8 solutions can typically be achieved in 64 different ways. It is up to the user to add or subtract 360 degrees such that it suits the application best.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:40:This robot has 7 degrees of freedom. It can have an infinite number of solutions, as the middle joint can be placed anywhere on a circle.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:48:The rw::invkin::PieperSolver is a closed form solver that works for serial devices with 6 degrees of freedom revolute joints. It requires that the last three axes intersect.
+RobWork/doc/sphinx\tutorials\basic.rst:173:   RPY<> rpy(0, 0, 90*Deg2Rad); // 90 degree rotation around x-axis
+RobWork/doc/sphinx\tutorials\basic.rst:188:   // rotate a vector (0,1,0) 90 degrees around x-axis
+RobWork/doc/sphinx\tutorials\basic.rst:205:RobWork uses radians and not degrees. Take this into account.
+RobWork/doc/sphinx\manual\rotations.rst:92:The direction of the vector gives the axis of rotation, and the length of the vector gives the amount of rotation in radians.

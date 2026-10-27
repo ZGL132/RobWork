@@ -1,0 +1,15 @@
+{
+  "reviewedCommit": "6925608ccbc5c7764dc983f7e7e0276f1f12d55f",
+  "comparisonBase": "63e86ba5a633e93c9027165756298d76536166b9",
+  "relatedRows": 34,
+  "newNoteDigest": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+  "failedHashes": 0,
+  "archiveFiles": 47,
+  "archiveRawMatches": 44,
+  "archiveNewlineOnly": 3,
+  "archiveContentMismatches": 0,
+  "originalFailPreserved": true,
+  "searchHits": 2,
+  "sourceDiffEmpty": true,
+  "scopedDiffCheckExit": 0
+}

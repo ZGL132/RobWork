@@ -1,0 +1,53 @@
+RobWork/RobWork/src/rw/CMakeLists.txt:4:    sdurw_core
+RobWork/RobWork/src/rw/CMakeLists.txt:16:    sdurw_pathplanning
+RobWork/RobWork/gtest/CMakeLists.txt:7:macro(ADD_RW_GTEST target)
+RobWork/RobWork/gtest/CMakeLists.txt:33:set(RWMAIN_TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} sdurw_core)
+RobWork/RobWork/gtest/CMakeLists.txt:35:set(RWMAIN_TEST_SRC TestEnvironment.cpp test-main.cpp)
+RobWork/RobWork/gtest/CMakeLists.txt:49:    add_rw_gtest(sdurw_algorithms-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:62:    add_rw_gtest(sdurw_calibration-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:69:if(TARGET sdurw_core)
+RobWork/RobWork/gtest/CMakeLists.txt:70:    set(CORE_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_core)
+RobWork/RobWork/gtest/CMakeLists.txt:85:    add_executable(sdurw_core-gtest ${CORE_TEST_SRC})
+RobWork/RobWork/gtest/CMakeLists.txt:86:    target_link_libraries(sdurw_core-gtest ${CORE_TEST_LIBRARIES})
+RobWork/RobWork/gtest/CMakeLists.txt:87:    add_rw_gtest(sdurw_core-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:91:    target_link_libraries(test_plugin.rwplugin sdurw_core)
+RobWork/RobWork/gtest/CMakeLists.txt:124:    add_rw_gtest(sdurw_common-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:154:    add_rw_gtest(sdurw_geometry-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:171:    add_rw_gtest(sdurw_graphics-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:188:    add_rw_gtest(sdurw_invkin-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:201:    add_rw_gtest(sdurw_kinematics-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:219:    add_rw_gtest(sdurw_loaders-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:252:    add_rw_gtest(sdurw_math-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:265:    add_rw_gtest(sdurw_mathematica-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:281:    add_rw_gtest(sdurw_models-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:294:    add_rw_gtest(sdurw_opengl-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:309:    add_rw_gtest(sdurw_pathoptimization-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:316:if(TARGET sdurw_pathplanners AND TARGET sdurw_loaders)
+RobWork/RobWork/gtest/CMakeLists.txt:317:    set(PATHPLANNING_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_pathplanners
+RobWork/RobWork/gtest/CMakeLists.txt:323:    add_executable(sdurw_pathplanning-gtest ${PATHPLANNING_TEST_SRC})
+RobWork/RobWork/gtest/CMakeLists.txt:324:    target_link_libraries(sdurw_pathplanning-gtest ${PATHPLANNING_TEST_LIBRARIES})
+RobWork/RobWork/gtest/CMakeLists.txt:325:    add_rw_gtest(sdurw_pathplanning-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:332:    AND TARGET sdurw_pathplanning)
+RobWork/RobWork/gtest/CMakeLists.txt:334:        sdurw_proximitystrategies sdurw_models sdurw_loaders sdurw_pathplanning
+RobWork/RobWork/gtest/CMakeLists.txt:355:    add_rw_gtest(sdurw_proximity-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:366:    add_rw_gtest(sdurw_sensor-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:379:    add_rw_gtest(sdurw_task-gtest)
+RobWork/RobWork/gtest/CMakeLists.txt:400:    add_rw_gtest(sdurw_trajectory-gtest)
+RobWork/RobWork/gtest/TestEnvironment.cpp:18:#include "TestEnvironment.hpp"
+RobWork/RobWork/gtest/TestEnvironment.cpp:31:TestEnvironment::TestEnvironment () : _argc (0), _argv (NULL)
+RobWork/RobWork/gtest/TestEnvironment.cpp:34:TestEnvironment::~TestEnvironment ()
+RobWork/RobWork/gtest/TestEnvironment.cpp:37:void TestEnvironment::SetUp ()
+RobWork/RobWork/gtest/TestEnvironment.cpp:43:void TestEnvironment::init (int argc, char** argv)
+RobWork/RobWork/gtest/TestEnvironment.cpp:49:std::string TestEnvironment::executableDir ()
+RobWork/RobWork/gtest/TestEnvironment.cpp:60:std::string TestEnvironment::testfilesDir ()
+RobWork/RobWork/gtest/TestEnvironment.cpp:73:std::string TestEnvironment::xmlSchemasDir()
+RobWork/RobWork/gtest/TestEnvironment.cpp:86:TestEnvironment* TestEnvironment::get ()
+RobWork/RobWork/gtest/TestEnvironment.cpp:88:    static TestEnvironment* env = new TestEnvironment ();
+RobWork/RobWork/gtest/TestEnvironment.cpp:92:TestEnvironment* TestEnvironment::make (int argc, char** argv)
+RobWork/RobWork/gtest/TestEnvironment.cpp:94:    TestEnvironment* const env = get ();
+RobWork/RobWork/gtest/TestEnvironment.hpp:22: * @file RobWork/gtest/TestEnvironment.hpp
+RobWork/RobWork/gtest/TestEnvironment.hpp:32:class TestEnvironment: public ::testing::Environment {
+RobWork/RobWork/gtest/TestEnvironment.hpp:66:        static TestEnvironment* get();
+RobWork/RobWork/gtest/TestEnvironment.hpp:74:        static TestEnvironment* make(int argc, char** argv);
+RobWork/RobWork/gtest/TestEnvironment.hpp:77:        TestEnvironment();
+RobWork/RobWork/gtest/TestEnvironment.hpp:78:        virtual ~TestEnvironment();

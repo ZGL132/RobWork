@@ -1,0 +1,130 @@
+[
+  {
+    "capabilityId": "PATH-PLANNING",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rwlibs/pathplanners/rrt/RRTPlanner.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "RRTPlanner": true,
+      "makeQToQPlanner": true
+    },
+    "target": "sdurw_pathplanners",
+    "targetFile": "RobWork/RobWork/src/rwlibs/pathplanners/CMakeLists.txt",
+    "targetHashMatch": true
+  },
+  {
+    "capabilityId": "PATH-PLANNING",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "QConstraint": true,
+      "makeBounds": true,
+      "makeMerged": true,
+      "inCollision": true
+    },
+    "target": "sdurw_pathplanning",
+    "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+    "targetHashMatch": true
+  },
+  {
+    "capabilityId": "PATH-PLANNING",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/QSampler.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "QSampler": true,
+      "makeUniform": true,
+      "makeConstrained": true
+    },
+    "target": "sdurw_pathplanning",
+    "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+    "targetHashMatch": true
+  },
+  {
+    "capabilityId": "PATH-PLANNING",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/QEdgeConstraint.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "QEdgeConstraint": true,
+      "make": true
+    },
+    "target": "sdurw_pathplanning",
+    "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+    "targetHashMatch": true
+  },
+  {
+    "capabilityId": "PATH-PLANNING",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/StopCriteria.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "StopCriteria": true,
+      "stopByFun": true,
+      "stopEither": true,
+      "stopAfter": true
+    },
+    "target": "sdurw_pathplanning",
+    "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+    "targetHashMatch": true
+  },
+  {
+    "capabilityId": "PATH-PLANNING",
+    "section": "tests",
+    "path": "RobWork/RobWork/gtest/pathplanning/PathPlanningTest.cpp",
+    "hashMatch": true,
+    "symbols": {
+      "testPathPlanning": true,
+      "testPartialIndexTable": true
+    }
+  },
+  {
+    "capabilityId": "MATH-METRIC",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "makeManhattan": true,
+      "makeInfinity": true,
+      "makeEuclidean": true
+    },
+    "target": "sdurw_math",
+    "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+    "targetHashMatch": true
+  },
+  {
+    "capabilityId": "MATH-METRIC",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "pathLength": true
+    },
+    "target": "sdurw_pathplanning",
+    "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+    "targetHashMatch": true
+  },
+  {
+    "capabilityId": "MATH-METRIC",
+    "section": "tests",
+    "path": "RobWork/RobWork/gtest/math/MetricFactoryTest.cpp",
+    "hashMatch": true,
+    "symbols": {
+      "MetricFactory": true
+    }
+  },
+  {
+    "capabilityId": "MATH-TRAPEZOID",
+    "section": "upstream",
+    "path": "RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp",
+    "hashMatch": true,
+    "symbols": {
+      "TrapMethod": true,
+      "trapezMethod": true
+    },
+    "target": "sdurw_softbody",
+    "targetFile": "RobWork/RobWork/src/rwlibs/softbody/CMakeLists.txt",
+    "targetHashMatch": true
+  }
+]

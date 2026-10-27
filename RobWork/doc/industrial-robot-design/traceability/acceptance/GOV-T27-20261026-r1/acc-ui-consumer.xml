@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="28" failures="12" disabled="0" errors="0" time="19.773" timestamp="2026-10-26T17:13:11.315" name="AllTests">
+  <testsuite name="KinEvaluationChannel" tests="28" failures="12" disabled="0" skipped="0" errors="0" time="19.773" timestamp="2026-10-26T17:13:11.315">
+    <testcase name="Submit_RejectsWhenSnapshotUnbound_UI_T64" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="285" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:11.315" classname="KinEvaluationChannel" />
+    <testcase name="Submit_RejectsIncompleteBackgroundRequests_KIN_P4" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="308" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:11.315" classname="KinEvaluationChannel" />
+    <testcase name="Submit_RejectsEmptyPlanSlice_UI_T64" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="337" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:11.315" classname="KinEvaluationChannel" />
+    <testcase name="Submit_RunsAndRecordsCoverage_UI_T64" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="364" status="run" result="completed" time="0.017" timestamp="2026-10-26T17:13:11.315" classname="KinEvaluationChannel" />
+    <testcase name="MapSampleStateToCell_TableDriven_UI_T65" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="422" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:11.333" classname="KinEvaluationChannel" />
+    <testcase name="View3DTintFromCoverage_TableDriven_UI_T65" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="440" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:11.333" classname="KinEvaluationChannel" />
+    <testcase name="RegionTint_FollowsPositionAxisNotMixed_UI_T65" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="462" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:11.333" classname="KinEvaluationChannel" />
+    <testcase name="ProjectPlan_WorldToBaseTranslation_KIN_P1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="608" status="run" result="completed" time="0.03" timestamp="2026-10-26T17:13:11.333" classname="KinEvaluationChannel" />
+    <testcase name="ProjectPlan_InvertedBasePreset_KIN_P1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="667" status="run" result="completed" time="0.012" timestamp="2026-10-26T17:13:11.363" classname="KinEvaluationChannel" />
+    <testcase name="ProjectPlan_WallBasePreset_KIN_P1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="726" status="run" result="completed" time="0.015" timestamp="2026-10-26T17:13:11.376" classname="KinEvaluationChannel" />
+    <testcase name="ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="789" status="run" result="completed" time="0.03" timestamp="2026-10-26T17:13:11.392" classname="KinEvaluationChannel" />
+    <testcase name="ProjectPlan_ArbitraryRotatedFrame_REQ03_A21" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="859" status="run" result="completed" time="0.03" timestamp="2026-10-26T17:13:11.423" classname="KinEvaluationChannel" />
+    <testcase name="Rebind_ClearsAccountAndDropsLateResult_UI_T64" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="930" status="run" result="completed" time="0.015" timestamp="2026-10-26T17:13:11.453" classname="KinEvaluationChannel" />
+    <testcase name="CoverageProgressAndDetachStopRealComputation_MA03" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="962" status="run" result="completed" time="19.512" timestamp="2026-10-26T17:13:11.469" classname="KinEvaluationChannel" />
+    <testcase name="SolveChannel_BackgroundRealSolve_KIN_P4" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1087" status="run" result="completed" time="0.001" timestamp="2026-10-26T17:13:30.981" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1110&#x0A;Value of: result-&gt;ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;求解设施失败（非结局——求解中途 FK 复算失败，详见评估诊断）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1110
+Value of: result->ok
+  Actual: false
+Expected: true
+求解设施失败（非结局——求解中途 FK 复算失败，详见评估诊断）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1111&#x0A;Value of: result-&gt;solutionSet != nullptr&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1111
+Value of: result->solutionSet != nullptr
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="SolveChannel_RebindCancelsInflight_KIN_P4" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1124" status="run" result="completed" time="0.001" timestamp="2026-10-26T17:13:30.982" classname="KinEvaluationChannel" />
+    <testcase name="BatchChannel_RealComputationAndOutcomes_KIN_P4" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1164" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:30.984" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1188&#x0A;Expected equality of these values:&#x0A;  outcome.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  &quot;completed&quot;&#x0A;解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1188
+Expected equality of these values:
+  outcome.outcomeState
+    Which is: "not-run"
+  "completed"
+解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1189&#x0A;Value of: outcome.requiredCoverageDone&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1189
+Value of: outcome.requiredCoverageDone
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1202" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:30.984" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1249&#x0A;Expected equality of these values:&#x0A;  results.begin()-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  &quot;completed&quot;&#x0A;非零混合RPY与旋转参考系应还原零位TCP，而非使用参考系旋转&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1249
+Expected equality of these values:
+  results.begin()->second.outcomeState
+    Which is: "not-run"
+  "completed"
+非零混合RPY与旋转参考系应还原零位TCP，而非使用参考系旋转
+]]></failure>
+    </testcase>
+    <testcase name="BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1254" status="run" result="completed" time="0.026" timestamp="2026-10-26T17:13:30.985" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1292&#x0A;Expected equality of these values:&#x0A;  results.begin()-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  &quot;completed&quot;&#x0A;Google Test trace:&#x0A;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1259): 1&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1292
+Expected equality of these values:
+  results.begin()->second.outcomeState
+    Which is: "not-run"
+  "completed"
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1259): 1
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1292&#x0A;Expected equality of these values:&#x0A;  results.begin()-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  &quot;completed&quot;&#x0A;Google Test trace:&#x0A;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1259): 2&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1292
+Expected equality of these values:
+  results.begin()->second.outcomeState
+    Which is: "not-run"
+  "completed"
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1259): 2
+]]></failure>
+    </testcase>
+    <testcase name="RegionNamedTcpAndMissingKey_REQ01_A21" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1309" status="run" result="completed" time="0.014" timestamp="2026-10-26T17:13:31.012" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1358&#x0A;Expected equality of these values:&#x0A;  result-&gt;position.reached&#x0A;    Which is: 0&#x0A;  4u&#x0A;    Which is: 4&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1358
+Expected equality of these values:
+  result->position.reached
+    Which is: 0
+  4u
+    Which is: 4
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364&#x0A;Expected equality of these values:&#x0A;  sample.state&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;  (sample.regionObjectId != ws.regions.entries.front().objectId &amp;&amp; sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364
+Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364&#x0A;Expected equality of these values:&#x0A;  sample.state&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;  (sample.regionObjectId != ws.regions.entries.front().objectId &amp;&amp; sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364
+Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364&#x0A;Expected equality of these values:&#x0A;  sample.state&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;  (sample.regionObjectId != ws.regions.entries.front().objectId &amp;&amp; sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364
+Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364&#x0A;Expected equality of these values:&#x0A;  sample.state&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;  (sample.regionObjectId != ws.regions.entries.front().objectId &amp;&amp; sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1364
+Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+]]></failure>
+    </testcase>
+    <testcase name="BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1382" status="run" result="completed" time="0.015" timestamp="2026-10-26T17:13:31.026" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  point.objectId == wrong.objectId ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;TCP工位1 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP工位1 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  point.objectId == wrong.objectId ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;TCP工位2 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP工位2 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  point.objectId == wrong.objectId ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;TCP工位3 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP工位3 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  point.objectId == wrong.objectId ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;TCP工位4 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP工位4 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  point.objectId == wrong.objectId ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;TCP工位1 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "failed"
+TCP工位1 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  point.objectId == wrong.objectId ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;TCP工位1 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1444
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP工位1 解 0 个/1 工况
+]]></failure>
+    </testcase>
+    <testcase name="BatchHonorsEveryConstraintMask_REQ01_A16" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1465" status="run" result="completed" time="0.016" timestamp="2026-10-26T17:13:31.041" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束0 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束0 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束1 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束1 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束2 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束2 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束3 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束3 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束4 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束4 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束5 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束5 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;分量约束6 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1499
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "failed"
+分量约束6 解 0 个/1 工况
+]]></failure>
+    </testcase>
+    <testcase name="BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1505" status="run" result="completed" time="0.013" timestamp="2026-10-26T17:13:31.058" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  expectCompleted ? &quot;completed&quot; : &quot;failed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;允许工具滚转 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "completed"
+允许工具滚转 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  expectCompleted ? &quot;completed&quot; : &quot;failed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;固定姿态对照 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "failed"
+固定姿态对照 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  expectCompleted ? &quot;completed&quot; : &quot;failed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;指向目标反例 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "failed"
+指向目标反例 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  expectCompleted ? &quot;completed&quot; : &quot;failed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;对齐法向反例 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1560
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "failed"
+对齐法向反例 解 0 个/1 工况
+]]></failure>
+    </testcase>
+    <testcase name="OppositeDirectionRejected_REQ09_WP14T12" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1628" status="run" result="completed" time="0.001" timestamp="2026-10-26T17:13:31.072" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  opposite?&quot;failed&quot;:&quot;completed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;方向边界指向 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "failed"
+方向边界指向 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  opposite?&quot;failed&quot;:&quot;completed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;方向边界法向 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "failed"
+方向边界法向 解 0 个/1 工况
+]]></failure>
+    </testcase>
+    <testcase name="DirectionCorrectionFromZero_REQ09_WP14T12" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1634" status="run" result="completed" time="0.001" timestamp="2026-10-26T17:13:31.074" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  opposite?&quot;failed&quot;:&quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;方向边界指向 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "completed"
+方向边界指向 解 0 个/1 工况
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  opposite?&quot;failed&quot;:&quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;方向边界法向 解 0 个/1 工况&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1623
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "completed"
+方向边界法向 解 0 个/1 工况
+]]></failure>
+    </testcase>
+    <testcase name="BatchDirectionRulesFreeToolRoll_WP14T12" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1644" status="run" result="completed" time="0.011" timestamp="2026-10-26T17:13:31.075" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1675&#x0A;Expected equality of these values:&#x0A;  outcome.outcomeState&#x0A;    Which is: &quot;not-run&quot;&#x0A;  &quot;completed&quot;&#x0A;解 0 个/1 工况（方向规则不得额外固定工具滚转）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1675
+Expected equality of these values:
+  outcome.outcomeState
+    Which is: "not-run"
+  "completed"
+解 0 个/1 工况（方向规则不得额外固定工具滚转）
+]]></failure>
+    </testcase>
+    <testcase name="PolicyRebindClearsFinishedSolve_ARC05_A23" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1680" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:31.087" classname="KinEvaluationChannel" />
+    <testcase name="EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1694" status="run" result="completed" time="0." timestamp="2026-10-26T17:13:31.088" classname="KinEvaluationChannel">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1712&#x0A;Value of: result-&gt;solutionSet&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1712
+Value of: result->solutionSet
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

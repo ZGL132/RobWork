@@ -9643,6 +9643,209 @@
       "title": "基线b12e8503完整GitHub CI模型测试10/47目标失败，后续边界与出包跳过；不得把治理门禁绿解释为全产品CI绿",
       "owner": "CI/相关单元验收所有者",
       "resolution": "基线运行39724444980在治理前已失败；本轮记录事实并保留required package阻断合入，不放宽测试、不修改算法。需后续单独调查环境/产品原因。"
+    },
+    {
+      "id": "F-957",
+      "source": "traceability/reuse/REUSE-T01/runtime-boundary-audit.md / runtime-probe/red",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "runtime S6将移动关节m制zeroOffset编码成旋转且缺少平移，阻断相关上游FK适配",
+      "owner": "runtime / REUSE-T02",
+      "resolution": "真实原编译器独立重建2项1 passed1 failed、exit1，三轴复现。T02先在runtime owner修复最薄模型映射并回归；业务不得额外补偿，不是RobWork缺算法。原失败与独立复现有效验收保留。"
+    },
+    {
+      "id": "F-958",
+      "source": "traceability/reuse/REUSE-T01/test-build-audit.md / probe-r10",
+      "severity": "major",
+      "status": "fixed",
+      "fixedAt": "2026-10-23",
+      "registeredAt": "2026-10-23",
+      "title": "testkit静态监听器传给GTest Append，与其接管并delete对象的公开所有权契约冲突",
+      "owner": "testkit / REUSE-T05",
+      "resolution": "已读安装GTest公开头并实跑局部集合析构1 passed，未执行静态对象非法delete，不宣称所有产品退出崩溃已重现。T05在现有安装函数内最小传递所有权并同步注释，原testkit/子进程/Debug退出回归，不新增监听器平台。 2026-10-23收口（REUSE-T18，codex/reuse-testkit-listener）：实施fbd51e765按gtest.h:1032-1040公开契约改堆对象经Append移交并新增常驻契约回归＋lsnchild三态子进程e2e；legacy反例Debug CRT复现非法delete诊断（debug_heap.cpp 904/908）、Release静默，不夸大存量故障范围。定向测试testkit Release/Debug各115/115、core 69/69经acceptance-sub1独立验收（实施与测试层面）；29处跨单元失真注释随协调批订正（仅注释行）；lsnchild工具边白名单/DTB §4.5登记、逐文件凭证与功能矩阵行覆盖随批落地；ird_gates复跑转绿（红线11类零命中＋validate-reuse PASS，ird-gates-run2-final.log）。整体准入与合入由所有者裁决。"
+    },
+    {
+      "id": "F-959",
+      "source": "traceability/reuse/REUSE-T01/test-helpers-golden-audit.md / generator-replay.json",
+      "severity": "major",
+      "status": "fixed",
+      "fixedAt": "2026-10-26",
+      "registeredAt": "2026-10-23",
+      "title": "URDF导入黄金生成脚本未随速度限制F01映射更新，再生会回退正确黄金数据且缺消费字段",
+      "owner": "modeling/testdata / REUSE-T05",
+      "resolution": "29脚本隔离运行全部exit0，但91个dataset JSON对照中import-report.json实质漂移；另一全新目录复现同输出。旧脚本unsupported=8含5个joint-velocity-limit，入库正确数据unsupported=3并有mappedVelocityCount=5。T05只同步生成脚本及注释/回归，不用重产旧错误数据洗绿；本批未运行产品C++消费者。2026-10-26 REUSE-T49落地批（所有者批量批准落地裁决表第1~4项，原blocked解阻）：make_import_expectations.mjs随F01期望面同步（unsupported 8→3、去joint-velocity-limit×5、增mappedVelocityCount=5与说明，头注计数约定同步）＋manifest.json integrity/history重登记——expected数据零变化；重放一致性收口＝replay-generators-t49.mjs隔离执行29生成器29/29 exit0、规范化对照漂移0、mdl-urdf-import两份expected原始字节逐位一致（landing-generator-replay.json）；受影响消费者testkit 121/121＋modeling 480/480（MdlGoldenImport消费mappedVelocityCount钉F01映射面）＋contract 17/17＋ird_gates零命中。GoldenImportTest.cpp:294-296既有过期文档注（T16创建时即有，断言面数据驱动正确）不属漂移链未改，留独立cosmetic缺陷归所有者归类。实施完成待独验。"
+    },
+    {
+      "id": "F-960",
+      "source": "traceability/reuse/REUSE-T01/compare-set-dataset-audit.md / probe-r17/core-red",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core C4比较在有限极值的diff与limit同时溢出时将超容差输入误判为接近",
+      "owner": "core / REUSE-T05",
+      "resolution": "原core目标真实编译调用v=M/ref=-M/relative=.5/absolute=M应拒绝（缩放oracle差2>阈值1.5），原实现inf<=inf返回true；1项真实failed、0 passed/skipped/notRun。保留原红证，T05保持C4/owner语义修数值边界，不放宽容差或另建比较平台。"
+    },
+    {
+      "id": "F-961",
+      "source": "traceability/reuse/REUSE-T01/policy-boundary-audit.md / probe-r18",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-23",
+      "title": "policy会话将合法REGEX前缀完整名传入上游模式API，产出的排除规则无法匹配原对象名",
+      "owner": "policy / REUSE-T05",
+      "resolution": "原policy CMake目标和原会话夹具真实编译，新2项1passed/1failed。runtime合法字符集允许REGEXarm，ProximitySetupRule把REGEX前缀后的字符串当正则；setup规则原名匹配false。仅证实公开setup输出错误，evaluate当前按scope直接逐对query，不声称已复现碰撞误判。T05用既有模式接口的最小字面适配，保留名称真值和上游API，先补原会话回归；不改上游或另建规则引擎。2026-10-25 REUSE-T36（WP-13）按本路线完成修复候选并验证：上游无字面API实核（makeExclude/makeInclude全走convertToRegEx）后单点字面适配（toUpstreamRulePattern镜像上游REGEX分支条件+ECMAScript全集转义，普通名透传零扰动），B18反例未修复码红（1 failed）修复后转绿（3用例）+候选构建全量214项回归；因复用门禁对改动文件要求全文件解决（超出WP-13边界，COLLISION capability仍candidate）经所有者裁决按T33 blocked先例留存候选（traceability/reuse/REUSE-T36/candidate/），产品未改；evaluate仍不消费setup，不声称碰撞误判修复；保持open至候选随policy单元迁移包落地并独立验收。2026-10-26 REUSE-T36落地批（所有者批量批准落地裁决表第1~4项，解阻原全文件解决批blocked）：候选diff对45e3e80ea干净应用（产品文件与候选全文件摘要逐位一致），policy全量214/214＋受影响四消费者全绿；全文件解决批一次收口（18行migrated＋2 helper＋20 audit铺面＋三grant＋COLLISION verified升级）；disconnected-bps真实生产变异红例复验（去适配即回F-961同型反例）＋恢复复测绿（final-recheck）。实证范围仍止于公开setup规则输出正字性（REGEX前缀完整名规则match原名、存储pattern字面化），evaluate不消费setup过滤，不声称碰撞误判修复；独立验收另行执行。"
+    },
+    {
+      "id": "F-962",
+      "source": "traceability/reuse/REUSE-T01/project-transaction-audit.md / probe-r20",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-23",
+      "title": "project恢复扫描未核清单字节摘要，错误HEAD摘要可经公开工厂成功打开",
+      "owner": "project / REUSE-T05",
+      "resolution": "原project目标/原TxEngine夹具新增6项2passed4failed，错误HEAD摘要、合法清单时间字节变化均scan true；公共ProjectStoreFactory::open也接受错误摘要并报告完整，健康正例通过。T05复用codec::contentVersionOf/core摘要补实算比较与原测试，不改上游或新建持久化核心。未跑全project/崩溃矩阵/并发。2026-10-25 REUSE-T40（WP-16）按本路线完成修复候选并验证：候选scanForRecovery实算HEAD指向清单字节摘要与head.manifestDigest严格比对（codec::contentVersionOf同commit口径，不新建哈希）＋首败钉扎定位；候选五用例未修复码5/5红（三反例全放行）修复后project_test 287/287＋contract_test 32/32绿零回归；因复用门禁对改动文件要求全文件解决（TxEngine.cpp 22行全pending＋四文件铺面，超出WP-16边界）经T33/T36 blocked先例留存候选（traceability/reuse/REUSE-T40/candidate/），产品未改，保持open至候选随project单元迁移包落地并独立验收。2026-10-26 REUSE-T40落地批（所有者批量批准落地裁决表第1~4项，解阻原全文件解决批blocked）：候选diff对44c8d59e4干净应用（产品四件与候选全件摘要逐位一致），project全量287/287＋contract 32/32＋B20三反例复跑5/5全绿＋ird_gates零命中（landing2-*证据在案）；全文件解决批一次收口（TxEngine.cpp 22行migrated＋四文件217铺面行＋47行TxEngine.hpp inputs摘要级联同步＋changes/REUSE-T40.json凭证，permissions零新增）；ProjectStoreTest夹具head.manifestDigest误写元数据对象摘要随批订正为清单字节摘要。实证范围＝恢复扫描与公开工厂对错误/失真HEAD摘要的拒绝（篡改/缺失/合法恢复/历史兼容四验收面），不声称超出scanForRecovery④闭包校验的语义；独立验收由所有者另行执行。"
+    },
+    {
+      "id": "F-963",
+      "source": "traceability/reuse/REUSE-T01/project-transaction-audit.md / probe-r20",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "project事务错误映射硬编码70，真实SDK磁盘满112误归WriteRejected",
+      "owner": "project / REUSE-T05",
+      "resolution": "原IFileOps夹具注入ERROR_DISK_FULL，commit拒绝且旧字节保持，但实际WriteRejected而非DiskFull；原F2注入同错误数字70掩盖缺陷。ObjectStore/StoreClone同常量仅静态同族待核，未跑这些路径。T05复用同单元Archive已采用的SDK常量映射方式收口，先补原回归，不另设数字表。"
+    },
+    {
+      "id": "F-964",
+      "source": "traceability/reuse/REUSE-T01/execution-admission-audit.md / probe-r22",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "execution拒绝Completed终结后登记半写，合法取消随后被拒",
+      "owner": "execution / REUSE-T05",
+      "resolution": "原目标/原RunRegistryAdmission夹具27项26passed1failed，原25项全通过；新增拒Completed后terminationCause仍Completed且Canceled再抛，健康取消正例通过。T05在原写入口先校验允许原因再赋值并落原回归，不新写登记/状态机。当前不改产品，不授全T01/T02。"
+    },
+    {
+      "id": "F-965",
+      "source": "reuse/core-identity-events-audit.md / batch28",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core身份FNV非空向量偏离约定，公开ObjectId散列继承偏差",
+      "owner": "core / REUSE-T05",
+      "resolution": "独立固定整数向量探测4项2通过2失败；原core64通过。addShifted/addMulSmall用已变更hi/lo计算后项，非一次乘FNV素数；公开ObjectId hash真实失败。六Id及ContentVersion/ContentIdentity静态同族，不声称内容SHA或持久化损坏。T01不修核心；后续先核成熟已有能力/消费者兼容性，无现成API则最小修正提案获批后实施。"
+    }
+,
+{
+  "id": "F-966",
+  "source": "reuse/core-units-compare-audit.md / batch31",
+  "severity": "major",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "core C4有限极值中间溢出令标量与vector/Q公共比较误绿",
+  "owner": "core / REUSE-T05",
+  "resolution": "22跑19passed3failed，原15例全过。DBL_MAX与-DBL_MAX、relative1.5绝对0的精确C4为2>1.5应拒；diff/limit双Inf使三个入口true。独立Fraction oracle冻结。T01不改数值核心；先查成熟既有能力与消费者兼容性，必要最小修正提案批准后实施，不改为范数/对称比较、不降低需求。"
+}
+,
+{
+  "id": "F-967",
+  "source": "reuse/core-event-lifetime-audit.md / batch32",
+  "severity": "major",
+  "status": "fixed",
+  "registeredAt": "2026-10-23",
+  "title": "ReferenceEventBus测试参考实现被UI生产装配且句柄析构不退订",
+  "owner": "core / execution / ui / REUSE-T01",
+  "resolution": "23跑22passed1failed，原17例通过。句柄析构仍1订阅且收到回调，bus/sink全程存活。UI源码装配和MODULE注册链已核，未跑GUI/最终DLL。既有execution总线RAII通过但回调线程与重复订阅粒度不同；后续先复用既有实现并核UI线程/销毁及在投退订，不新造第三总线。T01不改产品，F967开放。REUSE-T41（2026-10-25）候选收口：生产装配换execution::DomainEventBusImpl＋投递线程转接互斥＋关停drain序候选已全量验证（execution 157+38、ui_contract 63、core 74绿；ird_gates正例零命中＋撤登记负例恰命中SUB），候选留存traceability/reuse/REUSE-T41/candidate/；blocked＝REUSE-AD对变动UiPlugin.{hpp,cpp}要求host/graphics grant→host-presentation origin→宿主例外封闭清单（恰4文件机器冻结）不含UiPlugin，结构性无合法grant——所有者2026-10-25 escalate裁决采T33/T36/T40先例，产品树HEAD零改动；解阻待宿主例外治理批次（migration §13.2 REUSE-T41行）。**REUSE-T41落地批（2026-10-26所有者批量批准落地裁决表第1~4项）改fixed**：治理前置批1cb967892扩宿主例外HOST-WORKBENCH（封闭清单4→5＋permissions.json首批host-presentation精确grant＋ARCH §3.6.2 v0.17审查记录）解阻；候选六件diff对cf00a7dc9干净应用（post-blob与diff index头逐位一致），生产装配越界core::ReferenceEventBus归零（换execution::DomainEventBusImpl——H1直接复用§10.4/§13交接）、投递线程转接互斥（快照经m_eventAdapterMutex访问器＋显式Qt::QueuedConnection转UI线程）、关停drain序（句柄reset→waitForIdle→成员逆序销毁）落地；落地批复跑execution 157+38、ui_contract 63、core 74全绿＋ird_gates正例exit0/撤登记负例恰一条SUB（原件landing-*）；不造第三总线，CORE-EVENT维持candidate。实证范围＝生产装配越界用非生产组件、投递线程数据竞争、RAII退订/关停drain序缺口的收口；GUI真实生产路径（修订事件双sink投递）NOT RUN——HEAD既有启动段错误（F-974）阻断，不声称GUI端到端验证；独立验收另行执行（§6.4跨单元接线＋宿主装配层）。"
+}
+,
+{
+  "id": "F-968",
+  "source": "reuse/diagnostics-schema-audit.md / batch33",
+  "severity": "minor",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "diagnostics受限模式解析失败保留部分names违反私有输出契约",
+  "owner": "diagnostics / REUSE-T01",
+  "resolution": "43跑42passed1failed，原38例通过；四类已解析pid后的非法尾部均false且error非空但names未清空。注册表和工厂检查false即停止，未证公共对象污染。T01不改解析核心；保持单一私有解析点，后续先核冻结契约及两调用方，最小处置独立回归。"
+}
+,
+{
+  "id": "F-969",
+  "source": "reuse/diagnostics-log-file-audit.md / batch35",
+  "severity": "minor",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "diagnostics日志轮转未遵守含活动文件的保留总数边界",
+  "owner": "diagnostics / REUSE-T01",
+  "resolution": "真实日志器keep1额外保留.1；真实文件接缝从5代缩至2后.2/.3/.4仍在。19跑17passed2failed0skipped，原产品12与上游1全过；后续在既有文件接缝最小修正并核上游候选，T01不改产品或新写日志核心。"
+}
+,
+{
+  "id": "F-970",
+  "source": "traceability/acceptance/GOV-T21-20261024-r1.json#issues[1]（05-commit-lint.log，送验范围 64ef0fd07..0032c8e78）",
+  "severity": "suggestion",
+  "status": "fixed",
+  "registeredAt": "2026-10-24",
+  "title": "GOV-T21 独立验收 commit-lint FAIL：717594e5c『合入覆盖清查会话R1/R2成果（codex/coverage-sweep）』、3a61e300f『合入主会话reuse-t01增量（T07实施+T08旋转提案）用于R2增量核对』两个跨会话合入提交标题无合法中文前缀（2/88），且合并动作本身与 AGENTS §6.2 主工作树串行、不自行合并其他分支口径冲突；二者为自定义中文标题的 merge 提交，不匹配 commit-lint.ps1 的 ^Merge 前缀豁免，漏过 F-012 止增门禁",
+  "owner": "合入操作执行会话（提交纪律：绕过主工作树串行与 commit-lint 自检）＋commit-lint 门禁所有者（豁免面未覆盖自定义标题 merge，属登记事实，本轮不改脚本）",
+  "resolution": "按 F-012 口径显式登记豁免：历史提交不可改写（AGENTS §6.3 红线）。豁免依据＝717594e5c 正文自证『所有者指示合入』且全程只读调查（不改矩阵/产品/权限），3a61e300f 为其前序 T07 增量合入（内容与 8e4a08ac8 一致、对 8e4a08ac8..0032c8e78 净 diff 为零，GOV-T21-20261024-r1-fix README 实测佐证），两提交内容均已经主线后续验收链消化；豁免不改变标题违规与口径冲突的事实本身。杜绝再现：2026-10-22 精简治理起主工作树串行实施（AGENTS §0/§6.2），增量一律以主线新提交进入，不再执行跨会话/跨分支合入；新增提交标题过 commit-lint 白名单自检（GOV-T21 返工提交即按 [governance] 前缀自查）。",
+  "fixedAt": "2026-10-24"
+}
+,
+{
+  "id": "F-971",
+  "source": "traceability/acceptance/GOV-T21-20261024-r2.json#checks[2]（05/06 号 log；2026-10-24 登记后字面区间复验同型：64ef0fd07..HEAD 5/162）",
+  "severity": "suggestion",
+  "status": "fixed",
+  "registeredAt": "2026-10-24",
+  "title": "GOV-T21 字面区间 commit-lint FAIL 剩余 3 提交未按 F-012 转登台账：9e1fe9c2e905/340dc88a4000（『[REUSE-T09] 轨迹五次/七次多项式求值复用上游Polynomial并删除手写基导数链』，[REUSE-T09] 前缀不在 commit-lint 白名单）与 3e8cec6ef9d2（『并入主会话reuse-t01最新进展（EAA撤销与policy文本，按所有者指令）』，无合法中文前缀）；三者均为 r1 head（0032c8e78）之后 AB 集成期 merge（b0997f8d8『Merge 357d19e3d (reuse-t01) into redesign-main』、8db7a7e78『集成收口3/3：并入trajectory多项式替换（REUSE-T09）』、6fb26b31d 等）携入的其他任务包分支侧历史提交——git merge-base --is-ancestor 实测均非 0032c8e78 祖先，不属 GOV-T21 治理提交链（段A 78/78 PASS、0032c8e78..af7c623ae first-parent 链零前缀违规佐证）；r2 独立验收 checks[2] 已甄别核销但未转登台账，2026-10-24 登记后字面区间复验（5/162）暴露该缺口",
+  "owner": "AB 集成期跨分支合入会话（分支侧提交纪律）＋commit-lint 门禁所有者（单一连续区间枚举必然含 merge 携入历史，属登记事实，不改脚本不放宽门禁）",
+  "resolution": "按 F-012/F-970 口径显式登记豁免：历史提交不可改写（AGENTS §6.3 红线）。豁免依据＝三者为 REUSE-T09/reuse-t01 其他任务包分支侧历史，经 r1 head 后集成 merge 进入主线枚举面；其能力内容按各自契约另行送验独验，GOV-T21 r2 记录 limitations 明示『字面区间内其他任务包内容不因本验收放行』；GOV-T21 治理链五提交（64ef0fd07/6eab38df8/25ecf7f6d/0032c8e78/af7c623ae）标题全部合法前缀（r2 05/06 号 log 段级 PASS 佐证）。杜绝再现：2026-10-22 起主工作树串行实施（AGENTS §0/§6.2），不再跨分支合入；新增提交过 commit-lint 白名单自检。",
+  "fixedAt": "2026-10-24"
+}
+,
+{
+  "id": "F-972",
+  "source": "traceability/acceptance/GOV-T22-20261024-r1.json#checks[1]（02-scope.log，39b57abd..0d0d3ca3e 318 路径；2026-10-24 登记后门禁复验同型）",
+  "severity": "suggestion",
+  "status": "fixed",
+  "registeredAt": "2026-10-24",
+  "title": "GOV-T22 送验链 verify-task-scope 字面 FAIL：318 越界路径全部位于 traceability/acceptance/GOV-T22-20261022*（271+20+1+24+1+1），即本任务 2026-10-22 三轮独立验收（r1 fail/r2 fail/r3 pass）记录与证据随任务提交的登记产物，非其他任务内容、非实现面（实质 12 文件全命中 allowedFiles、forbiddenFiles 零命中，commit-lint 8/8）；allowedFiles 补验收路径被 validate-reuse.ps1 GOV-SCOPE 冻结白名单拒绝（实测『GOV-T22 cannot authorize』FAIL），扩面＝放宽门禁；r1 记录 checks[1] 已甄别判非阻断但未转登台账，2026-10-24 登记后字面区间复验暴露该缺口。同区间 commit-lint 39b57abd..HEAD 5/159 的 5 个历史提交均已在前册豁免（717594e5c/3a61e300f＝F-970，9e1fe9c2e/340dc88a4/3e8cec6ef＝F-971），零新增违规",
+  "owner": "验收登记流程（历史验收证据按『只写文件随任务提交』口径留痕，未入 allowedFiles 面）＋门禁所有者（验收证据目录纳入机器豁免面属所有者决策，本轮不改脚本不放宽门禁）",
+  "resolution": "按 F-012 登记族口径显式登记处置：318 路径为本任务自身三轮验收登记产物，历史不可改写（AGENTS §6.3），不回写、不补 allowedFiles（GOV-SCOPE 白名单冻结，r3/r1 记录同裁决）；新轮次验收证据路径以契约 note 与本台账登记为准（GOV-T22-20261024-r1 记录与证据目录已按此口径登记）；机器核验面＝实质 12 文件全命中＋送验链 commit-lint 8/8＋登记提交段处置面。杜绝再现：后续 GOV-T22 相关登记提交沿用 note 登记路径口径，不改 allowedFiles、不动门禁脚本。",
+  "fixedAt": "2026-10-24"
+},
+    {
+      "id": "F-973",
+      "source": "REUSE-T41 候选态验证（traceability/reuse/REUSE-T41/sdurws_ird_ui_test.xml＋log；2026-10-25 登记）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-25",
+      "title": "ui_test 13项真实数值链用例在redesign-main未记录失败（runtime物化＋真实FK/IK；与REUSE-T41源集零交集——独立移交线索）",
+      "owner": "所有者归类（候选源疑似 T33 rpyview RPY 反向换核跨单元漂移——待证；亦可能环境性）",
+      "resolution": "sdurws_ird_ui_test 345项中14 failed：1项为预存F-560（REUSE-T17在案），其余13项全为真实数值链（NamedTcpClosureCompilesAndSolvesRealNumerics/BatchChannel_RealComputationAndOutcomes/SolveChannel_BackgroundRealSolve/方向边界族/BatchNamedTcp/约束掩码/碰撞充分性等——failure形态＝fk.ok()为假或批量outcomeState=not-run，物化断言通过）；redesign-main近期无ui_test全量记录（T17为2026-10-23旧分支344/0/1），漂移源待查。与REUSE-T41无因果的证明＝ui_test编入TU源集（test/*.cpp＋plugin/{HostCompilePort,HostPresentationAdapters,QtTextBillboard,KinEvaluationChannel,KinHostServicesAssembly}.cpp）与REUSE-T41五候选文件零交集（二进制等同HEAD）。登记后候选回退，现HEAD即可复现；归所有者归类处置，REUSE-T41不越权修复。处置（2026-10-27，UI-T86诊断返工批）：疑似源『T33 rpyview RPY反向换核跨单元漂移』证伪（T33生产面rpyToRotation未进入失败链；13项失败形态统一为Fk.cpp:238-243锚缺失NoDevice值面）。根因＝REUSE-T18（20522f776，2026-10-24）换核FK/Jacobian经T17锚消费已编译模型并删除手写链，其测试夹具迁移面仅覆盖kinematics单元（KinFkFixture compileRealSnapshot/TestView），ui单元FixtureView（KinEvaluationChannelTest.cpp）与HostCompilePipelineTest.cpp本地View未同步——测试期望过期/迁移扰动，非产品回归、非环境性；T18验证仅kinematics_test/contract_test未跑ui_test，故主线未记录。修复＝FixtureView补runtimeModelView()锚覆盖（testfixture::compileRealSnapshot懒编译真实快照，T18在案模式）＋ui_test注入IRD_HAVE_RUNTIME_COMPILE=1（kinematics_test:515同款）：修复树全量344/1（仅预存F-560），12/13项核销（traceability/reuse/UI-T86/green13-full-suite.*）。第13项NamedTcpClosure候选修复同树实证PASS后被IRD-GATE-AD拦截（修复面HostCompilePipelineTest.cpp携带UI-T78 rw/graphics头依赖，测试文件无合法grant形态）——分流新登记F-975 blocked，本项按12/13收口fixed；终态树复跑343/2如实分列（final-full-suite.*）。",
+      "fixedAt": "2026-10-27"
+    },
+    {
+      "id": "F-974",
+      "source": "REUSE-T41 GUI冒烟归因（gui-smoke-launch.log＋gui-smoke-head-baseline-segfault.log；dev-diagnostics.log历史；2026-10-25 登记）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-25",
+      "title": "HEAD 41a59c670 studio启动段错误（共享面装配完成后崩，IRD_UI_PLUGIN_SMOKE全链阻断——GUI真实路径验证不可用）",
+      "owner": "所有者归类（候选源疑似同F-973的跨单元漂移或宿主启动链缺陷；10-21前后dev日志曾全程达draft applied/宿主已关闭工作单元，10-24起两次运行同早停）",
+      "resolution": "sdurws_ird_studio＋IRD_UI_PLUGIN_SMOKE=auto在『共享面装配完成』日志后段错误（exit 139）；REUSE-T41实施会话以stash五候选文件重建HEAD基线复跑同点同形崩溃——归因＝HEAD既有缺陷，非候选所致（双跑归因证据双留）。阻断面＝修订事件双sink『delivered after commit』真实GUI路径验证（REUSE-T41候选因此NOT RUN，替代证据＝execution总线契约用例＋ui_contract_test 63项）；亦影响后续任何ui插件GUI验收。归所有者归类处置。"
+    },
+    {
+      "id": "F-975",
+      "source": "UI-T86诊断返工批（traceability/reuse/UI-T86/gate-ad-blocked.log＋green13-full-suite.*＋README.md候选补丁；2026-10-27登记）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-27",
+      "title": "NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15修复面被IRD-GATE-AD权限门禁机器锁死（HostCompilePipelineTest.cpp携带UI-T78渲染面rw/graphics头依赖——测试路径无任何合法grant形态，修复不可落地）",
+      "owner": "所有者裁决（三选一：①门禁为/test/路径开graphics允许面（GOV治理批次，GOV-T22门禁所有者先例）；②宿主例外扩族接纳该测试文件（ARCH §3.6.2＋reuse-contract.ps1硬编码names表同步）；③UI-T78渲染面用例重组（迁移DrawableNode::Physical断言出该TU或改常量钉扎语义——涉及UI-T78已验收断言面契约修订））",
+      "resolution": "根因＝F-973第13项的修复要求改动ui/test/HostCompilePipelineTest.cpp，而该文件含#include <rw/graphics/DrawableNode.hpp>（UI-T78渲染面分组常量断言，:72/:952）——reuse-contract.ps1 CheckSourcePermission对变更文件提取graphics类别（:133提取表），grant携带graphics类别必须origin=host-presentation（:96），host-presentation要求文件路径∈hostExceptions[].files，且hostExceptions文件族被硬校验为恰UiPlugin.{hpp,cpp}五对（:85-90）——测试路径恒不可入。修复候选已实证：本地View补runtimeModelView()锚覆盖（锚＝同源物化快照本体）后全量344/1（仅预存F-560），候选补丁全文存traceability/reuse/UI-T86/README.md；门禁本体实测REUSE-AD exit 1（gate-ad-blocked.log）。UI-T86终态按增量回退该文件（ui_test 343/2：F-560＋本项），其余12项修复不受影响。"
     }
   ]
 }

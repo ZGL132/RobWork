@@ -1,0 +1,7 @@
+verify-task: RepoRoot=C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\lean-verification
+validate-task: PASS (1 tasks)
+Exception: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\lean-verification\RobWork\scripts\industrialrobot\validate-reuse.ps1:4
+Line |
+   4 |  … f (-not $t.reuse -or $t.rejectReuse) { throw 'fixture reuse denied' }
+     |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | fixture reuse denied

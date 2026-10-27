@@ -1,0 +1,28 @@
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from ReuseAudit
+[ RUN      ] ReuseAudit.SymmetricEigenvaluesAcrossScales
+[       OK ] ReuseAudit.SymmetricEigenvaluesAcrossScales (0 ms)
+[ RUN      ] ReuseAudit.SingleLegMaskedPositionOnExistingFrames
+[       OK ] ReuseAudit.SingleLegMaskedPositionOnExistingFrames (0 ms)
+[ RUN      ] ReuseAudit.LloydBlendRestToRestQuintic
+[       OK ] ReuseAudit.LloydBlendRestToRestQuintic (0 ms)
+[ RUN      ] ReuseAudit.PrismaticWrenchProjectionAgainstNewtonLaw
+[       OK ] ReuseAudit.PrismaticWrenchProjectionAgainstNewtonLaw (0 ms)
+[ RUN      ] ReuseAudit.ExistingPolynomialSepticWithThirdDerivative
+[       OK ] ReuseAudit.ExistingPolynomialSepticWithThirdDerivative (0 ms)
+[ RUN      ] ReuseAudit.PublicSvdSingularAndWellConditioned
+[       OK ] ReuseAudit.PublicSvdSingularAndWellConditioned (0 ms)
+[ RUN      ] ReuseAudit.PrincipalInertiaFromGeometryUtil
+[       OK ] ReuseAudit.PrincipalInertiaFromGeometryUtil (0 ms)
+[ RUN      ] ReuseAudit.BulletDynamicDeviceInsertionIsNotImplemented
+[       OK ] ReuseAudit.BulletDynamicDeviceInsertionIsNotImplemented (0 ms)
+[ RUN      ] ReuseAudit.EulerMaskCannotBeSubstitutedByEaaRows
+[       OK ] ReuseAudit.EulerMaskCannotBeSubstitutedByEaaRows (0 ms)
+[ RUN      ] ReuseAudit.JacobianSolverHalfTurnNeedsIndependentValidation
+[       OK ] ReuseAudit.JacobianSolverHalfTurnNeedsIndependentValidation (0 ms)
+[----------] 10 tests from ReuseAudit (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 10 tests.

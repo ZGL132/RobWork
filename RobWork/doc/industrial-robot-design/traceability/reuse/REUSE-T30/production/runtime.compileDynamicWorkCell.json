@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "runtime.compileDynamicWorkCell",
+  "target": "sdurws_ird_runtime",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+      "sha256": "f296c73e438cf11e0eeb8bb7ec739cddd98e9dad1380c09e9aba86f54c3c81ee"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.hpp",
+      "sha256": "78281ff660cd8004c7838911b79f07caeb16a06ce407da3c4dc4d311270fad19"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+      "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+      "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
+      "sha256": "e461a26ebdd9249fe1c91fb1bee809de627b21f41a9bf64ddfd249c94de72f2e"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
+      "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp",
+      "sha256": "ac355a760a4370ef0f0b3215584ee93fa3647a0c90c69e70f0c8ed25c8d51f56"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/dynamics/FixedBody.hpp",
+      "sha256": "de61f348dbd595d114c55c6b03700c0ed3e832708696c9d9022766b31c15ce86"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp",
+      "sha256": "5a7459723a2cd571724327bc133efb2ef4667f986ecb26efb74d99671995cae9"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/dynamics/DynamicWorkCell.hpp",
+      "sha256": "a8fcd0deb58255f48f2de48e8c3d0dd0ee372782b36586a1a9d2652f88fab96a"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/dynamics/MaterialDataMap.hpp",
+      "sha256": "f77abee659fb6524fce7c86cef4ef0e3987f8ed8bce7b924ea6e0d3f35de1385"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp",
+      "sha256": "ddb4b8b72b8dac6788b33349faeb3f17b76d452819177aa99dfae22df2b02c93"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/kinematics/MovableFrame.hpp",
+      "sha256": "65eff255249ca4da933116fceb79731a747f848444aa4d0cc818c9bfdf77ec3d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/RigidObject.hpp",
+      "sha256": "819a5ee372f64e88bfb7c5422756d7fff015964ddf3b8a832e4742daa3c4eff5"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/JointDevice.hpp",
+      "sha256": "07c97647cf5d309d6f340ab5c76967d3fd67a838ab6f6d7c6607fc72bc4b1769"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "sha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/kinematics/CMakeLists.txt",
+      "sha256": "68d4b6ca96e0f2d40883b1fdf641797685bd8caeaf5d70a09d9067440396fd4c"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+      "sha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+    }
+  ],
+  "normal": {
+    "command": "D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30\\runtime-t30.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30\\normal-report-t30.json",
+    "exitCode": 0,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/runtime-t30.xml",
+      "sha256": "d10c65116d27fb197b6f80ff39824f950e1d778f8f81d72dda1544905faf3a22"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/runtime-t30.log",
+      "sha256": "18f9bb22e885533971a3b3c5d0917baff913106a87e0a85263e9dd44838bc6a9"
+    }
+  },
+  "disconnected": {
+    "command": "D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=DynamicWorkCellCompilerTest.*:DynamicWorkCellConstView.* --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30\\disconnected.xml",
+    "exitCode": 1,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/disconnected.xml",
+      "sha256": "dee3934579ae9ef35a9993b7052b51b52244971f2f674ebe1acda19f1a8c1112"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/disconnected.log",
+      "sha256": "53b772181a385b0eddd49f6550b64d820aa9a43b1320421fa489bfbdd1acb599"
+    },
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+      "originalSha256": "f296c73e438cf11e0eeb8bb7ec739cddd98e9dad1380c09e9aba86f54c3c81ee",
+      "description": "真实DynamicWorkCellCompiler.cpp聚合断开：makeBodyInfo质量置零＋DWC重力加0.01偏移（CanonicalModel→Body物性与§8.2显式设值消费面）；2项14条真实断言失败（CompiledPathBodiesAndExplicitValues_RT_T08/DwcProductConsumableByUpstreamRne_REUSE_T30），其他12项通过。非逐helper隔离。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/disconnected-source.txt",
+      "sha256": "f312536598d107c9982374c94c63eb8abf4d15cba5e87bc6849180d085aa65f8"
+    }
+  },
+  "oracle": {
+    "command": "D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30\\runtime-t30.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30\\normal-report-t30.json",
+    "exitCode": 0,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/runtime-t30.xml",
+      "sha256": "d10c65116d27fb197b6f80ff39824f950e1d778f8f81d72dda1544905faf3a22"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/runtime-t30.log",
+      "sha256": "18f9bb22e885533971a3b3c5d0917baff913106a87e0a85263e9dd44838bc6a9"
+    }
+  },
+  "upstreamComparison": {
+    "command": "D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30\\runtime-t30.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30\\normal-report-t30.json",
+    "exitCode": 0,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/runtime-t30.xml",
+      "sha256": "d10c65116d27fb197b6f80ff39824f950e1d778f8f81d72dda1544905faf3a22"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/runtime-t30.log",
+      "sha256": "18f9bb22e885533971a3b3c5d0917baff913106a87e0a85263e9dd44838bc6a9"
+    }
+  },
+  "scope": "同次正常执行含具体独立oracle（非零offset位姿/bounds/Device同一、固定段多重集与同段角速度、RNE静力/惯量/切向全分量手算）及上游RNE/设备读回对照；聚合断开非逐函数隔离实验。GAP-RNE-FRAME（权威轴≠z质心表达系）已按所有者2026-10-25裁决登记，不外推上游套件全通过。见suitability.md与testCases。",
+  "testCases": {
+    "oracle": [
+      "DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1",
+      "DwcFixedSegmentCompositeRigidBody_REUSE_T30",
+      "DwcProductConsumableByUpstreamRne_REUSE_T30",
+      "CompiledPathBodiesAndExplicitValues_RT_T08",
+      "FrictionCarriedViaMaterialDataMap_R2"
+    ],
+    "upstreamComparison": [
+      "DwcProductConsumableByUpstreamRne_REUSE_T30",
+      "DeviceConsistencyJointsCrossCheck_RT_T08",
+      "DestructionOrderDwcBeforeWorkCell_RT_AD_3"
+    ]
+  }
+}

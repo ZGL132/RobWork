@@ -1,0 +1,50 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp
+sdurws::ird::project::QueryPortImpl::branchHistory
+347: std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
+348:                                                        std::uint32_t maxCount) const
+349: {
+350:     requireOpen();
+351: 
+352:     // 第一步（一致性窗口内）：自权威元数据取该分支 tip（§5.2 表前置
+353:     // "分支存在于权威元数据"；INV-M3——tip 一律取自 HEAD 引用版本，
+354:     // 禁止经历史修订的元数据重建）。分支不存在＝调用方违约 → fail-fast
+355:     // （实现口径 3：封闭集无对应稳定码，不私扩）。
+356:     core::RevisionId tip{};
+357:     {
+358:         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+359:         const auto found = revindex::RevisionIndex::branchTip(m_host.m_authoritative,
+360:                                                               branch);
+361:         if (!found.has_value()) {
+362:             throw std::invalid_argument(
+363:                 "project/query: unknown branch branch=" + branch.toCanonical()
+364:                 + "（§5.2 表：未知分支抛——调用方契约违约）");
+365:         }
+366:         tip = *found;
+367:     }
+368: 
+369:     // 平凡请求：maxCount==0 → 空列表（字面语义"最多 0 条"；实现口径）。
+370:     std::vector<RevisionView> history;
+371:     if (maxCount == 0) {
+372:         return history;
+373:     }
+374: 
+375:     // 第二步（锁外沿链）：自 tip 沿 parent 逐级回溯至首修订或凑满
+376:     // maxCount。已提交修订一经索引注册永在且不可变（PA-2——索引只增
+377:     // 无删除），锁外查索引安全；分支 tip 维度的 parent 语义保证只含
+378:     // 本分支提交（§4.5——其他分支的提交不在本链上）。
+379:     history.reserve(maxCount);
+380:     std::optional<core::RevisionId> current = tip;
+381:     while (current.has_value() && history.size() < maxCount) {
+382:         const auto manifest = m_host.m_index->tryRevision(*current);
+383:         if (!manifest.has_value()) {
+384:             // parent 链悬挂＝装载不完整/存储损坏——数据侧（打开闭包
+385:             // 校验正常不可达，防御性拒绝）。
+386:             throw StoreError(StoreErrorCode::StoreCorrupt,
+387:                              "project/query: branch history dangling parent revision="
+388:                                  + current->toCanonical());
+389:         }
+390:         history.push_back(assembleView(*manifest));
+391:         current = manifest->parentRevisionId;
+392:     }
+393:     return history;
+394: }

@@ -1,0 +1,37 @@
+[
+  {
+    "functionId": "diagnostics.FileLogFileOps.appendLine",
+    "requirements": [
+      "NFR-REL-05"
+    ],
+    "designRefs": [
+      "units/diagnostics.md#7",
+      "units/diagnostics.md#9.6",
+      "tasks/foundation/DIAG-T07.json"
+    ],
+    "status": "pending",
+    "decision": "pending",
+    "passed": true
+  },
+  {
+    "functionId": "diagnostics.LoggingPipeline.log",
+    "requirements": [
+      "NFR-REL-05"
+    ],
+    "designRefs": [
+      "units/diagnostics.md#7",
+      "units/diagnostics.md#9.6",
+      "tasks/foundation/DIAG-T07.json"
+    ],
+    "status": "pending",
+    "decision": "pending",
+    "passed": true
+  },
+  {
+    "functionId": "execution.WorkerSupervisor.spawnNewWorker",
+    "permissionRef": "ARCH:3.6.4",
+    "status": "pending",
+    "decision": "pending",
+    "passed": true
+  }
+]

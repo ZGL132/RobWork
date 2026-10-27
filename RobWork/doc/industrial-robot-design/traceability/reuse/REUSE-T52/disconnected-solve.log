@@ -1,0 +1,39 @@
+Note: Google Test filter = DynRnea.StaticGravityTwoLinkAnalytic
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DynRnea
+[ RUN      ] DynRnea.StaticGravityTwoLinkAnalytic
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 10.300500000000001, which exceeds tol, where
+actual evaluates to 0,
+expected evaluates to -10.300500000000001, and
+tol evaluates to 1.0300500000000002e-08.
+鍏宠妭 1 闈欐€侀噸鍔涚煩锛堝疄寰?0锛屾湡鏈?-10.300500000000001锛?
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 1.4715, which exceeds tol, where
+actual evaluates to 0,
+expected evaluates to -1.4715, and
+tol evaluates to 1.4715000000000001e-09.
+鍏宠妭 2 闈欐€侀噸鍔涚煩锛堝疄寰?0锛屾湡鏈?-1.4715锛?
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 10.300500000000001, which exceeds tol, where
+actual evaluates to 0,
+expected evaluates to -10.300500000000001, and
+tol evaluates to 1.0300500000000002e-08.
+鍏宠妭 1 闈欐€佹€诲姏鐭╋紙瀹炲緱 0锛屾湡鏈?-10.300500000000001锛?
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 1.4715, which exceeds tol, where
+actual evaluates to 0,
+expected evaluates to -1.4715, and
+tol evaluates to 1.4715000000000001e-09.
+鍏宠妭 2 闈欐€佹€诲姏鐭╋紙瀹炲緱 0锛屾湡鏈?-1.4715锛?
+
+[  FAILED  ] DynRnea.StaticGravityTwoLinkAnalytic (1 ms)
+[----------] 1 test from DynRnea (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DynRnea.StaticGravityTwoLinkAnalytic
+
+ 1 FAILED TEST

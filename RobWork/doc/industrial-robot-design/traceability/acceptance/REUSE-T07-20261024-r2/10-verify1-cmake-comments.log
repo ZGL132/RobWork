@@ -1,0 +1,10 @@
+== r2 rerun verify#1 PS7 (script blob SAME at all three points; target reuse-contract.ps1 unchanged since 5fb4ebd32) ==
+real-modeling-cmake: PASS
+cmake-line-comment: PASS
+cmake-inline-comment: PASS
+cpp-line-comment: PASS
+cpp-model-include-still-rejected: PASS
+cpp-state-write-still-rejected: PASS
+cmake-uncommented-type-still-rejected: PASS
+cpp-preprocessor-not-a-comment: PASS
+exit=0

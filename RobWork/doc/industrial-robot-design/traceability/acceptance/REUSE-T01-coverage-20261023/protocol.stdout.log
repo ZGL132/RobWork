@@ -1,0 +1,34 @@
+28:void putU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+35:void putU64(std::vector<std::uint8_t>& out, std::uint64_t v)
+47:std::uint32_t getU32(const std::uint8_t* p)
+56:std::uint64_t getU64(const std::uint8_t* p)
+67:    putU32(out, static_cast<std::uint32_t>(s.size()));  // 长度前缀 u32——文本自定界
+77:    const std::uint32_t len = getU32(p);
+91:    putU32(out, static_cast<std::uint32_t>(bytes.size()));
+101:    const std::uint32_t len = getU32(p);
+227:    putU64(out, frame.seq);                                         // seq u64
+228:    putU32(out, static_cast<std::uint32_t>(frame.payload.size()));  // payloadLen u32——自定界
+236:FrameAssembler::Status FrameAssembler::feed(const std::uint8_t* data, std::size_t size,
+266:        const std::uint32_t payloadLen = getU32(base + 19);
+290:        frame.seq = getU64(base + 11);
+319:std::vector<ChannelFrame> FrameSequencer::accept(ChannelFrame&& frame, Outcome* outcome)
+432:bool fragmentMessage(ChannelMsgType type, const core::TaskIdentity& identity,
+459:        putU64(frame.payload, static_cast<std::uint64_t>(message.size()));
+460:        putU32(frame.payload, i);
+461:        putU32(frame.payload, static_cast<std::uint32_t>(fragCount));
+470:std::vector<ChannelFrame> MessageReassembler::accept(ChannelFrame&& frame, bool* broken)
+493:    const std::uint64_t totalLen = getU64(p);
+494:    const std::uint32_t index = getU32(p + 8);
+495:    const std::uint32_t fragCount = getU32(p + 12);
+603:    putU32(out, p.heartbeatIntervalMs);
+617:    p.heartbeatIntervalMs = getU32(cursor + 1);
+668:    putU32(out, static_cast<std::uint32_t>(report.percent));  // percent [0,100]——make 已保证非负
+670:    putU64(out, report.batchesDone);
+671:    putU64(out, report.batchesTotal);
+682:    const std::uint32_t percent = getU32(cursor);
+688:    const std::uint64_t done = getU64(cursor);
+689:    const std::uint64_t total = getU64(cursor + 8);
+708:    putU64(out, p.batchIndex);
+721:    p.batchIndex = getU64(cursor);
+734:    putU64(out, p.sequence);
+748:    p.sequence = getU64(cursor);

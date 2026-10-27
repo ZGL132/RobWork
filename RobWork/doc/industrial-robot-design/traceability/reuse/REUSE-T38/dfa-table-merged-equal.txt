@@ -1,0 +1,13 @@
+IoUtf8.hpp 合流等价证据（REUSE-T38/WP-15批次B）
+提取自 git 工作树改前 Json.cpp 与 Csv.cpp（CRLF 归一后比对）。
+
+[1] kUtf8Dfa 表体：Json.cpp 与 Csv.cpp 逐字节一致 = true
+    归一化字符数 = 1283
+    Json.cpp 表体 sha256(治理口径) = a22fbf808eb728b14c6ca174dbf194703208f2a7f45a47d41a8ab23082d326cb
+    Csv.cpp  表体 sha256(治理口径) = a22fbf808eb728b14c6ca174dbf194703208f2a7f45a47d41a8ab23082d326cb
+
+[2] mapSystemError 函数体：Json.cpp 与 Csv.cpp 逐行一致 = true
+    函数体 sha256(治理口径) = 758fb9560879bcf8931210aefbceb2e71ee057be3d4af33cf1b47285ae30f04d（两份相同）
+
+合流后单实现位于 src/IoUtf8.hpp（inline kUtf8Dfa/utf8Step/strictUtf8Check/mapSystemError）；
+本文件由 t38edit.js 在删除两副本前提取，作为合流前后逐字节等价 oracle 的输入面。

@@ -1,0 +1,362 @@
+[
+  {
+    "kind": "source",
+    "id": "core.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "core.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.appendU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.appendU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.appendU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.appendU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.appendLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.appendLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.appendLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.appendLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.Reader.readU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.Reader.readU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.Reader.readU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.Reader.readU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.Reader.readU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.Reader.readU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.Reader.readLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.Reader.readLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Snapshot.Reader.readLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Snapshot.Reader.readLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.appendU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.appendU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.appendU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.appendU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.appendLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.appendLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.appendLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.appendLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.Reader.readU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.Reader.readU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.Reader.readU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.Reader.readU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.Reader.readU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.Reader.readU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.Reader.readLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.Reader.readLengthString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Slice.Reader.readLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Slice.Reader.readLengthBytes",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Evidence.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Evidence.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Evidence.appendLenStr",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Evidence.appendLenStr",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Evaluator.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Evaluator.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.Evaluator.appendLenStr",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.Evaluator.appendLenStr",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "TEST-HARNESS",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "TEST-HARNESS",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "TEST-HARNESS",
+    "path": "RobWork/RobWork/gtest/TestEnvironment.cpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "TEST-HARNESS",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "matches": true
+  }
+]

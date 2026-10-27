@@ -1,0 +1,6 @@
+Rows: old 41 unchanged; new 26 pending; 26 source regions and 390 full-file/evidence bindings match.
+Fresh actual execution: original25=25p/0f/0skip; new2=1p/1f/0skip; JSON/XML 27 identities and outcomes agree.
+Catalog top fields: schemaVersion,baselineCommit,units,capabilities
+Commit file count: 20
+Frozen clone HEAD: daf0dcd175fb76c956154fe0213f2d791dad8575
+Frozen clone status: 

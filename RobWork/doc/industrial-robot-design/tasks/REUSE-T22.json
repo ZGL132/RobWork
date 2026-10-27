@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T22",
+  "unit": "trajectory",
+  "masterWp": "WP-A",
+  "title": "登记PTP线性插值极值适配缺口",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "TRJ-01"
+  ],
+  "designRefs": [
+    "units/trajectory.md#7.3",
+    "reuse/extensions/GAP-TRJ-LINEAR-01.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T22.json"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T22.json",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-TRJ-LINEAR-01.md",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T22.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T22-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T22-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "引用仍有效的历史标量反例并核当前源码；不冒称真实Q/生产已验证",
+    "明确候选扩展点、影响及批准前禁止项；只交文档，不改变生产/功能状态"
+  ],
+  "note": "WP-11定向核查；起点19f394a593f67d19e6a6c6a0bc754c165581ad06。按所有者提速要求复用既有审计，不修改治理总计划，不批准新核心或框架改动。生产及独立算法验收NOT RUN。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T22-20261025-r1.json（scope/commit-lint/validate-docs 3件原件在其同名目录），verdict=pass（10项检查failed=0/notRun=0；生产及独立算法验收NOT RUN系登记型交付口径，如实保留不冒称），绑定送验 SHA=4585a59b97838bc97a111836296fc6936689781c（base=19f394a593f67d19e6a6c6a0bc754c165581ad06，送验范围单提交纯文档包）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（changed=3恰为allowedFiles三文件全在允许面）、forbiddenFiles三glob与closeout/门禁脚本目录零差异（零产品码、「只交文档」由diff事实成立）、契约两条acceptance逐项亲核（历史标量反例原件ToolSuitabilityTest.cpp:51-60＋probe-r7记录3/3有效、当前Ptp.cpp凸组合与上游LinearInterpolator差分式比对一致、GAP候选扩展点与批准前禁止项逐项在案、不冒称真实Q）、validate-docs三合一exit 0、commit-lint PASS且提交正文与diff逐项一致、红线抽查（H1—H6/CLOSURE冻结/L2零Qt/NOT RUN未混列）全过；limitations：登记型交付零产品改动，GAP-TRJ-LINEAR-01状态仍待决、WP-11未关闭，候选适用性验证（真实Q/消费者/性能）与SA-02 patch批准均在后续所有者裁决流程内，validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399）。据此登记 done。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T22.json"
+  },
+  "outputs": [
+    "GAP-TRJ-LINEAR-01具体提案；生产不变、待适用性验证与所需批准"
+  ],
+  "interUnit": false
+}

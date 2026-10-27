@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T23",
+  "unit": "execution",
+  "masterWp": "WP-A",
+  "title": "修正拒绝Completed终结后的登记半写",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "TASK-03",
+    "CON-02"
+  ],
+  "designRefs": [
+    "units/execution.md#9.1",
+    "units/execution.md#10.8",
+    "traceability/reuse/REUSE-T01/execution-admission-audit.md"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T23.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T23.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T23.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T23-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T23-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "原Completed异常拒绝后登记两状态字段不变，后续合法取消成功；原25项登记接纳及直接缓存消费者回归",
+    "保留RunRegistry/状态词表/一次写入及调度线程owner；不新建状态机、registry、核心或公共接口",
+    "完整变动文件实审及真实凭证，沿用B22上游不适用证据；只跑影响范围，独验另交，F-964仍open"
+  ],
+  "note": "WP-18/F-964精确子包；主线起点4585a59b97838bc97a111836296fc6936689781c。仅移动原enum/optional写入顺序，复用RunRegistryAdmission原夹具和既有公共工厂/ProjectStore，不新增上游算法或依赖。实现者不自签独验，不关闭F-964；不动Compare、T13及依赖IK/RNE，不操作远程。 自查红例1项预期FAIL；修复后登记/接纳25项与直接缓存消费者1项PASS，0跳过；架构11类PASS。公开/依赖/数值不变，无额外冒烟或性能微基准；原件traceability/reuse/REUSE-T23/README.md，仍待独验。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T23-20261025-r1.json（8件复跑原件在其同名目录），verdict=pass（12项检查failed=0/notRun=0；红例重放、性能微基准、独立冒烟/对端全套按增量口径如实登记NOT RUN并核实理由成立），绑定送验 SHA=d1e416b00433bbd3e62903e583b2ee2b103e0396（base=4585a59b97838bc97a111836296fc6936689781c，送验范围单提交）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（21路径全在允许面）、受影响构建exit 0、RunRegistryAdmissionTest全25项＋直接缓存消费者1项真实重跑26/26 PASS（04-acc-green.xml decisive=true）、红例原件red.xml sha256=2df95d23…按提交blob逐字节再现且4处失败与旧半写语义吻合、ird_gates 11类零命中、validate-docs三合一exit 0、commit-lint PASS、冻结面（closures.json/RpyMath.hpp/门禁目录/上游与vcpkg）零差异、凭证inputs逐项sha256吻合、代码实审仅写入次序移动无新增核心/接口/依赖、F-964仍open未关闭；记账瑕疵如实披露：red-report.json记录哈希在四种规范下均不能由提交blob再现（验收判定为登记后重跑再生durationMs易变内容所致，载体信息与逐字节再现的red.xml/red.log互证，不构成验收项失败，留待实施侧下次批次修正）；limitations：本验收不关闭F-964、不构成其终验，validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399）。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T23.json"
+  },
+  "outputs": [
+    "RunRegistry有界修正与原测试补强",
+    "原始红绿/消费者验证、逐功能及逐文件凭证；待独验"
+  ]
+}

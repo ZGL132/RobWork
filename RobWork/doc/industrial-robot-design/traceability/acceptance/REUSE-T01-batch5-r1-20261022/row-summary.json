@@ -1,0 +1,561 @@
+[
+  {
+    "functionId": "drivetrain.ByteWriter.putU32",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "putU32",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putU32",
+        "startLine": 54,
+        "endLine": 59,
+        "sha256": "b6ddf93d2771fff45a26decd3d90982feee460c861da1b1bb9fdb864927d2df6"
+      }
+    ]
+  },
+  {
+    "functionId": "drivetrain.ByteWriter.putU64",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "putU64",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putU64",
+        "startLine": 61,
+        "endLine": 66,
+        "sha256": "7fce84f6fac6e47c5d6ec0b084b4138d50466d74e1a3d3d7f336341f36f17e73"
+      }
+    ]
+  },
+  {
+    "functionId": "drivetrain.ByteWriter.putF64",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "putF64",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putF64",
+        "startLine": 69,
+        "endLine": 75,
+        "sha256": "210b70d64a446186115665df038cba469915851bdbddbfaf1bf1d2932936b89b"
+      }
+    ]
+  },
+  {
+    "functionId": "drivetrain.ByteWriter.putString",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "putString",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putString",
+        "startLine": 82,
+        "endLine": 86,
+        "sha256": "58a3fec6c431c78934820896d21cb638b030f379ec585ec335bccbdd8fcea76f"
+      }
+    ]
+  },
+  {
+    "functionId": "drivetrain.ByteReader.getU32",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "getU32",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getU32",
+        "startLine": 129,
+        "endLine": 137,
+        "sha256": "cac712d2e0dbbf75f98b05945fc433e83334d5d7c3c2f84f5de3147c70302500"
+      }
+    ]
+  },
+  {
+    "functionId": "drivetrain.ByteReader.getU64",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "getU64",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getU64",
+        "startLine": 139,
+        "endLine": 147,
+        "sha256": "24888850179a2c6605393c8620c497f5ee40efdea8383ee0ee7d01d521597fec"
+      }
+    ]
+  },
+  {
+    "functionId": "drivetrain.ByteReader.getF64",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "getF64",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getF64",
+        "startLine": 149,
+        "endLine": 155,
+        "sha256": "3ce0771777ec53f3b02dddaeb49fb4050a727845985648b35becb0279815812e"
+      }
+    ]
+  },
+  {
+    "functionId": "drivetrain.ByteReader.getString",
+    "ownerUnit": "drivetrain",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+        "symbol": "getString",
+        "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getString",
+        "startLine": 179,
+        "endLine": 196,
+        "sha256": "df670d1651baa1736253b6962ab865602b87da90fc27a7059ab6d5c4776f53b7"
+      }
+    ]
+  },
+  {
+    "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+    "ownerUnit": "dynamics",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Replay.cpp",
+        "symbol": "DynamicsReplayProjector::sampleAt",
+        "qualifiedSymbol": "sdurws::ird::dynamics::DynamicsReplayProjector::sampleAt",
+        "startLine": 230,
+        "endLine": 348,
+        "sha256": "a3ba0624f0a6eb96bcedb93d54803f9c9b13023ef740ea4a5a59194e8cbeff46"
+      }
+    ]
+  },
+  {
+    "functionId": "kinematics.rodrigues",
+    "ownerUnit": "kinematics",
+    "requirementIds": null,
+    "designRefs": [
+      "reuse/audit-contract.md §6"
+    ],
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "symbol": "rodrigues",
+        "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::rodrigues",
+        "startLine": 380,
+        "endLine": 397,
+        "sha256": "25d97002fedf815cda19b6b48b34d359c2df72d1c057a51087a18a753bc5cf01"
+      }
+    ]
+  },
+  {
+    "functionId": "kinematics.mul4",
+    "ownerUnit": "kinematics",
+    "requirementIds": null,
+    "designRefs": [
+      "reuse/audit-contract.md §6"
+    ],
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "symbol": "mul4",
+        "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::mul4",
+        "startLine": 408,
+        "endLine": 419,
+        "sha256": "6af2a1ed244ee7c5da6d38a9346b9adacd371de29dc969a82f52c70d65df40f4"
+      }
+    ]
+  },
+  {
+    "functionId": "kinematics.referenceFk",
+    "ownerUnit": "kinematics",
+    "requirementIds": null,
+    "designRefs": [
+      "reuse/audit-contract.md §6"
+    ],
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "symbol": "referenceFk",
+        "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::referenceFk",
+        "startLine": 429,
+        "endLine": 518,
+        "sha256": "ce2ff5946b2f0b0d1d66358d86b47c09f7d9a7e8b6182c9e3c64228a423d62d7"
+      }
+    ]
+  },
+  {
+    "functionId": "policy.ByteWriter.u32",
+    "ownerUnit": "policy",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::u32",
+        "startLine": 88,
+        "endLine": 94,
+        "sha256": "aa19d22cd4832abb1f826825465faf7496824a660b9345d0310ba3bf29d2dfa9"
+      }
+    ]
+  },
+  {
+    "functionId": "policy.ByteWriter.f64",
+    "ownerUnit": "policy",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::f64",
+        "startLine": 116,
+        "endLine": 120,
+        "sha256": "f49b45ed80f0969754a8f91b3f3c361866822a45ede0a15990170e6f11972709"
+      }
+    ]
+  },
+  {
+    "functionId": "policy.ByteWriter.lengthPrefixedText",
+    "ownerUnit": "policy",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+        "symbol": "lengthPrefixedText",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::lengthPrefixedText",
+        "startLine": 103,
+        "endLine": 113,
+        "sha256": "ebb0c04d3d468bc0faaa4d4eabf5986377498414c3f90026a187f7d45c43c0da"
+      }
+    ]
+  },
+  {
+    "functionId": "policy.ByteReader.u32",
+    "ownerUnit": "policy",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::u32",
+        "startLine": 168,
+        "endLine": 179,
+        "sha256": "319e45c324a42b9d27f4e92dc57d0c3d9b3b5e1d7d98607ab0b9a03ad5d22c37"
+      }
+    ]
+  },
+  {
+    "functionId": "policy.ByteReader.f64",
+    "ownerUnit": "policy",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::f64",
+        "startLine": 212,
+        "endLine": 220,
+        "sha256": "f2243cbcce8810c2eff6aa9eadc5015b026cc4fb584d95af572302779205cbbc"
+      }
+    ]
+  },
+  {
+    "functionId": "policy.ByteReader.text",
+    "ownerUnit": "policy",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+        "symbol": "text",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::text",
+        "startLine": 200,
+        "endLine": 209,
+        "sha256": "f806ff1fdc3ad6964894f9c042ae6646a413c1982263d71bcb3e812ff8dd37fb"
+      }
+    ]
+  },
+  {
+    "functionId": "selection.ByteWriter.u32",
+    "ownerUnit": "selection",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::u32",
+        "startLine": 123,
+        "endLine": 129,
+        "sha256": "6cc8be86c7a4b16220712b45dcbd6ffb29608a1995b9170029504a11c5decaea"
+      }
+    ]
+  },
+  {
+    "functionId": "selection.ByteWriter.f64",
+    "ownerUnit": "selection",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::f64",
+        "startLine": 134,
+        "endLine": 143,
+        "sha256": "f69f6a234a579d952bfc3cd7c327660a74329c7e511aed5d84ea76053f898364"
+      }
+    ]
+  },
+  {
+    "functionId": "selection.ByteWriter.str",
+    "ownerUnit": "selection",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "str",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::str",
+        "startLine": 145,
+        "endLine": 149,
+        "sha256": "c66ce5d6be36be13df5211081dbf6a2ccb70b10382c95b8036b7da8527d0be10"
+      }
+    ]
+  },
+  {
+    "functionId": "selection.ByteReader.u32",
+    "ownerUnit": "selection",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32",
+        "startLine": 218,
+        "endLine": 227,
+        "sha256": "bc3aa2e37a34f85615b76c1677eca26f88b84a516735c6cb361fa01cc857920f"
+      }
+    ]
+  },
+  {
+    "functionId": "selection.ByteReader.f64",
+    "ownerUnit": "selection",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::f64",
+        "startLine": 235,
+        "endLine": 249,
+        "sha256": "5c1998a894bfdb665730d439b5f3a4e7ffceb0214e49b43f58ab210e1b063eed"
+      }
+    ]
+  },
+  {
+    "functionId": "selection.ByteReader.str",
+    "ownerUnit": "selection",
+    "requirementIds": null,
+    "designRefs": null,
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "str",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::str",
+        "startLine": 250,
+        "endLine": 265,
+        "sha256": "ce8b1cb7eb2319b8e8269733df26d5b4bf89fdaa35a73ad265ed4e24a7193a39"
+      }
+    ]
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "ownerUnit": "ui",
+    "requirementIds": null,
+    "designRefs": [
+      "ARCHITECTURE.md §3.6.2 HOST-RENDER",
+      "tasks/foundation/UI-T52.json"
+    ],
+    "productTargets": null,
+    "decision": "pending",
+    "status": "pending",
+    "capabilityIds": null,
+    "upstreamCandidates": null,
+    "reason": null,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+        "symbol": "draw",
+        "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SampleGridRender::draw",
+        "startLine": 268,
+        "endLine": 344,
+        "sha256": "05cf3428068c11a611fdde2d17c67ff256b686d523d365b466375a616d0689ad"
+      }
+    ]
+  }
+]

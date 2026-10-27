@@ -1,0 +1,36 @@
+# GOV-T22 20261024 r1 scope review (39b57abd..0d0d3ca3e)
+
+## 1. verify-task-scope literal run (see 02-scope.log): FAIL 318 out-of-scope
+## 2. composition of 318 out-of-scope paths (all under traceability/acceptance/):
+    271 GOV-T22-20261022
+     20 GOV-T22-20261022-r2
+      1 GOV-T22-20261022-r2.json
+     24 GOV-T22-20261022-r3
+      1 GOV-T22-20261022-r3.json
+      1 GOV-T22-20261022.json
+
+## 3. non-acceptance files (12) vs allowedFiles literal set:
+.github/workflows/upstream-reuse-governance.yml
+RobWork/doc/industrial-robot-design/reuse/audit-contract.md
+RobWork/doc/industrial-robot-design/reuse/catalog.json
+RobWork/doc/industrial-robot-design/reuse/changes/GOV-T22.json
+RobWork/doc/industrial-robot-design/reuse/migration.md
+RobWork/doc/industrial-robot-design/reuse/permissions.json
+RobWork/doc/industrial-robot-design/reuse/policy.md
+RobWork/doc/industrial-robot-design/tasks/GOV-T22.json
+RobWork/scripts/industrialrobot/ci/upstream-reuse-governance.github-workflow.yml
+RobWork/scripts/industrialrobot/reuse-contract.ps1
+RobWork/scripts/industrialrobot/test-reuse-governance.ps1
+RobWork/scripts/industrialrobot/validate-reuse.ps1
+
+## 4. base is parent of implementation commit 0d018a0ba:
+39b57abd5246308968b192dab5d2112a05fd202d
+## 5. forbiddenFiles hit check (product cpp/hpp, RobWork/src, RobWorkSim, vcpkg):
+0
+0 hits
+## 6. r3-accepted script digests identical at e6f06e5b9 vs 0d0d3ca3e (see record scriptDigests):
+validate-reuse.ps1 9b413b0ad87e940f0860c7cf7b32710fa9198e1a
+reuse-contract.ps1 e6042385faea9a5bf9df6251abb3d98fd1355a6c
+test-reuse-governance.ps1 da4b9ed1813785ffc87508ef29c6f769bd8b12b1
+## 7. manifest +1 line:
++{"schemaVersion":"ird-reuse-change/1","taskId":"GOV-T22","taskFile":"RobWork/doc/industrial-robot-design/tasks/GOV-T22.json","files":[]}

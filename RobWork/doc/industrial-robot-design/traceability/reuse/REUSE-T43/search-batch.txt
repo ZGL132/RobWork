@@ -1,0 +1,34 @@
+== SB: 上游 BINArchive 容器语义检索（字节原语族候选面）
+RobWork/RobWork/src/rw/common/BINArchive.cpp:39:void BINArchive::doWrite (bool val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:47:void BINArchive::doWriteEnterScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:52:void BINArchive::doWriteLeaveScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:61:void BINArchive::doReadEnterScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:66:void BINArchive::doReadLeaveScope (const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:136:void BINArchive::doRead (std::vector< bool >& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:149:void BINArchive::doRead (bool& val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:158:void BINArchive::doWrite (const std::string& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:169:void BINArchive::doWrite (const std::vector< std::string >& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:186:void BINArchive::doRead (std::string& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.cpp:196:void BINArchive::doRead (std::vector< std::string >& val, const std::string&)
+RobWork/RobWork/src/rw/common/BINArchive.hpp:36:    class BINArchive : public InputArchive
+SB exit=0
+
+== SC: 上游 LinearInterpolator 段插值器语义检索
+51:    template< class T > class LinearInterpolator : public rw::trajectory::Interpolator< T >
+140:    class LinearInterpolator< rw::math::Rotation3D< T > >
+247:    class LinearInterpolator< rw::math::Transform3D< T > >
+SC exit=0
+
+== SE: 上游对称特征值入口（MATH-EIGEN 面）
+RobWork/RobWork/src/rw/math/LinearAlgebra.hpp:227:        eigenDecompositionSymmetric (const Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic >& Am1)
+RobWork/RobWork/src/rw/math/LinearAlgebra.hpp:229:            Eigen::SelfAdjointEigenSolver< Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic > >
+RobWork/RobWork/src/rw/math/LinearAlgebra.hpp:261:    LinearAlgebra::eigenDecompositionSymmetric< double > (const Eigen::MatrixXd& Am1);
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:84:LinearAlgebra::eigenDecompositionSymmetric< double > (const Eigen::MatrixXd& Am1)
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:86:    Eigen::SelfAdjointEigenSolver< Eigen::MatrixXd > eigenSolver;
+SE exit=0
+
+== SF: 上游回填/合成/查找辅助同义物检索（产品业务族）
+SF exit=1
+
+== SG: 上游 canonical 字节小端定宽写原语同义物检索
+SG exit=0

@@ -1,0 +1,11 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:50:    double positiveJ = 0.0;     ///< E⁺ 累加，J（∫max(P,0)dt）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:51:    double negativeJ = 0.0;     ///< E⁻ 累加，J（∫min(P,0)dt——恒 ≤0）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:63:PowerEnergySummary PowerEnergyCalculator::compute(const DynamicsSeries& series) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:108:            const double dt = r.t - a.lastT;  // s（相邻有效行时差——正常采样区间）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:109:            a.positiveJ += 0.5 * (std::max(a.prevP, 0.0) + std::max(p, 0.0)) * dt;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:110:            a.negativeJ += 0.5 * (std::min(a.prevP, 0.0) + std::min(p, 0.0)) * dt;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:127:ProbeVerdict probeReachability(double t,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:214:// computeApproximateEnvelope——主流程（头注算法四步的落值）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:217:Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:358:                probeReachability(t, directions[j], view, tcp, query,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:419:                probeReachability(mid, directions[j], view, tcp, query,

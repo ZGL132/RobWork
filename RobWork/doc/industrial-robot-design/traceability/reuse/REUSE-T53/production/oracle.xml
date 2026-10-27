@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="0" disabled="0" errors="0" time="0.318" timestamp="2026-10-27T08:06:43.063" name="AllTests">
+  <testsuite name="DynForward" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.318" timestamp="2026-10-27T08:06:43.063">
+    <testcase name="AnalyticStraightConfigurationPassed_DYN05" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp" line="282" status="run" result="completed" time="0.065" timestamp="2026-10-27T08:06:43.063" classname="DynForward" />
+    <testcase name="DeterministicRepeat_NFR_COR_02" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp" line="547" status="run" result="completed" time="0.131" timestamp="2026-10-27T08:06:43.128" classname="DynForward" />
+    <testcase name="PayloadEventSameSourceConsistency_DYN05" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp" line="582" status="run" result="completed" time="0.12" timestamp="2026-10-27T08:06:43.260" classname="DynForward" />
+  </testsuite>
+</testsuites>

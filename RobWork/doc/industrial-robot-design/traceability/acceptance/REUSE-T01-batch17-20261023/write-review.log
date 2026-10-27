@@ -1,0 +1,20 @@
+{
+  "result": "PASS",
+  "scope": "仅B17局部审计登记/证据和原3项探测重现；产品与全T01不因此通过",
+  "definitions": 39,
+  "probeCounts": {
+    "total": 3,
+    "notRun": 0,
+    "passed": 2,
+    "skipped": 0,
+    "failed": 1
+  },
+  "gateExitCodes": {
+    "task": 0,
+    "reuse": 0,
+    "docs": 0
+  },
+  "repositoryClean": true,
+  "fullT01Pass": false,
+  "T02Admission": false
+}

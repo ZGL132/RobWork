@@ -1,0 +1,35 @@
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.hpp:18:#ifndef RWLIBS_SOFTBODY_TRAPMETHOD_HPP
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.hpp:19:#define RWLIBS_SOFTBODY_TRAPMETHOD_HPP
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.hpp:25:     * @brief Implementation of the trapezoidal rule for integration
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.hpp:27:    class TrapMethod
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.hpp:31:         * @brief routine for calculating a definite integral using the trapezoidal rule
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.hpp:38:        template< class T > static double inline trapezMethod (T& func, const int M, const double h)
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.hpp:53:#endif    // TRAPMETHOD_HPP
+RobWork/RobWork/src/rwlibs/softbody\numerics\TrapMethod.cpp:18:#include "TrapMethod.hpp"
+RobWork/RobWork/src/rwlibs/softbody\CMakeLists.txt:1:set(SUBSYS_NAME sdurw_softbody)
+RobWork/RobWork/src/rwlibs/softbody\CMakeLists.txt:12:        ./numerics/TrapMethod.cpp
+RobWork/RobWork/src/rwlibs/softbody\CMakeLists.txt:27:        ./numerics/TrapMethod.hpp
+RobWork/RobWork/src/rwlibs/softbody\beam\ModRussel_NLP.cpp:22:#include "rwlibs/softbody/numerics/TrapMethod.hpp"
+RobWork/RobWork/src/rwlibs/softbody\beam\ModRussel_NLP.cpp:138:    obj_value = TrapMethod::trapezMethod< RusselIntegrand > (intgr, M, h);
+RobWork/RobWork/src/rwlibs/softbody\beam\ModRussel_NLP.cpp:159:    obj_value = TrapMethod::trapezMethod< RusselIntegrandEonly > (intgr, M, h);
+RobWork/RobWorkSim/src/rwsim/dynamics\Body.hpp:350:        calcEnergy (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/dynamics\BeamBody.hpp:36:        //! @copydoc Body::calcEnergy
+RobWork/RobWorkSim/src/rwsim/dynamics\BeamBody.hpp:38:        calcEnergy (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/dynamics\FixedBody.hpp:65:        //! @copydoc Body::calcEnergy
+RobWork/RobWorkSim/src/rwsim/dynamics\FixedBody.hpp:67:        calcEnergy (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/dynamics\Link.cpp:48:double Link::calcEnergy (const State& state, const Vector3D<>& gravity,
+RobWork/RobWorkSim/src/rwsim/dynamics\Link.cpp:51:    return _ddev->calcEnergy (this, state);
+RobWork/RobWorkSim/src/rwsim/dynamics\KinematicDevice.cpp:78:    virtual double calcEnergy (const State& state, const Vector3D<>& gravity = Vector3D<>::zero (),
+RobWork/RobWorkSim/src/rwsim/dynamics\Link.hpp:75:        //! @copydoc Body::calcEnergy
+RobWork/RobWorkSim/src/rwsim/dynamics\Link.hpp:77:        calcEnergy (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/dynamics\KinematicBody.hpp:75:         * @copydoc Body::calcEnergy
+RobWork/RobWorkSim/src/rwsim/dynamics\KinematicBody.hpp:78:        calcEnergy (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/dynamics\RigidBody.cpp:99:double RigidBody::calcEnergy (const State& state, const Vector3D<>& gravity,
+RobWork/RobWorkSim/src/rwsim/dynamics\RigidBody.hpp:71:         * @copydoc dynamics::Body::calcEnergy
+RobWork/RobWorkSim/src/rwsim/dynamics\RigidBody.hpp:77:        calcEnergy (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/dynamics\RigidDevice.cpp:80:    virtual double calcEnergy (const State& state, const Vector3D<>& gravity = Vector3D<>::zero (),
+RobWork/RobWork/src/rwlibs/softbody\beam\BeamGeometryCuboid.cpp:20:#include "rwlibs/softbody/numerics/TrapMethod.hpp"
+RobWork/RobWork/src/rwlibs/softbody\beam\BeamGeometryCuboid.cpp:83:    double val = TrapMethod::trapezMethod< B0mfunc > (func, i + 1, h);
+RobWork/RobWorkSim/src/rwsim/dynamics\FixedLink.hpp:83:        double calcEnergy () { return 0; };
+RobWork/RobWorkSim/src/rwsim/dynamics\RigidJoint.hpp:66:        double calcEnergy (const rw::kinematics::State& state) { return 0; };
+RobWork/RobWorkSim/src/rwsim/dynamics\RigidJoint.hpp:286:        // BodyIntegrator *_integrator;

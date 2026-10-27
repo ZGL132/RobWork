@@ -1,0 +1,37 @@
+{
+  "disconnected": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=WorkCellCompilerTest.*:WorkCellGeometryTest.*:WorkCellConstViewTest.* --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\disconnected.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\disconnected-report.json",
+    "exitCode": 1,
+    "seconds": 0.2554725001100451
+  },
+  "normal": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime-report.json",
+    "exitCode": 0,
+    "seconds": 0.6396381999365985
+  },
+  "candidate1": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ:WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-candidate1.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-candidate1-report.json --gtest_repeat=200",
+    "exitCode": 0,
+    "seconds": 3.486072100000456
+  },
+  "candidate2": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ:WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-candidate2.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-candidate2-report.json --gtest_repeat=200",
+    "exitCode": 0,
+    "seconds": 3.706577700097114
+  },
+  "baseline1": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ:WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-baseline1.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-baseline1-report.json --gtest_repeat=200",
+    "exitCode": 0,
+    "seconds": 3.7242560000158846
+  },
+  "baseline2": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ:WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-baseline2.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\perf-baseline2-report.json --gtest_repeat=200",
+    "exitCode": 0,
+    "seconds": 3.274201499996707
+  },
+  "final": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime-report.json",
+    "exitCode": 0,
+    "seconds": 0.5366181000135839
+  }
+}

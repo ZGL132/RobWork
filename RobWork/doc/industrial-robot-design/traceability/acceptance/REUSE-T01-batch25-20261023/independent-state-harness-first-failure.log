@@ -1,0 +1,8 @@
+&: C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\independent-state.ps1:27
+Line |
+  27 |    & $exe -NoProfile -File $validator -RepoRoot $fixture -StateFile $f …
+     |      ~~~~
+     | The term 'C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe
+     | C:\Users\zgl18\AppData\Local\Microsoft\WindowsApps\pwsh.exe' is not recognized as a name of a cmdlet, function,
+     | script file, or executable program. Check the spelling of the name, or if a path was included, verify that the
+     | path is correct and try again.

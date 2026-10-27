@@ -1,0 +1,216 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\TestMainReport.cpp:16: * **不构造 QCoreApplication**——drivetrain T02 测试面（登记表＋红线扫描）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\TestMainReport.cpp:20: * QCoreApplication 构造。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\TestMainReport.cpp:45:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\TestMainReport.cpp:62:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\TestMainReport.cpp:69:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\policy\test\TestMainReport.cpp:12: *     L2 计算单元（红线：零 Qt）——**不构造 QCoreApplication**，纯
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\policy\test\TestMainReport.cpp:23:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\policy\test\TestMainReport.cpp:25:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\policy\test\TestMainReport.cpp:30:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\test\TestMainReport.cpp:13: *     （installTestRecordListener 原文签名——测试 main 自持两种形态之一）、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\test\TestMainReport.cpp:35:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\test\TestMainReport.cpp:37:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\test\TestMainReport.cpp:42:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\TestMainReport.cpp:16: * QCoreApplication**——selection T02 测试面（登记表＋红线扫描）零 Qt
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\TestMainReport.cpp:19: * PluginPanelTest 先例补 QCoreApplication 构造。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\TestMainReport.cpp:27:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\TestMainReport.cpp:29:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\TestMainReport.cpp:36:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\test\TestMainReport.cpp:12: *     L2 计算单元（红线：零 Qt）——**不构造 QCoreApplication**，纯
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\test\TestMainReport.cpp:23:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\test\TestMainReport.cpp:25:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\test\TestMainReport.cpp:30:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\test\TestMainReport.cpp:16: * QCoreApplication**——dynamics T02 测试面（登记表＋红线扫描）零 Qt
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\test\TestMainReport.cpp:19: * modeling PluginPanelTest 先例补 QCoreApplication 构造。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\test\TestMainReport.cpp:27:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\test\TestMainReport.cpp:29:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\test\TestMainReport.cpp:36:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\test\TestMainReport.cpp:16: * **不构造 QCoreApplication**——workflow T02 测试面（红线扫描）零 Qt 消费，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\test\TestMainReport.cpp:21: * 增量先例补 QCoreApplication 构造。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\test\TestMainReport.cpp:29:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\test\TestMainReport.cpp:31:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\test\TestMainReport.cpp:38:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\TestMain.cpp:6: * 设计依据：units/testkit.md §7.3（installTestRecordListener——消费方 main
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\TestMain.cpp:22:char** g_irdTestArgv = nullptr;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\TestMain.cpp:24:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\TestMain.cpp:27:    g_irdTestArgv = argv;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\TestMain.cpp:29:    ::sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\TestMain.cpp:31:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\test\TestMainReport.cpp:18:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\test\TestMainReport.cpp:20:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\test\TestMainReport.cpp:21:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\contract_test\ContractTestMain.cpp:15: * QCoreApplication 构造（workflow T02 同款诚实登记）——drivetrain 零 Qt
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\contract_test\ContractTestMain.cpp:25:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\contract_test\ContractTestMain.cpp:27:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\contract_test\ContractTestMain.cpp:34:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\contract_test\ContractTestMain.cpp:27:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\contract_test\ContractTestMain.cpp:29:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\contract_test\ContractTestMain.cpp:32:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\TestMainReport.cpp:17: * QCoreApplication**——optimization T02 测试面（登记表＋红线扫描）零 Qt
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\TestMainReport.cpp:20: * PluginPanelTest 先例补 QCoreApplication 构造。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\TestMainReport.cpp:28:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\TestMainReport.cpp:30:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\TestMainReport.cpp:37:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\TestMainReport.cpp:11: *     （installTestRecordListener 原文签名——测试 main 自持两种形态之一）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\TestMainReport.cpp:18: * installTestRecordListener（testkit/test/TestMain.cpp 同款先例），链接
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\TestMainReport.cpp:31:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\TestMainReport.cpp:33:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\TestMainReport.cpp:36:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ContractTestMain.cpp:14: * QCoreApplication 构造（selection/workflow T02 同款诚实登记）——本
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ContractTestMain.cpp:25:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ContractTestMain.cpp:27:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ContractTestMain.cpp:34:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:13: * T15 增量（WP-13-T15）：QCoreApplication 构造——插件呈现模型测试消费
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:16: * 模型测试豁免行：QCoreApplication 级不要求窗口系统，testkit §6.7）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:19: * 线程模型：单线程入口（gtest 串行执行——测试目标纪律）；QCoreApplication
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:26:#include <QCoreApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:30:/// 测试入口：构造 QCoreApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:31:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:33:    // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:36:    QCoreApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:37:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\TestMainReport.cpp:44:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\contract_test\ContractTestMain.cpp:14: * QCoreApplication 构造（workflow/drivetrain T02 同款诚实登记）——本
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\contract_test\ContractTestMain.cpp:25:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\contract_test\ContractTestMain.cpp:27:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\contract_test\ContractTestMain.cpp:34:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\contract_test\ContractTestMain.cpp:19:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\contract_test\ContractTestMain.cpp:21:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\contract_test\ContractTestMain.cpp:24:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\ContractTestMain.cpp:19:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\ContractTestMain.cpp:21:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\ContractTestMain.cpp:24:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ContractTestMain.cpp:11: *   - units/testkit.md §7.3（installTestRecordListener 原文签名——测试 main
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ContractTestMain.cpp:15: *     子进程分派必须先于 InitGoogleTest）＋project/test/TestMainReport.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ContractTestMain.cpp:35:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ContractTestMain.cpp:37:    // 子进程模式拦截（先于 InitGoogleTest——gtest 不认识自有参数；PRJ-T15
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ContractTestMain.cpp:41:        if (exrcv::tryParseChildArgs(argc, argv, childArgs)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ContractTestMain.cpp:46:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ContractTestMain.cpp:51:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\contract_test\ContractTestMain.cpp:15: * QCoreApplication 构造（trajectory/dynamics/selection/workflow 落位批
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\contract_test\ContractTestMain.cpp:27:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\contract_test\ContractTestMain.cpp:29:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\contract_test\ContractTestMain.cpp:36:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:3: * @brief  `sdurws_ird_modeling_gui_test` 的自有测试入口——QApplication 形态
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:12: *   - 先例：ui/gui_test/TestMainReport.cpp（QApplication main＋监听器安装
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:16: * 串行调度）。QApplication 在 main 线程构造并存活至 RUN_ALL_TESTS 结束
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:22:#include <QApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:26:/// 测试入口：构造 QApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:27:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:29:    // QApplication（Widgets 级）：GUI 用例的运行期前提。平台插件路径由
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:32:    QApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:34:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\gui_test\TestMainReport.cpp:37:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:3: * @brief  `sdurws_ird_kinematics_gui_test` 的自有测试入口——QApplication
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:8: *     自动化承载：真实 widget＋直接事件探针；与 QCoreApplication 级的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:10: *   - 先例：ui/gui_test/TestMainReport.cpp（QApplication 形态＋testkit
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:17: *   （QLabel 文本＋QLineEdit 提交路径），QCoreApplication 级测试不构造
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:20: *   QApplication 构造真实面板，经 QMetaObject::invokeMethod 直触槽函数，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:23: * 线程模型：单线程入口（gtest 串行）；QApplication 在 main 线程构造并
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:29:#include <QApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:33:/// 测试入口：构造 QApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:34:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:36:    // QApplication（Widgets 级）：真实 QWidget（KinematicsPanelWidget——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:39:    QApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:41:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\TestMainReport.cpp:45:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\TestMainReport.cpp:12: *     L2 计算单元（红线：零 Qt）——**不构造 QCoreApplication**，纯
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\TestMainReport.cpp:23:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\TestMainReport.cpp:25:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\TestMainReport.cpp:30:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:5: *         QCoreApplication 构造（WP-15-T12 增量）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:14: * 线程模型：单线程入口（gtest 串行执行——测试目标纪律）；QCoreApplication
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:15: * 在 main 线程构造、全程序存活。模型测试豁免行：QCoreApplication 级不
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:22:#include <QCoreApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:26:/// 测试入口：构造 QCoreApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:27:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:29:    // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:32:    QCoreApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:33:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TestMainReport.cpp:40:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\ContractTestMain.cpp:19:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\ContractTestMain.cpp:21:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\ContractTestMain.cpp:24:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\TestMainReport.cpp:12: *     （installTestRecordListener 原文签名——测试 main 自持两种形态之
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\TestMainReport.cpp:19: * installTestRecordListener（testkit/test/TestMain.cpp 同款先例），链接
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\TestMainReport.cpp:32:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\TestMainReport.cpp:34:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\TestMainReport.cpp:39:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:3: * @brief  `sdurws_ird_requirements_gui_test` 的自有测试入口——QApplication
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:14: * 线程模型：单线程入口（gtest 串行；QApplication main 线程构造并存活
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:20:#include <QApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:24:/// 测试入口：构造 QApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:25:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:27:    // QApplication（Widgets 级）：GUI 用例的运行期前提。平台插件路径由
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:30:    QApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:32:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\gui_test\TestMainReport.cpp:35:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\ContractTestMain.cpp:19:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\ContractTestMain.cpp:21:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\ContractTestMain.cpp:24:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:3: * @brief  `sdurws_ird_ui_test` 的自有测试入口——QCoreApplication 级模型测试
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:7: *   - units/ui.md §12.1（sdurws_ird_ui_test＝无界面模型测试：QCoreApplication
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:9: *   - units/testkit.md §6.7（模型测试豁免行：QCoreApplication 模型测试不要求
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:11: *     installTestRecordListener 签名）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:18: * QCoreApplication 构造（Qt 链接的运行期半区实证：动态库解析失败即在此
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:23: * 线程模型：单线程入口（gtest 串行执行——测试目标纪律）；QCoreApplication
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:31:#include <QCoreApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:35:/// 测试入口：构造 QCoreApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:36:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:38:    // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:40:    // （ui.md §12.2 第 7 条"仅使用 QCoreApplication 的模型测试不需要 GUI
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:42:    QCoreApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:44:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\TestMainReport.cpp:47:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\TestMainReport.cpp:13: *     （installTestRecordListener 原文签名——测试 main 自持两种形态之一）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\TestMainReport.cpp:19: * ird-test-report.json）。本 TU 以自有 main 调用 installTestRecordListener，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\TestMainReport.cpp:38:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\TestMainReport.cpp:40:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\TestMainReport.cpp:43:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\TestMainReport.cpp:12: *     installTestRecordListener 原文签名——测试 main 自持两种形态之一）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\TestMainReport.cpp:18: * installTestRecordListener，链接面相应从 GTest::gtest_main 改为
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\TestMainReport.cpp:35:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\TestMainReport.cpp:37:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\TestMainReport.cpp:40:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:14: * （WP-14-T08，modeling T15 先例）：QCoreApplication 构造——插件呈现模型
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:15: * 测试消费 Qt 面（FormEditCommon 解析/QKeySequence 等需要 QCoreApplication
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:16: * 运行期标记；AGENTS 模型测试豁免行：QCoreApplication 级不要求窗口系统，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:23:#include <QCoreApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:27:/// 测试入口：构造 QCoreApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:28:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:30:    // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:33:    QCoreApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:34:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\TestMainReport.cpp:41:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:3: * @brief  `sdurws_ird_ui_contract_test` 的自有测试入口——QCoreApplication 级
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:8: *     带 Qt 事件循环 headless 用 QCoreApplication）、§12.1（第二层测试目标）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:13: * 背景说明：与 ui/test/TestMainReport.cpp 同形态（QCoreApplication＋监听器
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:22:#include <QCoreApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:31:/// 测试入口：子进程模式拦截（先于 QCoreApplication——子进程是裸崩溃现场，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:32:/// 不进入测试框架）→构造 QCoreApplication→初始化 gtest→安装报告监听器
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:34:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:38:    // 全 token 精确匹配＋模式白名单在 runCrashTestChild 内封闭）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:40:        return sdurws::ird::ui::studio::runCrashTestChild(argv[2]);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:43:    // QCoreApplication：headless 契约测试形态（无需 GUI 平台插件——ui.md
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:45:    QCoreApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:47:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\TestMainReport.cpp:48:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:3: * @brief  `sdurws_ird_ui_gui_test` 的自有测试入口——QApplication 形态
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:17: * 本 main 升级为 QApplication 形态。执行纪律按 §12.2 全文由运行方承载：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:22: * 单实例串行调度——testkit.md §6.7）。QApplication 在 main 线程构造并
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:28:#include <QApplication>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:32:/// 测试入口：构造 QApplication→初始化 gtest→安装报告监听器→执行用例。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:33:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:35:    // QApplication（Widgets 级）：GUI 用例的运行期前提——五区 Dock/布局
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:38:    QApplication app(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:40:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\TestMainReport.cpp:43:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\test\TestMainReport.cpp:16: * QCoreApplication**——trajectory T03 测试面（登记表＋红线扫描）零 Qt
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\test\TestMainReport.cpp:19: * PluginPanelTest 先例补 QCoreApplication 构造。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\test\TestMainReport.cpp:27:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\test\TestMainReport.cpp:29:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\test\TestMainReport.cpp:36:    sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\ContractTestMain.cpp:14: * QCoreApplication 构造（dynamics/selection/workflow 落位批同款诚实
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\ContractTestMain.cpp:26:int main(int argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\ContractTestMain.cpp:28:    ::testing::InitGoogleTest(&argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\ContractTestMain.cpp:35:    sdurws::ird::testkit::installTestRecordListener(argc, argv);

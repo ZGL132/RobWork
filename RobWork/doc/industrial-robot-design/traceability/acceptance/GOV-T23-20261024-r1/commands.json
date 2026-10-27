@@ -1,0 +1,42 @@
+[
+  {
+    "name": "serial-mainline",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -SerialMainlineOnly -OutputDir RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/ps7",
+    "exitCode": 0,
+    "started": "2026-10-24T06:56:31.8485049+08:00",
+    "finished": "2026-10-24T06:56:37.4716027+08:00",
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/serial-mainline.log"
+  },
+  {
+    "name": "scope",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T23.json -Base 58962b338505fc9f69b6a9f1a50e2d55712efffc -Head 4d0f1ab024f093b65d9839d090b124da721aa69f",
+    "exitCode": 0,
+    "started": "2026-10-24T06:56:37.4745837+08:00",
+    "finished": "2026-10-24T06:56:38.1066614+08:00",
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/scope.log"
+  },
+  {
+    "name": "validate-docs",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T23.json",
+    "exitCode": 0,
+    "started": "2026-10-24T06:56:38.1068279+08:00",
+    "finished": "2026-10-24T06:57:11.3782072+08:00",
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/validate-docs.log"
+  },
+  {
+    "name": "planned-task",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T24.json",
+    "exitCode": 0,
+    "started": "2026-10-24T06:57:11.3783660+08:00",
+    "finished": "2026-10-24T06:57:12.0398657+08:00",
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/planned-task.log"
+  },
+  {
+    "name": "commit-lint",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 58962b338505fc9f69b6a9f1a50e2d55712efffc..4d0f1ab024f093b65d9839d090b124da721aa69f",
+    "exitCode": 0,
+    "started": "2026-10-24T06:57:12.0400150+08:00",
+    "finished": "2026-10-24T06:57:12.6490155+08:00",
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/commit-lint.log"
+  }
+]

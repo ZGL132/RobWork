@@ -1,0 +1,47 @@
+{
+ "schemaVersion": "ird-reuse-change/1",
+ "taskId": "REUSE-T54",
+ "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T54.json",
+ "files": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+   "sha256": "46d0bbf3c2741bf36554577cc5a7d3854e6d04c2a2427099cddfaba7574c1e7a",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "解析家族换核（REUSE-T54——A4 裁决 Boost.JSON 渠道批准，REUSE-T43 byte-primitives-decision §6）：删除 JsonValue DOM/JsonParser 递归下降全族（parseValue/parseObject/parseArray/parseString/parseEscape/parseHex4/parseUnicodeEscape/appendUtf8/parseNumber 及 findMember），新增 canonical 词法门 scanCanonical 族（单遍线性扫描自持 §4.8——拒绝结构空白/非 ASCII 原始字节/浮点指数/true-false-null/前导零/重复键〔boost 坍缩保留后值〕/孤立代理/深度>64；重复键以解码后文本比对——与被删旧引擎解码比对语义一致）＋boost::json::parse 构建 DOM（显式 max_depth=64，异常一律转 store-corrupt）；解析语义提取辅助换 boost::json 载体（require*/integerInRange——int64/uint64 kind 分派、越界整数 double kind 拒绝，码不变；rejectUnknownFields/parsePreambleVersioned/版本判定逐字段保持）；dump 侧自持转义编码器与 contentVersionOf/toToken 零变化（§4.8 纯 ASCII 小写 \\uXXXX 字节面为冻结契约——boost 序列化器原生 UTF-8 不满足，探针 p7/p13 实证）。断开实验红转绿（disconnect/ 词法门空白规则整体放行变异→锚点用例真实失败→恢复绿）；project_test 290/290＋contract 32/32（基线 287+32 前后对照，t54-final-*/baseline 原件）。整文件逐区段实审（51 功能行重锚 migrated＋canonical 词法门族 7 新行＋86 audit 铺面行）。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/README.md"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+   "sha256": "2a77e2d2d1e9b4aa72c64e8620623068166d72f61fe4c60dac27baec1dfaf50b",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "文件头设计依据注释带增量（REUSE-T54）：Boost.JSON 公共依赖渠道登记（A4 裁决批准——vcpkg 公共渠道，REUSE-T43 §6）＋解析半区两段式（canonical 词法门自持＋Boost.JSON DOM）与 dump 侧自持编码器决策注记；公共契约（七 dump/七 parse/contentVersionOf 签名与错误语义）零变化——头契约不动，全文件 13 个 audit 铺面行登记。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/README.md"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+   "sha256": "983c594a104f02f162d040a38abfcba929803594aba1796cb95b3c80102b023f",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "Boost.JSON 接线（REUSE-T54）：find_package(Boost CONFIG COMPONENTS json REQUIRED)（vcpkg 公共依赖渠道，A4 批准；REQUIRED＝gtest 同口径失败即停）＋sdurws_ird_project PRIVATE Boost::json（仅 src/Codec.cpp 编译面消费，公共头零 Boost——R-2 同型；STATIC 库 PRIVATE 链接经 LINK_ONLY 传递测试/worker 可执行文件，boost_json DLL 随既有 $<TARGET_RUNTIME_DLLS> 拷贝机制带出）＋测试目标增列 test/CodecMigrationChannelTest.cpp；零新局部 CMake 变量（IRD-GATE-LIB 口径）、零 ird/框架/gtest 词表外目标（whitelist 增登见本凭证 governance 行）；既有 PRJ-T01～T18 登记注释零触碰；整文件 audit 载体行（1-704）＋ird_add_gtest 区段行重锚 migrated。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/README.md"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/CodecMigrationChannelTest.cpp",
+   "sha256": "0c727fbb47e45993344b45aa661bcd7087bd37ad27b88478ad1e7fea4308b19c",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "新增迁移通道钉扎用例（REUSE-T54 acceptance——只新增不删改 PersistenceFormatTest 既有断言）：孤立代理拒绝（高位缺续体/续体越出/低位缺前体——词法门先行＋boost 兜底双防线）、\\u0000 往返与解析端转义对称（\\/ 与大写 hex——被删 parseEscape/parseHex4 同语义）、结构完整仅带空白合法文档拒绝（'非 canonical 即损坏'门真实承载——断开实验红例锚点）。独立成文件以满足改动文件全行铺面（3 功能行＋6 audit 铺面行）；经 src/Codec.hpp 私有头驱动（R-2 允许形态）。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/README.md"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+   "sha256": "779ac34cc971fe740461dc29599324aae9f3ff63a876189c4f39415fe75927ff",
+   "mode": "governance",
+   "capabilities": [],
+   "boundary": "IRD_THIRDPARTY_ALLOWED_TARGETS 增登 Boost::json（REUSE-T54——第三方依赖机器词表承载点；渠道授权＝所有者 2026-10-26 A4 裁决 Boost.Endian/Boost.JSON 经 vcpkg 公共依赖渠道批准，登记 traceability/reuse/REUSE-T43/byte-primitives-decision.md §6；Boost::headers REUSE-T19 先例同型；project 计算库 PRIVATE，词法门与磁盘契约语义归产品自持；依赖契约修订＝units/project.md §1.4 同批登记）。L6 区段增 7 行，L6—L10 矩阵行随批重锚（functions/foundation-governance.json）。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/README.md"
+  }
+ ]
+}

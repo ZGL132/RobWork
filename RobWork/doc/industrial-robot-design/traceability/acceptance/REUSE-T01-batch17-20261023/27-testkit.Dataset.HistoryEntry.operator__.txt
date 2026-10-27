@@ -1,0 +1,7 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp
+sdurws::ird::testkit::HistoryEntry::operator==
+123:     bool operator==(const HistoryEntry& o) const noexcept
+124:     {
+125:         return version == o.version && date == o.date && change == o.change
+126:             && reReviewedBy == o.reReviewedBy && supersededBy == o.supersededBy;
+127:     }

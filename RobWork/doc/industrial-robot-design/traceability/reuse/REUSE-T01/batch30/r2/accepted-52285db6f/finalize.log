@@ -1,0 +1,1 @@
+{"verdict": "PASS", "head": "52285db6f0d276742531ecb7e7bcf73db283e563", "gates": {"task": 0, "docs": 0, "reuse": 0, "scope": 0, "commit-lint": 0, "diff-check": 0, "inspection": 0, "delta-and-coverage": 0}, "archiveRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B30-r2-accept-86d7d9f9d84044f0955f1a954983917b\\evidence"}

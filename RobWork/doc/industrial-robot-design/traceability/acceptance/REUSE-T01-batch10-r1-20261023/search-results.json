@@ -1,0 +1,42 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"main\\(|InitGoogleTest|QCoreApplication|QApplication|installTestRecordListener|tryParseChildArgs|runCrashTestChild|g_irdTestArgv\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"TestMainReport.cpp\" -g \"ContractTestMain.cpp\" -g \"TestMain.cpp\"",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"^macro\\(|^endmacro|add_test|add_custom_target|ird_add_gtest\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"CMakeLists.txt\"",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 3,
+    "command": "rg -n \"Append|Release|TestRecordListener|static.*listener|g_irdTestArgv\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 4,
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 5,
+    "command": "rg -n \"ownership of the listener|Append\\(|Release\\(\" D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/gtest/gtest.h",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  }
+]

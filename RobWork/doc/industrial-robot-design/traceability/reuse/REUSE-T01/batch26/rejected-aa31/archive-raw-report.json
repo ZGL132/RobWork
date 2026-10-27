@@ -1,0 +1,2990 @@
+[
+  {
+    "batch": "B24",
+    "relative": "accept.py",
+    "gitBlob": "b31ef48303a00030bf7a1dfbf387cd379baa86ca",
+    "originalRawBlob": "b31ef48303a00030bf7a1dfbf387cd379baa86ca",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\accept.py",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "acceptance.json",
+    "gitBlob": "d09411577ec6d8217e92846468884e5b0663fcf3",
+    "originalRawBlob": "768bef4f41189635dc0e11c22e2e5c312c3eacdc",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\acceptance.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "acceptance.md",
+    "gitBlob": "76aa69dcc63b0e1009926626e81b7f387aa5b45b",
+    "originalRawBlob": "76aa69dcc63b0e1009926626e81b7f387aa5b45b",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\acceptance.md",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "ast-check.log",
+    "gitBlob": "860215a1a74e38f648ee5aefd127429ad2b5c893",
+    "originalRawBlob": "beac6eee8959dedb118268fbd48b9030b4a75cfb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\ast-check.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "ast-definitions.json",
+    "gitBlob": "99fc11ee81d92c325bc79572064f9138623781f0",
+    "originalRawBlob": "61749342ced476c93e80ce01aa32eb96fb452857",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\ast-definitions.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "b22-raw-blob-report.json",
+    "gitBlob": "57916aa5659895b8b1afaf0ee310d2f7791667df",
+    "originalRawBlob": "998b72363afd664bebd8b04ede640015abe9b088",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\b22-raw-blob-report.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "before-binding.json",
+    "gitBlob": "2b18e9a6011f2823ceb38ca76cd1587fcc5bb5e3",
+    "originalRawBlob": "611790b5ed61c48d149a634d90ad63849d393c1d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\before-binding.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "binding-driver-initial-failure.log",
+    "gitBlob": "a8e144aa1f89599c349cb83e9401782eff8b738f",
+    "originalRawBlob": "bdbb3078a6447649b49ab5c294dc32b712af2ef3",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\binding-driver-initial-failure.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "binding-driver-raw-mismatch.log",
+    "gitBlob": "e0cd17546439a2093c681a7c648b7d16c7329466",
+    "originalRawBlob": "4344fdf70c006672e808e1637bda4f8d193cfcee",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\binding-driver-raw-mismatch.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "binding-driver.log",
+    "gitBlob": "b77e874999705751f82153f16e02b86c75698601",
+    "originalRawBlob": "c19d947fa8369ea6a497d8e8d7a4c71ff2161a6f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\binding-driver.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "binding-report.json",
+    "gitBlob": "72ddc49fac16c7b0bc90b784822a32cff56de3f8",
+    "originalRawBlob": "7f252477f387ee4f0df8437fd0b1991aa3e1aeeb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\binding-report.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "checkout.log",
+    "gitBlob": "eeea04935124b000b3ed00f9e1a5d770e214484c",
+    "originalRawBlob": "7637b29801e1577151e82b487a8c9fd4073cad46",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\checkout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "clone.log",
+    "gitBlob": "744c4c3107968dbbb8882c65a282b32aaab1af47",
+    "originalRawBlob": "ceb840664b3902bb05663601f7b539147d6bd014",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\clone.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "commit-lint.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\commit-lint.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "commit-lint.log",
+    "gitBlob": "1b6118360fa19fdf71e13e7f1819285a5bcbb0e2",
+    "originalRawBlob": "452726ccdfda0fa87cfacde61376c06d20eb9d94",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\commit-lint.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "final-head.txt",
+    "gitBlob": "dbb9b57513500666f8985f168cc2eb9212713eb8",
+    "originalRawBlob": "cff7f303ba0ddac4b99e69d4bfb830d52bf68fd0",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\final-head.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "final-status.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\final-status.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "fixture-commit.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixture-commit.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "fixture-commit.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixture-commit.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "fixture-init.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixture-init.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "fixture-init.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixture-init.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "fixture-worktree.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixture-worktree.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "fixture-worktree.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixture-worktree.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "lock-driver.log",
+    "gitBlob": "53234dacd7ccd88a321427ee52d2209fffc8e765",
+    "originalRawBlob": "0121d159bc1ba838432db795ecab06b0b33643c8",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\lock-driver.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pipeline-ps51.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pipeline-ps51.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pipeline-ps51.log",
+    "gitBlob": "78a6f5b2059d6ef744e88f7a53cb442d195c8112",
+    "originalRawBlob": "1d1694b8eb06825b984e94443ac33979c70a6894",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pipeline-ps51.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pipeline-ps7.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pipeline-ps7.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pipeline-ps7.log",
+    "gitBlob": "78a6f5b2059d6ef744e88f7a53cb442d195c8112",
+    "originalRawBlob": "1d1694b8eb06825b984e94443ac33979c70a6894",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pipeline-ps7.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-before-clone-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-before-clone-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-before-clone-acquire.stdout.log",
+    "gitBlob": "f23012e501607861727cf61f5bf5a805c8d305c3",
+    "originalRawBlob": "d9faaae7ce9a46b39b3f598902ae66fcc8b2ddca",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-before-clone-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-before-clone-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-before-clone-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-before-clone-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-before-clone-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-before-worktree-acquire.stderr.log",
+    "gitBlob": "eb3422508a77ba12ec995785238212be8011ed30",
+    "originalRawBlob": "0b9248ac8660008e625e93b9bd86a260efcd9a37",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-before-worktree-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-before-worktree-acquire.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-before-worktree-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-absent-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-absent-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-absent-renew.stdout.log",
+    "gitBlob": "43b3182b217d74635a1dce142561e4d646cd9806",
+    "originalRawBlob": "82042b52743830b6bc06355c99b7073dc4875e8b",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-absent-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-acquire.stdout.log",
+    "gitBlob": "8de3f19d2903eae840aa5e4db907270c4f451c2d",
+    "originalRawBlob": "72c673d48108410a55cbbf1327282e5a90587d2f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-busy.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-busy.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-busy.stdout.log",
+    "gitBlob": "751e17d05d0d77542df40d2275d6097745892d91",
+    "originalRawBlob": "78c37ee62b6b25928a07878e3d3547ae74794a84",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-busy.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-held.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-held.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-held.stdout.log",
+    "gitBlob": "616005951752e982539ca6ff6e5ef8c67468bf02",
+    "originalRawBlob": "749f1603a35dee80dc8da12a880d1962622015ee",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-held.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-new-owner.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-new-owner.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-new-owner.stdout.log",
+    "gitBlob": "ca033f4e92df44d2a8e8c8ecd4672c1119ae249e",
+    "originalRawBlob": "d9e264ac88093a25b40e710884a24166a7854424",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-new-owner.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-new-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-new-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-new-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-new-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-none.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-none.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-none.stdout.log",
+    "gitBlob": "b35877977feff4c25bed37fd4f906960b09cc23f",
+    "originalRawBlob": "c7a043f7802c9cfc778e13654c9ea0c531dce2bc",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-none.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-renew.stdout.log",
+    "gitBlob": "fddc61559791c100df3513ebf0d0a573427ba5f9",
+    "originalRawBlob": "a37f50e13486c4aea8e55a5e16e2be05f5b3bf4d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-stale-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-stale-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-stale-acquire.stdout.log",
+    "gitBlob": "c47321a02c8d2acebbff3172ad62a3ccef3f5f07",
+    "originalRawBlob": "4bfcad071e31015832049f18f1626b9d235d2a7e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-stale-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-stale-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-stale-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-stale-release.stdout.log",
+    "gitBlob": "79336d827d54a5a971a65c2bc3c2a1cde82d30fd",
+    "originalRawBlob": "77eea630056777aba75fe32009a5d97631aeee1c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-stale-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-stale-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-stale-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-stale-renew.stdout.log",
+    "gitBlob": "79336d827d54a5a971a65c2bc3c2a1cde82d30fd",
+    "originalRawBlob": "77eea630056777aba75fe32009a5d97631aeee1c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-stale-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-takeover.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-takeover.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-takeover.stdout.log",
+    "gitBlob": "b8e7d773519ffc93c8948290603cd853fd3aa16e",
+    "originalRawBlob": "8f9e9a12c380f22cbd6501090905e1b4d4fb1ce8",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-takeover.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-wrong-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-wrong-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-wrong-release.stdout.log",
+    "gitBlob": "5c93e593fe6f281a3370be585749c98e99229f7c",
+    "originalRawBlob": "926348512d01afb73e578df8f18f1b26a11e2909",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-wrong-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-wrong-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-wrong-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-clone-wrong-renew.stdout.log",
+    "gitBlob": "5c93e593fe6f281a3370be585749c98e99229f7c",
+    "originalRawBlob": "926348512d01afb73e578df8f18f1b26a11e2909",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-clone-wrong-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-missing-root.stderr.log",
+    "gitBlob": "bb436b0a3d7faa97ee8e40afcb45463e09c82a1b",
+    "originalRawBlob": "466f39ddcbce5eadcb7bc5cf53d15e68877a1055",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-missing-root.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-missing-root.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-missing-root.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-non-git-root.stderr.log",
+    "gitBlob": "9f6fcbcb38f67862a56dbff8b72d8cb5f9cdb7c3",
+    "originalRawBlob": "8d2f18e05750db23244ba20cabc8e83543f40f03",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-non-git-root.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-non-git-root.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-non-git-root.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-absent-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-absent-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-absent-renew.stdout.log",
+    "gitBlob": "43b3182b217d74635a1dce142561e4d646cd9806",
+    "originalRawBlob": "82042b52743830b6bc06355c99b7073dc4875e8b",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-absent-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-acquire.stdout.log",
+    "gitBlob": "a8485a6cabaf94dc75bb2ed8f13c5e768c5fe32b",
+    "originalRawBlob": "ae5077e4129ea60cb2be8302ea9a152a653b6c1e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-busy.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-busy.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-busy.stdout.log",
+    "gitBlob": "149ebee4f8e8fd3e3c09a83c32a1cfd2f62d8343",
+    "originalRawBlob": "661e72b085c83e7e14c4630fe6dfedff39ca3bd6",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-busy.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-held.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-held.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-held.stdout.log",
+    "gitBlob": "83b7e0740fc1ceab5f81d079973394dc292dd98d",
+    "originalRawBlob": "c6fc3b5e052ce3eece519814a780e9ab5c07ac52",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-held.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-new-owner.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-new-owner.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-new-owner.stdout.log",
+    "gitBlob": "7bdb3aec3c61791ef0ebb72b0bcbcd0ce74e7c5c",
+    "originalRawBlob": "bbd174ccde85b88a1abf2dc66b723f58db7eaff3",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-new-owner.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-new-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-new-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-new-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-new-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-none.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-none.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-none.stdout.log",
+    "gitBlob": "b35877977feff4c25bed37fd4f906960b09cc23f",
+    "originalRawBlob": "c7a043f7802c9cfc778e13654c9ea0c531dce2bc",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-none.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-renew.stdout.log",
+    "gitBlob": "aa5667fff0101239188c4613863fe941a2ec3d38",
+    "originalRawBlob": "53207bd3845a2f98f1cd7130820ebb1bf9b2f335",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-stale-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-stale-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-stale-acquire.stdout.log",
+    "gitBlob": "b4b154d2c035b156a0a5364a95ba947ae970ac56",
+    "originalRawBlob": "e9a9e730cb160a7f2f2839f03f5977a94bb8174b",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-stale-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-stale-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-stale-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-stale-release.stdout.log",
+    "gitBlob": "6c15946b523324b7f5430628da9aa8b84b9bbff2",
+    "originalRawBlob": "6820f995263816e84ae83fa57d3edb57dadbb369",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-stale-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-stale-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-stale-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-stale-renew.stdout.log",
+    "gitBlob": "6c15946b523324b7f5430628da9aa8b84b9bbff2",
+    "originalRawBlob": "6820f995263816e84ae83fa57d3edb57dadbb369",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-stale-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-takeover.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-takeover.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-takeover.stdout.log",
+    "gitBlob": "86e4c4622fbda150a5cfaa569da5fd619e274d11",
+    "originalRawBlob": "7c002805e6bf413b860e1d1eaef6efd3732a721b",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-takeover.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-wrong-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-wrong-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-wrong-release.stdout.log",
+    "gitBlob": "58930bfe01534e39415de89dbf42c8bbc55f6a9d",
+    "originalRawBlob": "3c09c81ecd1478074e084b0a897ab64544669abd",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-wrong-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-wrong-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-wrong-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "powershell-worktree-wrong-renew.stdout.log",
+    "gitBlob": "58930bfe01534e39415de89dbf42c8bbc55f6a9d",
+    "originalRawBlob": "3c09c81ecd1478074e084b0a897ab64544669abd",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\powershell-worktree-wrong-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "process-report.json",
+    "gitBlob": "5410142634d530a0d25e38b3704a381a727c88a7",
+    "originalRawBlob": "1172e3d7da183aef1bc4379a99c1e3b12a8630f9",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\process-report.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-before-clone-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-before-clone-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-before-clone-acquire.stdout.log",
+    "gitBlob": "ac5ef53eeaf2d619b3548956b339b0f64d21e610",
+    "originalRawBlob": "a58c6d2ec358524fd2894a5a427e946602c4177d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-before-clone-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-before-clone-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-before-clone-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-before-clone-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-before-clone-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-before-worktree-acquire.stderr.log",
+    "gitBlob": "6121559b786cad4dca24cdbd05c79ee6631df969",
+    "originalRawBlob": "c4079b24cc31ff983237ee4d91d7608a1b6feed0",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-before-worktree-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-before-worktree-acquire.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-before-worktree-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-absent-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-absent-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-absent-renew.stdout.log",
+    "gitBlob": "43b3182b217d74635a1dce142561e4d646cd9806",
+    "originalRawBlob": "82042b52743830b6bc06355c99b7073dc4875e8b",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-absent-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-acquire.stdout.log",
+    "gitBlob": "ae146dcee5e5793ec45b7c20b1991efba296b661",
+    "originalRawBlob": "878ca8eb82f9b3d819a5bfd1211e73afbac905af",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-busy.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-busy.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-busy.stdout.log",
+    "gitBlob": "b455dbcde581f89f6417f64d20956e8f3a637055",
+    "originalRawBlob": "ffc9cd6d7f2e4f07a4341296485f354cea2e12cd",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-busy.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-held.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-held.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-held.stdout.log",
+    "gitBlob": "53ca3b7f910faffe2505a288c652201653660e2a",
+    "originalRawBlob": "7ebf302a4cd9d5fff87883f91a472330824c14cd",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-held.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-new-owner.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-new-owner.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-new-owner.stdout.log",
+    "gitBlob": "65d004e1d3f184bb6bf7b7f520738d476a5d0c59",
+    "originalRawBlob": "4e5bee05cdfc16ca482ec9a61ebb379cb8a46ea1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-new-owner.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-new-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-new-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-new-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-new-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-none.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-none.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-none.stdout.log",
+    "gitBlob": "b35877977feff4c25bed37fd4f906960b09cc23f",
+    "originalRawBlob": "c7a043f7802c9cfc778e13654c9ea0c531dce2bc",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-none.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-renew.stdout.log",
+    "gitBlob": "08a3c01eef424b0262db5065b0060d8e6a876038",
+    "originalRawBlob": "9581137477aa3e2de701a616d83a8a2578cdb75f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-stale-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-stale-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-stale-acquire.stdout.log",
+    "gitBlob": "1a0484dced6a3eae136b9ff211290b276cd3bb3b",
+    "originalRawBlob": "48f4c55c9095109885cd2018f89c340caa6755bf",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-stale-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-stale-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-stale-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-stale-release.stdout.log",
+    "gitBlob": "3d343c4f4d8580f4e7591287adc7d85c615d9f74",
+    "originalRawBlob": "577b58dbc420e826d1b0c2f1925e48b5a9495a46",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-stale-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-stale-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-stale-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-stale-renew.stdout.log",
+    "gitBlob": "3d343c4f4d8580f4e7591287adc7d85c615d9f74",
+    "originalRawBlob": "577b58dbc420e826d1b0c2f1925e48b5a9495a46",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-stale-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-takeover.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-takeover.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-takeover.stdout.log",
+    "gitBlob": "fdef49a880b52db9316269f43ffcda55466d4e09",
+    "originalRawBlob": "5bbe6f4d323f61df1691256ca675e26d702fde91",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-takeover.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-wrong-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-wrong-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-wrong-release.stdout.log",
+    "gitBlob": "951aea5bd607e59636c42127f40e0ad138ad2618",
+    "originalRawBlob": "090ab58ae6292ced7c1f708d5c2dcc2107fd85b6",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-wrong-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-wrong-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-wrong-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-clone-wrong-renew.stdout.log",
+    "gitBlob": "951aea5bd607e59636c42127f40e0ad138ad2618",
+    "originalRawBlob": "090ab58ae6292ced7c1f708d5c2dcc2107fd85b6",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-clone-wrong-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-missing-root.stderr.log",
+    "gitBlob": "e15f91e19ce38d488081f6f35d06485e8df40b5a",
+    "originalRawBlob": "d2cbda9124ea90925c0833498354dee4b72336a4",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-missing-root.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-missing-root.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-missing-root.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-non-git-root.stderr.log",
+    "gitBlob": "9c4fd7fff04f2817131b09861f132a87567ab8fe",
+    "originalRawBlob": "7a7d7ca164708c9c4ad0336a8eb1663c82a9c492",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-non-git-root.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-non-git-root.stdout.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-non-git-root.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-absent-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-absent-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-absent-renew.stdout.log",
+    "gitBlob": "43b3182b217d74635a1dce142561e4d646cd9806",
+    "originalRawBlob": "82042b52743830b6bc06355c99b7073dc4875e8b",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-absent-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-acquire.stdout.log",
+    "gitBlob": "14c7a9fd70947e545610bba992ff16b3804f0ccd",
+    "originalRawBlob": "174cba4a57719bfbd1f5115df37098dc4b8e5cce",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-busy.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-busy.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-busy.stdout.log",
+    "gitBlob": "57b9e95573f450fd417af6248547becd1450ddf1",
+    "originalRawBlob": "294ffc5cb5224e2ea2dd44769d820641b0051836",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-busy.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-held.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-held.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-held.stdout.log",
+    "gitBlob": "f4496743f6cc0daa1cfbf40db1986fcd89f21061",
+    "originalRawBlob": "6869892ba282dd1d8ca74336f8fb069291778c26",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-held.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-new-owner.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-new-owner.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-new-owner.stdout.log",
+    "gitBlob": "f0495a5bcdb631aca9b2efaa59d9f2de9d025621",
+    "originalRawBlob": "cf6ad030b442f39cee0cce634c95f8d6d6f6e465",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-new-owner.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-new-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-new-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-new-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-new-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-none.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-none.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-none.stdout.log",
+    "gitBlob": "b35877977feff4c25bed37fd4f906960b09cc23f",
+    "originalRawBlob": "c7a043f7802c9cfc778e13654c9ea0c531dce2bc",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-none.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-release.stdout.log",
+    "gitBlob": "e3204af1708a8560715656f3a0be154bd3e28cf6",
+    "originalRawBlob": "a16b678c08d2daef82393cf80d42f6cdd6d4e7eb",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-renew.stdout.log",
+    "gitBlob": "43410d54b9260883c6a3d0f0ec521f6acafdfa03",
+    "originalRawBlob": "383933369cc32a5d4d1473700debd9d0fb5b563a",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-stale-acquire.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-stale-acquire.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-stale-acquire.stdout.log",
+    "gitBlob": "18ab9e849451683718dc3175d31174cbe11ce6ac",
+    "originalRawBlob": "12417dbe72742eddc82110e991c4963b88ac82c8",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-stale-acquire.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-stale-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-stale-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-stale-release.stdout.log",
+    "gitBlob": "88e2eef685883ea137355f97d7edb1d345d3ff4d",
+    "originalRawBlob": "b3c429f6fbc222a84fc9f08588a429cfe0e06efa",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-stale-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-stale-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-stale-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-stale-renew.stdout.log",
+    "gitBlob": "88e2eef685883ea137355f97d7edb1d345d3ff4d",
+    "originalRawBlob": "b3c429f6fbc222a84fc9f08588a429cfe0e06efa",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-stale-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-takeover.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-takeover.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-takeover.stdout.log",
+    "gitBlob": "8182d502ebd448e12492204bece9aa06cd49ebfe",
+    "originalRawBlob": "e1754652a4e47eae4097b8be908168f3a2e06103",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-takeover.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-wrong-release.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-wrong-release.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-wrong-release.stdout.log",
+    "gitBlob": "11e5283a234794b09306e8cbb549f7f79f7f3919",
+    "originalRawBlob": "ea0cc4a6e3e6f2d94c218abbc8206c63ada77a63",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-wrong-release.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-wrong-renew.stderr.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-wrong-renew.stderr.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "pwsh-worktree-wrong-renew.stdout.log",
+    "gitBlob": "11e5283a234794b09306e8cbb549f7f79f7f3919",
+    "originalRawBlob": "ea0cc4a6e3e6f2d94c218abbc8206c63ada77a63",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\pwsh-worktree-wrong-renew.stdout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "scope.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\scope.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "scope.log",
+    "gitBlob": "8c1835fb9462852dc817eb75b52e62bc58aa5aa1",
+    "originalRawBlob": "bbef3b77f3165e0a24b9162b0d15bca288043e37",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\scope.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "verify-task.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\verify-task.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B24",
+    "relative": "verify-task.log",
+    "gitBlob": "6f3f0fdc4cb3e72900bf3fdd2c4bf0fdc3e5b619",
+    "originalRawBlob": "b1c6c23ee1f9d80a71a5b073c1be2a01bcfded81",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\verify-task.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "acceptance.json",
+    "gitBlob": "ada9fc594fb521fbe3a162fd42afeafe45d4d279",
+    "originalRawBlob": "7da56be3380af9d715ea2d5747f8aaac6f6ae4b9",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\acceptance.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "acceptance.md",
+    "gitBlob": "a8b541c2b67eb92f0dba7674bd53c7ffde096cf8",
+    "originalRawBlob": "fffabf80e51920cb1497847d8667a1d96d3116e9",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\acceptance.md",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "artifact-manifest.json",
+    "gitBlob": "89e56f4c7dc26bac44496c953c032c33509faea5",
+    "originalRawBlob": "8d02295392d640f708860d9942cace35eb2e7fef",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\artifact-manifest.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "b23-git-blob-original-checks.json",
+    "gitBlob": "67e1d8c8e91600368787e049714fbe8844a0ff20",
+    "originalRawBlob": "1afa57641826579f042fdeb2d05f0a8d7e4577f0",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\b23-git-blob-original-checks.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "binding-checks.json",
+    "gitBlob": "66f41d3f2b40cdaf1e506e6dbccd8aac5fcce980",
+    "originalRawBlob": "b28f86c970b370ac7187775f329f5a42b4266db6",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\binding-checks.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "binding-review.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\binding-review.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "binding-review.log",
+    "gitBlob": "a7b854ddd31ab40f88b546acf3d382ded44c9dc7",
+    "originalRawBlob": "bb8e93af77c0f60642f4792e5eb7939710b86b75",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\binding-review.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "binding-review.ps1",
+    "gitBlob": "86b9ccd316720ac1792b7696a5ba8f60b3e50b6f",
+    "originalRawBlob": "08cfed623c717b85ac3a300dc0c154f8fb7f8548",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\binding-review.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "binding-summary.json",
+    "gitBlob": "a7b854ddd31ab40f88b546acf3d382ded44c9dc7",
+    "originalRawBlob": "bb8e93af77c0f60642f4792e5eb7939710b86b75",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\binding-summary.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "checkout-retry.log",
+    "gitBlob": "798271f9a5230c5c57ef575fa1a9ed82b538e1f6",
+    "originalRawBlob": "f23a05e4261dd499835f6d7175a28736b26e2538",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\checkout-retry.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "checkout.log",
+    "gitBlob": "a21fa2f97357a9265b166c681f0a3b06e24a01e1",
+    "originalRawBlob": "0e504b8df2b7fcb4e75cbbb49b1ff381dcaf6c19",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\checkout.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "clone.log",
+    "gitBlob": "fb05ba8b755a0e2e8f08e230d19ebbd1336b222d",
+    "originalRawBlob": "6df40243835bb31679e776374450808bab84b05c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\clone.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "commit-lint.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\commit-lint.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "commit-lint.log",
+    "gitBlob": "ad42a6f12605ef70b2d7d24b4c23cfbea7f1c459",
+    "originalRawBlob": "2d30950e39ef0ef1fa2c582585443a81c183c9d5",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\commit-lint.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "final-temp-status.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\final-temp-status.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state-harness-first-failure.exit.txt",
+    "gitBlob": "d00491fd7e5bb6fa28c517a0bb32b8b506539d4d",
+    "originalRawBlob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state-harness-first-failure.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state-harness-first-failure.log",
+    "gitBlob": "89a7964dc08271e39e627eceb0a60c0f50e610df",
+    "originalRawBlob": "d52f40bc083644bfe19635f15617419f9406c080",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state-harness-first-failure.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state.log",
+    "gitBlob": "49a8398965ddd8960b170d17c42233761cb4e6d0",
+    "originalRawBlob": "826b4e1cb2f3de0f63372c1c902789ab2e86695d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state.ps1",
+    "gitBlob": "5bcdcd879b4b7ed9bf72e0ba5f95e7587bbc3ee1",
+    "originalRawBlob": "496dc3b37aaf690dcd204dc5faec60b921df6e16",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-boolean-policy.json",
+    "gitBlob": "6df8cd0a324bc0672730b5d32e30e2c4a8f4f763",
+    "originalRawBlob": "2881302feb447f5c19451622cbb0665c00f25d3e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-boolean-policy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-boolean-policy.log",
+    "gitBlob": "3d17ff280c3adf0aeb214fd93d8a4af060fafe24",
+    "originalRawBlob": "d8f0aaa3ed003d132275a1189459d2f888b2deb1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-boolean-policy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-boolean-tick.json",
+    "gitBlob": "d2e77cdf4cfb53e16c9be3ba0b6e8a8307a5c1d0",
+    "originalRawBlob": "d7b0cb01d0058027a6d866c09aa9d420f9d62000",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-boolean-tick.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-boolean-tick.log",
+    "gitBlob": "b493ccd9638b9647a1df6678787f9eb06c7f8dc5",
+    "originalRawBlob": "08b1ac08dfa5af86a96e9cd25df246c8502c05bd",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-boolean-tick.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-equal-instant-offsets.json",
+    "gitBlob": "cd79f1dc34db85a35dd71c1a7c78ea7ea04299d1",
+    "originalRawBlob": "3a51c3d043d509d742c2656dc8bd996cfead32d8",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-equal-instant-offsets.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-equal-instant-offsets.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-equal-instant-offsets.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-fractional-lease.json",
+    "gitBlob": "0fbf431aae22da63a1b739ebe65f84ebfa74e8ef",
+    "originalRawBlob": "82c042e4f9dd35c8cf3e3f28f58845aa454aaced",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-fractional-lease.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-fractional-lease.log",
+    "gitBlob": "ef6ea4cde8365b292aa2ca7a5344e03ded60fccb",
+    "originalRawBlob": "415e287f971bb83ebfe952fbeddddcfea2ff9840",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-fractional-lease.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-guid-N-format.json",
+    "gitBlob": "f4fa463defec5646d0139f09eb97ac33b8e582bb",
+    "originalRawBlob": "7a1a9211722dd344a3b30411ee0710916257d8d7",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-guid-N-format.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-guid-N-format.log",
+    "gitBlob": "58ca0c8281a2d25d08eccaa3acb4fd646d4ada2b",
+    "originalRawBlob": "2da6d5677ea14fbcd39ccebcebe8368579904e13",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-guid-N-format.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-int64-policy.json",
+    "gitBlob": "cb36a1b0219a2400017cb6efe137f36e3b60d8af",
+    "originalRawBlob": "bdf569ae9de3781e228a14f047a02b2da52e2058",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-int64-policy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-int64-policy.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-int64-policy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-int64-tick.json",
+    "gitBlob": "d0423a57873914fd5ce98f1043e53041722252c9",
+    "originalRawBlob": "98485bfe2afc167dc968f68a832dd468d3d33955",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-int64-tick.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-int64-tick.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-int64-tick.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-negative-attempt.json",
+    "gitBlob": "62a3373493e9abe1792491f3c3a478b0845d3b0f",
+    "originalRawBlob": "dbfeaa216edf8612939a8bfdd132b0824f5684c1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-negative-attempt.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-negative-attempt.log",
+    "gitBlob": "e74ad74f85c191410f9a4ae692465d53b3fbe560",
+    "originalRawBlob": "83ab496df6933b660457a04471b1df1cbd67c226",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-negative-attempt.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-negative-tick.json",
+    "gitBlob": "127fe2c03fb1f75949fc8eba2bc82369ad850465",
+    "originalRawBlob": "17a7d1243f5d1b275baf28e9e9a7fb2e60db54f1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-negative-tick.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-negative-tick.log",
+    "gitBlob": "b493ccd9638b9647a1df6678787f9eb06c7f8dc5",
+    "originalRawBlob": "08b1ac08dfa5af86a96e9cd25df246c8502c05bd",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-negative-tick.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-string-lease.json",
+    "gitBlob": "83cb373ab162dbd80812a6a1d3a005fc9e3f408f",
+    "originalRawBlob": "47f82571818a29f1053a4c446fbceabca7082712",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-string-lease.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-string-lease.log",
+    "gitBlob": "ef6ea4cde8365b292aa2ca7a5344e03ded60fccb",
+    "originalRawBlob": "415e287f971bb83ebfe952fbeddddcfea2ff9840",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-string-lease.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-uppercase-guid.json",
+    "gitBlob": "a0b5ab9c14f743f2abbcce6479da4377d0673085",
+    "originalRawBlob": "395e1d3533d24daa62201e9289df4b64afd81992",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-uppercase-guid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-uppercase-guid.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-uppercase-guid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-zero-lease.json",
+    "gitBlob": "5fd4b0d8697c7fa7598663a47388741a815f409b",
+    "originalRawBlob": "d46a24bb97b977b6a342e555cda430f4485d927e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-zero-lease.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/powershell-zero-lease.log",
+    "gitBlob": "ef6ea4cde8365b292aa2ca7a5344e03ded60fccb",
+    "originalRawBlob": "415e287f971bb83ebfe952fbeddddcfea2ff9840",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\powershell-zero-lease.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-boolean-policy.json",
+    "gitBlob": "6df8cd0a324bc0672730b5d32e30e2c4a8f4f763",
+    "originalRawBlob": "2881302feb447f5c19451622cbb0665c00f25d3e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-boolean-policy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-boolean-policy.log",
+    "gitBlob": "f7d9175f5f359274ad9e2e0b4a716af6030d3395",
+    "originalRawBlob": "2306c8d9eaf316f1a75a0c3e917d86b2ef738124",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-boolean-policy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-boolean-tick.json",
+    "gitBlob": "d2e77cdf4cfb53e16c9be3ba0b6e8a8307a5c1d0",
+    "originalRawBlob": "d7b0cb01d0058027a6d866c09aa9d420f9d62000",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-boolean-tick.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-boolean-tick.log",
+    "gitBlob": "aed49c197d98bcb5a77e39d7e13db833976d4ec0",
+    "originalRawBlob": "b9ee7511c187ef53bc9e17e40ad73091cb1d059e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-boolean-tick.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-equal-instant-offsets.json",
+    "gitBlob": "cd79f1dc34db85a35dd71c1a7c78ea7ea04299d1",
+    "originalRawBlob": "3a51c3d043d509d742c2656dc8bd996cfead32d8",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-equal-instant-offsets.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-equal-instant-offsets.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-equal-instant-offsets.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-fractional-lease.json",
+    "gitBlob": "0fbf431aae22da63a1b739ebe65f84ebfa74e8ef",
+    "originalRawBlob": "82c042e4f9dd35c8cf3e3f28f58845aa454aaced",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-fractional-lease.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-fractional-lease.log",
+    "gitBlob": "f6c131f1b052af5552040bb99e7b191e9a2d50b5",
+    "originalRawBlob": "3d8415956096f257faa9419e05b33b1057ef106f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-fractional-lease.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-guid-N-format.json",
+    "gitBlob": "f4fa463defec5646d0139f09eb97ac33b8e582bb",
+    "originalRawBlob": "7a1a9211722dd344a3b30411ee0710916257d8d7",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-guid-N-format.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-guid-N-format.log",
+    "gitBlob": "1dc0ef2938c97c4229b1709b0be79957e85643c6",
+    "originalRawBlob": "604588aab588412f30309d41c58cbe12d2872045",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-guid-N-format.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-int64-policy.json",
+    "gitBlob": "cb36a1b0219a2400017cb6efe137f36e3b60d8af",
+    "originalRawBlob": "bdf569ae9de3781e228a14f047a02b2da52e2058",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-int64-policy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-int64-policy.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-int64-policy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-int64-tick.json",
+    "gitBlob": "d0423a57873914fd5ce98f1043e53041722252c9",
+    "originalRawBlob": "98485bfe2afc167dc968f68a832dd468d3d33955",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-int64-tick.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-int64-tick.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-int64-tick.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-negative-attempt.json",
+    "gitBlob": "62a3373493e9abe1792491f3c3a478b0845d3b0f",
+    "originalRawBlob": "dbfeaa216edf8612939a8bfdd132b0824f5684c1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-negative-attempt.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-negative-attempt.log",
+    "gitBlob": "1b125f8b9d28d47162ebde27c9f520916134d55f",
+    "originalRawBlob": "a78c92430a3112cf2eb51cf96d29bbc425a0c606",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-negative-attempt.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-negative-tick.json",
+    "gitBlob": "127fe2c03fb1f75949fc8eba2bc82369ad850465",
+    "originalRawBlob": "17a7d1243f5d1b275baf28e9e9a7fb2e60db54f1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-negative-tick.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-negative-tick.log",
+    "gitBlob": "aed49c197d98bcb5a77e39d7e13db833976d4ec0",
+    "originalRawBlob": "b9ee7511c187ef53bc9e17e40ad73091cb1d059e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-negative-tick.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-string-lease.json",
+    "gitBlob": "83cb373ab162dbd80812a6a1d3a005fc9e3f408f",
+    "originalRawBlob": "47f82571818a29f1053a4c446fbceabca7082712",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-string-lease.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-string-lease.log",
+    "gitBlob": "f6c131f1b052af5552040bb99e7b191e9a2d50b5",
+    "originalRawBlob": "3d8415956096f257faa9419e05b33b1057ef106f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-string-lease.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-uppercase-guid.json",
+    "gitBlob": "a0b5ab9c14f743f2abbcce6479da4377d0673085",
+    "originalRawBlob": "395e1d3533d24daa62201e9289df4b64afd81992",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-uppercase-guid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-uppercase-guid.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-uppercase-guid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-zero-lease.json",
+    "gitBlob": "5fd4b0d8697c7fa7598663a47388741a815f409b",
+    "originalRawBlob": "d46a24bb97b977b6a342e555cda430f4485d927e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-zero-lease.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/pwsh-zero-lease.log",
+    "gitBlob": "f6c131f1b052af5552040bb99e7b191e9a2d50b5",
+    "originalRawBlob": "3d8415956096f257faa9419e05b33b1057ef106f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\pwsh-zero-lease.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "independent-state/report.json",
+    "gitBlob": "adc32af26164cc1ab681ba171292edc06835bf63",
+    "originalRawBlob": "4695e5450d2624beca5668b6a97d26cbda9902e5",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\independent-state\\report.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "initial-status.log",
+    "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "originalRawBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\initial-status.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "old-row-property-deltas.json",
+    "gitBlob": "d82df63ccb94c64eef60ac18cdb9487b95d941be",
+    "originalRawBlob": "db8a62eabca0547458aecbdaab88a5155904339c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\old-row-property-deltas.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "pipeline-ps51.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\pipeline-ps51.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "pipeline-ps51.log",
+    "gitBlob": "1f9c1db984a75968ad3e133ce603ab624534449e",
+    "originalRawBlob": "854ed589b9c571c38fd200b8cf25bdb4c1d228cf",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\pipeline-ps51.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "pipeline-ps7.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\pipeline-ps7.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "pipeline-ps7.log",
+    "gitBlob": "1f9c1db984a75968ad3e133ce603ab624534449e",
+    "originalRawBlob": "854ed589b9c571c38fd200b8cf25bdb4c1d228cf",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\pipeline-ps7.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "powershell-runtime.log",
+    "gitBlob": "6ee3f2466b02983804f95a3d028954f1ee184ec7",
+    "originalRawBlob": "35e447fb2ec1ea62c310620d6db719db50b2f74b",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\powershell-runtime.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "pwsh-runtime.log",
+    "gitBlob": "dc160d67a8e6d6d510b11da056415256ab657eec",
+    "originalRawBlob": "a5bf63c52d2f8fddf2e1e65fa3a882d1a7444c37",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\pwsh-runtime.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "scope-frozen.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\scope-frozen.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "scope-frozen.log",
+    "gitBlob": "8a2b8a16eca81747c41726bad2df560735f7e9bd",
+    "originalRawBlob": "f46827b151e0353df7cd7ce91a6b669c15e27942",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\scope-frozen.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "semantic-review.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\semantic-review.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "semantic-review.json",
+    "gitBlob": "7a7acc93e1d0a4ff72c6af626001f9136181f825",
+    "originalRawBlob": "bc5e625253cc41181373bb88cb524546ace4d642",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\semantic-review.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "semantic-review.log",
+    "gitBlob": "e48c852b7a0204ae370725305ec0c98f072d87b1",
+    "originalRawBlob": "012841fa0e7eefb1317a04ec6513ecef3b576f3f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\semantic-review.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "semantic-review.ps1",
+    "gitBlob": "5d60038312915cd205c261a081ab74d31b881213",
+    "originalRawBlob": "933fa6504156bb716da150efd91041e230a9baa4",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\semantic-review.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/pipeline-lock.ps1",
+    "gitBlob": "f28a0c8a04fb8f16be3f63426c62194cd5ab1d5a",
+    "originalRawBlob": "f28a0c8a04fb8f16be3f63426c62194cd5ab1d5a",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\pipeline-lock.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/reuse-contract.ps1",
+    "gitBlob": "1ae5c74dc08cd3f9a7348aa9520ca6aacec654ba",
+    "originalRawBlob": "cd31898c3a3c410092f53e3483093bab7a0e9d9f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\reuse-contract.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/state-before.ps1",
+    "gitBlob": "5ba8168a34aaf052c9bb8be9912b35b62d41cd3f",
+    "originalRawBlob": "d7a8bb1c46ddf7eea63fe28d92fec3407364cdb6",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\state-before.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/state-probes.ps1",
+    "gitBlob": "fd94986c47e9b206b442dc9862cc30634390c1a7",
+    "originalRawBlob": "fd94986c47e9b206b442dc9862cc30634390c1a7",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\state-probes.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/test-pipeline-pipeline.ps1",
+    "gitBlob": "145b6c4a2ee0464edc0ebe730f096d8c423f8182",
+    "originalRawBlob": "145b6c4a2ee0464edc0ebe730f096d8c423f8182",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\test-pipeline-pipeline.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/validate-reuse.ps1",
+    "gitBlob": "60a7bf523fa7e7e22b50c821562d1badd5b1a767",
+    "originalRawBlob": "60a7bf523fa7e7e22b50c821562d1badd5b1a767",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\validate-reuse.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/validate-state.ps1",
+    "gitBlob": "0658792875640342a3e81e7fc3c902f19b077226",
+    "originalRawBlob": "0658792875640342a3e81e7fc3c902f19b077226",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\validate-state.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/validate-task.ps1",
+    "gitBlob": "a3b5f82f00553854cce60d0216e8de6a20db40fd",
+    "originalRawBlob": "a3b5f82f00553854cce60d0216e8de6a20db40fd",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\validate-task.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/verify-task-scope.ps1",
+    "gitBlob": "5cab5fa6147bc3883964ececcdd71bae3dd2d646",
+    "originalRawBlob": "5cab5fa6147bc3883964ececcdd71bae3dd2d646",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\verify-task-scope.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "source/verify-task.ps1",
+    "gitBlob": "d3f32870aeecbbf8edb933512fde7522245fb0f3",
+    "originalRawBlob": "d3f32870aeecbbf8edb933512fde7522245fb0f3",
+    "match": true,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\source\\verify-task.ps1",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green.log",
+    "gitBlob": "29b671646a39976c36203ee6da426832f9b518f0",
+    "originalRawBlob": "7d07ffa63af3b3c500691b60bad41aab21325b46",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/fixture/RobWork/doc/industrial-robot-design/tasks/TK-T01.json",
+    "gitBlob": "1fd5ec2656e6523ce0debd4bf44cbf58efd61127",
+    "originalRawBlob": "c59f0d28caf44afe2837dc1f0ad0c67257ca95b1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\fixture\\RobWork\\doc\\industrial-robot-design\\tasks\\TK-T01.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-bad-calendar.json",
+    "gitBlob": "12457c970800a24d80c0908a71392bb17a719a4a",
+    "originalRawBlob": "ccabba5e92ee50c09e638605fe73d14750f14d23",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-bad-calendar.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-bad-calendar.log",
+    "gitBlob": "0d4ab59586cd893b187de6b7992558be306b923f",
+    "originalRawBlob": "7f18401b7b5d92a4588e953299244c9fe1138862",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-bad-calendar.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-fake-guid.json",
+    "gitBlob": "9c810d6fafd55c38eaec713330d98e08cc7f1d87",
+    "originalRawBlob": "579dd99353be419e21b704637366c0184d40de3f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-fake-guid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-fake-guid.log",
+    "gitBlob": "b5cf0b5395ba466c8c4d05945dfef5f95a14f8b9",
+    "originalRawBlob": "0334becacc3e85bfadaf406b120f03f3c6e03078",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-fake-guid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-fractional-count.json",
+    "gitBlob": "85f28b06a898ebde0fd19a0e2a6d9c923369f751",
+    "originalRawBlob": "45f5a76fbe238e55bfa0d1b755b10e3ffc128f47",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-fractional-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-fractional-count.log",
+    "gitBlob": "b493ccd9638b9647a1df6678787f9eb06c7f8dc5",
+    "originalRawBlob": "08b1ac08dfa5af86a96e9cd25df246c8502c05bd",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-fractional-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-healthy.json",
+    "gitBlob": "7ad02dbb9b59b55ba5f932c13acae583118f75f4",
+    "originalRawBlob": "c983d84d3ee838772c28effebaaf34d9f897fc9c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-healthy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-healthy.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-healthy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-offset-expired.json",
+    "gitBlob": "e78de4f588704de683da10d36b02b16b506e2eac",
+    "originalRawBlob": "c48f2b518fc18412c11869701305d2a6914b4df8",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-offset-expired.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-offset-expired.log",
+    "gitBlob": "834b95132c01e4c5035318daeaf45afcc3388ef5",
+    "originalRawBlob": "5d4c55700192f36bc407868e6af8578785f138ad",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-offset-expired.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-offset-valid.json",
+    "gitBlob": "6eb8e73c243287e4e47bf1592d9a0e8e5572ae88",
+    "originalRawBlob": "b4ca7d3e95efa480a387663c8c9780f30293e9ee",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-offset-valid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-offset-valid.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-offset-valid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-string-count.json",
+    "gitBlob": "9c870602e7acd96cbf0d2a6581052e48a2efad3e",
+    "originalRawBlob": "4e44dae0b6ed98ce7de54e374ccd0d8a503858c1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-string-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/powershell-string-count.log",
+    "gitBlob": "ea6883334ba1e13313f7f1f6538184be6d295160",
+    "originalRawBlob": "aa3cd939188143477267aec2f7e789f4438ba905",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\powershell-string-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-bad-calendar.json",
+    "gitBlob": "12457c970800a24d80c0908a71392bb17a719a4a",
+    "originalRawBlob": "ccabba5e92ee50c09e638605fe73d14750f14d23",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-bad-calendar.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-bad-calendar.log",
+    "gitBlob": "16b6aa90e29296077aeab1982d7d31e10b4cee5e",
+    "originalRawBlob": "0db0854fb1059aecd70ab632724ee6584200e01a",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-bad-calendar.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-fake-guid.json",
+    "gitBlob": "9c810d6fafd55c38eaec713330d98e08cc7f1d87",
+    "originalRawBlob": "579dd99353be419e21b704637366c0184d40de3f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-fake-guid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-fake-guid.log",
+    "gitBlob": "aa3b9f860fe59ec6a770e1fb3b41b0f61d6fd01c",
+    "originalRawBlob": "80502e15dc7242d8e3f67322b4028a4484051eae",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-fake-guid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-fractional-count.json",
+    "gitBlob": "85f28b06a898ebde0fd19a0e2a6d9c923369f751",
+    "originalRawBlob": "45f5a76fbe238e55bfa0d1b755b10e3ffc128f47",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-fractional-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-fractional-count.log",
+    "gitBlob": "aed49c197d98bcb5a77e39d7e13db833976d4ec0",
+    "originalRawBlob": "b9ee7511c187ef53bc9e17e40ad73091cb1d059e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-fractional-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-healthy.json",
+    "gitBlob": "7ad02dbb9b59b55ba5f932c13acae583118f75f4",
+    "originalRawBlob": "c983d84d3ee838772c28effebaaf34d9f897fc9c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-healthy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-healthy.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-healthy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-offset-expired.json",
+    "gitBlob": "e78de4f588704de683da10d36b02b16b506e2eac",
+    "originalRawBlob": "c48f2b518fc18412c11869701305d2a6914b4df8",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-offset-expired.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-offset-expired.log",
+    "gitBlob": "b48d002d89c389ef793fc9cfb8f1a2ba451a731b",
+    "originalRawBlob": "52b09788d0d96d7c56606cf8de28200f69c01e5d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-offset-expired.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-offset-valid.json",
+    "gitBlob": "6eb8e73c243287e4e47bf1592d9a0e8e5572ae88",
+    "originalRawBlob": "b4ca7d3e95efa480a387663c8c9780f30293e9ee",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-offset-valid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-offset-valid.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-offset-valid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-string-count.json",
+    "gitBlob": "9c870602e7acd96cbf0d2a6581052e48a2efad3e",
+    "originalRawBlob": "4e44dae0b6ed98ce7de54e374ccd0d8a503858c1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-string-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/pwsh-string-count.log",
+    "gitBlob": "387f0c70c0ce6e33249d49a87c125ce11bb22d3b",
+    "originalRawBlob": "4ababf5d8a42fd42eb4425700285f106bf0b6017",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\pwsh-string-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-green/report.json",
+    "gitBlob": "f0a8bd9585336d038f70093adc82e05d3935ce14",
+    "originalRawBlob": "abebed0ad8ef7c7839100f17e61671ee51c6930c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-green\\report.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red.exit.txt",
+    "gitBlob": "d00491fd7e5bb6fa28c517a0bb32b8b506539d4d",
+    "originalRawBlob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red.log",
+    "gitBlob": "0da19cd3aad1dc113b51527a94c678be49a46c17",
+    "originalRawBlob": "5f84e694b3d2f1d5f285e3bd4f5f81f2d220864f",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/fixture/RobWork/doc/industrial-robot-design/tasks/TK-T01.json",
+    "gitBlob": "1fd5ec2656e6523ce0debd4bf44cbf58efd61127",
+    "originalRawBlob": "c59f0d28caf44afe2837dc1f0ad0c67257ca95b1",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\fixture\\RobWork\\doc\\industrial-robot-design\\tasks\\TK-T01.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-bad-calendar.json",
+    "gitBlob": "21dd02ba6669c76d598edb595f2dfa833fe3e8da",
+    "originalRawBlob": "379b5705543ce1cac93e5a1ad8cca278c66d014d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-bad-calendar.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-bad-calendar.log",
+    "gitBlob": "e936027ff2bd20b546ae8891d98a1366f1ce2645",
+    "originalRawBlob": "adaf31193bfc77cfa8b7bf200313d445d0ad0f87",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-bad-calendar.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-fake-guid.json",
+    "gitBlob": "8a4a2de5ad19314c0627c99f88b4bbb97dd02504",
+    "originalRawBlob": "14cffa6cea9b4ba5cc93bbd9ee6e48c99881e4e2",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-fake-guid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-fake-guid.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-fake-guid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-fractional-count.json",
+    "gitBlob": "5e0052e07a73dc7a7d569008cfccd57e3871984b",
+    "originalRawBlob": "d3d22ef889a24d2a854f02e63d69f86cb10e8f5c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-fractional-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-fractional-count.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-fractional-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-healthy.json",
+    "gitBlob": "9e0440c1d4cdb332e6215061c1d9d0509c6e7d8c",
+    "originalRawBlob": "14e6b5a9bfe2d3974b57c1954b35fddbc0f39c6a",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-healthy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-healthy.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-healthy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-offset-expired.json",
+    "gitBlob": "5aefc7e95ba43be82f35ab0f44a5570a93e4ddba",
+    "originalRawBlob": "5ff1d6a50767eb24c221e633e07d44e30286d0bf",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-offset-expired.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-offset-expired.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-offset-expired.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-offset-valid.json",
+    "gitBlob": "1446b53900610d49038ec32c590facccab39c8c1",
+    "originalRawBlob": "8e498fe42f48c556a9478f2f387c6ab349b27327",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-offset-valid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-offset-valid.log",
+    "gitBlob": "a76e21c17fcc53cd44b5575d7d0721373728c79c",
+    "originalRawBlob": "923e235fcbf81c6275772276699e187879cf7f62",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-offset-valid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-string-count.json",
+    "gitBlob": "894f2e804b6e149ef1fa4b92e9f6bb81bb3f21cb",
+    "originalRawBlob": "76e58fafb54a2b0b687889863bfc863ad03dead2",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-string-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/powershell-string-count.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\powershell-string-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-bad-calendar.json",
+    "gitBlob": "21dd02ba6669c76d598edb595f2dfa833fe3e8da",
+    "originalRawBlob": "379b5705543ce1cac93e5a1ad8cca278c66d014d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-bad-calendar.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-bad-calendar.log",
+    "gitBlob": "1f0dff7c2075a1cca775036c4d07161248b2be5f",
+    "originalRawBlob": "bcd7886e32164edd4170a154c4277d4ec3dd2de9",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-bad-calendar.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-fake-guid.json",
+    "gitBlob": "8a4a2de5ad19314c0627c99f88b4bbb97dd02504",
+    "originalRawBlob": "14cffa6cea9b4ba5cc93bbd9ee6e48c99881e4e2",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-fake-guid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-fake-guid.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-fake-guid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-fractional-count.json",
+    "gitBlob": "5e0052e07a73dc7a7d569008cfccd57e3871984b",
+    "originalRawBlob": "d3d22ef889a24d2a854f02e63d69f86cb10e8f5c",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-fractional-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-fractional-count.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-fractional-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-healthy.json",
+    "gitBlob": "9e0440c1d4cdb332e6215061c1d9d0509c6e7d8c",
+    "originalRawBlob": "14e6b5a9bfe2d3974b57c1954b35fddbc0f39c6a",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-healthy.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-healthy.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-healthy.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-offset-expired.json",
+    "gitBlob": "5aefc7e95ba43be82f35ab0f44a5570a93e4ddba",
+    "originalRawBlob": "5ff1d6a50767eb24c221e633e07d44e30286d0bf",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-offset-expired.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-offset-expired.log",
+    "gitBlob": "b48d002d89c389ef793fc9cfb8f1a2ba451a731b",
+    "originalRawBlob": "52b09788d0d96d7c56606cf8de28200f69c01e5d",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-offset-expired.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-offset-valid.json",
+    "gitBlob": "1446b53900610d49038ec32c590facccab39c8c1",
+    "originalRawBlob": "8e498fe42f48c556a9478f2f387c6ab349b27327",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-offset-valid.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-offset-valid.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-offset-valid.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-string-count.json",
+    "gitBlob": "894f2e804b6e149ef1fa4b92e9f6bb81bb3f21cb",
+    "originalRawBlob": "76e58fafb54a2b0b687889863bfc863ad03dead2",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-string-count.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/pwsh-string-count.log",
+    "gitBlob": "dcbaec4c24bf426399079a98695bbb828978988d",
+    "originalRawBlob": "d8f9d24afab0808c485f1c9fa0771fb41b4fd74e",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\pwsh-string-count.log",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "state-red/report.json",
+    "gitBlob": "995bc416b307902724ed7cf22e692af7d6c4aba4",
+    "originalRawBlob": "66d6684ff8c011709cd1fabae93aa8ffc3e500dc",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\state-red\\report.json",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "verify-task-real.exit.txt",
+    "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+    "originalRawBlob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\verify-task-real.exit.txt",
+    "mode": "100644"
+  },
+  {
+    "batch": "B25",
+    "relative": "verify-task-real.log",
+    "gitBlob": "26eb53a0901259ffb516c5957870c11dd85b71da",
+    "originalRawBlob": "7533c731b2ac3dd312cec081ef39a8a270370d00",
+    "match": false,
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\\verify-task-real.log",
+    "mode": "100644"
+  }
+]

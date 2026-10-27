@@ -1,0 +1,30 @@
+Note: Google Test filter = KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51:KinIk.ConvergesOnReachableTarget_WP15T04_ACC2
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinIk
+[ RUN      ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(215): error: Expected equality of these values:
+  out.outcomeKind
+    Which is: 1-byte object <02>
+  IkOutcomeKind::SolutionsFound
+    Which is: 1-byte object <01>
+
+[  FAILED  ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2 (1 ms)
+[ RUN      ] KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(1684): error: Expected equality of these values:
+  out.outcomeKind
+    Which is: 1-byte object <02>
+  IkOutcomeKind::SolutionsFound
+    Which is: 1-byte object <01>
+
+[  FAILED  ] KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51 (0 ms)
+[----------] 2 tests from KinIk (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2
+[  FAILED  ] KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51
+
+ 2 FAILED TESTS

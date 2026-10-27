@@ -1,0 +1,600 @@
+[
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).formatRawDouble",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "formatRawDouble",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::formatRawDouble",
+      "startLine": 100,
+      "endLine": 105,
+      "sha256": "e9e43be1902251f31bdab487d720cb2a8d9a6d19bedf3829fcbb5e5305cb6aa4"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "仅snprintf %.17g；格式依赖既定C locale，不是新数值核心。"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).radUnit",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "radUnit",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::radUnit",
+      "startLine": 111,
+      "endLine": 121,
+      "sha256": "110102e7e18aa0c481cfbaecc991fa48a676a8a4ea01e6945a7b2069f23dad48"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "真实查core rad token并对缺失fail-fast；单位权威未旁路。"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).marginProvenance",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "marginProvenance",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::marginProvenance",
+      "startLine": 127,
+      "endLine": 131,
+      "sha256": "d6fd0f3023b839484724f40179d3a64ee22c2e37bc9e8fe08421990298dc2d29"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "复用core派生只读来源，来源事实不升级为可信度结论。"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).makeJointDiagnostic",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "makeJointDiagnostic",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::makeJointDiagnostic",
+      "startLine": 148,
+      "endLine": 162,
+      "sha256": "c991f6f558f79b3beb0883fa1237c49269bd9721af08d8146dcc71bed7c19cd9"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "码选择和core记录组装可核；中文context/cause/action仍需diagnostics正式消费审查。"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).comparativeValue",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "comparativeValue",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::comparativeValue",
+      "startLine": 169,
+      "endLine": 182,
+      "sha256": "c2bc6fec0eb309eab5df3873d5b97d2a4b9aab059dacd4eebd99387ebc5db13c"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "有限Provided/非有限Invalid原串分轨，携SI单位及来源。"
+  },
+  {
+    "functionId": "policy.JointLimits.(anonymous namespace).validateQueryShape",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "validateQueryShape",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::validateQueryShape",
+      "startLine": 198,
+      "endLine": 258,
+      "sha256": "759907bbfef045b8b7946585828d618378ad650ef5e18b31b78a4d3840ab731d"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "形状/唯一身份/成对限位/continuous必填先fail-fast，不吞并数据发现。"
+  },
+  {
+    "functionId": "policy.JointLimits.JointLimitEvaluator.evaluate",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "JointLimitEvaluator::evaluate",
+      "qualifiedSymbol": "sdurws::ird::policy::JointLimitEvaluator::evaluate",
+      "startLine": 266,
+      "endLine": 589,
+      "sha256": "ef37bb0c84d69e35170756839e0f7c230963aa0fb93803b99760658651e3ba3c"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "已发布策略、非有限位置、名称守卫后输出首违例/有符号裕量/严格近限位；Models布尔不等价。端点有限及极值溢出未运行，finalized仅本DTO。"
+  },
+  {
+    "functionId": "policy.JointLimits.makeJointLimitEvaluator",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "symbol": "makeJointLimitEvaluator",
+      "qualifiedSymbol": "sdurws::ird::policy::makeJointLimitEvaluator",
+      "startLine": 595,
+      "endLine": 598,
+      "sha256": "08cf6416d86388457b096036f4948ae38440c1a95bf1eb8cc910ed4e867eab72"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "无状态接口工厂，只委托标准make_unique。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).formatNumber",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "formatNumber",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::formatNumber",
+      "startLine": 80,
+      "endLine": 85,
+      "sha256": "51d9d18a4f0977d13786094cbab02e0ec865c6510ef8a275d70e10b7d2f17832"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "非持久化诊断数值格式，C locale约束保留。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).makeErrorDiag",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "makeErrorDiag",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::makeErrorDiag",
+      "startLine": 100,
+      "endLine": 110,
+      "sha256": "1d55d96a82c35fcf7c77dd6c738b2c4e41f870b0ab39927bd433a01d6a9a1dd4"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "registryCode及core记录真实委托，正式中文文案仍待诊断权威核对。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparativeValue",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "comparativeValue",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::comparativeValue",
+      "startLine": 113,
+      "endLine": 122,
+      "sha256": "a06310ff103cf20eee1807bc8efe701e4047574158d41ef454456fec5d3a2d40"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "SI值和UserProvided来源承载，不改变来源等级。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).comparison",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "comparison",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::comparison",
+      "startLine": 125,
+      "endLine": 131,
+      "sha256": "8018db3cde5d55cdc1bd2da69e17ccdd25dce8b3fb37347f5b5cc767b3380531"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "仅组比较型两侧，复用本地comparativeValue及core数据结构。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).siUnitToken",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "siUnitToken",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::siUnitToken",
+      "startLine": 134,
+      "endLine": 146,
+      "sha256": "d430c733e7ca3dd268e63605e930ce88e6786bbe969fa1058a55fd5a4c5a15c8"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "域映射到既有m/1/rad token，不自建单位换算。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).expectedBound",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "expectedBound",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::expectedBound",
+      "startLine": 153,
+      "endLine": 168,
+      "sha256": "797da286a00180a4493d91f935f07184b577e07e9fd5fb930721a17778508085"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "错误分类到0/1期望界的policy域逻辑，真域窗仍由PolicyThreshold。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).domainWindowText",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "domainWindowText",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::domainWindowText",
+      "startLine": 171,
+      "endLine": 184,
+      "sha256": "a45b0f8dbef401c6c02f4efbbc2f6d4ae697c78cfc334f53da98b743e904c2ad"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "本地中文域窗文案真实存在，应继续pending并追正式diagnostics模板。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).isRegisteredRoleToken",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "isRegisteredRoleToken",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::isRegisteredRoleToken",
+      "startLine": 194,
+      "endLine": 202,
+      "sha256": "e649a53e44f0dfb1940191ffabf0f69743bf8e2ac65ef1e0bebd4dab862d9dd9"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "精确五角色词表；与会话switch存在维护重复，未宣称消除。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).scopeTargetLess",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "scopeTargetLess",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::scopeTargetLess",
+      "startLine": 213,
+      "endLine": 227,
+      "sha256": "3099fda36d3dca8648494e431004a60145316288925c57d83018a1bfebe376d4"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "Object/Role/Group键用标准字段比较，与codec实现重复待收口。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).orderedPairEnds",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "orderedPairEnds",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::orderedPairEnds",
+      "startLine": 230,
+      "endLine": 237,
+      "sha256": "c7e3553108567b01a04cbe1c968d3d045381552fbf71dce2ee4c944151ffff91"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "委托同一比较器规整无序对端，不拼拆框架全名。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedPairRules",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "normalizedPairRules",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::normalizedPairRules",
+      "startLine": 246,
+      "endLine": 270,
+      "sha256": "b2619c9da22134fedf17c4fa3e8f90f993d3c3681c6ecc7ddcec163bcc14468c"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "拷贝输入并用标准sort，codec同键谓词重复仍在。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).endsCoverEquivalent",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "endsCoverEquivalent",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::endsCoverEquivalent",
+      "startLine": 285,
+      "endLine": 316,
+      "sha256": "e807fcbd7f0c6ec3b276d9b9ecafe2dbe3af90bfffd68cb27738290bc9603fba"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "同kind精确等值及Object×Role上下文交集；不支持Group异kind展开，不是完整等价关系。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).pairsCoverEquivalent",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "pairsCoverEquivalent",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::pairsCoverEquivalent",
+      "startLine": 322,
+      "endLine": 329,
+      "sha256": "1d4976998a22cbd9fa550dc6e66f9e66d18e0cc51d8d1d5a34f8393e4977fc21"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "同序及反序组合，复用单端判定，非通用集合引擎。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).levelText",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "levelText",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::levelText",
+      "startLine": 332,
+      "endLine": 335,
+      "sha256": "7910cfab8da5008b34ea705f6c21dec9818e9dfca2b9fb66b92ed38baee456ab"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "本地级别中文文案待diagnostics正式显示链核对。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).normalizedSet",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "normalizedSet",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::normalizedSet",
+      "startLine": 341,
+      "endLine": 350,
+      "sha256": "a40b6a419202ad47b0ae1946175e15356cc5ed73a4f5e4f99e9ae89c6fd7c72c"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "标准sort/unique，等价由双向比较器定义，非新算法平台。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).resolveThresholdSlot",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "resolveThresholdSlot",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::resolveThresholdSlot",
+      "startLine": 386,
+      "endLine": 481,
+      "sha256": "579a50d30d21c5433bc75bb313f09f958483e02b4c931fb418d531956b412ced"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "非有限分类先于core单位转换，再由PolicyThreshold核域窗；异常转译范围明确。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.(anonymous namespace).runParsePipeline",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "runParsePipeline",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::runParsePipeline",
+      "startLine": 489,
+      "endLine": 844,
+      "sha256": "dbda61a854efa29ed909e9ad05ae64ff86057dbe59bfd5f2ebc58483bac9a7f8"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "唯一管线按schema/词表/阈值/冻结4pi/冲突/适用范围执行，错误拒发布，identity和发布工厂真实调用。Group定义应答不能承诺会话成员可展开。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.resolvePolicy",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "resolvePolicy",
+      "qualifiedSymbol": "sdurws::ird::policy::resolvePolicy",
+      "startLine": 852,
+      "endLine": 863,
+      "sha256": "5f6191b833c4606bc1f80c4b53477bb8493c77bf17ac5ded164a9b2e7ad4bf51"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "委托唯一管线并移动返回，不计算外部sourceVersion。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.PolicyValidator.validate",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "PolicyValidator::validate",
+      "qualifiedSymbol": "sdurws::ird::policy::PolicyValidator::validate",
+      "startLine": 865,
+      "endLine": 872,
+      "sha256": "d4960869ab9e44b86e3f85bcede5bab52d29a2ecb0938eec899c91069324e63a"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "同管线产出诊断；临时发布值被丢弃，无外部持久化操作。"
+  },
+  {
+    "functionId": "policy.PolicyParsing.sceneObjectRoleTokens",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "symbol": "sceneObjectRoleTokens",
+      "qualifiedSymbol": "sdurws::ird::policy::sceneObjectRoleTokens",
+      "startLine": 874,
+      "endLine": 877,
+      "sha256": "769dc436d2b18c86df1b150cb6ca1a5b77cce1c24a15dc028edd5a01fdcb8a57"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "返回该TU词表副本；没有把另一TU switch变成机械单源。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.sceneObjectRoleToken",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "sceneObjectRoleToken",
+      "qualifiedSymbol": "sdurws::ird::policy::sceneObjectRoleToken",
+      "startLine": 59,
+      "endLine": 73,
+      "sha256": "5acf6e32d72c9a5c67764d02688a8f4acf807bacf7d3fedf0dd28fbe01e8e8fc"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "枚举到五角色字面switch，与解析词表维护重复已揭示。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "trySceneObjectRole",
+      "qualifiedSymbol": "sdurws::ird::policy::trySceneObjectRole",
+      "startLine": 75,
+      "endLine": 87,
+      "sha256": "2a83baaee8211052bf9e301c7dc7b0521693d9e2f731aab791b6dcec28b80330"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "精确反查switch，未知返回nullopt。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "canonicalPair",
+      "qualifiedSymbol": "sdurws::ird::policy::detail::canonicalPair",
+      "startLine": 109,
+      "endLine": 116,
+      "sha256": "fdbd487add3182a14e815fe15d1d498a2a2aa708d06aa7fa7e88f917155272bd"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "按ObjectId字节序规范无序对，不以Frame名称另作真值。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "classifyDomainPair",
+      "qualifiedSymbol": "sdurws::ird::policy::detail::classifyDomainPair",
+      "startLine": 133,
+      "endLine": 180,
+      "sha256": "84229d894e8009eab7967ef8dfa8a4afa860994bd0c5ee7d8fb32141e9277f4e"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "按业务角色域矩阵机械选择，未列组合nullopt，不是几何碰撞核。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "computeSessionIdentity",
+      "qualifiedSymbol": "sdurws::ird::policy::detail::computeSessionIdentity",
+      "startLine": 196,
+      "endLine": 228,
+      "sha256": "aff0762fdbe7cd1a328383145682d4abddefc0b3c3d52971758f3f3859b0def9"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "core真实摘要器+固定magic/form/三身份及长度串；本地u32BE可继续审原语复用，不改身份组成；全零不可能注释不采信。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "makeBuiltinBackendDescriptor",
+      "qualifiedSymbol": "sdurws::ird::policy::detail::makeBuiltinBackendDescriptor",
+      "startLine": 240,
+      "endLine": 254,
+      "sha256": "caf51711c1c0117a11421dac4d40dd6f355395889a04e75859ded55ca7f137ad"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "只固化后端描述值；binary-collision+distance文案不能证明distance能力。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "ResolvedCollisionScope::inScopePairCount",
+      "qualifiedSymbol": "sdurws::ird::policy::ResolvedCollisionScope::inScopePairCount",
+      "startLine": 262,
+      "endLine": 273,
+      "sha256": "d4c491006c53921c06938b23722f78d67fa2dafb3052b6cae92b69b8513f9326"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "线性统计Mandatory及InScopeDefault，不另判碰撞。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "ResolvedCollisionScope::inScopePairCount",
+      "qualifiedSymbol": "sdurws::ird::policy::ResolvedCollisionScope::inScopePairCount",
+      "startLine": 287,
+      "endLine": 298,
+      "sha256": "3b358546c339ab62198ddeba93829fecc3590b7cb5da34a98684a7eda3d4679b"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "分域线性统计同两状态。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "ResolvedCollisionScope::excludedPairCount",
+      "qualifiedSymbol": "sdurws::ird::policy::ResolvedCollisionScope::excludedPairCount",
+      "startLine": 275,
+      "endLine": 285,
+      "sha256": "e84534eef6dcbc12b66ce89baad0a03ac202f159e6099fdb9a9dcecdf92918e1"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "线性统计两排除状态，保留事实语义。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "validateSceneAndPolicy",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::validateSceneAndPolicy",
+      "startLine": 324,
+      "endLine": 451,
+      "sha256": "b20fe9d5cc2cc64cd202aec19a501fab8fd578eb4beb9740d113980bb69c32e8"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "策略/身份/后端/WC/设备/对象及规则防御校验；仅findDevice读取，Group无成员数据拒绝。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "expandRuleTarget",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::expandRuleTarget",
+      "startLine": 462,
+      "endLine": 490,
+      "sha256": "c3b1eb679d0231e9954d35da0da8b3285451a4b9a2daa94019cde04fc17ef812"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "Object单点、Role场景枚举；Group不变量异常，不能猜空集。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "expandRulesAndCheckConflicts",
+      "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::expandRulesAndCheckConflicts",
+      "startLine": 508,
+      "endLine": 560,
+      "sha256": "40dabbf6f886bc8547c718d204c7d156d3d325830e1561d0de6f6c14bcc49420"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "规则展开去自对并用标准map保首条，冲突拒绝属于policy权威，不以框架缺省过滤代替。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "CollisionEvaluationSession::CollisionEvaluationSession",
+      "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::CollisionEvaluationSession",
+      "startLine": 568,
+      "endLine": 729,
+      "sha256": "3577ee69d5753bdd32aeb8df2fb5e65cde830b620dd7cbe214601b33ba9d8e25"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "持值/共享借持保活，作用域门控与优先级真实可核，setup和后端缓存不写WC结构；未证明全部生命周期/并发。"
+  },
+  {
+    "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "symbol": "CollisionEvaluationSession::buildPolicyProximitySetup",
+      "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::buildPolicyProximitySetup",
+      "startLine": 731,
+      "endLine": 777,
+      "sha256": "288c6acece446901ad2b18bd66a76071cbd50b499ae6fbad16d17ab16d8154a7"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "真实setup关闭静态默认、include-all；完整名直接进模式API导致F-961。evaluate不消费该setup过滤，不外推碰撞漏检。"
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+      "symbol": "RobWorkCollisionEvaluator::RobWorkCollisionEvaluator",
+      "qualifiedSymbol": "sdurws::ird::policy::RobWorkCollisionEvaluator::RobWorkCollisionEvaluator",
+      "startLine": 53,
+      "endLine": 72,
+      "sha256": "e7b21e9704b11d313556e0eac5b7aaef09726fd560f462e8a4164eb8d78f6336"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "构造真实ProximityStrategyRW，同评估器的会话共享后端和同锁。"
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+      "symbol": "RobWorkCollisionEvaluator::backend",
+      "qualifiedSymbol": "sdurws::ird::policy::RobWorkCollisionEvaluator::backend",
+      "startLine": 74,
+      "endLine": 79,
+      "sha256": "499f44555d15ce5b7c3673d60dd5b0c901e7aa07474b879e7149603e4643ebb5"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "返回构造固化描述值，无动态能力证明。"
+  },
+  {
+    "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+      "symbol": "makeRobWorkCollisionEvaluator",
+      "qualifiedSymbol": "sdurws::ird::policy::makeRobWorkCollisionEvaluator",
+      "startLine": 95,
+      "endLine": 101,
+      "sha256": "8650130f12e3530a016906d518e4cdf4f89a115accaa3b82711494ae1d133441"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "唯一公开make入口使用标准make_unique，未另造核心。"
+  },
+  {
+    "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+      "symbol": "CollisionEvaluationSession::buildEvaluationHalf",
+      "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::buildEvaluationHalf",
+      "startLine": 222,
+      "endLine": 365,
+      "sha256": "3f8c644a12f0691e4276940f21b5db4e82619750c111ab64e5b00a19541c4fd8"
+    },
+    "independentReview": "PASS for pending registration only",
+    "conclusion": "WC findDevice/findFrame/getObjects只读；hasModel/addModel同锁且属后端缓存；distance动态探测。直构共享后端未共锁、多Object同base首条与并发均待审/未运行。"
+  }
+]

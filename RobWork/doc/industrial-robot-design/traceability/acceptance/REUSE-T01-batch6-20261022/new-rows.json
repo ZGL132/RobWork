@@ -1,0 +1,1103 @@
+[
+  {
+    "functionId": "core.convert",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03",
+      "SEL-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "symbol": "convert",
+        "qualifiedSymbol": "sdurws::ird::core::convert",
+        "startLine": 134,
+        "endLine": 152,
+        "sha256": "2e895d8acd7caa6a1bbc6ada8fa5ebb6b0ec809980482bd7b154d1c55cffbb28"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-UNITS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "core为唯一量纲/单位权威，保留已注册同量纲、有限性及结果溢出拒绝；优先Constants角度因子。DOM getUnit只提供无量纲比例，不据其命中放弃强类型token或引入loader重依赖",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可",
+    "designRefs": [
+      "tasks/foundation/CORE-T04.json",
+      "units/core.md §4.4/§5.4"
+    ]
+  },
+  {
+    "functionId": "dynamics.DynamicsEnvelopeCalculator.computeRms",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Envelope.cpp",
+        "symbol": "DynamicsEnvelopeCalculator::computeRms",
+        "qualifiedSymbol": "sdurws::ird::dynamics::DynamicsEnvelopeCalculator::computeRms",
+        "startLine": 181,
+        "endLine": 241,
+        "sha256": "6edc82bf49c0c2525f09fad30d5ee3d44869ff0605c9e52db8656adc600d4abe"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-STATS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RMS|rms|weighted|trapez|Trapez|Statistics|integrat\" RobWork/RobWork/src/rw/math/Statistics.hpp RobWork/RobWork/gtest/math/StatisticsTest.cpp RobWork/RobWork/src/rw/math RobWork/RobWork/src/rw/trajectory",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "时间加权梯形积分tau²并按有效全跨度归一；本关节非Ok缺口区间零贡献但时长留分母，无样本/跨度时NaN。上游样本mean/variance不能偷换该契约；底层平方/累加/数值稳定性仍须核，非整段业务豁免",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Writer.u16",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "u16",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::u16",
+        "startLine": 65,
+        "endLine": 69,
+        "sha256": "26f55be80121419c3b376f435ab21e10d7dcbb608a33ad6f5c1d2e6416f055c2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Writer.u32",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::u32",
+        "startLine": 72,
+        "endLine": 77,
+        "sha256": "168c662f1fa5f05783ff07291e02fb42f4c8ccf6bce08e006319f31685dee7ae"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Writer.u64",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "u64",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::u64",
+        "startLine": 80,
+        "endLine": 85,
+        "sha256": "7ab2c14417751e8417f299ae5925506e03c61dbe9f9cc48d005c874a30c656d7"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Writer.f64",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::f64",
+        "startLine": 91,
+        "endLine": 100,
+        "sha256": "32bc6e72fe589df202bc0b691b2a47b864cc5a84a461a19914e2060cc7d818ae"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Writer.str",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "str",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::str",
+        "startLine": 103,
+        "endLine": 107,
+        "sha256": "94558cefad344e470dfa67a6f29fff7c7def9b0d9dc25a62a2e9108ca1a6384c"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Reader.u16",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "u16",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::u16",
+        "startLine": 150,
+        "endLine": 156,
+        "sha256": "b7e8a6dae0d0996927bc879b7ce6773572f9a546365255943037cff58f31aaa2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Reader.u32",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::u32",
+        "startLine": 158,
+        "endLine": 167,
+        "sha256": "d518820ee40359bb4141b021c3372e02f32a633d5cae6d083d33c866011cf536"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Reader.u64",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "u64",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::u64",
+        "startLine": 169,
+        "endLine": 178,
+        "sha256": "72303ecf01b91431a9e02bb3e3104ba94fc41d97eb374453a6b6eaab5ee75c1b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Reader.f64",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::f64",
+        "startLine": 180,
+        "endLine": 191,
+        "sha256": "0cc8d9069b0ed31e07ba54bf33b947bbcae9274f967408b55ca6a09aba0f96da"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.rtcodec.Reader.str",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+        "symbol": "str",
+        "qualifiedSymbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::str",
+        "startLine": 193,
+        "endLine": 201,
+        "sha256": "bae1d0d96c433672a6a4f882896e5b7f7718839ddc7e719b670b05e69eba6c21"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.snapshotcodec.ByteReader.readU16",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "readU16",
+        "qualifiedSymbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readU16",
+        "startLine": 337,
+        "endLine": 344,
+        "sha256": "43d1a126894945c8bf7a56d2c5b5feec9a5a5db0bcac7cd106196a69f7078868"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.snapshotcodec.ByteReader.readU32",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "readU32",
+        "qualifiedSymbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readU32",
+        "startLine": 347,
+        "endLine": 356,
+        "sha256": "95189f970caefc674a53fa1dd4eb791e9d485b3a9b93758d62d9969d1423bb07"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.snapshotcodec.ByteReader.readU64",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "readU64",
+        "qualifiedSymbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readU64",
+        "startLine": 359,
+        "endLine": 368,
+        "sha256": "d92570d64f54399bc235bdcc3bd7e368bc0c35d46b49b0f45a853c203d2a633d"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.snapshotcodec.ByteReader.readString",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "readString",
+        "qualifiedSymbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readString",
+        "startLine": 382,
+        "endLine": 390,
+        "sha256": "d804086fad777559814647256d684ee9e1d6da5608a838239bb88dab6c7e742b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.appendU16",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "appendU16",
+        "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::appendU16",
+        "startLine": 80,
+        "endLine": 84,
+        "sha256": "a3c708cb73beded61559c893b86581fea8ebc057ada6b0f22d73b4d9a30886df"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.appendU32",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "appendU32",
+        "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::appendU32",
+        "startLine": 87,
+        "endLine": 93,
+        "sha256": "ad63da30ad3142203673fecfdaa38d513e2c02b31d874a30e5d38720be8a83f2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.appendU64",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "appendU64",
+        "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::appendU64",
+        "startLine": 96,
+        "endLine": 101,
+        "sha256": "4bb06976b65bf8ebdfc187349777c56ddf3b5acdb36abd345be6f0583a5e6241"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "runtime.appendString",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "CON-04",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "appendString",
+        "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::appendString",
+        "startLine": 129,
+        "endLine": 133,
+        "sha256": "0f46cbcab5d50478621aef454eadc3e3499cd538ec7fc4c4be6b348cda20520d"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.combinationCodec.ByteWriter.u32",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-03",
+      "SEL-04",
+      "SEL-05",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::u32",
+        "startLine": 177,
+        "endLine": 183,
+        "sha256": "6cc8be86c7a4b16220712b45dcbd6ffb29608a1995b9170029504a11c5decaea"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.combinationCodec.ByteWriter.f64",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-03",
+      "SEL-04",
+      "SEL-05",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::f64",
+        "startLine": 190,
+        "endLine": 199,
+        "sha256": "f69f6a234a579d952bfc3cd7c327660a74329c7e511aed5d84ea76053f898364"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.combinationCodec.ByteWriter.str",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-03",
+      "SEL-04",
+      "SEL-05",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+        "symbol": "str",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::str",
+        "startLine": 201,
+        "endLine": 205,
+        "sha256": "c66ce5d6be36be13df5211081dbf6a2ccb70b10382c95b8036b7da8527d0be10"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.combinationCodec.ByteReader.u32",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-03",
+      "SEL-04",
+      "SEL-05",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+        "symbol": "u32",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32",
+        "startLine": 273,
+        "endLine": 282,
+        "sha256": "bc3aa2e37a34f85615b76c1677eca26f88b84a516735c6cb361fa01cc857920f"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.combinationCodec.ByteReader.f64",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-03",
+      "SEL-04",
+      "SEL-05",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+        "symbol": "f64",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::f64",
+        "startLine": 290,
+        "endLine": 305,
+        "sha256": "e3f669040e8435b4fe183de8326f628812fd80cb68c39d36f840fef2bf925f31"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.combinationCodec.ByteReader.str",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-03",
+      "SEL-04",
+      "SEL-05",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+        "symbol": "str",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::str",
+        "startLine": 306,
+        "endLine": 313,
+        "sha256": "ddbae193617e8db9a7179678095ecf7dc70f6b0ff7f622f996182f487e25e7ca"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.combinationCodec.ByteReader.u32At",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-03",
+      "SEL-04",
+      "SEL-05",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+        "symbol": "u32At",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32At",
+        "startLine": 367,
+        "endLine": 372,
+        "sha256": "20c9d9992428fe6a9a689e97f6d9a44f573753822011e594261849eaf2281d61"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  },
+  {
+    "functionId": "selection.backfillCodec.ByteReader.u32At",
+    "ownerUnit": "selection",
+    "requirements": [
+      "SEL-10",
+      "CON-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "u32At",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32At",
+        "startLine": 332,
+        "endLine": 337,
+        "sha256": "20c9d9992428fe6a9a689e97f6d9a44f573753822011e594261849eaf2281d61"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+    },
+    "differences": "回填普通u32/f64为显式小端，版本字段u32At仍memcpy主机序；与CombinationCheck相同隐藏差异，必须纳入跨端协议测试，不用已有F-777完成标签当豁免",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+  }
+]

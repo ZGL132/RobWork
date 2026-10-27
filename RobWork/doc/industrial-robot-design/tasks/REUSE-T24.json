@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T24",
+  "unit": "diagnostics",
+  "masterWp": "WP-A",
+  "title": "修正受限参数解析失败时的局部输出泄漏",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "ERR-01",
+    "NFR-MNT-03"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#4.5",
+    "units/diagnostics.md#9.2",
+    "reuse/diagnostics-schema-audit.md"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T24.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T24.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T24.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "冻结文法、首处违约错误与声明顺序不变；拒绝后names为空、error非空，成功后清错；重复调用和原注册/工厂消费者回归通过",
+    "保留diagnostics单一私有解析点、稳定码/文案owner及core依赖；不新建解析核心、上游调用或公共接口；完整变动文件功能实审",
+    "复用B33上游不适用证据，原生产红例与当前生产绿例均真实留痕；性能按同轮原入口对照，不把自查当独验，F-968仍open"
+  ],
+  "note": "WP-14/F-968有界修正；主线起点d1e416b00433bbd3e62903e583b2ee2b103e0396。仅局部收集及成功交换输出，保留原容量以免正常重复调用新增分配；不改文法/cctype/locale、错误文本、公共接口、依赖或CMake。原红例1项真实FAIL；最终24项通过、0失败0跳过；架构11类PASS。独验NOT RUN，不关闭F-968；不操作远程。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T24-20261025-r1.json（12件复跑原件在其同名目录），verdict=pass（10项检查failed=0/notRun=0；全库深查、无关单元/GUI/端到端性能按增量口径如实登记NOT RUN），绑定送验 SHA=c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215（base=d1e416b00433bbd3e62903e583b2ee2b103e0396，送验范围单提交）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（22路径全在允许面）、增量构建exit 0、diagnostics全量123/123与green口径24/24真实重跑（F-968新例DtReg5_ParamSchemaFailureClearsNames_F968在列OK）、实施红例red.xml 1项预期FAIL留痕核对、ird_gates 11类零命中、validate-docs三合一exit 0、性能同轮原入口对照独立重跑（旧版从base提取仅改符号名，旧/新区间重叠，fresh -2%～+7.5%、reuse +2%～+4%，微基准噪声量级，无超出声明的退化）、commit-lint PASS、冻结面（cmake门禁目录/上游与vcpkg/closures/findings/catalog/inventory）零差异、verification.json inputs 8/8 rawSha256与送验树一致、F-968仍open未关闭；limitations：性能结论限于该微基准口径不外推吞吐，本验收不关闭F-968，validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399）。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T24.json"
+  },
+  "outputs": [
+    "ParamSchema原解析入口最小输出提交修正和原测试补强",
+    "原始红绿/性能/架构证据、逐功能和逐文件凭证；待独验"
+  ]
+}

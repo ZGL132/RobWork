@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T25",
+  "unit": "project",
+  "masterWp": "WP-A",
+  "title": "保存TxEngine真实SDK错误映射候选与诊断边界阻断",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "NFR-REL-01",
+    "PM-08"
+  ],
+  "designRefs": [
+    "units/project.md#7.1",
+    "units/project.md#7.6",
+    "ARCHITECTURE.md#3.6.3",
+    "reuse/extensions/GAP-PRJ-DIAG-BOUNDARY-01.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T25.json"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T25.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T25.json",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-PRJ-DIAG-BOUNDARY-01.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "原生产红例和候选绿例真实留痕，候选精确绑定baseline及补丁；源码恢复，不把实验写成生产迁移",
+    "不虚标诊断边界migrated，不放宽整文件门禁；项目级诊断语义由所有者确认后再落实精确任务；F-962/F-963保持open"
+  ],
+  "note": "文档/候选交付ready，生产实施被具体诊断语义阻断，不代表生产准入。WP-17/F-963必要配套修复候选，起点c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215。SDK真实错误112/1295误分类已复现；最终候选31 passed/0 failed/0 skipped，架构11类PASS；中间30 passed/1 failed为原另一处70注入，已修正候选并保留失败。TxEngine两诊断工厂权威与项目级空subject存在语义冲突，无法诚实满足整文件migrated准入。生产文件已恢复，仅保存patch、具体提案和证据；独验NOT RUN，不放行普通IK/RNE，不操作远程。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T25-20261025-r1.json（复跑原件在其同名目录），verdict=pass（10项检查failed=0/notRun=0/skipped=0；候选重放测试计数另列candidateReplay=31/31/0/0互不相加；全库深查、性能微基准与项目级诊断语义验证按口径如实登记NOT RUN），绑定送验 SHA=507db46bba838bb170e1fbfaf5784a389ad3790d（base=c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215，送验范围单提交）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（22路径全在允许面）、候选四链SHA256绑定核验（patch/baseline/candidate/SDK winerror.h）、候选补丁本机真实重放（git apply→增量构建→31项测试全过→源码恢复对HEAD零差异）、红线零触碰（22文件全为新增，生产库/上游/vcpkg/cmake门禁目录零差异）、validate-docs三合一复跑exit 0、commit-lint PASS；limitations：候选仍未准入生产，TxEngine磁盘满误分类依旧存在，F-962/F-963保持open，本验收不解除「两诊断工厂权威与项目级空subject语义冲突」待裁决状态，validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399）。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T25.json"
+  },
+  "outputs": [
+    "可回放SDK常量修正候选、红绿与原始报告；生产不变",
+    "项目级诊断权威/subject语义阻断提案；不扩大本包、不计直接复用迁移"
+  ]
+}

@@ -1,0 +1,141 @@
+archive mismatches [{"attempt": "r1", "file": "finalize.py", "originalSha256": "a7a978b9f9c32306b4bed2fee7ac134a72385d22776e0ac9dc122430f08f08ee", "archivedSha256": "dcf3b85ba1c6dd9a2f3bd0761627a55840f4869434b27f8556f912afce0b311e", "exactBytes": false, "sameText": true}, {"attempt": "r1", "file": "inspect.py", "originalSha256": "01c06b57454844bdfbf38c7672c6bbc7b96bce5be5324d58b6931b157c3a10c6", "archivedSha256": "dd3d3f1496309f5d0f27fc5b2a40b3faa6d8c677bdc5a110ed98b6cd0bbb2c89", "exactBytes": false, "sameText": true}, {"attempt": "r2", "file": "finalize.py", "originalSha256": "dda9a98823ef7a516364bc329ac8364dcc5b77dd378f7204db68d288e8632bd1", "archivedSha256": "82e88af635e4e42984ed87dfe12eef3a4889a13763be3f895c921ca26f61f176", "exactBytes": false, "sameText": true}, {"attempt": "r2", "file": "inspect.py", "originalSha256": "bdbb09f7aa694c7c076385b73ba5ffad8124df4bf8c8a0dc75d5778977721d43", "archivedSha256": "fac85bfaa6dbce59af08186176fbb6cbb2e6b99b108994843efb4207cfd2f144", "exactBytes": false, "sameText": true}]
+{
+  "frozenSha": "4e142e485343e8bade52a8481eefbb447b017989",
+  "baseSha": "dfc317f234d9253b2e07bdea89a9bb3028e6db9d",
+  "pendingRelations": 95,
+  "closedFiles": 0,
+  "archiveFileCount": 82,
+  "archiveExactBytes": false,
+  "archiveSameText": true,
+  "independentOracles": {
+    "parallelIK": {
+      "tcpCircle": "p(q)=(cos(q),sin(q),0) m",
+      "distanceSquaredToTarget": "5-4*cos(q) >= 1",
+      "minimumDistanceMetres": 1,
+      "q0Jacobian": [
+        0,
+        1,
+        0
+      ],
+      "q0Residual": [
+        1,
+        0,
+        0
+      ],
+      "pseudoinverseStep": 0,
+      "meaning": "Unreachable target; zero tangential gradient leaves q=0 through both iterations; source returns in-bounds q after logging budget exhaustion."
+    },
+    "standardDH": {
+      "order": "Rz(theta)*Tz(d)*Tx(a)*Rx(alpha)",
+      "fourFactorMatrix": [
+        [
+          0.7648421872844885,
+          -0.5933637833613874,
+          0.2508701838500143,
+          0.22945265618534655
+        ],
+        [
+          0.644217687237691,
+          0.7044663052755917,
+          -0.2978435767000479,
+          0.1932653061713073
+        ],
+        [
+          0.0,
+          0.3894183423086505,
+          0.9210609940028851,
+          -0.2
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "explicitFormulaDifferenceNorm": 0.0,
+      "craigOrder": "Rx(alpha)*Tx(a)*Rz(theta)*Tz(d)",
+      "standardCraigDifferenceNorm": 0.40786629851938144
+    },
+    "antiparallel": {
+      "sourceBranch": "For z, idx=0 so axis=normalize(z cross x)=+y",
+      "upstreamRyPiDiagonal": [
+        -1,
+        1,
+        -1
+      ],
+      "productRxPiDiagonal": [
+        1,
+        -1,
+        -1
+      ],
+      "relativeRyPiInverseRxPiDiagonal": [
+        -1,
+        -1,
+        1
+      ],
+      "relativeAxis": "tool-local z",
+      "relativeAngleRad": 3.141592653589793,
+      "bothMapZToMinusZ": true
+    },
+    "polynomial": {
+      "definition": "p(u)=sum((i+1)*u^i,i=0..7)",
+      "oracle": "sum((i+1)*i!/(i-k)!*u^(i-k)), independently via exact Fraction arithmetic",
+      "normalizedLeft": [
+        1,
+        2,
+        6,
+        24
+      ],
+      "normalizedRight": [
+        36,
+        168,
+        756,
+        3024
+      ],
+      "physicalTimeDerivatives": [
+        {
+          "h": 0.5,
+          "u": 0,
+          "physicalTimeDerivatives0to3": [
+            1.0,
+            4.0,
+            24.0,
+            192.0
+          ]
+        },
+        {
+          "h": 0.5,
+          "u": 1,
+          "physicalTimeDerivatives0to3": [
+            36.0,
+            336.0,
+            3024.0,
+            24192.0
+          ]
+        },
+        {
+          "h": 2.0,
+          "u": 0,
+          "physicalTimeDerivatives0to3": [
+            1.0,
+            1.0,
+            1.5,
+            3.0
+          ]
+        },
+        {
+          "h": 2.0,
+          "u": 1,
+          "physicalTimeDerivatives0to3": [
+            36.0,
+            84.0,
+            189.0,
+            378.0
+          ]
+        }
+      ]
+    }
+  },
+  "trackedStatus": ""
+}

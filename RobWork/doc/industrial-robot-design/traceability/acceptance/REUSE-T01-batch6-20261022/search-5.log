@@ -1,0 +1,4 @@
+RobWork/RobWork/src/rw/common/CMakeLists.txt:96:    target_link_libraries(${SUBSYS_NAME} PUBLIC ${Boost_LIBRARIES} sdurw_core)
+RobWork/RobWork/cmake/RobWorkConfig.cmake.in:118:        find_package(Boost REQUIRED COMPONENTS filesystem serialization system thread
+RobWork/RobWork/cmake/RobWorkConfig.cmake.in:122:    if(TARGET Boost::headers)
+RobWork/RobWork/cmake/RobWorkConfig.cmake.in:123:        set(RW_BUILD_WITH_LIB_DEPEND ${RW_BUILD_WITH_LIB_DEPEND} Boost::headers)

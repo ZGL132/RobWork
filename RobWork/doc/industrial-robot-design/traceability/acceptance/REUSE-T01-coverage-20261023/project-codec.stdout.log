@@ -1,0 +1,117 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:3: * @brief  project 自有格式 canonical 编解码实现（§4.8）——自含 JSON 引擎。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:6: *   - units/project.md §4.8（canonical 编码契约：ASCII、固定字段序、无浮点
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:16: * 引擎规则（canonical 落值口径，随实现登记——DTB §5.4）：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:21: *   2. 输入：严格 canonical——拒绝任何空白（含换行）、拒绝非 ASCII 原始
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:25: *      canonical 形态的字节流＝损坏/外部篡改产物，按 store-corrupt 拒绝
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:31: *   4. 非法 UTF-8：dump 侧拒绝（std::invalid_argument——域 canonical 契约
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:153:// 解析器：递归下降，严格 canonical（无空白/无浮点/ASCII——见文件头规则 2）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:173:            corrupt("trailing content after JSON document（截断或非 canonical 尾部）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:186:    /// 读取当前字节（不前进）。耗尽即"截断"——canonical 文档不允许提前结束。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:248:            // 缺失即可选，出现即非 canonical（文件头规则 2）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:265:            // 重复键＝同一对象两义性，canonical 格式不存在（文件头规则 2）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:309:                // 裸控制字符：canonical 输出必转义（文件头规则 3），出现即非规范。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:343:    /// 解析端接受规范 JSON 的两种写法；解码结果唯一，不构成 canonical 二义）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:381:    /// 码点 → UTF-8 追加（标准最短形式；与 dump 侧 decodeUtf8At 互逆）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:427:        // "01" 这类前导零＝同一数值的第二种字节形态，canonical 不允许
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:429:        if (digits > 1 && firstDigitWasZero_) { corrupt("leading zero in number（非 canonical）"); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:454:std::optional<std::pair<char32_t, std::size_t>> decodeUtf8At(const std::string& s,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:497:/// canonical 确定性的字节面约定）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:518: * @brief 把 UTF-8 字符串按 canonical 转义表追加到 out（文件头规则 3）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:524: * @throws std::invalid_argument utf8 含无效 UTF-8 字节序列（域 canonical
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:557:        // canonical 契约（core §6.3"UTF-8"）——fail-fast，不猜测。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:558:        const auto decoded = decodeUtf8At(utf8, i);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:559:        if (!decoded) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:562:                                        + " 含无效 UTF-8 字节序列（域 canonical"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:565:        appendUnicodeEscape(out, decoded->first);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:566:        i += decoded->second;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:592:std::string decodeHexString(const std::string& hex)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:601:        corrupt("hex-encoded byte field has odd length");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:609:            corrupt("hex-encoded byte field has non-hex character");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:617:std::string canonical(ProjectId id) { return id.toCanonical(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:620:std::string canonical(BranchId id) { return id.toCanonical(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:623:std::string canonical(RevisionId id) { return id.toCanonical(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:628:std::string canonical(sdurws::ird::core::RunId id) { return id.toCanonical(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:631:std::string canonical(ObjectId id) { return id.toCanonical(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:634:std::string canonical(ContentVersion cv) { return cv.toCanonical(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:640:    out += canonical(ref.objectId);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:642:    out += canonical(ref.contentVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:824:        corrupt(std::string("field '") + key + "' is not a canonical id: " + s);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:922:    out += ",\"projectId\":\"" + canonical(value.projectId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:939:    out += ",\"projectId\":\"" + canonical(value.projectId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:940:    out += ",\"revisionId\":\"" + canonical(value.revisionId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:942:    out += ",\"branchId\":\"" + canonical(value.branchId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:954:    // ＝不输出（canonical 省略规则，与 parse 侧缺省空值对称——round-trip）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:956:    out += "{\"revisionId\":\"" + canonical(value.revisionId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:959:        out += ",\"parentRevisionId\":\"" + canonical(*value.parentRevisionId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:961:    out += ",\"branchId\":\"" + canonical(value.branchId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:970:        out += "{\"objectId\":\"" + canonical(r.objectId) + "\",\"contentVersion\":\""
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:971:             + canonical(r.contentVersion) + "\",\"objectTypeToken\":";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:982:            out += '"' + canonical(value.introducedObjects[i]) + '"';
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:996:    out += ",\"committedBy\":\"" + canonical(value.committedBy) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1003:    out += ",\"primaryBranchId\":\"" + canonical(value.primaryBranchId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1008:        out += "{\"branchId\":\"" + canonical(b.branchId) + "\",\"label\":";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1010:        out += ",\"baseRevisionId\":\"" + canonical(b.baseRevisionId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1011:        out += ",\"tipRevisionId\":\"" + canonical(b.tipRevisionId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1018:        // std::map 按键字典序迭代——canonical 键序（确定性，NFR-COR-02）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1039:    // **hex 文本**——payload 契约是"域 canonical 负载字节（不透明；project
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1094:    out += ",\"projectId\":\"" + canonical(value.projectId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1095:    out += ",\"branchId\":\"" + canonical(value.branchId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1098:    out += ",\"baseRevisionId\":\"" + canonical(value.baseRevisionId) + "\"";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1136:    out += "{\"taskIdentity\":{\"project\":\"" + canonical(value.taskIdentity.project)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1137:           + "\",\"branch\":\"" + canonical(value.taskIdentity.branch)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1138:           + "\",\"revision\":\"" + canonical(value.taskIdentity.revision)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1139:           + "\",\"run\":\"" + canonical(value.taskIdentity.run)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1250:                corrupt("introducedObjects item is not a canonical cv- text: " + item.str);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1341:    v.payloadCanonical = decodeHexString(requireStringField(root, "payloadCanonical"));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1350:            decodeHexString(requireStringField(*inv, "payloadCanonical"));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1368:            // canonical 形态不变式）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:9: *   2. 字段按名序：每个结构体的字段按字段名升序写入，canonical 顺序在
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:10: *      各 encode 函数头注释逐字列出（"字段按名序"的实施口径——升级字段
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:11: *      时必须重排 canonical 序并升编码器版本）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:24: * ContentDigester 唯一算法"）——对 canonical 字节整体摘要，结果以
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:50:class Writer {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:59:    void u32(std::uint32_t v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:78:    void f64(double v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:136:class Reader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:310:/// 对 canonical 字节整体做 SHA-256（core ContentDigester 唯一算法——§4.1）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:399:/// core::TaskIdentity 编解码（canonical 名序：attempt, branch, project,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:425:/// core::ValueProvenance 编码（canonical 名序：kind, methodTag,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:502:/// core::ComparativeValue 编码（canonical 名序：quantity, unit——UX-03）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:517:/// core::ComparativeFields 编码（canonical 名序：actual, expected）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:532:/// evidence::InvalidationReason 编码（canonical 名序：dependencyKey,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:551:/// evidence::BaselineConsistencyResult 编码（canonical 名序：consistent,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:577:// 报告引用类型编解码（canonical 名序逐结构注释——"字段按名序"）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:580:/// FieldValue 编码（canonical 名序：key, quantity, text, unit——§9.2）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:609:/// ResultBinding 编码（canonical 名序：fieldPath, runId）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:624:/// EvidenceBinding 编码（canonical 名序：caseScope, digest, itemId, status）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:658:/// JumpTarget 编码（canonical 名序：caseId, objectId, runId）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:696:/// SectionEntryView 编码（canonical 名序：caseScope, entryKey, evidence,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:743:/// MissingItemView 编码（canonical 名序：itemId, reason）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:758:/// EligibilityNote 编码（canonical 名序：formalPassAllowed, note,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:776:/// DiagRefEntry 编码（canonical 名序：category, code, comparison,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:840:/// CurrentnessSnapshot 编码（canonical 名序：computedAtUtc, evaluatedAgainst,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:849:    // evaluatedAgainst（canonical 名序：contextSummary, headRevision）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:889:/// ReviewReportSection 编码（canonical 名序：currentness, diagnostics,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:981:/// ReviewComment 编码（canonical 名序：atUtc, author, sectionId, text）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1005:/// SignOffState 编码（canonical 名序：signedAtUtc, signer, statementDigest,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1025:/// TradeOff 编码（canonical 名序：rationale, sectionId, topic）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1047:/// VariantDiffBlock 编码（canonical 名序：baselineCheckResult,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1076:/// ReportVersionEntry 编码（canonical 名序：actor, atUtc, reason, reportId,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1098:/// ReviewMetadata 编码（canonical 名序：basisRevision, basisSnapshot,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1157:// ReportSourceSpec 编解码（§4.4 ReportCodec-Data 主体——canonical 名序：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1162:/// ResultDataSourceRef 编码（canonical 名序：caseScope, inputBaselineId,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1212:        // map emplace：重复键＝编码违约（canonical 序内键唯一）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1227:std::vector<std::uint8_t> ReportCodec::encodeData(const ReportSourceSpec& spec)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1229:    // canonical 名序：branch, inputSliceId, level, project, resultRefs,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1246:        // SelectedSectionEntry canonical 名序：sectionId, selected。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1287:    // dataIdentity＝Data canonical 字节的 SHA-256（§4.4——计算对象
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1289:    return digestBytes(encodeData(spec));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1296:std::vector<std::uint8_t> ReportCodec::encodeFull(const ReportFullFields& full)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1298:    // canonical 名序：data, review, sectionModelVersion, sections
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1315:    // ＝dataIdentity 全部字段＋…"，同一 canonical 字节序列嵌入）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1316:    const std::vector<std::uint8_t> dataBytes = encodeData(full.data);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1332:    // data 段＝encodeData 的完整输出（含其自身 magic＋版本头——复用而非
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1333:    // 复制编码逻辑，canonical 序单点）；此处先消费嵌入的 Data 头再读字段。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1369:    // contentIdentity＝Full canonical 字节的 SHA-256（§4.4——幂等导出与
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1375:    // writeCurrentnessSnapshot 进入 canonical 字节——同一数据集两次构建的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp:1389:    return digestBytes(encodeFull(identityInput));

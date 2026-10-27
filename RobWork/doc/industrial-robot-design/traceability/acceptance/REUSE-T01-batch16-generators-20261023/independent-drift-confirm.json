@@ -1,0 +1,153 @@
+{
+  "command": [
+    "D:\\software\\Nodev\\node.exe",
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\second-confirm-dataset\\generate\\make_import_expectations.mjs"
+  ],
+  "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\second-confirm-dataset",
+  "exitCode": 0,
+  "secondEqualsFirst": true,
+  "secondOutputRawSha256": "3d99e004dc2be24f57ec0ff8fd1fff7bdac4a438788a77172d3905957b22043b",
+  "originalOutputRawSha256": "2448cd83ac6f28990a0e64cf15bbaa7355ac4f7036b50c877f7aa3443c4474d1",
+  "jsonChecks": [
+    {
+      "path": "expected/import-report.json",
+      "secondRawEqualsFirst": true,
+      "secondNormalizedEqualsOriginal": false
+    },
+    {
+      "path": "expected/xacro-samples.json",
+      "secondRawEqualsFirst": true,
+      "secondNormalizedEqualsOriginal": true
+    },
+    {
+      "path": "manifest.json",
+      "secondRawEqualsFirst": true,
+      "secondNormalizedEqualsOriginal": true
+    }
+  ],
+  "originalCounts": {
+    "jointStatuses": 6,
+    "jointStatusesAllMapped": true,
+    "resources": 2,
+    "resourceStates": {
+      "meshes/l1.stl": "recorded",
+      "meshes/ghost.dae": "missing"
+    },
+    "missingResourceDigestHexEmpty": true,
+    "selfCollisionCandidates": 1,
+    "selfCollisionPair": {
+      "link1": "base",
+      "link2": "l1"
+    },
+    "drivetrainCandidates": 5,
+    "drivetrainCandidateJoints": [
+      "j1",
+      "j2",
+      "j4",
+      "j5",
+      "j6"
+    ],
+    "pendingConfirms": 2,
+    "pendingKinds": [
+      {
+        "kind": "axis-default-plus-x",
+        "subject": "joint 'j2'"
+      },
+      {
+        "kind": "limit-missing",
+        "subject": "joint 'j3'"
+      }
+    ],
+    "ignored": 3,
+    "ignoredElements": [
+      "gazebo",
+      "disable_collisions",
+      "material 'gray'"
+    ],
+    "unsupported": 3,
+    "unsupportedKinds": [
+      {
+        "kind": "transmission",
+        "count": 1
+      },
+      {
+        "kind": "mesh-scale",
+        "count": 1
+      },
+      {
+        "kind": "ros-uri",
+        "count": 1
+      }
+    ],
+    "mappedVelocityCount": 5,
+    "mappedVelocityNote": "F01/{1,1}：<limit velocity> 真实映射 joints[i].maxVelocity（5 轴——j1/j2/j4/j5/j6）；旧 joint-velocity-limit 未保留面随 schema 落位消亡",
+    "mappedCountAtLeast": 6,
+    "defaultsCountAtLeast": 3,
+    "submittable": true,
+    "noNamedBlockingError": true
+  },
+  "generatedCounts": {
+    "jointStatuses": 6,
+    "jointStatusesAllMapped": true,
+    "resources": 2,
+    "resourceStates": {
+      "meshes/l1.stl": "recorded",
+      "meshes/ghost.dae": "missing"
+    },
+    "missingResourceDigestHexEmpty": true,
+    "selfCollisionCandidates": 1,
+    "selfCollisionPair": {
+      "link1": "base",
+      "link2": "l1"
+    },
+    "drivetrainCandidates": 5,
+    "drivetrainCandidateJoints": [
+      "j1",
+      "j2",
+      "j4",
+      "j5",
+      "j6"
+    ],
+    "pendingConfirms": 2,
+    "pendingKinds": [
+      {
+        "kind": "axis-default-plus-x",
+        "subject": "joint 'j2'"
+      },
+      {
+        "kind": "limit-missing",
+        "subject": "joint 'j3'"
+      }
+    ],
+    "ignored": 3,
+    "ignoredElements": [
+      "gazebo",
+      "disable_collisions",
+      "material 'gray'"
+    ],
+    "unsupported": 8,
+    "unsupportedKinds": [
+      {
+        "kind": "transmission",
+        "count": 1
+      },
+      {
+        "kind": "joint-velocity-limit",
+        "count": 5
+      },
+      {
+        "kind": "mesh-scale",
+        "count": 1
+      },
+      {
+        "kind": "ros-uri",
+        "count": 1
+      }
+    ],
+    "mappedCountAtLeast": 6,
+    "defaultsCountAtLeast": 3,
+    "submittable": true,
+    "noNamedBlockingError": true
+  },
+  "productTestsRun": false
+}

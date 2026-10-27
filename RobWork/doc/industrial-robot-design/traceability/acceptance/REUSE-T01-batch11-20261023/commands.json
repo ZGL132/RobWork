@@ -1,0 +1,32 @@
+[
+  {
+    "name": "check.py",
+    "command": "python -X utf8 check.py",
+    "log": "check.log"
+  },
+  {
+    "name": "semantic-check.py",
+    "command": "python -X utf8 semantic-check.py",
+    "log": "semantic-check.log"
+  },
+  {
+    "name": "reuse",
+    "command": "pwsh -NoProfile -File repo/RobWork/scripts/industrialrobot/validate-reuse.ps1 -RepoRoot <repo> -Head a3cb564810b3eae8515ba11bfed9c37756d808f4 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "log": "reuse.log"
+  },
+  {
+    "name": "docs",
+    "command": "pwsh -NoProfile -File repo/RobWork/scripts/industrialrobot/validate-docs.ps1 -RepoRoot <repo>/RobWork",
+    "log": "docs.log"
+  },
+  {
+    "name": "task",
+    "command": "pwsh -NoProfile -File repo/RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile <repo>/RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -RepoRoot <repo>",
+    "log": "task.log"
+  },
+  {
+    "name": "diff",
+    "command": "git diff --check e0bee2994eee0e8f3299ea5ccf200c354f4454be a3cb564810b3eae8515ba11bfed9c37756d808f4",
+    "log": "diff-check.log"
+  }
+]

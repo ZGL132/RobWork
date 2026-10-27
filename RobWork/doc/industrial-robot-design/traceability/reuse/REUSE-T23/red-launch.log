@@ -1,0 +1,11 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[==========] 1 test from 1 test suite ran. (32 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState
+
+ 1 FAILED TEST

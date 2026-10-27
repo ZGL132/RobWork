@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-reuse-capability-review/1",
+  "capabilityId": "KIN-IK",
+  "ownerUnit": "kinematics",
+  "reviewedVersion": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "date": "2026-10-26",
+  "task": "REUSE-T51（WP-04 普通位姿 IK 迁移批；catalog 升级由本包独立验收覆盖）",
+  "upgrade": "candidate -> verified",
+  "basis": [
+    "上游公共接口定向阅读在案：JacobianIKSolver.hpp:101-213（两构造 Device+State／Device+foi+State、solve(baseTend,state)→vector<Q>、solveLocal(bTed,maxError,state&,maxIter)→bool、setSolverType/setClampToBounds/setCheckJointLimits 显式默认面）与 JacobianIKSolver.cpp:35-167（SVD 伪逆步默认、maxIterations=15、normInf 混合单位 6 维旋量停判、不钳限位/不查限位默认、迭代内部不回传真实次数）——catalog upstream 引用即检索与摘要绑定面（3084ff3b…与当前工作树一致）",
+    "生产消费一行 adapter 证据齐备且真实执行：kinematics.IkSolver.solve（完整位姿普通模式）持 ird-reuse-production/1 四套运行（normal/disconnected/oracle/upstreamComparison）——normal=KinIk 全组 39 用例（可达收敛/双构型保留/命名 TCP/取消/逐位确定性/不可达搜索未果）；disconnected=上游停判据扰动真实生产变异红例（假成功被产品独立双容差复核拦截，2/2 failed exit 1）＋恢复复测绿；oracle=平面二连杆闭式独立参考（附录 D 第 9 项，与产品零共享）解集等价＋kin-ik-dedup 黄金数据集；upstreamComparison=同模型同初值直接上游 JacobianIKSolver 消费解逐位一致＋solveLocal 单步循环/单次多步调用轨迹同一性钉",
+    "语义边界实测钉（GAP-IK-01 §1 三行边界逐一落位）：不可达（环带内孔）耗尽预算零假收敛——真实单步迭代计数恰等于预算上限；限位＝上游默认不钳不查，越界收敛解由产品硬过滤②契约区间直比如实过滤（结局 3＋JointLimit 记录）；确定性＝同请求两次求解解集/残差/迭代数逐位一致（golden ACC5＋服务面重复求解用例）",
+    "全量回归：sdurws_ird_kinematics_test 297（296 passed＋1 既有环境 skip——GUI 呈现注册，REUSE-T36 同款记录）＋sdurws_ird_kinematics_contract_test 57/57 全绿零失败；黄金数据集（kin-ik-dedup/kin-search-outcomes 七场景判定表）零改动通过",
+    "消费契约面零破坏：请求词表/五类结局词表/统计口径/取消语义不变；求解器契约版本 4→5（CON-04——换核改变同请求数值结果，新旧解集不假借同一身份）；kIkDampingLambda/kIkCancellationProbeInterval 常量保留（仅位置模式链继续消费）"
+  ],
+  "limits": [
+    "本 verified 升级范围＝JacobianIKSolver 完整位姿迭代核（solveLocal/SVD 步）的完整位姿普通模式消费；catalog upstream 中 ParallelIKSolver/ParallelDevice 两引用仍为检索绑定面——其 Target 掩码消费被 runtime ParallelDevice 视图权限审查阻断（GAP-IK-01 §1），本升级不声称仅位置/部分姿态任务可迁",
+    "上游单一标量停判据（normInf 混合 m/rad 旋量）不承担产品验收语义——产品双容差逐项独立复核（FkEvaluator 正解回代）是唯一验收门；上游停判据失效的扰动红例证明该复核为真拦截",
+    "上游不回传真实迭代数/停止原因——产品经 solveLocal(maxIter=1) 单步循环逐步实测（轨迹同一性测试钉）；该口径为产品侧观测值，不冒充上游内部计数器（GAP-IK-01 §1 取消/统计行的扩展提案仍 Draft 未批准，归 WP-05）",
+    "状态/模型所有权边界照旧（catalog limits 与 ARCH §3.6/SA-19 不变）：模型 owner=runtime（锚受控视图），Device::setQ 仅写每初值 makeState() 任务私有副本；测试夹具模型构造为 ARCH §3.6.2.1 test-fixture 例外，不构成产品模型所有权变更"
+  ],
+  "upstreamVersionCheck": "reviewedVersion 与 catalog baseline 同为 b12e8503；门禁 SUITABILITY 对 verified 能力执行 git show <version>:<upstream path> 与当前工作树逐文件摘要一致核对（上游只读未变——JacobianIKSolver.hpp 3084ff3b…/ParallelIKSolver.hpp 2fda9476…/ParallelDevice.hpp aee0b3bf… 实测一致）",
+  "reviewer": "REUSE-T51 实施会话（落地批自检）；独立验收按包验收条件另行执行并覆盖本升级"
+}

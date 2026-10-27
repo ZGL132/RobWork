@@ -29,12 +29,15 @@
 #include <sdurws/ird/trajectory/Smooth.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
+#include <rw/math/Polynomial.hpp>
 #include <rw/math/Q.hpp>
 #include <rw/math/Transform3D.hpp>
 #include <rw/math/Vector3D.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -426,4 +429,125 @@ TEST(SmoothRecheckTest, LinearGeometryFactoryContract_WP16T07_ACC3)
                  trj::TrajectoryError);
     EXPECT_THROW(geometry->sampleAt(-0.1), trj::TrajectoryError);
     EXPECT_THROW(geometry->sampleAt(1.1), trj::TrajectoryError);
+}
+
+// =====================================================================
+// REUSE-T09（基函数求值上游化验收）——上游 Polynomial 直接对照＋非有限
+// 输入拒绝。上游对照形态：生产走 rw::math::Polynomial::evaluate（基值
+// 逐基 Horner 后加权），对照走上游 evaluateDerivatives（导数数组 Horner
+// 的另一条上游求值路径，对测试侧独立装配的段多项式一次返回值/导数）——
+// 两条路径独立实现，对照可捕捉系数装配/加权错误；独立解析公式（文件头
+// refSampleThreePoint）仍是第一对照（NFR-COR-01）。
+// =====================================================================
+
+namespace {
+
+/// 测试侧独立书写的五次基升幂系数（NFR-COR-01——与实现 TU 无共享代码；
+/// 仅用于上游 Polynomial 装配）。
+inline std::vector<double> coefH000() { return {1.0, 0.0, 0.0, -10.0, 15.0, -6.0}; }
+inline std::vector<double> coefH100() { return {0.0, 1.0, 0.0, -6.0, 8.0, -3.0}; }
+inline std::vector<double> coefH001() { return {0.0, 0.0, 0.0, 10.0, -15.0, 6.0}; }
+inline std::vector<double> coefH101() { return {0.0, 0.0, 0.0, -4.0, 7.0, -3.0}; }
+
+/// 升幂系数数乘（测试侧装配辅助）。
+std::vector<double> scaledCoef(const std::vector<double>& a, double w)
+{
+    std::vector<double> r(a.size());
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        r[i] = w * a[i];
+    }
+    return r;
+}
+
+/// 升幂系数求和（长度不足处视 0——测试侧装配辅助）。
+std::vector<double> addCoef(const std::vector<double>& a,
+                            const std::vector<double>& b)
+{
+    std::vector<double> r(std::max(a.size(), b.size()), 0.0);
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        r[i] += a[i];
+    }
+    for (std::size_t i = 0; i < b.size(); ++i) {
+        r[i] += b[i];
+    }
+    return r;
+}
+
+}  // namespace
+
+/**
+ * 用例（REUSE-T09——上游直接对照）：黄金算例同款三点路径（λ=1/16 采纳）
+ * 下，生产产物曲线对照上游 evaluateDerivatives——测试侧以独立基系数数
+ * 据装配两段段多项式（切线取文件头解析参照的收缩语义 m=Δ+λ(d−Δ)），
+ * 逐 t 一次取得 [f, f'] 并以 f 对照生产 sampleAt。断言：33 点网格（含
+ * 两段端点）位置差 <1e-12（与解析黄金对照同口径）。
+ */
+TEST(SmoothRecheckTest, SmoothUpstreamPolynomialCrossCheck_REUSE_T09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-04", "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    trj::SmoothRequest request;
+    request.waypoints = {rw::math::Q(1, 0.0), rw::math::Q(1, 0.1),
+                         rw::math::Q(1, 0.3)};
+    request.smoothToleranceJoint = 0.001;
+    request.smoothToleranceTcp = 0.001;
+    request.maxIterations = 5;
+    const trj::SmoothOutcome outcome = trj::smooth(request);
+    ASSERT_EQ(outcome.status, trj::SmoothStatus::Smoothed);
+    ASSERT_NE(outcome.geometry, nullptr);
+    const double lambda = outcome.deviation.adoptedShrinkFactor;
+
+    // 段切线（文件头解析参照的收缩语义——测试侧独立重算）：
+    // Δ₀=0.1、Δ₁=0.2、d₁=0.15；段 0 m₀=0.1、m₁=0.1+0.05λ；
+    // 段 1 m₀=0.2−0.05λ、m₁=0.2。
+    const double m01 = 0.1 + 0.05 * lambda;
+    const double m10 = 0.2 - 0.05 * lambda;
+    const rw::math::Polynomial<> span0(addCoef(
+        addCoef(scaledCoef(coefH000(), 0.0), scaledCoef(coefH100(), 0.1)),
+        addCoef(scaledCoef(coefH001(), 0.1), scaledCoef(coefH101(), m01))));
+    const rw::math::Polynomial<> span1(addCoef(
+        addCoef(scaledCoef(coefH000(), 0.1), scaledCoef(coefH100(), m10)),
+        addCoef(scaledCoef(coefH001(), 0.3), scaledCoef(coefH101(), 0.2))));
+
+    for (int i = 0; i <= 32; ++i) {
+        const double t = static_cast<double>(i) / 32.0;
+        // 段 0 网格：s=(0+t)/2。t=1 时 s=0.5 恰落结点（decomposeParameter
+        // 取段 1 起点 t=0）——其值与段 0 终点值同为结点值 0.1，兼作 C⁰
+        // 结点连续断言。段 1 网格：s=(1+t)/2；t=1 时 s=1 为全局末点（钳
+        // 末段 t=1）。
+        const double s0 = (0.0 + t) / 2.0;
+        EXPECT_NEAR(outcome.geometry->sampleAt(s0)[0],
+                    span0.evaluateDerivatives(t, 1)[0], 1e-12)
+            << "段0 t=" << t;
+        const double s1 = (1.0 + t) / 2.0;
+        EXPECT_NEAR(outcome.geometry->sampleAt(s1)[0],
+                    span1.evaluateDerivatives(t, 1)[0], 1e-12)
+            << "段1 t=" << t;
+    }
+}
+
+/**
+ * 用例（REUSE-T09/NFR-COR-03——非有限输入拒绝）：NaN/inf 路点在平滑入
+ * 口（validateSmoothRequest 的逐分量 isfinite）与折线工厂（同款守卫）
+ * 均 fail-fast——基函数求值上游化不改变入口守卫面。
+ */
+TEST(SmoothRecheckTest, SmoothRejectsNonFiniteWaypoints_REUSE_T09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-04", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    const double nan = std::numeric_limits<double>::quiet_NaN();
+    trj::SmoothRequest request;
+    request.waypoints = {rw::math::Q(1, 0.0), rw::math::Q(1, nan)};
+    request.smoothToleranceJoint = 0.001;
+    request.smoothToleranceTcp = 0.001;
+    request.maxIterations = 1;
+    EXPECT_THROW(trj::smooth(request), trj::TrajectoryError);
+
+    std::vector<rw::math::Q> infinite;
+    infinite.emplace_back(1, 0.0);
+    infinite.emplace_back(1, std::numeric_limits<double>::infinity());
+    EXPECT_THROW(trj::makeLinearJointPathGeometry(infinite),
+                 trj::TrajectoryError);
 }

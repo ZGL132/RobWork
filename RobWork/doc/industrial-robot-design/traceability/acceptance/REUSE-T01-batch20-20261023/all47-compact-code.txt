@@ -1,0 +1,1436 @@
+=== project.TxEngine.osToStoreError ===
+StoreError osToStoreError(unsigned long osError, const std::string& what,
+                          const std::string& path)
+{
+    constexpr unsigned long kDiskFull = 70;        // ERROR_DISK_FULL
+    constexpr unsigned long kQuotaExceeded = 395;  // ERROR_DISK_QUOTA_EXCEEDED
+    constexpr unsigned long kAccessDenied = 5;     // ERROR_ACCESS_DENIED
+    const std::string detail = "project/tx-engine: " + what
+        + " path=" + path + " osError=" + std::to_string(osError);
+    if (osError == kDiskFull || osError == kQuotaExceeded) {
+        return StoreError(StoreErrorCode::DiskFull, detail);
+    }
+    if (osError == kAccessDenied) {
+        return StoreError(StoreErrorCode::AccessDenied, detail);
+    }
+    return StoreError(StoreErrorCode::WriteRejected, detail);
+}
+=== project.TxEngine.cvHex ===
+std::string cvHex(const core::ContentVersion& cv)
+{
+    const std::string canonical = cv.toCanonical();
+    if (canonical.size() != 67 || canonical.compare(0, 3, "cv-") != 0) {
+        throw std::logic_error("project/tx-engine: core ContentVersion "
+                               "canonical contract violated");
+    }
+    return canonical.substr(3);
+}
+=== project.TxEngine.readAllBytes ===
+std::optional<std::string> readAllBytes(const fs::path& file)
+{
+    std::error_code ec;
+    if (!fs::exists(file, ec) || ec) {
+        return std::nullopt;  // 不存在＝调用方语义分流（验证步按损坏处理）
+    }
+    std::ifstream in(file, std::ios::binary);
+    if (!in) {
+        throw StoreError(StoreErrorCode::AccessDenied,
+                         "project/tx-engine: open-failed path=" + file.string());
+    }
+    std::string bytes{std::istreambuf_iterator<char>(in),
+                      std::istreambuf_iterator<char>()};
+    return bytes;
+}
+=== project.TxEngine.verifyStagedFile ===
+void verifyStagedFile(const fs::path& file, const std::string& expected,
+                      const core::ContentVersion& expectCv)
+{
+    const auto readBack = readAllBytes(file);
+    if (!readBack) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/tx-engine: staged-file-missing path="
+                             + file.string());
+    }
+    if (readBack->size() != expected.size()) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/tx-engine: staged-size-mismatch path="
+                             + file.string() + " expected="
+                             + std::to_string(expected.size()) + " got="
+                             + std::to_string(readBack->size()));
+    }
+    const core::ContentVersion actual = codec::contentVersionOf(*readBack);
+    if (!(actual == expectCv)) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/tx-engine: staged-digest-mismatch path="
+                             + file.string());
+    }
+}
+=== project.TxEngine.emitReport ===
+void emitReport(IDiagnosticsSink* sink, const core::DiagnosticRecord& rec)
+{
+    if (sink != nullptr) {
+        sink->report(rec);
+    }
+}
+=== project.TxEngine.makeIgnoredUncommittedRecord ===
+core::DiagnosticRecord makeIgnoredUncommittedRecord(
+    const std::vector<std::string>& txIds)
+{
+    std::string names;
+    for (const std::string& id : txIds) {
+        if (!names.empty()) {
+            names += ",";
+        }
+        names += id;
+    }
+    return core::DiagnosticRecord::make(
+        std::string{"PRJ-RECOVERY-IGNORED-UNCOMMITTED"},
+        std::nullopt,  // subject：项目级事件（§8.2/§8.5 记法＝∅）
+        std::nullopt, std::nullopt,
+        "打开项目时发现 " + std::to_string(txIds.size())
+            + " 个未提交事务的暂存残留（" + names + "），已按未提交内容"
+            "忽略——不影响已提交历史",
+        "上次会话的事务在提交点（HEAD 切换）之前中断（崩溃/失败），"
+        ".staging 暂存目录残留（PM-08：启动扫描忽略＋恢复诊断）",
+        "无需处理：残留内容不属于任何已提交修订；如需排查中断原因，"
+        "可联系支持人员并保留 .staging 现场目录");
+}
+=== project.TxEngine.makeStoreCorruptRecord ===
+core::DiagnosticRecord makeStoreCorruptRecord(const std::string& detail)
+{
+    return core::DiagnosticRecord::make(
+        std::string{"PRJ-STORE-CORRUPT"},
+        std::nullopt,  // subject：项目级事件（同上口径）
+        std::nullopt, std::nullopt,
+        "项目存储完整性校验失败：HEAD 引用的已提交内容存在缺失或损坏",
+        detail,
+        "从最近的有效备份恢复项目，或联系支持人员；不要手工修改 "
+        "objects/revisions 目录（内容寻址校验会拒绝不一致的改动）");
+}
+=== project.TxEngine.operator() ===
+    bool operator()(const ObjectRefPair& a, const ObjectRefPair& b) const
+    {
+        if (!(a.objectId == b.objectId)) {
+            return a.objectId.toCanonical() < b.objectId.toCanonical();
+        }
+        return a.contentVersion.toCanonical()
+            < b.contentVersion.toCanonical();
+    }
+=== project.TxEngine.TxEngine.TxEngine ===
+TxEngine::TxEngine(win32::IFileOps* fileOps,
+                   std::filesystem::path projectDir,
+                   objstore::ObjectStore* objects,
+                   revindex::RevisionIndex* index,
+                   core::IDomainEventBus* eventBus,
+                   IDiagnosticsSink* sink)
+    : m_fileOps(fileOps),
+      m_projectDir(std::move(projectDir)),
+      m_objects(objects),
+      m_index(index),
+      m_eventBus(eventBus),
+      m_sink(sink)
+{
+    if (m_fileOps == nullptr || m_objects == nullptr || m_index == nullptr) {
+        throw std::invalid_argument(
+            "project/tx-engine: fileOps/objects/index 注入不得为空"
+            "（装配契约——非 owning 指针，生存期由持有方保证）");
+    }
+}
+=== project.TxEngine.TxEngine.stagingRoot ===
+std::filesystem::path TxEngine::stagingRoot() const
+{
+    return m_projectDir / ".staging";
+}
+=== project.TxEngine.TxEngine.objectsRoot ===
+std::filesystem::path TxEngine::objectsRoot() const
+{
+    return m_projectDir / "objects";
+}
+=== project.TxEngine.TxEngine.revisionsRoot ===
+std::filesystem::path TxEngine::revisionsRoot() const
+{
+    return m_projectDir / "revisions";
+}
+=== project.TxEngine.TxEngine.revisionDir ===
+std::filesystem::path TxEngine::revisionDir(const RevisionId& id) const
+{
+    return revisionsRoot() / id.toCanonical();
+}
+=== project.TxEngine.TxEngine.objectFile ===
+std::filesystem::path TxEngine::objectFile(const core::ObjectId& oid,
+                                           const core::ContentVersion& cv) const
+{
+    return objectsRoot() / oid.toCanonical() / cvHex(cv);
+}
+=== project.TxEngine.TxEngine.generateTxId ===
+std::string TxEngine::generateTxId()
+{
+    const std::uint64_t seq =
+        m_txSeq.fetch_add(1, std::memory_order_relaxed);
+    thread_local std::mt19937_64 rng{std::random_device{}()};
+    char hex[17];
+    for (int i = 0; i < 2; ++i) {
+        const std::uint64_t v = rng();
+        static const char* kDigits = "0123456789abcdef";
+        for (int j = 0; j < 8; ++j) {
+            hex[i * 8 + j] = kDigits[(v >> (j * 4)) & 0xF];
+        }
+    }
+    hex[16] = '\0';
+    return "tx-" + std::to_string(seq) + "-" + std::string{hex, 16};
+}
+=== project.TxEngine.TxEngine.commit ===
+CommitResult TxEngine::commit(const CommitPlan& plan,
+                              const HeadRecord& currentHead,
+                              const ProjectMetadataRecord& authoritative,
+                              const ObjectRefPair& authoritativeRef)
+{
+    if (!plan.revisionId.isValid()) {
+        throw std::invalid_argument(
+            "project/tx-engine: commit requires valid plan.revisionId"
+            "（修订身份由调用方生成——单一分配点口径）");
+    }
+    if (!plan.branchId.isValid()) {
+        throw std::invalid_argument(
+            "project/tx-engine: commit requires valid branchId");
+    }
+    if (plan.metadataDelta.tipUpdate.has_value()
+        && !(plan.metadataDelta.tipUpdate->newTip == plan.revisionId)) {
+        throw std::invalid_argument(
+            "project/tx-engine: tipUpdate.newTip 必须等于 plan.revisionId"
+            "（每次提交的活动分支 tip 恰推进到本次新修订——§4.5）");
+    }
+    if (plan.committedAtUtc.empty()) {
+        throw std::invalid_argument(
+            "project/tx-engine: commit requires committedAtUtc（ISO-8601 "
+            "UTC——时钟供给归调用方）");
+    }
+    if (plan.command.commandType.empty()) {
+        throw std::invalid_argument(
+            "project/tx-engine: commit requires commandType（命令留痕无"
+            "token＝历史浏览无法呈现——§4.4.4）");
+    }
+    if (!currentHead.projectId.isValid()) {
+        throw std::invalid_argument(
+            "project/tx-engine: currentHead.projectId 无效（须为磁盘 HEAD "
+            "的真实内容——readHead() 产出）");
+    }
+    if (plan.parentRevisionId.has_value()
+        && !plan.parentRevisionId->isValid()) {
+        throw std::invalid_argument(
+            "project/tx-engine: parentRevisionId 携带全零保留值（无父修订"
+            "应传 nullopt 而非空身份——§4.4.2）");
+    }
+    std::set<std::string> objectIds;  // 完整清单的 OID 唯一性（无单位，按规范文本比较）。
+    for (const PlannedObject& obj : plan.newObjects) {
+        if (!obj.oid.isValid() || obj.objectTypeToken.empty()) {
+            throw std::invalid_argument(
+                "project/tx-engine: newObjects 含无效 oid 或空 "
+                "objectTypeToken（oid 分配归 HandlerContext——§6.5）");
+        }
+    }
+    for (const PlannedObject& obj : plan.newObjects) {
+        if (!objectIds.insert(obj.oid.toCanonical()).second) {
+            throw std::invalid_argument("project/tx-engine: newObjects 含重复 oid");
+        }
+    }
+    for (const ObjectRef& ref : plan.retainedObjects) {
+        if (!ref.objectId.isValid() || !ref.contentVersion.isValid()
+            || ref.objectTypeToken.empty() || ref.objectTypeToken == kMetadataTypeToken
+            || ref.objectId == authoritativeRef.objectId
+            || ref.digest256 != cvHex(ref.contentVersion)
+            || !objectIds.insert(ref.objectId.toCanonical()).second) {
+            throw std::invalid_argument(
+                "project/tx-engine: retainedObjects 含无效引用、元数据或重复 oid");
+        }
+    }
+    const core::ObjectId metadataOid = core::ObjectId::generate();
+    if (objectIds.count(metadataOid.toCanonical()) != 0) {
+        throw std::invalid_argument("project/tx-engine: 元数据 oid 与业务对象重叠");
+    }
+    const std::string txId = generateTxId();
+    const RevisionId& newRevId = plan.revisionId;
+    const std::uint64_t revSeq = m_index->allocateRevisionSeq();
+    const ProjectMetadataRecord candidate = revindex::RevisionIndex::
+        deriveNextMetadata(authoritative, authoritativeRef,
+                           plan.metadataDelta, newRevId);
+    const std::string metadataPayload = codec::dump(candidate);
+    const core::ContentVersion metadataCv =
+        codec::contentVersionOf(metadataPayload);
+    const std::string metadataDigestHex = cvHex(metadataCv);
+    struct StagedObject
+    {
+        core::ObjectId oid;
+        core::ContentVersion cv;
+        std::string payload;  ///< canonical 字节的稳定副本（验证步比对基准）
+    };
+    std::vector<StagedObject> staged;
+    staged.reserve(plan.newObjects.size() + 1);
+    for (const PlannedObject& obj : plan.newObjects) {
+        StagedObject s;
+        s.oid = obj.oid;
+        s.payload.assign(obj.payload.begin(), obj.payload.end());
+        s.cv = codec::contentVersionOf(
+            std::string_view{reinterpret_cast<const char*>(s.payload.data()),
+                             s.payload.size()});
+        staged.push_back(std::move(s));
+    }
+    RevisionManifest manifest;
+    manifest.revisionId = newRevId;
+    manifest.revisionSeq = revSeq;
+    manifest.parentRevisionId = plan.parentRevisionId;
+    manifest.branchId = plan.branchId;
+    manifest.committedAtUtc = plan.committedAtUtc;
+    manifest.metadataRef = ObjectRefPair{metadataOid, metadataCv};
+    {
+        ObjectRef metaRef;
+        metaRef.objectId = metadataOid;
+        metaRef.contentVersion = metadataCv;
+        metaRef.objectTypeToken = kMetadataTypeToken;
+        metaRef.digest256 = metadataDigestHex;
+        manifest.objectRefs.push_back(metaRef);
+        manifest.introducedObjects.push_back(metadataCv);
+    }
+    manifest.objectRefs.insert(manifest.objectRefs.end(),
+                               plan.retainedObjects.begin(), plan.retainedObjects.end());
+    for (std::size_t i = 0; i < staged.size(); ++i) {
+        const StagedObject& s = staged[i];
+        ObjectRef ref;
+        ref.objectId = s.oid;
+        ref.contentVersion = s.cv;
+        ref.objectTypeToken = plan.newObjects[i].objectTypeToken;
+        ref.digest256 = cvHex(s.cv);
+        manifest.objectRefs.push_back(ref);
+        manifest.introducedObjects.push_back(s.cv);
+    }
+    const std::string manifestBytes = codec::dump(manifest);
+    const core::ContentVersion manifestCv =
+        codec::contentVersionOf(manifestBytes);
+    const std::string manifestDigestHex = cvHex(manifestCv);
+    const std::string commandBytes = codec::dump(plan.command);
+    const core::ContentVersion commandCv =
+        codec::contentVersionOf(commandBytes);
+    m_index->registerRevision(manifest);
+    const ObjectRefPair candidateRef{metadataOid, metadataCv};
+    m_index->validateMetadataPublish(authoritative, authoritativeRef,
+                                     candidate, candidateRef, newRevId);
+    m_index->registerMetadata(candidateRef, candidate);
+    struct PhantomRegistrationGuard {
+        revindex::RevisionIndex* index;
+        const RevisionId& revId;
+        const ObjectRefPair& ref;
+        bool armed = true;
+        ~PhantomRegistrationGuard()
+        {
+            if (armed) {
+                index->rollbackCommitRegistration(revId, ref);
+            }
+        }
+    } phantomGuard{m_index, newRevId, candidateRef};
+    const fs::path txDir = stagingRoot() / txId;
+    {
+        const win32::FileResult cr = m_fileOps->createDirectories(txDir.wstring());
+        if (!cr.ok) {
+            std::error_code rmEc;
+            fs::remove_all(txDir, rmEc);
+            throw osToStoreError(cr.osError, "create-staging-dir",
+                                 txDir.string());
+        }
+    }
+    {
+        const win32::FileResult cr =
+            m_fileOps->createDirectories((txDir / "tmp").wstring());
+        if (!cr.ok) {
+            std::error_code rmEc;
+            fs::remove_all(txDir, rmEc);
+            throw osToStoreError(cr.osError, "create-staging-tmp",
+                                 (txDir / "tmp").string());
+        }
+    }
+    win32::AtomicFile file{m_fileOps};  // 注入接缝（F2 注入边界在此链路）
+    {
+        const fs::path stagedMeta =
+            txDir / "objects" / metadataOid.toCanonical() / cvHex(metadataCv);
+        const win32::FileResult dirCr = m_fileOps->createDirectories(
+            (txDir / "objects" / metadataOid.toCanonical()).wstring());
+        if (!dirCr.ok) {
+            throw osToStoreError(dirCr.osError, "stage-mkdir",
+                                 stagedMeta.string());
+        }
+        const win32::FileResult wr = file.writeThrough(
+            stagedMeta.wstring(), metadataPayload.data(),
+            metadataPayload.size());
+        if (!wr.ok) {
+            throw osToStoreError(wr.osError, "stage-write",
+                                 stagedMeta.string());
+        }
+    }
+    for (const StagedObject& s : staged) {
+        const fs::path stagedPath =
+            txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv);
+        const win32::FileResult dirCr = m_fileOps->createDirectories(
+            (txDir / "objects" / s.oid.toCanonical()).wstring());
+        if (!dirCr.ok) {
+            throw osToStoreError(dirCr.osError, "stage-mkdir",
+                                 stagedPath.string());
+        }
+        const char* data =
+            s.payload.empty() ? nullptr : s.payload.data();
+        const win32::FileResult wr = file.writeThrough(
+            stagedPath.wstring(), data, s.payload.size());
+        if (!wr.ok) {
+            throw osToStoreError(wr.osError, "stage-write",
+                                 stagedPath.string());
+        }
+    }
+    const fs::path stagedRevisionDir = txDir / "revision";
+    {
+        const win32::FileResult dirCr =
+            m_fileOps->createDirectories(stagedRevisionDir.wstring());
+        if (!dirCr.ok) {
+            throw osToStoreError(dirCr.osError, "stage-mkdir",
+                                 stagedRevisionDir.string());
+        }
+    }
+    const fs::path stagedManifest = stagedRevisionDir / "manifest.json";
+    const fs::path stagedCommand = stagedRevisionDir / "command.json";
+    {
+        const win32::FileResult wr =
+            file.writeThrough(stagedCommand.wstring(), commandBytes.data(),
+                              commandBytes.size());
+        if (!wr.ok) {
+            throw osToStoreError(wr.osError, "stage-write",
+                                 stagedCommand.string());
+        }
+    }
+    {
+        const win32::FileResult wr =
+            file.writeThrough(stagedManifest.wstring(), manifestBytes.data(),
+                              manifestBytes.size());
+        if (!wr.ok) {
+            throw osToStoreError(wr.osError, "stage-write",
+                                 stagedManifest.string());
+        }
+    }
+    {
+        const fs::path stagedMetaPath = txDir / "objects"
+            / metadataOid.toCanonical() / cvHex(metadataCv);
+        try {
+            verifyStagedFile(stagedMetaPath, metadataPayload, metadataCv);
+            for (const StagedObject& s : staged) {
+                verifyStagedFile(
+                    txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv),
+                    s.payload, s.cv);
+            }
+            verifyStagedFile(stagedCommand, commandBytes, commandCv);
+            verifyStagedFile(stagedManifest, manifestBytes, manifestCv);
+        } catch (const StoreError& e) {
+            reportDev(std::string{"verify-failed（暂存校验不符——磁盘/内存"
+                                  "错误怀疑，F3 边界） detail="}
+                      + e.what());
+            throw;  // StoreCorrupt（含路径定位）原样上抛
+        }
+    }
+    {
+        const fs::path stagedMetaPath =
+            txDir / "objects" / metadataOid.toCanonical() / cvHex(metadataCv);
+        publishOneObject(stagedMetaPath, metadataOid, metadataCv);
+        for (const StagedObject& s : staged) {
+            publishOneObject(
+                txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv),
+                s.oid, s.cv);
+        }
+        const fs::path targetRevDir = revisionDir(newRevId);
+        const win32::FileResult dirCr =
+            m_fileOps->createDirectories(targetRevDir.wstring());
+        if (!dirCr.ok) {
+            throw osToStoreError(dirCr.osError, "publish-mkdir",
+                                 targetRevDir.string());
+        }
+        const win32::FileResult cmdPub = m_fileOps->publishNew(
+            stagedCommand.wstring(),
+            (targetRevDir / "command.json").wstring());
+        if (!cmdPub.ok) {
+            throw osToStoreError(cmdPub.osError, "publish-command",
+                                 (targetRevDir / "command.json").string());
+        }
+        const win32::FileResult manPub = m_fileOps->publishNew(
+            stagedManifest.wstring(),
+            (targetRevDir / "manifest.json").wstring());
+        if (!manPub.ok) {
+            throw osToStoreError(manPub.osError, "publish-manifest",
+                                 (targetRevDir / "manifest.json").string());
+        }
+    }
+    HeadRecord newHead;
+    newHead.schemaVersion = currentHead.schemaVersion;
+    newHead.projectId = currentHead.projectId;
+    newHead.revisionId = newRevId;
+    newHead.revisionSeq = revSeq;
+    newHead.branchId = plan.branchId;
+    newHead.manifestDigest = manifestDigestHex;
+    const fs::path stagedHead = txDir / "head.new";
+    {
+        const std::string headBytes = codec::dump(newHead);
+        const win32::FileResult wr =
+            file.writeThrough(stagedHead.wstring(), headBytes.data(),
+                              headBytes.size());
+        if (!wr.ok) {
+            throw osToStoreError(wr.osError, "stage-head",
+                                 stagedHead.string());
+        }
+    }
+    {
+        const fs::path headPath = m_projectDir / "HEAD";
+        const win32::FileResult rep =
+            m_fileOps->replaceExisting(stagedHead.wstring(),
+                                       headPath.wstring());
+        if (!rep.ok) {
+            throw osToStoreError(rep.osError, "head-switch", headPath.string());
+        }
+        phantomGuard.armed = false;
+        const auto headBytes = readAllBytes(headPath);
+        bool selfCheckOk = headBytes.has_value();
+        if (selfCheckOk) {
+            try {
+                selfCheckOk = (codec::parseHeadRecord(*headBytes) == newHead);
+            } catch (const StoreError&) {
+                selfCheckOk = false;  // 重读内容解析失败＝自校验不过
+            }
+        }
+        if (!selfCheckOk) {
+            reportDev("head-selfcheck-failed（HEAD 切换后重读不符——提交点"
+                      "异常，恢复扫描④兜底） rev=" + newRevId.toCanonical());
+            throw StoreError(StoreErrorCode::StoreCorrupt,
+                             "project/tx-engine: head-selfcheck-failed path="
+                                 + (m_projectDir / "HEAD").string());
+        }
+    }
+    if (m_eventBus != nullptr) {
+        core::RevisionCommittedPayload committed;
+        committed.project = currentHead.projectId;
+        committed.branch = plan.branchId;
+        committed.revision = newRevId;
+        committed.parent = plan.parentRevisionId;
+        publishEventWithRetry(core::DomainEvent::make(committed),
+                              "revision-committed");
+        core::DependencyInvalidatedPayload invalidated;
+        invalidated.project = currentHead.projectId;
+        invalidated.branch = plan.branchId;
+        invalidated.revision = newRevId;
+        publishEventWithRetry(core::DomainEvent::make(invalidated),
+                              "dependency-invalidated");
+    }
+    {
+        const win32::FileResult rm = m_fileOps->removeTree(txDir.wstring());
+        if (!rm.ok) {
+            reportDev("cleanup-failed（.staging 清理失败——已提交状态不受"
+                      "影响，残留由下次启动扫描处置，F7 边界） dir="
+                          + txDir.string() + " osError="
+                          + std::to_string(rm.osError));
+        }
+    }
+    CommitResult result;
+    result.revisionId = newRevId;
+    result.revisionSeq = revSeq;
+    result.metadataRef = candidateRef;
+    result.manifestDigest = manifestDigestHex;
+    result.newHead = newHead;
+    return result;
+}
+=== project.TxEngine.TxEngine.publishOneObject ===
+void TxEngine::publishOneObject(const fs::path& stagedPath,
+                                const core::ObjectId& oid,
+                                const core::ContentVersion& cv)
+{
+    const fs::path target = objectFile(oid, cv);
+    const std::string targetName = target.string();
+    const win32::FileResult dirCr =
+        m_fileOps->createDirectories((objectsRoot() / oid.toCanonical()).wstring());
+    if (!dirCr.ok) {
+        throw osToStoreError(dirCr.osError, "publish-mkdir", targetName);
+    }
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        std::error_code existsEc;
+        if (!fs::exists(target, existsEc) || existsEc) {
+            const win32::FileResult pub =
+                m_fileOps->publishNew(stagedPath.wstring(), target.wstring());
+            if (pub.ok) {
+                return;  // 就位成功
+            }
+            if (pub.osError == ERROR_ALREADY_EXISTS && attempt == 0) {
+                continue;  // 竞态：目标刚出现——下一轮走共享判定
+            }
+            throw osToStoreError(pub.osError, "publish-rename", targetName);
+        }
+        m_objects->object(oid, cv);
+        return;
+    }
+    throw StoreError(StoreErrorCode::WriteRejected,
+                     "project/tx-engine: publish-retry-exhausted path="
+                         + targetName);
+}
+=== project.TxEngine.TxEngine.publishEventWithRetry ===
+void TxEngine::publishEventWithRetry(const core::DomainEvent& event,
+                                     const char* what)
+{
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        try {
+            m_eventBus->publish(event);
+            return;
+        } catch (const std::exception& e) {
+            reportDev(std::string{"event-publish-failed（"}
+                      + (attempt == 0
+                             ? "首败——按协议重试一次"
+                             : "重试后仍失败——不回滚已提交修订，D-18")
+                      + "） event=" + what + " error=" + e.what());
+        }
+    }
+}
+=== project.TxEngine.TxEngine.scanForRecovery ===
+TxRecoveryScan TxEngine::scanForRecovery()
+{
+    TxRecoveryScan scan;
+    std::error_code ec;
+    const fs::path stRoot = stagingRoot();
+    if (fs::exists(stRoot, ec) && !ec) {
+        std::vector<std::string> ignored;
+        for (fs::directory_iterator it(stRoot, ec), end; it != end && !ec;
+             it.increment(ec)) {
+            if (ec) {
+                break;  // 迭代中途中错：停止扫描（已收集结果仍有效）
+            }
+            const std::string name = it->path().filename().string();
+            std::error_code typeEc;
+            if (!it->is_directory(typeEc) || typeEc) {
+                continue;  // 非目录条目不属于事务残留（开发观测面之外——
+            }
+            if (name == "tmp") {
+                const win32::FileResult rm =
+                    m_fileOps->removeTree(it->path().wstring());
+                if (!rm.ok) {
+                    reportDev("tmp-cleanup-failed（.staging/tmp 启动清理"
+                              "失败——残留无害） osError="
+                                  + std::to_string(rm.osError));
+                }
+                continue;
+            }
+            ignored.push_back(name);
+        }
+        std::sort(ignored.begin(), ignored.end());
+        scan.ignoredStagingTxs = std::move(ignored);
+        if (!scan.ignoredStagingTxs.empty()) {
+            emitReport(m_sink, makeIgnoredUncommittedRecord(
+                                   scan.ignoredStagingTxs));
+        }
+    }
+    const fs::path headPath = m_projectDir / "HEAD";
+    const auto headBytes = readAllBytes(headPath);
+    if (!headBytes) {
+        reportDev("recovery-head-missing（HEAD 缺失——无法校验闭包）");
+        emitReport(m_sink, makeStoreCorruptRecord(
+                               "project/tx-engine: HEAD 文件缺失 path="
+                                   + headPath.string()));
+        return scan;  // headIntegrityVerified=false；①的发现已随行带回
+    }
+    HeadRecord head;
+    try {
+        head = codec::parseHeadRecord(*headBytes);
+    } catch (const StoreError& e) {
+        reportDev(std::string{"recovery-head-unreadable（HEAD 解析拒绝） "}
+                  + e.what());
+        emitReport(m_sink, makeStoreCorruptRecord(
+                               "project/tx-engine: HEAD 解析失败 detail="
+                                   + std::string(e.what())));
+        return scan;
+    }
+    revindex::RevisionIndex loader;
+    std::map<std::string, RevisionId> onDisk;
+    std::vector<std::pair<RevisionId, std::string>> brokenDirs;
+    std::set<ObjectRefPair, MetadataRefLess> metadataRefs;  // 去重待装载集
+    std::map<ObjectRefPair, std::string, MetadataRefLess> failedMetaRefs;
+    bool broken = false;  // ④完整性结论（仅闭包相关失败置位）
+    std::string brokenDetail;
+    {
+        std::error_code dirEc;
+        const fs::path revRoot = revisionsRoot();
+        const bool revRootOk = fs::exists(revRoot, dirEc) && !dirEc;
+        if (revRootOk) {
+            for (fs::directory_iterator it(revRoot, dirEc), end;
+                 it != end && !dirEc; it.increment(dirEc)) {
+                if (dirEc) {
+                    break;
+                }
+                std::error_code isDirEc;
+                if (!it->is_directory(isDirEc) || isDirEc) {
+                    continue;  // 非目录条目：不在修订命名规则内，跳过
+                }
+                const std::string dirName = it->path().filename().string();
+                const auto rid = RevisionId::tryFromCanonical(dirName);
+                if (!rid) {
+                    reportDev("recovery-malformed-revision-dir（目录名非"
+                              "规范文本，跳过） dir=" + dirName);
+                    continue;
+                }
+                const auto bytes =
+                    readAllBytes(it->path() / "manifest.json");
+                if (!bytes) {
+                    brokenDirs.emplace_back(
+                        *rid, "project/tx-engine: manifest 缺失 path="
+                                  + (it->path() / "manifest.json").string());
+                    reportDev("recovery-manifest-missing path="
+                              + (it->path() / "manifest.json").string());
+                    continue;
+                }
+                try {
+                    const RevisionManifest manifest =
+                        codec::parseRevisionManifest(*bytes);
+                    loader.registerRevision(manifest);
+                    onDisk[dirName] = manifest.revisionId;
+                    metadataRefs.insert(manifest.metadataRef);
+                } catch (const StoreError& e) {
+                    brokenDirs.emplace_back(
+                        *rid, "project/tx-engine: manifest 解析失败 path="
+                            + (it->path() / "manifest.json").string()
+                            + " detail=" + std::string(e.what()));
+                    reportDev("recovery-manifest-corrupt path="
+                              + (it->path() / "manifest.json").string()
+                              + " detail=" + std::string(e.what()));
+                }
+            }
+        }
+    }
+    for (const ObjectRefPair& ref : metadataRefs) {
+        try {
+            const auto payloadBytes = m_objects->object(ref.objectId,
+                                                        ref.contentVersion);
+            const std::string payload{
+                reinterpret_cast<const char*>(payloadBytes.data()),
+                payloadBytes.size()};
+            const ProjectMetadataRecord record =
+                codec::parseMetadataRecord(payload);
+            loader.registerMetadata(ref, record);
+        } catch (const StoreError& e) {
+            failedMetaRefs.emplace(
+                ref, "project/tx-engine: metadata 装载失败 oid="
+                    + ref.objectId.toCanonical() + " cv="
+                    + ref.contentVersion.toCanonical() + " detail="
+                    + std::string(e.what()));
+        }
+    }
+    bool closureOk = false;
+    revindex::CommittedClosure closure;
+    try {
+        closure = loader.committedClosure(head.revisionId);
+        closureOk = true;
+    } catch (const StoreError& e) {
+        broken = true;
+        brokenDetail = "project/tx-engine: 闭包行走失败 detail="
+            + std::string(e.what());
+        reportDev(std::string{"recovery-closure-failed "} + e.what());
+    }
+    if (closureOk) {
+        for (const auto& [rid, detail] : brokenDirs) {
+            scan.uncommittedRevisions.push_back(rid);
+            reportDev("recovery-uncommitted-broken-dir（闭包外目录清单残缺"
+                      "——按残留归类） detail=" + detail);
+        }
+        std::set<std::string> inClosure;
+        for (const RevisionId& id : closure.revisions) {
+            inClosure.insert(id.toCanonical());
+        }
+        for (const auto& [dirName, rid] : onDisk) {
+            if (inClosure.count(dirName) == 0) {
+                scan.uncommittedRevisions.push_back(rid);
+            }
+        }
+        std::sort(scan.uncommittedRevisions.begin(),
+                  scan.uncommittedRevisions.end());
+        std::vector<objstore::ObjectKey> references;
+        references.reserve(closure.revisions.size());
+        for (const RevisionId& rid : closure.revisions) {
+            const auto manifest = loader.tryRevision(rid);
+            if (!manifest) {
+                continue;  // 不可达防御（闭包成员必已注册）
+            }
+            const auto failedMeta = failedMetaRefs.find(manifest->metadataRef);
+            if (failedMeta != failedMetaRefs.end()) {
+                broken = true;
+                brokenDetail = failedMeta->second;
+                reportDev("recovery-closure-metadata-failed "
+                          + failedMeta->second);
+            }
+            for (const ObjectRef& ref : manifest->objectRefs) {
+                references.push_back(objstore::ObjectKey{ref.objectId,
+                                                         ref.contentVersion});
+            }
+        }
+        const objstore::ObjectScanReport objReport =
+            m_objects->scanObjects(references, true);
+        if (!objReport.missingReferenced.empty()
+            || !objReport.corruptReferenced.empty()) {
+            broken = true;
+            brokenDetail = "project/tx-engine: 闭包对象完整性失败 missing="
+                + std::to_string(objReport.missingReferenced.size())
+                + " corrupt="
+                + std::to_string(objReport.corruptReferenced.size());
+            reportDev("recovery-object-integrity-failed missing="
+                      + std::to_string(objReport.missingReferenced.size())
+                      + " corrupt="
+                      + std::to_string(objReport.corruptReferenced.size()));
+        }
+        scan.danglingObjectCount = objReport.danglingOnDisk.size();
+        if (scan.danglingObjectCount > 0) {
+            reportDev("recovery-dangling-objects count="
+                      + std::to_string(scan.danglingObjectCount)
+                      + "（闭包外对象——只读计数，不删除）");
+        }
+    } else {
+        for (const auto& [ref, detail] : failedMetaRefs) {
+            reportDev("recovery-metadata-load-failed " + detail);
+        }
+    }
+    if (broken) {
+        scan.headIntegrityVerified = false;
+        emitReport(m_sink, makeStoreCorruptRecord(brokenDetail));
+    } else {
+        scan.headIntegrityVerified = true;
+    }
+    return scan;
+}
+=== project.TxEngine.TxEngine.readHead ===
+HeadRecord TxEngine::readHead() const
+{
+    const auto bytes = readAllBytes(m_projectDir / "HEAD");
+    if (!bytes) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/tx-engine: head-missing path="
+                             + (m_projectDir / "HEAD").string());
+    }
+    return codec::parseHeadRecord(*bytes);
+}
+=== project.TxEngine.TxEngine.reportDev ===
+void TxEngine::reportDev(const std::string& message) const
+{
+    if (m_sink != nullptr) {
+        m_sink->reportDev("project/tx-engine", message);
+    }
+}
+=== project.TxEngine.~PhantomRegistrationGuard ===
+        ~PhantomRegistrationGuard()
+        {
+            if (armed) {
+                index->rollbackCommitRegistration(revId, ref);
+            }
+        }
+=== project.win32.AtomicFile.handleToResult ===
+FileResult handleToResult(HANDLE raw, HANDLE* handle)
+{
+    if (raw == INVALID_HANDLE_VALUE) {
+        *handle = nullptr;
+        FileResult r;
+        r.ok = false;
+        r.osError = ::GetLastError();
+        return r;
+    }
+    *handle = raw;
+    FileResult r;
+    r.ok = true;
+    r.osError = 0;  // 成功态错误码恒 0（FileResult 契约，消除残留歧义）
+    return r;
+}
+=== project.win32.AtomicFile.boolToResult ===
+FileResult boolToResult(BOOL okFlag)
+{
+    FileResult r;
+    r.ok = (okFlag != FALSE);
+    r.osError = r.ok ? 0UL : static_cast<unsigned long>(::GetLastError());
+    return r;
+}
+=== project.win32.AtomicFile.Win32FileOps.openWriteThrough ===
+FileResult Win32FileOps::openWriteThrough(const std::wstring& path,
+                                          HANDLE* handle)
+{
+    HANDLE raw = ::CreateFileW(path.c_str(), GENERIC_WRITE, 0 ,
+                               nullptr , CREATE_ALWAYS,
+                               FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH,
+                               nullptr );
+    return handleToResult(raw, handle);
+}
+=== project.win32.AtomicFile.Win32FileOps.writeChunk ===
+FileResult Win32FileOps::writeChunk(HANDLE handle, const char* data,
+                                    std::size_t length)
+{
+    if (length == 0) {
+        FileResult r;
+        r.ok = true;
+        return r;
+    }
+    DWORD written = 0;
+    const BOOL okFlag = ::WriteFile(handle, data,
+                                    static_cast<DWORD>(length), &written,
+                                    nullptr );
+    if (okFlag == FALSE || written != length) {
+        FileResult r;
+        r.ok = false;
+        r.osError = static_cast<unsigned long>(::GetLastError());
+        return r;
+    }
+    FileResult r;
+    r.ok = true;
+    return r;
+}
+=== project.win32.AtomicFile.Win32FileOps.flush ===
+FileResult Win32FileOps::flush(HANDLE handle)
+{
+    return boolToResult(::FlushFileBuffers(handle));
+}
+=== project.win32.AtomicFile.Win32FileOps.closeHandle ===
+FileResult Win32FileOps::closeHandle(HANDLE handle)
+{
+    return boolToResult(::CloseHandle(handle));
+}
+=== project.win32.AtomicFile.Win32FileOps.publishNew ===
+FileResult Win32FileOps::publishNew(const std::wstring& tempPath,
+                                    const std::wstring& targetPath)
+{
+    return boolToResult(::MoveFileExW(tempPath.c_str(), targetPath.c_str(),
+                                      0 ));
+}
+=== project.win32.AtomicFile.Win32FileOps.replaceExisting ===
+FileResult Win32FileOps::replaceExisting(const std::wstring& tempPath,
+                                         const std::wstring& targetPath)
+{
+    return boolToResult(
+        ::MoveFileExW(tempPath.c_str(), targetPath.c_str(),
+                      MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH));
+}
+=== project.win32.AtomicFile.Win32FileOps.createDirectories ===
+FileResult Win32FileOps::createDirectories(const std::wstring& path)
+{
+    std::error_code ec;
+    std::filesystem::create_directories(std::filesystem::path(path), ec);
+    if (ec) {
+        FileResult r;
+        r.ok = false;
+        r.osError = static_cast<unsigned long>(ec.value());
+        return r;
+    }
+    FileResult r;
+    r.ok = true;
+    r.osError = 0;
+    return r;
+}
+=== project.win32.AtomicFile.Win32FileOps.removeTree ===
+FileResult Win32FileOps::removeTree(const std::wstring& path)
+{
+    std::error_code ec;
+    std::filesystem::remove_all(std::filesystem::path(path), ec);
+    if (ec) {
+        FileResult r;
+        r.ok = false;
+        r.osError = static_cast<unsigned long>(ec.value());
+        return r;
+    }
+    FileResult r;
+    r.ok = true;
+    r.osError = 0;
+    return r;
+}
+=== project.win32.AtomicFile.AtomicFile.writeThrough ===
+FileResult AtomicFile::writeThrough(const std::wstring& path,
+                                    const char* data, std::size_t length)
+{
+    HANDLE handle = nullptr;
+    const FileResult openResult = m_ops->openWriteThrough(path, &handle);
+    if (!openResult.ok) {
+        return openResult;  // 打开失败：错误码透传，无任何半写（连文件都没有）
+    }
+    struct HandleGuard {
+        IFileOps* ops;
+        HANDLE handle;
+        FileResult closeResult{};
+        bool dismissed = false;  // 正常收尾时抑制重复关闭
+        ~HandleGuard()
+        {
+            if (!dismissed && handle != nullptr) {
+                closeResult = ops->closeHandle(handle);
+            }
+        }
+    } guard{m_ops, handle, {}, false};
+    std::size_t offset = 0;
+    while (offset < length) {
+        const std::size_t chunk =
+            (length - offset < kWriteChunkSize) ? (length - offset)
+                                                : kWriteChunkSize;
+        const FileResult writeResult =
+            m_ops->writeChunk(handle, data + offset, chunk);
+        if (!writeResult.ok) {
+            return writeResult;
+        }
+        offset += chunk;
+    }
+    const FileResult flushResult = m_ops->flush(handle);
+    if (!flushResult.ok) {
+        return flushResult;  // 闸门失败：字节已在文件里但未承诺持久——按失败处置
+    }
+    guard.dismissed = true;
+    const FileResult closeResult = m_ops->closeHandle(handle);
+    if (!closeResult.ok) {
+        return closeResult;
+    }
+    FileResult r;
+    r.ok = true;
+    return r;
+}
+=== project.win32.AtomicFile.AtomicFile.publishNew ===
+FileResult AtomicFile::publishNew(const std::wstring& tempPath,
+                                  const std::wstring& targetPath)
+{
+    return m_ops->publishNew(tempPath, targetPath);
+}
+=== project.win32.AtomicFile.AtomicFile.replaceFile ===
+FileResult AtomicFile::replaceFile(const std::wstring& tempPath,
+                                   const std::wstring& targetPath)
+{
+    return m_ops->replaceExisting(tempPath, targetPath);
+}
+=== project.AtomicFile.ctor.default ===
+AtomicFile::AtomicFile()
+    : m_ops(nullptr)
+{
+    static Win32FileOps sharedRealOps;
+    m_ops = &sharedRealOps;
+}
+=== project.AtomicFile.ctor.injected ===
+AtomicFile::AtomicFile(IFileOps* ops) : m_ops(ops)
+{
+    if (ops == nullptr) {
+        throw std::invalid_argument(
+            "AtomicFile: IFileOps 注入不得为空（接缝契约——testkit.md D-10）");
+    }
+}
+=== project.win32.AtomicFile.~HandleGuard ===
+        ~HandleGuard()
+        {
+            if (!dismissed && handle != nullptr) {
+                closeResult = ops->closeHandle(handle);
+            }
+        }
+=== project.CommandServiceImpl.CommandServiceImpl.submit ===
+CommandResult CommandServiceImpl::submit(const CommandEnvelope& envelope,
+                                         ICommandInteraction* interaction)
+{
+    std::lock_guard<std::mutex> slotGuard(m_slot);
+    std::shared_ptr<void> inFlight = m_host.acquireInFlight();
+    CommandResult result;
+    ICommandHandler* handler = nullptr;
+    RevisionView baseView;
+    try {
+        if (!runFormChecks(envelope, interaction, handler, result)) {
+            return result;
+        }
+        if (!resolveBaseline(envelope, baseView, result)) {
+            return result;
+        }
+        executePlan(envelope, *handler, baseView, interaction, result);
+        return result;
+    } catch (const StoreError& e) {
+        result = CommandResult{};
+        if (e.code() == StoreErrorCode::ContextClosed) {
+            result.status.kind = CommandStatus::Kind::Aborted;
+            result.status.abort = CommandStatus::Abort::ContextClosing;
+            result.error = e;
+            return result;
+        }
+        result.status.kind = CommandStatus::Kind::Failed;
+        result.error = e;
+        return result;
+    }
+}
+=== project.QueryPortImpl.QueryPortImpl.branchTips ===
+std::vector<BranchTip> QueryPortImpl::branchTips() const
+{
+    requireOpen();
+    ProjectMetadataRecord authoritative;
+    {
+        std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        authoritative = m_host.m_authoritative;
+    }
+    std::vector<BranchTip> tips;
+    tips.reserve(authoritative.branches.size());
+    for (const BranchRecord& b : authoritative.branches) {
+        BranchTip tip;
+        tip.id = b.branchId;
+        tip.label = b.label;
+        tip.base = b.baseRevisionId;
+        tip.tip = b.tipRevisionId;  // 权威版本的 tip（INV-M3——不取自历史元数据）
+        tips.push_back(std::move(tip));
+    }
+    return tips;
+}
+=== project.QueryPortImpl.QueryPortImpl.branchHistory ===
+std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
+                                                       std::uint32_t maxCount) const
+{
+    requireOpen();
+    core::RevisionId tip{};
+    {
+        std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        const auto found = revindex::RevisionIndex::branchTip(m_host.m_authoritative,
+                                                              branch);
+        if (!found.has_value()) {
+            throw std::invalid_argument(
+                "project/query: unknown branch branch=" + branch.toCanonical()
+                + "（§5.2 表：未知分支抛——调用方契约违约）");
+        }
+        tip = *found;
+    }
+    std::vector<RevisionView> history;
+    if (maxCount == 0) {
+        return history;
+    }
+    history.reserve(maxCount);
+    std::optional<core::RevisionId> current = tip;
+    while (current.has_value() && history.size() < maxCount) {
+        const auto manifest = m_host.m_index->tryRevision(*current);
+        if (!manifest.has_value()) {
+            throw StoreError(StoreErrorCode::StoreCorrupt,
+                             "project/query: branch history dangling parent revision="
+                                 + current->toCanonical());
+        }
+        history.push_back(assembleView(*manifest));
+        current = manifest->parentRevisionId;
+    }
+    return history;
+}
+=== project.ArchiveServiceImpl.readSmallFile ===
+std::optional<std::string> readSmallFile(const std::filesystem::path& file)
+{
+    std::error_code ec;
+    if (!std::filesystem::exists(file, ec) || ec) {
+        return std::nullopt;
+    }
+    std::ifstream in(file, std::ios::binary);
+    if (!in) {
+        return std::nullopt;
+    }
+    std::string bytes{std::istreambuf_iterator<char>(in),
+                      std::istreambuf_iterator<char>()};
+    if (in.bad()) {
+        return std::nullopt;
+    }
+    return bytes;
+}
+=== project.ArchiveServiceImpl.mapOsError ===
+StoreErrorCode mapOsError(unsigned long osError)
+{
+    if (osError == ERROR_DISK_FULL) {
+        return StoreErrorCode::DiskFull;
+    }
+    if (osError == ERROR_ACCESS_DENIED) {
+        return StoreErrorCode::AccessDenied;
+    }
+    return StoreErrorCode::WriteRejected;
+}
+=== project.ArchiveServiceImpl.ArchiveServiceImpl.finalize ===
+ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,
+                                           const RunManifest& manifest)
+{
+    const std::shared_ptr<ArchiveSessionState> state
+        = resolveActiveSession(session);
+    if (!(manifest.taskIdentity == state->task)) {
+        throw std::invalid_argument(
+            "project/archive: manifest.taskIdentity 与会话五元组不一致");
+    }
+    validateManifestFields(manifest);
+    if (!requireWriteAuthority("finalize")) {
+        return ArchiveStatus{
+            false,
+            StoreError{StoreErrorCode::WriteRejected,
+                       "project/archive: write authority check failed"
+                       "（finalize——句柄已释放或已失权）"}};
+    }
+    RunManifest out = manifest;
+    out.manifestDigest = computeManifestDigestHex(manifest);
+    const std::string canonical = codec::dump(out);
+    const std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+    {
+        std::lock_guard<std::mutex> guard(m_sessionsMutex);
+        if (m_sessions.find(state.get()) == m_sessions.end()) {
+            return ArchiveStatus{
+                false,
+                StoreError{StoreErrorCode::WriteRejected,
+                           "project/archive: 会话已终结（abandon 先至定终局"
+                           "——finalize 失去发布资格，F-805）"}};
+        }
+    }
+    const std::filesystem::path manifestFile
+        = state->runDir / std::string{kManifestFileName};
+    std::error_code ec;
+    if (std::filesystem::exists(manifestFile, ec) && !ec) {
+        const auto bytes = readSmallFile(manifestFile);
+        if (!bytes.has_value()) {
+            return ArchiveStatus{
+                false,
+                StoreError{StoreErrorCode::StoreCorrupt,
+                           "project/archive: 既有 manifest 不可读 path="
+                               + manifestFile.string()}};
+        }
+        RunManifest existing;
+        try {
+            existing = codec::parseRunManifest(*bytes);
+        } catch (const StoreError& e) {
+            return ArchiveStatus{
+                false,
+                StoreError{StoreErrorCode::StoreCorrupt,
+                           "project/archive: 既有 manifest 解析拒绝 path="
+                               + manifestFile.string() + " detail="
+                               + e.what()}};
+        }
+        if (existing.manifestDigest == out.manifestDigest) {
+            reportDev("project/archive",
+                      "finalize idempotent（D-14 摘要一致——不重写） run="
+                          + state->task.run.toCanonical());
+            endSession(state, true);
+            return ArchiveStatus{true, std::nullopt};
+        }
+        if (m_host.m_sink != nullptr) {
+            try {
+                m_host.m_sink->report(diagrec::makeArchiveConflict(
+                    "project/archive: manifest 摘要冲突 run="
+                        + state->task.run.toCanonical()));
+            } catch (...) {
+            }
+        }
+        return ArchiveStatus{
+            false,
+            StoreError{StoreErrorCode::ArchiveConflict,
+                       "project/archive: 同 attempt 重投递 manifest 内容"
+                       "不一致（D-14 冲突拒绝） run="
+                           + state->task.run.toCanonical()}};
+    }
+    if (ec) {
+        return ArchiveStatus{
+            false,
+            StoreError{mapOsError(static_cast<unsigned long>(ec.value())),
+                       "project/archive: stat manifest failed path="
+                           + manifestFile.string() + " osError="
+                           + std::to_string(ec.value())}};
+    }
+    for (const RunManifestItem& item : out.items) {
+        const std::filesystem::path file
+            = state->runDir / relPathToPath(item.relPath);
+        const auto bytes = readSmallFile(file);
+        if (!bytes.has_value()) {
+            reportDev("project/archive",
+                      "finalize verify failed（批次文件缺失/不可读） relPath="
+                          + item.relPath);
+            return ArchiveStatus{
+                false,
+                StoreError{StoreErrorCode::StoreCorrupt,
+                           "project/archive: manifest 条目缺失或不可读"
+                           " relPath=" + item.relPath}};
+        }
+        if (bytes->size() != item.sizeBytes) {
+            reportDev("project/archive",
+                      "finalize verify failed（size 不符） relPath="
+                          + item.relPath + " disk="
+                          + std::to_string(bytes->size()) + " declared="
+                          + std::to_string(item.sizeBytes));
+            return ArchiveStatus{
+                false,
+                StoreError{StoreErrorCode::StoreCorrupt,
+                           "project/archive: manifest 条目 size 与磁盘不符"
+                           " relPath=" + item.relPath}};
+        }
+        const core::ContentVersion diskDigest
+            = codec::contentVersionOf(*bytes);
+        if (diskDigest.toCanonical().substr(3) != item.sha256) {
+            reportDev("project/archive",
+                      "finalize verify failed（sha256 不符） relPath="
+                          + item.relPath);
+            return ArchiveStatus{
+                false,
+                StoreError{StoreErrorCode::StoreCorrupt,
+                           "project/archive: manifest 条目 sha256 与磁盘不符"
+                           " relPath=" + item.relPath}};
+        }
+    }
+    const std::wstring temp = tempPathOf(manifestFile);
+    const auto written
+        = m_file.writeThrough(temp, canonical.data(), canonical.size());
+    if (!written.ok) {
+        std::error_code rmEc;
+        std::filesystem::remove(temp, rmEc);
+        reportDev("project/archive",
+                  "finalize temp cleanup after write-failure file="
+                      + manifestFile.string() + " osError="
+                      + std::to_string(written.osError));
+        return ArchiveStatus{
+            false,
+            StoreError{mapOsError(written.osError),
+                       "project/archive: manifest writeThrough failed"}};
+    }
+    const auto published
+        = m_file.replaceFile(temp, manifestFile.wstring());
+    if (!published.ok) {
+        std::error_code rmEc;
+        std::filesystem::remove(temp, rmEc);
+        reportDev("project/archive",
+                  "finalize publish failed file=" + manifestFile.string()
+                      + " osError=" + std::to_string(published.osError));
+        return ArchiveStatus{
+            false,
+            StoreError{mapOsError(published.osError),
+                       "project/archive: manifest 原子发布失败"}};
+    }
+    {
+        std::lock_guard<std::mutex> guard(m_sessionsMutex);
+        state->finalized = true;
+        state->ended = true;
+        m_sessions.erase(state.get());
+    }
+    reportDev("project/archive",
+              "finalize ok run=" + state->task.run.toCanonical()
+                  + " manifest=" + manifestFile.string());
+    publishResultArchived(state->task);
+    state->inFlight.reset();  // 锁外释放（§9.7——排空归零的触发点之一）
+    return ArchiveStatus{true, std::nullopt};
+}
+=== project.ArchiveServiceImpl.ArchiveServiceImpl.endSession ===
+void ArchiveServiceImpl::endSession(
+    const std::shared_ptr<ArchiveSessionState>& state, bool finalized)
+{
+    std::shared_ptr<void> ticket;
+    {
+        std::lock_guard<std::mutex> guard(m_sessionsMutex);
+        state->finalized = finalized;
+        state->ended = true;
+        m_sessions.erase(state.get());
+        ticket = std::move(state->inFlight);
+    }
+    ticket.reset();  // 释放＝引用归零（排空完成的触发点之一，§9.7）
+}
+=== project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived ===
+void ArchiveServiceImpl::publishResultArchived(
+    const core::TaskIdentity& task) const noexcept
+{
+    if (m_host.m_eventBus == nullptr) {
+        return;
+    }
+    core::ResultArchivedPayload payload;
+    payload.task = task;
+    const core::DomainEvent event = core::DomainEvent::make(payload);
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        try {
+            m_host.m_eventBus->publish(event);
+            return;
+        } catch (const std::exception& e) {
+            reportDev("project/archive",
+                      std::string{"event-publish-failed（"}
+                          + (attempt == 0 ? "首败——按协议重试一次"
+                                          : "重试后仍失败——不影响归档完成，"
+                                            "D-18")
+                          + "） event=result-archived error=" + e.what());
+        }
+    }
+}
+=== project.ProjectStoreImpl.loadCommittedState ===
+void loadCommittedState(tx::TxEngine& engine,
+                        objstore::ObjectStore& objects,
+                        revindex::RevisionIndex& index,
+                        const tx::TxRecoveryScan& scan,
+                        const core::ProjectId& projectId,
+                        int schemaVersion,
+                        IDiagnosticsSink* sink,
+                        HeadRecord& outHead,
+                        ProjectMetadataRecord& outAuthoritative,
+                        ObjectRefPair& outAuthoritativeRef)
+{
+    const HeadRecord head = engine.readHead();
+    if (!(head.projectId == projectId) || head.schemaVersion != schemaVersion
+        || head.formatId != std::string{kFormatId}) {
+        const std::string detail
+            = "project/open: project.json 与 HEAD 跨文件不一致 projectId(json)="
+              + projectId.toCanonical() + " projectId(head)="
+              + head.projectId.toCanonical() + " schemaVersion(json)="
+              + std::to_string(schemaVersion) + " schemaVersion(head)="
+              + std::to_string(head.schemaVersion);
+        if (sink != nullptr) {
+            sink->report(makeOpenCorruptRecord(detail));
+        }
+        throw StoreError(StoreErrorCode::StoreCorrupt, detail);
+    }
+    std::set<std::string> uncommitted;
+    for (const RevisionId& rid : scan.uncommittedRevisions) {
+        uncommitted.insert(rid.toCanonical());
+    }
+    std::set<ObjectRefPair, MetadataRefLess> metadataRefs;
+    RevisionManifest headManifest;
+    bool headManifestSeen = false;
+    std::error_code ec;
+    const std::filesystem::path revRoot
+        = std::filesystem::path(engine.projectDir()) / "revisions";
+    if (std::filesystem::exists(revRoot, ec) && !ec) {
+        for (std::filesystem::directory_iterator it(revRoot, ec), end;
+             it != end && !ec; it.increment(ec)) {
+            std::error_code dirEc;
+            if (!it->is_directory(dirEc) || dirEc) {
+                continue;
+            }
+            const std::string dirName = it->path().filename().string();
+            if (!core::RevisionId::tryFromCanonical(dirName).has_value()) {
+                continue;  // 不合规目录名（scan 已开发观测——搬运侧跳过）
+            }
+            if (uncommitted.count(dirName) != 0) {
+                continue;  // 闭包外＝未提交残留——不装载（PRJ-TX-9）
+            }
+            const auto bytes = readAllBytes(it->path() / "manifest.json");
+            if (!bytes) {
+                throw StoreError(StoreErrorCode::StoreCorrupt,
+                                 "project/open: manifest 缺失（扫描后竞态"
+                                 "损坏） path="
+                                     + (it->path() / "manifest.json").string());
+            }
+            RevisionManifest manifest;
+            try {
+                manifest = codec::parseRevisionManifest(*bytes);
+            } catch (const StoreError& e) {
+                throw StoreError(StoreErrorCode::StoreCorrupt,
+                                 "project/open: manifest 解析失败（扫描后"
+                                 "竞态损坏） path="
+                                     + (it->path() / "manifest.json").string()
+                                     + " detail=" + std::string(e.what()));
+            }
+            if (manifest.revisionId == head.revisionId) {
+                headManifest = manifest;  // HEAD 修订清单（权威引用来源）
+                headManifestSeen = true;
+            }
+            index.registerRevision(manifest);
+            metadataRefs.insert(manifest.metadataRef);
+        }
+    }
+    if (!headManifestSeen) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/open: HEAD 引用的修订目录缺失（扫描后"
+                         "竞态损坏） revision="
+                             + head.revisionId.toCanonical());
+    }
+    std::map<ObjectRefPair, ProjectMetadataRecord, MetadataRefLess>
+        loaded;
+    for (const ObjectRefPair& ref : metadataRefs) {
+        const auto payloadBytes = objects.object(ref.objectId,
+                                                ref.contentVersion);
+        const std::string payload{
+            reinterpret_cast<const char*>(payloadBytes.data()),
+            payloadBytes.size()};
+        ProjectMetadataRecord record = codec::parseMetadataRecord(payload);
+        index.registerMetadata(ref, record);
+        loaded.emplace(ref, std::move(record));
+    }
+    index.adoptHeadSeq(head.revisionSeq);
+    outHead = head;
+    outAuthoritativeRef = headManifest.metadataRef;
+    outAuthoritative = loaded.at(outAuthoritativeRef);  // 权威底本（D-5）
+}

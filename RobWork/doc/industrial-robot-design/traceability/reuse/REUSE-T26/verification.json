@@ -1,0 +1,117 @@
+{
+  "taskId": "REUSE-T26",
+  "base": "507db46bba838bb170e1fbfaf5784a389ad3790d",
+  "implementation": "local working tree bound by exact inputs; final commit supplied at handoff",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+      "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+      "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/CartesianLine.hpp",
+      "sha256": "e8cdc91803b45bde749abb9540d4a2857f2aa0402e17e026bd3163a560956bfc"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+      "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Geometry/Quaternion.h",
+      "sha256": "647bee175ef29e4b57252cf84f0ca211c34b30096aeb8ea5898e2f7b05c5e039"
+    }
+  ],
+  "configuration": {
+    "path": "build/CMakeCache.txt",
+    "sha256": "1ceac342dfb771cb69a614438ee407221ecef933b8a378d78b24dadbfb745c86"
+  },
+  "toolchain": "VS2022 x64 / C++17 / Release; microbenchmark MSVC /O2 /MD /DNDEBUG; existing vcpkg and Qt",
+  "results": {
+    "baseline": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0
+    },
+    "final": {
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0
+    },
+    "contract": {
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0
+    },
+    "disconnected": {
+      "tests": 3,
+      "failures": 3,
+      "errors": 0,
+      "disabled": 0
+    }
+  },
+  "builds": [
+    {
+      "command": "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test",
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/final-build.log",
+        "sha256": "feaddd89de88172abd6be9a95638b58aadbdee18f57e91ab5f5130667508a2fd"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "cmake --build build/govt24-smoke --config Release --target sdurws_ird_trajectory -- /nologo /verbosity:minimal",
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/smoke-build.log",
+        "sha256": "8f4316c1dc6286f79161a923215c356aad6b14d7d0c4d748abcfb40d34e17c34"
+      },
+      "exitCode": 0
+    }
+  ],
+  "architecture": {
+    "command": "cmake -DIRD_ROOT=<repo>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/architecture-gates.log",
+      "sha256": "386672842381a878e28a6cd099455b549ceb3e34801c3af43fe2d69847d6f627"
+    },
+    "result": "PASS: 11 classes, zero findings"
+  },
+  "performance": {
+    "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/run-performance.cmd",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/performance.log",
+      "sha256": "c467fb501a3bba0b0c7cc7de8a0c6175777c2cf7190cddf003e1e70f860f82f5"
+    },
+    "result": "measured; general angle ~6-10% slower, near pi ~0.3-2.7% slower; same orientation/tiny angle faster",
+    "ownerDecision": "接受本次具体开销，交独验",
+    "scope": "REUSE-T26 exact reported microbenchmark only; not independent acceptance"
+  },
+  "independentAcceptance": "NOT RUN; owner-arranged separate context or human",
+  "notRun": [
+    "upstream test targets",
+    "allocation count",
+    "thread stress",
+    "full-project tests/whole-product performance"
+  ],
+  "baselineSource": {
+    "git": "507db46bba838bb170e1fbfaf5784a389ad3790d:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+    "sha256": "07baa709c1eecba0c4ef91655035e14c4def7f9381ac99079039eb444fa78983"
+  }
+}

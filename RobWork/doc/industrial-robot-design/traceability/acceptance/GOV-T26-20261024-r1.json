@@ -1,0 +1,91 @@
+{
+  "taskId": "GOV-T26",
+  "baseCommit": "0a091394b9466c3fa7521d34162b1c8b64a843c4",
+  "reviewedCommit": "2136a89d5cd65e7183c734956df68291862e0fc0",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-24T19:14:55+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "GOV-T26/WP-10 单次验收子智能体（第1轮）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配集成构建树；探针在系统临时目录独立重建。复跑 verify.py 会覆写 revision-r3/result.json，已先备份原件（03-result-original-backup.json）、复跑对比后原样还原，git status 核实干净。所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 0a091394b..2136a89d5 送验包（唯一提交 2136a89d5，WP-10 C4 修订提案 R3 与成熟定宽原语候选隔离验证，纯治理/文档，无产品改动）：显式 Base/Head 范围机检、提交链、10 项输入指纹绑定送验版本、MSVC 独立重建双探针（不依赖实施者留下的 exe）、真实 CPython/Fraction 22831 组数值验证完全复现、串行微基准同量级复现、红线硬核验（产品/门禁/REUSE-T14 既有原件零改动、F-966 保持 open、R2 哨兵静态不一致代码依据、note 批准对象 SHA256 绑定命中）、validate-docs 门禁复跑、契约四条 acceptance 与 note/status 一致性映射。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "12 项验收检查；数值复跑计数另列（numericRerun），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 干净（仅本产物目录未跟踪）；HEAD=bbe2e47a2（送验 2136a89d5 之后另有 GOV-T25 收口与 REUSE-T21 等主线提交，均非被验内容）；送验范围内唯一提交 2136a89d5，与契约 note『唯一提交推导』一致。",
+    "范围：verify-task-scope 显式 -Base 0a091394b -Head 2136a89d5 exit 0，16 路径全部在 6 条允许规则内（tasks/GOV-T26.json、extensions 两文件、migration.md、changes/GOV-T26.json、REUSE-T14/revision-r3/**）。",
+    "提交链：commit-lint -Range 0a091394b..2136a89d5 PASS（1 提交合规，中文 [governance] 前缀）；正文数字与原件逐一吻合——22831 组、3494 溢出误判、9.29–10.54µs（performance-serial.log:4,8,12 为 10.536015/9.678825/9.291675）、候选正常 0.00469–0.00676µs（同文件 0.0067602/0.0046861/0.0048765）、『文档/契约/复用机检PASS…独验NOT RUN』与 validate-docs.log 及 result.json independent_acceptance 一致；『首次缺复用契约FAIL原件保留』与 validate-docs-initial-fail.log（REUSE-TASK: GOV-T26: reuse contract required → Write-Error）一致。",
+    "输入指纹：result.json 记录 10 项输入 raw_sha256，逐项重算比对——9 项当前树直接 OK；Compare.cpp 当前树 DIFF 的唯一原因是送验后主线提交 19f394a59（REUSE-T21 产品实施 +26 行，符合契约 note『产品实施另归 REUSE-T21』），而 git show 2136a89d5:Compare.cpp 经 unix2dos 后 SHA256=c7b6518…与 result.json 记录完全一致，且 0a091394b..2136a89d5 该文件零改动——10/10 输入均绑定送验版本，证据链完好。",
+    "独立重建：不依赖实施者留下的 build/c4-r3-probe 产物，从 git 提取 2136a89d5 版 Compare.cpp（指纹 c7b6518… 核对）与工作树 probe.cpp/C4Probe.cpp/compare-candidate.cpp（指纹 OK），在系统临时目录按 build-probes.cmd 同参数（cl /std:c++17 /O2 /EHsc /utf-8，core include＋vcpkg Boost include）编译 c4-r3-probe.exe 与 c4-r2-probe.exe，exit 0。",
+    "数值验证真实复现：D:/software/Miniconda3/python.exe verify.py（独立 exe）exit 0，r3_verdict=PASS，counts 与原件 verify.log 逐字段一致（cases=22831、reused=13168、finite_valid=22600、overflow=13291、production_overflow_errors=3494、wide/r3-overflow/r3-unchanged/r2-overflow/r2-unchanged errors 均 0、normal_rounding_differences=36）；protocol_sha256=51c1c46f… 与原件一致（语料位模式确定性），probe_stderr 一致（R3 计算期间 new/new[]＝0）；复跑仅 head 字段随当前 HEAD 前移（0a091394b→bbe2e47a2），属预期。Fraction 期望在 verify.py:90-91 以真实 fractions.Fraction 精确实数计算。",
+    "性能 bench 复现：独立构建 c4-r3-probe.exe --bench exit 0——溢出 10.30–10.93µs（原件 9.29–10.54µs 同量级）、候选正常 0.00521–0.00555µs（原件 0.00469–0.00676）、checksum=6060000 与 candidate-new-calls=0 逐位一致。README 已声明串行微基准不作最终生产性能且无所有者接受，量级复现即满足『性能风险如实披露』要求。",
+    "红线硬核验：git diff --exit-code 0a091394b..2136a89d5 对 industrialrobot/cmake/ 退出 0；对 RobWorkStudio/src/、RobWork/src/、RobWorkSim/src/、vcpkg/ 零文件（未越权放宽门禁/权限，H1/H5/H6 边界成立）；对 REUSE-T14 除 revision-r3/** 外零文件（A 失败与 R2 原件原样保留，acceptance 第 1 条前半成立）。diff 全集即 16 个允许文件，所有冻结区（既有 acceptance/units/functions/catalog）未被触碰。",
+    "R2 哨兵静态不一致核明（acceptance 第 1 条后半）：revision-candidate/compare-candidate.cpp:92 exactSignInner 256 轮后 return -2，:152 return exactSign(leaf,5)<=0 —— -2<=0 为 true，与原提案『哨兵返回 false』相反，README『R2 复核』节论断有真实代码依据；『未发现合法输入触发反例、不将有限样本通过当作证明』在 README:54、提案 R3 第 1 点、提交正文三处一致分列。",
+    "F-966 与批准绑定（acceptance 第 4 条）：findings.json 中 F-966 status=open 且该文件本包零改动；契约 note 记载的批准对象 SHA256=7c5d1ec9… 经 git show 2136a89d5:GAP-CORE-C4-01.md（LF blob 形态）sha256sum 完全命中；送验范围内零产品实施，私有 Boost 范围/第三方表达/最终生产性能的批准与实施边界由 note、提案 R3 第 7/8 点明确；result.json independent_acceptance=NOT RUN、独验另行安排属实。观察（非缺陷）：提案末行『没有所有者R3批准记录』为申请时点表述，同提交的契约 note 补记批准并绑定精确 SHA256，note 为契约状态权威源，治理链自洽。",
+    "门禁复跑：validate-docs -TaskFile GOV-T26.json exit 0——validate-task: PASS（1 tasks）、validate-reuse: PASS governance only（inventory=1401 units=20 DEBT=16 UNRESOLVED=1399 与送验口径一致；changed=94/404 task files 为送验后主线新增所致，非本包内容）、validate-docs: PASS；REUSE-AD-PENDING 为既有 AD 审计 pending 提示，非本包阻断（GOV-T24 先例同型）。治理过程负例真实：initial-fail 原件保留。",
+    "契约一致性：GOV-T26.json status==ready（提案自查完成待裁决/待独验语义，note 明示不表示产品修复完成）；note 起点 SHA、22831 组、独验 NOT RUN、生产/Q/消费者 NOT RUN 且未修改、R3 复用既有 Boost、产品实施另归 REUSE-T21 全部与实测映射；四条 acceptance 逐条有证据（第1条→检查8/9，第2条→检查8+README 来源/原语/位宽推导节+probe.cpp:75 正常路径委托生产入口不复制算术核心，第3条→检查4/6/7+result.json 输入摘要+README 命令块全部复跑可复核，第4条→检查10）；reuse/changes/GOV-T26.json 空产品变更凭证与『本轮没有产品改动』一致。"
+  ],
+  "numericRerun": {
+    "verdict": "PASS（完全复现）",
+    "cases": 22831,
+    "reusedRealCpythonCases": 13168,
+    "finiteValid": 22600,
+    "overflow": 13291,
+    "productionOverflowErrors": 3494,
+    "r3WideFormulaErrors": 0,
+    "r3OverflowErrors": 0,
+    "r3UnchangedPathErrors": 0,
+    "r2OverflowErrors": 0,
+    "r2UnchangedPathErrors": 0,
+    "normalRoundingDifferences": 36,
+    "protocolSha256": "51c1c46fbfbfc7f43a2472e10c7835776b9283fc3a153925ede43c102c48e610",
+    "probeNewCallsDuringCandidate": 0,
+    "benchOverflowUsPerCall": "10.30–10.93（原件 9.29–10.54，同量级）",
+    "benchChecksum": "6060000（与原件一致）"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T26.json -Base 0a091394b9466c3fa7521d34162b1c8b64a843c4 -Head 2136a89d5cd65e7183c734956df68291862e0fc0", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 0a091394b9466c3fa7521d34162b1c8b64a843c4..2136a89d5cd65e7183c734956df68291862e0fc0", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "input-fingerprints", "command": "D:/software/Miniconda3/python.exe 对 result.json 10 项 inputs 逐项 sha256 比对＋git show 2136a89d5:Compare.cpp|unix2dos|sha256sum", "exitCode": 0, "passed": true },
+    { "name": "probe-rebuild", "command": "cl /std:c++17 /O2 /EHsc /utf-8（vcvars64；独立临时目录；2136a89d5 版 Compare.cpp＋probe.cpp / C4Probe.cpp＋compare-candidate.cpp）", "exitCode": 0, "passed": true },
+    { "name": "fraction-verify", "command": "D:/software/Miniconda3/python.exe RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T14/revision-r3/verify.py <独立c4-r3-probe.exe> <独立c4-r2-probe.exe>", "exitCode": 0, "passed": true, "log": "03-verify-rerun.log" },
+    { "name": "bench", "command": "<独立 c4-r3-probe.exe> --bench", "exitCode": 0, "passed": true, "log": "04-bench-rerun.log" },
+    { "name": "gates-zero-diff", "command": "git diff --exit-code 0a091394b..2136a89d5 -- RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/", "exitCode": 0, "passed": true },
+    { "name": "product-and-evidence-zero-diff", "command": "git diff --stat 0a091394b..2136a89d5 -- RobWork/RobWorkStudio/src/ RobWork/RobWork/src/ RobWork/RobWorkSim/src/ vcpkg/ ＋ REUSE-T14 (排除 revision-r3/**)", "exitCode": 0, "passed": true },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/GOV-T26.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" }
+  ],
+  "executionNotes": [
+    "verify.py 按设计覆写 revision-r3/result.json（HERE/result.json 硬编码）；验收复跑前已备份原件至产物目录，复跑对比（counts/protocol_sha256/probe_stderr 全等，仅 head 随当前 HEAD 前移）后原样还原，git status 确认该文件干净，原件零改动。",
+    "首轮 Git Bash heredoc 方式跑 Python 对比脚本挂起进入后台，已停止并改用临时脚本文件执行，结果不变。",
+    "本包为纯治理/文档包，按 AGENTS §4 无需 C++ 集成构建/产品测试；数值验收项（Fraction 22831 组）与性能项（bench）均以独立重建探针真实执行。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "真实 Q 重载、产品消费者回归、生产集成性能、最终生产异常契约审查",
+      "reason": "属契约 note 与提案 R3 第 7/8 点明确划出的后续范围（产品实施归 REUSE-T21、最终性能另验、异常契约获批实施时审查），本治理包不授权且未声称执行；不构成本包阻断。"
+    },
+    {
+      "item": "REUSE-T21 产品实施验收",
+      "reason": "独立任务另行验收；本记录仅覆盖 GOV-T26 治理包 0a091394b..2136a89d5。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 GOV-T26/WP-10 送验范围（0a091394b..2136a89d5）：C4 修订提案 R3 与成熟定宽原语候选的隔离验证与待批范围治理。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭）；不构成 WP-02、算法替换（migration §11）或 REUSE-T02 的放行；不替代 REUSE-T21 产品验收；位宽推导（128/4224）、noexcept/异常契约、4224 位 Karatsuba 临时存储规避论证仍为待审条件（README 已声明未经独立验收），获批实施时须按提案第 8 点验证。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1/03-result-original-backup.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1/03-verify-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1/04-bench-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1/07-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1.json"
+  ]
+}

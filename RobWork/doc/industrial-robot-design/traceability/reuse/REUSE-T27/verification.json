@@ -1,0 +1,203 @@
+{
+  "taskId": "REUSE-T27",
+  "base": "704667b598967d9849dd02f113dd28ec3ad93a8e",
+  "implementation": "exact source/dependency bindings; final commit provided in handoff",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+      "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+      "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
+      "sha256": "14e705397b6930e3cc7896351a2c9e2ed60074915bf9c6e528451a700f8464f5"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+      "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h",
+      "sha256": "f7f7c8dc2f3fdee15317858582311b4135eed3a1759dc629386e8bfff0499996"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
+      "sha256": "8b7b0ee69876441c1f9629d6d5763bf6af934e47dc11dc68911161f5e7c730ae"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
+      "sha256": "3845aabc98545fd5c431f65333322ef9c2759357e75eade847be93574b32a9ff"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+      "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CommandHandlers.cpp",
+      "sha256": "0da9154c69be12bf607f7f5abac431c6fd6de22c33b02caf169ae1e926922efd"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
+      "sha256": "1a397e8867174664fe4c3e60db0a35ac19ee459c731b9ba7b588cce3976eae9b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
+      "sha256": "e405fedaab6eb178f9c5b28d37d9bc4c828b370f4afca82a68532be74a5bff7e"
+    }
+  ],
+  "configuration": {
+    "path": "build/CMakeCache.txt",
+    "sha256": "1ceac342dfb771cb69a614438ee407221ecef933b8a378d78b24dadbfb745c86"
+  },
+  "toolchain": "VS2022 x64 / Release / C++17; microbenchmark MSVC /O2 /MD /DNDEBUG",
+  "results": {
+    "baseline": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 0
+    },
+    "normal": {
+      "tests": 62,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 62
+    },
+    "disconnected": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 0
+    },
+    "restore-stale": {
+      "tests": 65,
+      "failures": 22,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 43
+    },
+    "final": {
+      "tests": 65,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 65
+    },
+    "contract": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0,
+      "passed": 8
+    }
+  },
+  "final": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter MdlInertiaReuse.*:MdlPropertyEstimation.*:MdlRobotDesign.IMdl5*:MdlRobotDesign.IMdl3*:MdlParts.ToolBodyAssertions*:MdlImport.*:MdlReadiness.*:MdlCommandPrepare.HardAssert*:LinAlgeTest.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/final.xml",
+      "sha256": "87fb826e0cf67414533888e10b9ad2eff880af8543320cc37f9488d3e46b5381"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/final.log",
+      "sha256": "58712b8fcc30aee4cb2f47c6a0b46fe0bd2298aec97d56e6586fb733735bc004"
+    },
+    "exitCode": 0
+  },
+  "contract": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/run-contract.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label contract -Filter MdlDescriptionBridgeContract.*:MdlGoldenPeerContract.*:MdlCompileBridgeContract.*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/contract.xml",
+      "sha256": "d97c163f00c3987ed0920a228dcbd898499c50aceb970ce84ef45435f811bca8"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/contract.log",
+      "sha256": "dee7fa0cd19a2e9974b82d7fbb3e4fafe4a719e68890ca129b14970bd7b14434"
+    },
+    "exitCode": 0
+  },
+  "builds": [
+    {
+      "command": "cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test -- /nologo /verbosity:minimal",
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/final-build.log",
+        "sha256": "dc04b889baedc0b7b06d4db0139028266eef0c1af3c2d46bbe3ecc054226fbb6"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "cmake --build build/govt24-smoke --config Release --target sdurws_ird_modeling -- /nologo /verbosity:minimal",
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/smoke-build.log",
+        "sha256": "53a39d31566c7b66b4bef2f8afe5448e355ca1ce558eccf98fc1ac632c7da2c9"
+      },
+      "exitCode": 0
+    }
+  ],
+  "architecture": {
+    "command": "cmake -DIRD_ROOT=<repo>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/architecture-gates.log",
+      "sha256": "386672842381a878e28a6cd099455b549ceb3e34801c3af43fe2d69847d6f627"
+    },
+    "result": "PASS: 11 classes, zero findings"
+  },
+  "performance": {
+    "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/run-performance.cmd",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/performance.log",
+      "sha256": "c7a346c7caaefb09883030b68ac2a8b1a547ee0ca86ffcf8321bb5114b7b4e25"
+    },
+    "sources": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/perf.cpp",
+        "sha256": "21acd552a7d2b49447826481cdc9f82b5335c306db9a96f50eb2848d26000267"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/perf-old.cpp",
+        "sha256": "ef143742642d299c65abf715ad03be202b3e186227b326a9a7c46efbedca55ef"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/perf-new.cpp",
+        "sha256": "944dad6b2f896e59951aee6185ee287367f917baf7f64cd2c1c4cfd1047bef0f"
+      }
+    ],
+    "ownerDecision": "接受本包具体开销并交独验",
+    "scope": "REUSE-T27 exact microbenchmark; not independent acceptance or budget for another package"
+  },
+  "baselineSource": {
+    "git": "704667b598967d9849dd02f113dd28ec3ad93a8e:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+    "sha256": "9a81c419cd0a766e0153390b94ec58351bfc453ea137f42167c530dc90c02829"
+  },
+  "independentAcceptance": "NOT RUN; owner-arranged independent session/human",
+  "notRun": [
+    "allocation-failure injection/count",
+    "thread stress",
+    "whole-product performance",
+    "unaffected modules / all GUI / full-project tests"
+  ],
+  "restoreIncident": "Copy-Item preserved earlier header mtime; incremental build reused mutation objects. Raw failure preserved; rewrote identical correct bytes to update mtime, rebuilt affected targets, final65 and contract8 passed. No production algorithm change to mask the failure."
+}

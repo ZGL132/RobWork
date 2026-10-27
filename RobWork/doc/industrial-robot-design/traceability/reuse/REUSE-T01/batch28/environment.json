@@ -1,0 +1,36 @@
+{
+  "system": "Windows x64 / MSVC 2022 / C++17 / Release",
+  "python": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "pythonVersion": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "RobWork_DIR": "D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake",
+  "RWSIM_TARGETS_DIR": "D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkSim/cmake/targets",
+  "prefix": [
+    "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows",
+    "D:/software/Qt/6.11.1/msvc2022_64"
+  ],
+  "runtimePath": [
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin"
+  ],
+  "GUI": false,
+  "artifacts": [
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\t01-probe-export\\Release\\ird_reuse_audit_probe.exe",
+      "bytes": 655360,
+      "rawSha256": "0f58fd3a83ae61278b96f878e1a55315ceb53fb98f17f2bc00f139e0df515932"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\t01-probe-export\\ird-core\\Release\\sdurws_ird_core_test.exe",
+      "bytes": 761856,
+      "rawSha256": "5ea41fed5d30a736be5b60662325535b6fda8290e605294a300f109ed95def87"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\t01-probe-export\\ird-core\\Release\\sdurws_ird_core.lib",
+      "bytes": 1743418,
+      "rawSha256": "11fd02f112ad46b8eb6bd6f473b990efe88168295e34e5d34c8eaa088646f28b"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+[
+  {
+    "index": 1,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "CreateProcess|JobObject|fork\\s*\\(|popen|spawn|processrunner|QProcess",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/RobWork/gtest",
+      "RobWork/RobWorkSim/gtest"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 2
+  },
+  {
+    "index": 2,
+    "arguments": [
+      "rg",
+      "-n",
+      "ThreadPool|ThreadTask|TimerUtil|waitForEmptyQueue|sleepMs|currentTimeMs",
+      "RobWork/RobWork/src/rw/common",
+      "RobWork/RobWork/gtest/common",
+      "RobWork/RobWork/example"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 205
+  },
+  {
+    "index": 3,
+    "arguments": [
+      "rg",
+      "-n",
+      "StoreCloseSupervisor|superviseLoop|closeWithin|checkAllCloseWithin|quoteWindowsArg|EventWatch",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+      "-g",
+      "*.cpp",
+      "-g",
+      "*.hpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 110
+  },
+  {
+    "index": 4,
+    "arguments": [
+      "rg",
+      "-n",
+      "json|read_json|write_json|ptree|property_tree",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/RobWork/gtest",
+      "RobWork/RobWorkSim/gtest",
+      "-g",
+      "*.cpp",
+      "-g",
+      "*.hpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 111
+  },
+  {
+    "index": 5,
+    "arguments": [
+      "rg",
+      "-n",
+      "CreateProcessW|launchWorkerProcess|createProcess|CREATE_SUSPENDED|AssignProcessToJobObject",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 8
+  },
+  {
+    "index": 6,
+    "arguments": [
+      "rg",
+      "-n",
+      "ProcessRunner|CloseSupervisor|Check.cpp|JsonLite.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "exitMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true,
+    "hits": 8
+  }
+]

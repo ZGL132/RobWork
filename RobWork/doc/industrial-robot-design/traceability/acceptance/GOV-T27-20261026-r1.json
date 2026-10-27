@@ -1,0 +1,69 @@
+{
+  "taskId": "GOV-T27",
+  "baseCommit": "4f83917e91bc3987e9ee257b326e58cd80a8b268",
+  "reviewedCommit": "44d6fe8c448dfab528db9fb99f67624df10c7f29",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "GOV-T27 独立验收会话（单次验收子智能体，未参与实施）",
+    "authorization": "所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型）；实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（GOV-T27-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未建工作树、未远程操作（git status 亲证仅本验收目录与 .workbuddy/ 未跟踪）；测试复跑输出落本验收目录（acc-* 前缀），未覆盖入库 GOV-T27 证据原件；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": {
+    "range": "4f83917e91bc3987e9ee257b326e58cd80a8b268..44d6fe8c448dfab528db9fb99f67624df10c7f29",
+    "commits": 1,
+    "changedFiles": 18,
+    "productCodeDiff": "零——kinematics/{src,include,test} 对 554fa6f7a..44d6fe8c4 的 git diff 输出为空（diff-exit=0 空输出亲证）；18 个变更文件全部为治理文档/分审记录/验证证据，全部落在契约 allowedFiles 内（verify-task-scope PASS 18 路径），forbiddenFiles（RobWork/RobWork/src、RobWorkSim/src、vcpkg、main）零命中"
+  },
+  "counts": {
+    "rerunFullSuite": { "ran": 297, "passed": 296, "skipped": 1, "failed": 0, "skipName": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1", "exitCode": 0 },
+    "rerunContract": { "ran": 57, "passed": 57, "failed": 0, "exitCode": 0 },
+    "rerunUiDirected": { "ran": 28, "passed": 16, "failed": 12, "exitCode": 1, "failureNamesIdenticalToSentEvidence": true, "subsetOfReuseT41CandidateState14": true, "notInOld": [] },
+    "verificationMatrixOracleTests": { "checked": 19, "passed": 19, "missing": 0, "nonPassed": 0 },
+    "validateDocsPerContract": { "total": 78, "pass": 77, "fail": 1, "failDetail": "foundation-tasks exit=1（ready task has empty or missing field allowedFiles: CORE-T01——tasks/foundation-tasks.json 为入口索引文件，其 stub 条目无 allowedFiles；该文件不在本包 18 文件 diff 内＝既有存量，与 GOV-T27 无关，按『已知无关全局阻断只引用原始记录并明确责任』登记于 limitations，不冒称全绿" },
+    "irdGates": { "exitCode": 0, "detail": "R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中；自测负例均按预期检出" },
+    "commitLint": { "range": "4f83917e9..44d6fe8c4", "exitCode": 0, "detail": "1 个提交全部合规" },
+    "verifyTaskScope": { "exitCode": 0, "detail": "PASS——18 个路径全部在允许面内（显式 -Base 4f83917e91bc... -Head 44d6fe8c448d）" }
+  },
+  "checks": [
+    { "id": "A1-分审记录四模式裁决绑定实测证据", "verdict": "pass", "evidence": "分审记录 traceability/reuse/GOV-T27/README.md 逐模式裁决的全部关键读码引用由本会话独立复核成立：①完整位姿＝REUSE-T51 已收口（Ik.cpp:800-820 fullPosePlain 判别＋upstreamMaxError=min(posTol,oriTol)＋独立复核注释亲读）；②双容差＝JacobianIKSolver::solveLocal 单一 maxError 标量停判亲读（RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:81-98——e_eVed/e_eOed 全 6 维 VelocityScrew＋normInf(b_eXed)<=maxError），CCDSolver.cpp:313/330 ep/eo 双误差同对 maxError 亲读；③取消/迭代观测＝solveLocal 返回 bool 无统计回传＋单步循环测试钉 KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51 亲位于 IkTest.cpp:1846 且在复跑全量中 passed；④rw/invkin 全目录 13 入口 ls 亲证（AmbiguityResolver/CCDSolver/ClosedFormIK/ClosedFormIKSolverKukaIIWA/ClosedFormIKSolverUR/IKMetaSolver/InvKinSolver/IterativeIK/IterativeMultiIK/JacobianIKSolver/JacobianIKSolverM/ParallelIKSolver/PieperSolver）" },
+    { "id": "A2-仅位置实质缺口与 GAP blocked 登记", "verdict": "pass", "evidence": "ParallelIKSolver.hpp:69 构造形参 const rw::models::ParallelDevice* 亲读；ParallelDevice.cpp:108/117 两构造均由 legs/junctions 构造亲读；产品编译产物设备＝runtime/src/WorkCellCompiler.cpp:799-800 new rw::models::SerialDevice(...) 亲读——唯一掩码入口对当前编译产物不可达成立；rg -in 'euler|TaskPoseConstraint|constrainedDof' rw/invkin/ 仅命中 PieperSolver.hpp:52 设备专属闭式解注释（ZYZ Euler），无任何任务行掩码 Euler 入口；GAP-IK-01.md 补强块明确『提案批准状态不变：仍为 Draft，不构成任何批准』；既有 3 维位置链保留且非隐藏 fallback（Ik.cpp:412-421 注释＋dampedLeastSquaresStep 调用点唯一亲证）" },
+    { "id": "A3-部分姿态实质缺口（EAA≠Euler）", "verdict": "pass", "evidence": "ParallelIKSolver.hpp Target::enabled 注释原文『The 6 values specify x, y, z and EAA x, y, z directions』（:132-141 与 :166-168 两处）亲读；产品契约为参考系 ZYX Euler 分量掩码（Ik.cpp constrainedPoseError:336-363——zyxEulerAngles(conposeOf(refT,…)) 差值掩码亲读）＋自由工具滚转目标族（nearestToolRollTarget:296-321 亲读）；probe-r3 运行反例目录在案（traceability/reuse/REUSE-T01/probe-r3/{build.log,gtest.xml,ird-test-report.json,tests.log} ls 亲证）；后过滤不冒充约束求解与被否表口径在 GAP-IK-01 §4 保持" },
+    { "id": "A4-旧核心删除前置不满足如实登记＋六行尾注同步", "verdict": "pass", "evidence": "五函数（dampedLessSquaresStep/constrainedPoseError/constrainedDampedLeastSquaresStep/nearestToolRollTarget/zyxEulerAngles）全部保留于 Ik.cpp 且零 diff（范围 diff 无产品文件）；rg -l 五符号在 kinematics src+include 仅命中 Ik.cpp，ui/evidence/runtime 零泄漏；functions/kinematics.json 六处 differences 尾注（:33/:66/:75/:84/:93/:102 行旧文→分审定案 blocked 文）diff 亲读，inputs 产品文件 sha256 摘要零变化（diff 中 inputs 块未动）；消费者链亲证：Workspace.cpp:802/Envelope.cpp:164/Evaluators.cpp:2584（仅位置）、Evaluators.cpp:631/1315/1591＋ui/plugin/KinEvaluationChannel.cpp:1257-1332 TaskPoseConstraint 组装（亲读）" },
+    { "id": "A5-验证真实执行（数值 oracle/计数/名单包含关系）", "verdict": "pass", "evidence": "实施批证据计数核对一致：full-suite.xml tests=297 failures=0（1 skip＝PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1 亲位于 log）、contract 57/57、ui-consumer-report 28=16 passed+12 failed；12 项失败逐名 ⊆ REUSE-T41 候选态 sdurws_ird_ui_test.xml（tests=345 failures=14）由本会话 node 独立解析复算——notInOld=[] 子集关系成立，14 项中 DefectPinning F-560×1 与 HostCompilePipelineTest×1 不在 KinEvaluationChannel.* 过滤子集、余 12 项全为 F-973 数值链（findings.json:9820 F-973 open 亲读）；本会话亲跑复跑（重建目标后）：kinematics 全量 297=296 passed+1 skip 同名（exit 0）、contract 57/57（exit 0）、ui 定向 28=16+12 且 12 项失败逐名与送验证据完全一致（exit 1 如实不冒称全绿）；分审矩阵 19 个 oracle/奇异/取消/误报收敛测试（含 KinIk.PositionOnlyTaskIndependentDimension_KIN_P2 独立 FK 复验、KinIk.YawOnlyMaskSatisfiedAtGimbalTarget_WP14T12 万向锁、KinIk.FullPoseUpstreamUnreachableNoFalseSuccess_REUSE_T51 假成功拦截、KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2）在复跑全量报告中逐名确认全部真实执行且 passed（node endsWith 匹配 19/19，missing=0）" },
+    { "id": "A6-零产品代码变更纪律", "verdict": "pass", "evidence": "git diff 554fa6f7a..44d6fe8c4 -- kinematics/{src,include,test} 空输出亲证（Ik.cpp/Ik.hpp/IkTest.cpp 零 diff）；kIkSolverContractVersion 维持 5（Ik.hpp:94 inline constexpr 5U 亲读）；GAP-IK-01.md 状态行维持 Draft/未批准（补强引用块自述不构成任何批准，diff 未触碰状态行）；migration.md §13.1 WP-05 skipped 行与 §13.3 WP-05 行同步分审结论（diff 亲读）；本包全部 18 文件均在 allowedFiles 面" },
+    { "id": "A7-治理门禁全绿", "verdict": "pass", "evidence": "ird_gates 复跑 exit 0 零命中（自测负例按预期检出）；commit-lint -Range 4f83917e9..44d6fe8c4 exit 0（1/1 合规）；verify-task-scope 显式 -Base/-Head PASS；validate-docs -TaskFile GOV-T27.json exit 0 PASS（20 units, 426 task files…）；validate-docs 全部 78 契约单值逐个传参＝77 exit=0＋1 既有无关失败（见 counts.validateDocsPerContract 与 limitations[0]，非本包阻断）" },
+    { "id": "R-红线抽查", "verdict": "pass", "evidence": "H1/H2/H5：范围 diff 无产品代码＝无平行实现回流、无未批准新核心/上游扩展（两缺口 blocked 登记不实施，提案维持 Draft）；H3/H6：无代码适配面，六行尾注全部绑定上游文件行级证据＋本包实测（functions/kinematics.json diff 亲读）；H4：门禁 validate-reuse 随 validate-docs 全绿（PASS governance only; inventory=1401 units=20 changed=124）；L2 零 Qt：范围 18 文件逐文件 grep 命中全部为 migration.md 行文与报告 qtVersion 字段（逐文件 git show+grep 亲证），无产品引入；runtime 唯一模型 owner（SA-19）：分审记录 §3 明确业务自建 ParallelDevice＝模型构造越权并以此为由 blocked，口径与红线一致；CLOSURE 冻结：reuse/closures.json 仅登记 modeling/src/RpyMath.hpp 一条（node 解析亲证 mentions kinematics=false），本包改动无冻结面冲突；test-fixture 越界：范围 diff 无任何测试/fixture 文件，五旧核符号 rg 仅存 Ik.cpp（test 专用符号无产品路径回流）" },
+    { "id": "覆盖缺口如实登记核验", "verdict": "pass", "evidence": "分审记录 §7.2 登记『IK 迭代核一般奇异位形专用红例无既有用例』与『①复验逐模式变异红例无既有用例』——rg -in 'singular|奇异' IkTest.cpp 零命中亲证该现状陈述属实（万向锁面由 Gimbal/YawOnly 两用例承载），登记为不补造不冒称，符合本包分审定位（该面向随迁移实施批按 GAP-IK-01 §5 补）" }
+  ],
+  "issues": [],
+  "notRun": [
+    "validate-docs -DeepEvidence 深查证据索引（AGENTS §4：深查为显式运行项，普通提交不要求；本包未运行，未声称）",
+    "GUI 真实路径人工点验（本包零 ui 产品变更，ui 面证据＝定向消费通道复跑；F-974 HEAD 启动段错误为既有 open finding，不在本包验收条件内）"
+  ],
+  "limitations": [
+    "validate-docs 全 78 契约单值逐个传参中 tasks/foundation-tasks.json exit=1：『ready task has empty or missing field allowedFiles: CORE-T01』——该文件为 286 份 canonical 契约的入口索引（note 自述），其 stub 条目无 allowedFiles；文件不在本包 18 文件 diff 内＝先于本包存在的存量状态，非 GOV-T27 引入，责任在契约索引编制方，留所有者归类；其余 77 契约全部 exit=0",
+    "ui 定向子集 12 项失败为既有 open finding F-973/F-560 登记面（所有者归类处置中），本包以『零产品 diff＋名单子集＋同 HEAD kinematics 全绿』三证零因果如实分列，不修复不越权——与实施批口径一致",
+    "本包验收为分审与登记批（零产品代码变更）；两 GAP 的实质处置（批准原库最小扩展 patch／批准 runtime ParallelDevice 视图能力／否决保留既有链）全部留待所有者裁决，本验收不预支任何批准"
+  ],
+  "commands": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T27.json -Base 4f83917e91bc3987e9ee257b326e58cd80a8b268 -Head 44d6fe8c448dfab528db9fb99f67624df10c7f29（exit 0，PASS 18 路径）",
+    "git diff --stat 4f83917e9..44d6fe8c4（18 文件 15828 insertions，全治理文档/证据）；git diff 554fa6f7a..44d6fe8c4 -- kinematics/{src,include,test}（空＝零产品 diff）",
+    "cmake --build build --config Release --target sdurws_ird_kinematics sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test ird_gates（exit 0）",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe --gtest_output=xml:acc-full-suite.xml --ird_report=acc-full-suite-report.json（exit 0：297 ran=296 passed+1 skipped 同名）",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_contract_test.exe --gtest_output=xml:acc-contract.xml --ird_report=acc-contract-report.json（exit 0：57/57）",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe --gtest_filter=KinEvaluationChannel.* --gtest_output=xml:acc-ui-consumer.xml --ird_report=acc-ui-consumer-report.json（exit 1：28 ran=16 passed+12 failed，逐名与送验证据一致且 ⊆ F-973/F-560 登记名单）",
+    "node 独立解析复算：实施批 ui-consumer-report 12 项失败 vs REUSE-T41/sdurws_ird_ui_test.xml 14 项失败——notInOld=[]；复跑 acc-full-suite-report 分审矩阵 19/19 oracle 测试 passed",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake（exit 0 零命中）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 4f83917e9..44d6fe8c4（exit 0，1/1 合规）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile <78 个契约逐个单值传参>（77 exit=0；foundation-tasks exit=1 既有存量见 limitations[0]）",
+    "上游读码亲验：JacobianIKSolver.cpp:81-98、CCDSolver.cpp:313/330、ParallelIKSolver.hpp:69/100-172、ParallelDevice.cpp:100-125、WorkCellCompiler.cpp:795-805、Ik.cpp:235-258/296-368/377-446/645-660/800-820/1164-1175、IkTest.cpp:1846、KinEvaluationChannel.cpp:1257-1334；rg -in 'euler|TaskPoseConstraint|constrainedDof' rw/invkin（仅 PieperSolver.hpp:52 设备专属注释）；ls rw/invkin（13 入口）"
+  ],
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T27-20261026-r1.json（本记录）",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T27-20261026-r1/（verify-task-scope.log、build.log、acc-full-suite.{xml,log,-report.json 不含前缀者均为 acc-* 三件套}、acc-contract.*、acc-ui-consumer.*、ird-gates.log、commit-lint.log、validate-docs-GOV-T27.log、validate-docs-summary.txt、validate-docs-per-contract/78 份日志）"
+  ],
+  "passBinding": "本 verdict=pass 绑定送验 SHA 44d6fe8c448dfab528db9fb99f67624df10c7f29（冻结范围恰 1 提交，Base=4f83917e91bc3987e9ee257b326e58cd80a8b268）；任何偏离该 SHA 的后续变更不在本记录覆盖内"
+}

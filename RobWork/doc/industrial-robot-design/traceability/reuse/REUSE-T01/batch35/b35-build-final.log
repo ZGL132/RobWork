@@ -1,0 +1,112 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+生成启动时间为 2026/10/23 7:39:02。
+
+     1>节点 1 上的项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(默认目标)。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 1 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ZERO_CHECK.vcxproj”(2) (默认目标)。
+     2>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+       InitializeBuildStatus:
+         正在创建“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild”执行 Touch 任务。
+       CustomBuild:
+         所有输出均为最新。
+       FinalizeBuildStatus:
+         正在删除文件“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild”。
+         正在对“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\ZERO_CHECK.lastbuildstate”执行 Touch 任务。
+     2>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ZERO_CHECK.vcxproj”(默认目标)的操作。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 1 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-core\sdurws_ird_core.vcxproj”(3) (默认目标)。
+     3>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+       InitializeBuildStatus:
+         正在创建“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\unsuccessfulbuild”执行 Touch 任务。
+       CustomBuild:
+         所有输出均为最新。
+       VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+       ClCompile:
+         所有输出均为最新。
+       Lib:
+         所有输出均为最新。
+         sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-core\Release\sdurws_ird_core.lib
+       FinalizeBuildStatus:
+         正在删除文件“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\unsuccessfulbuild”。
+         正在对“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\sdurws_ird_core.lastbuildstate”执行 Touch 任务。
+     3>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-core\sdurws_ird_core.vcxproj”(默认目标)的操作。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 2 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-testkit\sdurws_ird_testkit.vcxproj”(4) (默认目标)。
+     4>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 3 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\ird-diagnostics\sdurws_ird_diagnostics.vcxproj”(5) (默认目标)。
+     5>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+       InitializeBuildStatus:
+         正在创建“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\unsuccessfulbuild”执行 Touch 任务。
+     4>InitializeBuildStatus:
+         正在创建“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\unsuccessfulbuild”执行 Touch 任务。
+     5>CustomBuild:
+         所有输出均为最新。
+     4>CustomBuild:
+         所有输出均为最新。
+     5>VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+     4>VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+     5>ClCompile:
+         所有输出均为最新。
+     4>ClCompile:
+         所有输出均为最新。
+     5>Lib:
+         所有输出均为最新。
+     4>Lib:
+         所有输出均为最新。
+     5>Lib:
+         sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\ird-diagnostics\Release\sdurws_ird_diagnostics.lib
+     4>Lib:
+         sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-testkit\Release\sdurws_ird_testkit.lib
+     5>FinalizeBuildStatus:
+         正在删除文件“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\unsuccessfulbuild”。
+     4>FinalizeBuildStatus:
+         正在删除文件“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\unsuccessfulbuild”。
+     5>FinalizeBuildStatus:
+         正在对“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\sdurws_ird_diagnostics.lastbuildstate”执行 Touch 任务。
+     4>FinalizeBuildStatus:
+         正在对“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\sdurws_ird_testkit.lastbuildstate”执行 Touch 任务。
+     5>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\ird-diagnostics\sdurws_ird_diagnostics.vcxproj”(默认目标)的操作。
+     4>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-testkit\sdurws_ird_testkit.vcxproj”(默认目标)的操作。
+     1>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+       InitializeBuildStatus:
+         正在创建“ird_log_file_audit.dir\Release\ird_log_.5CA7EAA1.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“ird_log_file_audit.dir\Release\ird_log_.5CA7EAA1.tlog\unsuccessfulbuild”执行 Touch 任务。
+       CustomBuild:
+         所有输出均为最新。
+       VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+       ClCompile:
+         D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\bin\HostX64\x64\CL.exe /c /I"C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\include" /I"C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include" /I"C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\include" /I"D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include" /nologo /W1 /WX- /diagnostics:column /MP /O2 /Ob2 /D _MBCS /D WIN32 /D _WINDOWS /D NDEBUG /D "IRD_DIAGNOSTICS_UNIT_ROOT=\"C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot\"" /D NOMINMAX /D BIND_FORTRAN_LOWERCASE_UNDERSCORE /D WIN32_LEAN_AND_MEAN /D _WIN32_WINNT=0x0501 /D _SCL_SECURE_NO_WARNINGS /D _CRT_SECURE_NO_WARNINGS /D _CRT_SECURE_NO_DEPRECATE /D MSVC_AMD64 /D GTEST_LINKED_AS_SHARED_LIBRARY=1 /D BOOST_FILESYSTEM_NO_LIB /D BOOST_FILESYSTEM_DYN_LINK=1 /D BOOST_THREAD_NO_LIB /D BOOST_THREAD_DYN_LINK /D BOOST_THREAD_USE_DLL /D BOOST_ATOMIC_NO_LIB /D BOOST_ATOMIC_DYN_LINK /D BOOST_CHRONO_NO_LIB /D BOOST_CHRONO_DYN_LINK /D BOOST_CONTAINER_NO_LIB /D BOOST_CONTAINER_DYN_LINK /D BOOST_DATE_TIME_NO_LIB /D BOOST_DATE_TIME_DYN_LINK /D BOOST_PROGRAM_OPTIONS_NO_LIB /D BOOST_PROGRAM_OPTIONS_DYN_LINK /D "CMAKE_INTDIR=\"Release\"" /EHa /MD /openmp /std:c++17 /Fo"ird_log_file_audit.dir\Release\\" /Fd"ird_log_file_audit.dir\Release\vc143.pdb" /external:W0 /TP /errorReport:queue  /external:I "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include" /external:I "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3" /external:I "D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/src" -bigobj /utf-8 "C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp"
+         LogFileSuitabilityTest.cpp
+       Link:
+         D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\bin\HostX64\x64\link.exe /OUT:"C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\Release\ird_log_file_audit.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib" /LIBPATH:"D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\manual-link" /NATVIS:"D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\boost-1.92.0\assert\boost_assert.natvis" /NATVIS:"D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\boost-1.92.0\unordered\boost_unordered.natvis" "schema-probe\ird-diagnostics\Release\sdurws_ird_diagnostics.lib" "schema-probe\parent-probe\ird-testkit\Release\sdurws_ird_testkit.lib" "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\gtest.lib" D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\sdurw_math.lib "schema-probe\parent-probe\ird-core\Release\sdurws_ird_core.lib" D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\sdurw_common.lib D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\sdurw_core.lib "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\boost_filesystem-vc143-mt-x64-1_92.lib" "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\boost_thread-vc143-mt-x64-1_92.lib" "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\boost_atomic-vc143-mt-x64-1_92.lib" "D:\Windows Kits\10\Lib\10.0.22621.0\um\x64\synchronization.lib" "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\boost_chrono-vc143-mt-x64-1_92.lib" "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\boost_program_options-vc143-mt-x64-1_92.lib" "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\boost_date_time-vc143-mt-x64-1_92.lib" "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\boost_container-vc143-mt-x64-1_92.lib" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b35-build/Release/ird_log_file_audit.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b35-build/Release/ird_log_file_audit.lib" /MACHINE:X64  /machine:x64 ird_log_file_audit.dir\Release\LogFileSuitabilityTest.obj
+         ird_log_file_audit.dir\Release\LoggingTest.obj
+         ird_log_file_audit.dir\Release\LogTestSuite.obj
+         ird_log_file_audit.dir\Release\TestMainReport.obj
+         ird_log_file_audit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\Release\ird_log_file_audit.exe
+       AppLocalFromInstalled:
+         "D:\10_Source_Repos\21_robot\RobWork\vcpkg\vcpkg.exe" z-applocal --target-binary="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\Release\ird_log_file_audit.exe" --installed-bin-dir="D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin" --tlog-file="ird_log_file_audit.dir\Release\ird_log_.5CA7EAA1.tlog\ird_log_file_audit.write.1u.tlog" --copied-files-log="ird_log_file_audit.dir\Release\vcpkg.applocal.log"
+         D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll
+       FinalizeBuildStatus:
+         正在删除文件“ird_log_file_audit.dir\Release\ird_log_.5CA7EAA1.tlog\unsuccessfulbuild”。
+         正在对“ird_log_file_audit.dir\Release\ird_log_.5CA7EAA1.tlog\ird_log_file_audit.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(默认目标)的操作。
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:02.70

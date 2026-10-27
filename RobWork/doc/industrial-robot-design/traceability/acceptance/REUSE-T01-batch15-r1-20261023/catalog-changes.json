@@ -1,0 +1,224 @@
+[
+  {
+    "id": "HOST-SCENE",
+    "search": {
+      "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
+      "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+      "conclusion": "已查列明API；只证明候选存在，不代表生产适用或功能缺口成立"
+    },
+    "boundary": "仅ARCH3.6.2精确宿主呈现例外；空场景锚与正式计算模型须分别审查，不授予工程模型构造权，也不允许worker图形依赖",
+    "upstream": [
+      {
+        "path": "RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp",
+        "sha256": "6e396a8fb97558bbca6d77fccbd9924c82a413f10a77da257cdfdb3116404eca",
+        "symbols": [
+          "setWorkCell",
+          "getWorkCell",
+          "getWorldNode",
+          "addRender",
+          "addFrameAxis",
+          "removeDrawable"
+        ],
+        "target": "sdurw_graphics",
+        "targetFile": "RobWork/RobWork/src/rw/graphics/CMakeLists.txt",
+        "targetSha256": "8ae68542dec9acb18f6032c0f17af2fe455c5c1f34bc3ffde05e83d5e58ea034"
+      },
+      {
+        "path": "RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp",
+        "sha256": "0300994b6b8e68c9caaa3406f36ffd2c792e3be62631c1105df7d4d2604b370f",
+        "symbols": [
+          "addRender",
+          "removeDrawable",
+          "setWorkCell"
+        ],
+        "target": "sdurw_graphics",
+        "targetFile": "RobWork/RobWork/src/rw/graphics/CMakeLists.txt",
+        "targetSha256": "8ae68542dec9acb18f6032c0f17af2fe455c5c1f34bc3ffde05e83d5e58ea034"
+      }
+    ],
+    "build": {
+      "targets": [
+        "sdurw_graphics"
+      ],
+      "constraints": "仅ARCH3.6.2精确宿主呈现例外；空场景锚与正式计算模型须分别审查，不授予工程模型构造权，也不允许worker图形依赖"
+    },
+    "usages": [
+      {
+        "consumerUnit": "ui",
+        "usageRole": "adapter",
+        "permissionRef": "ARCH:3.6",
+        "operations": [
+          "value"
+        ]
+      }
+    ],
+    "limits": {
+      "semantics": "仅ARCH3.6.2精确宿主呈现例外；空场景锚与正式计算模型须分别审查，不授予工程模型构造权，也不允许worker图形依赖",
+      "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
+      "determinism": "未运行本批适用性实验，不承诺等价"
+    },
+    "ownerUnit": "ui",
+    "examples": [],
+    "docs": [],
+    "operations": [
+      "value"
+    ],
+    "review": {
+      "status": "candidate",
+      "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    },
+    "tests": [
+      {
+        "path": "RobWork/RobWork/gtest/graphics/WorkCellSceneTest.cpp",
+        "sha256": "a231d0571ac9b1849bdcf7a8b6e5e68dc40cb39eb084308c5706e1a2e23aa5d0",
+        "symbols": [
+          "WorkCellScene"
+        ],
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      }
+    ],
+    "resourceSearch": {
+      "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
+      "conclusion": "本批只核公共API/源码/构建，测试与示例资源待进一步复核；空数组非不存在"
+    }
+  },
+  {
+    "id": "HOST-FRAME",
+    "search": {
+      "command": "见batch15-search.json，全文核公共头与实现",
+      "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+      "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+    },
+    "boundary": "任意点轴标记可组合DrawableNode::setTransform或既有RenderFrame；addFrameAxis只在帧原点不证明必须自绘。轴形、GLU/DrawType、palette与GL状态/alpha差异仍须验。仅宿主呈现，不授权新Frame或模型构造。",
+    "upstream": [
+      {
+        "path": "RobWork/RobWork/src/rwlibs/opengl/RenderFrame.hpp",
+        "sha256": "84b0227e549496b956b455da3949163279c5fe219d4f32fd1d61f41646cec15a",
+        "symbols": [
+          "RenderFrame",
+          "draw"
+        ],
+        "target": "sdurw_opengl",
+        "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+        "targetSha256": "e5c3a1379dd0e4ab0859396e9f049f57b2c8a0a2b97ef5cbeac0e01e7373f20f"
+      },
+      {
+        "path": "RobWork/RobWork/src/rwlibs/opengl/RenderFrame.cpp",
+        "sha256": "9e49512d2ce76b7f37f470b6ca65bd4d7829d1ed3c0b7da2f5e5aa21197fc4ef",
+        "symbols": [
+          "RenderFrame::draw",
+          "renderWire",
+          "renderSolid"
+        ],
+        "target": "sdurw_opengl",
+        "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+        "targetSha256": "e5c3a1379dd0e4ab0859396e9f049f57b2c8a0a2b97ef5cbeac0e01e7373f20f"
+      }
+    ],
+    "build": {
+      "targets": [
+        "sdurw_opengl"
+      ],
+      "constraints": "任意点轴标记可组合DrawableNode::setTransform或既有RenderFrame；addFrameAxis只在帧原点不证明必须自绘。轴形、GLU/DrawType、palette与GL状态/alpha差异仍须验。仅宿主呈现，不授权新Frame或模型构造。"
+    },
+    "usages": [
+      {
+        "consumerUnit": "ui",
+        "usageRole": "adapter",
+        "permissionRef": "ARCH:3.6",
+        "operations": [
+          "value"
+        ]
+      }
+    ],
+    "limits": {
+      "semantics": "任意点轴标记可组合DrawableNode::setTransform或既有RenderFrame；addFrameAxis只在帧原点不证明必须自绘。轴形、GLU/DrawType、palette与GL状态/alpha差异仍须验。仅宿主呈现，不授权新Frame或模型构造。",
+      "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+      "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+    },
+    "ownerUnit": "ui",
+    "examples": [],
+    "docs": [],
+    "operations": [
+      "value"
+    ],
+    "review": {
+      "status": "candidate",
+      "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    },
+    "tests": [],
+    "resourceSearch": {
+      "command": "见batch15-search.json，全文核公共头与实现",
+      "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+    }
+  },
+  {
+    "id": "HOST-TEXT",
+    "search": {
+      "command": "见batch15-search.json，全文核RenderText.hpp/.cpp",
+      "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+      "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+    },
+    "boundary": "RenderText使用GLUT位图字符串/字体，不能直接满足CJK；billboard数学已用上游Transform/Rotation，不能复制上游源码。Qt栅格化是否最小适配还须许可证/状态与纹理寿命核查，非新增通用图形后端许可。",
+    "upstream": [
+      {
+        "path": "RobWork/RobWork/src/rwlibs/opengl/RenderText.hpp",
+        "sha256": "df9c4e62c7ec01224c654ee31f4a72c50410e5ec73be90ee829dc176b8e03e6b",
+        "symbols": [
+          "RenderText",
+          "draw"
+        ],
+        "target": "sdurw_opengl",
+        "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+        "targetSha256": "e5c3a1379dd0e4ab0859396e9f049f57b2c8a0a2b97ef5cbeac0e01e7373f20f"
+      },
+      {
+        "path": "RobWork/RobWork/src/rwlibs/opengl/RenderText.cpp",
+        "sha256": "8707cf75cd27b9dbb1a65df59f301ad314c119ea019e35e12ba8a19cb16969fd",
+        "symbols": [
+          "RenderText::draw",
+          "getLabelCorners"
+        ],
+        "target": "sdurw_opengl",
+        "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+        "targetSha256": "e5c3a1379dd0e4ab0859396e9f049f57b2c8a0a2b97ef5cbeac0e01e7373f20f"
+      }
+    ],
+    "build": {
+      "targets": [
+        "sdurw_opengl"
+      ],
+      "constraints": "RenderText使用GLUT位图字符串/字体，不能直接满足CJK；billboard数学已用上游Transform/Rotation，不能复制上游源码。Qt栅格化是否最小适配还须许可证/状态与纹理寿命核查，非新增通用图形后端许可。"
+    },
+    "usages": [
+      {
+        "consumerUnit": "ui",
+        "usageRole": "adapter",
+        "permissionRef": "ARCH:3.6",
+        "operations": [
+          "value"
+        ]
+      }
+    ],
+    "limits": {
+      "semantics": "RenderText使用GLUT位图字符串/字体，不能直接满足CJK；billboard数学已用上游Transform/Rotation，不能复制上游源码。Qt栅格化是否最小适配还须许可证/状态与纹理寿命核查，非新增通用图形后端许可。",
+      "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+      "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+    },
+    "ownerUnit": "ui",
+    "examples": [],
+    "docs": [],
+    "operations": [
+      "value"
+    ],
+    "review": {
+      "status": "candidate",
+      "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    },
+    "tests": [],
+    "resourceSearch": {
+      "command": "见batch15-search.json，全文核RenderText.hpp/.cpp",
+      "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+    }
+  }
+]

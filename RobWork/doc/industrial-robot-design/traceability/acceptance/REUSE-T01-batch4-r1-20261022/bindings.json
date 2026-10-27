@@ -1,0 +1,477 @@
+[
+  {
+    "id": "dynamics.evalAcceleration",
+    "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate::<lambda:evalAcceleration>",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+    "startLine": 509,
+    "endLine": 567,
+    "hashMatches": true,
+    "actualSha": "1cf75638d8d84dbc64390349351dd15d1969d36c867772f2fc78dc37280bddda",
+    "symbolOccurs": true,
+    "first": "    std::vector<double> qdd(n, 0.0);                 // 解向量（rad/s² 或 m/s²）",
+    "last": "    };"
+  },
+  {
+    "id": "dynamics.evalAcceleration",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+    "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+    "startLine": 251,
+    "endLine": 874,
+    "hashMatches": true,
+    "actualSha": "ebe207025ab78d83152f3d2460c5dd9516fd7a175176644b27798880af9f3960",
+    "symbolOccurs": true,
+    "first": "ForwardCheckOutcome ForwardDynamicsValidator::validate(",
+    "last": "}"
+  },
+  {
+    "id": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+    "kind": "auditedSections",
+    "startLine": 612,
+    "endLine": 692,
+    "hashMatches": true
+  },
+  {
+    "id": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "modeling.rotationToRpy",
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationToRpy",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+    "startLine": 72,
+    "endLine": 81,
+    "hashMatches": true,
+    "actualSha": "5b609e8c5cc27a039ae44a6ad09a9782b8bb2c7e1a430c660d92f7f9005f007a",
+    "symbolOccurs": true,
+    "first": "std::array<double, 3> rotationToRpy(const rw::math::Rotation3D<double>& R)",
+    "last": "}"
+  },
+  {
+    "id": "modeling.rotationToRpy",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "modeling.makeLinkPlaceholderCylinder",
+    "qualifiedSymbol": "sdurws::ird::modeling::makeLinkPlaceholderCylinder",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+    "startLine": 1097,
+    "endLine": 1178,
+    "hashMatches": true,
+    "actualSha": "1f814cf1a4de351bd2badda64f1bba175734d14ced1b74c3c7e6840e1b8beb58",
+    "symbolOccurs": true,
+    "first": "GeneratedGeometry makeLinkPlaceholderCylinder(",
+    "last": "}"
+  },
+  {
+    "id": "modeling.makeLinkPlaceholderCylinder",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "optimization.nextU64",
+    "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+    "startLine": 161,
+    "endLine": 168,
+    "hashMatches": true,
+    "actualSha": "90783e32d23e1c882f6725fd38b060d63be7d4e2f422d080cfab2e488e668878",
+    "symbolOccurs": true,
+    "first": "    std::uint64_t nextU64()",
+    "last": "    }"
+  },
+  {
+    "id": "optimization.nextU64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "optimization.nextUnit",
+    "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextUnit",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+    "startLine": 172,
+    "endLine": 175,
+    "hashMatches": true,
+    "actualSha": "c5cf87634d97bf263a98549f71668e79468361fdb694e3214b54bdc2d7b34541",
+    "symbolOccurs": true,
+    "first": "    double nextUnit()",
+    "last": "    }"
+  },
+  {
+    "id": "optimization.nextUnit",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "optimization.makeLayerPermutation",
+    "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::makeLayerPermutation",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+    "startLine": 183,
+    "endLine": 196,
+    "hashMatches": true,
+    "actualSha": "87b91341a3887978074c2400b582ada1e530d3897a000ea469e9058fb093c2e5",
+    "symbolOccurs": true,
+    "first": "std::vector<std::uint32_t> makeLayerPermutation(SplitMix64& rng, std::uint32_t n)",
+    "last": "}"
+  },
+  {
+    "id": "optimization.makeLayerPermutation",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "optimization.generateStageDJointCandidates",
+    "qualifiedSymbol": "sdurws::ird::optimization::generateStageDJointCandidates",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+    "startLine": 704,
+    "endLine": 909,
+    "hashMatches": true,
+    "actualSha": "475ae2d98bd82c056f9f2a66730edf3f50e6a1cd2795424b307444acda74db8d",
+    "symbolOccurs": true,
+    "first": "std::vector<CandidatePatch> generateStageDJointCandidates(",
+    "last": "}"
+  },
+  {
+    "id": "optimization.generateStageDJointCandidates",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.reflectPosition",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectPosition",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+    "startLine": 219,
+    "endLine": 226,
+    "hashMatches": true,
+    "actualSha": "158036ceebb484a3d8eff5db09ac61f26dacb50659322e7da3d3938d9057f405",
+    "symbolOccurs": true,
+    "first": "rw::math::Vector3D<double> reflectPosition(const rw::math::Vector3D<double>& p,",
+    "last": "}"
+  },
+  {
+    "id": "requirements.reflectPosition",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.rotationFromRpy",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::rotationFromRpy",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+    "startLine": 230,
+    "endLine": 243,
+    "hashMatches": true,
+    "actualSha": "62494b8a27b2a585416a0a399f6e16cd9e3adb09f4944a664ac054367006b276",
+    "symbolOccurs": true,
+    "first": "void rotationFromRpy(double roll, double pitch, double yaw,",
+    "last": "}"
+  },
+  {
+    "id": "requirements.rotationFromRpy",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.reflectionMatrix",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectionMatrix",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+    "startLine": 246,
+    "endLine": 253,
+    "hashMatches": true,
+    "actualSha": "4202282acb452142373701cc1b66e00c836bd54c7e00c6d46d91446638d19789",
+    "symbolOccurs": true,
+    "first": "void reflectionMatrix(const rw::math::Vector3D<double>& nUnit, double m[3][3])",
+    "last": "}"
+  },
+  {
+    "id": "requirements.reflectionMatrix",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.matMul",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::matMul",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+    "startLine": 256,
+    "endLine": 273,
+    "hashMatches": true,
+    "actualSha": "22a87b4c1cf939d62fed93cf70ab3db50d9c2fe67759b1fa5d6d8a65946c190c",
+    "symbolOccurs": true,
+    "first": "void matMul(const double a[3][3], const double b[3][3], double out[3][3])",
+    "last": "}"
+  },
+  {
+    "id": "requirements.matMul",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.reflectRpy",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectRpy",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+    "startLine": 289,
+    "endLine": 330,
+    "hashMatches": true,
+    "actualSha": "dc7044b7966753f99eb1672a78d350e5ae698763806e78e14019ffd02c312bb4",
+    "symbolOccurs": true,
+    "first": "rw::math::Vector3D<double> reflectRpy(const rw::math::Vector3D<double>& rpy,",
+    "last": "}"
+  },
+  {
+    "id": "requirements.reflectRpy",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.targetEditRotation",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRotation",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "startLine": 72,
+    "endLine": 78,
+    "hashMatches": true,
+    "actualSha": "70c11faf93c7098aa103279d751ecc559d4a058c43d1264cd6a561ab0952fc34",
+    "symbolOccurs": true,
+    "first": "rw::math::Rotation3D<> targetEditRotation(const rw::math::Vector3D<>& rpy)",
+    "last": "}"
+  },
+  {
+    "id": "requirements.targetEditRotation",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.targetEditRpy",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRpy",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "startLine": 80,
+    "endLine": 86,
+    "hashMatches": true,
+    "actualSha": "8a88bf036d95a56b12bac625d5a0f571500bb31d0ddf3536e79c62416d44e8c4",
+    "symbolOccurs": true,
+    "first": "rw::math::Vector3D<> targetEditRpy(const rw::math::Rotation3D<>& r)",
+    "last": "}"
+  },
+  {
+    "id": "requirements.targetEditRpy",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.finiteTargetEditPose",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::finiteTargetEditPose",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "startLine": 88,
+    "endLine": 104,
+    "hashMatches": true,
+    "actualSha": "2ab399158ec6ab00c65dbb1e9281976c54e08d876a20a4c9e418e585124fbc43",
+    "symbolOccurs": true,
+    "first": "bool finiteTargetEditPose(const rw::math::Transform3D<>& pose)",
+    "last": "}"
+  },
+  {
+    "id": "requirements.finiteTargetEditPose",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.rotationToRpyPresentation",
+    "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::rotationToRpyPresentation",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsCommandFlows.cpp",
+    "startLine": 75,
+    "endLine": 85,
+    "hashMatches": true,
+    "actualSha": "1769067ae0530cad49f18497389503597ea8bc3701a20d9c09bd5cce235a1d99",
+    "symbolOccurs": true,
+    "first": "std::array<double, 3> rotationToRpyPresentation(const rw::math::Rotation3D<double>& R)",
+    "last": "}"
+  },
+  {
+    "id": "requirements.rotationToRpyPresentation",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.symmetrizedSpdWitness",
+    "qualifiedSymbol": "sdurws::ird::runtime::inertia_validation_detail::symmetrizedSpdWitness",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+    "startLine": 85,
+    "endLine": 134,
+    "hashMatches": true,
+    "actualSha": "733f60b25f74df312d87bb992672b97895f691609c85fa4e118c85f58899a84b",
+    "symbolOccurs": true,
+    "first": "double symmetrizedSpdWitness(const rw::math::InertiaMatrix<double>& m) noexcept",
+    "last": "}"
+  },
+  {
+    "id": "runtime.symmetrizedSpdWitness",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.relativeAsymmetry",
+    "qualifiedSymbol": "sdurws::ird::runtime::inertia_validation_detail::relativeAsymmetry",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+    "startLine": 50,
+    "endLine": 73,
+    "hashMatches": true,
+    "actualSha": "2be0bb91502acf70ab1f0359c6e970b2ecb0a8a541f302b69e014b270ccae062",
+    "symbolOccurs": true,
+    "first": "double relativeAsymmetry(const rw::math::InertiaMatrix<double>& m) noexcept",
+    "last": "}"
+  },
+  {
+    "id": "runtime.relativeAsymmetry",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.axisAlignmentRotation",
+    "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::axisAlignmentRotation",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "startLine": 469,
+    "endLine": 493,
+    "hashMatches": true,
+    "actualSha": "81868f447439a744491f97702e5224d4cac6f9b8d74ebf3127341133e2950310",
+    "symbolOccurs": true,
+    "first": "rw::math::Rotation3D<double> axisAlignmentRotation(const rw::math::Vector3D<double>& axis)",
+    "last": "}"
+  },
+  {
+    "id": "runtime.axisAlignmentRotation",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.spanPlacement",
+    "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::spanPlacement",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "startLine": 512,
+    "endLine": 521,
+    "hashMatches": true,
+    "actualSha": "e7b2b4f606de91ece530eb716908c7f3e795e337ec2f08704a9494109136cfac",
+    "symbolOccurs": true,
+    "first": "rw::math::Transform3D<double> spanPlacement(const rw::math::Vector3D<double>& span)",
+    "last": "}"
+  },
+  {
+    "id": "runtime.spanPlacement",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.symmetricEigenvalues3x3",
+    "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::symmetricEigenvalues3x3",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "startLine": 80,
+    "endLine": 106,
+    "hashMatches": true,
+    "actualSha": "b83c0ec700693d9976aecb18e0b035aae16c9d95a352e77b8accc1b581283bc1",
+    "symbolOccurs": true,
+    "first": "std::array<double, 3> symmetricEigenvalues3x3(",
+    "last": "}"
+  },
+  {
+    "id": "selection.symmetricEigenvalues3x3",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "trajectory.rotationAngleBetween",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::rotationAngleBetween",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Continuity.cpp",
+    "startLine": 51,
+    "endLine": 67,
+    "hashMatches": true,
+    "actualSha": "af0306607f5568ea8b04b9e4e7c1b526c485626dc2f5331c0ae96f06928cbea8",
+    "symbolOccurs": true,
+    "first": "double rotationAngleBetween(const rw::math::Rotation3D<double>& Ra,",
+    "last": "}"
+  },
+  {
+    "id": "trajectory.rotationAngleBetween",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "trajectory.canDropPoint",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::canDropPoint",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+    "startLine": 378,
+    "endLine": 409,
+    "hashMatches": true,
+    "actualSha": "a9fccc4634753fc726408822479ca117a6aeae86f15b38f6f4c80bf4cd78a8d8",
+    "symbolOccurs": true,
+    "first": "bool canDropPoint(const std::vector<rw::math::Q>& points,",
+    "last": "}"
+  },
+  {
+    "id": "trajectory.canDropPoint",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "trajectory.buildTangents",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::buildTangents",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+    "startLine": 427,
+    "endLine": 447,
+    "hashMatches": true,
+    "actualSha": "017600a3bc9a5c0a47d6200db1f2443137f67f69ffa700b6eb44bd068ba5993a",
+    "symbolOccurs": true,
+    "first": "std::vector<rw::math::Q> buildTangents(const std::vector<rw::math::Q>& knots, double lambda)",
+    "last": "}"
+  },
+  {
+    "id": "trajectory.buildTangents",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "trajectory.measureDeviation",
+    "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::measureDeviation",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+    "startLine": 466,
+    "endLine": 503,
+    "hashMatches": true,
+    "actualSha": "b9071e84ad9a5a17446c2788f28176a296ffbcce7dce94dd59bb18ff8f4e6bd1",
+    "symbolOccurs": true,
+    "first": "DeviationMeasurement measureDeviation(const std::vector<rw::math::Q>& knots,",
+    "last": "}"
+  },
+  {
+    "id": "trajectory.measureDeviation",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "hashMatches": true
+  }
+]

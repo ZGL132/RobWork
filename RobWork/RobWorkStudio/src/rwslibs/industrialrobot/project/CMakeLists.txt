@@ -42,6 +42,17 @@
 # vendor——两份 gtest 混用会破坏 ODR。
 find_package(GTest CONFIG REQUIRED)
 
+# ---- Boost.JSON 接入（REUSE-T54——磁盘格式解析 DOM 的公共依赖渠道）----
+# 渠道授权＝所有者 2026-10-26 A4 裁决「Boost.Endian/Boost.JSON 渠道已批准
+# ——经 vcpkg 公共依赖渠道引入，不新增本仓 vendored 依赖」（登记
+# traceability/reuse/REUSE-T43/byte-primitives-decision.md §6）。boost-json
+# 端口安装入既有 vcpkg installed 树（x64-windows 动态库，1.92.0）；消费面
+# 仅 src/Codec.cpp 解析半区（boost::json::parse 构建 DOM），dump 侧自持
+# 转义编码器与全部磁盘契约语义零变化；词表放行＝ird_gates_whitelist
+# IRD_THIRDPARTY_ALLOWED_TARGETS 增登 "Boost::json"（Boost::headers
+# REUSE-T19 先例同型）。REQUIRED＝找不到即配置失败（gtest 同口径）。
+find_package(Boost CONFIG COMPONENTS json REQUIRED)
+
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # src/Project.cpp＝落位期锚点翻译单元（§12 PRJ-T01 行"src/（空起步）"；
 # STATIC 库至少一个翻译单元纪律——core/src/Core.cpp、policy/src/Policy.cpp、
@@ -248,6 +259,12 @@ target_include_directories(sdurws_ird_project PUBLIC
 # 阶段 A 零 io 编译期消费，包导入导出/固化归阶段 B WP-04-T17/T18）。
 target_link_libraries(sdurws_ird_project PUBLIC sdurws_ird_core)
 
+# Boost.JSON PRIVATE（REUSE-T54）：仅 src/Codec.cpp 编译面消费（私有实现头
+# 不暴露 boost 类型——公共头零 Boost，R-2 同型纪律）；STATIC 库的 PRIVATE
+# 链接经 LINK_ONLY 传递给测试/worker 可执行文件（运行期 boost_json DLL 随
+# $<TARGET_RUNTIME_DLLS> 拷贝既有机制带出）。词表见上方 find_package 注释。
+target_link_libraries(sdurws_ird_project PRIVATE Boost::json)
+
 # 别名（集成模式）：供消费方单元（execution 等——ARCH §3.5 execution→
 # project 入边）以 RWS::ird::project 消费；冒烟模式无别名（与骨架期行为
 # 一致，DTB §5.1）。
@@ -377,6 +394,7 @@ enable_testing()
 
 add_executable(sdurws_ird_project_test
     test/BuildRedLineTest.cpp
+    test/CodecMigrationChannelTest.cpp
     test/AtomicFileTest.cpp
     test/StoreLockTest.cpp
     test/PathCanonicalTest.cpp

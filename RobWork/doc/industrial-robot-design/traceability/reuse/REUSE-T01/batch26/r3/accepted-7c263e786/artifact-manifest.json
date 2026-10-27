@@ -1,0 +1,1827 @@
+[
+  {
+    "path": "acceptance.json",
+    "bytes": 7154,
+    "rawSha256": "eebf3cc6e66c36ce7778d126ce90a021d77c248ba9f535e63dfeb26f003598d5"
+  },
+  {
+    "path": "acceptance.md",
+    "bytes": 2466,
+    "rawSha256": "545785eaeffd6f897a2032ffd1aa82f1cfe8bc34d9caccfd711864b82d403d48"
+  },
+  {
+    "path": "adversarial-report.json",
+    "bytes": 9284,
+    "rawSha256": "93e7b4ac11a65551e2b5583f600bebccb9fb7ebb9c25a52b2be13fe94b203a23"
+  },
+  {
+    "path": "adversarial.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "adversarial.log",
+    "bytes": 6812,
+    "rawSha256": "19c78a82969834b99e86b295a0e9acd930e854cd9a01cee4264103cfffbc9952"
+  },
+  {
+    "path": "adversarial.py",
+    "bytes": 4669,
+    "rawSha256": "9a92b70e4e37aeb9adaa8b5e5e9d21d144a5b4ee8884d4c2314bf0601df1c80d"
+  },
+  {
+    "path": "baseline-full-pipeline-powershell.stderr.log",
+    "bytes": 612,
+    "rawSha256": "8afffd4e96b2e6cddc04f31a83b8ab0a7873f532bb5cc852d7a98d626fe88b4c"
+  },
+  {
+    "path": "baseline-full-pipeline-powershell.stdout.log",
+    "bytes": 409,
+    "rawSha256": "e5a3c0f7eb73d48d3e6c38d47faa36cfa896bf1ae01abc1fec29f5e93673cc91"
+  },
+  {
+    "path": "baseline-full-pipeline-pwsh.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-full-pipeline-pwsh.stdout.log",
+    "bytes": 479,
+    "rawSha256": "2c55cec22060be01a447d8e5c40969f774dd62f1ae8d94507b2f4e4a80af107b"
+  },
+  {
+    "path": "baseline-powershell-missing-1.stderr.log",
+    "bytes": 604,
+    "rawSha256": "e31f2a75224c039a9333f28eb764031571ec47988e4cb2f7570e7235f8a13868"
+  },
+  {
+    "path": "baseline-powershell-missing-1.stdout.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-powershell-missing-2.stderr.log",
+    "bytes": 604,
+    "rawSha256": "5138deea87483050dce5478071f86279a33e83f2ba411d9de4cf089f06537dba"
+  },
+  {
+    "path": "baseline-powershell-missing-2.stdout.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-powershell-missing-3.stderr.log",
+    "bytes": 604,
+    "rawSha256": "423cd92b7f6bedcaf36b2daf764858324f4ce376b97ce0588c95b3bad1b3942a"
+  },
+  {
+    "path": "baseline-powershell-missing-3.stdout.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-powershell-missing-stage.stderr.log",
+    "bytes": 605,
+    "rawSha256": "570bf249f6304580eee2b52c1d5abe38bcc58d3279870ad3ee70575d565ff1be"
+  },
+  {
+    "path": "baseline-powershell-missing-stage.stdout.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-pwsh-missing-1.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-pwsh-missing-1.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "baseline-pwsh-missing-2.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-pwsh-missing-2.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "baseline-pwsh-missing-3.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-pwsh-missing-3.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "baseline-pwsh-missing-stage.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "baseline-pwsh-missing-stage.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "baseline-root/RobWork/doc/industrial-robot-design/traceability/pipeline/state.json",
+    "bytes": 115234,
+    "rawSha256": "3d31072ec4f5a00287c27fff1626982e772778c74298521fecedfc69846718d5"
+  },
+  {
+    "path": "baseline-root/RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+    "bytes": 12806,
+    "rawSha256": "019578379ed34f30a261395b95061c96ad3813a40418709c3eef6cfa7f12f2fe"
+  },
+  {
+    "path": "baseline-root/RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "bytes": 9449,
+    "rawSha256": "f8f4c2f9db6d4379618d814229a2ba9e4759c0eb8a281c204e9ca69617ea6739"
+  },
+  {
+    "path": "baseline-root/RobWork/scripts/industrialrobot/validate-state.ps1",
+    "bytes": 23952,
+    "rawSha256": "5d974cb08d689caa387fe533f44069ebe57fd5205d35dade802bcce016d07460"
+  },
+  {
+    "path": "binding-review.json",
+    "bytes": 157446,
+    "rawSha256": "b793c0caf6b1189bd6ac03866dfbc666de834087d7a2b26c28746f5c86bbaa78"
+  },
+  {
+    "path": "checks.json",
+    "bytes": 2367,
+    "rawSha256": "7dec6437d8f0634fcb82e5916768b6d593cd6e0ef0643ed86b237493ee002572"
+  },
+  {
+    "path": "commit-lint.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "commit-lint.log",
+    "bytes": 71,
+    "rawSha256": "f79cdb6b1ac5055324768834f9a82abf976ba799da28f62eb0738266fd46b2fa"
+  },
+  {
+    "path": "diff-check-crlf.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "diff-check-crlf.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "diff-check-default.exit.txt",
+    "bytes": 3,
+    "rawSha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b"
+  },
+  {
+    "path": "diff-check-default.log",
+    "bytes": 49146,
+    "rawSha256": "b0bc54e0288067b333992f1165b94805eb7302781cf22aaec13f7a1dbd2fbc5b"
+  },
+  {
+    "path": "finalize.py",
+    "bytes": 7231,
+    "rawSha256": "fb73e547c2c09fce5294909fa4a11dcd3b4cf88b580202f3bea86c919d45fa01"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/stage-2.json",
+    "bytes": 283,
+    "rawSha256": "a019f8319071e8215cd49b327c85f9bed94ecabf1310b3c012bf57af7fffa975"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/stage-3.json",
+    "bytes": 283,
+    "rawSha256": "999e621141d640adda86f46579568e221e2acd63c888191078a9f5a07ab58bbe"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/stdout.log",
+    "bytes": 95,
+    "rawSha256": "7d6a8b412643eff7a9d75b330ceab4d7661786c3d735d729fea20de90b3d5796"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "06dd8f941c4b1c3b72b503763b17a2abff85d2ed54d1cb6d67ce987aabcf97d0"
+  },
+  {
+    "path": "fixtures-v3/powershell-both-modify/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "06dd8f941c4b1c3b72b503763b17a2abff85d2ed54d1cb6d67ce987aabcf97d0"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/stage-3.json",
+    "bytes": 181,
+    "rawSha256": "a44d8f71de040d1d6952985724e5dcf34cc422100ff8f4cbd90b3011b7f60e42"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/stdout.log",
+    "bytes": 76,
+    "rawSha256": "9da8741ab2b51f336a6948fe5c2a2ce7c95e7d17f4595a2142a568b0f67b145d"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "b35760668a097eaf3ca195d2aaff2a3b1b20e0498faf177d8cb6252b8d5ef4b2"
+  },
+  {
+    "path": "fixtures-v3/powershell-deletion/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "b35760668a097eaf3ca195d2aaff2a3b1b20e0498faf177d8cb6252b8d5ef4b2"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/stage-3.json",
+    "bytes": 377,
+    "rawSha256": "1b012c6cd86b007f07939b14f0eb1914fb5a4e1c3d8742955863f10b1d29b6e0"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/stdout.log",
+    "bytes": 46,
+    "rawSha256": "cc8aaff7bb88d077a2936ed504b988a46b9cb04e630063f356714739901f95bf"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "6bd7faa68c3718106c3acb2bc922548b84987b0cf54e3ffb866d0a9efebab1c1"
+  },
+  {
+    "path": "fixtures-v3/powershell-duplicate/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "6bd7faa68c3718106c3acb2bc922548b84987b0cf54e3ffb866d0a9efebab1c1"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/stage-3.json",
+    "bytes": 287,
+    "rawSha256": "a37a08ed8b42fc6a15264ed3250bd013d698a092594c0594c2c80d0a56d84bfb"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/stderr.log",
+    "bytes": 880,
+    "rawSha256": "37f660b8cc9f995cf0c1cc5399ffc4d84f7fbfc50bb622999fbf6bf8dcf2b2c6"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/stdout.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "3e53cb16cb5146bc4a83b5f8fffa441efdb8bad4549c5c299b15219aebbeb327"
+  },
+  {
+    "path": "fixtures-v3/powershell-malformed/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "3e53cb16cb5146bc4a83b5f8fffa441efdb8bad4549c5c299b15219aebbeb327"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/unmerged-after.log",
+    "bytes": 226,
+    "rawSha256": "e694a0ca6a3ebe7195d8adff946a2ec42ce893a74cc386cc21e4e32793154317"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-1/unmerged-before.log",
+    "bytes": 226,
+    "rawSha256": "e694a0ca6a3ebe7195d8adff946a2ec42ce893a74cc386cc21e4e32793154317"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/unmerged-after.log",
+    "bytes": 226,
+    "rawSha256": "a199eaaf84cfb0dd6b9c4a31c165e6ee0aae5e3143f71ab5f7f4166637a77811"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-2/unmerged-before.log",
+    "bytes": 226,
+    "rawSha256": "a199eaaf84cfb0dd6b9c4a31c165e6ee0aae5e3143f71ab5f7f4166637a77811"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/unmerged-after.log",
+    "bytes": 226,
+    "rawSha256": "5c46c6dc4fb0b3968b21a297369932937f2f0cce32af566859a17f464e458a6b"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-3/unmerged-before.log",
+    "bytes": 226,
+    "rawSha256": "5c46c6dc4fb0b3968b21a297369932937f2f0cce32af566859a17f464e458a6b"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-missing-stage/unmerged-before.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/stage-3.json",
+    "bytes": 375,
+    "rawSha256": "62704283ae4136ca042c340d8964bc3258c08772f6d0f4cd4ded678f775d1efe"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/stdout.log",
+    "bytes": 96,
+    "rawSha256": "2249940951a86456acadeb9fd341f19175f20ba8eb680d0b76569014d01cdbc3"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "8e378602cf7011aee5a3f3e4a18c7f8fcaa3ea9ecf7b11874ad6c7576dd828dd"
+  },
+  {
+    "path": "fixtures-v3/powershell-new-collision/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "8e378602cf7011aee5a3f3e4a18c7f8fcaa3ea9ecf7b11874ad6c7576dd828dd"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/stage-2.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/stage-3.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/stdout.log",
+    "bytes": 109,
+    "rawSha256": "4ae8e88e4d3fb69fef505eb94ec4fead6a975ed9681a932199f139510994c2a2"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "7734dcdc6feca7a0c578cd80685838419cab4d81927d5883468f866a8b30e412"
+  },
+  {
+    "path": "fixtures-v3/powershell-no-delta/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "7734dcdc6feca7a0c578cd80685838419cab4d81927d5883468f866a8b30e412"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "4b181086cccdd7fcf1cddb153b92b30fc34d4241e42758ad5be599634b8fd1d5"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/stdout.log",
+    "bytes": 73,
+    "rawSha256": "75e1b05e758241b6a95b3634f160cfbd0ffaf0ed9497e5e0afc5e94e7b0c6bf2"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "67e0dfbfc0d3540e2e98d561ac6ca01b2592024288822347212037d92010d678"
+  },
+  {
+    "path": "fixtures-v3/powershell-note-case/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "67e0dfbfc0d3540e2e98d561ac6ca01b2592024288822347212037d92010d678"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 385,
+    "rawSha256": "1e8243d761133ef3930481037fb6c97bd2a273ef7c93024914056989e6ef43d8"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/stage-2.json",
+    "bytes": 283,
+    "rawSha256": "a019f8319071e8215cd49b327c85f9bed94ecabf1310b3c012bf57af7fffa975"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/stdout.log",
+    "bytes": 149,
+    "rawSha256": "9f9cc84fb810a0289c77a6e7b07ed3a19bc24e95f8d67684ea710ba455c402af"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-ours-only/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "cb91f1c0109c77d9d52144afae73f1c024d573ca84f192bad35e6515744f8517"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 381,
+    "rawSha256": "501e7dab303c3a3ca7207b5f158979637c62f87a0cdbb7db282ceca76a8e9467"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/stage-3.json",
+    "bytes": 381,
+    "rawSha256": "7285020669fe3c59212c2625de0e88304abcdd8a77eef8abb805b693fccb0565"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/stdout.log",
+    "bytes": 149,
+    "rawSha256": "9f9cc84fb810a0289c77a6e7b07ed3a19bc24e95f8d67684ea710ba455c402af"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-same-new/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "951cf0702102899ad19f9f7486f36c6d476eb96c81e8ec430ca55c1e4f5e91fa"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "b4873898affe4e3cdf740ddd26d10977180d0cf6cf0f88a05f284d107bc912d9"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/stdout.log",
+    "bytes": 82,
+    "rawSha256": "4f75794fc2112ce4c4bfffd5cda9d18ccf37778ab2d4f2a8d4f22e885416e712"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "89b913101a26fd3821b9fe1e7d81fc6190bddc56c97a0116be1cdc31349b2afe"
+  },
+  {
+    "path": "fixtures-v3/powershell-schema-case/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "89b913101a26fd3821b9fe1e7d81fc6190bddc56c97a0116be1cdc31349b2afe"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 283,
+    "rawSha256": "999e621141d640adda86f46579568e221e2acd63c888191078a9f5a07ab58bbe"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/stage-2.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/stage-3.json",
+    "bytes": 283,
+    "rawSha256": "999e621141d640adda86f46579568e221e2acd63c888191078a9f5a07ab58bbe"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/stdout.log",
+    "bytes": 187,
+    "rawSha256": "8d714a33364ac855b10fbe2a8ee23e49bef5a243226ffe187e1495d8b33a5b8c"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-theirs-only/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "4845527f019abfe0632a7d9a4a03f80b3fae787bfd0b4e490b25cf70dbc8d100"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 381,
+    "rawSha256": "501e7dab303c3a3ca7207b5f158979637c62f87a0cdbb7db282ceca76a8e9467"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/stage-1.json",
+    "bytes": 180,
+    "rawSha256": "46d90adf6f4b377e0212f7ab945dae98107fd6ed6581c68a0476300db58d2861"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/stage-2.json",
+    "bytes": 282,
+    "rawSha256": "c56b83d6ca69437a9907c9c506926e9b65ea46daa710c3dd5aaccb0529db31f7"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/stage-3.json",
+    "bytes": 282,
+    "rawSha256": "11e7bece5e3a9a75f36422a83f74416d7b3a05f3f1333db4e94054f3cf0feb8d"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/stdout.log",
+    "bytes": 149,
+    "rawSha256": "9f9cc84fb810a0289c77a6e7b07ed3a19bc24e95f8d67684ea710ba455c402af"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/powershell-unicode-bom-union/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "e11bf8b866728e35061cf1a744a5841d5e6299182db6251d5d53ff227a542d23"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/stage-2.json",
+    "bytes": 283,
+    "rawSha256": "a019f8319071e8215cd49b327c85f9bed94ecabf1310b3c012bf57af7fffa975"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/stage-3.json",
+    "bytes": 283,
+    "rawSha256": "999e621141d640adda86f46579568e221e2acd63c888191078a9f5a07ab58bbe"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/stdout.log",
+    "bytes": 95,
+    "rawSha256": "7d6a8b412643eff7a9d75b330ceab4d7661786c3d735d729fea20de90b3d5796"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "06dd8f941c4b1c3b72b503763b17a2abff85d2ed54d1cb6d67ce987aabcf97d0"
+  },
+  {
+    "path": "fixtures-v3/pwsh-both-modify/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "06dd8f941c4b1c3b72b503763b17a2abff85d2ed54d1cb6d67ce987aabcf97d0"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/stage-3.json",
+    "bytes": 181,
+    "rawSha256": "a44d8f71de040d1d6952985724e5dcf34cc422100ff8f4cbd90b3011b7f60e42"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/stdout.log",
+    "bytes": 76,
+    "rawSha256": "9da8741ab2b51f336a6948fe5c2a2ce7c95e7d17f4595a2142a568b0f67b145d"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "b35760668a097eaf3ca195d2aaff2a3b1b20e0498faf177d8cb6252b8d5ef4b2"
+  },
+  {
+    "path": "fixtures-v3/pwsh-deletion/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "b35760668a097eaf3ca195d2aaff2a3b1b20e0498faf177d8cb6252b8d5ef4b2"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/stage-3.json",
+    "bytes": 377,
+    "rawSha256": "1b012c6cd86b007f07939b14f0eb1914fb5a4e1c3d8742955863f10b1d29b6e0"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/stdout.log",
+    "bytes": 46,
+    "rawSha256": "cc8aaff7bb88d077a2936ed504b988a46b9cb04e630063f356714739901f95bf"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "6bd7faa68c3718106c3acb2bc922548b84987b0cf54e3ffb866d0a9efebab1c1"
+  },
+  {
+    "path": "fixtures-v3/pwsh-duplicate/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "6bd7faa68c3718106c3acb2bc922548b84987b0cf54e3ffb866d0a9efebab1c1"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/stage-3.json",
+    "bytes": 287,
+    "rawSha256": "a37a08ed8b42fc6a15264ed3250bd013d698a092594c0594c2c80d0a56d84bfb"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/stderr.log",
+    "bytes": 494,
+    "rawSha256": "b724c3519e8370b3ffa70a5f6dc0552f22c6934073f85875e0788c093e7c47f1"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/stdout.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "3e53cb16cb5146bc4a83b5f8fffa441efdb8bad4549c5c299b15219aebbeb327"
+  },
+  {
+    "path": "fixtures-v3/pwsh-malformed/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "3e53cb16cb5146bc4a83b5f8fffa441efdb8bad4549c5c299b15219aebbeb327"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/unmerged-after.log",
+    "bytes": 226,
+    "rawSha256": "e694a0ca6a3ebe7195d8adff946a2ec42ce893a74cc386cc21e4e32793154317"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-1/unmerged-before.log",
+    "bytes": 226,
+    "rawSha256": "e694a0ca6a3ebe7195d8adff946a2ec42ce893a74cc386cc21e4e32793154317"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/unmerged-after.log",
+    "bytes": 226,
+    "rawSha256": "a199eaaf84cfb0dd6b9c4a31c165e6ee0aae5e3143f71ab5f7f4166637a77811"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-2/unmerged-before.log",
+    "bytes": 226,
+    "rawSha256": "a199eaaf84cfb0dd6b9c4a31c165e6ee0aae5e3143f71ab5f7f4166637a77811"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/unmerged-after.log",
+    "bytes": 226,
+    "rawSha256": "5c46c6dc4fb0b3968b21a297369932937f2f0cce32af566859a17f464e458a6b"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-3/unmerged-before.log",
+    "bytes": 226,
+    "rawSha256": "5c46c6dc4fb0b3968b21a297369932937f2f0cce32af566859a17f464e458a6b"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-missing-stage/unmerged-before.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/stage-3.json",
+    "bytes": 375,
+    "rawSha256": "62704283ae4136ca042c340d8964bc3258c08772f6d0f4cd4ded678f775d1efe"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/stdout.log",
+    "bytes": 96,
+    "rawSha256": "2249940951a86456acadeb9fd341f19175f20ba8eb680d0b76569014d01cdbc3"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "8e378602cf7011aee5a3f3e4a18c7f8fcaa3ea9ecf7b11874ad6c7576dd828dd"
+  },
+  {
+    "path": "fixtures-v3/pwsh-new-collision/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "8e378602cf7011aee5a3f3e4a18c7f8fcaa3ea9ecf7b11874ad6c7576dd828dd"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/stage-2.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/stage-3.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/stdout.log",
+    "bytes": 109,
+    "rawSha256": "4ae8e88e4d3fb69fef505eb94ec4fead6a975ed9681a932199f139510994c2a2"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "7734dcdc6feca7a0c578cd80685838419cab4d81927d5883468f866a8b30e412"
+  },
+  {
+    "path": "fixtures-v3/pwsh-no-delta/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "7734dcdc6feca7a0c578cd80685838419cab4d81927d5883468f866a8b30e412"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "4b181086cccdd7fcf1cddb153b92b30fc34d4241e42758ad5be599634b8fd1d5"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/stdout.log",
+    "bytes": 73,
+    "rawSha256": "75e1b05e758241b6a95b3634f160cfbd0ffaf0ed9497e5e0afc5e94e7b0c6bf2"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "67e0dfbfc0d3540e2e98d561ac6ca01b2592024288822347212037d92010d678"
+  },
+  {
+    "path": "fixtures-v3/pwsh-note-case/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "67e0dfbfc0d3540e2e98d561ac6ca01b2592024288822347212037d92010d678"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 385,
+    "rawSha256": "1e8243d761133ef3930481037fb6c97bd2a273ef7c93024914056989e6ef43d8"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/stage-2.json",
+    "bytes": 283,
+    "rawSha256": "a019f8319071e8215cd49b327c85f9bed94ecabf1310b3c012bf57af7fffa975"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "507dcc84c08396ef8eff730f8b37a81315481dcdc62d45d43b3424413f833a82"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/stdout.log",
+    "bytes": 149,
+    "rawSha256": "9f9cc84fb810a0289c77a6e7b07ed3a19bc24e95f8d67684ea710ba455c402af"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-ours-only/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "cb91f1c0109c77d9d52144afae73f1c024d573ca84f192bad35e6515744f8517"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 381,
+    "rawSha256": "501e7dab303c3a3ca7207b5f158979637c62f87a0cdbb7db282ceca76a8e9467"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/stage-3.json",
+    "bytes": 381,
+    "rawSha256": "7285020669fe3c59212c2625de0e88304abcdd8a77eef8abb805b693fccb0565"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/stdout.log",
+    "bytes": 149,
+    "rawSha256": "9f9cc84fb810a0289c77a6e7b07ed3a19bc24e95f8d67684ea710ba455c402af"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-same-new/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "951cf0702102899ad19f9f7486f36c6d476eb96c81e8ec430ca55c1e4f5e91fa"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 19,
+    "rawSha256": "133a7b361dcf1abef70e0143570d9f80729bdc030e2e865bb4d40348209c2557"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/stage-2.json",
+    "bytes": 279,
+    "rawSha256": "9003f010ff0925f664bb9c27959c418d0889013f1376ed721346e66e78d40664"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/stage-3.json",
+    "bytes": 279,
+    "rawSha256": "b4873898affe4e3cdf740ddd26d10977180d0cf6cf0f88a05f284d107bc912d9"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/stdout.log",
+    "bytes": 82,
+    "rawSha256": "4f75794fc2112ce4c4bfffd5cda9d18ccf37778ab2d4f2a8d4f22e885416e712"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/unmerged-after.log",
+    "bytes": 339,
+    "rawSha256": "89b913101a26fd3821b9fe1e7d81fc6190bddc56c97a0116be1cdc31349b2afe"
+  },
+  {
+    "path": "fixtures-v3/pwsh-schema-case/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "89b913101a26fd3821b9fe1e7d81fc6190bddc56c97a0116be1cdc31349b2afe"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 283,
+    "rawSha256": "999e621141d640adda86f46579568e221e2acd63c888191078a9f5a07ab58bbe"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/stage-1.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/stage-2.json",
+    "bytes": 177,
+    "rawSha256": "cc2269dbde3adfb92bb60388e7276d33aa9c3b028aeb7c2f60c5fb43bec6e5f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/stage-3.json",
+    "bytes": 283,
+    "rawSha256": "999e621141d640adda86f46579568e221e2acd63c888191078a9f5a07ab58bbe"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/stdout.log",
+    "bytes": 187,
+    "rawSha256": "8d714a33364ac855b10fbe2a8ee23e49bef5a243226ffe187e1495d8b33a5b8c"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-theirs-only/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "4845527f019abfe0632a7d9a4a03f80b3fae787bfd0b4e490b25cf70dbc8d100"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/empty-exclude",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "bytes": 384,
+    "rawSha256": "c2e027d4a46a0e70e87655766a555834fde930799e8ded9898289df1a692de35"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/stage-1.json",
+    "bytes": 180,
+    "rawSha256": "46d90adf6f4b377e0212f7ab945dae98107fd6ed6581c68a0476300db58d2861"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/stage-2.json",
+    "bytes": 282,
+    "rawSha256": "c56b83d6ca69437a9907c9c506926e9b65ea46daa710c3dd5aaccb0529db31f7"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/stage-3.json",
+    "bytes": 282,
+    "rawSha256": "11e7bece5e3a9a75f36422a83f74416d7b3a05f3f1333db4e94054f3cf0feb8d"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/stdout.log",
+    "bytes": 149,
+    "rawSha256": "9f9cc84fb810a0289c77a6e7b07ed3a19bc24e95f8d67684ea710ba455c402af"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/unmerged-after.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixtures-v3/pwsh-unicode-bom-union/unmerged-before.log",
+    "bytes": 339,
+    "rawSha256": "e11bf8b866728e35061cf1a744a5841d5e6299182db6251d5d53ff227a542d23"
+  },
+  {
+    "path": "frozen-powershell-missing-1.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-powershell-missing-1.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "frozen-powershell-missing-2.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-powershell-missing-2.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "frozen-powershell-missing-3.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-powershell-missing-3.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "frozen-powershell-missing-stage.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-powershell-missing-stage.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "frozen-pwsh-missing-1.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-pwsh-missing-1.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "frozen-pwsh-missing-2.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-pwsh-missing-2.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "frozen-pwsh-missing-3.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-pwsh-missing-3.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "frozen-pwsh-missing-stage.stderr.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "frozen-pwsh-missing-stage.stdout.log",
+    "bytes": 181,
+    "rawSha256": "4cdd971f63bb21c51f4d1990dae6854a1aec7d8b59aaba05464d30f1b2ea9f48"
+  },
+  {
+    "path": "pipeline-ps51.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "pipeline-ps51.log",
+    "bytes": 479,
+    "rawSha256": "2c55cec22060be01a447d8e5c40969f774dd62f1ae8d94507b2f4e4a80af107b"
+  },
+  {
+    "path": "pipeline-ps7.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "pipeline-ps7.log",
+    "bytes": 479,
+    "rawSha256": "2c55cec22060be01a447d8e5c40969f774dd62f1ae8d94507b2f4e4a80af107b"
+  },
+  {
+    "path": "r2-archive-raw-report.json",
+    "bytes": 127347,
+    "rawSha256": "f54ffee2da1303a46f576cf7bc4c0b99bd488278e42ea7f1098f92637b3e54f1"
+  },
+  {
+    "path": "red-comparison-report.json",
+    "bytes": 15764,
+    "rawSha256": "09ae5cc959a6dca41c52984d40a97fd68aa61c2acea08d1eb5076a8c0ca03099"
+  },
+  {
+    "path": "red-comparison.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "red-comparison.log",
+    "bytes": 15766,
+    "rawSha256": "6022cfffb1551c450ad76a5eefa89591cd341dabc10bdbc9e57618af28abe48b"
+  },
+  {
+    "path": "red-comparison.py",
+    "bytes": 3405,
+    "rawSha256": "815d8fc279607d1dca9ca243b6a6144c5c0cf1e4f680d384fbac3070ce7e1c0f"
+  },
+  {
+    "path": "run-checks.py",
+    "bytes": 1564,
+    "rawSha256": "9aa660c10034ae494666c1b3a850c98e5fefe0a77440c5466d5c1194bc3748de"
+  },
+  {
+    "path": "scope-frozen.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "scope-frozen.log",
+    "bytes": 190,
+    "rawSha256": "859267a2d6d684ac27bfd5e9e7be976ce579b2ffe9894f3340daa784fdee94b0"
+  },
+  {
+    "path": "static-review.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "static-review.log",
+    "bytes": 1458,
+    "rawSha256": "e28495fb2356537d5b27b0d714cfd740cfd712885265f6e1ae06c6e37d0547bf"
+  },
+  {
+    "path": "static-review.py",
+    "bytes": 7008,
+    "rawSha256": "229223b050829957af66b25595f6aab36f0418e093bbfb1531af221a966b956d"
+  },
+  {
+    "path": "static-summary.json",
+    "bytes": 1456,
+    "rawSha256": "6750cf81d9f6a0f771af8ecdd79ec7061926e53eeb8b4489ad600233c10934ee"
+  },
+  {
+    "path": "validate-docs.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "validate-docs.log",
+    "bytes": 2724,
+    "rawSha256": "e6df76052099f1071a253a836da1330f37c58c457586982b911f311bc1766e23"
+  },
+  {
+    "path": "validate-reuse.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "validate-reuse.log",
+    "bytes": 2486,
+    "rawSha256": "fbed32fbd731b2683bd62a69345af04d7d1bb2be85931a21a955123093430b89"
+  },
+  {
+    "path": "validate-task.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "validate-task.log",
+    "bytes": 2517,
+    "rawSha256": "10f025a63112695964d8b364fa6c4a772eca3b49c3199e086032a756405a1bf1"
+  }
+]

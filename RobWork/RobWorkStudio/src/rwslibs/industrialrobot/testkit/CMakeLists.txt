@@ -31,6 +31,17 @@
 # vendor。vcpkg 的 gtest:x64-windows 为动态库（运行期 DLL 拷贝见下方）。
 find_package(GTest CONFIG REQUIRED)
 
+# ---- Boost.Graph 接入（SetCheck 阶段 2 最大匹配内核复用；header-only）----
+# 复用来源：同一 vcpkg 渠道已装 Boost 1.92（boost-headers/boost-graph），
+# checked_edmonds_maximum_cardinality_matching＋matching_size 经
+# src/SetCheckMatch.cpp 单 TU 编译期消费（Boost 头不出该 TU——公共模板头
+# 与消费者编译面零 Boost）。Boost::headers 为接口目标（零链接库、零运行时
+# DLL），PRIVATE 限于 testkit 本体。候选证据：REUSE-T01 审计 B17＋
+# probe-r17/candidates 两项公开 API 探测；依赖契约修订（testkit.md §3.1
+# "不引入第三方运行库"→header-only 编译期使用例外）与 ird_gates 第三方
+# 词表登记随治理批次。
+find_package(Boost CONFIG REQUIRED)
+
 # ---- 数据根变量落位（testkit.md §3.6/§4.6）----
 # 编译期默认＝industrialrobot/testdata（正斜杠绝对路径）。CACHE PATH：
 # 集成/冒烟两模式与外部覆写（-DSDURWS_IRD_TESTDATA_DIR=...）共用同一变量；
@@ -53,7 +64,8 @@ add_library(sdurws_ird_testkit STATIC
     src/ContractCheck.cpp
     src/Fixture.cpp
     src/Report.cpp
-    src/ProcessRunner.cpp)   # TK-T11：Windows API 全部限定在本 TU 内（testkit.md §1.4）
+    src/ProcessRunner.cpp   # TK-T11：Windows API 全部限定在本 TU 内（testkit.md §1.4）
+    src/SetCheckMatch.cpp)  # 最大二分图匹配内核——Boost.Graph 薄适配单 TU（Boost 头不出本 TU）
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -85,6 +97,11 @@ target_include_directories(sdurws_ird_testkit PUBLIC
 # 目标的链接写法一致）。
 target_link_libraries(sdurws_ird_testkit PUBLIC sdurws_ird_core)
 
+# Boost::headers（header-only 接口目标）：SetCheckMatch.cpp 的编译期使用面。
+# PRIVATE——Boost 头不出 src/SetCheckMatch.cpp，消费者编译/链接面零 Boost；
+# 第三方词表登记随治理批次（ird_gates IRD_THIRDPARTY_ALLOWED_TARGETS）。
+target_link_libraries(sdurws_ird_testkit PRIVATE Boost::headers)
+
 # 别名（集成模式）：供各单元 _test 目标以 RWS::ird::testkit 消费；冒烟
 # 模式无别名（与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -113,6 +130,7 @@ add_executable(sdurws_ird_testkit_test
     test/ReproBenchmarkTest.cpp   # WP-23-T09：复现夹具元测试（三腿/违例检出/报告）
     test/PerfBenchmarkTest.cpp   # WP-23-T02：PERF 侧计时夹具元测试（P95 插值/预热剔除/无效留痕/报告）
     test/ReportTest.cpp
+    test/ListenerOwnershipTest.cpp   # F-958：监听器所有权契约＋lsnchild 子进程三态用例
     test/ProcessRunnerTest.cpp   # TK-T11：四态 outcome＋EventWatch 双路径用例
     test/CoreIntegrationExampleTest.cpp
     test/TestMain.cpp
@@ -211,6 +229,38 @@ endif()
 # helper 一起构建：verify 命令只构建 sdurws_ird_testkit_test，缺此依赖则
 # 冒烟/集成验证时 helper 可能缺失，进程用例全数失败。
 add_dependencies(sdurws_ird_testkit_test sdurws_ird_testkit_prochelper)
+
+# ---- 监听器所有权测试子进程（F-958：tools/lsnchild）----
+# ListenerOwnershipTest 的隔离子进程载体：经生产安装入口跑真实 gtest 的
+# passed/failed/skipped 三态样本（失败/跳过不污染父测试驱动的报告与退出码）；
+# --lsn_mode=legacy 为旧实现反例载体（仅取证/独验人工执行，见该文件头）。
+# 目标名后缀不匹配产品/测试目标族（ird_gates 形态解析归 other——prochelper
+# 同款）；tools/ 属 §3.6 安装排除面（同 testdata/tools 排除登记）。
+add_executable(sdurws_ird_testkit_lsnchild tools/lsnchild/main.cpp)
+target_compile_features(sdurws_ird_testkit_lsnchild PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_testkit_lsnchild PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    # 输出目录对齐测试可执行文件（多配置生成器下含 $<CONFIG> 子目录）——
+    # 用例以 argv[0] 同目录定位，不依赖 PATH/工作目录。
+    RUNTIME_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:sdurws_ird_testkit_test>")
+if(MSVC)
+    target_compile_options(sdurws_ird_testkit_lsnchild PRIVATE /utf-8)
+endif()
+# 链接同测试目标口径：产品库 testkit（生产安装入口）＋GTest::gtest（自有
+# main，不用 gtest_main）。vcpkg gtest 为动态库——同测试目标的 POST_BUILD
+# 拷贝保证子进程不经 PATH 即可直接运行。
+target_link_libraries(sdurws_ird_testkit_lsnchild PRIVATE
+    sdurws_ird_testkit
+    GTest::gtest)
+add_custom_command(TARGET sdurws_ird_testkit_lsnchild POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_testkit_lsnchild>
+            $<TARGET_FILE_DIR:sdurws_ird_testkit_lsnchild>
+    COMMAND_EXPAND_LISTS)
+# lsnchild 一起构建（同 prochelper 理由：verify 只构建 sdurws_ird_testkit_test）。
+add_dependencies(sdurws_ird_testkit_test sdurws_ird_testkit_lsnchild)
 
 # ---- Qt 测试辅助目标 sdurws_ird_testkit_qt（UI-T02 启用登记，WP-10-T02）----
 # 启用依据（testkit.md §3.5/§10.1 启用表）：触发＝ui/workflow 出现

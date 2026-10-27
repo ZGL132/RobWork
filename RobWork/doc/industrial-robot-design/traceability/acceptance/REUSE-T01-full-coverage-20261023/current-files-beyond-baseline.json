@@ -1,0 +1,21 @@
+[
+  "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+  "RobWork/scripts/industrialrobot/commit-lint.ps1",
+  "RobWork/scripts/industrialrobot/gate-all.ps1",
+  "RobWork/scripts/industrialrobot/index-evidence.ps1",
+  "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+  "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+  "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+  "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+  "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+  "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+  "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+  "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+  "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+  "RobWork/scripts/industrialrobot/validate-docs.ps1",
+  "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+  "RobWork/scripts/industrialrobot/validate-state.ps1",
+  "RobWork/scripts/industrialrobot/validate-task.ps1",
+  "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+  "RobWork/scripts/industrialrobot/verify-task.ps1"
+]

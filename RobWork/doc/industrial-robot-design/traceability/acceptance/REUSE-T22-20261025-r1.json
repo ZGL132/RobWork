@@ -1,0 +1,55 @@
+{
+  "taskId": "REUSE-T22",
+  "baseCommit": "19f394a593f67d19e6a6c6a0bc754c165581ad06",
+  "reviewedCommit": "4585a59b97838bc97a111836296fc6936689781c",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T06:39:19+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T22/WP-11 单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施由另一串行会话完成，实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配或重建构建树；只验收不修复、不改任务状态、不推进下一任务；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立验收 19f394a59..4585a59b 送验范围（REUSE-T22 登记型交付：WP-11 定向核查并登记 PTP 线性插值极值适配缺口，仅交文档）：现场与送验提交定位、verify-task-scope 显式 Base/Head 复跑、allowedFiles/forbiddenFiles 与 diff 逐文件核对、契约 acceptance 两条逐项事实核对（历史标量反例原件有效性＋当前源码凸组合/上游差分式比对＋不冒称真实Q；候选扩展点与批准前禁止项＋只交文档）、红线抽查（H1—H6、L2 零 Qt、六类端口/runtime owner、CLOSURE 冻结、门禁脚本零改动、NOT RUN 未混列）、commit-lint 与提交正文一致性。",
+  "counts": {
+    "failed": 0,
+    "passed": 10,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "10 项验收检查（验收员亲跑）；契约登记的生产及独立算法验收 NOT RUN 属任务交付口径，另列 notRun，不计入本表"
+  },
+  "checks": [
+    "现场与送验定位：分支 redesign-main，HEAD=0ca544e49（在送验 head 之后，属后续 T10/T12~T21 验收登记提交）；git log 19f394a59..4585a59b 仅 1 个提交 4585a59b9「[governance] REUSE-T22 登记PTP插值极值适配缺口」，与契约 note「reviewHead 系唯一提交推导」一致；4585a59b 经 merge-base --is-ancestor 确认为 HEAD 祖先；三份交付文件在送验树与当前树 git diff --stat 零差异。",
+    "范围：verify-task-scope 显式 -Base 19f394a593f67d19e6a6c6a0bc754c165581ad06 -Head 4585a59b97838bc97a111836296fc6936689781c exit 0，「PASS REUSE-T22 —— 3 个路径全部在允许面内」（changed=3 allowedRules=3 forbiddenRules=3），日志 02-scope.log。",
+    "逐文件核对：git diff --name-only 范围内恰为 allowedFiles 三项（tasks/REUSE-T22.json、reuse/extensions/GAP-TRJ-LINEAR-01.md、reuse/changes/REUSE-T22.json）；forbiddenFiles 三 glob（RobWork/RobWork/src/**、RobWork/RobWorkSim/src/**、vcpkg/**）diff 零命中；零 .cpp/.hpp/.cmake/源码改动——「只交文档，不改变生产/功能状态」由 diff 事实直接成立。",
+    "CLOSURE 冻结未触碰：git diff --exit-code 19f394a59..4585a59b -- RobWork/doc/industrial-robot-design/traceability/closeout/ 退出 0 零差异（phase-b/c/d closeout 四文件原样）。",
+    "门禁未越权放宽：git diff --exit-code 19f394a59..4585a59b -- RobWork/scripts/industrialrobot/ 退出 0 零差异；总治理计划 migration.md 与矩阵不在变更清单（diff 仅 3 文件）；空产品凭证 reuse/changes/REUSE-T22.json files=[] 与零产品改动自洽。",
+    "文档/契约/复用门禁：validate-docs -TaskFile REUSE-T22.json exit 0 一次过——validate-task: PASS（1 tasks）、validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399，not algorithm compliance）、validate-docs: PASS（20 units, 12 trace entries, 404 task files）；REUSE-AD-PENDING 9 行为 AD 审计既有 pending 提示（与 GOV-T24 20261024 记录同类），非本包阻断；「NOT RUN: 全库证据索引审计」为按需 -DeepEvidence 提示，按 AGENTS §4 普通提交不要求。",
+    "acceptance 第 1 条（引用仍有效的历史标量反例并核当前源码；不冒称真实Q/生产已验证）逐项实测：①历史反例原件有效——REUSE-T01 ToolSuitabilityTest.cpp:51-60 ReuseAudit.LinearInterpolatorExtrapolatesAndCanOverflowFiniteEndpoints 真实断言标量极值（limit=DBL_MAX 构造 LinearInterpolator<double>(limit,-limit,1.0)，EXPECT_FALSE(isfinite(extreme.x(0.5)))＋权重式中点精确抵消 EXPECT_DOUBLE_EQ(0.0,...)）；probe-r7/gtest.xml 记录该用例 status=\"run\" result=\"completed\"（testsuite ReuseAudit tests=3 failures=0）、probe-r7/ird-test-report.json summary total=3 passed=3 failed=0 skipped=0 notRun=0 decisive=true；②当前源码核对——产品 trajectory/src/Ptp.cpp:61-79 interpolateJointLinear 仍为逐轴凸组合 (1-s)*qa[i]+s*qb[i]（含维度/定义域前置），上游 RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:70-76 构造 _a(end-start) 后 _a/_duration、第 86 行求值 _a*t+_b，与 GAP 文档第 11/15 行描述及反例机制（end-start=-2·DBL_MAX 溢出→非有限，凸组合中点精确抵消为 0）一致；设计锚 units/trajectory.md §7.3（647 行，逐轴 joint-linear）§7.4（655 行，凸组合不越限位）在案；③不冒称——GAP 文档第 13 行「真实Q模板路径的极值探测本轮 NOT RUN，不能把旧标量探测称为Q或生产迁移通过」、第 15 行「不把它写成上游整体不可用」、契约 note「生产及独立算法验收NOT RUN」；probe-r7 引用仅限标量(double)。",
+    "acceptance 第 2 条（明确候选扩展点、影响及批准前禁止项；只交文档）逐项实测：GAP-TRJ-LINEAR-01.md §最小候选与边界（17-24 行）列四项候选并逐一标定状态——直接替换「当前否决」、继续检查上游稳定求值入口「待验证」、最小上游扩展设计「当前不实施」（候选位置＝原 LinearInterpolator 抽象的稳定凸组合求值入口，需明确端点存储/API/ABI/数值容差/构建测试/许可证并经所有者单独批准 SA-02 patch，本提案不授权框架改动）、产品新核心或未验证缩放算法「不批准」（不沿用 C4 已否决推理）；影响面（19-28 行）明确接口/owner 保持（trajectory 路径几何、runtime 模型真值、policy 碰撞，不增模型/状态/缓存）与批准前禁止项（不修改 Ptp.cpp 或矩阵迁移状态，候选须有真实Q/独立插值期望/端点零段极值/消费者/性能证据）；「只交文档」由检查 3 diff 事实成立。",
+    "提交链：commit-lint -Range 19f394a593f67d19e6a6c6a0bc754c165581ad06..4585a59b97838bc97a111836296fc6936689781c exit 0 PASS（1 个提交全部合规，[governance] 前缀），日志 05-commit-lint.log；提交正文（定向核差分式与凸组合契约、引用 B31 以外的原 ToolSuitability/probe-r7 标量证据、真实Q NOT RUN、不批准框架/新核心/降需求/生产替换、只新增提案/任务/空凭证、初次缺字段失败原件在 build/t22-validate-docs-initial-fail.log）与 diff 实际内容逐项一致。",
+    "红线抽查汇总：H1/H2——零产品代码，GAP 文档否决产品自建插值类与未登记双核心 fallback（19、22 行），方向为继续检索上游现成入口，无平行实现回流；H3——引用沿用上游类型/符号/库目标（LinearInterpolator.hpp::LinearInterpolator<T>、sdurw_trajectory、上游 CMakeLists 与 gtest/LinearInterpolatorTest.cpp 入口）；H4——文档任务受文档门禁约束，validate-docs/validate-reuse/validate-task PASS 已亲跑；H5——登记型交付不批准新核心或上游扩展，GAP 第 3/4 候选均标「不实施/不批准」；H6——绑定具体上游文件/符号/目标＋REUSE-T01 功能行（reuse/functions/trajectory.json:6 trajectory.interpolateJointLinear）＋catalog capability TRAJ-LINEAR（reuse/inventory.json:10452-10456，trajectory 单元 migration-debt，migrationTask=REUSE-T01）均亲核在案；架构红线——L2 零 Qt 由零代码改动成立，六类端口与 runtime 模型 owner 语句在 GAP 第 24 行明确保持；PASS/FAIL/SKIP/NOT RUN 分列——probe-r7 报告计数分列（3/3/0/0/0），契约与 GAP 的 NOT RUN 登记与验收口径一致，无混列无冒称。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T22.json' -Base 19f394a593f67d19e6a6c6a0bc754c165581ad06 -Head 4585a59b97838bc97a111836296fc6936689781c; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "diff-files", "command": "git diff --name-only 19f394a59..4585a59b（＋对 forbiddenFiles 三 glob 与 closeout/、scripts/industrialrobot/ 的 --exit-code 零差异检查）", "exitCode": 0, "passed": true },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T22.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/commit-lint.ps1' -Range '19f394a593f67d19e6a6c6a0bc754c165581ad06..4585a59b97838bc97a111836296fc6936689781c'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "evidence-reads", "command": "静态核对（无命令产物）：REUSE-T01/ToolSuitabilityTest.cpp:51-60、REUSE-T01/probe-r7/gtest.xml 与 ird-test-report.json、Ptp.cpp:61-79、LinearInterpolator.hpp:70-86、trajectory.md:647-655、GAP-TRJ-LINEAR-01.md 全文、functions/trajectory.json:6、inventory.json:10452-10456", "passed": true }
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "生产及独立算法验收（真实Q模板路径极值探测、C++ 构建/性能/产品测试）",
+      "reason": "任务登记口径非验收缺口：REUSE-T22 为登记型交付，零产品改动（diff 仅 3 文档文件，凭证 files=[]），无生产面可验；契约 note 与 GAP-TRJ-LINEAR-01.md 第 13/30 行均如实标 NOT RUN，且明确「不能把旧标量探测称为Q或生产迁移通过」。历史标量反例按 AGENTS §4 增量口径引用原件（源码/输入未变），已亲核其有效性（检查 7）。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 REUSE-T22 送验范围（19f394a59..4585a59b，单提交纯文档包）：GAP-TRJ-LINEAR-01 提案登记、任务契约与空产品凭证。本验收不批准任何新核心、上游扩展、生产替换或框架改动；GAP 状态仍为「待决」，WP-11 未关闭，候选扩展点的适用性验证（真实Q、端点/零段/极值、消费者、性能）与 SA-02 patch 批准均在后续所有者裁决流程内。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭，changed=94 相对 2026-10-24 基线的增量来自其他已登记批次，非本包引入）。本包为纯文档零构建，未执行任何 C++ 构建/测试/性能运行——与验收口径（登记型交付无生产面）一致，不构成全库状态声明。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T22-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T22-20261025-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T22-20261025-r1/07-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T22-20261025-r1.json"
+  ]
+}

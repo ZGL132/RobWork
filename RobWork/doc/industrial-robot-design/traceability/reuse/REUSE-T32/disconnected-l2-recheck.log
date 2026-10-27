@@ -1,0 +1,13 @@
+Note: Google Test filter = TrjPlannerAvoidance.CollisionThenRework*:TrjPlannerAvoidance.BudgetExhausted*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from TrjPlannerAvoidance
+[ RUN      ] TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2
+[       OK ] TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2 (22 ms)
+[ RUN      ] TrjPlannerAvoidance.BudgetExhaustedYieldsMaterialNotInfeasible_WP16T06_ACC2
+[       OK ] TrjPlannerAvoidance.BudgetExhaustedYieldsMaterialNotInfeasible_WP16T06_ACC2 (301 ms)
+[----------] 2 tests from TrjPlannerAvoidance (323 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (323 ms total)
+[  PASSED  ] 2 tests.

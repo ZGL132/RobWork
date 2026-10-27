@@ -1,0 +1,11 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  SetCheckMatch.cpp
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_testkit_lsnchild.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit_lsnchild.exe
+  sdurws_ird_testkit_prochelper.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit_prochelper.exe
+  ReproBenchmarkTest.cpp
+  SetCheckTest.cpp
+  正在生成代码...
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit_test.exe

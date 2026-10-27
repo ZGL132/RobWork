@@ -1,0 +1,5 @@
+{
+  "elapsedSeconds": 28.5982804,
+  "command": "validate-docs.ps1 -TaskFile @(REUSE-T15,REUSE-T16)",
+  "exitCode": 1
+}

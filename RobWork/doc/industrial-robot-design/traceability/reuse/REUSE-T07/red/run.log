@@ -1,0 +1,109 @@
+Note: Google Test filter = CouplingReuse.*:MdlParts.*:MdlReadiness*.*
+[==========] Running 37 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 14 tests from MdlParts
+[ RUN      ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3
+[       OK ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlParts.DrivetrainCouplingR1Locked_WP13T03_ACC3
+[       OK ] MdlParts.DrivetrainCouplingR1Locked_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlParts.DrivetrainRatioValidity_WP13T03_ACC3
+[       OK ] MdlParts.DrivetrainRatioValidity_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlParts.ToolTcpListIntegrity_IMdl13_WP13T10_ACC1
+[       OK ] MdlParts.ToolTcpListIntegrity_IMdl13_WP13T10_ACC1 (0 ms)
+[ RUN      ] MdlParts.NamedPoseMergeReservedKeysAndJointOrder_WP13T10_ACC4
+[       OK ] MdlParts.NamedPoseMergeReservedKeysAndJointOrder_WP13T10_ACC4 (0 ms)
+[ RUN      ] MdlParts.PartPoseEdits_ToolMountAndSceneWorld_UI_T55
+[       OK ] MdlParts.PartPoseEdits_ToolMountAndSceneWorld_UI_T55 (0 ms)
+[ RUN      ] MdlParts.TcpListEdits_AddRemoveOffsetDefault_UI_T57
+[       OK ] MdlParts.TcpListEdits_AddRemoveOffsetDefault_UI_T57 (0 ms)
+[ RUN      ] MdlParts.TcpDisplayNameEdit_PresentationOnlyField_UI_T58
+[       OK ] MdlParts.TcpDisplayNameEdit_PresentationOnlyField_UI_T58 (0 ms)
+[ RUN      ] MdlParts.PoseSetEntryEdits_UpsertRemove_UI_T60
+[       OK ] MdlParts.PoseSetEntryEdits_UpsertRemove_UI_T60 (0 ms)
+[ RUN      ] MdlParts.DrivetrainEdits_RatioFrictionTorque_UI_T60
+[       OK ] MdlParts.DrivetrainEdits_RatioFrictionTorque_UI_T60 (0 ms)
+[ RUN      ] MdlParts.CouplingSingularValues_IndependentReference_WP13T23
+[       OK ] MdlParts.CouplingSingularValues_IndependentReference_WP13T23 (0 ms)
+[ RUN      ] MdlParts.CouplingMatrixCheck_FullKindCoverage_WP13T18_ACC1
+[       OK ] MdlParts.CouplingMatrixCheck_FullKindCoverage_WP13T18_ACC1 (0 ms)
+[ RUN      ] MdlParts.CouplingEdit_R1LockedAndR2AcceptAndClear_WP13T18_ACC1_ACC2
+[       OK ] MdlParts.CouplingEdit_R1LockedAndR2AcceptAndClear_WP13T18_ACC1_ACC2 (0 ms)
+[ RUN      ] MdlParts.CouplingEdit_AuthorityModeDoesNotBlock_WP13T18_ACC2
+[       OK ] MdlParts.CouplingEdit_AuthorityModeDoesNotBlock_WP13T18_ACC2 (0 ms)
+[----------] 14 tests from MdlParts (0 ms total)
+
+[----------] 6 tests from CouplingReuse
+[ RUN      ] CouplingReuse.ProductionSourceUsesUpstream_REUSE_T07
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CouplingReuseTest.cpp(54): error: Expected: (source.find("rw::math::LinearAlgebra::svd(")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+生产适配必须直接消费上游 API
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CouplingReuseTest.cpp(56): error: Expected equality of these values:
+  source.find("kCouplingJacobiMaxSweeps")
+    Which is: 4906
+  std::string::npos
+    Which is: 18446744073709551615
+旧扫描内核不得留作回退
+
+[  FAILED  ] CouplingReuse.ProductionSourceUsesUpstream_REUSE_T07 (0 ms)
+[ RUN      ] CouplingReuse.IndependentSpectrumAndExtremeScale_REUSE_T07
+[       OK ] CouplingReuse.IndependentSpectrumAndExtremeScale_REUSE_T07 (0 ms)
+[ RUN      ] CouplingReuse.RankAndConditionBoundariesThroughProduction_REUSE_T07
+[       OK ] CouplingReuse.RankAndConditionBoundariesThroughProduction_REUSE_T07 (0 ms)
+[ RUN      ] CouplingReuse.ProductionConsumesRecomputedCondition_REUSE_T07
+[       OK ] CouplingReuse.ProductionConsumesRecomputedCondition_REUSE_T07 (0 ms)
+[ RUN      ] CouplingReuse.ExistingInvalidInputContract_REUSE_T07
+[       OK ] CouplingReuse.ExistingInvalidInputContract_REUSE_T07 (0 ms)
+[ RUN      ] CouplingReuse.UpstreamComparisonAndReconstruction_REUSE_T07
+[       OK ] CouplingReuse.UpstreamComparisonAndReconstruction_REUSE_T07 (0 ms)
+[----------] 6 tests from CouplingReuse (0 ms total)
+
+[----------] 8 tests from MdlReadiness
+[ RUN      ] MdlReadiness.LegalWorkingSetAllLayersPassAndPureFunction
+[       OK ] MdlReadiness.LegalWorkingSetAllLayersPassAndPureFunction (0 ms)
+[ RUN      ] MdlReadiness.NotProvidedOnlyNoteKeepsReadyReachable_WP13T23
+[       OK ] MdlReadiness.NotProvidedOnlyNoteKeepsReadyReachable_WP13T23 (0 ms)
+[ RUN      ] MdlReadiness.InformationalNoteStillAggregatesReadyWithNotes_WP13T23
+[       OK ] MdlReadiness.InformationalNoteStillAggregatesReadyWithNotes_WP13T23 (0 ms)
+[ RUN      ] MdlReadiness.ShortCircuitPriorityStopsAtFirstBlockingLayer
+[       OK ] MdlReadiness.ShortCircuitPriorityStopsAtFirstBlockingLayer (0 ms)
+[ RUN      ] MdlReadiness.L11PolicyUnresolvableBlocksWithoutSilentTravelSkip
+[       OK ] MdlReadiness.L11PolicyUnresolvableBlocksWithoutSilentTravelSkip (0 ms)
+[ RUN      ] MdlReadiness.ResultGroupsStableOrderByLayerThenSubject
+[       OK ] MdlReadiness.ResultGroupsStableOrderByLayerThenSubject (0 ms)
+[ RUN      ] MdlReadiness.L9CouplingStageLockAndR2NumericCheck_WP13T18
+[       OK ] MdlReadiness.L9CouplingStageLockAndR2NumericCheck_WP13T18 (0 ms)
+[ RUN      ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25
+[       OK ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25 (0 ms)
+[----------] 8 tests from MdlReadiness (0 ms total)
+
+[----------] 6 tests from MdlReadinessAssertionDomains
+[ RUN      ] MdlReadinessAssertionDomains.MassNonpositiveBlocksPrecisely
+[       OK ] MdlReadinessAssertionDomains.MassNonpositiveBlocksPrecisely (0 ms)
+[ RUN      ] MdlReadinessAssertionDomains.InertiaNotSpdBlocks
+[       OK ] MdlReadinessAssertionDomains.InertiaNotSpdBlocks (0 ms)
+[ RUN      ] MdlReadinessAssertionDomains.LimitIntervalBlocks
+[       OK ] MdlReadinessAssertionDomains.LimitIntervalBlocks (0 ms)
+[ RUN      ] MdlReadinessAssertionDomains.MissingPhysicsWithConfirmedContinuousApplicable
+[       OK ] MdlReadinessAssertionDomains.MissingPhysicsWithConfirmedContinuousApplicable (0 ms)
+[ RUN      ] MdlReadinessAssertionDomains.RangeEditorUnblocksContinuous_MDL12_AT17
+[       OK ] MdlReadinessAssertionDomains.RangeEditorUnblocksContinuous_MDL12_AT17 (0 ms)
+[ RUN      ] MdlReadinessAssertionDomains.ContinuousInvalidRangeStateBlocks_F746_1
+[       OK ] MdlReadinessAssertionDomains.ContinuousInvalidRangeStateBlocks_F746_1 (0 ms)
+[----------] 6 tests from MdlReadinessAssertionDomains (0 ms total)
+
+[----------] 3 tests from MdlReadinessTravelLimit
+[ RUN      ] MdlReadinessTravelLimit.MultiTurnJointProducesConfirmableFinding
+[       OK ] MdlReadinessTravelLimit.MultiTurnJointProducesConfirmableFinding (0 ms)
+[ RUN      ] MdlReadinessTravelLimit.ContinuousNoRangeYieldsEvaluationFailedNotThrow_F746_1
+[       OK ] MdlReadinessTravelLimit.ContinuousNoRangeYieldsEvaluationFailedNotThrow_F746_1 (0 ms)
+[ RUN      ] MdlReadinessTravelLimit.BoundaryTravelAndConfiguredThresholdPass
+[       OK ] MdlReadinessTravelLimit.BoundaryTravelAndConfiguredThresholdPass (0 ms)
+[----------] 3 tests from MdlReadinessTravelLimit (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 37 tests from 5 test suites ran. (2 ms total)
+[  PASSED  ] 36 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CouplingReuse.ProductionSourceUsesUpstream_REUSE_T07
+
+ 1 FAILED TEST

@@ -1,0 +1,107 @@
+[
+  {
+    "capabilityId": "HOST-SCENE",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp",
+    "sourceHashMatches": true,
+    "symbols": {
+      "setWorkCell": true,
+      "getWorkCell": true,
+      "getWorldNode": true,
+      "addRender": true,
+      "addFrameAxis": true,
+      "removeDrawable": true
+    },
+    "target": "sdurw_graphics",
+    "targetFile": "RobWork/RobWork/src/rw/graphics/CMakeLists.txt",
+    "targetHashMatches": true,
+    "targetDeclared": true,
+    "sourceListed": true
+  },
+  {
+    "capabilityId": "HOST-SCENE",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp",
+    "sourceHashMatches": true,
+    "symbols": {
+      "addRender": true,
+      "removeDrawable": true,
+      "setWorkCell": true
+    },
+    "target": "sdurw_graphics",
+    "targetFile": "RobWork/RobWork/src/rw/graphics/CMakeLists.txt",
+    "targetHashMatches": true,
+    "targetDeclared": true,
+    "sourceListed": true
+  },
+  {
+    "capabilityId": "HOST-SCENE",
+    "kind": "tests",
+    "path": "RobWork/RobWork/gtest/graphics/WorkCellSceneTest.cpp",
+    "sourceHashMatches": true,
+    "symbols": {
+      "WorkCellScene": true
+    }
+  },
+  {
+    "capabilityId": "HOST-FRAME",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rwlibs/opengl/RenderFrame.hpp",
+    "sourceHashMatches": true,
+    "symbols": {
+      "RenderFrame": true,
+      "draw": true
+    },
+    "target": "sdurw_opengl",
+    "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "targetHashMatches": true,
+    "targetDeclared": true,
+    "sourceListed": true
+  },
+  {
+    "capabilityId": "HOST-FRAME",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rwlibs/opengl/RenderFrame.cpp",
+    "sourceHashMatches": true,
+    "symbols": {
+      "RenderFrame::draw": true,
+      "renderWire": true,
+      "renderSolid": true
+    },
+    "target": "sdurw_opengl",
+    "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "targetHashMatches": true,
+    "targetDeclared": true,
+    "sourceListed": true
+  },
+  {
+    "capabilityId": "HOST-TEXT",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rwlibs/opengl/RenderText.hpp",
+    "sourceHashMatches": true,
+    "symbols": {
+      "RenderText": true,
+      "draw": true
+    },
+    "target": "sdurw_opengl",
+    "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "targetHashMatches": true,
+    "targetDeclared": true,
+    "sourceListed": true
+  },
+  {
+    "capabilityId": "HOST-TEXT",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rwlibs/opengl/RenderText.cpp",
+    "sourceHashMatches": true,
+    "symbols": {
+      "RenderText::draw": true,
+      "getLabelCorners": true
+    },
+    "target": "sdurw_opengl",
+    "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "targetHashMatches": true,
+    "targetDeclared": true,
+    "sourceListed": true
+  }
+]

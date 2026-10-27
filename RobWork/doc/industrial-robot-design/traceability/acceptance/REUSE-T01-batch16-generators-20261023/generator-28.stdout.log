@@ -1,0 +1,2 @@
+trj-at06-recheck-golden: wrote C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690\repo\.cache\b16-golden-replay\trj-at06-recheck-golden\1.0.0\expected\trj-at06-expected.json
+  cases: recheck-collision, budget-exhausted, replan-success, limit-exceeded

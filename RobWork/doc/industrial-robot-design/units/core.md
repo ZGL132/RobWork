@@ -1,6 +1,6 @@
 # 工业机械臂设计软件 · core 单元详细设计（阶段 A）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 
 > 2026-09-10 同步：本单元详设编写完成（第一批 11/20）；保留本文 Draft/Draft-Structured 评审状态，不代表接口已冻结或实现通过。当前任务与准入结论见 [阶段一同步记录](../traceability/phase-one-readiness.md)；历史磁盘调查仅表示编写时事实，现状以该记录为准。
@@ -61,7 +61,7 @@ core 是"任何层都可依赖"的 L2 平台内核（ARCHITECTURE §3.5 共享�
 | Eigen | `EIGEN3_INCLUDE_DIR` 指向仓库根 `vcpkg/installed/x64-windows/include/eigen3`（外部依赖，经 vcpkg） | core 不直接包含 Eigen 头；经 `rw::math` 头传递出现（`Transform3D.hpp` 含 `Eigen/Core`），由 `sdurw_math` 目标的公开依赖传递 |
 | RobWork 基线 C++ 标准 | `RobWork/CMakeLists.txt` 设 `CMAKE_CXX_STANDARD 11`；RobWorkStudio 及其 cmake 宏未设全局标准 | industrialrobot 各目标**显式**设 `CXX_STANDARD 17`（决策 D-01，§12）：MSVC 2022 完整支持；与 C++11 编译的 RobWork 库在同一 ABI（同一运行时）下链接为通行做法；首次集成构建验证为 CORE-T01 完成条件。**不使用 C++20 及以上特性**（对基线保持保守） |
 | CMake | 骨架 `cmake_minimum_required(3.16)`；集成入口经 patch 0001 守卫（默认 OFF） | 保持骨架目标名 `sdurws_ird_core`／别名 `RWS::ird::core` 与 include 根 `core/include/`（内含 `sdurws/ird/core/`）不变；INTERFACE→STATIC 升级随 CORE-T01 |
-| 可用标准库 | C++17：`std::optional`、`std::string_view`、`std::variant`、`std::chrono`、`std::array` 等 | 全部允许；禁止引入 Boost 等第三方运行库 |
+| 可用标准库 | C++17：`std::optional`、`std::string_view`、`std::variant`、`std::chrono`、`std::array` 等 | 全部允许；不引入第三方运行库。GAP-CORE-FNV-01与GAP-CORE-C4-01 R3分别获批：Identity.cpp私有使用固定uint128，Compare.cpp仅同时溢出分支私有使用固定128/4224位原语；沿用现有vcpkg Boost头，公共头不暴露Boost |
 | RobWork 数学类型 | `rw::math::{Vector3D, Rotation3D, Transform3D, EAA, Quaternion, Q, VelocityScrew6D, Wrench6D, InertiaMatrix, Jacobian}`（`RobWork/src/rw/math/`，库目标 `sdurw_math`） | core **直接使用、不包装**（NFR-MNT-04；§4.6 论证） |
 | 异常 | RobWork 惯例使用异常（`rw::common::Exception`） | core 使用自有异常类型 `CoreError`（§4.10），并在可恢复查询路径提供 `try*` 非抛出变体 |
 
@@ -173,6 +173,7 @@ core 由 9 个公共头模块＋1 个 README 保留位＋1 个编译实现组成
 ```
 core ──► C++17 标准库
      ──► sdurw_math（L1：rw::math；仅 Compare.hpp 的 Q 重载与文档化约定需要）
+     ──► Boost::headers 的私有头目录（仅Identity.cpp的FNV128及Compare.cpp的C4溢出修正；各GAP分别批准，无链接边）
      ──► （无其他：零 Qt〔R-3〕、零 industrialrobot 单元、零 Eigen 直接包含）
 ```
 
@@ -1043,3 +1044,11 @@ core产品库与公共头零变化。本轮集成65通过、独立63通过，均
 ## WP-13-T30 / GF-A 单位字典增量（2026-10-21）
 
 经所有者批准，仅在Units.cpp注册表表尾增加mm/s、mm/s^2（对应LinearVelocity/LinearAcceleration，SI因子0.001）、deg/s、deg/s^2（对应AngularVelocity/AngularAcceleration，SI因子π/180）。原17项顺序和符号保留；不增加量纲，不改变持久化或UnitToken公共形状。建模显示单位统一复用core::Quantity/convert，插件不重复换算。UnitsTest.ModelingDerivativeDisplayUnits_UX05_T30验证四项查找、量纲和真实换算；红绿及全套回归按本批报告真实结论登记，不以设计注册替代执行通过。
+
+### REUSE-T15：FNV128 有界适配（2026-10-23）
+
+按所有者批准 GAP-CORE-FNV-01 候选 A，删除 Identity.cpp 内 add/addShifted/mulHi64/addMulSmall 自持算术，固定 FNV-1a128 协议委托现有 vcpkg Boost uint128_t。只修正 std::hash 分桶值；六类 ID、ContentVersion/ContentIdentity 的规范文本、字节、SHA-256 与公共签名不变。既有消费者为进程内容器/相等查找，序列化仍用规范身份；不保证历史错误 hash 数值兼容。独验及全局准入尚未完成，证据见 traceability/reuse/REUSE-T15/README.md。
+
+### REUSE-T21：C4同时溢出有界修正（R3获批范围）
+
+仍按§4.5非对称逐元素C4，阈值/C7、公开签名与noexcept不变。仅有限合法tolerance且diff/limit同时溢出时，将binary64精确乘积委托既有Boost固定128位，再以固定4224位进行差/绝对值/加法/比较；不再以Inf<=Inf作为结论。正常路径保留原浮点舍入，非法聚合tolerance沿原行为，vector/Q仍委托唯一标量入口。没有新比较平台、模型缓存或自写补偿循环。来源、位宽与异常边界、生产数值/性能及待独验状态见[REUSE-T21原记录](../traceability/reuse/REUSE-T21/README.md)。性能批准与独验分别登记，不因实施标记关闭F-966。

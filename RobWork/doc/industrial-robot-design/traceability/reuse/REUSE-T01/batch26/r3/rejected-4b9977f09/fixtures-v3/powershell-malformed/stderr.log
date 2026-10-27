@@ -1,0 +1,23 @@
+ConvertFrom-Json : Invalid object passed in, ':' or '}' expected. (273): {
+  "schemaVersion": "ird-findings/1",
+  "note": "RuleA",
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "原始α",
+      "when": "2026-10-23T01:02:03Z"
+    },
+    {
+      "id": "F-002",
+      "title": "对方新增",
+      "when": "2026-10-23T01:02:03Z"
+    }
+  ], BROKEN
+}
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r2-acceptance-20261023\repo\RobWork\scripts\industrialrobot\merge-fi
+ndings-union.ps1:122 char:68
++ ... (($theirsLines -join "`n") -replace "^\uFEFF", "") | ConvertFrom-Json
++                                                          ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [ConvertFrom-Json], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand
+ 

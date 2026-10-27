@@ -1,0 +1,103 @@
+diff --git a/RobWork/doc/industrial-robot-design/reuse/audit-contract.md b/RobWork/doc/industrial-robot-design/reuse/audit-contract.md
+index b5acd5453..47e1aabd2 100644
+--- a/RobWork/doc/industrial-robot-design/reuse/audit-contract.md
++++ b/RobWork/doc/industrial-robot-design/reuse/audit-contract.md
+@@ -107,6 +107,8 @@
+ 
+ `-Head` 冻结校验数据；验收还须使用该 SHA 的脚本执行，报告记录 validator/helper/driver 摘要。CI 的 PS7/PS5.1 自测使用独立输出目录，避免互相覆盖。未执行的远程 CI/保护设置或产品数值测试须明确保留为未执行。
+ 
++REUSE-T01 工具审计补正：catalog 的 targetFile 除上游 src 子目录外，还允许精确的 `RobWork/RobWork/gtest/CMakeLists.txt` 与 `RobWork/RobWorkSim/gtest/CMakeLists.txt`，用于登记既有测试入口；仍要求真实文件、目标和摘要，不放开任意测试子目录。隔离自测同步检出这两个 gtest 根，避免夹具漏文件误报。该允许范围不授予产品链接带 main/全局初始化的测试入口的权限，是否适用须逐消费目标审查。
++
+ ## 8. 控制复杂度与收口
+ 
+ 能直接调用就不加包装；薄适配只承担实际需要的类型/单位/坐标转换、生命周期、错误翻译与业务编排。不得建立覆盖全部 RobWork 的 facade、第二模型层、通用 backend 注册框架或每个数学运算一个接口/DTO。公共辅助只因真实共享需求提取，不能越过 owner/六类端口。
+diff --git a/RobWork/scripts/industrialrobot/test-reuse-governance.ps1 b/RobWork/scripts/industrialrobot/test-reuse-governance.ps1
+index f35bebb6c..598fffedb 100644
+--- a/RobWork/scripts/industrialrobot/test-reuse-governance.ps1
++++ b/RobWork/scripts/industrialrobot/test-reuse-governance.ps1
+@@ -15,7 +15,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
+ $reuse = $design+'reuse/'
+ $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
+ $script:results = @(); $script:restore = @{}
+-$driverFailure = ''; $expectedTests = 140
++$driverFailure = ''; $expectedTests = 142
+ $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
+ $copiedValidatorSha256='';$copiedHelperSha256=''
+ # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
+@@ -56,6 +56,14 @@ function MathMatrix {
+     return [pscustomobject]@{schemaVersion='ird-reuse-functions/1';unit='runtime';functions=@($row)}
+ }
+ function PutMath($m) { PutJson ($reuse+'functions/runtime.json') $m }
++function IsolateFinalClosureMatrices {
++    # 这两项专测“新增文件缺独立关闭记录”，不能被真实审计中的 pending 抢先截断。
++    # 仅清空本 Case 的隔离副本；PutJson 保留原字节并在 finally 恢复。
++    # 01-clean 与 22-final-debt-rejected 仍使用完整真实矩阵，不豁免生产债务。
++    foreach ($file in Get-ChildItem -LiteralPath (Join-Path $sandbox ($reuse+'functions')) -Filter '*.json' -File) {
++        $path=$reuse+'functions/'+$file.Name;$m=GetJson $path;$m.functions=@();PutJson $path $m
++    }
++}
+ function RestrictedAuditMatrix {
+     # 使用真实未改动的 owner 编译器记录待审事实，不能要求先伪造授权才能登记债务。
+     $m=MathMatrix;$r=$m.functions[0];$path=$product+'runtime/src/WorkCellCompiler.cpp'
+@@ -195,7 +203,8 @@ try {
+     & git -C $sandbox config core.autocrlf true
+     & git -C $sandbox config core.safecrlf false
+     & git -C $sandbox sparse-checkout init --cone
+-    & git -C $sandbox sparse-checkout set 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' $product ($design+'reuse') ($design+'tasks') ($design+'traceability/acceptance')
++    # 上游测试入口也是复用对象；精确检出两套既有 gtest 根，避免隔离夹具漏文件而误报合法目标。
++    & git -C $sandbox sparse-checkout set 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' 'RobWork/RobWork/gtest' 'RobWork/RobWorkSim/gtest' $product ($design+'reuse') ($design+'tasks') ($design+'traceability/acceptance')
+     & git -C $sandbox checkout --quiet --detach HEAD
+     if ($LASTEXITCODE) { throw 'fixture checkout failed' }
+     Copy-Item -LiteralPath $validatorSource -Destination $validator
+@@ -247,6 +256,24 @@ try {
+     Case '28-arbitrary-task-ready' 'REUSE-TASK' { PutJson ($design+'tasks/OTHER-T99.json') ([pscustomobject]@{taskId='OTHER-T99';status='ready'}) }
+     Case '29-planned-not-executable' 'REUSE-TASK-STATE' { $j=GetJson ($design+'tasks/REUSE-T01.json');$j.status='planned';PutJson ($design+'tasks/REUSE-T01.json') $j } @('-TaskFile',($design+'tasks/REUSE-T01.json'))
+     Case '30-forged-build-target' 'REUSE-UPSTREAM-TARGET' { $j=GetJson ($reuse+'catalog.json'); $j.capabilities[0].upstream[0].target='nonexistent'; PutJson ($reuse+'catalog.json') $j }
++    # 上游已有测试入口也是可复用资产；仅放开真实gtest根CMake，不扩展到任意目录。
++    Case 'upstream-gtest-build-target' 'PASS' {
++        $j=GetJson ($reuse+'catalog.json');$u=$j.capabilities[0].upstream[0]
++        $u.path='RobWork/RobWork/gtest/test-main.cpp';$u.symbols=@('main')
++        $u.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $u.path)))
++        $u.target='sdurw-gtest-main';$u.targetFile='RobWork/RobWork/gtest/CMakeLists.txt'
++        $u.targetSha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $u.targetFile)))
++        # v2 同时绑定能力的目标集合；替换候选来源后同步派生字段，避免正例自身不一致。
++        $j.capabilities[0].build.targets=@($j.capabilities[0].upstream | ForEach-Object { $_.target } | Sort-Object -Unique)
++        PutJson ($reuse+'catalog.json') $j
++    }
++    Case 'upstream-arbitrary-test-build-path-rejected' 'REUSE-UPSTREAM-TARGET' {
++        $j=GetJson ($reuse+'catalog.json');$u=$j.capabilities[0].upstream[0]
++        $u.target='sdurw-gtest-main';$u.targetFile='RobWork/RobWork/gtest/fake/CMakeLists.txt'
++        Put $u.targetFile 'add_library(sdurw-gtest-main STATIC fake.cpp)'
++        $u.targetSha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $u.targetFile)))
++        PutJson ($reuse+'catalog.json') $j
++    }
+     # 首轮验收真实发现.c绕过；每种代码入口均须被同一门禁拒绝，无目录豁免。
+     foreach ($suffix in @('c','ipp','inl','tpp','mjs','ps1','py','html','ts','cu','inc','opaque')) {
+         $caseSuffix = $suffix
+@@ -361,10 +388,10 @@ try {
+         $txt=[IO.File]::ReadAllText((Join-Path $sandbox $g.build.path))+"`n# add_library(sdurws_ird_kinematics_fake STATIC src/Fk.cpp)`n"
+         Put $g.build.path $txt;$g.build.sha256=Hash $txt;$p.grants=@($g);PutJson ($reuse+'permissions.json') $p
+     }
+-    Case 'closure-new-file-no-independent-record' 'REUSE-MIGRATION : new/current file lacks independent closure' { FunctionalChange 'void probe(){}';ProbeMatrix 'business-specific' 'closed' } @('-RequireMigrationComplete')
++    Case 'closure-new-file-no-independent-record' 'REUSE-MIGRATION : new/current file lacks independent closure' { IsolateFinalClosureMatrices;FunctionalChange 'void probe(){}';ProbeMatrix 'business-specific' 'closed' } @('-RequireMigrationComplete')
+     Case 'closure-baseline-cannot-use-absent' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].baselineBlob='absent';PutJson ($reuse+'closures.json') $c }
+     Case 'closure-new-file-cannot-use-blob' 'REUSE-CLOSURE' { [void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files[1].baselineBlob=$c.files[0].baselineBlob;PutJson ($reuse+'closures.json') $c }
+-    Case 'closure-new-file-omitted-final' 'REUSE-MIGRATION : new/current file lacks independent closure' { [void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files=@($c.files[0]);PutJson ($reuse+'closures.json') $c } @('-RequireMigrationComplete')
++    Case 'closure-new-file-omitted-final' 'REUSE-MIGRATION : new/current file lacks independent closure' { IsolateFinalClosureMatrices;[void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files=@($c.files[0]);PutJson ($reuse+'closures.json') $c } @('-RequireMigrationComplete')
+     Case 'closure-mutable-reference-rejected' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].migrationCommit='HEAD';PutJson ($reuse+'closures.json') $c }
+     Case 'closure-record-path-rejected' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].acceptance.path=$reuse+'fixture-production.json';PutJson ($reuse+'closures.json') $c }
+     Case 'ad-real-qt-item-positive' 'PASS' {
+diff --git a/RobWork/scripts/industrialrobot/validate-reuse.ps1 b/RobWork/scripts/industrialrobot/validate-reuse.ps1
+index 9b413b0ad..60a7bf523 100644
+--- a/RobWork/scripts/industrialrobot/validate-reuse.ps1
++++ b/RobWork/scripts/industrialrobot/validate-reuse.ps1
+@@ -101,7 +101,8 @@ try {
+             $txt = ReadText $u.path
+             if ((Digest $txt) -ne $u.sha256) { Fail 'UPSTREAM-HASH' $u.path }
+             foreach ($s in $u.symbols) { if (-not $txt.Contains("$s")) { Fail 'UPSTREAM-SYMBOL' "$($u.path): $s" } }
+-            if ("$($u.targetFile)" -notmatch '^RobWork/(RobWork|RobWorkSim)/src/.+/CMakeLists\.txt$') { Fail 'UPSTREAM-TARGET' "$($c.id): target evidence required" }
++            # 测试入口/夹具亦须优先复用；仅允许两上游既有gtest根目标登记，仍拒绝任意路径。
++            if ("$($u.targetFile)" -notmatch '^RobWork/(RobWork|RobWorkSim)/(src/.+|gtest)/CMakeLists\.txt$') { Fail 'UPSTREAM-TARGET' "$($c.id): target evidence required" }
+             $targetText = ReadText $u.targetFile
+             if ((Digest $targetText) -ne $u.targetSha256 -or -not $targetText.Contains("$($u.target)")) { Fail 'UPSTREAM-TARGET' "$($u.target): build registration missing/stale" }
+         }

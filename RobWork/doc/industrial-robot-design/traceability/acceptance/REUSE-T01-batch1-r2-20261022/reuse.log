@@ -1,0 +1,3 @@
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted
+reuse supplement: schema/permission/function evidence checked; functions=24 closedFiles=0 (semantic review required)
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)

@@ -1,0 +1,7 @@
+== GOV-T22 acceptance #1 evidence: GOV-T21-era fixtures preserved ==
+r2(20261022) junit cases: 135
+r1(20261024) ps7 cases: 136  ps51 cases: 136
+r2 fixtures missing from current 136: 0 -> 
+fixtures added vs r2: closure-bom-log-positive
+ps7 set == ps51 set: True
+governance fixture groups present: ad-* permission, function-*, production-*/positive-evidence, stage admission (21/ad-stage-*), freshness (stale), closure-*

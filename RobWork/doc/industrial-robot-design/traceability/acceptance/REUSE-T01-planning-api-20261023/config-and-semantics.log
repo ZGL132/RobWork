@@ -1,0 +1,187 @@
+210-
+211-                The distance between adjacent element is measured by \b metric.
+212-        */
+213-        template< class It >
+214:        static double pathLength (It begin, It end,
+215-                                  const rw::math::Metric< typename It::value_type >& metric)
+216-        {
+217-            // If the sequence is empty:
+218-            if (begin == end)
+219-                return 0;
+220-
+221-            It p = begin;
+222-            It q = p;
+223-            ++q;
+224-
+225-            double result = 0;
+226-            for (; q != end; ++p, ++q)
+227-                result += metric.distance (*p, *q);
+228-            return result;
+229-        }
+230-
+231-      private:
+95-    int _maxCnt;
+96-};
+97-
+98:class BoundsSampler : public QSampler
+99-{
+100-  public:
+101:    BoundsSampler (const Device::QBox& bounds) : _bounds (bounds) {}
+102-
+103-  private:
+104-    Q doSample () { return Math::ranQ (_bounds.first, _bounds.second); }
+105-
+106-  private:
+107-    Device::QBox _bounds;
+108-};
+109-
+110-class NormalizedSampler : public QSampler
+111-{
+112-  public:
+113-    NormalizedSampler (QSampler::Ptr sampler, const QNormalizer& normalizer) :
+114-        _sampler (sampler), _normalizer (normalizer)
+--
+210-    return makeFinite (std::vector< Q > (1, q));
+211-}
+212-
+213:QSampler::Ptr QSampler::makeUniform (const Device::QBox& bounds)
+214-{
+215:    return ownedPtr (new BoundsSampler (bounds));
+216-}
+217-
+218:QSampler::Ptr QSampler::makeUniform (const Device& device)
+219-{
+220:    return makeUniform (device.getBounds ());
+221-}
+222-
+223:QSampler::Ptr QSampler::makeUniform (Device::CPtr device)
+224-{
+225:    return makeUniform (device->getBounds ());
+226-}
+227-
+228-QSampler::Ptr QSampler::makeNormalized (QSampler::Ptr sampler, const QNormalizer& normalizer)
+229-{
+230-    return ownedPtr (new NormalizedSampler (sampler, normalizer));
+231-}
+232-
+233-QSampler::Ptr QSampler::make (QIKSampler::Ptr sampler, const rw::math::Transform3D<>& target)
+234-{
+235-    return ownedPtr (new IKSampler (sampler, target));
+236-}
+237-
+238-QSampler::Ptr QSampler::makeConstrained (QSampler::Ptr sampler, QConstraint::CPtr constraint,
+--
+245-{
+246-    const Q center = 0.5 * (bounds.first + bounds.second);
+247-    const Device::QBox dirBounds (bounds.first - center, bounds.second - center);
+248:    return QSampler::makeUniform (dirBounds);
+249-}
+38-    return Random::ran ();
+39-}
+40-
+41:void Math::seed (unsigned seed)
+42-{
+43:    Random::seed (seed);
+44-    srand (seed);
+45-}
+46-
+47:void Math::seed ()
+48-{
+49:    Random::seed ();
+50-    srand ((unsigned int)time (NULL));
+51-}
+52-
+53-rw::math::Q Math::clampQ (const rw::math::Q& q, const rw::math::Q& min, const rw::math::Q& max)
+54-{
+55-    assert (q.size () == min.size ());
+56-    assert (q.size () == max.size ());
+57-
+--
+71-    return Random::ranI (from, to);
+72-}
+73-
+74:Q Math::ranQ (const rw::math::Q& from, const rw::math::Q& to)
+75-{
+76-    RW_ASSERT (from.size () == to.size ());
+77-
+78-    const size_t len = from.size ();
+79-    Q result (len);
+80-    for (size_t i = 0; i < len; i++)
+81-        result (i) = ran (from (i), to (i));
+82-    return result;
+83-}
+84-
+85:Q Math::ranQ (const std::pair< rw::math::Q, rw::math::Q >& bounds)
+86-{
+87-    return ranQ (bounds.first, bounds.second);
+88-}
+89-
+90-/**
+91- * @brief Returns a random direction in \b dim dimensions.
+92- *
+93- * The length of the vector is given by \b length;
+namespace rw { namespace trajectory {
+
+    template< class T > class Path : public std::vector< T >
+    {
+      public:
+        //! @brief smart pointer type to this class
+        typedef rw::core::Ptr< Path > Ptr;
+
+        /**
+         * @brief Default constructor
+         */
+        Path () {}
+
+        /**
+         * @brief Constructor adding \b cnt elements. Objects of type T is added using default
+         * constructor
+         * @param cnt [in] Number of elements in data structure.
+         */
+        Path (size_t cnt) : std::vector< T > (cnt) {}
+
+        /**
+         * @brief Constructor adding \b cnt elements with value \b value.
+         * @param cnt [in] Number of elements in data structure.
+         * @param value [in] Values with which to initialize elements.
+         */
+        Path (size_t cnt, const T& value) : std::vector< T > (cnt, value) {}
+#if !defined(SWIG)
+        /**
+         * @brief Constructs Path and copies elements from \b start to \b end into the path
+         * @param start [in] Start of iterator to input data
+         * @param end [in] End for iterator to input data.
+         */
+        template< typename input_iterator >
+        Path (input_iterator start, input_iterator end) : std::vector< T > (start, end)
+        {}
+#endif
+
+        /**
+         * @brief Construct Path and copies elements from \b v
+         * @param v [in] vector to copy data from
+22:foreach(_cmake_expected_target IN ITEMS RW::sdurw_pathplanning)
+49:# Create imported target RW::sdurw_pathplanning
+50:add_library(RW::sdurw_pathplanning SHARED IMPORTED)
+52:set_target_properties(RW::sdurw_pathplanning PROPERTIES
+53:  INTERFACE_INCLUDE_DIRECTORIES "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include;D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/src"
+57:# Import target "RW::sdurw_pathplanning" for configuration "Debug"
+58:set_property(TARGET RW::sdurw_pathplanning APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+59:set_target_properties(RW::sdurw_pathplanning PROPERTIES
+65:# Import target "RW::sdurw_pathplanning" for configuration "Release"
+66:set_property(TARGET RW::sdurw_pathplanning APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+67:set_target_properties(RW::sdurw_pathplanning PROPERTIES
+70:  IMPORTED_LOCATION_RELEASE "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_pathplanning.dll"
+73:# Import target "RW::sdurw_pathplanning" for configuration "MinSizeRel"
+74:set_property(TARGET RW::sdurw_pathplanning APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
+75:set_target_properties(RW::sdurw_pathplanning PROPERTIES
+81:# Import target "RW::sdurw_pathplanning" for configuration "RelWithDebInfo"
+82:set_property(TARGET RW::sdurw_pathplanning APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
+83:set_target_properties(RW::sdurw_pathplanning PROPERTIES
+156:BUILD_sdurw_softbody:BOOL=OFF
+89:      <AdditionalIncludeDirectories>C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\include;C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+118:      <AdditionalIncludeDirectories>C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\include;C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWork\src;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWork\ext\rwpqp;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkSim\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+121:      <AdditionalIncludeDirectories>C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\include;C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWork\src;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWork\ext\rwpqp;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkSim\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+129:      <AdditionalDependencies>D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Debug\sdurwsim_bullet.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\gtest.lib;ird-testkit\Debug\sdurws_ird_testkit.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Debug\sdurwsim.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_task.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\OpenGL32.Lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\lib\GlU32.Lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_pathplanning.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_invkin.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_trajectory.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_proximity.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_simulation.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_control.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_graphics.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_models.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_sensor.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_geometry.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_kinematics.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_math.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_common.lib;D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Debug\sdurw_core.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_filesystem-vc143-mt-gd-x64-1_92.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_program_options-vc143-mt-gd-x64-1_92.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_serialization-vc143-mt-gd-x64-1_92.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_thread-vc143-mt-gd-x64-1_92.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_date_time-vc143-mt-gd-x64-1_92.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_atomic-vc143-mt-gd-x64-1_92.lib;D:\Windows Kits\10\Lib\10.0.22621.0\um\x64\synchronization.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_chrono-vc143-mt-gd-x64-1_92.lib;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\debug\lib\boost_container-vc143-mt-gd-x64-1_92.lib;ird-core\Debug\sdurws_ird_core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+148:      <AdditionalIncludeDirectories>C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\include;C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+178:      <AdditionalIncludeDirectories>C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\include;C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWork\src;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWork\ext\rwpqp;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkSim\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

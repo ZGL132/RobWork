@@ -1,40 +1,17 @@
 /**
- * @file   CouplingMath.hpp
- * @brief  modeling 单元私有：传动耦合矩阵（MDL-21，R2）的数值数学核——
- *         奇异值计算（单侧 Jacobi/Hestenes SVD）、条件数重算与阈值单点。
+ * @file CouplingMath.hpp
+ * @brief MDL-21 耦合矩阵到 RobWork SVD 的私有薄适配与业务阈值。
  *
- * 设计依据：
- *   - units/modeling.md §8.1（"病态/非常矩阵"行：非方阵、奇异、条件数
- *     >1×10⁸→编辑边界比较型诊断＋应用阻断；"与 runtime InputInvalid 同
- *     口径"）、§4.10 I-MDL-11（R2 下 C 须方阵、可逆、条件数 ≤1×10⁸）
- *   - 需求 MDL-21（M-12：非常矩阵/病态给诊断并阻止，v1.8）
- *   - P-MDL-7（阈值登记）：条件数阈值 1×10⁸ 为 runtime 设计默认（P-RT-7，
- *     units/runtime.md P-RT-7），非附录 D 冻结值；处置约束"modeling 引用
- *     runtime/常量单源（不私设），P-RT-7 冻结时同步"。
+ * 设计依据：units/modeling.md §8.1、I-MDL-11、P-MDL-7；REUSE-T07/H1—H3。
+ * 分解唯一来源为 rw::math::LinearAlgebra::svd（sdurw_math），不保留自写
+ * Jacobi 或备用算法。适配只处理行主序输入、极端有限尺度和返回值容器。
+ * checkCouplingMatrix 仍负责结构/有限性/窗口校验及稳定诊断，不把业务
+ * 阈值移入上游；runtime 的独立迁移由其能力任务负责，禁止跨单元私有头。
  *
- * 背景说明（为什么本单元要有自己的 SVD，以及阈值"单源"的现实落位——
- * 第一读者须知）：耦合矩阵的条件数/可逆性**重算复核**是 I-MDL-11 的建模
- * 侧履行点（runtime DescriptionValidator 在编译期同样重算——"校验器一律
- * 以重算值为准"；两处判定互为防线纵深，建模侧先拦、编译侧兜底）。本头
- * 的数学核与 runtime 的实现互不可见（R-2：跨单元私有头禁止；runtime 的
- * SVD 位于其 src/ 私有实现，未从公共头导出——本单元无法 include），故
- * 按"算法各自实现、阈值语义同源登记"的口径落位：
- *   1) 算法：单侧 Jacobi（Hestenes）——与 runtime 同族算法、同档收敛
- *      纪律（固定扫描序/相对收敛阈/轮数上限），同输入同奇异值（确定性
- *      NFR-COR-02）；良好条件下两实现的 κ 在机器精度内一致，阻断判定
- *      （κ 与阈值的比较）对良态/病态矩阵结论一致。
- *   2) 阈值：1×10⁸ 在本单元内**单点承载**（kCouplingConditionNumberLimit
- *      ——modeling 域内唯一书写点，Parts.cpp 历史字面已收敛于此）；该值
- *      与 runtime P-RT-7 设计默认同值，P-RT-7 冻结（并入附录 D 或改归
- *      EngineeringPolicySet）时本常量随之同步——同步义务登记于单元卡
- *      §14.3 P-MDL-7 行与 §15 增量（DTB §5.4 实现细节登记）。在 runtime
- *      导出公共阈值常量之前，本单元以单一常量点＋行为测试钉扎（病态反例
- *      κ=1×10⁹ 阻断）保证与 runtime 口径一致；本单元域内不出现第二处
- *      阈值字面（ Parts.cpp 既有 1e8 字面已随 WP-13-T18 收敛）。
- *
- * 线程安全：全部纯函数（无共享可变状态）——并发只读可重入（§3.4）。
- * 确定性：固定列对扫描序（p 升序 × q 升序）、固定收敛阈与轮数上限——
- * 同输入逐位同输出（NFR-COR-02）。
+ * 阈值仍为 P-RT-7 设计默认、modeling 域内单点；policy/附录 D 冻结时按
+ * P-MDL-7 同步，不在本次数值来源替换中改变归属或范围。
+ * 全部函数使用调用栈私有值，无共享状态，可重入；固定构建环境内可复现，
+ * 不承诺不同编译器/上游版本间逐位一致。分配异常直接传播，不伪造成功。
  */
 
 #ifndef IRD_MODELING_SRC_COUPLINGMATH_HPP
@@ -43,9 +20,10 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
-#include <functional>
 #include <limits>
 #include <vector>
+
+#include <rw/math/LinearAlgebra.hpp>
 
 namespace sdurws::ird::modeling {
 namespace couplingmath {
@@ -69,44 +47,15 @@ inline constexpr double kCouplingConditionNumberLimit = 1e8;
 /// 默认——若所有者后续将其并入策略集，随 P-RT-7 同批登记）。
 inline constexpr double kCouplingSingularSigmaRatio = 1e-12;
 
-/// 单侧 Jacobi 最大扫描轮数：收敛上界保护（正规小矩阵 2～4 轮内收敛；
-/// 耦合矩阵工程规模为腕部窗口 2～3 阶、上限按机械臂可动关节数个位数阶——
-/// 固定轮数保证确定性终止，即使病态矩阵迭代缓慢也在有限步内给出奇异值）。
-inline constexpr int kCouplingJacobiMaxSweeps = 60;
-
-/// 单侧 Jacobi 相对收敛阈：列对内积 |γ| ≤ 1×10⁻¹⁶×√(αβ) 视为已正交——
-/// 机器精度层（再转只引入噪音，奇异值相对精度因此 ~eps）。
-inline constexpr double kCouplingJacobiOrthogonality = 1e-16;
-
-// =====================================================================
-// 奇异值与条件数（纯函数；确定性）
-// =====================================================================
-
 /**
- * @brief 计算方阵的奇异值降序序列（单侧 Jacobi/Hestenes SVD）。
+ * @brief 经上游 SVD 取得方阵奇异值降序序列，不改变调用方数据。
+ * @param c [in] 行主序 n*n 个元素，量纲与返回奇异值相同；生产入口先拒非有限值。
+ * @param n [in] 方阵阶数；0 或尺寸不符返回空序列。
+ * @return n 个非负奇异值；零矩阵返回全零；无限尺度保留原防御性无穷返回。
+ * @throws std::bad_alloc 工作矩阵或输出分配失败；不吞错，不回退旧算法。
  *
- * 算法（逐步——供 review 对照数值代数教材 Hestenes 1958 形态）：
- *   第 1 步：工作副本按行主序展开（a[i*n+j]＝元素 (i,j)）；
- *   第 2 步：反复扫描全部列对 (p,q)（p<q，外层 p 升序、内层 q 升序——
- *            固定扫描序保证同输入同旋转序列），对每对计算
- *            α=‖a_p‖²、β=‖a_q‖²、γ=a_p·a_q（a_p/a_q 为第 p/q 列向量）；
- *   第 3 步：|γ| 已达机器精度正交（|γ| ≤ ε·√(αβ)）则跳过该对；否则对
- *            两列施加 Jacobi 平面旋转（消去列间内积——ζ=(β−α)/(2γ)、
- *            t=sign(ζ)/(|ζ|+√(1+ζ²))（较小倾角根——数值稳定）、
- *            c=1/√(1+t²)、s=c·t），旋转后 A→A·J（J 为该平面旋转矩阵）；
- *   第 4 步：整轮零旋转＝已收敛，提前退出（确定性路径）；未收敛达轮数
- *            上限同样终止（病态矩阵的奇异值已收敛到判档精度——分界
- *            1×10⁻¹² 相对量级远大于迭代残差）；
- *   第 5 步：奇异值＝正交化后各列的欧氏范数（Hestenes 定理——A 的奇异
- *            值即 A·J 序列极限的列范数），降序排列返回。
- *
- * @param c [in] 方阵元素（行主序；恰 n*n 个——调用方保证，非方阵属
- *            调用方契约违约，本函数不校验维度合法性）
- * @param n [in] 方阵阶数（≥1；0 阶＝无意义输入，返回空序列）
- * @return 奇异值降序序列（σmax 在首；n 个——σi ≥ 0，单位与矩阵元素同
- *         量纲；条件数消费方以 σmax/σmin 比值使用，量纲相消无量纲）
- *
- * 纯函数；线程安全；确定性（NFR-COR-02）。
+ * 缩放只改变量纲尺度，乘回后供原业务计算无量纲条件数；分解、收敛与排序
+ * 的数值能力复用上游，不在产品实现旋转迭代。线程安全，无模型所有权转移。
  */
 inline std::vector<double> couplingSingularValues(const std::vector<double>& c,
                                                   std::size_t n)
@@ -114,7 +63,7 @@ inline std::vector<double> couplingSingularValues(const std::vector<double>& c,
     if (n == 0 || c.size() != n * n) {
         return {};  // 维度不符＝调用方契约违约——空序列防御（不猜测不伪造）
     }
-    // 先按最大元素缩放工作副本。Jacobi 统计量会平方矩阵元素；不缩放时
+    // 保留既有量纲缩放。分解中的统计量涉及矩阵元素平方；不缩放时
     // 1e-200 级合法耦合系数会平方下溢为 0，1e200 级有限系数会平方上溢为
     // Inf。奇异值整体乘回 scale 不改变条件数和奇异/病态判定。
     double scale = 0.0;
@@ -127,63 +76,25 @@ inline std::vector<double> couplingSingularValues(const std::vector<double>& c,
     if (!std::isfinite(scale)) {
         return std::vector<double>(n, std::numeric_limits<double>::infinity());
     }
-    std::vector<double> a = c;  // 工作副本（原矩阵不被修改——值语义）
-    for (double& value : a) { value /= scale; }
-    for (int sweep = 0; sweep < kCouplingJacobiMaxSweeps; ++sweep) {
-        bool rotated = false;  // 本轮是否发生过旋转（零旋转＝收敛信号）
-        for (std::size_t p = 0; p + 1 < n; ++p) {
-            for (std::size_t q = p + 1; q < n; ++q) {
-                // 列对统计量（α/β＝两列范数平方、γ＝两列内积）。
-                double alpha = 0.0;
-                double beta = 0.0;
-                double gamma = 0.0;
-                for (std::size_t i = 0; i < n; ++i) {
-                    const double ap = a[i * n + p];
-                    const double aq = a[i * n + q];
-                    alpha += ap * ap;
-                    beta += aq * aq;
-                    gamma += ap * aq;
-                }
-                // 零列或已正交（相对判据）→跳过该对（继续其余对——部分
-                // 收敛面；整轮全跳过才触发提前退出）。
-                if (gamma == 0.0) { continue; }
-                const double normProduct = std::sqrt(alpha * beta);
-                if (normProduct == 0.0) { continue; }
-                if (std::fabs(gamma)
-                    <= kCouplingJacobiOrthogonality * normProduct) {
-                    continue;
-                }
-                // Jacobi 平面旋转参数（较小倾角根——|t|≤1 保证数值稳定；
-                // ζ 的符号决定旋转方向）。
-                const double zeta = (beta - alpha) / (2.0 * gamma);
-                const double t =
-                    (zeta >= 0.0 ? 1.0 : -1.0)
-                    / (std::fabs(zeta) + std::sqrt(1.0 + zeta * zeta));
-                const double cs = 1.0 / std::sqrt(1.0 + t * t);
-                const double sn = cs * t;
-                // 列更新（A←A·J——仅两列线性组合，逐行原位写回）。
-                for (std::size_t i = 0; i < n; ++i) {
-                    const double ap = a[i * n + p];
-                    const double aq = a[i * n + q];
-                    a[i * n + p] = cs * ap - sn * aq;
-                    a[i * n + q] = sn * ap + cs * aq;
-                }
-                rotated = true;
-            }
+    // 行主序业务容器转换为上游既有 Eigen 参数；除以 scale 避免极端有限
+    // 输入的平方上溢/下溢。模型、单位与诊断均留在调用方既有边界。
+    const auto dimension = static_cast<Eigen::Index>(n);
+    Eigen::MatrixXd matrix(dimension, dimension);
+    for (std::size_t row = 0; row < n; ++row) {
+        for (std::size_t col = 0; col < n; ++col) {
+            matrix(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+                = c[row * n + col] / scale;
         }
-        if (!rotated) { break; }  // 整轮零旋转＝已收敛（确定性提前退出）
     }
-    // 奇异值＝各列欧氏范数；降序排列（σmax 在首——条件数取首尾比）。
-    std::vector<double> singularValues(n, 0.0);
-    for (std::size_t q = 0; q < n; ++q) {
-        double norm2 = 0.0;
-        for (std::size_t i = 0; i < n; ++i) {
-            norm2 += a[i * n + q] * a[i * n + q];
-        }
-        singularValues[q] = scale * std::sqrt(norm2);
+    Eigen::MatrixXd u, v;
+    Eigen::VectorXd sigma;
+    rw::math::LinearAlgebra::svd(matrix, u, sigma, v);
+
+    // 只消费奇异值，U/V 由上游接口要求提供，不产生新的分解/求逆入口。
+    std::vector<double> singularValues(n);
+    for (std::size_t i = 0; i < n; ++i) {
+        singularValues[i] = sigma[static_cast<Eigen::Index>(i)] * scale;
     }
-    std::sort(singularValues.begin(), singularValues.end(),
-              std::greater<double>());
     return singularValues;
 }
 

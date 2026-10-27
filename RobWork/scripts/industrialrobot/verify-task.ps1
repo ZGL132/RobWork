@@ -15,12 +15,15 @@ param(
   [string]$RepoRoot = "",
   [switch]$DryRun
 )
+# 前置校验失败必须终止执行器，不能继续执行契约中的业务命令。
+$ErrorActionPreference = 'Stop'
 if (-not (Test-Path $TaskFile)) { throw "task file not found: $TaskFile" }
 
 # 仓库根解析（与 validate-task.ps1 同一套逻辑，保持两个脚本行为一致）
 $scriptDir = $PSScriptRoot
 if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
 if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir "..\..\..")).Path }
+$RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
 if (-not (Test-Path (Join-Path $RepoRoot "RobWork/doc/industrial-robot-design"))) {
   throw "repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定仓库根）"
 }
@@ -29,9 +32,12 @@ Write-Output "verify-task: RepoRoot=$RepoRoot"
 & (Join-Path $scriptDir "validate-task.ps1") -TaskFile $TaskFile -RepoRoot $RepoRoot
 
 $t = Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json
-# 新执行（包括旧契约重新执行）必须补齐复用证据与阶段门，DryRun 也不能绕过。
-& (Join-Path $scriptDir 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
-if ($LASTEXITCODE -ne 0) { throw 'H1-H6 execution blocked: compile reuse contract first' }
+# validate-task 已对这些契约执行复用门禁；同次前置只查一次。
+# 旧契约/尚未编译的占位仍须补查，DryRun 同样不能绕过 H1—H6。
+if (-not ($t.reuse -or ($t.taskId -like 'REUSE-*' -and $t.status -in @('ready','done')))) {
+  & (Join-Path $scriptDir 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+  if ($LASTEXITCODE -ne 0) { throw 'H1-H6 execution blocked: compile reuse contract first' }
+}
 if ($DryRun) {
   foreach ($cmd in @($t.verify)) { Write-Output "[dryrun] $cmd" }
   Write-Output "verify-task: DRYRUN PASS $($t.taskId)"
@@ -46,8 +52,24 @@ if ($DryRun) {
 # 通过语义；人工核对结论归验收记录）。
 $manualEntries = 0
 $machineEntries = 0
+$reusedPreflight = 0
+# 只识别原封不动的当前任务前置命令，不解析/改写任意 PowerShell。
+# 仅在第一个其他条目前复用；此前若执行过命令，输入可能已变，必须重新检查。
+# 更强参数（Head/RequireMigrationComplete）、其他任务、命令后缀均照常执行。
+$relativeTask = (Resolve-Path -LiteralPath $TaskFile).Path.Substring($RepoRoot.TrimEnd('\','/').Length+1).Replace('\','/')
+$samePreflight = @()
+$currentHostName = [IO.Path]::GetFileNameWithoutExtension((Get-Process -Id $PID).Path)
+if ($relativeTask -match '^[a-zA-Z0-9_./-]+$' -and $currentHostName -in @('pwsh','powershell')) {
+  # 不把其他 PowerShell 版本的兼容性检查或可能加载 profile 的命令当成同一输入。
+  $samePreflight = @("$currentHostName -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile $relativeTask")
+}
 foreach ($cmd in @($t.verify)) {
   Write-Output "> $cmd"
+  if ($machineEntries -eq 0 -and $manualEntries -eq 0 -and $samePreflight -ccontains "$cmd".Trim()) {
+    Write-Output '[reuse-preflight] 引用本次前置实际通过结果，未重复执行'
+    $reusedPreflight++
+    continue
+  }
   Push-Location $RepoRoot
   try {
     Invoke-Expression $cmd -ErrorAction Stop
@@ -66,4 +88,4 @@ foreach ($cmd in @($t.verify)) {
   }
   finally { Pop-Location }
 }
-Write-Output ("verify-task: PASS {0}（机器可执行 {1} 条全部通过；散文人工核对 {2} 条）" -f $t.taskId, $machineEntries, $manualEntries)
+Write-Output ("verify-task: PASS {0}（实际执行 {1} 条通过；散文人工核对 {2} 条；reusedPreflight={3}）" -f $t.taskId, $machineEntries, $manualEntries, $reusedPreflight)

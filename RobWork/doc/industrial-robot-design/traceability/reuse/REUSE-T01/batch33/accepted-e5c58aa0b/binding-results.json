@@ -1,0 +1,1746 @@
+{
+  "head": "e5c58aa0b6b3958b90e3a22ef42c36e4c9a4dc7e",
+  "base": "88cae2102d16a338c5f0a7725d080f1c0d802f95",
+  "newRows": [
+    "diagnostics.audit-b33.ParamSchema.isValidParamName",
+    "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+    "diagnostics.audit-b33.EntryDetail.codeLower",
+    "diagnostics.audit-b33.EntryDetail.taskScopeId",
+    "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+    "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+    "diagnostics.audit-b33.Factory.create"
+  ],
+  "refreshedRows": "diagnostics.StableCodeRegistry.registerCode",
+  "allRowsPending": true,
+  "bindingCount": 256,
+  "bindingFailures": [],
+  "bindings": [
+    {
+      "kind": "section",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "start": 28,
+      "end": 51,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::detail::(anonymous namespace)::isValidParamName",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.isValidParamName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    },
+    {
+      "kind": "section",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "start": 55,
+      "end": 137,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::detail::tryParseParamSchema",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.ParamSchema.tryParseParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    },
+    {
+      "kind": "section",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "start": 33,
+      "end": 42,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::detail::codeLower",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.codeLower",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    },
+    {
+      "kind": "section",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "start": 46,
+      "end": 58,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::detail::taskScopeId",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.taskScopeId",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    },
+    {
+      "kind": "section",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "start": 69,
+      "end": 86,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::detail::deriveDedupKey",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.EntryDetail.deriveDedupKey",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    },
+    {
+      "kind": "section",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "start": 150,
+      "end": 158,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::(anonymous namespace)::validateParamSchema",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.DiagCodes.validateParamSchema",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    },
+    {
+      "kind": "section",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "start": 84,
+      "end": 216,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::DiagnosticsFactory::create",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.audit-b33.Factory.create",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    },
+    {
+      "kind": "section",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "start": 604,
+      "end": 720,
+      "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::registerCode",
+      "symbolFound": true,
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Catalog.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/DiagnosticSchemaSuitabilityTest.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/search.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/dependency.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/verification.json",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/gtest.xml",
+      "match": true
+    },
+    {
+      "kind": "whole",
+      "row": "diagnostics.StableCodeRegistry.registerCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/run/ird-test-report.json",
+      "match": true
+    }
+  ],
+  "manifestCount": 21,
+  "manifestFailures": [],
+  "manifest": [
+    {
+      "path": "b33-build.exit.txt",
+      "bytes": 3,
+      "expectedBytes": 3,
+      "match": true
+    },
+    {
+      "path": "b33-build.log",
+      "bytes": 2101,
+      "expectedBytes": 2101,
+      "match": true
+    },
+    {
+      "path": "b33-configure.exit.txt",
+      "bytes": 3,
+      "expectedBytes": 3,
+      "match": true
+    },
+    {
+      "path": "b33-configure.log",
+      "bytes": 2582,
+      "expectedBytes": 2582,
+      "match": true
+    },
+    {
+      "path": "b33-docs.exit.txt",
+      "bytes": 3,
+      "expectedBytes": 3,
+      "match": true
+    },
+    {
+      "path": "b33-docs.log",
+      "bytes": 2725,
+      "expectedBytes": 2725,
+      "match": true
+    },
+    {
+      "path": "b33-reuse.exit.txt",
+      "bytes": 3,
+      "expectedBytes": 3,
+      "match": true
+    },
+    {
+      "path": "b33-reuse.log",
+      "bytes": 2487,
+      "expectedBytes": 2487,
+      "match": true
+    },
+    {
+      "path": "b33-task.exit.txt",
+      "bytes": 3,
+      "expectedBytes": 3,
+      "match": true
+    },
+    {
+      "path": "b33-task.log",
+      "bytes": 2518,
+      "expectedBytes": 2518,
+      "match": true
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 1470,
+      "expectedBytes": 1470,
+      "match": true
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1574,
+      "expectedBytes": 1574,
+      "match": true
+    },
+    {
+      "path": "dependency.json",
+      "bytes": 1222,
+      "expectedBytes": 1222,
+      "match": true
+    },
+    {
+      "path": "DiagnosticSchemaSuitabilityTest.cpp",
+      "bytes": 4581,
+      "expectedBytes": 4581,
+      "match": true
+    },
+    {
+      "path": "findings-prefix.json",
+      "bytes": 144,
+      "expectedBytes": 144,
+      "match": true
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 3,
+      "expectedBytes": 3,
+      "match": true
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 20370,
+      "expectedBytes": 20370,
+      "match": true
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 33653,
+      "expectedBytes": 33653,
+      "match": true
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 10007,
+      "expectedBytes": 10007,
+      "match": true
+    },
+    {
+      "path": "search.json",
+      "bytes": 40814,
+      "expectedBytes": 40814,
+      "match": true
+    },
+    {
+      "path": "verification.json",
+      "bytes": 922,
+      "expectedBytes": 922,
+      "match": true
+    }
+  ],
+  "manifestGitBlobRawSha256": "7837bd073c6cf717b22b58649cfe2925f3b6ba07be22aaa501754042fcef5091",
+  "externalDependencyChecks": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/version.hpp",
+      "match": true
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser.hpp",
+      "match": true
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser/detail/read.hpp",
+      "match": true
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser/detail/parser.hpp",
+      "match": true
+    }
+  ],
+  "findingsPrefix": {
+    "bytes": 1289777,
+    "expected": "79c9b3d97d662a12de4f30507dee78f7a8dbfce78abe296ea651201116779fdf",
+    "base": "79c9b3d97d662a12de4f30507dee78f7a8dbfce78abe296ea651201116779fdf",
+    "head": "79c9b3d97d662a12de4f30507dee78f7a8dbfce78abe296ea651201116779fdf",
+    "match": true
+  },
+  "scopeCount": 26,
+  "protectedChanges": [],
+  "catalogChanged": false
+}

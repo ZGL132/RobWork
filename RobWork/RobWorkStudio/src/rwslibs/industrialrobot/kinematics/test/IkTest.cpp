@@ -29,8 +29,16 @@
 #include <sdurws/ird/kinematics/SolutionSet.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
+// REUSE-T51 上游直接对照用例（IRD_HAVE_RUNTIME_COMPILE 门控块内）所需
+// 上游头——声明式包含，冒烟树无链接消费（未用符号不产生链接需求）。
+#include <rw/invkin/JacobianIKSolver.hpp>  // 上游直接对照（REUSE-T51 同模型同初值）
+#include <rw/kinematics/State.hpp>
+#include <rw/math/Q.hpp>
+#include <rw/models/SerialDevice.hpp>
+
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <atomic>
 #include <cmath>
 #include <functional>
@@ -84,6 +92,12 @@ std::vector<std::vector<double>> twoLinkClosedForm(double L1, double L2, double 
         out.push_back({q1, q2});
     }
     return out;
+}
+
+/// 跨周最短角差（rad，[−π,π]）——闭式 oracle 配对用（独立于产品实现）。
+double wrapPi(double a)
+{
+    return std::atan2(std::sin(a), std::cos(a));
 }
 
 /// 平面三连杆模型（V-04 同位姿异构型的几何载体——平面 3R 臂的全位姿
@@ -231,12 +245,10 @@ TEST(KinIk, ConvergesOnReachableTarget_WP15T04_ACC2)
  * @brief 中途失效视图替身（F-746③ 故障注入载体——"注入视图面在求解
  *        期间失效"的设施事实模拟）。
  *
- * 前 4 次 model() 返回完整二连杆模型（solve 的 FK 前置读取：请求校验/
- * TCP 解析/解析界限计算两读），第 5 次起（＝迭代内 FK 首评）返回三连杆
- * 降级模型——FK 的自由度核对（device DOF=3 ≠ q.size()=2）失败
- * （IllegalQDimension），即"入口校验覆盖不到、FK 复算才发现"的中途失效
- * 面。调用计数漂移时替身切换点错位——FK 拿到同侧模型则无设施失败、
- * 用例红（布局漂移显式失败，钉子不空转）。
+ * model() 计数切换（前 4 次好模型、其后降级三连杆）覆盖 FK 复算面的设
+ * 施失效注入；runtimeModelView() 不覆盖（T17 缺省体返回空）——REUSE-T51
+ * 起完整位姿普通模式的上游装配（锚消费）在同一替身上先触发"无编译产
+ * 物锚"设施失败（同值面，见下方用例）。
  */
 class MidSolveDegradedView final : public kin::IKinRuntimeView {
 public:
@@ -269,7 +281,10 @@ TEST(KinIk, FkFacilityFailureYieldsValueFormNotThrow_F746_3)
 
     // 载体：好模型＝二连杆（DOF 2），降级模型＝三连杆（DOF 3）——目标取
     // 可达算例位姿（保证不触发结局 5 的解析界限分支——本钉只验证设施
-    // 失败面）；初值 1 个（失败发生在首个初值的 FK 首评）。
+    // 失败面）；初值 1 个（失败发生在首个初值处理前）。★ REUSE-T51：
+    // 完整位姿普通模式迭代核迁移上游 JacobianIKSolver 后，本替身（无锚
+    // 覆盖）在初值循环前的上游装配即失败——设施失败值面收缩点前移
+    // （装配段 InitialFkEvaluation），值面语义不变（见下方断言）。
     MidSolveDegradedView view(twoLinkModel(), threeLinkModel());
     TestView goodView(twoLinkModel());
     const Mat4 golden = referenceFk(twoLinkModel(), {0.3, -0.5}).tcp;
@@ -279,8 +294,9 @@ TEST(KinIk, FkFacilityFailureYieldsValueFormNotThrow_F746_3)
     // 本钉核心断言：solve 不抛（修复前三处 std::logic_error 的回归面）。
     const IkOutcome out = IkSolver().solve(req);
 
-    // 失败形态齐备：facilityFailure 非空、阶段＝初值起点 FK 首评、细节
-    // 携带底层 FK 错误原文（不吞错——NFR-COR-03）。
+    // 失败形态齐备：facilityFailure 非空、阶段＝初值起点 FK 首评（上游
+    // 装配段同阶段语义——装配不通则任何初值连起点位姿都不可评）、细节
+    // 携带底层设施错误原文（不吞错——NFR-COR-03）。
     ASSERT_TRUE(out.facilityFailure.has_value());
     EXPECT_FALSE(out.cancelled);
     EXPECT_EQ(out.facilityFailure->stage,
@@ -337,12 +353,15 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
 
     const rt::CanonicalModel model = coaxialChainModel();
     TestView view(model);
+#if IRD_HAVE_RUNTIME_COMPILE  // REUSE-T18：FK 复验经真实编译产物（冒烟树不编译）
     const kin::FkEvaluator fk;
+#endif
     kin::TcpRef tcp;
     tcp.toolObject = model.tools().front().objectId;
     tcp.tcpKey = model.tools().front().localName;
     constexpr double kPi = 3.14159265358979323846;
 
+#if IRD_HAVE_RUNTIME_COMPILE
     // 已知解解析验证（反例数据的前提 sanity）：q*=(π/2,0,…,0) 的 TCP
     // 位置＝(0,1,0)（六轴同轴全 z、TCP 偏置 x+1 m——Rz(π/2)·(1,0,0)）。
     {
@@ -352,6 +371,7 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
         expectGoldenNear(m.get().tcpInBase.P()[1], 1.0, "已知解 TCP y");
         expectGoldenNear(m.get().tcpInBase.P()[2], 0.0, "已知解 TCP z");
     }
+#endif
 
     // 公共请求面（审查反例参数：目标 (0,1,0)、零初值、迭代上限 256）。
     auto baseRequest = [&](kin::IkTaskSpace space) {
@@ -397,6 +417,7 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
         EXPECT_GT(s.orientationResidual, 1e-6)
             << "姿态残差如实记录且量级大——证明姿态确未被约束（若参与"
                "判据则上收紧敛必失败）";
+#if IRD_HAVE_RUNTIME_COMPILE
         // 独立 FK 复验（审查正面证据法——解 q 经 FkEvaluator 独立复算，
         // TCP 位置 ≈ (0,1,0)）。
         const auto m = fk.evaluate(view, tcp, s.q);
@@ -404,6 +425,7 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
         EXPECT_NEAR(m.get().tcpInBase.P()[0], 0.0, 1e-6);
         EXPECT_NEAR(m.get().tcpInBase.P()[1], 1.0, 1e-6);
         EXPECT_NEAR(m.get().tcpInBase.P()[2], 0.0, 1e-6);
+#endif
         // 硬过滤照常工作（②限位用真实区间——解在 [-π,π] 内）。
         for (std::size_t i = 0; i < s.q.size(); ++i) {
             EXPECT_GE(s.q[i], -kPi);
@@ -1621,3 +1643,263 @@ TEST(KinIk, GimbalPlus90PitchConverges_WP14T12)
         EXPECT_LE(std::fabs(wrap(s.q[2] - qStar[2])), 1e-3);
     }
 }
+
+// =====================================================================
+// REUSE-T51——完整位姿普通模式上游 JacobianIKSolver 迁移用例组
+// （migration §13.3 WP-04：不可达/限位/确定性语义＋独立残差 oracle＋
+// 上游直接对照；迭代核换核后的服务面回归钉）
+// =====================================================================
+
+/**
+ * @brief 可达目标收敛＋独立闭式 oracle（正解回代复核）：上游引擎收敛解
+ *        必须落在平面二连杆闭式逆解两分支之一（附录 D 第 9 项独立参考
+ *        ——与产品实现零共享），且产品双容差逐项满足、迭代计数真实
+ *        （非零且 ≤ 预算）。
+ *
+ * 与 V-05 既有用例的分工：V-05 钉结局/统计/标记面（初值近解）；本用例
+ * 钉换核后的数值正确性（初值远离解——迭代核真实工作）与闭式 oracle。
+ */
+TEST(KinIk, FullPoseUpstreamClosedFormOracle_REUSE_T51)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01", "KIN-02"},
+                  std::vector<std::string>{});
+    EXPECT_GE(kIkSolverContractVersion, 5U)
+        << "完整位姿换核伴随契约版本升级（CON-04——新旧解集不可假借同一身份）";
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+
+    // 目标＝独立参考 FK 在 q*=(0.3,−0.5) 的输出；初值取分支 1 近旁的
+    // (0.35,−0.45)——上游 Newton 迭代核须真实推进收敛（迭代计数>0），
+    // 且不落在限位边界的越界等价解上（Newton 不识限位——远离解的初值
+    // 可收敛到 mod 2π 越界等价构型，那是限位过滤用例的载体）。
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+    const std::vector<std::vector<double>> branches =
+        twoLinkClosedForm(1.1, 0.7, golden[0][3], golden[1][3]);
+    ASSERT_EQ(branches.size(), 2U);
+
+    IkRequest req = makeRequest(view, transformOf(golden), {{0.35, -0.45}});
+    const IkOutcome out = IkSolver().solve(req);
+
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound);
+    ASSERT_EQ(out.solutionSet.solutions.size(), 1U);
+    const auto& s = out.solutionSet.solutions.front();
+    // 产品双容差逐项满足（阶段①独立 FK 复验收敛判据——上游假成功拦截面）。
+    EXPECT_LE(s.positionResidual, req.positionTolerance);
+    EXPECT_LE(s.orientationResidual, req.orientationTolerance);
+    // 独立闭式 oracle：解落两分支之一（1e-4 档案容差内——闭式参考与
+    // 数值解的容差配对，非逐位断言）。
+    double best = std::numeric_limits<double>::infinity();
+    for (const auto& b : branches) {
+        double worst = 0.0;
+        for (std::size_t i = 0; i < b.size(); ++i) {
+            worst = std::max(worst, std::fabs(wrapPi(s.q[i] - b[i])));
+        }
+        best = std::min(best, worst);
+    }
+    EXPECT_LE(best, 1e-4) << "收敛解不在闭式两分支任一的容差内";
+    // 迭代计数真实：初值远离解→非零；且不超请求预算（不伪造统计——
+    // GAP-IK-01 §1：solveLocal 单步循环逐步实测）。
+    EXPECT_GT(s.iterations, 0U);
+    EXPECT_LE(s.iterations, req.iterationLimit);
+}
+
+/**
+ * @brief 限位语义：上游引擎默认不钳限位/不查限位（JacobianIKSolver 构
+ *        造默认，本适配显式保持）——收敛解越出契约评价区间时由产品硬
+ *        过滤②（§6.1 契约区间直比）如实过滤，结局 3＋JointLimit 过滤
+ *        记录，绝不静默放行越界解。
+ *
+ * 载体：目标＝FK(0.3,−0.5)（两闭式分支 q₁＝0.3/−0.087——几何确定），
+ * 请求区间把 j1 收窄到 [0.35, 2.97]——两分支均被排除，任何收敛解必越
+ * 界（含 mod 2π 越界等价构型）。
+ */
+TEST(KinIk, FullPoseUpstreamLimitViolationFiltered_REUSE_T51)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+    // 闭式 sanity：两分支 q₁ 均不在收窄区间 [0.35, 2.97] 内（几何前提）。
+    for (const auto& b : twoLinkClosedForm(1.1, 0.7, golden[0][3], golden[1][3])) {
+        ASSERT_TRUE(b[0] < 0.35 || b[0] > 2.97)
+            << "载体前提失效：存在区间内 q₁ 分支则本用例不成立";
+    }
+
+    IkRequest req = makeRequest(view, transformOf(golden), {{0.1, 0.1}});
+    req.intervals[0].lower = 0.35;  // 收窄 j1 评价区间（请求输入——过滤②真值源）
+    const IkOutcome out = IkSolver().solve(req);
+
+    // 结局 3：有收敛候选但被限位过滤——必附搜索记录＋逐解过滤记录；
+    // DataInsufficient 素材，不得输出不可行（无 proof）。
+    EXPECT_EQ(out.outcomeKind, IkOutcomeKind::AllCandidatesFiltered);
+    EXPECT_TRUE(out.solutionSet.solutions.empty());
+    ASSERT_TRUE(out.solutionSet.searchRecord.has_value());
+    EXPECT_EQ(out.solutionSet.statistics.convergedCount, 1U);
+    ASSERT_EQ(out.solutionSet.filteredRecords.size(), 1U);
+    EXPECT_EQ(out.solutionSet.filteredRecords.front().reason,
+              SolutionFilterReason::JointLimit);
+    EXPECT_TRUE(out.solutionSet.filteredRecords.front().q[0] < 0.35
+                || out.solutionSet.filteredRecords.front().q[0] > 2.97)
+        << "被过滤构型即上游收敛的越界解（过滤记录如实保留诊断价值）";
+    EXPECT_FALSE(out.proofMaterial.has_value());
+}
+
+/**
+ * @brief 不可达语义（换核后的 V-06 复核）：上游 SVD 伪逆步对可达环带
+ *        内孔目标（无解析解）耗尽预算不得假收敛——上游停判据不过＋产
+ *        品独立双容差复核拦截假成功，结局 2 素材如实交付（迭代统计＝
+ *        真实单步循环计数，逐初值恰为预算上限）。
+ */
+TEST(KinIk, FullPoseUpstreamUnreachableNoFalseSuccess_REUSE_T51)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "EVI-01"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    // 目标在可达环带内孔（‖p‖=0.2 < |L1−L2|=0.4）——解析界限内、几何
+    // 不可达（结局 5 不触发，进入上游迭代→结局 2）。
+    IkRequest req = makeRequest(view, trans(0.2, 0.0, 0.0), {{0.0, 0.0}});
+    const IkOutcome out = IkSolver().solve(req);
+
+    EXPECT_EQ(out.outcomeKind, IkOutcomeKind::MultiInitNoConvergence);
+    EXPECT_TRUE(out.solutionSet.solutions.empty());
+    ASSERT_TRUE(out.solutionSet.searchRecord.has_value());
+    ASSERT_EQ(out.solutionSet.searchRecord->iterationsPerInit.size(), 1U);
+    EXPECT_EQ(out.solutionSet.searchRecord->iterationsPerInit.front(),
+              req.iterationLimit)
+        << "不可达目标：上游单步循环恰耗尽预算（真实迭代数＝上限，非伪造）";
+    EXPECT_FALSE(out.proofMaterial.has_value())
+        << "搜索未果≠证明不可达（§8.1 C5 保守语义）";
+}
+
+#if IRD_HAVE_RUNTIME_COMPILE  // 以下用例消费真实编译锚——冒烟树不编译
+
+/**
+ * @brief 上游直接对照（audit-contract §6 upstreamComparison 面）：同一编
+ *        译产物、同初值、同目标、同参考帧，测试内**直接**驱动上游
+ *        JacobianIKSolver（单次 solveLocal(maxIter=预算)），收敛解经同一
+ *        权威映射回权威角后与产品解逐位一致——薄适配（q 映射/foi 选择/
+ *        目标复合/maxError/单步循环）不引入数值偏差。
+ *
+ * foi/目标与产品默认 TCP 路径同源：ObjectId 经名称端口解析编译产物帧
+ * （帧含偏置），目标即该帧系位姿——与生产装配段同一 R-4 权威路径。
+ */
+TEST(KinIk, FullPoseUpstreamDirectComparison_REUSE_T51)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01", "KIN-02"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+
+    IkRequest req = makeRequest(view, transformOf(golden), {{0.35, -0.45}});
+    const IkOutcome out = IkSolver().solve(req);
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound);
+    ASSERT_EQ(out.solutionSet.solutions.size(), 1U);
+
+    // ——测试内直接上游消费（不经产品 IkSolver）——
+    const std::shared_ptr<const rt::IRuntimeModelView> anchor =
+        view.runtimeModelView();
+    ASSERT_TRUE(anchor);
+    const rw::core::Ptr<const rw::models::SerialDevice> device =
+        anchor->workCell().findDevice(model.chain().deviceName);
+    ASSERT_TRUE(device);
+    // 默认 TCP＝编译产物帧（与产品装配段同路径）。
+    const auto resolved =
+        anchor->nameResolver().resolveObjectId(model.tools().front().objectId);
+    ASSERT_TRUE(resolved.ok());
+    const rw::kinematics::Frame* foi =
+        anchor->workCell().findFrame(resolved.get().fullName);
+    ASSERT_TRUE(foi != nullptr);
+    rw::kinematics::State state = anchor->makeState();
+    // 初值入上游坐标（q_rw＝q_auth−0——夹具零位偏置；映射与产品同源）。
+    device->setQ(rw::math::Q(std::vector<double>{0.35, -0.45}), state);
+    const double maxError = std::min(req.positionTolerance, req.orientationTolerance);
+    rw::invkin::JacobianIKSolver direct(
+        device, rw::core::Ptr<const rw::kinematics::Frame>(foi), state);
+    direct.setSolverType(rw::invkin::JacobianIKSolver::SVD);
+    direct.setClampToBounds(false);
+    direct.setCheckJointLimits(false);
+    ASSERT_TRUE(direct.solveLocal(transformOf(golden), maxError, state,
+                                  static_cast<int>(req.iterationLimit)));
+    const rw::math::Q qDirect = device->getQ(state);
+
+    const auto& s = out.solutionSet.solutions.front();
+    ASSERT_EQ(s.q.size(), static_cast<std::size_t>(qDirect.size()));
+    for (std::size_t i = 0; i < s.q.size(); ++i) {
+        EXPECT_EQ(s.q[i], qDirect[static_cast<Eigen::Index>(i)])
+            << "第 " << i << " 轴：产品解与直接上游消费不一致（薄适配引入偏差）";
+    }
+}
+
+/**
+ * @brief solveLocal 单步循环与单次多步调用轨迹同一性钉（迭代计数诚实性
+ *        的实证基础——GAP-IK-01 §1"每次 solveLocal 迭代 1 步的外循环"
+ *        备选的进一步实证）：同初值分别经 (a) 单次 solveLocal(maxIter=N)
+ *        与 (b) 逐次 solveLocal(maxIter=1) 循环，收敛性与最终 q 逐位一
+ *        致——生产适配的"单步循环迭代数＝上游真实更新数"由此钉背书。
+ */
+TEST(KinIk, SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01", "KIN-02"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const std::shared_ptr<const rt::IRuntimeModelView> anchor =
+        view.runtimeModelView();
+    ASSERT_TRUE(anchor);
+    const rw::core::Ptr<const rw::models::SerialDevice> device =
+        anchor->workCell().findDevice(model.chain().deviceName);
+    ASSERT_TRUE(device);
+    // 默认 TCP＝编译产物帧（与产品装配段同路径——同 foi 同目标）。
+    const auto resolvedId =
+        anchor->nameResolver().resolveObjectId(model.tools().front().objectId);
+    ASSERT_TRUE(resolvedId.ok());
+    const rw::kinematics::Frame* foi =
+        anchor->workCell().findFrame(resolvedId.get().fullName);
+    ASSERT_TRUE(foi != nullptr);
+
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+    const rw::math::Transform3D<double> target = transformOf(golden);
+    const double maxError = 1e-6;
+    constexpr int kBudget = 64;
+
+    // (a) 单次多步调用。
+    rw::kinematics::State stateA = anchor->makeState();
+    device->setQ(rw::math::Q(std::vector<double>{0.35, -0.45}), stateA);
+    rw::invkin::JacobianIKSolver solverA(
+        device, rw::core::Ptr<const rw::kinematics::Frame>(foi), stateA);
+    solverA.setSolverType(rw::invkin::JacobianIKSolver::SVD);
+    const bool okA = solverA.solveLocal(target, maxError, stateA, kBudget);
+    const rw::math::Q qA = device->getQ(stateA);
+    ASSERT_TRUE(okA);
+
+    // (b) 单步循环（生产适配同构——每调用恰一次上游循环体）。
+    rw::kinematics::State stateB = anchor->makeState();
+    device->setQ(rw::math::Q(std::vector<double>{0.35, -0.45}), stateB);
+    rw::invkin::JacobianIKSolver solverB(
+        device, rw::core::Ptr<const rw::kinematics::Frame>(foi), stateB);
+    solverB.setSolverType(rw::invkin::JacobianIKSolver::SVD);
+    bool okB = false;
+    for (int step = 0; step < kBudget; ++step) {
+        if (solverB.solveLocal(target, maxError, stateB, 1)) {
+            okB = true;
+            break;
+        }
+    }
+    const rw::math::Q qB = device->getQ(stateB);
+
+    EXPECT_EQ(okA, okB);
+    ASSERT_EQ(static_cast<std::size_t>(qA.size()), static_cast<std::size_t>(qB.size()));
+    for (std::size_t i = 0; i < static_cast<std::size_t>(qA.size()); ++i) {
+        EXPECT_EQ(qA[static_cast<Eigen::Index>(i)], qB[static_cast<Eigen::Index>(i)])
+            << "第 " << i << " 轴：单步循环与单次调用轨迹分离（迭代计数失真）";
+    }
+}
+
+#endif  // IRD_HAVE_RUNTIME_COMPILE

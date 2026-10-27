@@ -1,0 +1,6 @@
+probe start argc=4
+profile loaded
+mode=new n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=2.73 analyticMB=0.1 peakWS=5.3
+mode=new n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=48.42 analyticMB=0.8 peakWS=8.6
+mode=new n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=789.94 analyticMB=12.8 peakWS=47.4
+done mode=new

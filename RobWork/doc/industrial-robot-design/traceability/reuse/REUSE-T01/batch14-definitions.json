@@ -1,0 +1,1789 @@
+[
+  {
+    "functionId": "project.Codec.anonymous.corrupt",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 62,
+        "endLine": 65,
+        "first": "[[noreturn]] void corrupt(const std::string& why)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.checkSchemaVersion",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 84,
+        "endLine": 110,
+        "first": "bool checkSchemaVersion(int documentVersion, const char* typeName)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.checkFormatId",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 117,
+        "endLine": 124,
+        "first": "void checkFormatId(const std::string& formatId)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.findMember",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 144,
+        "endLine": 150,
+        "first": "const JsonValue* findMember(const JsonValue& obj, std::string_view key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.JsonParser",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 162,
+        "endLine": 165,
+        "first": "    explicit JsonParser(std::string_view text)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseDocument",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 169,
+        "endLine": 176,
+        "first": "    JsonValue parseDocument()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.atEnd",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 184,
+        "endLine": 184,
+        "first": "    bool atEnd() const { return p_ == end_; }",
+        "last": "    bool atEnd() const { return p_ == end_; }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.peek",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 187,
+        "endLine": 191,
+        "first": "    char peek()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.next",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 194,
+        "endLine": 199,
+        "first": "    char next()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.expect",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 202,
+        "endLine": 209,
+        "first": "    void expect(char expected)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.printable",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 212,
+        "endLine": 221,
+        "first": "    static std::string printable(char c)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseValue",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 224,
+        "endLine": 252,
+        "first": "    JsonValue parseValue(int depth)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseObject",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 255,
+        "endLine": 278,
+        "first": "    JsonValue parseObject(int depth)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseArray",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 281,
+        "endLine": 296,
+        "first": "    JsonValue parseArray(int depth)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseString",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 299,
+        "endLine": 320,
+        "first": "    std::string parseString()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseEscape",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 323,
+        "endLine": 340,
+        "first": "    void parseEscape(std::string& out)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseHex4",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 344,
+        "endLine": 356,
+        "first": "    std::uint32_t parseHex4()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseUnicodeEscape",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 360,
+        "endLine": 379,
+        "first": "    void parseUnicodeEscape(std::string& out)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.appendUtf8",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 382,
+        "endLine": 399,
+        "first": "    static void appendUtf8(std::string& out, std::uint32_t cp)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.JsonParser.parseNumber",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 403,
+        "endLine": 441,
+        "first": "    void parseNumber(JsonValue& v)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.decodeUtf8At",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 454,
+        "endLine": 494,
+        "first": "std::optional<std::pair<char32_t, std::size_t>> decodeUtf8At(const std::string& s,",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.appendUnicodeEscape",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 498,
+        "endLine": 515,
+        "first": "void appendUnicodeEscape(std::string& out, char32_t cp)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.appendJsonString",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 527,
+        "endLine": 569,
+        "first": "void appendJsonString(std::string& out, const std::string& utf8, const char* whatField)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.appendHexString",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 578,
+        "endLine": 588,
+        "first": "void appendHexString(std::string& out, const std::string& bytes)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.decodeHexString",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 592,
+        "endLine": 614,
+        "first": "std::string decodeHexString(const std::string& hex)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.appendRefPair",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 637,
+        "endLine": 644,
+        "first": "void appendRefPair(std::string& out, const ObjectRefPair& ref)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireMember",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 651,
+        "endLine": 655,
+        "first": "const JsonValue& requireMember(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireStringField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 658,
+        "endLine": 665,
+        "first": "std::string requireStringField(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.hasMember",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 668,
+        "endLine": 671,
+        "first": "bool hasMember(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.integerInRange",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 675,
+        "endLine": 705,
+        "first": "std::int64_t integerInRange(const JsonValue& obj, const char* key, std::int64_t lo,",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireIntField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 708,
+        "endLine": 713,
+        "first": "int requireIntField(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireUint64Field",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 716,
+        "endLine": 720,
+        "first": "std::uint64_t requireUint64Field(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireUint32Field",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 723,
+        "endLine": 727,
+        "first": "std::uint32_t requireUint32Field(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireObjectField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 730,
+        "endLine": 737,
+        "first": "const JsonValue& requireObjectField(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireArrayField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 740,
+        "endLine": 747,
+        "first": "const JsonValue& requireArrayField(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireTokenField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 756,
+        "endLine": 771,
+        "first": "std::string requireTokenField(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requirePathField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 779,
+        "endLine": 794,
+        "first": "std::string requirePathField(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireHex64Field",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 799,
+        "endLine": 813,
+        "first": "std::string requireHex64Field(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireIdField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 818,
+        "endLine": 827,
+        "first": "template <typename CoreId>",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.optionalIdField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 830,
+        "endLine": 835,
+        "first": "template <typename CoreId>",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.parseRefPair",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 845,
+        "endLine": 852,
+        "first": "ObjectRefPair parseRefPair(const JsonValue& obj, bool tolerate)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.optionalRefPairField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 855,
+        "endLine": 860,
+        "first": "std::optional<ObjectRefPair> optionalRefPairField(const JsonValue& obj, const char* key,",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.requireTimestampField",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 864,
+        "endLine": 867,
+        "first": "std::string requireTimestampField(const JsonValue& obj, const char* key)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.rejectUnknownFields",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 872,
+        "endLine": 889,
+        "first": "void rejectUnknownFields(const JsonValue& obj,",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.anonymous.parsePreambleVersioned",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 895,
+        "endLine": 904,
+        "first": "bool parsePreambleVersioned(const JsonValue& root, const char* typeName, bool withFormatId)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.canonical.ProjectId",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 617,
+        "endLine": 617,
+        "first": "std::string canonical(ProjectId id) { return id.toCanonical(); }",
+        "last": "std::string canonical(ProjectId id) { return id.toCanonical(); }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.canonical.BranchId",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 620,
+        "endLine": 620,
+        "first": "std::string canonical(BranchId id) { return id.toCanonical(); }",
+        "last": "std::string canonical(BranchId id) { return id.toCanonical(); }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.canonical.RevisionId",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 623,
+        "endLine": 623,
+        "first": "std::string canonical(RevisionId id) { return id.toCanonical(); }",
+        "last": "std::string canonical(RevisionId id) { return id.toCanonical(); }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.canonical.sdurws.ird.core.RunId",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 628,
+        "endLine": 628,
+        "first": "std::string canonical(sdurws::ird::core::RunId id) { return id.toCanonical(); }",
+        "last": "std::string canonical(sdurws::ird::core::RunId id) { return id.toCanonical(); }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.canonical.ObjectId",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 631,
+        "endLine": 631,
+        "first": "std::string canonical(ObjectId id) { return id.toCanonical(); }",
+        "last": "std::string canonical(ObjectId id) { return id.toCanonical(); }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.canonical.ContentVersion",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 634,
+        "endLine": 634,
+        "first": "std::string canonical(ContentVersion cv) { return cv.toCanonical(); }",
+        "last": "std::string canonical(ContentVersion cv) { return cv.toCanonical(); }"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.dump.ProjectStaticIdentity",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 914,
+        "endLine": 929,
+        "first": "std::string dump(const ProjectStaticIdentity& value)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.dump.HeadRecord",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 931,
+        "endLine": 947,
+        "first": "std::string dump(const HeadRecord& value)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.dump.RevisionManifest",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 949,
+        "endLine": 988,
+        "first": "std::string dump(const RevisionManifest& value)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.dump.ProjectMetadataRecord",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 990,
+        "endLine": 1032,
+        "first": "std::string dump(const ProjectMetadataRecord& value)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.dump.CommandRecord",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1034,
+        "endLine": 1086,
+        "first": "std::string dump(const CommandRecord& value)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.dump.DraftDocument",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1088,
+        "endLine": 1126,
+        "first": "std::string dump(const DraftDocument& value)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.dump.RunManifest",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1128,
+        "endLine": 1164,
+        "first": "std::string dump(const RunManifest& value)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.parseStaticIdentity",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1168,
+        "endLine": 1184,
+        "first": "ProjectStaticIdentity parseStaticIdentity(std::string_view text)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.parseHeadRecord",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1186,
+        "endLine": 1204,
+        "first": "HeadRecord parseHeadRecord(std::string_view text)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.parseRevisionManifest",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1206,
+        "endLine": 1260,
+        "first": "RevisionManifest parseRevisionManifest(std::string_view text)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.parseMetadataRecord",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1262,
+        "endLine": 1309,
+        "first": "ProjectMetadataRecord parseMetadataRecord(std::string_view text)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.parseCommandRecord",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1311,
+        "endLine": 1393,
+        "first": "CommandRecord parseCommandRecord(std::string_view text)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.parseDraftDocument",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1395,
+        "endLine": 1445,
+        "first": "DraftDocument parseDraftDocument(std::string_view text)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.parseRunManifest",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1447,
+        "endLine": 1506,
+        "first": "RunManifest parseRunManifest(std::string_view text)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.contentVersionOf",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1510,
+        "endLine": 1520,
+        "first": "core::ContentVersion contentVersionOf(std::string_view payloadBytes)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.toToken",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1529,
+        "endLine": 1537,
+        "first": "const char* toToken(DraftOrigin origin) noexcept",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "project.Codec.public.draftOriginFromToken",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "startLine": 1539,
+        "endLine": 1545,
+        "first": "std::optional<DraftOrigin> draftOriginFromToken(std::string_view token) noexcept",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.u8",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 53,
+        "endLine": 53,
+        "first": "    void u8(std::uint8_t v) { m_out.push_back(v); }",
+        "last": "    void u8(std::uint8_t v) { m_out.push_back(v); }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.u16",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 54,
+        "endLine": 58,
+        "first": "    void u16(std::uint16_t v)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.u32",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 59,
+        "endLine": 65,
+        "first": "    void u32(std::uint32_t v)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.u64",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 66,
+        "endLine": 71,
+        "first": "    void u64(std::uint64_t v)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.i64",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 74,
+        "endLine": 74,
+        "first": "    void i64(std::int64_t v) { u64(static_cast<std::uint64_t>(v)); }",
+        "last": "    void i64(std::int64_t v) { u64(static_cast<std::uint64_t>(v)); }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.f64",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 78,
+        "endLine": 88,
+        "first": "    void f64(double v)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.boolean",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 91,
+        "endLine": 91,
+        "first": "    void boolean(bool v) { u8(v ? 1 : 0); }",
+        "last": "    void boolean(bool v) { u8(v ? 1 : 0); }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.presence",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 94,
+        "endLine": 94,
+        "first": "    void presence(bool present) { u8(present ? kPresencePresent : kPresenceAbsent); }",
+        "last": "    void presence(bool present) { u8(present ? kPresencePresent : kPresenceAbsent); }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.raw",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 97,
+        "endLine": 100,
+        "first": "    void raw(const std::uint8_t* data, std::size_t n)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.string",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 103,
+        "endLine": 111,
+        "first": "    void string(const std::string& s)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.unitToken",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 115,
+        "endLine": 122,
+        "first": "    void unitToken(core::UnitToken unit)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.u8",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 145,
+        "endLine": 149,
+        "first": "    std::uint8_t u8()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.u16",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 150,
+        "endLine": 157,
+        "first": "    std::uint16_t u16()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.u32",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 158,
+        "endLine": 167,
+        "first": "    std::uint32_t u32()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.u64",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 168,
+        "endLine": 177,
+        "first": "    std::uint64_t u64()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.i64",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 178,
+        "endLine": 178,
+        "first": "    std::int64_t i64() { return static_cast<std::int64_t>(u64()); }",
+        "last": "    std::int64_t i64() { return static_cast<std::int64_t>(u64()); }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.f64",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 181,
+        "endLine": 191,
+        "first": "    double f64()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.boolean",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 193,
+        "endLine": 201,
+        "first": "    bool boolean()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.presence",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 204,
+        "endLine": 212,
+        "first": "    bool presence()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.raw",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 215,
+        "endLine": 220,
+        "first": "    void raw(std::uint8_t* out, std::size_t n)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.string",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 230,
+        "endLine": 241,
+        "first": "    std::string string()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.unitToken",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 244,
+        "endLine": 253,
+        "first": "    core::UnitToken unitToken()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Writer.take",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 125,
+        "endLine": 125,
+        "first": "    std::vector<std::uint8_t> take() { return std::move(m_out); }",
+        "last": "    std::vector<std::uint8_t> take() { return std::move(m_out); }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.pointer",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 138,
+        "endLine": 138,
+        "first": "    Reader(const std::uint8_t* data, std::size_t size) : m_data(data), m_size(size) {}",
+        "last": "    Reader(const std::uint8_t* data, std::size_t size) : m_data(data), m_size(size) {}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.vector",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 140,
+        "endLine": 143,
+        "first": "    explicit Reader(const std::vector<std::uint8_t>& bytes)",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.rawArray",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 222,
+        "endLine": 227,
+        "first": "    template <std::size_t N> std::array<std::uint8_t, N> rawArray()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.expectEnd",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 256,
+        "endLine": 263,
+        "first": "    void expectEnd()",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Reader.need",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 267,
+        "endLine": 274,
+        "first": "    void need(std::size_t n) const",
+        "last": "    }"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Header",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 286,
+        "endLine": 290,
+        "first": "void writeHeader(Writer& w, std::string_view magic)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 293,
+        "endLine": 308,
+        "first": "void readHeader(Reader& r, std::string_view magic)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Time",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 323,
+        "endLine": 327,
+        "first": "void writeTime(Writer& w, const std::chrono::system_clock::time_point& tp)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 329,
+        "endLine": 337,
+        "first": "std::chrono::system_clock::time_point readTime(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Enum",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 344,
+        "endLine": 348,
+        "first": "template <typename E> void writeEnum(Writer& w, E value)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 352,
+        "endLine": 362,
+        "first": "template <typename E>",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.OptionalIdentity",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 381,
+        "endLine": 387,
+        "first": "void writeOptionalIdentity(Writer& w, const std::optional<core::ContentIdentity>& id)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 389,
+        "endLine": 397,
+        "first": "std::optional<core::ContentIdentity> readOptionalIdentity(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.TaskIdentity",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 401,
+        "endLine": 408,
+        "first": "void writeTaskIdentity(Writer& w, const core::TaskIdentity& t)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 410,
+        "endLine": 419,
+        "first": "core::TaskIdentity readTaskIdentity(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Provenance",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 427,
+        "endLine": 442,
+        "first": "void writeProvenance(Writer& w, const core::ValueProvenance& p)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 444,
+        "endLine": 462,
+        "first": "core::ValueProvenance readProvenance(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.SourcedDouble",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 466,
+        "endLine": 481,
+        "first": "void writeSourcedDouble(Writer& w, const core::SourcedValue<double>& v)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 483,
+        "endLine": 500,
+        "first": "core::SourcedValue<double> readSourcedDouble(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.ComparativeValue",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 503,
+        "endLine": 507,
+        "first": "void writeComparativeValue(Writer& w, const core::ComparativeValue& v)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 509,
+        "endLine": 515,
+        "first": "core::ComparativeValue readComparativeValue(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.ComparativeFields",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 518,
+        "endLine": 522,
+        "first": "void writeComparativeFields(Writer& w, const core::ComparativeFields& f)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 524,
+        "endLine": 530,
+        "first": "core::ComparativeFields readComparativeFields(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.InvalidationReason",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 534,
+        "endLine": 539,
+        "first": "void writeInvalidationReason(Writer& w, const evidence::InvalidationReason& reason)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 541,
+        "endLine": 549,
+        "first": "evidence::InvalidationReason readInvalidationReason(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.BaselineResult",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 553,
+        "endLine": 560,
+        "first": "void writeBaselineResult(Writer& w, const evidence::BaselineConsistencyResult& b)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 562,
+        "endLine": 574,
+        "first": "evidence::BaselineConsistencyResult readBaselineResult(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.FieldValue",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 581,
+        "endLine": 593,
+        "first": "void writeFieldValue(Writer& w, const FieldValue& f)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 595,
+        "endLine": 607,
+        "first": "FieldValue readFieldValue(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.ResultBinding",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 610,
+        "endLine": 614,
+        "first": "void writeResultBinding(Writer& w, const ResultBinding& b)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 616,
+        "endLine": 622,
+        "first": "ResultBinding readResultBinding(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.EvidenceBinding",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 625,
+        "endLine": 637,
+        "first": "void writeEvidenceBinding(Writer& w, const EvidenceBinding& b)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 639,
+        "endLine": 656,
+        "first": "EvidenceBinding readEvidenceBinding(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.JumpTarget",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 659,
+        "endLine": 673,
+        "first": "void writeJumpTarget(Writer& w, const JumpTarget& j)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 675,
+        "endLine": 694,
+        "first": "JumpTarget readJumpTarget(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.SectionEntry",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 698,
+        "endLine": 715,
+        "first": "void writeSectionEntry(Writer& w, const SectionEntryView& e)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 717,
+        "endLine": 741,
+        "first": "SectionEntryView readSectionEntry(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.MissingItem",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 744,
+        "endLine": 748,
+        "first": "void writeMissingItem(Writer& w, const MissingItemView& m)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 750,
+        "endLine": 756,
+        "first": "MissingItemView readMissingItem(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.EligibilityNote",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 760,
+        "endLine": 765,
+        "first": "void writeEligibilityNote(Writer& w, const EligibilityNote& n)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 767,
+        "endLine": 774,
+        "first": "EligibilityNote readEligibilityNote(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.DiagRefEntry",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 779,
+        "endLine": 806,
+        "first": "void writeDiagRefEntry(Writer& w, const DiagRefEntry& d)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 808,
+        "endLine": 838,
+        "first": "DiagRefEntry readDiagRefEntry(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.CurrentnessSnapshot",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 846,
+        "endLine": 867,
+        "first": "void writeCurrentnessSnapshot(Writer& w, const CurrentnessSnapshot& c)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 869,
+        "endLine": 887,
+        "first": "CurrentnessSnapshot readCurrentnessSnapshot(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.Section",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 892,
+        "endLine": 928,
+        "first": "void writeSection(Writer& w, const ReviewReportSection& s)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 930,
+        "endLine": 975,
+        "first": "ReviewReportSection readSection(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.ReviewComment",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 982,
+        "endLine": 991,
+        "first": "void writeReviewComment(Writer& w, const ReviewComment& c)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 993,
+        "endLine": 1003,
+        "first": "ReviewComment readReviewComment(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.SignOff",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1007,
+        "endLine": 1013,
+        "first": "void writeSignOff(Writer& w, const SignOffState& s)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1015,
+        "endLine": 1023,
+        "first": "SignOffState readSignOff(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.TradeOff",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1026,
+        "endLine": 1034,
+        "first": "void writeTradeOff(Writer& w, const TradeOff& t)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1036,
+        "endLine": 1045,
+        "first": "TradeOff readTradeOff(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.VariantDiff",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1049,
+        "endLine": 1059,
+        "first": "void writeVariantDiff(Writer& w, const VariantDiffBlock& v)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1061,
+        "endLine": 1074,
+        "first": "VariantDiffBlock readVariantDiff(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.VersionEntry",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1078,
+        "endLine": 1085,
+        "first": "void writeVersionEntry(Writer& w, const ReportVersionEntry& e)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1087,
+        "endLine": 1096,
+        "first": "ReportVersionEntry readVersionEntry(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.ReviewMetadata",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1101,
+        "endLine": 1126,
+        "first": "void writeReviewMetadata(Writer& w, const ReviewMetadata& m)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1128,
+        "endLine": 1154,
+        "first": "ReviewMetadata readReviewMetadata(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.ResultDataSourceRef",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1164,
+        "endLine": 1174,
+        "first": "void writeResultDataSourceRef(Writer& w, const ResultDataSourceRef& ref)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1176,
+        "endLine": 1191,
+        "first": "ResultDataSourceRef readResultDataSourceRef(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.UnitPreference",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1195,
+        "endLine": 1202,
+        "first": "void writeUnitPreference(Writer& w, const UnitPreference& u)",
+        "last": "}"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1204,
+        "endLine": 1219,
+        "first": "UnitPreference readUnitPreference(Reader& r)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.anonymous.digestBytes",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 312,
+        "endLine": 319,
+        "first": "core::ContentIdentity digestBytes(const std::vector<std::uint8_t>& bytes)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.public.ReportCodec.encodeData",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1227,
+        "endLine": 1253,
+        "first": "std::vector<std::uint8_t> ReportCodec::encodeData(const ReportSourceSpec& spec)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.public.ReportCodec.parseData",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1255,
+        "endLine": 1283,
+        "first": "ReportSourceSpec ReportCodec::parseData(const std::vector<std::uint8_t>& bytes)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.public.ReportCodec.digestData",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1285,
+        "endLine": 1290,
+        "first": "core::ContentIdentity ReportCodec::digestData(const ReportSourceSpec& spec)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.public.ReportCodec.encodeFull",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1296,
+        "endLine": 1325,
+        "first": "std::vector<std::uint8_t> ReportCodec::encodeFull(const ReportFullFields& full)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.public.ReportCodec.parseFull",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1327,
+        "endLine": 1365,
+        "first": "ReportFullFields ReportCodec::parseFull(const std::vector<std::uint8_t>& bytes)",
+        "last": "}"
+      }
+    ]
+  },
+  {
+    "functionId": "reporting.ReportCodec.public.ReportCodec.digestFull",
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "startLine": 1367,
+        "endLine": 1390,
+        "first": "core::ContentIdentity ReportCodec::digestFull(const ReportFullFields& full)",
+        "last": "}"
+      }
+    ]
+  }
+]

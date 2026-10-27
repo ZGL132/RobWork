@@ -1,0 +1,25 @@
+Note: Google Test filter = SetNumeric.NumericOnlyMatching_UT_SET
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SetNumeric
+[ RUN      ] SetNumeric.NumericOnlyMatching_UT_SET
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(120): error: Value of: r.equivalent
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(126): error: Expected equality of these values:
+  r2.missingExpected.size()
+    Which is: 2
+  1u
+    Which is: 1
+
+[  FAILED  ] SetNumeric.NumericOnlyMatching_UT_SET (0 ms)
+[----------] 1 test from SetNumeric (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] SetNumeric.NumericOnlyMatching_UT_SET
+
+ 1 FAILED TEST

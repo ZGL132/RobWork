@@ -1,0 +1,27 @@
+RobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp:36:TEST (ODESimpleTest, SimpleDropObjectTest)
+RobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp:77:TEST (ODESimpleTest, OnTrayObjectStabilityTest)
+RobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp:134:TEST (ODESimpleTest, MultiOnTrayObjectStabilityTest)
+RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:1:set(SUBSYS_NAME sdurwsim_ode)
+RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:19:set(DEFAULT ${RWSIM_HAVE_ODE})
+RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:114:        target_link_libraries(${SUBSYS_NAME_PLUGIN} PRIVATE sdurwsim_ode)
+RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:120:            target_compile_definitions(sdurwsim_ode PUBLIC dDOUBLE)
+RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:122:            target_compile_definitions(sdurwsim_ode PUBLIC dSINGLE)
+RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp:45:TEST(ODEControlTest, ODEControlDeviceTest )
+RobWork/RobWorkSim/gtest/CMakeLists.txt:44:    add_rwsim_gtest(sdurwsim_common-gtest)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:57:    add_rwsim_gtest(sdurwsim_dynamics-gtest)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:63:if(TARGET sdurwsim_ode)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:65:    set(ODE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}
+RobWork/RobWorkSim/gtest/CMakeLists.txt:69:    set(ODE_TEST_SRC ode/ODEControlTest.cpp ode/ODESimpleTest)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:71:    add_executable(sdurwsim_ode-gtest ${ODE_TEST_SRC})
+RobWork/RobWorkSim/gtest/CMakeLists.txt:72:    target_link_libraries(sdurwsim_ode-gtest ${ODE_TEST_LIBRARIES})
+RobWork/RobWorkSim/gtest/CMakeLists.txt:73:    add_rwsim_gtest(sdurwsim_ode-gtest)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:81:if(TARGET sdurwsim_ode)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:83:    set(PERFORMANCE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode
+RobWork/RobWorkSim/gtest/CMakeLists.txt:92:    add_rwsim_gtest(sdurwsim_performance-gtest)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:99:if(TARGET sdurwsim_ode)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:101:    set(SENSORS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}
+RobWork/RobWorkSim/gtest/CMakeLists.txt:109:    add_rwsim_gtest(sdurwsim_sensors-gtest)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:122:    add_rwsim_gtest(sdurwsim_simulator-gtest)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:129:if(TARGET sdurwsim_ode)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:130:    set(TASKSIMULATION_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode
+RobWork/RobWorkSim/gtest/CMakeLists.txt:137:    add_rwsim_gtest(sdurwsim_tasksimulation-gtest)

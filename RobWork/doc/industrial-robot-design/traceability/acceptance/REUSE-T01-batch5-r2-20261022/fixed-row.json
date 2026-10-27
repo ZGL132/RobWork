@@ -1,0 +1,44 @@
+{
+  "functionId": "ui.SampleGridRender.draw",
+  "ownerUnit": "ui",
+  "requirements": [
+    "UX-02",
+    "ERR-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "symbol": "draw",
+      "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SampleGridRender::draw",
+      "startLine": 268,
+      "endLine": 344,
+      "sha256": "05cf3428068c11a611fdde2d17c67ff256b686d523d365b466375a616d0689ad"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_ui_plugin",
+    "sdurws_ird_studio"
+  ],
+  "usageRole": "adapter",
+  "permissionRef": "ARCH:3.6.2",
+  "capabilityId": "HOST-LINES",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "rg -n \"RenderLines|addLine|setColor|setThickness|glVertex3f|glPushAttrib|alpha\" RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+  },
+  "differences": "格线与选中圈可组合RenderLines候选，点阵/逐点色仍是呈现编排；候选draw忽略宿主alpha、double顶点转float，需先量化可接受性。24段三平面环不等于新几何核心，不授予WorkCell构造或worker可视化权",
+  "inputs": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+      "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+    }
+  ],
+  "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+  "designRefs": [
+    "ARCHITECTURE.md §3.6.2 HOST-RENDER",
+    "tasks/foundation/UI-T52.json acceptance 2",
+    "units/requirements.md §9.8"
+  ]
+}

@@ -1,0 +1,311 @@
+RobWork/RobWork/src/rw/pathplanning\CMakeLists.txt:18:        QToQSamplerPlanner.cpp
+RobWork/RobWork/src/rw/pathplanning\CMakeLists.txt:21:        QConstraint.cpp
+RobWork/RobWork/src/rw/pathplanning\CMakeLists.txt:24:        QSampler.cpp
+RobWork/RobWork/src/rw/pathplanning\CMakeLists.txt:36:        QToQSamplerPlanner.hpp
+RobWork/RobWork/src/rw/pathplanning\CMakeLists.txt:39:        QConstraint.hpp
+RobWork/RobWork/src/rw/pathplanning\CMakeLists.txt:42:        QSampler.hpp
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:28:#include <rw/pathplanning/QConstraint.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:29:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:105:    QSampler::Ptr sampler = QSampler::makeUniform (device.getBounds ());
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:147:    ShrinkingUniformBox (QConstraint::Ptr constraint, const QBox& outer, const QBox& inner) :
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:164:    QConstraint::Ptr _constraint;
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:172:    JacobianShrinkingUniformBox (QConstraint::Ptr constraint, const QBox& outer,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:204:    QConstraint::Ptr _constraint;
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:225:SBLExpand::Ptr SBLExpand::makeShrinkingUniformBox (QConstraint::Ptr constraint, const QBox& outer,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:231:SBLExpand::Ptr SBLExpand::makeShrinkingUniformBox (QConstraint::Ptr constraint, const QBox& outer,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.cpp:237:SBLExpand::Ptr SBLExpand::makeShrinkingUniformJacobianBox (QConstraint::Ptr constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.hpp:37:    class QConstraint;
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.hpp:43:    class QSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.hpp:131:        PRMPlanner (rw::core::Ptr< rw::pathplanning::QConstraint > constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.hpp:132:                    rw::core::Ptr< rw::pathplanning::QSampler > sampler, double resolution,
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.hpp:245:        rw::core::Ptr< rw::pathplanning::QConstraint > _constraint;
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.hpp:246:        rw::core::Ptr< rw::pathplanning::QSampler > _sampler;
+RobWork/RobWork/src/rw/pathplanning\PathAnalyzer.cpp:53:    analysis.length = pathLength (path.begin (), path.end (), *metric);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.hpp:38:    class QConstraint;
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.hpp:138:        makeShrinkingUniformBox (rw::core::Ptr< rw::pathplanning::QConstraint > constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.hpp:153:        makeShrinkingUniformBox (rw::core::Ptr< rw::pathplanning::QConstraint > constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLExpand.hpp:177:        makeShrinkingUniformJacobianBox (rw::core::Ptr< rw::pathplanning::QConstraint > constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:23:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:484:    bool inCollision (const Q& q) { return options.constraint.getQConstraint ().inCollision (q); }
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:766:void addAsRootIfCfree (const Q& q, const QConstraint& constraint, SBL& sbl, const TreeChoice& tree)
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:772:void addAsRootsIfCfree (const Motion& qs, const QConstraint& constraint, SBL& sbl,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:780:void addAsRootIfCfreeSample (QSampler& sampler, const QConstraint& constraint, SBL& sbl,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:796:Q getRootConfiguration (const Q& q, QSampler& sampler, const StopCriteria& stop)
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:812:                           const Motion& toSamples, QSampler& fromSampler, QSampler& toSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:828:    if (options.constraint.getQConstraint ().inCollision (from) ||
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:829:        options.constraint.getQConstraint ().inCollision (to)) {
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:835:    addAsRootsIfCfree (fromSamples, options.constraint.getQConstraint (), sbl, Start);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:836:    addAsRootsIfCfree (toSamples, options.constraint.getQConstraint (), sbl, Goal);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:850:            addAsRootIfCfreeSample (fromSampler, options.constraint.getQConstraint (), sbl, Start);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:851:            addAsRootIfCfreeSample (toSampler, options.constraint.getQConstraint (), sbl, Goal);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:864:    QSampler::Ptr emptySampler = QSampler::makeEmpty ();
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:869:Motion NS::findApproach (const Q& from, const Q& to, const Motion& toSamples, QSampler& toSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.cpp:872:    QSampler::Ptr emptySampler = QSampler::makeEmpty ();
+RobWork/RobWork/src/rw/pathplanning\PathAnalyzer.hpp:214:        static double pathLength (It begin, It end,
+RobWork/RobWork/src/rwlibs/pathplanners\arw\ARWPlanner.cpp:30:QToQPlanner::Ptr ARWPlanner::makeQToQPlanner (const PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\arw\ARWPlanner.cpp:37:QToQPlanner::Ptr ARWPlanner::makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\arw\ARWPlanner.cpp:50:    return makeQToQPlanner (constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3QToQPlanner.hpp:29:    class QSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3QToQPlanner.hpp:60:        Z3QToQPlanner (rw::core::Ptr< rw::pathplanning::QSampler > sampler,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3QToQPlanner.hpp:68:        rw::core::Ptr< rw::pathplanning::QSampler > _sampler;
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.cpp:26:#include <rw/pathplanning/QConstraint.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.cpp:28:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.cpp:45:PRMPlanner::PRMPlanner (rw::pathplanning::QConstraint::Ptr constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.cpp:46:                        rw::pathplanning::QSampler::Ptr sampler, double resolution,
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.cpp:57:    _constraint (QConstraint::make (detector, device, state)),
+RobWork/RobWork/src/rwlibs/pathplanners\prm\PRMPlanner.cpp:58:    _sampler (QSampler::makeUniform (*device)), _resolution (resolution),
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.hpp:36:    class QSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.hpp:83:                                      rw::pathplanning::QSampler& fromSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.hpp:84:                                      rw::pathplanning::QSampler& toSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLInternal.hpp:99:                                    const Motion& toSamples, rw::pathplanning::QSampler& toSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.cpp:23:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.cpp:31:QToQPlanner::Ptr RRTPlanner::makeQToQPlanner (const PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.cpp:32:                                              QSampler::Ptr sampler, QMetric::Ptr metric,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.cpp:47:QToQPlanner::Ptr RRTPlanner::makeQToQPlanner (const PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.cpp:52:    return makeQToQPlanner (constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.cpp:53:                            QSampler::makeUniform (device),
+RobWork/RobWork/src/rwlibs/pathplanners\arw\ARWPlanner.hpp:74:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\arw\ARWPlanner.hpp:102:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.hpp:33:    class QSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.hpp:108:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.hpp:109:                         rw::core::Ptr< rw::pathplanning::QSampler > sampler,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.hpp:117:           (rw::pathplanning::QSampler) and distance metrics (rw:math::QMetric)
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTPlanner.hpp:127:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLOptions.cpp:25:SBLOptions::SBLOptions (QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3QToQPlanner.cpp:22:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3QToQPlanner.cpp:121:std::vector< Q > sampleConfigurations (int cnt, QSampler& sampler)
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3QToQPlanner.cpp:138:Z3QToQPlanner::Z3QToQPlanner (QSampler::Ptr sampler, QToQPlanner::Ptr localPlanner, int nodeCnt,
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.cpp:33:PlannerConstraint::PlannerConstraint (QConstraint::Ptr constraint, QEdgeConstraint::Ptr edge) :
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.cpp:40:PlannerConstraint PlannerConstraint::make (QConstraint::Ptr constraint, QEdgeConstraint::Ptr edge)
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.cpp:48:    QConstraint::Ptr constraint = QConstraint::make (detector, device, state);
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:23:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:50:    RRTStruct (const PlannerConstraint& constraint, QSampler::Ptr sampler, QMetric::Ptr metric,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:60:    QSampler::Ptr sampler;
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:67:    return rrt.constraint.getQConstraint ().inCollision (q);
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:73:    return rrt.constraint.getQConstraint ().inCollision (b) ||
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:313:                                            QSampler::Ptr sampler, QMetric::Ptr metric,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:320:                                              QSampler::Ptr sampler, QMetric::Ptr metric,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:327:                                                    QSampler::Ptr sampler, QMetric::Ptr metric,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.cpp:335:                                                            QSampler::Ptr sampler,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.hpp:33:    class QSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.hpp:69:                   rw::core::Ptr< rw::pathplanning::QSampler > sampler,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.hpp:90:                     rw::core::Ptr< rw::pathplanning::QSampler > sampler,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.hpp:112:                           rw::core::Ptr< rw::pathplanning::QSampler > sampler,
+RobWork/RobWork/src/rwlibs/pathplanners\rrt\RRTQToQPlanner.hpp:133:                                   rw::core::Ptr< rw::pathplanning::QSampler > sampler,
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:25:#include <rw/pathplanning/QConstraint.hpp>
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:53:       @brief A tuple of (QConstraintPtr, QEdgeConstraintPtr).
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:77:           @brief A (QConstraintPtr, QEdgeConstraintPtr) tuple.
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:81:        PlannerConstraint (rw::core::Ptr<rw::pathplanning::QConstraint> constraint, QEdgeConstraint::Ptr edge);
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:84:         * @brief Forwards call to the QConstraint wrapped by the PlannerConstraint
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:96:        QConstraint& getQConstraint () const { return *_constraint; }
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:106:        const rw::core::Ptr<rw::pathplanning::QConstraint>& getQConstraintPtr () const { return _constraint; }
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:114:           @brief A (QConstraintPtr, QEdgeConstraintPtr) tuple.
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:118:        static PlannerConstraint make (rw::core::Ptr<rw::pathplanning::QConstraint> constraint, QEdgeConstraint::Ptr edge);
+RobWork/RobWork/src/rw/pathplanning\PlannerConstraint.hpp:157:        rw::core::Ptr<rw::pathplanning::QConstraint> _constraint;
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:32:class SBLQToQSamplerPlanner : public rw::pathplanning::QToQSamplerPlanner
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:35:    SBLQToQSamplerPlanner (const SBLSetup& setup) : _options (SBLInternal::getOptions (setup)) {}
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:38:    bool doQuery (const Q& from, QSampler& to, QPath& result, const StopCriteria& stop)
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:53:QToQSamplerPlanner::Ptr SBLPlanner::makeQToQSamplerPlanner (const SBLSetup& setup)
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:55:    return ownedPtr (new SBLQToQSamplerPlanner (setup));
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:58:QToQPlanner::Ptr SBLPlanner::makeQToQPlanner (const SBLSetup& setup)
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:60:    return QToQPlanner::make (makeQToQSamplerPlanner (setup));
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.cpp:66:    return QToTPlanner::make (makeQToQSamplerPlanner (setup), ikSampler);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLOptions.hpp:27:#include <rw/pathplanning/QConstraint.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLOptions.hpp:45:        SBLPlannerConstraint (rw::pathplanning::QConstraint::Ptr qconstraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLOptions.hpp:55:        const rw::pathplanning::QConstraint& getQConstraint () const { return *_qconstraint; }
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLOptions.hpp:67:        rw::pathplanning::QConstraint::Ptr _qconstraint;
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLOptions.hpp:93:        SBLOptions (rw::pathplanning::QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.hpp:33:    class QConstraint;
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.hpp:36:    class QSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.hpp:73:        makeQToQPlanner (rw::core::Ptr< rw::pathplanning::QSampler > sampler,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.hpp:80:           A default configuration space sampler (rw::pathplanning::QSampler)
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.hpp:89:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.hpp:121:                                rw::core::Ptr< rw::pathplanning::QSampler > directionSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.hpp:122:                                rw::core::Ptr< rw::pathplanning::QConstraint > boundsConstraint,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:24:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:41:class OrthogonalSampler : public QSampler
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:44:    static QSampler::Ptr make (const Q& dir, QSampler::Ptr directionSampler, QMetric::Ptr metric,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:51:    OrthogonalSampler (const Q& dir, QSampler::Ptr directionSampler, QMetric::Ptr metric,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:97:    QSampler::Ptr _directionSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:109:    SlidingPlanner (const PlannerConstraint& constraint, QSampler::Ptr directionSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:110:                    QConstraint::Ptr boundsConstraint, QMetric::Ptr metric, double extend,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:162:            QSampler::Ptr baseSampler =
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:265:    QSampler::Ptr _directionSampler;
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:266:    QConstraint::Ptr _boundsConstraint;
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:273:QToQPlanner::Ptr Z3Planner::makeQToQPlanner (QSampler::Ptr sampler, QToQPlanner::Ptr localPlanner,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:279:QToQPlanner::Ptr Z3Planner::makeQToQPlanner (const PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:285:    return makeQToQPlanner (
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:286:        QSampler::makeConstrained (QSampler::makeUniform (device), constraint.getQConstraintPtr ()),
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:293:                                                    QSampler::Ptr directionSampler,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:294:                                                    QConstraint::Ptr boundsConstraint,
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:322:                                   QSampler::makeBoxDirectionSampler (bounds),
+RobWork/RobWork/src/rwlibs/pathplanners\z3\Z3Planner.cpp:323:                                   QConstraint::makeBounds (bounds),
+RobWork/RobWork/src/rw/pathplanning\PlannerUtil.cpp:20:#include "QSampler.hpp"
+RobWork/RobWork/src/rw/pathplanning\PlannerUtil.cpp:35:    return (checkStart && constraint.getQConstraint ().inCollision (start)) ||
+RobWork/RobWork/src/rw/pathplanning\PlannerUtil.cpp:36:           (checkEnd && constraint.getQConstraint ().inCollision (end)) ||
+RobWork/RobWork/src/rw/pathplanning\PlannerUtil.cpp:43:        if (constraint.getQConstraint ().inCollision (q))
+RobWork/RobWork/src/rw/pathplanning\PlannerUtil.cpp:85:    QSampler::Ptr sampler = QSampler::makeUniform (device);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.hpp:29:#include <rw/pathplanning/QToQSamplerPlanner.hpp>
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.hpp:42:       @relates QToQSamplerPlanner
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.hpp:55:        static rw::pathplanning::QToQSamplerPlanner::Ptr
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.hpp:56:        makeQToQSamplerPlanner (const SBLSetup& setup);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLPlanner.hpp:63:        static rw::pathplanning::QToQPlanner::Ptr makeQToQPlanner (const SBLSetup& setup);
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLSetup.cpp:29:    QConstraint::Ptr qconstraint, QEdgeConstraintIncremental::Ptr edgeConstraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLSetup.cpp:35:SBLSetup SBLSetup::make (QConstraint::Ptr qconstraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLSetup.hpp:76:        static SBLSetup make (rw::pathplanning::QConstraint::Ptr constraint,
+RobWork/RobWork/src/rwlibs/pathplanners\sbl\SBLSetup.hpp:109:        static SBLSetup make (rw::pathplanning::QConstraint::Ptr constraint,
+RobWork/RobWork/src/rw/pathplanning\PlannerUtil.hpp:80:            return constraint.getQConstraint ().inCollision (q);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:18:#include "QConstraint.hpp"
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:37:class StateConstraintWrapper : public QConstraint
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:67:class MergedConstraints : public QConstraint
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:70:    MergedConstraints (const std::vector< QConstraint::Ptr >& constraints) :
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:77:        for (const QConstraint::Ptr& sc : _constraints) {
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:86:        for (const QConstraint::Ptr& sc : _constraints) {
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:93:        for (const QConstraint::Ptr& sc : _constraints) {
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:99:    std::vector< QConstraint::Ptr > _constraints;
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:102:class NormalizedConstraint : public QConstraint
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:105:    NormalizedConstraint (QConstraint::Ptr constraint, const QNormalizer& normalizer) :
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:120:    QConstraint::Ptr _constraint;
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:124:class FixedConstraint : public QConstraint
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:144:class BoundsConstraint : public QConstraint
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:173:bool QConstraint::inCollision (const rw::math::Q& q) const
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:178:void QConstraint::setLog (rw::core::Log::Ptr log)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:183:void QConstraint::update (const rw::kinematics::State& state)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:188:QConstraint::Ptr QConstraint::makeFixed (bool value)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:193:QConstraint::Ptr QConstraint::make (StateConstraint::Ptr detector, Device::CPtr device,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:199:QConstraint::Ptr QConstraint::make (rw::core::Ptr< CollisionDetector > detector,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:205:QConstraint::Ptr QConstraint::makeMerged (const std::vector< QConstraint::Ptr >& constraints)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:210:QConstraint::Ptr QConstraint::makeMerged (const QConstraint::Ptr& ca, const QConstraint::Ptr& cb)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:212:    std::vector< QConstraint::Ptr > cs;
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:218:QConstraint::Ptr QConstraint::makeNormalized (const QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:224:QConstraint::Ptr QConstraint::makeNormalized (const QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:230:QConstraint::Ptr QConstraint::makeNormalized (const QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:236:QConstraint::Ptr QConstraint::makeBounds (const Device::QBox& bounds)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:22:   @file QConstraint.hpp
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:48:    class QConstraint
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:52:        typedef rw::core::Ptr< QConstraint > Ptr;
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:54:        typedef rw::core::Ptr< const QConstraint > CPtr;
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:59:        virtual ~QConstraint () {}
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:85:        static QConstraint::Ptr makeFixed (bool value);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:93:        static QConstraint::Ptr makeBounds (const rw::models::Device::QBox& bounds);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:98:        static QConstraint::Ptr make (rw::core::Ptr< StateConstraint > detector,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:105:        static QConstraint::Ptr make (rw::core::Ptr< rw::proximity::CollisionDetector > detector,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:113:        static QConstraint::Ptr makeMerged (const std::vector< QConstraint::Ptr >& constraints);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:119:        static QConstraint::Ptr makeMerged (const QConstraint::Ptr& ca, const QConstraint::Ptr& cb);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:128:        static QConstraint::Ptr
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:129:        makeNormalized (const QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:139:        static QConstraint::Ptr makeNormalized (const QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:149:        static QConstraint::Ptr makeNormalized (const QConstraint::Ptr& constraint,
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:173:        QConstraint () {}
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:176:        QConstraint (const QConstraint&);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:177:        QConstraint& operator= (const QConstraint&);
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.cpp:40:    ExpandedBinary (rw::core::Ptr< QConstraint > constraint, QMetric::CPtr metric,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.cpp:101:    rw::core::Ptr< QConstraint > _constraint;
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.cpp:126:QEdgeConstraint::Ptr QEdgeConstraint::make (rw::core::Ptr< QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.cpp:132:QEdgeConstraint::Ptr QEdgeConstraint::makeDefault (rw::core::Ptr< QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.hpp:34:    class QConstraint;
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.hpp:99:        static QEdgeConstraint::Ptr make (rw::core::Ptr< QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.hpp:110:        static QEdgeConstraint::Ptr makeDefault (rw::core::Ptr< QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraintIncremental.hpp:34:    class QConstraint;
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraintIncremental.hpp:161:        static QEdgeConstraintIncremental::Ptr make (rw::core::Ptr< QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraintIncremental.hpp:174:        makeDefault (rw::core::Ptr< QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraintIncremental.cpp:109:                    QConstraint::Ptr constraint) :
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraintIncremental.cpp:214:    QConstraint::Ptr _constraint;
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraintIncremental.cpp:255:QEdgeConstraintIncremental::Ptr QEdgeConstraintIncremental::make (QConstraint::Ptr constraint,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraintIncremental.cpp:263:QEdgeConstraintIncremental::makeDefault (QConstraint::Ptr constraint, Device::Ptr device)
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:20:#include "QConstraint.hpp"
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:21:#include "QSampler.hpp"
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:39:                         QSampler::Ptr seed, int maxAttempts) :
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:46:            _seed = QSampler::makeUniform (device);
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:89:    QSampler::Ptr _seed;
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:97:    ConstrainedQIKSampler (QIKSampler::Ptr sampler, QConstraint::Ptr constraint, int maxAttempts) :
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:117:    QConstraint::Ptr _constraint;
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:132:                                  QSampler::Ptr seed, int maxAttempts)
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:137:QIKSampler::Ptr QIKSampler::makeConstrained (QIKSampler::Ptr sampler, QConstraint::Ptr constraint,
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.hpp:41:    class QConstraint;
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.hpp:42:    class QSampler;
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.hpp:100:                                     rw::core::Ptr< QSampler > seed = NULL, int maxAttempts = -1);
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.hpp:115:                                                rw::core::Ptr< QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:18:#include "QSampler.hpp"
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:20:#include "QConstraint.hpp"
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:33:class EmptySampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:40:class FixedSampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:52:class FiniteSampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:75:class AbridgedSampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:78:    AbridgedSampler (QSampler::Ptr sampler, int cnt) : _sampler (sampler), _cnt (0), _maxCnt (cnt)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:93:    QSampler::Ptr _sampler;
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:98:class BoundsSampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:110:class NormalizedSampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:113:    NormalizedSampler (QSampler::Ptr sampler, const QNormalizer& normalizer) :
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:127:    QSampler::Ptr _sampler;
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:131:class IKSampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:148:class ConstrainedSampler : public QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:151:    ConstrainedSampler (QSampler::Ptr sampler, QConstraint::CPtr constraint, int maxAttempts) :
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:170:    QSampler::Ptr _sampler;
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:171:    QConstraint::CPtr _constraint;
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:175://	typedef QSampler::Ptr T;
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:178:bool QSampler::empty () const
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:183:bool QSampler::doEmpty () const
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:188:QSampler::Ptr QSampler::makeEmpty ()
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:193:QSampler::Ptr QSampler::makeFixed (const Q& q)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:198:QSampler::Ptr QSampler::makeFinite (const std::vector< Q >& qs)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:203:QSampler::Ptr QSampler::makeFinite (QSampler::Ptr sampler, int cnt)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:208:QSampler::Ptr QSampler::makeSingle (const Q& q)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:213:QSampler::Ptr QSampler::makeUniform (const Device::QBox& bounds)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:218:QSampler::Ptr QSampler::makeUniform (const Device& device)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:223:QSampler::Ptr QSampler::makeUniform (Device::CPtr device)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:228:QSampler::Ptr QSampler::makeNormalized (QSampler::Ptr sampler, const QNormalizer& normalizer)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:233:QSampler::Ptr QSampler::make (QIKSampler::Ptr sampler, const rw::math::Transform3D<>& target)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:238:QSampler::Ptr QSampler::makeConstrained (QSampler::Ptr sampler, QConstraint::CPtr constraint,
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:244:QSampler::Ptr QSampler::makeBoxDirectionSampler (const Device::QBox& bounds)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:248:    return QSampler::makeUniform (dirBounds);
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.hpp:31:    class QToQSamplerPlanner;
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.hpp:56:           @param planner [in] A planner for a region given by a QSampler.
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.hpp:58:        static QToQPlanner::Ptr make (rw::core::Ptr< QToQSamplerPlanner > planner);
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:21:#include "QToQSamplerPlanner.hpp"
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:33:    RegionPlanner (QToQSamplerPlanner::Ptr planner) : _planner (planner) {}
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:38:        return _planner->query (from, *QSampler::makeSingle (to), path, stop);
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:42:    QToQSamplerPlanner::Ptr _planner;
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:53:        if (_constraint.getQConstraint ().inCollision (from) ||
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:54:            _constraint.getQConstraint ().inCollision (to) ||
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:70:QToQPlanner::Ptr QToQPlanner::make (QToQSamplerPlanner::Ptr planner)
+RobWork/RobWork/src/rw/pathplanning\QToQSamplerPlanner.cpp:18:#include "QToQSamplerPlanner.hpp"
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:22:   @file QSampler.hpp
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:32:    class QConstraint;
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:44:    class QSampler
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:48:        typedef rw::core::Ptr< QSampler > Ptr;
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:50:        typedef rw::core::Ptr< const QSampler > CPtr;
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:70:        virtual ~QSampler () {}
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:75:        static QSampler::Ptr makeEmpty ();
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:82:        static QSampler::Ptr makeFixed (const rw::math::Q& q);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:91:        static QSampler::Ptr makeSingle (const rw::math::Q& q);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:100:        static QSampler::Ptr makeFinite (const std::vector< rw::math::Q >& qs);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:109:        static QSampler::Ptr makeFinite (QSampler::Ptr sampler, int cnt);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:114:        static QSampler::Ptr makeUniform (const rw::models::Device::QBox& bounds);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:119:        static QSampler::Ptr makeUniform (const rw::models::Device& device);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:124:        static QSampler::Ptr makeUniform (rw::models::Device::CPtr device);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:130:        static QSampler::Ptr makeNormalized (QSampler::Ptr sampler, const QNormalizer& normalizer);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:138:        static QSampler::Ptr make (rw::core::Ptr< QIKSampler > sampler,
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:153:        static QSampler::Ptr makeConstrained (QSampler::Ptr sampler,
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:154:                                              rw::core::Ptr< const QConstraint > constraint,
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:166:        static QSampler::Ptr makeBoxDirectionSampler (const rw::models::Device::QBox& bounds);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:172:        QSampler () {}
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:188:        QSampler (const QSampler&);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:189:        QSampler& operator= (const QSampler&);
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.hpp:32:    class QToQSamplerPlanner;
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.hpp:57:           @param planner [in] Planner for a QSampler region.
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.hpp:60:        static QToTPlanner::Ptr make (rw::core::Ptr< QToQSamplerPlanner > planner,
+RobWork/RobWork/src/rw/pathplanning\QToQSamplerPlanner.hpp:22:   @file QToQSamplerPlanner.hpp
+RobWork/RobWork/src/rw/pathplanning\QToQSamplerPlanner.hpp:26:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/src/rw/pathplanning\QToQSamplerPlanner.hpp:37:       QToQSamplerPlanner plans a configuration space path from a start
+RobWork/RobWork/src/rw/pathplanning\QToQSamplerPlanner.hpp:40:    class QToQSamplerPlanner : public PathPlanner< rw::math::Q, QSampler >
+RobWork/RobWork/src/rw/pathplanning\QToQSamplerPlanner.hpp:44:        typedef rw::core::Ptr< QToQSamplerPlanner > Ptr;
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:21:#include "QSampler.hpp"
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:23:#include "QToQSamplerPlanner.hpp"
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:36:    RegionPlanner (QToQSamplerPlanner::Ptr planner, QIKSampler::Ptr ikSampler) :
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:44:        return _planner->query (from, *QSampler::make (_ikSampler, baseTend), path, stop);
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:48:    QToQSamplerPlanner::Ptr _planner;
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:93:QToTPlanner::Ptr QToTPlanner::make (QToQSamplerPlanner::Ptr planner, QIKSampler::Ptr ikSampler)
+RobWork/RobWork/src/rw/pathplanning\QToTrajPlanner.hpp:28:#include <rw/pathplanning/QToQSamplerPlanner.hpp>
+RobWork/RobWork/src/rw/pathplanning\QToTrajPlanner.hpp:60:           @param planner [in] Planner for a QSampler region.
+RobWork/RobWork/src/rw/pathplanning\QToTrajPlanner.hpp:63:        static QToTPlanner::Ptr make (QToQSamplerPlanner::Ptr planner, QIKSampler::Ptr ikSampler);

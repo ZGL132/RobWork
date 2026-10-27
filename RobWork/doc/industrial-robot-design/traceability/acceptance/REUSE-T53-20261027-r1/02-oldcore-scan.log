@@ -1,0 +1,18 @@
+# 旧核符号 rg 复扫（HEAD=cb778a75a，dynamics/src dynamics/include runtime 全域）
+# 命中仅限：契约测试钉扎断言（stripComments 后扫描的 forbidden 词表）与退役登记注释；源码面零回流
+== callRneaSample
+  (no hit)
+== solveLinearSystem
+  (no hit)
+== massFlat
+  (no hit)
+== kSingularPivotRelative
+  (no hit)
+== rk4Stage
+  (no hit)
+== rk4Stages
+  (no hit)
+== massMatrixFlat
+  (no hit)
+== mutation normalized diff line counts (vs worktree originals)
+mutFD=2 mutSession=2 (各=2 即单一变异点)

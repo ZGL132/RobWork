@@ -1,0 +1,357 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T18",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp",
+      "sha256": "3aca91019593046c2650ab6bc5f70de97e4d85ae6a8fd7debe62713137cae8ca",
+      "mode": "adapter",
+      "capabilities": [
+        "TEST-HARNESS"
+      ],
+      "boundary": "F-958：installTestRecordListener 按已安装 gtest 1.18.0 公开契约（gtest.h:1032 Append 接管并 delete）改为堆对象移交，删除静态对象与错误所有权注释；--ird_report 摘除/缺省路径/OnTestProgramEnd 写盘时序/每进程一次契约/函数签名零变化；无新公共接口。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Report.cpp",
+      "sha256": "b474b55ac9f65e2b55c1abaf936397c7c87ee334e56572a9ce61e1b911fcba54",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "TestRecordStore::instance() 注释中＇listener 泄漏式注册同型＇失真引用订正；静态单例职责与实现零变化。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+      "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d",
+      "mode": "governance",
+      "capabilities": [
+        
+      ],
+      "boundary": "注册 ListenerOwnershipTest.cpp 入 sdurws_ird_testkit_test；新增 sdurws_ird_testkit_lsnchild 工具目标（other 形态，链 testkit＋GTest::gtest，输出目录对齐测试目标，DLL POST_BUILD 拷贝，add_dependencies 挂测试目标）；依赖红线配置期守卫（T-2/R-3/D-06）原文未动；工具边白名单登记与 DTB §4.5 登记册行随本批。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ListenerOwnershipTest.cpp",
+      "sha256": "9ec6ff8a5dab7cbb222ccdf806d20b4f7b61b4174af02808aaef44b7125e18bf",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 定向用例（UT_LSN 五用例）：Append 单次析构/Release 返还所有权（进程内局部集合）＋lsnchild passed/failed/skipped 三态子进程 e2e（报告唯一且落 --ird_report 指定路径、退出码 0/非0/0）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/lsnchild/main.cpp",
+      "sha256": "3f22ae4b21d7ff88dc1c09e263d903626f96697a72f47398d789ad1b8bda5188",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "监听器所有权测试子进程（prochelper 先例，tools/ 不入产品安装面）：经生产安装入口跑真实 gtest 三态样本；--lsn_mode=legacy 为旧实现反例取证载体（非产品 fallback、非第二报告路径）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp",
+      "sha256": "84d190f4af35b40578e770c555a93936a5efd8b624d7c27e59bbdd0a78028651",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp",
+      "sha256": "595cdb2e339e05d319410760944ac954e2e2ebc95a038a5b5c490ecc885fac30",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ContractTestMain.cpp",
+      "sha256": "59400b71e11d6041555e1a81945357e9054c9b3d4ee8c53759580c91fc07a087",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TestMainReport.cpp",
+      "sha256": "3d56c4a9269160010407c1a8e13f4bccac1f075481eccb9e1131f36cf430fcdd",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+      "sha256": "93bd0fac0aa9a7f5a453ec7e97a848a5a03e3311aa667dce791f34404e77f7f4",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp",
+      "sha256": "8f0368b8c26f92c6da13ad18d3c9eae5ee6c2806233efbf50fdda00a1a56291d",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/perf_test/TestMainPerf.cpp",
+      "sha256": "f8f7e81a01aba005b6fc86e92689c4644abd3be82f5fd16b701e357759075d70",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp",
+      "sha256": "34e1220bcc717e5ae40c8df877fec473805ba25d4c732426d73fd2be7ac16403",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/TestMainReport.cpp",
+      "sha256": "981cadd73bfd35885896d9b71ac8726dad9580332255d628ed8f65701cf1301e",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp",
+      "sha256": "8572bb58c95fcac9bc8f0ca7ffaf08cc3b1f762345ad2118dbfaccd17d8ee491",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TestMainReport.cpp",
+      "sha256": "b79a6d3d30e643cde15b52e30ba90b5b20925c42336f7e00652a82472ee95ade",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp",
+      "sha256": "6bc2a31705a58a50156e8cfe82adbc1123072f463c3bdc6d06a2e55e6e5270ef",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/TestMainPerf.cpp",
+      "sha256": "30d5fa68e1a1a1b279fac8dc6875d176e05d239ce6e5b217c8d046507b2691d0",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp",
+      "sha256": "9474c49a0383f6030313987274c1cce2cf781ff5f820635aa69588e7c5fc8b59",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+      "sha256": "3074261950306c2740f721034958adaff33cc9b300263e73c2d605f24b4baaf3",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/perf_test/TestMainPerf.cpp",
+      "sha256": "4b94e344b516c2425be494aab7ff4be66692deeeb2b971b23bc6b5cf186207a0",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TestMainReport.cpp",
+      "sha256": "badfb82330c97ff01be6f07be23dc8670edbf329d7f36df931a10cd5064d73b9",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp",
+      "sha256": "cf4ed0af0f8ae73a7530a356610e3b0b122f436cd7b512045950ff7808eecd1e",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp",
+      "sha256": "b9e3c42c9e33f8ed7c554bbc16127f2d6f71a51b9341048289de79ca53a6041a",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp",
+      "sha256": "dd374fb3f21b9c746568045fd60565125b09e91d091b9bcddf51ff9d34692a11",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+      "sha256": "7e8d6df6ef032603930eb90a82971fdc34135e81be5771689ca052af09057be9",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp",
+      "sha256": "0ef8cb5c239065f6ef9c3ac85cc66d1256a7ac94466463b831d028177aff4f40",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp",
+      "sha256": "352267872a633055be0897b237d57b6704a30c8afab8c6fc136650f8a9233da6",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ContractTestMain.cpp",
+      "sha256": "bacbce6d32c474e965a6dc27deed87a64828ed5d24dbabd0c70287772fae49b6",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TestMainReport.cpp",
+      "sha256": "223fa6a83ee6839a31c87d4f58beeef043faf74f6205788aec4e43696b648403",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/perf_test/TestMainLargeDataPerf.cpp",
+      "sha256": "9a9b71aa02d428dfd91f868129ff4c3acdc5cbc3a0f6e36ffb8c621e95891d46",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/perf_test/TestMainPerf.cpp",
+      "sha256": "a4d46bedc9c355f79653ca4921e31c9905eddf86582ede4511a751599d93495a",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp",
+      "sha256": "4cde04768d2f7d96e01cb4a72deda75a71f27ef4e356892eceb2165e3d132e3c",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp",
+      "sha256": "37509b3a5201d59c520e9c233914e24c1133544c9225c32cd0443bc9a8cd8915",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "F-958 协调批：仅订正 installTestRecordListener 监听器所有权失真注释（静态对象声明→gtest Append 接管契约），零代码/调用顺序/逻辑变化；功能矩阵整文件行覆盖登记随本批（trajectory SmoothTest 整文件行先例同型）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+      "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795",
+      "mode": "governance",
+      "capabilities": [
+        
+      ],
+      "boundary": "IRD_TOOL_TARGET_EDGES 与 IRD_T1_EXEMPT_TARGETS 增列 sdurws_ird_testkit_lsnchild 工具边与豁免（testdata_lint 同型登记，非放宽门禁）；DTB §4.5 登记册对应行同批；其余数据段零变化。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/README.md"
+    }
+  ]
+}

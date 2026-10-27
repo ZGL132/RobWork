@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "GOV-T25",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "WP-03 已实施基础能力包独验交接与遗留核对",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13",
+    "reuse/policy.md",
+    "tasks/REUSE-T13.json",
+    "tasks/REUSE-T15.json",
+    "tasks/REUSE-T16.json",
+    "traceability/reuse/REUSE-T13/README.md",
+    "traceability/reuse/REUSE-T15/README.md",
+    "traceability/reuse/REUSE-T16/README.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T25.json"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/GOV-T25.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/*acceptance*",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/*acceptance*",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T16/*acceptance*",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/WP-03/**",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T25.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "WP-03 已实施基础能力包独验交接与遗留核对及原始证据"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "引用T13/T15/T16原证据并核适用源码输入、依赖、配置及工具链，给出确切送验版本；不可只按HEAD判断",
+    "独立会话/人工评价offset物理映射、FNV精确性与已接受性能、日志keep边界，实施者不签独验",
+    "定向核T07/T09/T12遗留和已有独验，未执行不记PASS；发现缺陷先确定独立返工范围，不借本契约改生产"
+  ],
+  "note": "所有者授权主工作树redesign-main串行，本地提交不操作远程；WP别名仅用于migration调度。实施与独验分开；本任务不批准新核心、上游扩展或权限放宽。 此契约仅做交接/记录核对，不代替各原任务acceptance，不重复实现T07/T09/T12/T13/T15/T16。缺少独验保持开放，由所有者安排。 本轮已完成定向交接准备，入口traceability/reuse/WP-03/README.md；原manifest除T15 core/CMake外一致，变化归GOV-T24冒烟供给修复。T12旧coverage已修、性能仍NOT RUN；六包独验未找到已归档PASS，保持开放。未借本契约运行C++或修改算法。核查树e98cf3deb2c8f5680edc766e963235fe4954f25d对应标题更正后实现9276f19b26bfe095cbe2ccf460a64dec39bf45e9，原输入未变；本包正式起点2ac114f33d2102d0b7848d8d4d51345147fa32b8，显式Base/Head仅核本包交接文档。2026-10-24 独立验收收口：所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」授权工作流内单次验收子智能体（GOV-T23/T24 先例同型；实施者不得自签，本轮验收员未参与实施）独立复验 13/13 通过——verdict=pass，绑定送验SHA 0a091394b9466c3fa7521d34162b1c8b64a843c4，记录 traceability/acceptance/GOV-T25-20261024-r1.json（复跑原件在其同名目录：范围 5 路径原生 PASS、版本对应链、六包 manifest/scopeInputs/XML 双口径重算、红线合集、commit-lint 1/1、validate-docs 复跑）；据此由登记步骤置 done，后续纯记录提交不属于被验实现 SHA；六包（T07/T09/T12/T13/T15/T16）独验与性能接受保持开放，不因本登记放行。allowedFiles 补 r1 验收记录与证据目录两条（登记产物入允许面，不触碰 forbidden 面、不改门禁脚本）。登记后门禁实测：verify-task-scope 2ac114f33..0a091394b9 原生 PASS（5 路径全在允许面）；commit-lint 2ac114f33..HEAD 登记前 16/16 全合规（五个已豁免历史提交不在本区间），登记后以提交后复跑为准。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T25.json"
+  }
+}

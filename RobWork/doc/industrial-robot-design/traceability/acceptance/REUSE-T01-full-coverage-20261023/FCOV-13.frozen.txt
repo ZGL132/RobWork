@@ -1,0 +1,18 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Redaction.cpp
+sdurws::ird::diagnostics::RedactionService::redact
+580: std::string RedactionService::redact(std::string_view raw, LogTier tier) const noexcept
+581: {
+582:     try {
+583:         // 纯函数主链：拷贝入参→规则链就地改写→累计观测计数。
+584:         std::string text(raw);
+585:         RedactionCounters counters{};
+586:         applyRules(text, tier, counters);
+587:         m_impl->accumulate(counters);
+588:         return text;
+589:     } catch (...) {
+590:         // 降级铁律（§7.3②）：任何内部失败——整条字面量＋开发诊断，绝不放行
+591:         // 原文、绝不抛出。applyRules 为虚函数：测试子类抛出即复现本路径
+592:         // （DT-SEC-3 确定性注入）。
+593:         return m_impl->degrade();
+594:     }
+595: }

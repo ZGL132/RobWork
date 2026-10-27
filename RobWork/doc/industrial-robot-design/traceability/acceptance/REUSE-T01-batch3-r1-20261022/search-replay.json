@@ -1,0 +1,74 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"class Log|static.*getLog|setWriter|write \\(|flush|virtual.*doWrite\" RobWork/RobWork/src/rw/core/Log.hpp RobWork/RobWork/src/rw/core/LogWriter.hpp",
+    "exitCode": 0,
+    "recordedExit": 0,
+    "sameOutput": false,
+    "sameExit": true,
+    "sameHitMultiset": true
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"class ThreadPool|addWork|stop \\(|waitForEmptyQueue|class ThreadSafeQueue|push \\(|pop \\(|while.*empty\" RobWork/RobWork/src/rw/common/ThreadPool.hpp RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "exitCode": 0,
+    "recordedExit": 0,
+    "sameOutput": false,
+    "sameExit": true,
+    "sameHitMultiset": true
+  },
+  {
+    "index": 3,
+    "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+    "exitCode": 0,
+    "recordedExit": 0,
+    "sameOutput": true,
+    "sameExit": true,
+    "sameHitMultiset": true
+  },
+  {
+    "index": 4,
+    "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
+    "exitCode": 0,
+    "recordedExit": 0,
+    "sameOutput": true,
+    "sameExit": true,
+    "sameHitMultiset": true
+  },
+  {
+    "index": 5,
+    "command": "rg -n \"inCollision \\(|distance \\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+    "exitCode": 0,
+    "recordedExit": 0,
+    "sameOutput": false,
+    "sameExit": true,
+    "sameHitMultiset": true
+  },
+  {
+    "index": 6,
+    "command": "rg -n \"class LinearInterpolator|LinearInterpolator \\(|T x \\(|duration\" RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp",
+    "exitCode": 0,
+    "recordedExit": 0,
+    "sameOutput": true,
+    "sameExit": true,
+    "sameHitMultiset": true
+  },
+  {
+    "index": 7,
+    "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+    "exitCode": 1,
+    "recordedExit": 1,
+    "sameOutput": true,
+    "sameExit": true,
+    "sameHitMultiset": true
+  },
+  {
+    "index": 8,
+    "command": "rg -n \"zeroConfigFK|baseTframe\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src/rw/models/Device.hpp",
+    "exitCode": 0,
+    "recordedExit": 0,
+    "sameOutput": true,
+    "sameExit": true,
+    "sameHitMultiset": true
+  }
+]

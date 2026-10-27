@@ -1,0 +1,164 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+生成启动时间为 2026/10/23 7:37:33。
+
+     1>节点 1 上的项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(默认目标)。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 1 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ZERO_CHECK.vcxproj”(2) (默认目标)。
+     2>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+       InitializeBuildStatus:
+         正在创建“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild”执行 Touch 任务。
+       CustomBuild:
+         1>Checking Build System
+         CMake is re-running because C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b35-build/CMakeFiles/generate.stamp is out-of-date.
+           the file 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch35/CMakeLists.txt'
+           is newer than 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b35-build/CMakeFiles/generate.stamp.depend'
+           result='-1'
+         -- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+         -- RobWork has not been compiled with a Version Number
+         -- RobWork: Found a RobWork build tree
+         CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+           Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+           variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+           cmake_policy command to set the policy and suppress this warning.
+         
+           CMake variable QHULL_ROOT is set to:
+         
+             D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+         
+           For compatibility, find_package is ignoring the variable, but code in a
+           .cmake module might still use it.
+         Call Stack (most recent call first):
+           CMakeLists.txt:4 (find_package)
+         This warning is for project developers.  Use -Wno-dev to suppress it.
+         
+         -- RobWork has not been compiled with a Version Number
+         -- RobWork: Found a RobWork build tree
+         CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+           Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+           variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+           cmake_policy command to set the policy and suppress this warning.
+         
+           CMake variable QHULL_ROOT is set to:
+         
+             D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+         
+           For compatibility, find_package is ignoring the variable, but code in a
+           .cmake module might still use it.
+         Call Stack (most recent call first):
+           C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt:4 (find_package)
+         This warning is for project developers.  Use -Wno-dev to suppress it.
+         
+         -- RobWork has not been compiled with a Version Number
+         -- RobWork: Found a RobWork build tree
+         CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+           Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+           variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+           cmake_policy command to set the policy and suppress this warning.
+         
+           CMake variable QHULL_ROOT is set to:
+         
+             D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+         
+           For compatibility, find_package is ignoring the variable, but code in a
+           .cmake module might still use it.
+         Call Stack (most recent call first):
+           C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt:4 (find_package)
+         This warning is for project developers.  Use -Wno-dev to suppress it.
+         
+         -- Configuring done (1.3s)
+         -- Generating done (1.1s)
+         -- Build files have been written to: C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b35-build
+       FinalizeBuildStatus:
+         正在删除文件“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild”。
+         正在对“x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\ZERO_CHECK.lastbuildstate”执行 Touch 任务。
+     2>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ZERO_CHECK.vcxproj”(默认目标)的操作。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 1 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-core\sdurws_ird_core.vcxproj”(3) (默认目标)。
+     3>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+       InitializeBuildStatus:
+         正在创建“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\unsuccessfulbuild”执行 Touch 任务。
+       CustomBuild:
+         所有输出均为最新。
+       VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+       ClCompile:
+         所有输出均为最新。
+       Lib:
+         所有输出均为最新。
+         sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-core\Release\sdurws_ird_core.lib
+       FinalizeBuildStatus:
+         正在删除文件“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\unsuccessfulbuild”。
+         正在对“sdurws_ird_core.dir\Release\sdurws_ird_core.tlog\sdurws_ird_core.lastbuildstate”执行 Touch 任务。
+     3>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-core\sdurws_ird_core.vcxproj”(默认目标)的操作。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 2 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-testkit\sdurws_ird_testkit.vcxproj”(5) (默认目标)。
+     5>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+     1>项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(1)正在节点 3 上生成“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\ird-diagnostics\sdurws_ird_diagnostics.vcxproj”(4) (默认目标)。
+     4>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+     5>InitializeBuildStatus:
+         正在创建“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+     4>InitializeBuildStatus:
+         正在创建“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+     5>InitializeBuildStatus:
+         正在对“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\unsuccessfulbuild”执行 Touch 任务。
+     4>InitializeBuildStatus:
+         正在对“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\unsuccessfulbuild”执行 Touch 任务。
+     5>CustomBuild:
+         所有输出均为最新。
+     4>CustomBuild:
+         所有输出均为最新。
+     5>VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+     4>VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+     5>ClCompile:
+         所有输出均为最新。
+     4>ClCompile:
+         所有输出均为最新。
+       Lib:
+         所有输出均为最新。
+     5>Lib:
+         所有输出均为最新。
+     4>Lib:
+         sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\ird-diagnostics\Release\sdurws_ird_diagnostics.lib
+     5>Lib:
+         sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-testkit\Release\sdurws_ird_testkit.lib
+     4>FinalizeBuildStatus:
+         正在删除文件“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\unsuccessfulbuild”。
+         正在对“sdurws_ird_diagnostics.dir\Release\sdurws_i.151B93F4.tlog\sdurws_ird_diagnostics.lastbuildstate”执行 Touch 任务。
+     4>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\ird-diagnostics\sdurws_ird_diagnostics.vcxproj”(默认目标)的操作。
+     5>FinalizeBuildStatus:
+         正在删除文件“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\unsuccessfulbuild”。
+         正在对“sdurws_ird_testkit.dir\Release\sdurws_i.EDEC1437.tlog\sdurws_ird_testkit.lastbuildstate”执行 Touch 任务。
+     5>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\schema-probe\parent-probe\ird-testkit\sdurws_ird_testkit.vcxproj”(默认目标)的操作。
+     1>PrepareForBuild:
+         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+       InitializeBuildStatus:
+         正在对“ird_log_file_audit.dir\Release\ird_log_.5CA7EAA1.tlog\unsuccessfulbuild”执行 Touch 任务。
+       CustomBuild:
+         所有输出均为最新。
+       VcpkgTripletSelection:
+         Using triplet "x64-windows" from "D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\"
+         Using normalized configuration "Release"
+       ClCompile:
+         D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\bin\HostX64\x64\CL.exe /c /I"C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\include" /I"C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include" /I"C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\include" /I"D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include" /nologo /W1 /WX- /diagnostics:column /MP /O2 /Ob2 /D _MBCS /D WIN32 /D _WINDOWS /D NDEBUG /D NOMINMAX /D BIND_FORTRAN_LOWERCASE_UNDERSCORE /D WIN32_LEAN_AND_MEAN /D _WIN32_WINNT=0x0501 /D _SCL_SECURE_NO_WARNINGS /D _CRT_SECURE_NO_WARNINGS /D _CRT_SECURE_NO_DEPRECATE /D MSVC_AMD64 /D GTEST_LINKED_AS_SHARED_LIBRARY=1 /D BOOST_FILESYSTEM_NO_LIB /D BOOST_FILESYSTEM_DYN_LINK=1 /D BOOST_THREAD_NO_LIB /D BOOST_THREAD_DYN_LINK /D BOOST_THREAD_USE_DLL /D BOOST_ATOMIC_NO_LIB /D BOOST_ATOMIC_DYN_LINK /D BOOST_CHRONO_NO_LIB /D BOOST_CHRONO_DYN_LINK /D BOOST_CONTAINER_NO_LIB /D BOOST_CONTAINER_DYN_LINK /D BOOST_DATE_TIME_NO_LIB /D BOOST_DATE_TIME_DYN_LINK /D BOOST_PROGRAM_OPTIONS_NO_LIB /D BOOST_PROGRAM_OPTIONS_DYN_LINK /D "CMAKE_INTDIR=\"Release\"" /EHa /MD /openmp /std:c++17 /Fo"ird_log_file_audit.dir\Release\\" /Fd"ird_log_file_audit.dir\Release\vc143.pdb" /external:W0 /TP /errorReport:queue  /external:I "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include" /external:I "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3" /external:I "D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/src" -bigobj /utf-8 "C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp"
+         LoggingTest.cpp
+     1>C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp(1065,29): error C2065: “IRD_DIAGNOSTICS_UNIT_ROOT”: 未声明的标识符 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj]
+     1>已完成生成项目“C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(默认目标)的操作 - 失败。
+
+生成失败。
+
+       “C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj”(默认目标) (1) ->
+       (ClCompile 目标) -> 
+         C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp(1065,29): error C2065: “IRD_DIAGNOSTICS_UNIT_ROOT”: 未声明的标识符 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b35-build\ird_log_file_audit.vcxproj]
+
+    0 个警告
+    1 个错误
+
+已用时间 00:00:05.62

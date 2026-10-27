@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T07",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+      "sha256": "f04c14eeae79b0d567e17e80d8b09021428b5c71412355e387af00c1b15194c9",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-SVD"
+      ],
+      "boundary": "仅谱/条件数薄适配与既有阈值，无旧核回退；Parts真实入口结果消费",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/production.json"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "项目目标注册/上游数学链接与原测试接入；无数值核心",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/gtest.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CouplingReuseTest.cpp",
+      "sha256": "6339880973113d8c4308ea048f18d9b4ad1bbe9841bfc53272e6a08fb24092fe",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "沿GTest/testkit的MDL-21独立oracle/阈值/消费验证",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/gtest.xml"
+    }
+  ]
+}

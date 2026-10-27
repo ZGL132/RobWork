@@ -1,6 +1,6 @@
 /**
  * @file   InertiaMath.hpp
- * @brief  modeling 单元私有实现头——惯量张量的对称 3×3 特征值解析求解、
+ * @brief  modeling 单元私有实现头——惯量张量到上游对称特征值分解的薄适配、
  *         物性断言②③（SPD＋三角不等式）核查（I-MDL-5 单一实现点）与
  *         物性估算输出自检（§9.4.6 @post——WP-13-T04）。
  *
@@ -14,80 +14,50 @@
  * 实现的动机：连杆与工具的物性判定必须逐字同源（两份实现会在容差/
  * 判定式上漂移），故收敛到本头。
  *
- * 线程安全：全部纯函数；确定性：解析式（无迭代、无收敛判据）——
- * 同输入位级同输出（NFR-COR-02）。
+ * 线程安全：全部纯函数，分解状态由调用栈及上游局部对象持有。
+ * REUSE-T27：数值核由 RobWork 维护；同输入/工具链重复确定性由回归核对，
+ * 不将解析公式或跨平台位级一致性作为未经验证的保证（NFR-COR-02）。
  */
 
 #ifndef IRD_MODELING_SRC_INERTIAMATH_HPP
 #define IRD_MODELING_SRC_INERTIAMATH_HPP
 
+#include <algorithm>
 #include <array>
 #include <cmath>
+
+#include <rw/math/LinearAlgebra.hpp>  // REUSE-T27：复用原有 sdurw_math，不自持特征值核心。
 
 #include <sdurws/ird/modeling/RobotDesign.hpp>  // InertiaTensor/InvariantViolation/InvariantId
 
 namespace sdurws::ird::modeling::inertiamath {
 
 /**
- * @brief 对称 3×3 矩阵特征值（解析式三角法——Smith 算法，无迭代）。
+ * @brief 将惯量六分量投影到 RobWork 对称分解，返回升序主惯量（REUSE-T27）。
  *
- * 为什么不用迭代特征值库：I-MDL-5 需要"同输入同特征值"的位级确定性，
- * 迭代法（Jacobi/QR）的收敛路径依赖浮点累积次序，跨平台/跨调用可能差
- * 一位；解析式是固定算式，确定性由构造保证。精度对 3×3 对称阵足够
- * （判定边界由测试用清晰例钉住；边界浮点噪声 ~1e-16 相对量级）。
- *
- * 数学（对称阵 A=[[x,p,q],[p,y,r],[q,r,z]]）：
- *   六个分量全为 0 → 零阵（特征值全 0）；否则 q_ = tr(A)/3，
- *   p2 = Σ(xᵢ-q_)²+2(p²+q²+r²)，p2=0 → 各向同性阵（特征值全为 q_），
- *   p2>0 时 p_ = √(p2/6)，
- *   B = (A - q_·I)/p_，r_ = det(B)/2 夹取到 [-1,1]，φ = acos(r_)/3，
- *   λmax = q_ + 2p_·cos(φ)，λmin = q_ + 2p_·cos(φ+2π/3)，
- *   λmid = 3q_-λmax-λmin。
+ * 这里仅连接产品张量和上游矩阵接口：不计算第二份行列式/三角解析根，
+ * 不缓存分解状态。旧解析公式的平方在极小/极大有限尺度会下溢/溢出，
+ * 直接复用上游分解可消除该重复核心；SPD 与三角不等式仍由下方业务函数判定。
  *
  * @param t [in] 六分量对称张量（ixx,iyy,izz 主项；ixy,ixz,iyz 惯量积），
  *          单位 kg·m²；分量须有限（非有限由 I-MDL-3 层先报，本函数行为
  *          仅对有限输入有定义）
  * @return 升序特征值 (λmin, λmid, λmax)，单位 kg·m²
+ * @throws std::bad_alloc 上游动态矩阵分配失败时向调用方传播；本私有函数
+ *         不再声明 noexcept，以免把资源失败转换成进程终止，不吞错或另建诊断轨。
  *
  * 纯函数；线程安全；确定性。
  */
-inline std::array<double, 3> symmetricEigenvalues3x3(const InertiaTensor& t) noexcept
+inline std::array<double, 3> symmetricEigenvalues3x3(const InertiaTensor& t)
 {
-    // 先按分量判断真正的零矩阵，而不是用平方和 p1==0 判断：极小但
-    // 合法的惯量（例如 1e-300 kg·m²）平方后会下溢为 0，不能因此被
-    // 错当成零矩阵。零矩阵分支必须优先于 p2 边界处理，SPD 判定仍会
-    // 正确拒绝其最小特征值不严格大于 0（I-MDL-5）。
-    const bool isZeroMatrix = t.ixx == 0.0 && t.iyy == 0.0 && t.izz == 0.0
-                           && t.ixy == 0.0 && t.ixz == 0.0 && t.iyz == 0.0;
-    if (isZeroMatrix) {
-        // 零矩阵：特征值全 0（SPD 判定将正确拒绝——零惯量非正定）
-        return {0.0, 0.0, 0.0};
-    }
-    const double trThird = (t.ixx + t.iyy + t.izz) / 3.0;
-    const double p2 = (t.ixx - trThird) * (t.ixx - trThird)
-                    + (t.iyy - trThird) * (t.iyy - trThird)
-                    + (t.izz - trThird) * (t.izz - trThird)
-                    + 2.0 * (t.ixy * t.ixy + t.ixz * t.ixz + t.iyz * t.iyz);
-    if (p2 == 0.0) {
-        // 各向同性张量的三个对角项相等且积项为零，此时 pNorm=0；
-        // 直接返回三重平均值，避免后续 B=(A−qI)/pNorm 形成 0/0。
-        // 该分支也覆盖大尺度输入的 p1 溢出场景，因为 p2 只描述偏离
-        // 各向同性部分的能量，仍可保持为零（WP-13-T23）。
-        return {trThird, trThird, trThird};
-    }
-    const double pNorm = std::sqrt(p2 / 6.0);
-    // B = (A - trThird·I) / pNorm（p2>0 蕴含 pNorm>0——非零阵不会除零）
-    const double bx = (t.ixx - trThird) / pNorm, bp = t.ixy / pNorm, bq = t.ixz / pNorm;
-    const double by = (t.iyy - trThird) / pNorm, br = t.iyz / pNorm, bz = (t.izz - trThird) / pNorm;
-    // det(B)：对称 3×3 行列式展开
-    const double detB = bx * (by * bz - br * br) - bp * (bp * bz - br * bq)
-                      + bq * (bp * br - by * bq);
-    const double rr = std::max(-1.0, std::min(1.0, detB / 2.0));
-    const double phi = std::acos(rr) / 3.0;
-    const double eigMax = trThird + 2.0 * pNorm * std::cos(phi);
-    const double eigMin = trThird + 2.0 * pNorm * std::cos(phi + 2.0943951023931953);  // φ+2π/3
-    const double eigMid = 3.0 * trThird - eigMax - eigMin;
-    return {eigMin, eigMid, eigMax};  // 升序
+    // 六分量是同一连杆参考系、同一参考点的 kg·m²；镜像填入两三角，
+    // 不改变惯量积符号、不做平行轴迁移或额外归一化。上游返回值已升序。
+    Eigen::MatrixXd matrix(3, 3);
+    matrix << t.ixx, t.ixy, t.ixz,
+              t.ixy, t.iyy, t.iyz,
+              t.ixz, t.iyz, t.izz;
+    const auto decomposition = rw::math::LinearAlgebra::eigenDecompositionSymmetric(matrix);
+    return {decomposition.second[0], decomposition.second[1], decomposition.second[2]};
 }
 
 /**
@@ -103,7 +73,7 @@ inline std::array<double, 3> symmetricEigenvalues3x3(const InertiaTensor& t) noe
  *   - 对称性：六分量表示天然对称（附录 D 第 6 项由表示层结构性满足）；
  *   - SPD：最小特征值严格 > 0（第 7 项）；
  *   - 三角不等式：λmax ≤ λmid + λmin（严格比较——卡面未给容差，特征值
- *     已是解析解，不在本层放宽）。
+ *     来自统一的上游分解，不在本层增加第二容差）。
  *
  * 纯函数；线程安全；确定性。
  */
@@ -131,9 +101,8 @@ inline void checkInertiaAssertions(std::vector<InvariantViolation>& out,
 // 三角不等式（自检失败=内部错误码，不输出非法张量）"的单一实现点）
 // =====================================================================
 
-/// 对称性容差：|M−Mᵀ| 逐元素上限 1×10⁻¹²（卡 acceptance 2 原文"对称相对
-/// 1×10⁻¹²"——双精度旋转/平移合成引入的浮点噪声远低于此量级，超限即
-/// 实现错误而非正常舍入）。附录 D 第 6 项同值的建模侧承载。
+/// 相对对称性容差（REQUIREMENTS附录D第6项固定1×10⁻¹²）。REUSE-T28
+/// 经所有者确认，以九项最大绝对元素作张量尺度，不按kg·m²的绝对差判定。
 inline constexpr double kSynthesisSymmetryTolerance = 1e-12;
 
 /**
@@ -148,9 +117,10 @@ inline constexpr double kSynthesisSymmetryTolerance = 1e-12;
  *
  * 核查序（失败即短路返回原因，NFR-COR-03 不修复不截断）：
  *   ①有限性：九元素全有限（NaN/Inf——如量纲溢出到 inf——立即拒收）；
- *   ②对称性：|M(i,j)−M(j,i)| ≤ 1×10⁻¹²（kSynthesisSymmetryTolerance）；
+ *   ②对称性：令s为九项最大绝对值，|M(i,j)/s−M(j,i)/s| ≤ 1×10⁻¹²；
+ *     零阵不除以零，随后由原严格SPD拒收（REUSE-T28已确认的相对尺度）；
  *   ③SPD＋三角不等式：经六分量投影（容差内的对称化取平均——两三角
- *     差已由②保证 ≤1×10⁻¹²，投影不引入超容差改动）复用
+ *     相对差已由②保证 ≤1×10⁻¹²，投影不引入超容差改动）复用
  *     symmetricEigenvalues3x3 判定 λmin>0 且 λmax ≤ λmid+λmin。
  *
  * 物理背景（为什么合法输入下此自检应恒过）：SPD 张量经正交相似变换
@@ -163,22 +133,25 @@ inline constexpr double kSynthesisSymmetryTolerance = 1e-12;
  * @return 空串＝自检通过；非空＝失败原因（英文稳定短语，进
  *         EstimateError.detail 的内部定位串——不直接呈现给用户）
  *
- * 纯函数；线程安全；确定性（无迭代收敛判据——解析特征值，NFR-COR-02）。
+ * 纯函数；线程安全；相同输入/工具链的重复确定性由特征值及消费者回归验证。
  */
 inline std::string synthesisSelfCheck(const std::array<std::array<double, 3>, 3>& m)
 {
     // ①有限性：任何 NaN/Inf（含大尺寸溢出场景）都不能作为"物性"输出。
+    double scale = 0.0;  // kg·m²，有限性检查通过后才参与无量纲相对比较。
     for (int r = 0; r < 3; ++r) {
         for (int c = 0; c < 3; ++c) {
             if (!std::isfinite(m[r][c])) {
                 return "non-finite-entry";
             }
+            scale = std::max(scale, std::abs(m[r][c]));
         }
     }
-    // ②对称性（相对 1×10⁻¹²）：逐元素核查两三角的偏差。
+    // ②先归一再相减：有限大数直接相减也可能溢出；不以1作尺度下限，
+    // 极小张量同样执行相对1×10⁻¹²。零阵留给下方严格SPD，无0/0路径。
     for (int r = 0; r < 3; ++r) {
         for (int c = r + 1; c < 3; ++c) {
-            const double diff = m[r][c] - m[c][r];
+            const double diff = scale == 0.0 ? 0.0 : m[r][c] / scale - m[c][r] / scale;
             if (!(diff <= kSynthesisSymmetryTolerance
                   && diff >= -kSynthesisSymmetryTolerance)) {
                 return "asymmetric-beyond-tolerance";

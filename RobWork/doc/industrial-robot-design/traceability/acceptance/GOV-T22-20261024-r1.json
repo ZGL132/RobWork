@@ -1,0 +1,82 @@
+{
+  "taskId": "GOV-T22",
+  "baseCommit": "39b57abd5246308968b192dab5d2112a05fd202d",
+  "reviewedCommit": "0d0d3ca3ecedd7649b7f7b9b60dcaabd7a89cb5c",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-24T18:20:36+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "GOV-T22/WP-A 单次验收子智能体（独立验收·GOV-T22·r1）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何仓库文件、未提交、未切分支、未建持久工作树、未远程操作、未重配或重建构建树；全部验证命令在送验 SHA 0d0d3ca3e 的临时 detached worktree（C:/Users/zgl18/AppData/Local/Temp/govt22-acc-wt，验后已删除）真实执行，脚本版本与送验树逐字节一致；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 39b57abd..0d0d3ca3e 送验链（实现 0d018a0ba＋三轮验收记录与两轮返工＋登记收口）：verify-task-scope 显式 Base/Head 复跑与 318 越界甄别、forbiddenFiles 零命中、commit-lint 8 提交、送验 SHA 冻结树上契约 verify 5 项全量真实重跑（validate-reuse／test-reuse-governance PS7+PS5.1 双运行时各 136 例／validate-docs／ird_gates 引擎）、夹具保留实证（r2 135 例全保留）、红线抽查（门禁未放宽、RequireMigrationComplete 语义移位在案且更严格、catalog 既有绑定零删除、CI 镜像逐字节一致、零产品代码）、契约三条 acceptance 逐条映射。",
+  "counts": {
+    "failed": 0,
+    "passed": 9,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "9 项验收检查；治理测试矩阵计数另列（governanceMatrix: PS7 136＋PS5.1 136），互不相加"
+  },
+  "checks": [
+    "现场：主工作树 redesign-main HEAD=83224ba40、git status --short 干净；送验 head 0d0d3ca3e 为 HEAD 祖先（git merge-base --is-ancestor 通过）；送验链 8 提交（0d018a0ba→0d0d3ca3e）全部为 GOV-T22 主题（实现＋ACC 三轮记录＋返工＋登记），一包一组可回滚。",
+    "范围：verify-task-scope -TaskFile tasks/GOV-T22.json -Base 39b57abd…-Head 0d0d3ca3e 字面 FAIL（318 路径越界）→ 甄别（01-scope-review.log）：318 个越界全部位于 traceability/acceptance/GOV-T22-20261022*（271+20+1+24+1+1），即本任务三轮独立验收记录与证据随任务提交的登记产物，非其他任务内容、非实现面，与 r3 记录 review.scope「排除历史验收证据后恰为契约12个允许文件」甄别口径及 GOV-T21 F-970/F-971 字面区间豁免先例同型（补 allowedFiles 属放宽门禁、被禁止）；实质 12 文件（3 脚本＋CI 两文件＋6 reuse 文档＋契约）全部字面命中 allowedFiles；forbiddenFiles 零命中（产品 cpp/hpp、RobWork/RobWork/src、RobWorkSim/src、vcpkg 均 0）；base 39b57abd 恰为实现提交 0d018a0ba 之父（git rev-parse 0d018a0ba^ 核对），区间为单任务连续链，非以主线与自身比较。",
+    "版本绑定：送验 head 后续 8 个批次提交（REUSE-T07/T28/T29 等）改动了 validate-reuse.ps1/reuse-contract.ps1/test-reuse-governance.ps1/CI 镜像，主工作树 HEAD 版本不可用于本验收；故建临时 detached worktree 检出 0d0d3ca3e，全部验证在该树真实执行；三核心脚本在 r3 验收 SHA e6f06e5b9 与送验 head 0d0d3ca3e 之间 git blob hash 完全一致（9b413b0a/e6042385/da4b9ed1），本轮 test-reuse-governance 报告内 validatorSha256=179A2B…/helperSha256=C17D5E…/driverSha256=CFAC17…与 r3 记录 scriptDigests 完全一致，即本轮重跑的就是 r3 独立验收通过的脚本版本。",
+    "提交规范：commit-lint -Range 39b57abd..0d0d3ca3e PASS（8 个提交全部合规，中文 [governance]/[ACC] 前缀）exit 0（03-commit-lint.log）。",
+    "治理测试矩阵（契约 verify 第 2/3 项，送验树真实执行）：pwsh PS7 test-reuse-governance.ps1 136/136 passed、0 failed、0 skipped、0 notRun，exit 0（04-test-ps7-driver.log＋report＋junit）；powershell PS5.1 同 136/136 passed、0 failed、0 skipped、0 notRun，exit 0（04-test-ps51-driver.log＋report＋junit）；双运行时夹具名集合完全一致（Compare-Object 计数 0）。",
+    "validate-reuse（契约 verify 第 1 项，送验树真实执行）：exit 0，输出「reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0」＋「PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399」——与 r3 记录及送验说明一致，不宣称算法合规（05-validate-reuse.log）。",
+    "validate-docs（契约 verify 第 4 项，送验树真实执行）：exit 0，「validate-docs: PASS (20 units, 12 trace entries, 378 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, NOT AUDITED evidence)」（06-validate-docs.log）；ird_gates 引擎（契约 verify 第 5 项）：cmake -DIRD_ROOT=<送验树>/…/industrialrobot -DIRD_SELFTEST_DIR=… -P …/cmake/ird_gates.cmake exit 0，17 项自测正负例全部按预期（fail_r1/r3/r4/r4cliff/r5/t1/t2/sub 检出＋pass 无误报）＋产品静态扫描「全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」（07-ird-gates.log）——`cmake --build build --config Release --target ird_gates` 原形式因送验树无 build 配置未执行（r3 记录先例同口径），以该目标的两条原始命令等价直跑替代，如实登记。",
+    "红线抽查：①门禁未放宽——三脚本 diff 624+/11-，逐条删除行甄别：validate-reuse.ps1 的 MIGRATION 计数检查行被替换为 CheckFunctions 独立关闭记录判定，其语义承接在 reuse-contract.ps1:316-322（RequireMigrationComplete 为真时：无关闭记录的新文件/未关闭基线/非 closed 功能一律 Fail REUSE-MIGRATION），policy.md §52 在案登记「读取逐文件/逐功能关闭记录，而非永久锁死历史债务计数；无有效关闭记录仍须拒绝」，强度不降反升；其余删除行为 schema v1→v2 与 JSON 数组闭合的结构性变更，catalog 既有上游绑定（targetFile/targetSha256）与 baselineCommit b12e8503 零删除（CLOSURE 冻结未触碰，functions=0 closedFiles=0 保持全 candidate）；②CI 镜像 .github/workflows/upstream-reuse-governance.yml 与 scripts/industrialrobot/ci/ 同名文件在送验 SHA 逐字节相同（同 blob hash 4b833b…）；③零产品代码（forbiddenFiles 0 命中）→ 无平行实现回流、L2 零 Qt/六类端口/runtime 模型 owner 等架构红线由 ird_gates 全量扫描零命中直接守护；④PASS/FAIL/SKIP/NOT RUN 在 r1/r2/r3 记录与本记录中均分列如实（r3 的 cmake --build NOT RUN、远程 CI NOT RUN 均有显式声明）。",
+    "契约三条 acceptance 逐条映射：第 1 条「原GOV-T21校验保持；新增正负夹具PS7/PS5.1真实执行」——junit 逐例比对（08-fixture-preservation.log）：r2(20261022) 135 例夹具在当前 136 例中 0 缺失全保留，新增 closure-bom-log-positive（BOM 关闭记录正例），PS7/PS5.1 双运行时各 136/136 真实执行通过；第 2 条「精确权限/逐功能/正向证据/阶段准入/新鲜度与关闭记录校验」——136 例夹具按组齐备且全过：权限（ad-* 含 ad-real-qt-item/ad-state-data 正负例与 grant-HOST-*/runtime-owner 边界）、逐功能（function-* 10 例）、正向证据（production-* 12 例＋positive-evidence-required）、阶段准入（21-stage-not-approved/ad-stage-*）、新鲜度（function-stale-*/production-stale-log/grant-stale-source）、关闭记录（closure-* 11 例含三个 -RequireMigrationComplete 负例），validate-reuse supplement 输出确认 schema/permission/function evidence checked；第 3 条「独立会话冻结SHA验收，本任务不自签pass或算法批准」——契约 reuseGateAcceptance 绑定 r3 记录（reviewedCommit e6f06e5b9、verdict pass），三轮记录（r1 fail／r2 fail／r3 pass）原样保留，status=ready、implementationState=local-independent-pass-remote-delivery-blocked，实施提交未自签 done；本轮验收为独立会话第 4 次（工作流授权、未参与实施）。"
+  ],
+  "governanceMatrix": {
+    "ps7": { "executed": 136, "passed": 136, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "04-test-ps7-driver.log", "report": "04-test-ps7-report.json", "junit": "04-test-ps7.junit.xml" },
+    "ps51": { "executed": 136, "passed": 136, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "04-test-ps51-driver.log", "report": "04-test-ps51-report.json", "junit": "04-test-ps51.junit.xml" },
+    "fixturePreservation": { "r2Cases": 135, "missingFromCurrent": 0, "addedVsR2": ["closure-bom-log-positive"], "ps7Ps51SetEqual": true, "log": "08-fixture-preservation.log" }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T22.json -Base 39b57abd5246308968b192dab5d2112a05fd202d -Head 0d0d3ca3ecedd7649b7f7b9b60dcaabd7a89cb5c", "exitCode": 1, "passed": false, "note": "字面 FAIL：318 越界全部为本任务三轮验收证据登记产物（甄别见 checks[1] 与 01-scope-review.log），非实现面越界，判非阻断", "log": "02-scope.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 39b57abd5246308968b192dab5d2112a05fd202d..0d0d3ca3ecedd7649b7f7b9b60dcaabd7a89cb5c", "exitCode": 0, "passed": true, "log": "03-commit-lint.log" },
+    { "name": "test-reuse-governance-ps7", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -RepoRoot . -OutputDir .cache/acc-20261024-r1/ps7（送验 0d0d3ca3e 临时 worktree 内执行）", "exitCode": 0, "passed": true, "log": "04-test-ps7-driver.log" },
+    { "name": "test-reuse-governance-ps51", "command": "powershell -NoProfile -ExecutionPolicy Bypass -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -RepoRoot . -OutputDir .cache/acc-20261024-r1/ps51（送验 0d0d3ca3e 临时 worktree 内执行）", "exitCode": 0, "passed": true, "log": "04-test-ps51-driver.log" },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1（送验 0d0d3ca3e 临时 worktree 内执行）", "exitCode": 0, "passed": true, "log": "05-validate-reuse.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1（送验 0d0d3ca3e 临时 worktree 内执行）", "exitCode": 0, "passed": true, "log": "06-validate-docs.log" },
+    { "name": "ird-gates-engine", "command": "cmake -DIRD_ROOT=C:/Users/zgl18/AppData/Local/Temp/govt22-acc-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=…/.cache/acc-20261024-r1/ird-selftest -P …/industrialrobot/cmake/ird_gates.cmake（送验树）", "exitCode": 0, "passed": true, "log": "07-ird-gates.log" }
+  ],
+  "executionNotes": [
+    "送验 head 之后主线批次（REUSE-T07/T28/T29 等 8 提交）已修改三核心脚本（validate-reuse.ps1 18 行、reuse-contract.ps1 685 行、test-reuse-governance.ps1 888 行差量），为满足「pass 绑定送验 head SHA」，本轮全部验证在 0d0d3ca3e 的临时 detached worktree 真实执行，验后 git worktree remove 删除，未触碰主工作树与历史 worktree；python 不可用（WindowsApps 存根 exit 49），JSON/junit 比对改用 pwsh 完成（XML 根节点为 testsuite，非 testsuites）。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "cmake --build build --config Release --target ird_gates（契约 verify 第 5 项字面形式）",
+      "reason": "送验 0d0d3ca3e 临时树未配置 build（AGENTS §4 治理脚本任务无需无关产品构建）；按 r3 记录先例以该目标的两条原始命令等价物（ird_gates.cmake 之 cmake -P 直跑，IRD_ROOT 指向送验树）真实执行并核对（07-ird-gates.log exit 0、17 自测＋扫描零命中）。"
+    },
+    {
+      "item": "远程推送/远程 CI/分支保护验证",
+      "reason": "所有者明令禁止远程同步（AGENTS §0），127.0.0.1:17890 代理阻断已在契约 note/implementationState=local-independent-pass-remote-delivery-blocked 单列登记，本轮不重复执行任何远程命令。"
+    },
+    {
+      "item": "C++ 产品构建、数值/性能/GUI 测试",
+      "reason": "本包零产品代码改动（forbiddenFiles 0 命中，12 实质文件全为治理脚本/文档），AGENTS §4 治理脚本口径不触发产品构建；r3 记录同口径（「无产品算法改动；C++ 构建、数值/性能/GUI 产品测试及真实产品mutation实验 NOT RUN」）。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 GOV-T22/WP-A 送验范围（39b57abd..0d0d3ca3e）：上游权限与逐功能生产证据门禁补强＋两轮返工＋三轮验收登记。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399、functions=0 closedFiles=0 全 candidate 未变），不构成算法迁移批准、REUSE-T02 放行或 migration §11 阶段准入；远程交付阻断维持单列状态。verify-task-scope 字面 FAIL（318 验收证据越界）按 r3 甄别口径与 GOV-T21 豁免先例判非阻断，若后续治理要求将验收证据目录纳入机器豁免面，属所有者决策。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/01-scope-review.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/03-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/04-test-ps7-driver.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/04-test-ps7-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/04-test-ps7.junit.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/04-test-ps51-driver.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/04-test-ps51-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/04-test-ps51.junit.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/05-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/06-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/07-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1/08-fixture-preservation.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1.json"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "taskId": "GOV-T25",
+  "baseCommit": "2ac114f33d2102d0b7848d8d4d51345147fa32b8",
+  "reviewedCommit": "0a091394b9466c3fa7521d34162b1c8b64a843c4",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-24T18:55:41+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "GOV-T25/WP-03 单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配或重建构建树、未运行任何 C++ 构建/测试；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。本记录只写文件不提交，由登记步骤统一提交。"
+  },
+  "scope": "独立复验 2ac114f33..0a091394b9 送验交接包（1 个纯治理提交、5 个文档路径）：现场、显式 Base/Head 范围、版本对应链（核查树 e98cf3deb＝9276f19b26 tree、--grep 唯一 head 推导、正式起点 2ac114f33 身份）、六包（T07/T09/T12/T13/T15/T16）manifest 双口径（raw／UTF-8·LF 规范化）逐文件摘要对核查树重算、T15/T16 scopeInputs 原实施版本→核查树差异重算、T15 core/CMakeLists 变化归因 GOV-T24、原 gtest XML 14 件计数抽查、T15 oracle 1017 组抽查、三条 acceptance 与 note 一致性映射、红线合集（closures.json／门禁目录／modeling 冻结链＋REUSE-T11 rpyTo／forbidden 面／零产品代码／PASS-NOT RUN 分列）、提交规范与文档/契约/复用机检复跑。不代替 T07/T09/T12/T13/T15/T16 各原任务 acceptance，不签署任何算法语义独验。",
+  "counts": {
+    "failed": 0,
+    "passed": 13,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "13 项验收检查；范围外的 C++ 构建与六包算法语义独验另列 notRun 数组（非本包检查项，互不相加）"
+  },
+  "checks": [
+    "现场：git status --short 干净（仅本验收产物目录未跟踪）；HEAD=db58727b3（其后仅 GOV-T21/T22 治理登记提交，非被验内容）；分支 redesign-main；送验范围 2ac114f33..0a091394b9 内恰 1 个提交 0a091394b，改 5 文件（+88/-1）全落 doc 区。",
+    "范围：verify-task-scope 显式 -TaskFile GOV-T25.json -Base 2ac114f33d2102d0b7848d8d4d51345147fa32b8 -Head 0a091394b9466c3fa7521d34162b1c8b64a843c4 exit 0——changed=5 allowedRules=7 forbiddenRules=4，5 个路径全部在允许面内（migration.md、tasks/GOV-T25.json、WP-03/README.md、WP-03/handoff-input-check.txt、WP-03/validate-docs.log），与契约 allowedFiles 逐条对应；证据 01-scope.log。",
+    "版本对应链（acceptance 第 1 条『给出确切送验版本；不可只按HEAD判断』的锚点）：git rev-parse 9276f19b26^{tree}＝e98cf3deb2c8f5680edc766e963235fe4954f25d 与 WP-03 README 记载的核查树相等；git log --grep=GOV-T25 --all 全历史唯一命中 0a091394b9466c3fa7521d34162b1c8b64a843c4（reviewHead 唯一提交推导成立）；2ac114f33 提交为『[governance] REUSE-T20 登记性能接受及第三方表达裁决』（T20 裁决文档提交，§13.1 记载正式起点身份属实）；handoff 记载的 inspected HEAD 881f576cd（『[REUSE-T20] 精简集合匹配适配并补齐实际消费证据』）为真实历史快照；证据 02-version-chain.log。",
+    "六包 manifest 双口径重算（acceptance 第 1 条核心）：对核查树 e98cf3deb 逐文件计算 raw 与 CRLF 剥离两种 sha256，与 reuse/changes/*.json 凭证比对——T07 3/3、T09 4/4、T12 4/4、T13 7/7、T16 5/5 全一致；T15 4 same＋唯一 mismatch core/CMakeLists.txt，与 handoff『4 same/1 changed』逐字吻合（T07 modeling/CMakeLists.txt 走 UTF-8/LF 规范化口径 638d9bdd… 命中，证实 handoff『原raw或reuse UTF-8/LF摘要』双口径方法真实）；另以双 commit diff 复核 T13（f378f01c5→e98cf3deb 零差异）、T09（b0997f8d8→零差异）、T12（bc212f245→零差异）；证据 06-manifest-recheck.log。",
+    "scopeInputs 重算（acceptance 第 1 条『核适用源码输入』）：提取 verification.json 的 scopeInputs 数组（T15＝30 项、T16＝39 项，与 handoff 29+1/39+0 计数结构吻合），git diff 091e53353→e98cf3deb——T15 唯一变化 core/CMakeLists.txt、T16 零变化，与 handoff『29 same/1 changed』『39/39』完全一致；证据 06-manifest-recheck.log。",
+    "T15 变化归因（acceptance 第 1 条『依赖、配置及工具链』）：091e53353..9276f19b26 区间内 core/CMakeLists.txt 唯一变化提交＝df0b35fc2b32068dcfe3745d1b29a81c58d17f77（『WP-01/GOV-T24：修复…冒烟RobWork导出包供给』，即 GOV-T24 独验记录 reviewedCommit）——README『唯一变化core/CMake来自WP-01供给修复、当前供给引用GOV-T24独验』归因准确；核查树早于 19f394a59（T21，12:06）与送验无关。",
+    "原 gtest XML 计数抽查（acceptance 第 1 条『引用原证据』，共 14 件全查）：T13 runtime 305/0、smoke 195/0、modeling 474/0、upstream 9t/1f、disconnected 32t/13f；T15 core 69/0、runtime 305/0、execution 27/0、project 282/0、smoke 67/0；T16 diagnostics-final 122/0、contract-final 26/0、smoke 122/0、diagnostics-r1 122t/1f——与 handoff-input-check.txt 全部一致，失败例（upstream 1、disconnected 13、r1 1）如实分列未混报；T15 production-oracle.json 实测 count=1017 与 README『1017组精确oracle』一致；证据 06-manifest-recheck.log。",
+    "acceptance 第 2 条（待独验项交接、实施者不签独验）：WP-03 README 首行即『当前为交接准备与原证据核对，不是独立验收』，offset 物理映射（T13 行『移动offset正负/关节轴/安装旋转/限位及旋转回归』）、FNV 精确性与已接受性能（T15 行『1017组精确oracle…原已接受性能仅适用本FNV范围；独验NOT RUN』）、日志 keep 边界（T16 行『keep1、5→2/2→5、超长后缀及目录/非普通文件边界』）逐项列为待独验；结尾『本记录不新签任何PASS、性能接受或任务done』；提交正文『未签独验』；六包原任务 status 全部 ready 未被改判——实施者零自签属实。",
+    "acceptance 第 3 条（定向核 T07/T09/T12 遗留、未执行不记 PASS、不改生产）：独立复核 acceptance 目录确无 REUSE-T07/T09/T12/T13/T15/T16 命名的独验记录（handoff『未找到已归档独立PASS』结论独立证实）；T07 约4.662倍未获性能接受（REUSE-T07/README.md:13 原文一致）、T09 +17.7%/+34.3%（REUSE-T09/README.md:9 一致）、T12 性能 NOT RUN（drivetrain-linalg/README.md:16 一致）；T12 旧 REUSE-COVERAGE 消除经本轮 validate-docs 复跑 0 命中证实；送验范围零产品代码路径（红线检查 5），『不借本契约改生产』成立。",
+    "红线合集（证据 03-redline-checks.log）：CLOSURE 冻结——reuse/closures.json 对 2ac114f33..0a091394b9 git diff --exit-code 零差异；门禁未放宽——industrialrobot/cmake/ 目录零差异；modeling 冻结链（modeling/CMakeLists.txt、functions/modeling.json、functions/foundation-governance.json、REUSE-T07/production.json、REUSE-T11 rpyToEaa/rpyToRotation-production.json）零差异；forbidden 面（RobWork/RobWork/src/**、RobWorkSim/src/**、vcpkg/**）零路径；无平行实现回流——范围 5 文件全为 doc/ 下 .md/.json/.txt/.log，无任何 .hpp/.cpp/CMake；L2 零 Qt／六类端口／runtime 唯一模型 owner——本包零产品代码无触及面，WP-03 README 数据流陈述（runtime独占WorkCell模型、q_auth=offset+q_rw、core只维护值身份、FNV委托Boost、diagnostics唯一日志）与原契约一致未放宽；未触碰 main、无远程操作。",
+    "PASS/FAIL/SKIP/NOT RUN 分列：handoff-input-check.txt 的 XML 汇总按 passed/skipped/failed/errors 四列逐件分列，T13 upstream/disconnected 与 T16 diagnostics-r1 的失败计数如实保留、README 明示『上游原例8通过＋1失败，不能报全绿』；六包独验状态统一『NOT RUN』与任务 ready 状态未混列；本轮复跑各脚本输出（01/04/05/06 号证据）同样显式分列。",
+    "提交链：范围恰 1 个实施提交 0a091394b，标题『[governance] GOV-T25 核对既有能力证据并交接独验范围』中文前缀合规；正文与证据一致——『文档、契约及复用机检PASS，仅治理有效，DEBT=16、UNRESOLVED=1399』（本轮复跑 validate-reuse 实测 DEBT=16、UNRESOLVED=1399 一致）、『未运行C++』（范围零代码文件）、『未签独验、不改生产，不同步远程』（检查 8/9/10 证实）；commit-lint -Range 2ac114f33..0a091394b9 exit 0『1 个提交全部合规』；证据 04-commit-lint.log。",
+    "文档/契约/复用机检复跑：validate-docs -TaskFile GOV-T25.json exit 0——validate-task: PASS（1 tasks）、validate-reuse: PASS governance only（inventory=1401 units=20 DEBT=16 UNRESOLVED=1399）、validate-docs: PASS（20 units, 12 trace entries, 404 task files）；REUSE-AD-PENDING 为 AD 审计既有 pending 提示、非本包阻断；REUSE-COVERAGE 0 命中（T12 历史失败确已消除）；当前树 changed=94/functions=1764 较送验时 83/1539 增长系送验 head 之后 GOV-T21/T22/T25 治理登记提交所致、DEBT/UNRESOLVED 不变；证据 05-validate-docs.log。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T25.json -Base 2ac114f33d2102d0b7848d8d4d51345147fa32b8 -Head 0a091394b9466c3fa7521d34162b1c8b64a843c4", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+    { "name": "version-chain", "command": "git rev-parse 9276f19b26^{tree}; git log --grep=GOV-T25 --all; git log -1 2ac114f33/881f576cd; 六任务 status; acceptance 目录 ls|grep REUSE-T(07|09|12|13|15|16)", "exitCode": 0, "passed": true, "log": "02-version-chain.log" },
+    { "name": "redline-bundle", "command": "git diff --exit-code 2ac114f33 0a091394b9 -- reuse/closures.json; -- industrialrobot/cmake/; -- modeling冻结链6文件+REUSE-T11 rpyTo2文件; diff --name-only | grep forbidden/非doc 计数", "exitCode": 0, "passed": true, "log": "03-redline-checks.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 2ac114f33d2102d0b7848d8d4d51345147fa32b8..0a091394b9466c3fa7521d34162b1c8b64a843c4", "exitCode": 0, "passed": true, "log": "04-commit-lint.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/GOV-T25.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "05-validate-docs.log" },
+    { "name": "manifest-scope-xml-recheck", "command": "对 e98cf3deb 树逐文件 raw/去CR 双口径 sha256 vs 六包 manifest 凭证；git diff 091e53353→e98cf3deb -- T15/T16 scopeInputs 30/39 项；git log 091e53353..9276f19b26 -- core/CMakeLists.txt；14 件 XML tests/failures/errors 属性", "exitCode": 0, "passed": true, "log": "06-manifest-recheck.log" }
+  ],
+  "executionNotes": [
+    "首轮 manifest 循环曾用 pwsh 提取清单，其输出 CRLF 行尾污染 expect 值导致一次全量假 mismatch，立即以 bash grep/paste 无 CR 提取重跑并经 T07 noCR 口径单点验真（638d9bdd…命中）后采信；另一次 pwsh /tmp 与 Git Bash /tmp 不一致导致清单丢失、diff 退化为全树输出，该结果整体丢弃未采信。两次均为过程瑕疵，重跑后结论全部基于干净输出，仓库无污染。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "T13/T15/T16 算法语义独验本体（offset 物理映射评价、FNV 精确性与已接受性能复核、日志 keep 边界评价）及 T07/T09/T12 遗留性能/独验",
+      "reason": "按契约 acceptance 第 2/3 条与 note，这些评价须由所有者另开独立会话或人工执行、保持开放；GOV-T25 本身是交接准备包，本验收只核交接记录的真实性与未自签，不代替原任务 acceptance，签署超范围。"
+    },
+    {
+      "item": "C++ 集成/冒烟构建与测试",
+      "reason": "送验范围 5 路径全为文档（红线检查 5：非 doc 路径计数 0），按 AGENTS §4 文档类改动无需 C++ 构建；契约 note 与提交正文亦声明未借本契约运行 C++。六包历史 XML 为只读引用证据、按交接语义不重跑。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 GOV-T25/WP-03 送验范围（2ac114f33..0a091394b9）的交接包本身：版本链锚定、六包 manifest/scopeInputs/XML 引用真实性、三条 acceptance 的一致性与红线合规。不构成 T07/T09/T12/T13/T15/T16 任何一包的独立验收放行、性能接受或任务关闭；validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭），不构成 WP-02、算法替换（migration §11）或 REUSE-T02 的放行；validate-docs 于当前树 db58727b3 复跑（送验 head 后的 GOV-T21/T22 治理登记提交并入），关键计数 DEBT/UNRESOLVED 与送验时一致，changed/functions 增长已归因登记提交。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1/01-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1/02-version-chain.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1/03-redline-checks.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1/04-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1/05-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1/06-manifest-recheck.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T25-20261024-r1.json"
+  ]
+}

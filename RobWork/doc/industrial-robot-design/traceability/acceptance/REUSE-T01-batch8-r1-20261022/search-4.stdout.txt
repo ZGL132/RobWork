@@ -1,0 +1,100 @@
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/boost_endian/boost_endian-targets.cmake:58:add_library(Boost::endian INTERFACE IMPORTED)
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:26:template<class T, std::size_t N1, order O1, std::size_t N2, order O2> struct endian_load_impl
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:40:inline T endian_load( unsigned char const * p ) BOOST_NOEXCEPT
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:45:    return detail::endian_load_impl<T, sizeof(T), order::native, N, Order>()( p );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:53:template<class T, std::size_t N, order O> struct endian_load_impl<T, N, O, N, O>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:67:template<class T, std::size_t N, order O1, order O2> struct endian_load_impl<T, N, O1, N, O2>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:86:template<class T, order Order> struct endian_load_impl<T, 2, Order, 1, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:97:        return boost::endian::endian_load<T, 2, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:101:template<class T, order Order> struct endian_load_impl<T, 2, Order, 1, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:112:        return boost::endian::endian_load<T, 2, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:118:template<class T, order Order> struct endian_load_impl<T, 4, Order, 1, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:133:        return boost::endian::endian_load<T, 4, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:137:template<class T, order Order> struct endian_load_impl<T, 4, Order, 1, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:152:        return boost::endian::endian_load<T, 4, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:158:template<class T, order Order> struct endian_load_impl<T, 4, Order, 2, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:173:        return boost::endian::endian_load<T, 4, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:177:template<class T, order Order> struct endian_load_impl<T, 4, Order, 2, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:192:        return boost::endian::endian_load<T, 4, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:198:template<class T, order Order> struct endian_load_impl<T, 4, Order, 3, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:211:        return boost::endian::endian_load<T, 4, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:215:template<class T, order Order> struct endian_load_impl<T, 4, Order, 3, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:228:        return boost::endian::endian_load<T, 4, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:234:template<class T, order Order> struct endian_load_impl<T, 8, Order, 1, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:254:        return boost::endian::endian_load<T, 8, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:258:template<class T, order Order> struct endian_load_impl<T, 8, Order, 1, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:278:        return boost::endian::endian_load<T, 8, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:284:template<class T, order Order> struct endian_load_impl<T, 8, Order, 2, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:304:        return boost::endian::endian_load<T, 8, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:308:template<class T, order Order> struct endian_load_impl<T, 8, Order, 2, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:328:        return boost::endian::endian_load<T, 8, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:334:template<class T, order Order> struct endian_load_impl<T, 8, Order, 3, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:354:        return boost::endian::endian_load<T, 8, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:358:template<class T, order Order> struct endian_load_impl<T, 8, Order, 3, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:378:        return boost::endian::endian_load<T, 8, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:384:template<class T, order Order> struct endian_load_impl<T, 8, Order, 4, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:404:        return boost::endian::endian_load<T, 8, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:408:template<class T, order Order> struct endian_load_impl<T, 8, Order, 4, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:428:        return boost::endian::endian_load<T, 8, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:434:template<class T, order Order> struct endian_load_impl<T, 8, Order, 5, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:454:        return boost::endian::endian_load<T, 8, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:458:template<class T, order Order> struct endian_load_impl<T, 8, Order, 5, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:478:        return boost::endian::endian_load<T, 8, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:484:template<class T, order Order> struct endian_load_impl<T, 8, Order, 6, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:504:        return boost::endian::endian_load<T, 8, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:508:template<class T, order Order> struct endian_load_impl<T, 8, Order, 6, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:528:        return boost::endian::endian_load<T, 8, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:534:template<class T, order Order> struct endian_load_impl<T, 8, Order, 7, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:554:        return boost::endian::endian_load<T, 8, order::little>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:558:template<class T, order Order> struct endian_load_impl<T, 8, Order, 7, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_load.hpp:578:        return boost::endian::endian_load<T, 8, order::big>( tmp );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:26:template<class T, std::size_t N1, order O1, std::size_t N2, order O2> struct endian_store_impl
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:40:inline void endian_store( unsigned char * p, T const & v ) BOOST_NOEXCEPT
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:45:    return detail::endian_store_impl<T, sizeof(T), order::native, N, Order>()( p, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:53:template<class T, std::size_t N, order O> struct endian_store_impl<T, N, O, N, O>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:65:template<class T, std::size_t N, order O1, order O2> struct endian_store_impl<T, N, O1, N, O2>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:82:template<class T, order Order> struct endian_store_impl<T, 2, Order, 1, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:89:        boost::endian::endian_store<T, 2, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:95:template<class T, order Order> struct endian_store_impl<T, 2, Order, 1, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:102:        boost::endian::endian_store<T, 2, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:110:template<class T, order Order> struct endian_store_impl<T, 4, Order, 1, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:117:        boost::endian::endian_store<T, 4, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:123:template<class T, order Order> struct endian_store_impl<T, 4, Order, 1, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:130:        boost::endian::endian_store<T, 4, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:138:template<class T, order Order> struct endian_store_impl<T, 4, Order, 2, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:145:        boost::endian::endian_store<T, 4, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:152:template<class T, order Order> struct endian_store_impl<T, 4, Order, 2, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:159:        boost::endian::endian_store<T, 4, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:168:template<class T, order Order> struct endian_store_impl<T, 4, Order, 3, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:175:        boost::endian::endian_store<T, 4, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:183:template<class T, order Order> struct endian_store_impl<T, 4, Order, 3, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:190:        boost::endian::endian_store<T, 4, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:200:template<class T, order Order> struct endian_store_impl<T, 8, Order, 1, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:207:        boost::endian::endian_store<T, 8, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:213:template<class T, order Order> struct endian_store_impl<T, 8, Order, 1, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:220:        boost::endian::endian_store<T, 8, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:228:template<class T, order Order> struct endian_store_impl<T, 8, Order, 2, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:235:        boost::endian::endian_store<T, 8, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:242:template<class T, order Order> struct endian_store_impl<T, 8, Order, 2, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:249:        boost::endian::endian_store<T, 8, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:258:template<class T, order Order> struct endian_store_impl<T, 8, Order, 3, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:265:        boost::endian::endian_store<T, 8, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:273:template<class T, order Order> struct endian_store_impl<T, 8, Order, 3, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:280:        boost::endian::endian_store<T, 8, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:290:template<class T, order Order> struct endian_store_impl<T, 8, Order, 4, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:297:        boost::endian::endian_store<T, 8, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:306:template<class T, order Order> struct endian_store_impl<T, 8, Order, 4, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:313:        boost::endian::endian_store<T, 8, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:324:template<class T, order Order> struct endian_store_impl<T, 8, Order, 5, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:331:        boost::endian::endian_store<T, 8, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:341:template<class T, order Order> struct endian_store_impl<T, 8, Order, 5, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:348:        boost::endian::endian_store<T, 8, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:360:template<class T, order Order> struct endian_store_impl<T, 8, Order, 6, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:367:        boost::endian::endian_store<T, 8, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:378:template<class T, order Order> struct endian_store_impl<T, 8, Order, 6, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:385:        boost::endian::endian_store<T, 8, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:398:template<class T, order Order> struct endian_store_impl<T, 8, Order, 7, order::little>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:405:        boost::endian::endian_store<T, 8, order::little>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:417:template<class T, order Order> struct endian_store_impl<T, 8, Order, 7, order::big>
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/detail/endian_store.hpp:424:        boost::endian::endian_store<T, 8, order::big>( tmp, v );
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/boost_property_tree/boost_property_tree-targets.cmake:58:add_library(Boost::property_tree INTERFACE IMPORTED)

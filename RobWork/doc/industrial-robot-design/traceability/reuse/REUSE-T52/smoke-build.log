@@ -1,0 +1,29 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\core\Release\sdurws_ird_core.lib
+  RneConsumptionDevice.cpp
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\runtime\Release\sdurws_ird_runtime.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\runtime\Release\sdurws_ird_runtime.lib
+  InverseDynamics.cpp
+  sdurws_ird_dynamics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\dynamics\Release\sdurws_ird_dynamics.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_dynamics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\dynamics\Release\sdurws_ird_dynamics.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_dynamics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\dynamics\Release\sdurws_ird_dynamics_plugin.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\testkit\Release\sdurws_ird_testkit.lib
+  RneaTest.cpp
+  sdurws_ird_dynamics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp07-smoke\dynamics\Release\sdurws_ird_dynamics_test.exe

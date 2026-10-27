@@ -1,0 +1,23 @@
+Note: Google Test filter = SelBackfillSynthesis.*
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from SelBackfillSynthesis
+[ RUN      ] SelBackfillSynthesis.GoldenValuesMassComInertia_MDL16
+[       OK ] SelBackfillSynthesis.GoldenValuesMassComInertia_MDL16 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RotorInertiaNeverEntersSynthesis_SEL10
+[       OK ] SelBackfillSynthesis.RotorInertiaNeverEntersSynthesis_SEL10 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNonPositiveMass_NFRCOR03
+[       OK ] SelBackfillSynthesis.RejectsNonPositiveMass_NFRCOR03 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNonFiniteInput_NFRCOR03
+[       OK ] SelBackfillSynthesis.RejectsNonFiniteInput_NFRCOR03 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNotPositiveDefinite_MDLL06A2
+[       OK ] SelBackfillSynthesis.RejectsNotPositiveDefinite_MDLL06A2 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsTriangleInequality_MDLL06A3
+[       OK ] SelBackfillSynthesis.RejectsTriangleInequality_MDLL06A3 (0 ms)
+[ RUN      ] SelBackfillSynthesis.AcceptsDegeneratePlanarEquality_MDLL06A3
+[       OK ] SelBackfillSynthesis.AcceptsDegeneratePlanarEquality_MDLL06A3 (0 ms)
+[----------] 7 tests from SelBackfillSynthesis (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 7 tests.

@@ -1,0 +1,9 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp
+sdurws::ird::testkit::Producer::operator==
+85:     bool operator==(const Producer& o) const noexcept
+86:     {
+87:         return softwareVersion == o.softwareVersion && algorithmId == o.algorithmId
+88:             && solverConfigJson == o.solverConfigJson && seedPresent == o.seedPresent
+89:             && seed == o.seed && threadCount == o.threadCount
+90:             && generatedAtUtc == o.generatedAtUtc;
+91:     }

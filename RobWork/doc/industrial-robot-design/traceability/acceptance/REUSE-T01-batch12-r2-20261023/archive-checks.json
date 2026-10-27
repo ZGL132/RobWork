@@ -1,0 +1,287 @@
+{
+  "files": [
+    {
+      "file": "acceptance.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "acceptance.md",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "archive-checks.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "bindings.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "catalog-bindings.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "check.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "check.py",
+      "exists": true,
+      "rawMatches": false,
+      "newlineMatches": true
+    },
+    {
+      "file": "checkout.exit.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "checkout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "clone.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "definition-checks.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "docs.exit.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "docs.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "finalize.exit.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "finalize.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "finalize.py",
+      "exists": true,
+      "rawMatches": false,
+      "newlineMatches": true
+    },
+    {
+      "file": "frozen-sha.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "git-status-end.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "new-catalog.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "new-rows.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "process-search-corrected.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "process-search-corrected.stderr.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "process-search-corrected.stdout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "product-upstream-diff.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "reuse.exit.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "reuse.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "scoped-diff-check.exit.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "scoped-diff-check.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-1.stderr.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-1.stdout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-2.stderr.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-2.stdout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-3.stderr.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-3.stdout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-4.stderr.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-4.stdout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-5.stderr.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-5.stdout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-6.stderr.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-6.stdout.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "search-replay.json",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "semantic-check.exit.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "semantic-check.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "semantic-check.py",
+      "exists": true,
+      "rawMatches": false,
+      "newlineMatches": true
+    },
+    {
+      "file": "source-excerpts.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "task.exit.txt",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    },
+    {
+      "file": "task.log",
+      "exists": true,
+      "rawMatches": true,
+      "newlineMatches": true
+    }
+  ],
+  "extraFiles": []
+}

@@ -1,0 +1,48 @@
+{
+  "sha": "a7171137a77048e2f1102b80051fb66fce52daa9",
+  "scope": "B9-P2-01/02 rework only",
+  "result": "PASS",
+  "closedFindings": [
+    "B9-P2-01",
+    "B9-P2-02"
+  ],
+  "bindingChecks": {
+    "failed": 0,
+    "passed": 4,
+    "pendingPreserved": true
+  },
+  "gateExitCodes": {
+    "task": 0,
+    "reuse": 0,
+    "docs": 0
+  },
+  "gates": {
+    "failed": 0,
+    "passed": 3,
+    "skipped": 0
+  },
+  "originalFailArchive": {
+    "newlineOnly": 3,
+    "byteEqual": 39,
+    "files": 42,
+    "normalizedEqual": 42
+  },
+  "runtimeCounterexampleArchive": {
+    "normalizedEqual": 25,
+    "newlineOnly": 3,
+    "originalProductResults": {
+      "skipped": 0,
+      "passed": 1,
+      "total": 2,
+      "processExit": 1,
+      "failed": 1,
+      "notRun": 0
+    },
+    "productDefect": "OPEN",
+    "byteEqual": 22,
+    "files": 25
+  },
+  "productAndProbeUnchanged": true,
+  "wholeT01T02Accepted": false,
+  "archiveExclusion": "repo/"
+}

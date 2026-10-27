@@ -1,0 +1,13 @@
+Note: Google Test filter = LsnChild.Passes
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Passes
+[       OK ] LsnChild.Passes (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+minkernel\crts\ucrt\src\appcrt\heap\debug_heap.cpp(904) : Assertion failed: _CrtIsValidHeapPointer(block)
+minkernel\crts\ucrt\src\appcrt\heap\debug_heap.cpp(908) : Assertion failed: is_block_type_valid(header->_block_use)

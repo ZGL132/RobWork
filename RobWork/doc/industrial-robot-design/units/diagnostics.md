@@ -1,6 +1,8 @@
 # 工业机械臂设计软件 · diagnostics 单元详细设计（阶段 A）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
+
+SA-19 重申：本单元虽属 L3，自身目标仍零 Qt；core 维护纯数据契约，StableCodeRegistry 与稳定码/文案权威在本单元。业务/adapter 只提供已注册码与结构化参数，不自建码表或以日志替代正式诊断。
 
 
 > 2026-09-10 同步：本单元详设编写完成（第一批 11/20）；保留本文 Draft/Draft-Structured 评审状态，不代表接口已冻结或实现通过。当前任务与准入结论见 [阶段一同步记录](../traceability/phase-one-readiness.md)；历史磁盘调查仅表示编写时事实，现状以该记录为准。
@@ -1337,3 +1339,9 @@ public:
 | 是否越权修改需求、架构或其他单元机制 | ✔ 未修改任何上游文件；接口统一（sink）与 FindingId 收编均以待裁决登记（P-DIAG-5/4）；README 指向修正属本文产物自身的结构对齐 | §14.3、§14.4 |
 | 未参与开发者可直接实现 | ✔ 每数据类型字段表（§4.2/§5.2）、每接口签名/前置/错误/线程/生命周期/合法非法（§9）、验证矩阵含观测点（§10）、任务卡（§11） | 全文 |
 | 上游输入版本如实登记 | ✔ §1.2 磁盘实测表（含 DETAILED-DESIGN/breakdown 已存在的更新状态，未虚构） | §1.2 |
+
+### REUSE-T16：既有文件轮转的保留边界（2026-10-23）
+
+所有者已批准 GAP-DIAG-RETENTION-01 方案 A。FileLogFileOps 仍使用原 std::filesystem 与同实例互斥；keep 含活动文件，keep=1 不生成 .1，降低 keep 时只清理本日志规范正整数后缀普通文件。目录/符号链接不作世代删除或覆盖；失败沿原 bool/管线 guardOpsBool 轨，不新增日志框架。原逐行 fopen("ab")/fclose 与幂等 flush 不变，不承诺 fsync 或跨进程并发。
+
+本次测试目标复用既有 testkit 原生报告监听器，不引入 XML 转换器；diagnostics 产品仍只依赖 core 与标准库。_test 与 _contract_test 均使用 test/TestMainReport.cpp；这是测试报告设施依赖，不是产品反向依赖。原B35及新真实文件结果见 traceability/reuse/REUSE-T16/README.md，独验尚未完成。队列/格式/两Tier/稳定码/脱敏/worker值载荷由既有实现唯一承载，未迁移其职责或新增模型持有权。

@@ -157,12 +157,18 @@ struct ToolSpec {
  * @param tool       [in] 工具注入（nullopt＝无工具）
  * @param ratioPerJoint [in] 传动比注入（DYN-04 边界用例的对照面——RNEA
  *                   不消费该块；空＝全缺省）
+ * @param provideBasePhysics [in] 基座连杆物性齐备开关（REUSE-T53：正动力
+ *                   学引擎会话经 S7 编译门控要求**全连杆**物性齐备〔含
+ *                   基座〕；RNE 递推不消费基座物性——本参数对 RNE 侧数值
+ *                   零影响，仅 FD 引擎会话路径需要；缺省 false 保持既有
+ *                   RNE 用例模型形态不变）
  * @return 构造完成的 CanonicalModel（contentIdentity 非零）
  */
 inline CanonicalModel makeTwoLinkModel(const WorldPlacement& world,
                                        const FrictionSpec& friction,
                                        const std::optional<ToolSpec>& tool,
-                                       const std::vector<double>& ratioPerJoint = {})
+                                       const std::vector<double>& ratioPerJoint = {},
+                                       bool provideBasePhysics = false)
 {
     // ---- 身份与来源块（§4.3.1——非空 id＋契约版本＋摘要，build() 强制）----
     CanonicalModelHeader header;
@@ -232,6 +238,15 @@ inline CanonicalModel makeTwoLinkModel(const WorldPlacement& world,
     CanonicalLink baseLink;
     baseLink.objectId = l0;
     baseLink.localName = "base_link";    // 基座连杆：物性不入递推（评估器体号约定）
+    if (provideBasePhysics) {
+        // 基座物性齐备（FD 引擎会话 S7 门控面——值确定性固定，不入任何
+        // RNE 递推/黄金对照；地面固定体在引擎中为静态几何惰性体）。
+        baseLink.mass = val(5.0);        // kg
+        baseLink.centerOfMass = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            rw::math::Vector3D<double>(0.0, 0.0, 0.0), userProv());  // 基座系下，m
+        baseLink.inertia = core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            diagInertia(0.1, 0.1, 0.1), userProv());  // 质心系，kg·m²
+    }
     chain.links.push_back(baseLink);
 
     CanonicalLink link1;

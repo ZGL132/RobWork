@@ -1,0 +1,5 @@
+Exception: D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\verify-task-scope.ps1:87
+Line |
+  87 |      throw 'serial mainline task requires explicit -Base <start SHA>'
+     |      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | serial mainline task requires explicit -Base <start SHA>

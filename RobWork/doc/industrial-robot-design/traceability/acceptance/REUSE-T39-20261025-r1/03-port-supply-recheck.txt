@@ -1,0 +1,20 @@
+验收员独立实读（非仅核对附件）——2026-10-25，送验 HEAD 2fe4cd4fe8170b03a1d206d4ac12a87b7def331c 工作树：
+
+boost-hash2（vcpkg/ports/boost-hash2/vcpkg.json）：
+  "version": "1.92.0"  "license": "BSL-1.0"                ——与 supply-boost-hash2.txt/README 一致
+portfile.cmake：vcpkg_from_github( SHA512 1555de1c8c0e206f7ebb1aca5994feb381dcaf64bed42e2b4a44
+  df5d814cea9e462d4e38cbe8d6da7f3c56b557c17d946977c647ab882b7fef3c9c8a01da17ef )
+  ——与附件摘录 SHA512 逐字吻合（来源固定成立）
+
+openssl（vcpkg/ports/openssl/vcpkg.json）：
+  "version": "3.6.5"  "port-version": 1  "license": "Apache-2.0" ——与附件一致（GAP:6 差异更正成立）
+
+安装状态（未安装核验）：
+  ls vcpkg/installed/x64-windows/share | grep -iE 'hash2|openssl'  → 无命中
+  ls vcpkg/installed/x64-windows/include | grep -iE 'boost/hash2|openssl' → 无命中（exit 1）
+  ——二者仅 port 在案、未安装，与 GAP:6「未核安装/API/跨平台」纪律一致；
+    API/跨平台/函数签名仍未核，附件未编造。
+
+audit-only 零产品改动：git show b4f2d529c --stat = 6 文件（changes/REUSE-T39.json、
+tasks/REUSE-T39.json、traceability/reuse/REUSE-T39/ 下 README/attachment/supply×2），
+零产品源码/CMake；changes/REUSE-T39.json files=[] 实测。

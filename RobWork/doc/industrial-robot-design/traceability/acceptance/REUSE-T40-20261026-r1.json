@@ -1,0 +1,84 @@
+{
+  "taskId": "REUSE-T40",
+  "baseCommit": "44c8d59e4d5c8e83dace0986066525e66bcf67fe",
+  "reviewedCommit": "15449f55d658b92e7a754e0305d289faf4ca35e3",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T08:15:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T40 独立验收会话（单次验收子智能体，未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型）；实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（REUSE-T40-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未远程操作；临时 worktree（base 送验对照与候选应用实测各一）用后即删；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 44c8d59e4..15449f55d（冻结范围，单提交 15449f55d「[WP-16-T40] F-962 project恢复扫描修复落地与全文件解决批收口」）：①逐契约 verify-task-scope 显式 Base/Head 落盘；②acceptance 逐项清单式增量复验（候选落地三方逐位核验＋全文件解决批逐行区段/生产证据抽查＋篡改/缺失/合法恢复/历史兼容四验收面真实复跑）；③红线抽查（H1—H6、架构红线、CLOSURE 冻结、无平行回流、宿主例外范围未扩越权——含宿主例外治理批按治理脚本正负例与 ARCH §3.6.2.1 记录一并核验）；④当前 HEAD 门禁实测 validate-docs -TaskFile（PowerShell 数组传参）。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "12 项验收检查；测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场与范围：HEAD=15449f55d658（redesign-main），工作区仅三个未跟踪验收产物目录（本目录＋T10/T30 前序会话遗留），零受跟踪文件改动。verify-task-scope 显式 -Base 44c8d59e4d5c -Head 15449f55d658 exit 0：changed=20 全部落在契约 allowedFiles（10 规则）内、forbiddenFiles（3 规则）零命中（acc-verify-task-scope.log）；commit-lint -Range 44c8d59e4d5c..15449f55d658 PASS（1 提交合规，acc-commit-lint.log）。",
+    "候选落地逐位核验：产品四件（project/src/TxEngine.cpp、project/src/TxEngine.hpp、project/test/TxEngineTest.cpp、project/test/ProjectStoreTest.cpp）与 traceability/reuse/REUSE-T40/candidate/ 全件 sha256 逐位一致（4/4 MATCH，裸字节口径）；在 base 44c8d59e4 临时 worktree 实测四份 candidate/*.diff git apply --check 全部干净通过，实际应用后与 candidate 全件、与 HEAD 产品件三方 sha256 逐位一致（3WAY-MATCH 4/4）。",
+    "修复实现审查：scanForRecovery 在 HEAD 解析后新增 HEAD 清单字节实算比对（TxEngine.cpp:963-998 区段）——经 cvHex(codec::contentVersionOf(字节))，与提交第 4 步 cvHex(contentVersionOf(dump(manifest))) 同口径；contentVersionOf 为 CR-02 唯一摘要入口（project/src/Codec.cpp:1510-1522 经 core::ContentDigester，文件头 :13 声明本文件除该函数外无哈希），本包未触碰 Codec.cpp、未新建哈希路径、未自写摘要。缺失/不符＝broken＋cause 定位到文件路径＋reportDev 开发通道（missing/mismatch 双通道），broken→scan.headIntegrityVerified=false＋PRJ-STORE-CORRUPT 用户级记录（TxEngine.cpp:1178-1184），公开工厂 ProjectStoreFactory::open 对 !headIntegrityVerified 抛 StoreCorrupt 拒开（ProjectStoreImpl.cpp:1187-1193）。首败钉扎＝扫描序第一失败（HEAD 锚点块，无条件写入）＋后续三处赋值（闭包行走 :1084-1088、闭包元数据 :1135-1137、闭包对象 :1152-1157）brokenDetail.empty() 守卫，后续失败仍经 reportDev 逐一交底。⑤残留识别/悬挂计数/§7.3 未提交清单语义未变。",
+    "测试改动审查：TxEngineTest.cpp 增四用例（WrongHeadDigest 64hex 形态合法仅摘要比对能拒／LegalManifestByteTamper_StaleDigest committedAtUtc 合法改字 HEAD 摘要保持／HeadManifestMissing cause 定位缺失路径／TamperThenRestore 还原字节扫描恢复绿无一次性闩锁）；ProjectStoreTest.cpp 增公开工厂反例 Open_WrongHeadManifestDigest_Rejected（StoreCorrupt＋PRJ-STORE-CORRUPT＋cause 含 manifest.json＋磁盘字节不被打开动作改动）；夹具订正 head.manifestDigest 由 metaCvHex 改为 contentVersionOf(dump(manifest)).toCanonical().substr(3)——与 cvHex 剥离 'cv-' 前缀口径逐位同源（TxEngine.cpp:60-72），被摘要对象即落盘 r0 清单字节，订正与产品修复成对。新增注释全中文、含锚点与业务依据（AGENTS §2）。",
+    "全文件解决批抽查：functions/project.json 中 TxEngine.cpp 非 audit 功能行 22 行全部 decision=business-specific/status=migrated，scanForRecovery 行 differences 完整登记修复语义（实算比对＋首败钉扎＋语义不变边界）；project.audit-t40.* 铺面行共 217（TxEngine.cpp 23＋TxEngine.hpp 25＋TxEngineTest.cpp 97＋ProjectStoreTest.cpp 72，逐文件计数实测）；绑定 TxEngine.hpp inputs 的非 audit 矩阵行恰 47 行（另 25 行为本次新增 hpp 铺面行，合计 72），以 validate-reuse 同款 Digest 口径复算当前 TxEngine.hpp=9c1f818e…，72 行 inputs 摘要 0 陈旧（级联同步完整）；逐行证据 nonOverlapEvidence 绑定 REUSE-T40/README.md 在场；changes/REUSE-T40.json 四文件凭证以同口径复算 4/4 MATCH（TxEngine.cpp=29540740…、TxEngine.hpp=9c1f818e…、TxEngineTest.cpp=bb7f7db1…、ProjectStoreTest.cpp=9f487564…，与 README §5 gate Digest 口径一致）。",
+    "四验收面真实复跑（本人于 HEAD 增量重构建两测试目标后亲跑，非引用实施方日志）：B20 三反例过滤跑 5/5 passed exit 0（acc-b20-three-counterexamples-rerun.log）；project 全量 287/287 passed exit 0（acc-sdurws_ird_project_test.log/.xml/.ird-test-report.json，287/287/0/decisive）；contract 目标 32/32 passed exit 0（含 ProcessCrashContractTest 崩溃重开断言，acc-sdurws_ird_project_contract_test.*）；ird_gates 直跑 exit 0「R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」且自检正负例按预期（acc-wp16-t40-ird-gates.log）。红绿链闭环：候选阶段 f962-red.log 实测同五用例 5/5 FAILED（未修复码），reuse-gate-coverage-evidence.log 留存 REUSE-UNDECLARED（TxEngine.cpp : 29540740…，与登记凭证同摘要）——红→绿对应关系与生产证据一致。",
+    "生产证据抽查（引用＋核验）：landing2-green-sdurws_ird_project_test 287/287、landing2-green-sdurws_ird_project_contract_test 32/32、landing2-b20 5/5 的 log 尾与 .ird-test-report.json summary（passed/failed/decisive）逐一读取比对一致；landing2-wp16-t40-ird-gates.log 零命中结论与本人复跑一致；历史兼容半区（提交路径自 856544ef7「实现 project 事务引擎」起实算 manifestDigestHex，git log -S 实证）——历史合法仓库比对零误伤由 287 全量含既有 282 用例零回归承载。",
+    "跨文件治理订正核验：范围 diff 中 ProjectStoreTest.cpp 夹具订正与产品修复同提交成对落地（检查 4）；TxEngineTest.cpp 与 candidate 终版字节一致（检查 2）；B20 原始独立复现记录 traceability/acceptance/REUSE-T01-batch20-20261023/ 在场（stdout.log 含 PublicOpenWrongHeadDigestMustBeRejected FAILED 原件）；units/project.md §7.4「事务提交与恢复状态机」锚点真实存在（:974）。",
+    "收口登记核验：findings.json F-962 status=open→fixed，resolution 补 2026-10-26 落地批段且实证范围如实限定（「恢复扫描与公开工厂对错误/失真HEAD摘要的拒绝……不声称超出scanForRecovery④闭包校验的语义」）；migration.md §13.1（WP-16 行 blocked→已落地）、§13.2（REUSE-T40 待核表行新增，旧 blocked 留痕划线保留）、§13.3（WP-16 子任务行已落地）三处同步；契约 status=ready 待独立验收、note 含候选/落地双起点 SHA——登记与实测一致。",
+    "红线抽查（H1—H6/架构）：H1＝修复复用本单元既有唯一入口 codec::contentVersionOf（commit 路径在用直接 API，differences/search 登记完整），非 GAP-DIGEST-01（core 摘要后端替换归 WP-15，本包零触碰）；H2＝无平行实现（Codec.cpp 零差异、无第二哈希路径，src diff 零新增 #include、无 old/ 回流）；H3＝沿用上游构建/测试规范，中文契约与命名空间未动；H4＝代码/测试/文档/矩阵/凭证/门禁同批收口（检查 5/9）；H5＝所有者 2026-10-26 批量批准落地裁决表第 1~4 项授权脉络在契约 note/migration §13.2/13.3/README §5 四处一致登记，包边界扩至全文件解决批有批准留痕；H6＝逐文件凭证＋逐功能行＋逐行证据三级绑定可追溯（检查 5）。架构红线：项目修订写路径归 project 未动（修复纯只读校验，修订只增不改）；L2 零 Qt 未涉；业务域互链零新增（diff 无新增 include）。",
+    "CLOSURE 冻结与宿主例外：范围 diff 不含 closures.json/permissions.json；closures.json 无本包四文件条目（grep 零命中）；permissions.json 零新增 grant、四文件零权限条目（IRD-GATE-AD 零触发与 T36 不同，无需夹具例外）。宿主例外治理批（3d5753861，范围外按送验说明一并核验）：test-fixture 例外范围收敛——ARCH §3.6.2.1＋v0.16 变更记录在案（仅产品树 /test/ 路径合法、仅豁免夹具装配必需 construct/mutate-model、host/graphics 与 runtime owner 红线不变、独立治理批可回退待追认）；permissions.json 例外条目仅涉 policy/test/CollisionSessionTest.cpp 单文件单目标；治理脚本自测实跑 155/155 exit 0（acc-test-reuse-governance.log），含 test-fixture 三正负例（grant 正例 PASS／非 test 路径冒用拒／无 grant 模型操作拒）按预期。REUSE-T40 未使用未扩展该例外。",
+    "④ 当前 HEAD 门禁实测（PowerShell 数组传参，包装脚本落盘）：决定性套件 validate-docs -TaskFile @(REUSE-T40.json, GOV-T21.json, GOV-T22.json)（本包＋dependsOn 前置）exit 0——validate-reuse: PASS governance only; inventory=1401 units=20 changed=117 DEBT=16 UNRESOLVED=1399（与提交声明 changed=117 一致，含本包四文件全文件解决 COVERAGE 检查）；validate-task: PASS (3 tasks)；validate-docs: PASS (20 units, 12 trace entries, 424 task files…)（acc-validate-docs-package-suite.log）。REUSE-AD-PENDING 各行为 AD 审计既有 pending 提示（reporting/runtime/ui 等文件，GOV-T24 独验已同样定性），非本包阻断。"
+  ],
+  "integrationTest": {
+    "project": { "tests": 287, "passed": 287, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "evidence/acc-sdurws_ird_project_test.log", "xml": "evidence/acc-sdurws_ird_project_test.xml", "note": "独验本人增量重构建（--target sdurws_ird_project_test --target sdurws_ird_project_contract_test，源未变仅重链接证实现行）后亲跑；既有 282 零回归＋新 5 用例全绿" },
+    "projectContract": { "tests": 32, "passed": 32, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "log": "evidence/acc-sdurws_ird_project_contract_test.log", "xml": "evidence/acc-sdurws_ird_project_contract_test.xml" },
+    "b20ThreeCounterexamples": { "tests": 5, "passed": 5, "failed": 0, "exitCode": 0, "log": "evidence/acc-b20-three-counterexamples-rerun.log", "note": "篡改/缺失/合法恢复/历史兼容四验收面；红证据 f962-red.log 同五用例 5/5 FAILED 对应" },
+    "irdGates": { "exitCode": 0, "log": "evidence/acc-wp16-t40-ird-gates.log", "result": "R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中；自检 fail_* 按预期检出" },
+    "governanceSelfTest": { "passed": 155, "failed": 0, "exitCode": 0, "log": "evidence/acc-test-reuse-governance.log", "note": "含宿主例外治理批 test-fixture 三正负例" }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T40.json -Base 44c8d59e4d5c8e83dace0986066525e66bcf67fe -Head 15449f55d658b92e7a754e0305d289faf4ca35e3", "exitCode": 0, "passed": true, "log": "evidence/acc-verify-task-scope.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 44c8d59e4d5c8e83dace0986066525e66bcf67fe..15449f55d658b92e7a754e0305d289faf4ca35e3", "exitCode": 0, "passed": true, "log": "evidence/acc-commit-lint.log" },
+    { "name": "candidate-apply-and-digest", "command": "git worktree add --detach <tmp> 44c8d59e4 && 逐 diff git apply --check + git apply 后三方 sha256sum（base+diff / candidate 全件 / HEAD 产品件）4/4 一致（worktree 用后即删）", "exitCode": 0, "passed": true },
+    { "name": "int-project-test", "command": "cmake --build build --config Release --target sdurws_ird_project_test --target sdurws_ird_project_contract_test && build/RobWorkStudio/bin/Release/sdurws_ird_project_test.exe --gtest_output=xml:<evidence>/acc-sdurws_ird_project_test.xml --ird_report=<evidence>/acc-sdurws_ird_project_test.ird-test-report.json", "exitCode": 0, "passed": true },
+    { "name": "int-project-contract-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_project_contract_test.exe --gtest_output=xml:<evidence>/acc-sdurws_ird_project_contract_test.xml --ird_report=<evidence>/acc-sdurws_ird_project_contract_test.ird-test-report.json", "exitCode": 0, "passed": true },
+    { "name": "b20-filter-rerun", "command": "sdurws_ird_project_test.exe --gtest_filter=*RecoveryScan_WrongHeadDigest_StoreCorrupt:*RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt:*RecoveryScan_HeadManifestMissing_StoreCorrupt:*RecoveryScan_TamperThenRestore_ScanGreen:*Open_WrongHeadManifestDigest_Rejected", "exitCode": 0, "passed": true, "log": "evidence/acc-b20-three-counterexamples-rerun.log" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=<industrialrobot> -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "evidence/acc-wp16-t40-ird-gates.log" },
+    { "name": "governance-selftest", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1", "exitCode": 0, "passed": true, "log": "evidence/acc-test-reuse-governance.log" },
+    { "name": "matrix-and-credential-audit", "command": "pwsh 数组脚本按 validate-reuse 同款 Digest 口径复算：TxEngine.cpp 22 功能行/217 audit-t40 行逐文件计数/47+25 行 TxEngine.hpp inputs 摘要 0 陈旧/changes 四凭证 4/4 MATCH（输出见 checks 记录）", "exitCode": 0, "passed": true },
+    { "name": "validate-docs-package-suite", "command": "pwsh -NoProfile -File <evidence>/run-acc-validate-docs-package.ps1（内部 validate-docs.ps1 -TaskFile @('REUSE-T40.json','GOV-T21.json','GOV-T22.json') 数组传参）", "exitCode": 0, "passed": true, "log": "evidence/acc-validate-docs-package-suite.log" },
+    { "name": "validate-docs-full-suite-and-baseline-control", "command": "75 份独立契约全量套件于 HEAD 与 BASE 44c8d59e4（临时 worktree）各跑一次：两处同样 exit 1 于 legacy 契约（CORE-T01 allowedFiles 缺失/DOC-T01 reuse contract required）——基线既有，非本包引入", "exitCode": 1, "passed": false, "log": "evidence/acc-validate-docs-all-tasks.log；evidence/acc-validate-docs-baseline-control.log；evidence/acc-validate-docs-legacy-array-finding.md", "note": "不计入本包判定（见 limitations 第 2 条）" }
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "性能微基准（sdurws_ird_project_perf_test）与新依赖冒烟",
+      "reason": "本包为恢复扫描只读校验单点修复，无公共接口/依赖/数值算法变化，契约与 AGENTS §4 均未要求性能或独立冒烟验收面；四验收面由 287 全量＋32 契约＋B20 过滤跑承载，均已亲跑。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 REUSE-T40 送验范围（44c8d59e4..15449f55d）与宿主例外治理批的记录/正负例核验。三点如实说明：1) 集成测试为送验时已构建集成树的增量重构建产物（cmake 增量确认两目标与 HEAD 源现行，仅重链接），未做 fresh 全量重配；构建参数 RWS_BUILD_INDUSTRIALROBOT=ON 经 CMakeCache 确认。2) 「validate-docs -TaskFile 全部契约」的两层口径均实测并留痕：本包决定性套件（REUSE-T40＋GOV-T21＋GOV-T22）exit 0；75 份独立契约全量套件在 HEAD 与 BASE 同样 exit 1，失败点全部为 legacy 契约既有缺项（foundation-tasks.json 内嵌 78 契约中 71 个 ready 无 allowedFiles——BASE 同态 71 个、两提交间该文件零差异；DOC-T01 reuse contract required）——属治理存量而非本包引入，本验收不修复，提请所有者后续治理批次收口（详见 evidence/acc-validate-docs-legacy-array-finding.md）。3) validate-reuse 为 governance only 口径（DEBT=16、UNRESOLVED=1399），不构成算法替换（migration §11）或 REUSE-T02 放行；F-962 fixed 的实证范围以 findings 登记为准（止于 scanForRecovery④对错误/失真 HEAD 摘要的拒绝），不声称更广语义。宿主例外 test-fixture（ARCH §3.6.2.1）维持「待所有者追认」状态，本包零使用；REUSE-T36 侧使用情况的独验归该包记录。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-verify-task-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-b20-three-counterexamples-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-sdurws_ird_project_test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-sdurws_ird_project_test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-sdurws_ird_project_test.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-sdurws_ird_project_contract_test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-sdurws_ird_project_contract_test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-sdurws_ird_project_contract_test.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-wp16-t40-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-test-reuse-governance.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-validate-docs-package-suite.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-validate-docs-all-tasks.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-validate-docs-baseline-control.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/acc-validate-docs-legacy-array-finding.md",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/run-acc-validate-docs.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T40-20261026-r1/evidence/run-acc-validate-docs-package.ps1"
+  ]
+}

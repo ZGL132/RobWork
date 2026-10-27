@@ -431,7 +431,19 @@ set(IRD_THIRDPARTY_ALLOWED_TARGETS
     "libzip::zip"
     "expat::expat"
     "pugixml::pugixml"
-    "Eigen3::Eigen")
+    "Eigen3::Eigen"
+    # Boost::headers：SetCheck 阶段 2 最大匹配内核（REUSE-T19——header-only
+    # 接口目标，零运行库/DLL；src/SetCheckMatch.cpp 单 TU 收敛，公共模板头
+    # 与消费者编译面零 Boost；依赖契约修订＝units/testkit.md §3.1 同批登记）
+    "Boost::headers"
+    # Boost::json：project.Codec 磁盘格式解析 DOM（REUSE-T54——所有者
+    # 2026-10-26 A4 裁决 Boost.Endian/Boost.JSON 消费渠道批准：经 vcpkg
+    # 公共依赖渠道引入，登记见 traceability/reuse/REUSE-T43/
+    # byte-primitives-decision.md §6；project 计算库 PRIVATE，仅
+    # src/Codec.cpp 解析半区消费，canonical 词法门与磁盘契约语义仍归产品
+    # 自持，dump 侧自持编码器零变化；依赖契约修订＝units/project.md §1.4
+    # 同批登记）
+    "Boost::json")
 
 # ---------------------------------------------------------------------
 # IRD_TOOL_TARGET_EDGES —— 开发/演示工具目标的允许链接边（ird_gates 形态
@@ -443,7 +455,10 @@ set(IRD_THIRDPARTY_ALLOWED_TARGETS
 #     红线的既有语义内（工具不入产品面，DTB §2.2 TK-T03 行）；
 #   - sdurws_ird_demo6r：6 自由度机械臂 demo 项目生成器（owner 演示指令
 #     2026-09-26——modeling/CMakeLists.txt"链接面＝modeling＋project（两
-#     登记边；demo 工具非产品交付路径）"）。
+#     登记边；demo 工具非产品交付路径）"）；
+#   - sdurws_ird_testkit_lsnchild：testkit 单元监听器所有权测试子进程（F-958
+#     交付——tools/lsnchild，经生产安装入口跑三态样本的隔离子进程载体；
+#     testkit 同生命周期，不入产品分发面，同 testdata_lint T-1 纪律）。
 # ---------------------------------------------------------------------
 set(IRD_TOOL_TARGET_EDGES
     # WP-01-T05 回填 WP-23-T05 打开基准的独立测量进程边；精确到目标，
@@ -451,15 +466,20 @@ set(IRD_TOOL_TARGET_EDGES
     "sdurws_ird_project_openbench_worker->sdurws_ird_project"
     "sdurws_ird_testdata_lint->sdurws_ird_testkit"
     "sdurws_ird_demo6r->sdurws_ird_modeling"
-    "sdurws_ird_demo6r->sdurws_ird_project")
+    "sdurws_ird_demo6r->sdurws_ird_project"
+    "sdurws_ird_testkit_lsnchild->sdurws_ird_testkit")
 
 # ---------------------------------------------------------------------
 # IRD_T1_EXEMPT_TARGETS —— T-1（产品目标禁链 testkit）的目标豁免表。
 #   - sdurws_ird_testdata_lint：见 IRD_TOOL_TARGET_EDGES 注——lint 工具
 #     与 testkit 同生命周期（TK-T03），不随产品分发（豁免的是"产品目标"
-#     形态误判——该目标为开发工具，非产品交付物）。
+#     形态误判——该目标为开发工具，非产品交付物）；
+#   - sdurws_ird_testkit_lsnchild：见 IRD_TOOL_TARGET_EDGES 注——F-958
+#     监听器所有权测试子进程（tools/lsnchild），不入产品分发面（同款
+#     豁免的是"产品目标"形态误判——该目标为测试辅助工具，非产品交付物）。
 # ---------------------------------------------------------------------
-set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint")
+set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint"
+                          "sdurws_ird_testkit_lsnchild")
 
 # ---------------------------------------------------------------------
 # IRD_TEST_TARGET_EDGES —— 测试目标（_test/_contract_test/_gui_test）的
@@ -567,6 +587,13 @@ set(IRD_TEST_TARGET_EDGES
 #     层（ui_plugin）按上述三先例消费三域装配门面（公共 assembly/ 头，
 #     域私有头零触碰）的目标级登记边；ui_plugin 链接段源面修改归 ui 宿主
 #     面批次（本批只登记边数据——边是放行面，提前登记零命中）。
+#   - sdurws_ird_ui_plugin->sdurws_ird_execution：WP-18/F-967 收口批
+#     （2026-10-25，migration §13.3 批准方向"优先 execution 现有总线与
+#     订阅生命周期"）——宿主装配层消费 execution 事件总线实现
+#     DomainEventBusImpl（公共头 EventBus.hpp，R-2 公共面；ui 产品库
+#     sdurws_ird_ui 零 execution 红线 O-31/C-3/4/5 不动，仅 plugin 装配
+#     目标链接面；登记与源面修改同批——ASM-PLUG 先例）。登记册见
+#     traceability/wp18-t41-gate-registrations.md。
 # （ui->ui 自边两处——ui_app/ui_plugin 链接本单元产品库——由引擎同单元
 # 装配自边豁免承载，不入本表。）
 # ---------------------------------------------------------------------
@@ -578,4 +605,5 @@ set(IRD_TARGET_LEVEL_EDGES
     "sdurws_ird_ui_plugin->sdurws_ird_kinematics_plugin"
     "sdurws_ird_ui_plugin->sdurws_ird_dynamics_plugin"      # ASM-PLUG 收口批（2026-10-10）——宿主装配层消费三域门面（ui_plugin 链接面修改归 ui 宿主面批次）
     "sdurws_ird_ui_plugin->sdurws_ird_selection_plugin"     # ASM-PLUG 收口批（2026-10-10）——同款
-    "sdurws_ird_ui_plugin->sdurws_ird_optimization_plugin") # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_ui_plugin->sdurws_ird_optimization_plugin"  # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_ui_plugin->sdurws_ird_execution")           # WP-18/F-967 收口批（2026-10-25）——宿主装配层消费 execution 事件总线实现（EventBus.hpp 公共头；ui 产品库零 execution 红线不动）

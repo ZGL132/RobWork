@@ -1,0 +1,47 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B33",
+  "baseline": "549a61834",
+  "tests": {
+    "total": 43,
+    "passed": 42,
+    "failed": 1,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "originalTests": {
+    "total": 38,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0
+  },
+  "newTests": {
+    "total": 5,
+    "passed": 4,
+    "failed": 1,
+    "skipped": 0
+  },
+  "configureExit": 0,
+  "buildExit": 0,
+  "runExit": 1,
+  "productionChanges": false,
+  "protected": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/",
+    "RobWork/RobWork/src",
+    "RobWork/RobWorkSim/src",
+    "vcpkg"
+  ],
+  "changed": [],
+  "independentAcceptance": "pending",
+  "notRun": [
+    "全诊断管线/轮转/脱敏/并发压力",
+    "新解析后端或插件",
+    "locale切换后的词形",
+    "生产修正",
+    "全T01验收"
+  ],
+  "remote": "not executed"
+}

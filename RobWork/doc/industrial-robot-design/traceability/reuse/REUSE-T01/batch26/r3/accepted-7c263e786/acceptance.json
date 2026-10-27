@@ -1,0 +1,247 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B26",
+  "round": 3,
+  "reviewedCommit": "7c263e78683a74b5532e6f99e7647a02b6f39ea7",
+  "baseCommit": "4b9977f096d0b3d58687ecc94013f435e5b0502c",
+  "verdict": "PASS_LOCAL_B26_R3_ONLY",
+  "generatedAt": "2026-10-23T05:57:30.752871+08:00",
+  "blockingFindings": [],
+  "freeze": {
+    "independentClone": true,
+    "noHardlinks": true,
+    "noCheckoutThenDetached": true,
+    "coreAutocrlf": false,
+    "coreLongpaths": true,
+    "initialClean": true,
+    "finalHead": "7c263e78683a74b5532e6f99e7647a02b6f39ea7",
+    "finalStatus": "",
+    "noSharedWrites": true
+  },
+  "checks": [
+    {
+      "name": "pipeline-ps7",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      ],
+      "exitCode": 0,
+      "seconds": 19.16,
+      "log": "pipeline-ps7.log"
+    },
+    {
+      "name": "pipeline-ps51",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      ],
+      "exitCode": 0,
+      "seconds": 14.76,
+      "log": "pipeline-ps51.log"
+    },
+    {
+      "name": "validate-task",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      ],
+      "exitCode": 0,
+      "seconds": 29.76,
+      "log": "validate-task.log"
+    },
+    {
+      "name": "validate-reuse",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+        "-Head",
+        "7c263e78683a74b5532e6f99e7647a02b6f39ea7"
+      ],
+      "exitCode": 0,
+      "seconds": 344.33,
+      "log": "validate-reuse.log"
+    },
+    {
+      "name": "validate-docs",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/validate-docs.ps1"
+      ],
+      "exitCode": 0,
+      "seconds": 19.92,
+      "log": "validate-docs.log"
+    },
+    {
+      "name": "scope-frozen",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+        "-Base",
+        "4b9977f096d0b3d58687ecc94013f435e5b0502c",
+        "-Head",
+        "7c263e78683a74b5532e6f99e7647a02b6f39ea7"
+      ],
+      "exitCode": 0,
+      "seconds": 31.43,
+      "log": "scope-frozen.log"
+    },
+    {
+      "name": "commit-lint",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "-Range",
+        "4b9977f096d0b3d58687ecc94013f435e5b0502c..7c263e78683a74b5532e6f99e7647a02b6f39ea7"
+      ],
+      "exitCode": 0,
+      "seconds": 1.07,
+      "log": "commit-lint.log"
+    }
+  ],
+  "formalCheckSummary": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "adversarial": {
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "report": "adversarial-report.json"
+  },
+  "baselineComparisons": {
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "report": "red-comparison-report.json",
+    "interpretation": "Baseline PS5.1 exit1/NativeCommandError is expected red evidence; frozen exit2 is required. Current full pipeline against baseline merger fails only in PS5.1; both frozen full entries pass."
+  },
+  "staticReview": {
+    "head": "7c263e78683a74b5532e6f99e7647a02b6f39ea7",
+    "detached": true,
+    "status": "",
+    "autocrlf": "false",
+    "longpaths": "true",
+    "changedFiles": 350,
+    "noProductFrameworkVcpkgChanges": true,
+    "scriptsChanged": [
+      "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+    ],
+    "minimalGetStagePatch": true,
+    "beforeSourceExact": true,
+    "beforePipelineExact": true,
+    "oldArchivesUnchanged": {
+      "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch23-20261023/": true,
+      "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch24-20261023/": true,
+      "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch25-20261023/": true
+    },
+    "oldArchiveR2VerifiedCounts": {
+      "B24": 173,
+      "B25": 159,
+      "B23": 136
+    },
+    "oldArchiveR2ReportSha256": "a214ffcd25c668032a7d5b47f9e83f2803f7abf7d37689e9abd9cdf19a3bcb06",
+    "firstFailFiles": 8,
+    "firstFailUnchanged": true,
+    "archiveSummary": {
+      "expectedManifestEntries": 327,
+      "manifestEntries": 327,
+      "expectedIncludingManifest": 328,
+      "gitEntries": 328,
+      "checked": 328,
+      "failed": 0,
+      "exactSet": true
+    },
+    "bindingSummary": {
+      "affectedRows": 43,
+      "sourceChecks": 43,
+      "bindingChecks": 497,
+      "failed": 0,
+      "allRemainPending": true,
+      "r3VerificationBound": 43
+    }
+  },
+  "bindingDeltaKinds": [
+    "auditBoundary",
+    "auditEvidence",
+    "inputs",
+    "sources"
+  ],
+  "b26R2FindingClosure": {
+    "id": "B26-R2-01",
+    "status": "CLOSED_LOCAL_B26_R3",
+    "frozenExitCode": 2,
+    "missingVariants": [
+      "all",
+      "stage1",
+      "stage2",
+      "stage3"
+    ],
+    "bothShells": true,
+    "worktreeAndIndexByteForBytePreserved": true,
+    "baselinePS51ExitCode": 1,
+    "evidence": "red-comparison-report.json"
+  },
+  "priorFailures": {
+    "aa31Preserved": true,
+    "aa31FilesChecked": 8,
+    "r2VerdictPreserved": "FAIL_LOCAL_B26_PS51_MISSING_STAGE_EXIT_CONTRACT",
+    "r2ManifestEntries": 327,
+    "r2IncludingManifest": 328,
+    "report": "r2-archive-raw-report.json"
+  },
+  "scope": {
+    "localBatchOnly": true,
+    "fullT01": "NOT RUN / NOT ACCEPTED",
+    "T02": "NOT AUTHORIZED",
+    "algorithmReplacement": "NOT AUTHORIZED",
+    "productChanges": false,
+    "frameworkChanges": false,
+    "remoteSync": "NOT RUN per owner",
+    "merge": "NOT RUN",
+    "implementation": false
+  },
+  "notRun": [
+    "C++ build/tests",
+    "GUI/Widgets tests",
+    "numerical/performance acceptance",
+    "DeepEvidence",
+    "full T01/T02 acceptance",
+    "remote CI/sync/push/merge"
+  ],
+  "nonBlockingObservations": [
+    {
+      "name": "raw Git diff whitespace diagnostic",
+      "defaultExit": 2,
+      "crAtEolExit": 0,
+      "reason": "Committed CRLF is reported as trailing whitespace by default; explicit cr-at-eol recognizes CRLF and passes. Both raw logs retained."
+    }
+  ],
+  "evidenceRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-r3-acceptance-20261023",
+  "manifest": "artifact-manifest.json"
+}

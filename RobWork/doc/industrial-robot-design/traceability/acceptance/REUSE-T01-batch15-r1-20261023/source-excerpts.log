@@ -1,0 +1,758 @@
+
+ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor sdurws::ird::ui::HostView3DPreviewBackend::ensureSessionPreviewAnchor
+468: }
+469: 
+470: rw::core::Ptr<rw::models::WorkCell>
+471: HostView3DPreviewBackend::ensureSessionPreviewAnchor(WorkCellScene& scene)
+472: {
+473:     // ①场景已挂 WorkCell＝原样复用（宿主装载/发布链/上次锚——幂等；
+474:     // 重复 setWorkCell 会无谓重建场景节点树并触发查看器世界节点再同步，
+475:     // 见下②注）。成员同步持有当前场景锚（可读性——所有权本身由场景
+476:     // 共享属主保证）。
+477:     if (!scene.getWorkCell().isNull()) {
+478:         m_sessionAnchor = scene.getWorkCell();
+479:         return m_sessionAnchor;
+480:     }
+481:     // ②新建会话预览锚 WC：仅含框架根帧的空 WorkCell（名＝ird 前缀族
+482:     // 约定——诊断可辨识；WC 名不入任何身份/缓存键，runtime §8.2 同口
+483:     // 径）。模型层隔离：studio->getWorkCell() 保持空——发布链"WorkCell
+484:     // 即编译产物本体"（HostPresentationAdapters INV-B4 宿主单入口）与
+485:     // TreeView 等订阅 studio 工作单元事件的宿主组件，对本锚零感知零干扰。
+486:     // 查看器先行校验（不半装）：世界节点重同步是装入的必要半区——查看
+487:     // 器缺位（headless 等装配降级）＝装了也渲染不出，如实返回空交调用
+488:     // 方按"锚不可得"处理；实践中 scene 可取得则查看器必在位（同一
+489:     // RWStudioView3D 持有），本分支为防御面。
+490:     if (m_studio->getView() == nullptr
+491:         || m_studio->getView()->getSceneViewer() == nullptr) {
+492:         return nullptr;
+493:     }
+494:     m_sessionAnchor = rw::core::ownedPtr(
+495:         new rw::models::WorkCell("ird-session-preview"));
+496:     scene.setWorkCell(m_sessionAnchor);
+497:     // 世界节点重同步（框架硬契约）：WorkCellScene::setWorkCell 会重建
+498:     // 场景世界节点（旧节点从根摘除、新节点按锚 WC 帧树生成），而查看器
+499:     // 缓存的是旧节点引用——框架自身路径（RWStudioView3D::setWorkCell/
+500:     // clear 尾段）都在装 WC 后补 setWorldNode，本直连场景的装配路径必须
+501:     // 同款补挂，否则新节点树不进渲染。
+502:     m_studio->getView()->getSceneViewer()->setWorldNode(scene.getWorldNode());
+503:     return m_sessionAnchor;
+504: }
+505: 
+506: void HostView3DPreviewBackend::clear()
+
+ui.HostView3DGateway.currentTcpPose sdurws::ird::ui::HostView3DGateway::currentTcpPose
+117: // =====================================================================
+118: 
+119: std::optional<rw::math::Transform3D<>>
+120: HostView3DGateway::currentTcpPose(const std::string& deviceName)
+121: {
+122:     // 双缝缺省/双取失败＝诚实降级（nullopt——调用方呈现失败原因）。
+123:     if (!m_deps.resolveTcpFrame || !m_deps.currentState) {
+124:         return std::nullopt;
+125:     }
+126:     const rw::kinematics::Frame* tcpFrame = m_deps.resolveTcpFrame(deviceName);
+127:     const rw::kinematics::State* state = m_deps.currentState();
+128:     if (tcpFrame == nullptr || state == nullptr) {
+129:         return std::nullopt;
+130:     }
+131:     // TCP 世界系位姿（worldTframe——宿主会话态只读，KIN-06：零修订、
+132:     // 不写设计模型；设备 base 即模型根布置时与 base→TCP 一致）。
+133:     const rw::core::Ptr<const rw::kinematics::Frame> frameView(tcpFrame);
+134:     return rw::kinematics::Kinematics::worldTframe(frameView, *state);
+135: }
+136: 
+137: // =====================================================================
+
+ui.SampleGridRender.draw sdurws::ird::ui::(anonymous namespace)::SampleGridRender::draw
+266:     }
+267: 
+268:     void draw(const DrawableNode::RenderInfo& info,
+269:               DrawableNode::DrawType type, double alpha) const override
+270:     {
+271:         (void)info;
+272:         (void)type;
+273:         const PreviewColorScope colorScope;
+274:         // 格线骨架（UI-T52 字面化——采样格的线段呈现：灰细线与着色点并
+275:         // 存〔格线＝格结构、点＝样本锚——两层视觉语义分离〕；空＝无格）。
+276:         if (!m_gridLines.empty()) {
+277:             glLineWidth(1.0f);
+278:             glColor4f(0.55f, 0.55f, 0.60f, static_cast<float>(alpha));  // 格线灰
+279:             glBegin(GL_LINES);
+280:             for (const auto& seg : m_gridLines) {
+281:                 glVertex3d(seg.first[0], seg.first[1], seg.first[2]);
+282:                 glVertex3d(seg.second[0], seg.second[1], seg.second[2]);
+283:             }
+284:             glEnd();
+285:         }
+286:         // 采样点渲染（点阵着色——评估就位＝逐点分色；空＝中性灰诚实空态）。
+287:         glPointSize(5.0f);
+288:         glBegin(GL_POINTS);
+289:         for (std::size_t i = 0; i < m_samples.size(); ++i) {
+290:             glColor4f(0.6f, 0.6f, 0.6f, static_cast<float>(alpha));  // 中性灰
+291:             if (i < m_states.size()) {
+292:                 applyCellColor(m_states[i]);  // 评估就位＝逐点分色
+293:             }
+294:             const Vector3D<double>& p = m_samples[i];
+295:             glVertex3d(p[0], p[1], p[2]);
+296:         }
+297:         glEnd();
+298:         glPointSize(1.0f);
+299:         // 高亮样本叠加层（FIX-T2——"蓝框=当前选中"：放大点＋蓝描边环，
+300:         // 蓝色＝区域框缺省档词表同源（F-495 建议语义零新增色值）；
+301:         // nullopt＝无高亮零产出——诚实空态不画占位）。
+302:         if (m_highlighted.has_value()) {
+303:             const Vector3D<double>& h = *m_highlighted;
+304:             // 放大点芯（约 3 倍点径——与 5px 常规点在视觉上明确分层）。
+305:             glPointSize(14.0f);
+306:             // 词表是RGB三元组，glColor4fv会越界读取第4个float作为alpha，
+307:             // 导致14px点芯透明/随机透明；显式使用回调alpha，保持宿主透明语义。
+308:             glColor4f(ui::palette::kRegionTintDefaultGl[0],
+309:                       ui::palette::kRegionTintDefaultGl[1],
+310:                       ui::palette::kRegionTintDefaultGl[2],static_cast<float>(alpha));
+311:             glBegin(GL_POINTS);
+312:             glVertex3d(h[0], h[1], h[2]);
+313:             glEnd();
+314:             glPointSize(1.0f);
+315:             // 蓝描边环（选中框语义的采样点形态——三轴小环近似"框"：
+316:             // 世界系半径 0.06 m 与采样格间距同量级，工位级视距可辨）。
+317:             glColor4f(ui::palette::kRegionTintDefaultGl[0],
+318:                       ui::palette::kRegionTintDefaultGl[1],
+319:                       ui::palette::kRegionTintDefaultGl[2],
+320:                       static_cast<float>(alpha));
+321:             glLineWidth(2.0f);
+322:             constexpr double kHighlightRingRadius = 0.06;  // m——环半径
+323:             for (int axis = 0; axis < 3; ++axis) {
+324:                 glBegin(GL_LINE_LOOP);
+325:                 for (int step = 0; step < 24; ++step) {
+326:                     // 圆周参数化（24 段近似圆——固定管线无 GLU 依赖；
+327:                     // 三正交平面各一环＝三轴环近似球框）。
+328:                     const double theta = 2.0 * 3.14159265358979323846
+329:                                        * static_cast<double>(step) / 24.0;
+330:                     const double c = std::cos(theta) * kHighlightRingRadius;
+331:                     const double s = std::sin(theta) * kHighlightRingRadius;
+332:                     Vector3D<double> p = h;
+333:                     switch (axis) {
+334:                     case 0: p[1] += c; p[2] += s; break;  // XY 平面环
+335:                     case 1: p[0] += c; p[2] += s; break;  // XZ 平面环
+336:                     default: p[0] += c; p[1] += s; break;  // YZ 平面环
+337:                     }
+338:                     glVertex3d(p[0], p[1], p[2]);
+339:                 }
+340:                 glEnd();
+341:             }
+342:             glLineWidth(1.0f);
+343:         }
+344:     }
+345: 
+346:   private:
+
+ui.HostView3DPreviewBackend.HostView3DPreviewBackend sdurws::ird::ui::HostView3DPreviewBackend::HostView3DPreviewBackend
+354: }  // namespace
+355: 
+356: HostView3DPreviewBackend::HostView3DPreviewBackend(rws::RobWorkStudio* studio)
+357:     : m_studio(studio)
+358: {}
+359: 
+360: bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
+
+ui.HostView3DPreviewBackend.draw sdurws::ird::ui::HostView3DPreviewBackend::draw
+358: {}
+359: 
+360: bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
+361: {
+362:     // 场景现取（studio 公开 API 直供——getView 中介零需要）。
+363:     if (m_studio == nullptr) {
+364:         return false;
+365:     }
+366:     WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
+367:     if (scene.isNull()) {
+368:         return false;
+369:     }
+370:     // 挂接锚 WorkCell 三级现取（F-550② 修复——会话预览是会话编辑面
+371:     // 〔PM-11/协议头注〕，草稿期（首应用前）就必须可见；此前实现把
+372:     // "宿主已有发布 WorkCell"当前置，新项目增工位/区域后三维恒空白）：
+373:     //   ①宿主 WorkCell（发布链 setWorkCell 后——常态路径）；
+374:     //   ②场景当前 WorkCell（宿主装载，或上次装入的会话预览锚——复用）；
+375:     //   ③新建会话预览锚装入场景（ensureSessionPreviewAnchor——仅场景
+376:     //     层，studio 模型层零触碰）。
+377:     // "无锚不画"是框架硬约束（场景挂接 API 在场景无 WorkCell 时抛异常
+378:     // ——WorkCellScene::addDrawable 防御），修复让锚恒在位而非放弃渲染。
+379:     rw::models::WorkCell::Ptr workcell = m_studio->getWorkCell();
+380:     if (workcell.isNull()) {
+381:         workcell = ensureSessionPreviewAnchor(*scene);
+382:     }
+383:     if (workcell.isNull()) {
+384:         return false;  // 锚不可得（视图缺位等装配降级——诚实失败）
+385:     }
+386:     Frame* const world = workcell->getWorldFrame();
+387:     if (world == nullptr) {
+388:         return false;
+389:     }
+390: 
+391:     // ①清旧组（节点名清单逐个删——原子替换语义的"先清"半区）。
+392:     clear();
+393: 
+394:     // ②工位标记（UI-T77——F-555 双形态）：
+395:     //   - position 形态（世界系点位）：坐标轴＋标签一体自绘
+396:     //     （StationMarkerRender）挂 WORLD 根帧——工位作为带坐标的空间点
+397:     //     在三维可辨（此前标记恒渲染于参考系原点＝工位坐标投影链丢失）；
+398:     //     投影方保证到达本形态的 position 已可用（World 恒等或参考帧已
+399:     //     解析——变换失败降级为挂帧形态），故无需再解析 frameName；
+400:     //   - 挂帧形态（position 空，UI-T33 旧语义）：findFrame 挂 FrameAxis
+401:     //     （坐标轴随帧动——会话/示教移动零重投；帧不可解析＝跳过并计数
+402:     //     ——失败可见面）。
+403:     //   两形态标签统一走 Qt 纹理化文本（QtTextBillboard——F-556：GLUT
+404:     //   位图字体无 CJK，UTF-8 工位名乱码的替代承载；标签名独立命名空间
+405:     //   防与轴同名冲突——removeDrawable 按名逐个删互不干扰）。
+406:     // 帧解析锚＝上方现取的挂接锚 WC（F-550②——发布前＝会话预览锚，
+407:     // "WORLD" 别名经 WorkCell::findFrame 特判命中其根帧；发布后＝编译
+408:     // 产物 WC，同一别名命中发布根帧——两态查找语义一致）。
+409:     int unresolved = 0;
+410:     for (const View3DFrameMarker& marker : update.frameMarkers) {
+411:         if (marker.position.has_value()) {
+412:             // 点值形态：轴＋标签一体挂 WORLD（世界系点位——见上注）。
+413:             const std::string nodeName =
+414:                 std::string(kPreviewPrefix) + "marker3d-" + marker.label;
+415:             scene->addRender(nodeName,
+416:                              rw::core::ownedPtr(new StationMarkerRender(
+417:                                  *marker.position, marker.label)),
+418:                              world);
+419:             m_nodeNames.push_back(nodeName);
+420:             continue;
+421:         }
+422:         Frame* const frame = workcell->findFrame(marker.frameName);
+423:         if (frame == nullptr) {
+424:             ++unresolved;  // 失败可见面在投影方摘要——此处计数不虚构坐标轴
+425:             continue;
+426:         }
+427:         const rw::core::Ptr<Frame> framePtr(frame);  // 非 owning 包装（场景树持有帧存活）
+428:         const std::string axisName =
+429:             std::string(kPreviewPrefix) + "marker-" + marker.label;
+430:         scene->addFrameAxis(axisName, 0.25, frame);  // 轴长 0.25 m（工位尺度）
+431:         m_nodeNames.push_back(axisName);
+432:         // 标签（Qt 纹理化文本——F-556 替代件；挂帧随动，帧原点上方）。
+433:         const std::string labelName =
+434:             std::string(kPreviewPrefix) + "label-" + marker.label;
+435:         scene->addRender(labelName,
+436:                          rw::core::ownedPtr(
+437:                              new QtTextBillboardRender(marker.label, framePtr)),
+438:                          frame);
+439:         m_nodeNames.push_back(labelName);
+440:     }
+441: 
+442:     // ③区域边界框（世界系八角点 12 棱线框——辨识蓝）。
+443:     if (update.boxOutline.has_value()) {
+444:         const std::string nodeName = std::string(kPreviewPrefix) + "box";
+445:         scene->addRender(nodeName,
+446:                          rw::core::ownedPtr(new RegionOutlineRender(*update.boxOutline)),
+447:                          world);
+448:         m_nodeNames.push_back(nodeName);
+449:     }
+450: 
+451:     // ④采样格（点阵着色——Good 绿/Weak 黄/Failed 红；空＝中性灰）。
+452:     if (update.sampleGrid.has_value()) {
+453:         const std::string nodeName = std::string(kPreviewPrefix) + "grid";
+454:         scene->addRender(nodeName,
+455:                          rw::core::ownedPtr(new SampleGridRender(*update.sampleGrid)),
+456:                          world);
+457:         m_nodeNames.push_back(nodeName);
+458:     }
+459: 
+460:     // 失败可见面追加到摘要（协议值不可变——摘要由投影方承载；此处经
+461:     // 节点名留痕：未解析帧计数以独立占位节点名可查——Dev 面诊断锚）。
+462:     if (unresolved > 0) {
+463:         const std::string nodeName = std::string(kPreviewPrefix) + "unresolved-"
+464:                                      + std::to_string(unresolved);
+465:         m_nodeNames.push_back(nodeName);  // 名单留痕（无渲染体——诊断锚）
+466:     }
+467:     return true;
+468: }
+469: 
+470: rw::core::Ptr<rw::models::WorkCell>
+
+ui.HostView3DPreviewBackend.clear sdurws::ird::ui::HostView3DPreviewBackend::clear
+504: }
+505: 
+506: void HostView3DPreviewBackend::clear()
+507: {
+508:     if (m_studio == nullptr) {
+509:         return;
+510:     }
+511:     WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
+512:     if (scene.isNull()) {
+513:         m_nodeNames.clear();
+514:         return;
+515:     }
+516:     for (const std::string& name : m_nodeNames) {
+517:         scene->removeDrawable(name);  // 幂等（不存在＝false，无副作用）
+518:     }
+519:     m_nodeNames.clear();
+520: }
+521: 
+522: }  // namespace ui
+
+ui.PreviewColorScope.constructor sdurws::ird::ui::(anonymous namespace)::PreviewColorScope::PreviewColorScope
+69: public:
+70:     /** @brief 借用当前兼容GL上下文；只关闭颜色覆盖来源，保留深度测试。 */
+71:     PreviewColorScope()
+72:     {
+73:         glPushAttrib(GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_CURRENT_BIT
+74:                      | GL_LINE_BIT | GL_POINT_BIT | GL_TEXTURE_BIT);
+75:         glDisable(GL_LIGHTING);
+76:         glDisable(GL_TEXTURE_1D);
+77:         glDisable(GL_TEXTURE_2D);
+78:     }
+79:     /** @brief 恢复进入前的宿主状态；不得跨上下文或跨绘制回调存活。 */
+80:     ~PreviewColorScope() { glPopAttrib(); }
+
+ui.PreviewColorScope.destructor sdurws::ird::ui::(anonymous namespace)::PreviewColorScope::~PreviewColorScope
+78:     }
+79:     /** @brief 恢复进入前的宿主状态；不得跨上下文或跨绘制回调存活。 */
+80:     ~PreviewColorScope() { glPopAttrib(); }
+81:     PreviewColorScope(const PreviewColorScope&) = delete;
+82:     PreviewColorScope& operator=(const PreviewColorScope&) = delete;
+
+ui.anonymous.applyCellColor sdurws::ird::ui::(anonymous namespace)::applyCellColor
+85: /// 逐点着色分色（判定已由域侧完成——本函数只做词表到 GL 颜色的映射；
+86: /// 色值经 UiTheme palette 词表供色——UI-T65 消硬编码，F-495 统一供色）。
+87: void applyCellColor(View3DCellState state)
+88: {
+89:     switch (state) {
+90:     case View3DCellState::Good:
+91:         glColor3fv(ui::palette::kSampleGoodGl);  // 达标＝绿（词表）
+92:         break;
+93:     case View3DCellState::Weak:
+94:         glColor3fv(ui::palette::kSampleWeakGl);  // 临界＝黄（词表）
+95:         break;
+96:     case View3DCellState::Failed:
+97:         glColor3fv(ui::palette::kSampleFailedGl);  // 不达标＝红（词表）
+98:         break;
+99:     case View3DCellState::NotSampled:
+100:         glColor3fv(ui::palette::kSampleNotSampledGl);  // 未采样＝灰（UI-T65）
+101:         break;
+102:     }
+103: }
+104: 
+105: /// 区域框 tint 分色（UI-T65——覆盖率映射档；None/缺省＝区域框既有辨识
+
+ui.anonymous.tintColor sdurws::ird::ui::(anonymous namespace)::tintColor
+108: /// 误为 kPrimary 同值且字面量硬编码，acc/ui-t65/1 阻断 B/E2 消账）。
+109: /// 返回色三元组供 glColor4f 消费。
+110: std::array<float, 3> tintColor(std::optional<View3DTint> tint)
+111: {
+112:     if (!tint.has_value() || *tint == View3DTint::None) {
+113:         return {ui::palette::kRegionTintDefaultGl[0],
+114:                 ui::palette::kRegionTintDefaultGl[1],
+115:                 ui::palette::kRegionTintDefaultGl[2]};  // 缺省蓝（词表单点）
+116:     }
+117:     switch (*tint) {
+118:     case View3DTint::Good:
+119:         return {ui::palette::kSampleGoodGl[0], ui::palette::kSampleGoodGl[1],
+120:                 ui::palette::kSampleGoodGl[2]};  // 达标档＝绿
+121:     case View3DTint::Weak:
+122:         return {ui::palette::kSampleWeakGl[0], ui::palette::kSampleWeakGl[1],
+123:                 ui::palette::kSampleWeakGl[2]};  // 未达档＝黄
+124:     case View3DTint::Failed:
+125:         return {ui::palette::kSampleFailedGl[0], ui::palette::kSampleFailedGl[1],
+126:                 ui::palette::kSampleFailedGl[2]};  // 零达标档＝红
+127:     }
+128:     // 不可达分支（switch 全覆盖——防御面）：同缺省蓝词表值。
+129:     return {ui::palette::kRegionTintDefaultGl[0],
+130:             ui::palette::kRegionTintDefaultGl[1],
+131:             ui::palette::kRegionTintDefaultGl[2]};
+132: }
+133: 
+134: /**
+
+ui.StationMarkerRender.draw sdurws::ird::ui::(anonymous namespace)::StationMarkerRender::draw
+153:     }
+154: 
+155:     void draw(const DrawableNode::RenderInfo& info,
+156:               DrawableNode::DrawType type, double alpha) const override
+157:     {
+158:         (void)type;
+159:         const PreviewColorScope colorScope;
+160:         // 三轴：局部平移至点位后画 X/Y/Z 三线段（GL_LINES——轴指示惯例
+161:         // 形态；轴长与挂帧形态 addFrameAxis 同尺度 0.25 m＝工位尺度）。
+162:         glPushMatrix();
+163:         glTranslated(m_position[0], m_position[1], m_position[2]);
+164:         glLineWidth(2.0f);
+165:         glBegin(GL_LINES);
+166:         glColor4f(ui::palette::kAxisXGl[0], ui::palette::kAxisXGl[1],
+167:                   ui::palette::kAxisXGl[2], static_cast<float>(alpha));
+168:         glVertex3d(0.0, 0.0, 0.0);
+169:         glVertex3d(kAxisLenM, 0.0, 0.0);
+170:         glColor4f(ui::palette::kAxisYGl[0], ui::palette::kAxisYGl[1],
+171:                   ui::palette::kAxisYGl[2], static_cast<float>(alpha));
+172:         glVertex3d(0.0, 0.0, 0.0);
+173:         glVertex3d(0.0, kAxisLenM, 0.0);
+174:         glColor4f(ui::palette::kAxisZGl[0], ui::palette::kAxisZGl[1],
+175:                   ui::palette::kAxisZGl[2], static_cast<float>(alpha));
+176:         glVertex3d(0.0, 0.0, 0.0);
+177:         glVertex3d(0.0, 0.0, kAxisLenM);
+178:         glEnd();
+179:         glLineWidth(1.0f);
+180:         glPopMatrix();
+181:         // 标签：点位上方（轴顶之外——层次分离）；挂 WORLD＝局部系即世界
+182:         // 系，帧世界位姿恒等（省 State 查询——根帧语义保证）。
+183:         m_label.drawBillboard(
+184:             m_position + Vector3D<double>(0.0, 0.0, kLabelLiftM),
+185:             Transform3D<double>::identity(), info, alpha);
+186:     }
+187: 
+188:   private:
+
+ui.RegionOutlineRender.draw sdurws::ird::ui::(anonymous namespace)::RegionOutlineRender::draw
+209:     }
+210: 
+211:     void draw(const DrawableNode::RenderInfo& info,
+212:               DrawableNode::DrawType type, double alpha) const override
+213:     {
+214:         (void)info;
+215:         (void)type;
+216:         (void)alpha;
+217:         const PreviewColorScope colorScope;
+218:         // 十二棱（八角点拓扑——UI-T77/F-562 修正：生产者角序＝二进制序
+219:         // 〔PanelRegionModel「索引 i 的 bit0→+sx、bit1→+sy、bit2→+sz」〕，
+220:         // 边表按该角序连 12 条真棱——x 向 {0,1}{2,3}{4,5}{6,7}＋y 向
+221:         // {0,2}{1,3}{4,6}{5,7}＋z 向立柱 {0,4}{1,5}{2,6}{3,7}。旧边表按
+222:         // 循环序假设（0→1→2→3）连边，与二进制序不符＝底/顶面画成面对角
+223:         // 线蝴蝶结、y 向四棱缺失——任何区域预览必现的几何错误）。
+224:         static const int kEdges[12][2] = {
+225:             {0, 1}, {1, 3}, {3, 2}, {2, 0},  // 底面（x 棱＋y 棱——二进制序回路 0→1→3→2→0）
+226:             {4, 5}, {5, 7}, {7, 6}, {6, 4},  // 顶面（同构回路 4→5→7→6→4）
+227:             {0, 4}, {1, 5}, {2, 6}, {3, 7},  // 立柱（z 向——bit2 翻转对）
+228:         };
+229:         glLineWidth(2.0f);
+230:         // 框色＝tint 分色（UI-T65——覆盖率映射档；缺省蓝＝既有选中辨识
+231:         // 色语义保持）。
+232:         const std::array<float, 3> color = tintColor(m_tint);
+233:         glColor4f(color[0], color[1], color[2], static_cast<float>(alpha));
+234:         glBegin(GL_LINES);
+235:         for (const auto& e : kEdges) {
+236:             const Vector3D<double>& a = m_corners[e[0]];
+237:             const Vector3D<double>& b = m_corners[e[1]];
+238:             glVertex3d(a[0], a[1], a[2]);
+239:             glVertex3d(b[0], b[1], b[2]);
+240:         }
+241:         glEnd();
+242:         glLineWidth(1.0f);
+243:     }
+244: 
+245:   private:
+
+ui.HostView3DGateway.HostView3DGateway sdurws::ird::ui::HostView3DGateway::HostView3DGateway
+15: namespace ui {
+16: 
+17: HostView3DGateway::HostView3DGateway(Deps deps)
+18:     : m_deps(std::move(deps))
+19: {
+20:     // 装配校验（fail-fast——禁止构造违反拾取承诺的网关；scene/TCP 两缝
+21:     // 可空＝呈现/TCP 诚实降级的显式形态，不在此列）。
+22:     if (m_deps.pickFrame == nullptr || m_deps.selection == nullptr
+23:         || m_deps.nameMap == nullptr) {
+24:         throw std::invalid_argument(
+25:             "ui/hostview3d: pickFrame/selection/nameMap 必填非空"
+26:             "（装配契约违约——scene/TCP 两缝可空除外）");
+27:     }
+28: }
+29: 
+30: // =====================================================================
+
+ui.HostView3DGateway.handleViewDoubleClick sdurws::ird::ui::HostView3DGateway::handleViewDoubleClick
+32: // =====================================================================
+33: 
+34: bool HostView3DGateway::handleViewDoubleClick(const QPoint& pos)
+35: {
+36:     // 链路五拍：拾取→帧名→反解→域分发→选中（View3DPick 来源）。任何
+37:     // 一拍失败＝诚实返回 false（调用方不过滤事件——放行框架默认处理）。
+38:     rw::kinematics::Frame* frame = m_deps.pickFrame(pos.x(), pos.y());
+39:     if (frame == nullptr) {
+40:         return false;  // 未命中（空白处双击——常态，非错误）
+41:     }
+42:     const std::string runtimeName = frame->getName();
+43:     const std::optional<core::ObjectId> oid =
+44:         m_deps.nameMap->resolveObjectIdFromRuntimeName(runtimeName);
+45:     if (!oid.has_value()) {
+46:         return false;  // L3 分支②语义——非业务对象：零选中变化、零伪造
+47:     }
+48:     // 域分发先行（未命中本域＝域内诚实 false——两域至少其一命中即有
+49:     // 产出；分发出口缺省＝该域不参与，装配缺席的诚实形态）。
+50:     bool dispatched = false;
+51:     if (m_deps.dispatchToModeling) {
+52:         dispatched = m_deps.dispatchToModeling(*oid) || dispatched;
+53:     }
+54:     if (m_deps.dispatchToRequirements) {
+55:         dispatched = m_deps.dispatchToRequirements(*oid) || dispatched;
+56:     }
+57:     // 选中汇聚（View3DPick 来源——selectBusiness 后 L2 高亮判定经既有
+58:     // HostHighlightOutlet 回环，链路闭环零第二状态源）。
+59:     m_deps.selection->selectBusiness({*oid}, SelectionSource::View3DPick);
+60:     return true;
+61: }
+62: 
+63: // =====================================================================
+
+ui.HostView3DGateway.applyPresentation sdurws::ird::ui::HostView3DGateway::applyPresentation
+65: // =====================================================================
+66: 
+67: PresentationApplyReport HostView3DGateway::applyPresentation(
+68:     const PresentationViewProjection& view)
+69: {
+70:     PresentationApplyReport report;
+71:     // 视图完整性前置（桥的身份对账之后的双保险——不完整视图不进挂接）。
+72:     if (!view.isComplete()) {
+73:         report.ok = false;
+74:         report.failureToken = "ui-t45.incomplete-view";
+75:         report.failureDetail = "呈现视图不完整（身份/存在性查询缺项）";
+76:         return report;  // 旧呈现保持原状（桥保留旧当前呈现语义）
+77:     }
+78:     // hostPayload 取回（本类型本解释——禁止跨适配器解释的契约边界）。
+79:     // void 载荷别名构造＋static 下转：类型契约由载荷提供方保证（装配
+80:     // 纪律——void 起点无 dynamic 可言，误型载荷属装配缺陷非运行态）。
+81:     const auto object = std::shared_ptr<const HostPresentationObject>(
+82:         view.hostPayload,
+83:         static_cast<const HostPresentationObject*>(view.hostPayload.get()));
+84:     if (object == nullptr) {
+85:         report.ok = false;
+86:         report.failureToken = "ui-t45.payload-null";
+87:         report.failureDetail = "hostPayload 为空（无可应用的呈现对象）";
+88:         return report;
+89:     }
+90:     // 原子替换＝新呈现先挂接（失败＝旧呈现保持原状并如实报告——"失败
+91:     // 保持原状"的事务语义），成功后整组摘除旧呈现（切换窗口内新旧短暂
+92:     // 并存——观察面在返回后才见新态，原子性对消费者成立）。
+93:     if (!object->apply()) {
+94:         report.ok = false;
+95:         report.failureToken = "ui-t45.attach-failed";
+96:         report.failureDetail = "呈现对象挂接失败（对象自报）";
+97:         return report;
+98:     }
+99:     releasePresentation();
+100:     m_attachedPresentation = object;
+101:     report.ok = true;
+102:     return report;
+103: }
+104: 
+105: void HostView3DGateway::releasePresentation()
+
+ui.HostView3DGateway.releasePresentation sdurws::ird::ui::HostView3DGateway::releasePresentation
+103: }
+104: 
+105: void HostView3DGateway::releasePresentation()
+106: {
+107:     if (m_attachedPresentation != nullptr) {
+108:         // 整组摘除（场景绑定在对象侧——网关零场景依赖；尽力而为，桥对
+109:         // 失败仅 Dev 留痕的既有语义）。
+110:         m_attachedPresentation->remove();
+111:         m_attachedPresentation.reset();
+112:     }
+113: }
+114: 
+115: // =====================================================================
+
+ui.HostView3DGateway.onSceneCleared sdurws::ird::ui::HostView3DGateway::onSceneCleared
+139: // =====================================================================
+140: 
+141: void HostView3DGateway::onSceneCleared()
+142: {
+143:     // 场景清除拍残留清理（呈现＋预览——幂等；高亮归既有 outlet 的选中
+144:     // 流收口）。场景已清＝渲染对象随组消亡，这里只做摘除编排对称收口
+145:     // （后端 clear 幂等可重复调用——"不残留旧呈现"纪律的双拍承载）。
+146:     releasePresentation();
+147:     removePreview();
+148: }
+149: 
+150: // =====================================================================
+
+ui.HostView3DGateway.applyPreview sdurws::ird::ui::HostView3DGateway::applyPreview
+152: // =====================================================================
+153: 
+154: bool HostView3DGateway::applyPreview(const View3DPreviewUpdate& update)
+155: {
+156:     // 预览诚实降级（渲染后端缺位＝呈现/TCP/预览三面独立降级的显式形态
+157:     // ——headless/无缝装配下不虚构预览，调用方呈现失败原因）。
+158:     if (!m_deps.previewBackend.draw) {
+159:         return false;
+160:     }
+161:     // 整组绘制（原子替换语义在后端 draw 的实现契约——先清旧组再挂新组；
+162:     // 失败＝保留旧呈现，"失败保持原状"事务语义与修订呈现同款）。
+163:     if (!m_deps.previewBackend.draw(update)) {
+164:         return false;
+165:     }
+166:     m_previewAttached = true;
+167:     m_currentPreview = update;
+168:     return true;
+169: }
+170: 
+171: void HostView3DGateway::removePreview()
+
+ui.HostView3DGateway.removePreview sdurws::ird::ui::HostView3DGateway::removePreview
+169: }
+170: 
+171: void HostView3DGateway::removePreview()
+172: {
+173:     if (m_deps.previewBackend.clear) {
+174:         m_deps.previewBackend.clear();  // 幂等（后端清除可重复调用）
+175:     }
+176:     m_previewAttached = false;
+177:     m_currentPreview = View3DPreviewUpdate{};
+178: }
+179: 
+180: }  // namespace ui
+
+ui.QtTextBillboard.QtTextBillboard sdurws::ird::ui::QtTextBillboard::QtTextBillboard
+36: namespace ui {
+37: 
+38: QtTextBillboard::QtTextBillboard(std::string text)
+39:     : m_text(std::move(text))
+40: {
+41: }
+42: 
+43: QtTextBillboard::TextTexture
+
+ui.QtTextBillboard.rasterizeAndUpload sdurws::ird::ui::QtTextBillboard::rasterizeAndUpload
+41: }
+42: 
+43: QtTextBillboard::TextTexture
+44: QtTextBillboard::rasterizeAndUpload(const std::string& text)
+45: {
+46:     // ---- Qt 离屏排版：QFont 默认应用字体（像素字号——DPI 无关，纹理
+47:     // 尺寸稳定）；UTF-8 → QString 原生解码，CJK 字形经系统字体回退
+48:     // （Windows 下"Microsoft YaHei"族）——GLUT 位图字体做不到的这一步
+49:     // 就是 F-556 乱码的消解点。图像留 8/4 px 内边距防字形裁边。
+50:     QFont font;
+51:     font.setPixelSize(16);
+52:     const QString qs = QString::fromStdString(text);
+53:     const QFontMetrics fm(font);
+54:     TextTexture tex{0, std::max(1, fm.horizontalAdvance(qs) + 8),
+55:                     std::max(1, fm.height() + 4)};
+56:     QImage img(tex.w, tex.h, QImage::Format_RGBA8888);
+57:     img.fill(Qt::transparent);
+58:     QPainter painter(&img);
+59:     painter.setFont(font);
+60:     painter.setRenderHint(QPainter::Antialiasing, true);
+61:     painter.setPen(QColor(ui::palette::kMarkerLabelHex));  // 词表字色（工程蓝）
+62:     painter.drawText(img.rect(), Qt::AlignCenter, qs);
+63:     painter.end();
+64: 
+65:     // ---- GL 纹理上传（GL 1.1 标准入口；RGBA8888 内存布局与
+66:     // GL_RGBA/GL_UNSIGNED_BYTE 直配——无字节序换算；NPOT 尺寸在现代
+67:     // GL 兼容面直上，LINEAR 单级过滤——标签文本无 mipmap 需求）。
+68:     glGenTextures(1, &tex.id);
+69:     glBindTexture(GL_TEXTURE_2D, tex.id);
+70:     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+71:     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+72:     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+73:     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.w, tex.h, 0, GL_RGBA,
+74:                  GL_UNSIGNED_BYTE, img.bits());
+75:     return tex;
+76: }
+77: 
+78: void QtTextBillboard::drawBillboard(
+
+ui.QtTextBillboard.drawBillboard sdurws::ird::ui::QtTextBillboard::drawBillboard
+76: }
+77: 
+78: void QtTextBillboard::drawBillboard(
+79:     const Vector3D<double>& centerLocal,
+80:     const Transform3D<double>& wTframe,
+81:     const DrawableNode::RenderInfo& info, double alpha) const
+82: {
+83:     // ①GL 上下文现取（纹理上传/绑定的前提；无上下文＝离屏快照等
+84:     // 装配态——文本层诚实跳过，不虚构呈现）。
+85:     QOpenGLContext* const ctx = QOpenGLContext::currentContext();
+86:     if (ctx == nullptr) {
+87:         return;
+88:     }
+89:     // ②相机现取（billboard 朝向来源；无相机信息＝无法面向视口——同上）。
+90:     if (info._cam.isNull()) {
+91:         return;
+92:     }
+93:     // ③纹理缓存（进程级——键＝文本＋字色；上下文更换＝旧句柄全失效，
+94:     // 整缓存作废重建，见契约头生命周期说明。仅 UI 线程访问——§3.4）。
+95:     static std::map<std::pair<std::string, QRgb>, TextTexture> s_cache;
+96:     static QOpenGLContext* s_texContext = nullptr;
+97:     if (s_texContext != ctx) {
+98:         s_cache.clear();
+99:         s_texContext = ctx;
+100:     }
+101:     const QRgb labelRgba = QColor(ui::palette::kMarkerLabelHex).rgba();
+102:     const auto key = std::make_pair(m_text, labelRgba);
+103:     auto it = s_cache.find(key);
+104:     if (it == s_cache.end()) {
+105:         it = s_cache.emplace(key, rasterizeAndUpload(m_text)).first;
+106:     }
+107:     const TextTexture& tex = it->second;
+108: 
+109:     // ④billboard 四角（局部系）：相机右/上向量经挂接帧逆变换投回局部
+110:     // 系（框架 RenderText 同款手法——wTf⁻¹·wTc 的旋转取列 0/列 1），
+111:     // 中心对 @p centerLocal、世界尺寸按图像纵横比展开。
+112:     const Transform3D<double> wTc = info._cam->getTransform();
+113:     const Rotation3D<double> fTcR = inverse(wTframe).R() * wTc.R();
+114:     const Vector3D<double> right(fTcR(0, 0), fTcR(1, 0), fTcR(2, 0));
+115:     const Vector3D<double> up(fTcR(0, 1), fTcR(1, 1), fTcR(2, 1));
+116:     const double halfH = 0.5 * kTextHeightM;
+117:     const double halfW =
+118:         halfH * static_cast<double>(tex.w) / static_cast<double>(tex.h);
+119:     const Vector3D<double> tl = centerLocal - right * halfW + up * halfH;
+120:     const Vector3D<double> tr = centerLocal + right * halfW + up * halfH;
+121:     const Vector3D<double> br = centerLocal + right * halfW - up * halfH;
+122:     const Vector3D<double> bl = centerLocal - right * halfW - up * halfH;
+123: 
+124:     // ⑤纹理四边形（混合状态自管——进出配对；v 坐标 0＝QImage 顶行
+125:     // 〔行序直上 GL——glTexImage2D 自 v=0 装载首行〕）。
+126:     glEnable(GL_TEXTURE_2D);
+127:     glEnable(GL_BLEND);
+128:     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+129:     glBindTexture(GL_TEXTURE_2D, tex.id);
+130:     glColor4f(1.0f, 1.0f, 1.0f, static_cast<float>(alpha));
+131:     glBegin(GL_QUADS);
+132:     glTexCoord2f(0.0f, 0.0f);
+133:     glVertex3d(tl[0], tl[1], tl[2]);
+134:     glTexCoord2f(1.0f, 0.0f);
+135:     glVertex3d(tr[0], tr[1], tr[2]);
+136:     glTexCoord2f(1.0f, 1.0f);
+137:     glVertex3d(br[0], br[1], br[2]);
+138:     glTexCoord2f(0.0f, 1.0f);
+139:     glVertex3d(bl[0], bl[1], bl[2]);
+140:     glEnd();
+141:     glDisable(GL_BLEND);
+142:     glDisable(GL_TEXTURE_2D);
+143: }
+144: 
+145: // =====================================================================
+
+ui.QtTextBillboardRender.QtTextBillboardRender sdurws::ird::ui::QtTextBillboardRender::QtTextBillboardRender
+147: // =====================================================================
+148: 
+149: QtTextBillboardRender::QtTextBillboardRender(std::string text,
+150:                                              rw::core::Ptr<Frame> frame)
+151:     : m_label(std::move(text)), m_frame(frame)
+152: {
+153: }
+154: 
+155: void QtTextBillboardRender::draw(const DrawableNode::RenderInfo& info,
+
+ui.QtTextBillboardRender.draw sdurws::ird::ui::QtTextBillboardRender::draw
+153: }
+154: 
+155: void QtTextBillboardRender::draw(const DrawableNode::RenderInfo& info,
+156:                                  DrawableNode::DrawType type,
+157:                                  double alpha) const
+158: {
+159:     (void)type;
+160:     // 帧/状态缺位＝场景树装配残态（防御面——不渲染不崩；RenderInfo
+161:     // 的 _state 为裸指针形态——空判用指针比较而非 Ptr::isNull）。
+162:     if (m_frame.isNull() || info._state == nullptr) {
+163:         return;
+164:     }
+165:     // 挂接帧世界位姿（billboard 朝向计算输入——随 State 实时取）。
+166:     const Transform3D<double> wTframe = m_frame->wTf(*info._state);
+167:     // 标签中心＝帧原点上方（与轴指示器的视觉层次分离——轴在原点、名在
+168:     // 上方；偏移与点值标记标签同族）。
+169:     m_label.drawBillboard(Vector3D<double>(0.0, 0.0, kLabelLiftM), wTframe,
+170:                           info, alpha);
+171: }
+172: 
+173: }  // namespace ui

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": 4,
+  "verdict": "pass",
+  "reviewedCommit": "877f6afee38446ab43c5e6a6fd9b09593925aedb",
+  "previousFailedCommit": "c7e1469b40ca7c1dbba55a3b6bd8a443fc6086c5",
+  "scope": "B4-P2-01 requirement-trace rework only; API probe acceptance excluded",
+  "closedFindings": [
+    "B4-P2-01"
+  ],
+  "checks": {
+    "reviewedCommit": "877f6afee38446ab43c5e6a6fd9b09593925aedb",
+    "previousFailedCommit": "c7e1469b40ca7c1dbba55a3b6bd8a443fc6086c5",
+    "finding": "B4-P2-01",
+    "functionId": "modeling.makeLinkPlaceholderCylinder",
+    "requirements": [
+      "MDL-04"
+    ],
+    "designRefs": [
+      "units/modeling.md#2.5",
+      "units/modeling.md#5.2",
+      "tasks/foundation/WP-13-T07.json"
+    ],
+    "onlyRequirementsAndDesignRefsChanged": true,
+    "status": "pending",
+    "decision": "pending",
+    "unitSection25Exists": true,
+    "unitSection52Exists": true,
+    "unitHasExplicitMdl04At01PlaceholderMapping": true,
+    "contractTaskId": "WP-13-T07",
+    "contractIncludesMdl04": true,
+    "contractHasAt01": true,
+    "contractHasPlaceholderAcceptance": true,
+    "requirementMdl04Exists": true,
+    "sourceUnchanged": true
+  },
+  "validation": {
+    "reuse": {
+      "result": "pass governance only",
+      "exitCode": 0
+    },
+    "remoteCi": "NOT RUN",
+    "docs": {
+      "result": "pass; DeepEvidence NOT RUN",
+      "exitCode": 0
+    },
+    "apiProbeRebuild": "NOT RUN",
+    "build": "NOT RUN",
+    "task": {
+      "result": "pass",
+      "exitCode": 0
+    }
+  },
+  "fullT01Complete": false,
+  "report": "acceptance.md"
+}

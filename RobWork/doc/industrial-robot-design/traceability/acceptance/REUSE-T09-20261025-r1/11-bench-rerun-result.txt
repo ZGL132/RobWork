@@ -1,0 +1,31 @@
+用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.42.34433 版
+版权所有(C) Microsoft Corporation。保留所有权利。
+
+polynomial-replace-bench.cpp
+Microsoft (R) Incremental Linker Version 14.42.34433.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/out:acc-bench-rerun.exe 
+/LIBPATH:D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release 
+sdurw_math.lib 
+sdurw_core.lib 
+polynomial-replace-bench.obj 
+scenario: 20 spans x 100 samples x 6 joints x 20 iterations
+compiler: MSVC /O2 /DNDEBUG /std:c++17
+
+== quintic ==
+determinism(old rerun bit-equal): yes
+determinism(new rerun bit-equal): yes
+old-vs-new checksum rel-drift: 9.888e-16
+old-hand      :    1.107 ms  allocs/scene=0
+upstream-eval :    1.412 ms  allocs/scene=0  (vs old +27.5%)
+evalderivs    :    8.134 ms  allocs/scene=244800  (vs new +476.1%)
+
+== septic ==
+determinism(old rerun bit-equal): yes
+determinism(new rerun bit-equal): yes
+old-vs-new checksum rel-drift: 9.910e-16
+old-hand      :    1.299 ms  allocs/scene=0
+upstream-eval :    1.784 ms  allocs/scene=0  (vs old +37.4%)
+evalderivs    :   10.455 ms  allocs/scene=244800  (vs new +485.9%)
+

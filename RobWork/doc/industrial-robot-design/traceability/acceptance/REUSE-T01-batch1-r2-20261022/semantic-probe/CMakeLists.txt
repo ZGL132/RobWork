@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.23)
+project(acceptance_semantic LANGUAGES CXX)
+find_package(RobWork REQUIRED CONFIG COMPONENTS models invkin)
+add_executable(acceptance_semantic semantic.cpp)
+set_target_properties(acceptance_semantic PROPERTIES CXX_STANDARD 17)
+target_link_libraries(acceptance_semantic PRIVATE RW::sdurw_models RW::sdurw_invkin)

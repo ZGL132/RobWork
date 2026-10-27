@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T86",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "ui 13 项数值链失败诊断返工（ui-13/P6）——F-973 根因＝REUSE-T18 锚契约后 ui 测试夹具未同步迁移；12/13 修复核销＋NamedTcpClosure 修复面被 IRD-GATE-AD graphics 锁死登记 blocked",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [],
+  "requirements": [
+    "REQ-01",
+    "REQ-09",
+    "KIN-02",
+    "KIN-03",
+    "ARC-05",
+    "NFR-COR-01"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13",
+    "traceability/findings.json",
+    "units/kinematics.md#9.2",
+    "units/ui.md#12"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe --gtest_output=xml:full-suite.xml（全量 345 项；逐项对账见 traceability/reuse/UI-T86/README.md）",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/UI-T86.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+    "RobWork/doc/industrial-robot-design/reuse/changes/UI-T86.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/UI-T86/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T86-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T86-20261026-r1/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T86.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/**",
+    "RobWork/scripts/industrialrobot/**"
+  ],
+  "outputs": [
+    "诊断批：F-973 十三失败项逐项根因归因（全部＝测试期望过期/迁移扰动——REUSE-T17/T18 锚契约后 ui 测试夹具未同步；非 T33 RPY 跨单元漂移、非产品回归）",
+    "修复批：FixtureView 补 runtimeModelView() 真实编译锚（12 项核销）；ui_test 编译定义IRD_HAVE_RUNTIME_COMPILE；NamedTcpClosure 原位锚修复候选实证后因权限门禁 graphics 锁回退登记 blocked",
+    "证据：green13-full-suite.*（13 项全绿全量 344/1＝仅预存 F-560）、final-full-suite.*（终态树复跑）、gate-ad-blocked.log（门禁本体实测阻断）"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "十三失败项逐项对账（WP-18 REUSE-T41 失败清单减 F-560）：12 项 KinEvaluationChannel 家族在修复树上 PASS（green13-full-suite.xml 逐 testcase 断言）；NamedTcpClosure 修复候选（View 补同源物化快照锚）在同一树上 PASS 后因 HostCompilePipelineTest.cpp 携带 UI-T78 渲染面 rw/graphics 头依赖、IRD-GATE-AD 下无任何合法 grant 形态（graphics 类别仅 host-presentation origin 可授且宿主例外文件族被 reuse-contract.ps1 硬校验为 UiPlugin.{hpp,cpp}）而回退——blocked 归因以门禁本体实测输出 gate-ad-blocked.log 为准，候选补丁与通过证据留存 README",
+    "ui_test 全量真实执行（345 项）：修复树 344 passed/1 failed（预存 F-560，REUSE-T17 在案越界项）；终态树 343 passed/2 failed（F-560＋NamedTcpClosure blocked 项）——两次运行 PASS/FAIL 如实分列，ird-test-report.json 留存",
+    "产品 FK/IK 零触碰（kinematics/runtime 源零改动）——修复全部落在 ui 测试夹具与 ui_test 编译定义；T17 锚契约语义（无锚值替身能力缺席＝AnchorlessValueView 用例）保持 PASS 不混同；治理面（ui.json/permissions.json/changes）按 Digest 口径全链同步，validate-reuse 在终态树 PASS"
+  ],
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/UI-T86.json"
+  },
+  "note": "P6（ui-13）诊断返工批，所有者 workflow 派遣，主工作树 redesign-main 串行，起始 SHA=28973eeee（REUSE-T54 收口提交）。诊断结论：F-973 疑似源『T33 rpyview RPY 反向换核跨单元漂移』证伪——13 项失败形态统一为 Fk.cpp:238-243 锚缺失 NoDevice 值面（REUSE-T18 于 20522f776 换核 FK/Jacobian 经 T17 锚消费已编译模型并删除手写链，其测试夹具迁移面仅覆盖 kinematics 单元，ui 单元 FixtureView/本地 View 未同步；T33 生产面 rpyToRotation 未进入本失败链）。12/13 修复＝KinEvaluationChannelTest.cpp FixtureView 补 runtimeModelView()（testfixture::compileRealSnapshot 懒编译——T18 KinFkFixture 在案模式复用，ui_test 经既有 include 面消费）＋ui/CMakeLists.txt 为 ui_test 注入 IRD_HAVE_RUNTIME_COMPILE=1（kinematics_test:515 同款）；NamedTcpClosure（HostCompilePipelineTest.cpp:338 本地 View）同型修复在全量树实证 344/1 后被 IRD-GATE-AD 拦截（该文件 rw/graphics 头依赖→graphics 类别→仅 host-presentation origin→宿主例外硬校验 UiPlugin.{hpp,cpp}），回退登记 blocked 待所有者裁决（候选：门禁为 /test/ 路径开 graphics 允许面／宿主例外扩族／UI-T78 渲染面用例重组）；候选补丁＋通过证据留存 traceability/reuse/UI-T86/。独验按 §6.4 由所有者另行执行，实施者不自签。 2026-10-27 独立验收收口：verdict=pass，记录 traceability/acceptance/UI-T86-20261026-r1.json（复跑原件在同名目录：acc-build/acc-build-contract/acc-full-suite 343+2 如实分列/acc-ui-contract-test 63/63/acc-ird-gates/acc-ird-test-report/commit-lint/validate-docs-t41+validate-docs-t86/verify-task-scope-t86），绑定 reviewedCommit=e536adc1079e848315be61dc72828f6a0ccfa9c9；授权口径＝所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型），实施者不自签。据此本契约登记 done；F-975（NamedTcpClosure 权限门禁锁死）维持 open 待所有者裁决，不随本收口关闭。"
+}

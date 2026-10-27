@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T16",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T16.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp",
+      "sha256": "e2bead1b7c601b447a0891257570574c45abbdeea7fd924406411172527eac62",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T16/diagnostics-final.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Logging.hpp",
+      "sha256": "574af124ac4f927126fa122a9f105007268d41f1b04a96a0d20d1fadaca66abb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T16/diagnostics-final.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/LoggingTest.cpp",
+      "sha256": "089621d77b9d124418661e151c42d6e5bed859b55f54accbd4b11b3b28f7760b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T16/diagnostics-final.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/TestMainReport.cpp",
+      "sha256": "c0f3646366b55e2325cdf275bc6fe09983283d8fc24e33f3b7dd1e9d32a018e6",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T16/diagnostics-final.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "sha256": "6359d09721caabaccd06b52b986f0984d05bba3fc8a0dbd99bc086a4ea2bed70",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "已批准的产品冻结协议/日志边界薄适配、必要构建与真实回归；RW/RWSim不等价证据及成熟原语供给见本包README。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T16/diagnostics-final.xml"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+fullrange-violation: out-of-scope=1330 forbidden=2 unique-total=1332
+t09-face files: 61
+fullrange-violation ∩ t09-face:
+RobWork/doc/industrial-robot-design/reuse/catalog.json
+=> all other violations (1331) 由非 T09 提交产生
+  [forbidden] RobWork/doc/industrial-robot-design/reuse/catalog.json  <= RobWork/doc/industrial-robot-design/reuse/catalog.json
+  [forbidden] RobWork/doc/industrial-robot-design/reuse/permissions.json  <= RobWork/doc/industrial-robot-design/reuse/permissions.json

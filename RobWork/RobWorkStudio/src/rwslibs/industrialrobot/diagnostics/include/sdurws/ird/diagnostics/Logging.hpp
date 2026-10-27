@@ -364,20 +364,21 @@ struct ILogFileOps {
 /**
  * @brief 产品默认文件操作实现（L5 装配注入；真实磁盘 I/O）。
  *
- * 打开策略：append 惰性打开（首写时 fopen "ab"），句柄常驻直到 rotate 或
- * 析构（两文件各一——日志线程串行写）；flushFile＝fflush 不关句柄。
+ * 打开策略：append 每行 fopen "ab"、写入并 fclose；无常驻脏缓冲，
+ * flushFile 为幂等成功。fclose 不构成 fsync/断电持久性承诺。
  * 轮转方案：活动文件移位为 ".1"，旧 ".1"→".2"……超出 keepFiles-1 的最老档
- * 删除（标准 generations 方案——§7.8"轮转覆盖"生命周期）。
- * 线程安全：内部互斥（flush() 调用方与日志线程并发触碰同一句柄面）。
+ * 删除（标准 generations 方案——§7.8"轮转覆盖"生命周期）。keepFiles 含活动
+ * 文件；为1时不保留.1；降低配置只删除本日志规范正整数后缀的普通文件。
+ * 线程安全：同实例 append/rotate 内部互斥；不承诺多进程同时轮转同一路径。
  */
 class FileLogFileOps final : public ILogFileOps {
 public:
-    /// 构造（分配句柄表；定义于 src/Logging.cpp——pimpl 需要完整实现体）。
+    /// 构造（分配互斥实现体；定义于 src/Logging.cpp——pimpl 需要完整实现体）。
     FileLogFileOps();
 
     ~FileLogFileOps() override;
 
-    // 禁拷贝/禁移动：持有打开句柄（FILE* 非拥有语义复制无意义）。
+    // 禁拷贝/禁移动：同一文件操作实例的互斥身份不可隐式复制。
     FileLogFileOps(const FileLogFileOps&) = delete;
     FileLogFileOps& operator=(const FileLogFileOps&) = delete;
 
@@ -390,7 +391,7 @@ public:
 private:
     struct Impl;
     /// pimpl：隔离 FILE*/mutex 细节于头文件之外（公共头最小依赖面——R-2 纪律）。
-    std::unique_ptr<Impl> m_impl;  ///< 实现体（句柄表＋互斥；Impl 完整定义于 src/Logging.cpp）
+    std::unique_ptr<Impl> m_impl;  ///< 实现体（互斥；Impl 完整定义于 src/Logging.cpp）
 };
 
 // =====================================================================

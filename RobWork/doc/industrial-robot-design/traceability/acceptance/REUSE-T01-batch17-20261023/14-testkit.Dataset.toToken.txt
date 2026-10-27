@@ -1,0 +1,13 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::toToken
+116: const char* toToken(DatasetKind k) noexcept
+117: {
+118:     switch (k) {
+119:     case DatasetKind::AnalyticCase:        return "analytic-case";
+120:     case DatasetKind::ReferenceImpl:       return "reference-impl";
+121:     case DatasetKind::ContractFixture:     return "contract-fixture";
+122:     case DatasetKind::Regression:          return "regression";
+123:     case DatasetKind::PerformanceBaseline: return "performance-baseline";
+124:     }
+125:     return "unknown";
+126: }

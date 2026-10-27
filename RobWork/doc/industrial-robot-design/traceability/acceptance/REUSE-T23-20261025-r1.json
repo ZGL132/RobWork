@@ -1,0 +1,83 @@
+{
+  "taskId": "REUSE-T23",
+  "baseCommit": "4585a59b97838bc97a111836296fc6936689781c",
+  "reviewedCommit": "d1e416b00433bbd3e62903e583b2ee2b103e0396",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T06:52:08.640630+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T23/WP-18 单次验收子智能体",
+    "authorization": "所有者2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施者不得自签，本次实施由另一串行会话完成。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配构建树；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。只验收不修复、不改任务状态、不推进下一任务、不关闭F-964。"
+  },
+  "scope": "独立复验 4585a59b..d1e416b00 送验实现（唯一提交：RunRegistry::markTerminated 拒绝 Completed 终结后的登记半写修正）：显式 Base/Head 范围门禁、21 变动文件全量实审、受影响验证清单式增量重跑（集成构建、RunRegistryAdmissionTest 全 25 项＋直接缓存消费者 1 项真实执行、11 类架构门禁引擎直跑、validate-docs 一次过）、H1—H6 与架构红线抽查、CLOSURE/门禁目录/框架冻结零差异硬核验、提交链与正文-证据一致性核对。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "12 项验收检查；受影响测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 无已跟踪改动（仅他人既有 21 条未跟踪验收产物＋本记录目录）；HEAD=0ca544e49（d1e416b0 为其祖先，中间仅 T09/T12/T17 治理登记提交，execution/ 目录 4585a59b→HEAD 间零漂移，故本验收在 HEAD 构建运行对送验内容有效）。",
+    "范围：verify-task-scope 显式 -Base 4585a59b -Head d1e416b0 exit 0，21 路径全部在允许面（02-scope.log）；git diff --name-only 21 文件中无 RobWork/RobWork/src/**、无 RobWork/RobWorkSim/src/**、无 vcpkg/**、无 .hpp/CMakeLists 变动；产品代码仅 RunRegistry.cpp 与 RunRegistryAdmissionTest.cpp 两文件，均在 allowedFiles。",
+    "提交链：范围仅 1 个提交 d1e416b00（一包一组）；commit-lint -Range 4585a59b..d1e416b0 PASS exit 0（07-commit-lint.log）；中文标题 [governance] REUSE-T23 前缀合规，正文记载红例 FAIL→修复后 26 项 PASS、架构 11 类与文档/任务/复用 PASS、性能 NOT RUN 及不操作远程，与本人实测及原件全部一致。",
+    "受影响构建复跑：cmake --build build --config Release --target sdurws_ird_execution_test exit 0（03-build.log，增量链接 sdurws_ird_execution.lib 与 execution_test.exe），未重配全库（build/CMakeCache.txt RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 沿用）。",
+    "受影响测试真实执行（验收第 1 条）：本人以同款 PATH/QT_QPA_PLATFORM=windows 运行 build/RobWorkStudio/bin/Release/sdurws_ird_execution_test.exe，--gtest_filter=RunRegistryAdmissionTest.*:CacheCoordinatorTest.EX_CCH_2_StoreGateOnlyFinalizedCompleted —— 26 tests＝26 passed/0 failed/0 skipped/0 notRun，exit 0（04-acc-green.xml：25+1 两 testsuite 全 0 失败；04-acc-green-report.json decisive=true）；MarkTerminatedWritesOnceAndMirrorsState（含本次新增 14 行断言）确认在列且 OK。",
+    "红例真实性（验收第 1 条失败能力）：red.xml sha256 与 verification.json 记录 2df95d23… 按提交 blob 逐字节再现；4 处失败与旧代码半写语义逐一吻合（683 行 terminationCause 被 Completed=02 污染、685 行合法取消误抛『登记已带终结标记』、688/689 行取消未生效），red.log/red-launch.log/red-build.log 同run同源；预期 FAIL 未与修复后结果混列。",
+    "架构门禁直跑（验收第 2、3 条佐证）：cmake -P ird_gates.cmake exit 0，『全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中』，17 行自测正负例（11 fail_* 按预期检出＋6 pass_* 无误报）（05-architecture-gates.log）；实施方原件 architecture-gates.log 同结论互证。",
+    "文档/任务/复用检查复跑（验收第 3 条）：validate-docs -TaskFile REUSE-T23.json exit 0 —— validate-task: PASS（1 tasks）、validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-docs: PASS（20 units, 404 task files）；10 条 REUSE-AD-PENDING 与实施方 validate-docs.log 完全同集，均为 policy/reporting/runtime/trajectory/ui 既有 pending，非本包引入、非本包阻断（06-validate-docs.log）。",
+    "凭证真实性（H6）：changes/REUSE-T23.json 登记 2 个产品文件经 validate-reuse 机器核验通过（Digest 文本规范）；verification.json inputs 五项 rawSha256 与本人 sha256sum 逐项吻合（RunRegistry.cpp=3d8296c7…、RunRegistryAdmissionTest.cpp=017242e1… 等）；green.xml/green-report.json 记录哈希按提交内容再现（见 executionNotes 规范说明）；test-function-inventory.json 69 条与『69 个测试定义』一致，RunRegistry.cpp 12 个函数定义（makeReject＋ctor＋find×2＋registerRun/appendAttempt/classifyArrival/tryRun/markTerminated/noteAdmissionCompleted/noteArchivePhase/noteArchiveSession）与『完整12个生产函数』一致；execution.json 矩阵逐函数绑定 B22 检索证据（REUSE-T01/batch22-search.json、execution-admission-audit.md，文件在库）＋REUSE-T23 定向核对与 auditBoundary，F-964 标注 open。",
+    "代码实审（验收第 2 条）：diff 仅将 rec->terminationCause = cause; 从一次写入检查后移至 switch 全部可抛分支之后（RunRegistry.cpp:334-337），Completed 仍在原分支抛同文异常；一次写入检查（:308-313）、合法状态映射 switch、错误轨文案、公共接口、状态词表全部未动；无新增锁/分配/循环/类/状态机/registry/核心/依赖（新增行 grep 无 #include、sdurw、rw:: 引用；RunRegistry.cpp 仅 2 个 include，L2 零 Qt）。测试侧仅原终结用例追加 14 行断言（快照前后对比＋合法取消成功＋二次终结仍拒），未新增框架或替身。",
+    "红线与冻结抽查：closures.json 及其钉扎的 modeling/src/RpyMath.hpp git diff --exit-code 零差异；industrialrobot/cmake/ 门禁目录零差异；RobWork/RobWork/src、RobWork/RobWorkSim/src、vcpkg/ 零差异（无平行实现回流载体）；runtime/project/policy/evidence/diagnostics 各 owner 文件未触碰；manifest capabilities=[] 无新增权限或门禁放宽；Admission.cpp 的 markTerminated(Failed) 生产路径与 CacheCoordinator 失败/取消不入正式缓存语义保持（EX_CCH_2 实测通过）。",
+    "契约一致性（验收第 3 条收口）：tasks/REUSE-T23.json status==ready、note 记载主线起点 4585a59b 与『仍待独验、F-964 open』；findings.json F-964 status=open（:9722）未被本包关闭，findings.json 不在 allowedFiles 内亦未被改动；影响范围仅 execution 两文件＋直连缓存消费者，无 CMake/依赖/公共接口/核心数值变化，无需额外冒烟或对端全套，与 AGENTS §4 增量口径一致。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T23.json -Base 4585a59b97838bc97a111836296fc6936689781c -Head d1e416b00433bbd3e62903e583b2ee2b103e0396", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "build", "command": "cmake --build build --config Release --target sdurws_ird_execution_test", "exitCode": 0, "passed": true, "log": "03-build.log" },
+    { "name": "affected-tests", "command": "sdurws_ird_execution_test.exe --gtest_filter=RunRegistryAdmissionTest.*:CacheCoordinatorTest.EX_CCH_2_StoreGateOnlyFinalizedCompleted --gtest_output=xml:…/04-acc-green.xml --ird_report=…/04-acc-green-report.json（QT_QPA_PLATFORM=windows，PATH 前置 Qt/vcpkg/build RobWork Release）", "exitCode": 0, "passed": true, "log": "04-acc-green.log", "xml": "04-acc-green.xml", "report": "04-acc-green-report.json" },
+    { "name": "architecture-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=<TEMP>/reuse-t23-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "05-architecture-gates.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T23.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "06-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 4585a59b97838bc97a111836296fc6936689781c..d1e416b00433bbd3e62903e583b2ee2b103e0396", "exitCode": 0, "passed": true, "log": "07-commit-lint.log" },
+    { "name": "frozen-zero-diff", "command": "git diff --exit-code 4585a59b..d1e416b0 -- industrialrobot/cmake/ ＋ closures.json ＋ modeling/src/RpyMath.hpp ＋ RobWork/RobWork/src ＋ RobWork/RobWorkSim/src ＋ vcpkg/（分别执行均退出 0）", "exitCode": 0, "passed": true },
+    { "name": "hash-probe", "command": "pwsh -NoProfile -File …/REUSE-T23-20261025-r1/hash-probe.ps1（verification.json 四证据 sha256 再现性探测）", "exitCode": 0, "passed": true, "log": "08-hash-probe.log" }
+  ],
+  "integrationTest": {
+    "executionAffected": {
+      "tests": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "scope": "RunRegistryAdmissionTest 全 25 项（含新增 F-964 断言用例 MarkTerminatedWritesOnceAndMirrorsState）＋直接缓存消费者 CacheCoordinatorTest.EX_CCH_2_StoreGateOnlyFinalizedCompleted",
+      "exitCode": 0,
+      "xml": "04-acc-green.xml",
+      "irdReport": "04-acc-green-report.json",
+      "decisive": true
+    }
+  },
+  "commandsNotes": [
+    "测试计数分列：受影响执行 26 项全 PASS（26/0/0/0）；实施方红例 1 项 FAIL 为开发期预期失败证据（red.xml 逐字节再现），不计入本验收计数；性能微基准、独立冒烟、对端契约全套、GUI、独验为 NOT RUN 项，见 notRun 与 limitations。"
+  ],
+  "executionNotes": [
+    "verification.json 哈希再现性探测（08-hash-probe.log）：red.xml 记录 2df95d23… 与提交 blob 逐字节一致；green.xml 记录 cd9ead2e… 与 blob 一致；green-report.json 记录 556e3ba7… 按 LF 文本＋末尾换行规范再现（core.autocrlf=true 提交时换行归一所致差异）；唯 red-report.json 记录 d9f7ef18… 在逐字节/LF/CRLF/UTF16 四种规范下均不能由提交 blob 再现，判定为登记后重跑再生 durationMs 类易变内容所致的记账瑕疵——其载体信息（1 run/1 failed 同一用例）与逐字节再现的 red.xml、red.log 完全互证，且本验收以本人独立重跑的 26/26 PASS 为准，不构成验收项失败；建议实施侧下次批次修正该记录值。",
+    "本验收在 HEAD=0ca544e49 现场执行构建与测试；送验 head d1e416b0 为 HEAD 祖先且 execution/ 目录在 4585a59b→HEAD 间零漂移（git diff --name-only 为空），运行结果对送验内容有效。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "红例重放（把修复回退后重跑）",
+      "reason": "验收不得回退产品修复；红例失败能力已由逐字节再现的 red.xml（4 处失败与旧代码半写语义吻合）＋red.log/red-launch.log/red-build.log 原件及本人在修复后代码上的 26/26 PASS 交叉证实。"
+    },
+    {
+      "item": "性能微基准",
+      "reason": "合法路径为同一 switch 与两次不抛的枚举/optional 赋值，仅次序变化，无新增分配/循环/锁；无数值/性能验收项（契约无此要求），实施方如实登记 NOT RUN，本验收沿用并核实其理由成立。"
+    },
+    {
+      "item": "独立冒烟、对端契约全套、无关模块/全库/GUI",
+      "reason": "无 CMake/依赖/公共接口/跨单元/核心数值变化（第 10 项实审），按 AGENTS §4 增量口径不要求；直接接纳生产链（Admission→RunRegistry→CacheCoordinator 门槛消费者）已被受影响测试覆盖。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 REUSE-T23/WP-18 送验范围（4585a59b..d1e416b00）：RunRegistry 拒绝 Completed 终结后登记半写的最小修正及其直接受影响验证。任务保持 ready、F-964 保持 open，本验收不关闭该缺陷、不构成 F-964 终验；validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399），不构成算法替换（migration §11）或对 T13 依赖 IK/RNE 的放行；red-report.json 单项记录哈希不能再现（记账瑕疵，见 executionNotes）。"
+}

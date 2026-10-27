@@ -1,43 +1,36 @@
 /**
  * @file   ForwardDynamics.cpp
  * @brief  正动力学响应一致性检查器实现（units/dynamics.md §6）——同源
- *         τ_ref 产出、单样本 RNEA 质量阵/偏置力提取、固定步长 RK4 积分、
- *         误差四元组度量、发散/数值异常检测与四态判定。
+ *         τ_ref 产出、runtime 受控引擎会话（RobWorkSim ODE 后端）推进、
+ *         采样保持、负载变体会话重建、误差四元组度量、发散/异常检测与
+ *         四态判定。
  *
  * 设计依据（契约面见同名公共头 ForwardDynamics.hpp 文件头）：
  *   - units/dynamics.md §6.1（时序图①→⑤——本实现按步逐步对应）、§6.2
  *     （输入与前置表）、§6.3（必须明确六条）、§10.2（契约表）、§9.4
  *     （DYN-FD-* 码）、§4.6（样本级处置——非有限不伪造）
- *   - 需求 DYN-05（明确控制输入/初始状态/步长/容差的正动力学场景——响应
- *     一致性检查与异常检测）
- *   - 任务契约 tasks/foundation/WP-17-T05.json
- *
- * 实现要点（为什么零 rw 外联符号）：
- *   全部数值路径（RK4/高斯消元/误差统计）为自持 double 逐元素算术；模型
- *   消费只经公共 InverseDynamicsEvaluator::evaluate（其内部已按 T03 冒烟
- *   纪律实现）——本 TU 无任何 rw/rwsim 头包含，双模式构建同源可链（公共
- *   头文件头"引擎选型登记"第 4 条）。
+ *   - 需求 DYN-05（明确控制输入/初始状态/步长/容差的 RobWorkSim 正动力学
+ *     场景——响应一致性检查与异常检测）
+ *   - GAP-FD-BUILD-01 提案执行（A3 裁决 2026-10-26）——WP-09/REUSE-T53：
+ *     ODE 引擎承接面（runtime::FdEngineSession，模型构造权归 runtime），
+ *     旧自持核（质量阵提取/高斯消元/RK4 四阶段）随本批删除
+ *   - 任务契约 tasks/REUSE-T53.json
  *
  * 算法总览（符号约定全链统一，单位见逐处注释）：
- *   - 状态 y=(q,q̇)，右端 f(q,q̇)=M(q)⁻¹·(τ_ctrl − h_f(q,q̇))：
- *     h_f(q,q̇)＝G(q)＋C(q,q̇)q̇＋τ_fric(q̇)＝单样本 evaluate(q,q̇,q̈=0) 的
- *     tauTotal（全量通道在 q̈=0 时恰为三者之和——T03 分项拆分口径）；
- *     M(q) 第 i 列＝单样本 evaluate(q, q̇=0, q̈=e_i) 的 tauInertia（惯性
- *     通道＝(g=0,q̇=0) 输入组合下的 M(q)·q̈，纯惯量不含摩擦/重力——T03
- *     "惯性通道"注释原文），n 列共 n 次调用；
- *   - 采样保持（§6.1 ②）：区间 [t_j, t_{j+1}) 内控制输入 τ_ctrl＝τ_ref(t_j)
- *     常量；M/h 提取调用一律传区间起点时刻 t_j——evaluate 内部事件时间线
- *     按"样本时刻 t ≥ tEvent 生效"推进变体（§5.4 保守边界），区间起点时刻
- *     调用使正动力学侧变体与 τ_ref(t_j) 严格同变体（⑤共源强制的结构性
- *     实现——变体切换只发生在参考样本区间边界，积分子步内恒定）；
- *   - 固定步长 RK4：子步长 h＝min(maxStepS, t_{j+1} − t_current)（子步不跨
- *     参考样本边界——采样保持区间完整性）；经典四显式 stage，对不超过 4
- *     阶的多项式轨迹精确（黄金解析算例的构造依据——匀加速激励在质量阵
- *     常数区间内 τ_ref 恒定，仿真逐位重现解析解）；
- *   - 线性求解：带部分主元的高斯消元（n×n，n 为可动关节数，典型 ≤7——
- *     O(n³) 每次消元可忽略）；主元下界＝1e-14×‖M‖∞（数值线性代数的常规
- *     相对奇异判据——实现常量，黄金算例锁定；全零质量阵由 ‖M‖∞=0 先行
- *     拦截）。
+ *   - τ_ref（§6.1 ①）：参考段经公共 InverseDynamicsEvaluator::evaluate
+ *     整段产出（同一冻结模型/重力/负载/工况——⑤共源的结构性强制）；
+ *   - 引擎会话（§6.1 ②③）：runtime::buildFdEngineSession 以 CanonicalModel
+ *     私有物化副本装配 ODE 引擎——请求 gravityBase（基座系，m/s²）由会话
+ *     经 R_world_base 投影为世界系重力（与 τ_ref 同一重力语义）；控制输入
+ *     τ_ctrl 按采样保持（区间内常量）；子步长 h＝min(maxStepS, 剩余时长)
+ *     （子步不跨参考样本边界——采样保持区间完整性）；
+ *   - 负载变体（§5.4）：变体切换只发生在参考样本区间边界——挂载集变化时
+ *     以当前 (q,q̇) 重建会话（法兰组合替代值按 §5.4 同规则合成，工具/负载
+ *     提取数学与逆动力学 extractEndComponent/composeFlangeVariant 同源——
+ *     本 TU 自持同式镜像，合并归后续卫生批登记，REUSE-T52 镜像先例）；
+ *   - 异常检测（§6.1 ④）：逐子步检查状态非有限或量级超发散检出界；会话
+ *     物化/推进失败（含移动关节链与物性能力缺失的引擎侧稳定诊断）→
+ *     DYN-FD-NUMERIC-ANOMALY 值面（不抛穿，四态契约闭合）。
  */
 
 #include <sdurws/ird/dynamics/ForwardDynamics.hpp>
@@ -45,6 +38,7 @@
 #include <sdurws/ird/dynamics/DiagCodes.hpp>  // DYN-* 码值常量（唯一书写点——产码共用）
 #include <sdurws/ird/core/Provenance.hpp>     // core::SourcedValue/ProvenanceKind（比较型素材）
 #include <sdurws/ird/core/Units.hpp>          // core::UnitToken（比较型单位三要素）
+#include <sdurws/ird/runtime/FdEngineSession.hpp>  // runtime 受控引擎会话（WP-09 承接面）
 
 #include <algorithm>
 #include <cmath>
@@ -53,7 +47,7 @@
 #include <string>
 #include <utility>
 
-namespace sdurws::ird::dynamics {
+namespace sdurws { namespace ird { namespace dynamics {
 
 namespace {
 
@@ -69,159 +63,127 @@ namespace {
  */
 constexpr double kForwardDivergenceMagnitude = 1e10;
 
-/**
- * 质量阵线性求解的相对奇异判据：消元主元 |p| ≤ 1e-14×‖M‖∞ 即判求解失败
- * （DYN-FD-NUMERIC-ANOMALY）。取 1e-14＝双精度部分主元消元的常规相对下界
- * （物理一致模型的 M 对称正定，正常路径主元远离此界；全零物性链的 M≡0
- * 由 ‖M‖∞=0 先行拦截）。
- */
-constexpr double kSingularPivotRelative = 1e-14;
-
 // =====================================================================
-// 单样本 RNEA 调用（M/h 提取的公共接口消费面——共源强制的实现载体）。
+// 末端合成（引擎会话法兰替代值的 §5.4 变体承载——与逆动力学提取/合成
+// 数学期同源镜像；见文件头"负载变体"段与 REUSE-T52 镜像先例）。
 // =====================================================================
 
 /**
- * @brief 单样本逆动力学调用（一次 evaluate 消费——返回逐关节全量与惯性
- *        通道力矩）。
+ * @brief 末端组成件（工具/负载在法兰系的静参数——每变体合成一次）。
  *
- * 变体一致性：t 传区间起点时刻——evaluate 内部按事件时间线把 tEvent≤t 的
- * 全部事件生效（§5.4 保守边界），与 τ_ref(t) 严格同变体（文件头算法总览）。
- *
- * @param base      [in] 请求基座（身份/模型/重力/负载/事件——拷贝后改样本列）
- * @param t         [in] 样本时刻，单位 s（区间起点——变体生效时刻）
- * @param q         [in] 关节位置（rad 或 m——权威角；长度 n）
- * @param qd        [in] 关节速度（rad/s 或 m/s；长度 n）
- * @param qdd       [in] 关节加速度（rad/s² 或 m/s²；长度 n）
- * @param evaluator [in] 逆动力学评估器（无状态——调用边界）
- * @param context   [in] 宿主上下文（evaluate 内部样本级取消轮询用）
- * @param tauTotal  [out] 全量通道 τ（N·m 或 N，按关节类型；长度 n）
- * @param tauInertia[out] 惯性通道 M(q)·q̈（同上量纲；长度 n——M 列提取用）
- * @param cancelled [out] 观测到宿主取消置 true（evaluate 单样本取消——
- *                  空产出返回）
- * @param usable    [out] 本样本行提取可用（F-581）：evaluate 行数＝n 且
- *                  全行 Ok 才为 true；RNEA 数值失败时逆动力学按 §5.6 只
- *                  产**失败关节**的行并可截断后续样本——行数＜n 时原实现
- *                  的 .at() 满取以 std::out_of_range（非契约异常）穿出。
- *                  不可用时 usable=false；缓冲区可能已写入前段值（非零填充），
- *                  调用方不得消费，走
- *                  DYN-FD-NUMERIC-ANOMALY 值面（§6.3.5 部分失败语义）。
- *
- * @throws DynamicsError 透传 evaluate 的调用方错误（物性复检等——与 τ_ref
- *         主调用同模型，理论不可达；防御性传播不吞错）
+ * 所有量在**法兰系**（末连杆系）表示：comF 为质心在法兰系位置（单位 m，
+ * 已含"质心相对 TCP 的偏置经 T_flange_tcp 旋转"）；inertiaC 为对质心、
+ * 法兰系姿态的惯量张量（单位 kg·m²）。与 InverseDynamics.cpp 的
+ * EndComponent 同构（物理值面——估算标记/诊断定位不进引擎会话）。
  */
-void callRneaSample(const InverseDynRequest& base, double t,
-                    const std::vector<double>& q, const std::vector<double>& qd,
-                    const std::vector<double>& qdd,
-                    const InverseDynamicsEvaluator& evaluator,
-                    evidence::IEvaluationContext& context,
-                    std::vector<double>& tauTotal, std::vector<double>& tauInertia,
-                    bool& cancelled, bool& usable)
+struct FdEndComponent {
+    double mass = 0.0;                          ///< 质量，单位 kg
+    rw::math::Vector3D<double> comF{};          ///< 质心，法兰系下表示，单位 m
+    rw::math::InertiaMatrix<double> inertiaC{}; ///< 对质心惯量（法兰系姿态），kg·m²
+};
+
+/**
+ * @brief 末端组成件提取（§5.4 物理语义的同源镜像——估算标记面不复制）。
+ *
+ * 物理规则（与 extractEndComponent 逐式同源，D-DYN-6）：com 缺失→取安装
+ * 点（TCP 在法兰系位置）；inertia 缺失→点质量模型（零张量）；值已提供→
+ * TCP 姿态旋转到法兰系（R·I·Rᵀ）。质量必填（Provided 且有限＞0）——
+ * 违约即调用方错误（τ_ref 主调用的同款防线先行，此处为会话侧防御）。
+ *
+ * @param massF          [in] 质量（必填）
+ * @param comF           [in] 质心（TCP 系，可缺失）
+ * @param inertiaF       [in] 惯量（质心系、TCP 姿态，可缺失）
+ * @param tcpPosInFlange [in] TCP 安装点在法兰系位置，单位 m
+ * @param tcpRotToFlange [in] TCP 系→法兰系旋转
+ * @return 法兰系组成件（物理值面）
+ *
+ * @throws DynamicsError mass 非法（调用方错误——防御轨；正常路径被 τ_ref
+ *         主调用的提取防线先行拦截，此处不可达防御）
+ */
+FdEndComponent extractFdEndComponent(
+    const core::SourcedValue<double>& massF,
+    const core::SourcedValue<rw::math::Vector3D<double>>& comF,
+    const core::SourcedValue<rw::math::InertiaMatrix<double>>& inertiaF,
+    const rw::math::Vector3D<double>& tcpPosInFlange,
+    const rw::math::Rotation3D<double>& tcpRotToFlange)
 {
-    // 请求基座拷贝：身份/模型引用/重力/负载池/事件时间线原样透传（共源），
-    // 仅样本列替换为本调用构造的单样本（segmentIndex=0——内部调用无段语义）。
-    InverseDynRequest req = base;
-    InverseDynSampleInput s;
-    s.t = t;            // 单位 s
-    s.segmentIndex = 0; // 内部提取调用不携带上游段结构
-    s.q = q;
-    s.qd = qd;
-    s.qdd = qdd;
-    req.samples.clear();
-    req.samples.push_back(std::move(s));
-
-    const InverseDynOutcome out = evaluator.evaluate(req, context);
-    cancelled = out.cancelled;
-    if (cancelled) {
-        usable = false;
-        return;  // 取消＝空产出（调用方检查 cancelled 位）
+    const std::optional<double> massOpt = massF.tryValue();
+    if (!massOpt.has_value() || !std::isfinite(*massOpt) || *massOpt <= 0.0) {
+        throw DynamicsError("input-invalid", "末端组成件质量必填且须为有限正值（kg）"
+                                             "——引擎会话变体合成防御");
     }
-
-    // 行提取：单样本产出按 (t, jointIndex 升序) 排序（evaluate §4.6 纪律）。
-    // F-581：行数必须恰为 n 且全行 Ok 才可用——RNEA 数值失败时逆动力学
-    // 只产失败关节的行（§5.6 部分产出），.at() 满取在行数＜n 时以
-    // std::out_of_range（非契约异常类型）穿出。不可用＝usable=false，缓冲区
-    // 可能已写入前段值（非零填充）——调用方不得消费。
-    const std::size_t n = q.size();
-    tauTotal.assign(n, 0.0);
-    tauInertia.assign(n, 0.0);
-    usable = (out.samples.size() == n);
-    for (std::size_t i = 0; usable && i < n; ++i) {
-        tauTotal[i] = out.samples[i].tauTotal;
-        tauInertia[i] = out.samples[i].tauInertia;
-        if (out.samples[i].numericState != SampleNumericState::Ok) {
-            usable = false;  // 行态非 Ok（NonFiniteInput/Output）——τ 不可信
-        }
+    FdEndComponent c;
+    c.mass = *massOpt;
+    if (const std::optional<rw::math::Vector3D<double>> com = comF.tryValue()) {
+        c.comF = tcpPosInFlange + tcpRotToFlange * *com;  // TCP 偏置→法兰系（m）
+    } else {
+        c.comF = tcpPosInFlange;  // 缺失→安装点（D-DYN-6 保守估算的物理面）
     }
+    if (const std::optional<rw::math::InertiaMatrix<double>> inertia = inertiaF.tryValue()) {
+        c.inertiaC = tcpRotToFlange * *inertia * rw::math::inverse(tcpRotToFlange);
+    } else {
+        c.inertiaC = rw::math::InertiaMatrix<double>();  // 零张量（点质量——显式化）
+    }
+    return c;
 }
 
 /**
- * @brief 解 n×n 线性方程组 M·x = rhs（带部分主元的高斯消元）。
+ * @brief 把工具与挂载负载合成进末连杆（法兰）物性替代值。
  *
- * @param a   [in,out] 系数矩阵（行主序 a[i*n+j]，单位随方程语义——本域为
- *            质量阵 kg·m²/kg；函数内被消元破坏，调用方传副本）
- * @param b   [in,out] 右端项（长度 n；函数内随消元变换）
- * @param x   [out] 解向量（长度 n——q̈，rad/s² 或 m/s²）
- * @return true＝求解成功；false＝奇异/病态（‖M‖∞=0 或主元越相对下界——
- *         调用方据此产 DYN-FD-NUMERIC-ANOMALY）
+ * 合成规则（与 composeFlangeVariant 逐式同源——全部在法兰系，单位 kg/m/
+ * kg·m²）：总质量 M＝法兰基线＋Σ组件；总质心＝质量加权一阶矩；对总质心
+ * 的合成惯量＝Σ[I_k＋m_k·(|d_k|²E−d_k d_kᵀ)]（平行轴定理，d_k 为各体质心
+ * 到总质心的位移）。★ 合成基项＝末连杆规范物性（权威法兰系）——绝不上次
+ * 合成值（变体重复合成会重复累加）。
  *
- * 确定性：固定循环序＋部分主元取首个最大（严格 > 比较——同输入同主元行）。
+ * 边界：M ≤ 0（全部物性缺失的极端形态）——质心/惯量取零（力矩贡献为零、
+ * 数值安全，与逆动力学同式）；物性缺失链在会话物化时已被 S7 门控拒绝
+ * （DwcCompileFailed→DYN-FD-NUMERIC-ANOMALY 值面），此分支为镜像自证。
+ *
+ * @param flangeMass    [in] 末连杆基线质量，单位 kg
+ * @param flangeCom     [in] 末连杆基线质心，法兰系下表示，单位 m
+ * @param flangeInertia [in] 末连杆基线对质心惯量（法兰系姿态），kg·m²
+ * @param mounted       [in] 当前挂载的组成件（工具＋负载——法兰系静参数）
+ * @param outOverride   [out] 引擎会话法兰替代值（末连杆系表示）
  */
-bool solveLinearSystem(std::vector<double>& a, std::vector<double>& b,
-                       std::vector<double>& x)
+void composeFlangeOverride(double flangeMass, const rw::math::Vector3D<double>& flangeCom,
+                           const rw::math::InertiaMatrix<double>& flangeInertia,
+                           const std::vector<FdEndComponent>& mounted,
+                           runtime::FdFlangeOverride& outOverride)
 {
-    const std::size_t n = b.size();
-    // ‖M‖∞（行和最大绝对值——缩放基准）：全零矩阵立即判奇异（全零物性链
-    // 的物理语义＝无惯量可积分，属数值异常而非除零崩溃）。
-    double scale = 0.0;
-    for (std::size_t k = 0; k < n * n; ++k) {
-        scale = std::max(scale, std::abs(a[k]));
+    double totalMass = flangeMass;
+    rw::math::Vector3D<double> firstMoment = flangeMass * flangeCom;  // 一阶矩，kg·m
+    for (const FdEndComponent& p : mounted) {
+        totalMass += p.mass;
+        firstMoment += p.mass * p.comF;
     }
-    if (!(scale > 0.0)) { return false; }
-    const double pivotFloor = scale * kSingularPivotRelative;  // 相对主元下界
-
-    // 前向消元（逐列部分主元——数值稳定性）。
-    for (std::size_t col = 0; col < n; ++col) {
-        // 选主元：col 列 |a[r][col]| 最大的行 r≥col（严格 > 取首个最大——
-        // 确定性，NFR-COR-02）。
-        std::size_t pivotRow = col;
-        double pivotMag = std::abs(a[col * n + col]);
-        for (std::size_t r = col + 1; r < n; ++r) {
-            const double mag = std::abs(a[r * n + col]);
-            if (mag > pivotMag) {
-                pivotMag = mag;
-                pivotRow = r;
+    rw::math::Vector3D<double> compositeCom{};
+    rw::math::InertiaMatrix<double> compositeInertia = rw::math::InertiaMatrix<double>();
+    if (totalMass > 0.0) {
+        compositeCom = firstMoment / totalMass;  // 质心（法兰系，m）
+        // 平行轴定理逐项累加（确定性求和序：基线→组件依挂载序）。
+        auto addParallelAxis = [&compositeInertia, &compositeCom](
+                                   const rw::math::InertiaMatrix<double>& inertia,
+                                   const rw::math::Vector3D<double>& comF, double mass) {
+            const rw::math::Vector3D<double> d = comF - compositeCom;  // m
+            const double dd = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    const double dOuter = d[r] * d[c];
+                    const double correction =
+                        ((r == c) ? dd : 0.0) - dOuter;  // δrc·|d|² − d_r·d_c
+                    compositeInertia(r, c) += inertia(r, c) + mass * correction;
+                }
             }
-        }
-        if (!(pivotMag > pivotFloor)) { return false; }  // 奇异/病态
-        if (pivotRow != col) {
-            // 行交换（消元准备——行主序逐元素换）。
-            for (std::size_t c = 0; c < n; ++c) {
-                std::swap(a[col * n + c], a[pivotRow * n + c]);
-            }
-            std::swap(b[col], b[pivotRow]);
-        }
-        // 消去下方各行（第 col 列）。
-        for (std::size_t r = col + 1; r < n; ++r) {
-            const double factor = a[r * n + col] / a[col * n + col];
-            a[r * n + col] = 0.0;
-            for (std::size_t c = col + 1; c < n; ++c) {
-                a[r * n + c] -= factor * a[col * n + c];
-            }
-            b[r] -= factor * b[col];
+        };
+        addParallelAxis(flangeInertia, flangeCom, flangeMass);
+        for (const FdEndComponent& p : mounted) {
+            addParallelAxis(p.inertiaC, p.comF, p.mass);
         }
     }
-    // 回代（上三角求解——最后一行向前）。
-    x.assign(n, 0.0);
-    for (std::size_t ii = n; ii-- > 0;) {
-        const std::size_t r = ii;
-        double s = b[r];
-        for (std::size_t c = r + 1; c < n; ++c) {
-            s -= a[r * n + c] * x[c];
-        }
-        x[r] = s / a[r * n + r];
-    }
-    return true;
+    outOverride.mass = totalMass;              // kg
+    outOverride.masscenter = compositeCom;     // m（末连杆系）
+    outOverride.inertia = compositeInertia;    // kg·m²（对质心、末连杆系姿态）
 }
 
 /// 向量全部分量有限（NFR-COR-03 判定原语——长度 n 的逐元素检查）。
@@ -265,11 +227,13 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     //      之"步长/容差明确"的合法性面；配置非法不发稳定码——§10.0 错误
     //      类型行"输入/配置非法"归调用方错误轨）----
     if (request.forwardCheck.integratorToken != kForwardIntegratorToken) {
-        // 封闭词表（§4.2——当前唯一锁定值 kForwardIntegratorToken）。
+        // 封闭词表（§4.2——当前唯一锁定值 kForwardIntegratorToken；历史值
+        // "rk4-fixed" 已随自持核退役，接受它＝以旧身份冒充新引擎，拒绝）。
         throw DynamicsError("input-invalid",
                             "forwardCheck.integratorToken 不在封闭词表（实际 '"
                                 + request.forwardCheck.integratorToken + "'，词表值 '"
-                                + std::string{kForwardIntegratorToken} + "'）——拒绝检查");
+                                + std::string{kForwardIntegratorToken}
+                                + "'）——拒绝检查");
     }
     if (!std::isfinite(request.forwardCheck.maxStepS)
         || request.forwardCheck.maxStepS <= 0.0) {
@@ -430,11 +394,10 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
 
     // τ_ref 逐时刻提取（evaluate 产出按 (t 升序, jointIndex 升序) 排序——
     // §4.6）。F-581：RNEA 数值失败时逆动力学按 §5.6 只产**失败关节**的行
-    // 并**自该样本起截断后续产出**——总行数可小于 nSample×n。原实现的
-    // 满网格下标 at(j*n+i) 在截断发生时以 std::out_of_range（非契约异常
-    // 类型）穿出。改为按时刻 t 匹配的游标消费：本样本行不足 n 行、或
-    // 产出耗尽、或行态非 Ok＝该样本 τ_ref 不可信（不参与仿真/比较，样
-    // 本级处置 §4.6——诊断已由 evaluate 透传，此处不重复产码）。
+    // 并**自该样本起截断后续产出**——总行数可小于 nSample×n。按时刻 t 匹配
+    // 的游标消费：本样本行不足 n 行、或产出耗尽、或行态非 Ok＝该样本 τ_ref
+    // 不可信（不参与仿真/比较，样本级处置 §4.6——诊断已由 evaluate 透传，
+    // 此处不重复产码）。
     const std::size_t n = rneaRequest.samples.front().q.size();  // 可动关节数
     struct SampleTorque {
         std::vector<double> tauTotal;          ///< 逐关节全量 τ_ref（N·m 或 N）
@@ -481,89 +444,109 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     }
     const bool rneaComplete = (usableSamples == nSample);
 
-    // ---- 第 3～5 步：正向仿真＋误差度量＋异常检测（时序图②③④）----
+    // ---- 第 3～5 步：正向仿真＋误差度量＋异常检测（时序图②③④——
+    //      runtime 受控引擎会话承载）----
     // 仿真状态 y=(q,q̇)——初始状态取参考段起点（§6.2；第 1 步已验证有限）。
     std::vector<double> q = request.samples.front().q;    // 权威角（rad 或 m）
     std::vector<double> qd = request.samples.front().qd;  // 关节速度（rad/s 或 m/s）
 
-    // RNEA 请求基座（M/h 单样本调用的公共底座——身份/模型/重力/负载/事件）。
-    InverseDynRequest extractBase;
-    extractBase.conditionId = request.conditionId;
-    extractBase.toolObjectId = core::ObjectId{};
-    extractBase.model = request.model;
-    extractBase.gravityBase[0] = request.gravityBase[0];
-    extractBase.gravityBase[1] = request.gravityBase[1];
-    extractBase.gravityBase[2] = request.gravityBase[2];
-    extractBase.payloads = request.payloads;
-    extractBase.events = request.events;
+    // ---- 变体合成前置（§5.4 法兰静参数的会话侧提取——工具＋负载）：
+    //      TCP 安装几何与末连杆基线自模型提取一次（只读面）。
+    const runtime::RobotChain& chain = request.model->chain();
+    const runtime::CanonicalLink& flangeLink = chain.links.back();
+    const double flangeMass = flangeLink.mass.tryValue().value_or(0.0);  // kg（缺失→0：会话侧门控拒绝）
+    const rw::math::Vector3D<double> flangeCom =
+        flangeLink.centerOfMass.tryValue().value_or(rw::math::Vector3D<double>());  // m
+    const rw::math::InertiaMatrix<double> flangeInertia =
+        flangeLink.inertia.tryValue().value_or(rw::math::InertiaMatrix<double>());  // kg·m²
 
-    // 动力学右端 f(q,q̇)＝M(q)⁻¹·(τ_ctrl − h_f(q,q̇)) 的单次求值。
-    // 返回 false＝数值异常（质量阵奇异/病态，或 F-581 的 RNEA 部分产出
-    // ——调用方产 DYN-FD-NUMERIC-ANOMALY 并终止仿真）；失败原因经
-    // reasonOut 带出（调用方入 anomalyDetail——首因定位）。
-    const std::vector<double> zeroVec(n, 0.0);
-    std::vector<double> tauTotalBuf, tauInertiaBuf;  // 单样本调用输出缓冲
-    std::vector<double> hVec(n, 0.0);                // h_f(q,q̇)（N·m 或 N）
-    std::vector<double> massFlat(n * n, 0.0);        // 质量阵（行主序，kg·m²/ kg）
-    std::vector<double> rhs(n, 0.0);                 // τ_ctrl − h_f（N·m 或 N）
-    std::vector<double> qdd(n, 0.0);                 // 解向量（rad/s² 或 m/s²）
-    auto evalAcceleration = [&](const std::vector<double>& qv,
-                                const std::vector<double>& qdv, double tIntervalStart,
-                                const std::vector<double>& tauCtrl, bool& cancelledOut,
-                                bool& singularOut, std::string& reasonOut) {
-        cancelledOut = false;
-        singularOut = false;
-        // h_f 提取：单样本 evaluate(q, q̇, q̈=0) 的全量通道＝G＋C·q̇＋摩擦
-        // （q̈=0 时惯性通道为零——全量恰为偏置力＋摩擦之和）。
-        bool rneaUsable = false;
-        callRneaSample(extractBase, tIntervalStart, qv, qdv, zeroVec, evaluator,
-                       context, tauTotalBuf, tauInertiaBuf, cancelledOut, rneaUsable);
-        if (cancelledOut) { return false; }
-        if (!rneaUsable) {
-            // F-581：RNEA 部分产出（数值失败只产失败关节行）＝本样本不可
-            // 用——走数值异常值面（不以契约外异常穿出）。
-            singularOut = true;
-            reasonOut = "RNEA 输出非有限（逆动力学部分产出——M/偏置力提取样本不可用）：t="
-                        + std::to_string(tIntervalStart) + " s";
+    rw::math::Vector3D<double> tcpPosInFlange{};   // TCP 安装点，法兰系，m（无工具＝法兰原点）
+    rw::math::Rotation3D<double> tcpRotToFlange(1, 0, 0, 0, 1, 0, 0, 0, 1);  // TCP→法兰（无工具＝恒等）
+    bool hasTool = false;
+    FdEndComponent toolComponent;
+    if (request.model->defaultTcpIndex().has_value()) {
+        const runtime::CanonicalTool& tool =
+            request.model->tools().at(*request.model->defaultTcpIndex());
+        tcpPosInFlange = tool.tcpOffset.P();
+        tcpRotToFlange = tool.tcpOffset.R();
+        toolComponent = extractFdEndComponent(tool.mass, tool.centerOfMass, tool.inertia,
+                                              tcpPosInFlange, tcpRotToFlange);
+        hasTool = true;
+    }
+
+    // 挂载集计算（§5.4 事件时间线的区间起点口径——"样本时刻 t ≥ tEvent
+    // 生效"，与 τ_ref 侧 evaluate 同规则——两侧同变体的结构性强制）。
+    auto computeMounted = [&](double t, std::vector<bool>& mounted) {
+        mounted.assign(request.payloads.size(), false);
+        for (std::size_t p = 0; p < request.payloads.size(); ++p) {
+            bool isMounted = request.payloads[p].initiallyMounted;
+            for (const PayloadEvent& e : request.events) {
+                if (e.payloadIndex == p && t >= e.tEvent) {
+                    isMounted = (e.kind == PayloadEvent::Kind::Grasp);
+                }
+            }
+            mounted[p] = isMounted;
+        }
+    };
+    auto buildComponents = [&](const std::vector<bool>& mounted,
+                               std::vector<FdEndComponent>& parts) {
+        parts.clear();
+        if (hasTool) { parts.push_back(toolComponent); }
+        for (std::size_t p = 0; p < request.payloads.size(); ++p) {
+            if (!mounted[p]) { continue; }
+            const EndEffectorPayload& payload = request.payloads[p];
+            // 负载 com/惯量在 TCP 系表达（§5.4——与逆动力学提取同基准）；
+            // 非法质量经 extractFdEndComponent 防御（τ_ref 主调用已先行拦截）。
+            parts.push_back(extractFdEndComponent(payload.mass, payload.centerOfMass,
+                                                  payload.inertia, tcpPosInFlange,
+                                                  tcpRotToFlange));
+        }
+    };
+
+    // 数值异常/发散的终止面（记录首因——诊断素材只产一条；先于会话助手
+    // 声明——ensureSession 按引用捕获写入）。
+    bool diverged = false;       ///< 发散检出（DYN-FD-DIVERGED）
+    bool singular = false;       ///< 会话物化/推进失败（DYN-FD-NUMERIC-ANOMALY）
+    std::string anomalyDetail;   ///< 异常定位文本（首因）
+
+    // 会话重建助手：按当前 (q,q̇) 与挂载集物化引擎会话；任何失败（含移动
+    // 关节链/物性能力缺失的 runtime 稳定诊断）映射 DYN-FD-NUMERIC-ANOMALY
+    // 值面（四态契约闭合——不抛穿；detail 携带会话侧定位）。
+    runtime::FdFlangeOverride flangeOverride;  // 复用缓冲（每变体重填）
+    std::vector<bool> mountedNow;
+    std::vector<bool> sessionMounted;
+    bool hasSession = false;
+    runtime::FdEngineSession session;
+    auto ensureSession = [&](double t) {
+        computeMounted(t, mountedNow);
+        if (hasSession && mountedNow == sessionMounted) {
+            return true;  // 变体未变——复用当前会话
+        }
+        std::vector<FdEndComponent> parts;
+        buildComponents(mountedNow, parts);
+        // 法兰替代面：有工具或有挂载负载时合成替代值（S7 工具体为静态惰性
+        // 体——替代值是工具/负载进入引擎动力学的唯一通道）；纯基线变体传
+        // 空指针＝S7 编译物性直用（与合成基线逐值等价，单一实现两形态）。
+        const runtime::FdFlangeOverride* overridePtr = nullptr;
+        if (hasTool || !parts.empty()) {
+            composeFlangeOverride(flangeMass, flangeCom, flangeInertia, parts, flangeOverride);
+            overridePtr = &flangeOverride;
+        }
+        try {
+            session = runtime::buildFdEngineSession(*request.model, request.gravityBase, q, qd,
+                                                    overridePtr);
+        }
+        catch (const std::exception& e) {
+            // 会话物化失败＝引擎侧稳定诊断（runtime/* 码面）——映射既有
+            // NUMERIC-ANOMALY 值面（全零物性链不可正解积分旧语义的延续面）。
+            singular = true;
+            anomalyDetail = std::string{"引擎会话物化失败（"} + e.what() + "）：t="
+                            + std::to_string(t) + " s";
             return false;
         }
-        hVec = tauTotalBuf;
-
-        // M 逐列提取：惯性通道 (g=0, q̇=0, q̈=e_i)＝M·e_i（纯惯量——不叠
-        // 摩擦/重力；T03"惯性通道"口径）。n 列 n 次调用。
-        for (std::size_t i = 0; i < n; ++i) {
-            std::vector<double> e = zeroVec;
-            e[i] = 1.0;  // 单位向量（第 i 列激励——rad/s² 或 m/s² 的 1 单位）
-            callRneaSample(extractBase, tIntervalStart, qv, zeroVec, e, evaluator,
-                           context, tauTotalBuf, tauInertiaBuf, cancelledOut,
-                           rneaUsable);
-            if (cancelledOut) { return false; }
-            if (!rneaUsable) {
-                singularOut = true;
-                reasonOut = "RNEA 输出非有限（逆动力学部分产出——M 第 "
-                            + std::to_string(i) + " 列提取样本不可用）：t="
-                            + std::to_string(tIntervalStart) + " s";
-                return false;
-            }
-            for (std::size_t r = 0; r < n; ++r) {
-                massFlat[r * n + i] = tauInertiaBuf[r];  // 行主序 M(r,i)
-            }
-        }
-
-        // rhs＝τ_ctrl − h_f（控制输入减偏置力——正动力学方程右端）。
-        for (std::size_t i = 0; i < n; ++i) {
-            rhs[i] = tauCtrl[i] - hVec[i];
-        }
-        // 求解 M·q̈ = rhs（副本消元——massFlat 可复用）。
-        std::vector<double> a = massFlat;
-        std::vector<double> b = rhs;
-        const bool solved = solveLinearSystem(a, b, qdd);
-        singularOut = !solved;
-        if (!solved) {
-            reasonOut = "质量矩阵线性求解失败（奇异或病态）：t="
-                        + std::to_string(tIntervalStart) + " s";
-        }
-        return solved;
+        sessionMounted = mountedNow;
+        hasSession = true;
+        return true;
     };
 
     // 误差统计累加器（§6.1 ④——逐元素 max 与全网格平方和）。
@@ -580,13 +563,8 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
         intervalCount = (usableSamples >= 2) ? (usableSamples - 1) : 0;
     }
 
-    // 数值异常/发散的终止面（记录首因——诊断素材只产一条）。
-    bool diverged = false;       ///< 发散检出（DYN-FD-DIVERGED）
-    bool singular = false;       ///< 质量阵求解失败（DYN-FD-NUMERIC-ANOMALY）
-    std::string anomalyDetail;   ///< 异常定位文本（首因）
-
     // 主循环：逐参考样本区间积分（区间 j 的控制输入＝tauRef[j] 常量——
-    // 采样保持；子步不跨样本边界）。
+    // 采样保持；子步不跨样本边界；变体切换＝区间边界会话重建）。
     for (std::size_t j = 0; j + 1 < usableSamples; ++j) {
         // 取消轮询（§9.3 周期性查询——每区间一次；取消非错误 UX-03）。
         if (context.cancellationRequested()) {
@@ -604,12 +582,17 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
             break;
         }
 
+        // 变体检查/会话就绪（区间起点时刻——变体切换只发生在区间边界）。
+        if (!ensureSession(tauRef[j].t)) {
+            break;  // 物化失败——singular/anomalyDetail 已置
+        }
+
         const double tBegin = tauRef[j].t;      // 区间起点（s）
         const double tEnd = tauRef[j + 1].t;    // 区间终点（s）
-        const std::vector<double>& tauCtrl = tauRef[j].tauTotal;  // 采样保持输入
+        session.setForceTargets(tauRef[j].tauTotal);  // 采样保持输入（N·m 或 N）
         double tCur = tBegin;                   // 当前仿真时刻（s）
 
-        // RK4 子步循环（h＝min(maxStepS, 剩余时长)——不跨参考样本边界）。
+        // 子步循环（h＝min(maxStepS, 剩余时长)——不跨参考样本边界）。
         while (tCur < tEnd) {
             const double h = std::min(request.forwardCheck.maxStepS, tEnd - tCur);
             // 数值防御：区间端点舍入残差（h 可能为 0——直接收口推进）。
@@ -617,79 +600,21 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
                 tCur = tEnd;
                 break;
             }
-
-            // ---- RK4 四 stage（经典显式格式；全部 stage 共用区间起点
-            //      时刻 tBegin 提取变体——采样保持语义见文件头）----
-            bool cancelledNow = false;
-            bool singularNow = false;
-            std::string failReason;  // F-581：失败原因带出（奇异或 RNEA 部分产出）
-
-            // k1 ＝ f(y_j)
-            std::vector<double> k1q = qd;  // q̇（状态一阶分量恒为速度）
-            if (!evalAcceleration(q, qd, tBegin, tauCtrl, cancelledNow, singularNow,
-                                  failReason)) {
-                if (cancelledNow) { out.cancelled = true; break; }
+            try {
+                session.step(h);  // 引擎推进（摩擦补偿/回写在会话内——状态随之推进）
+            }
+            catch (const std::exception& e) {
                 singular = true;
-                anomalyDetail = failReason + "，RK4 stage 1";
+                anomalyDetail = std::string{"引擎推进失败（"} + e.what() + "）：t="
+                                + std::to_string(tCur) + " s";
                 break;
-            }
-            const std::vector<double> k1qd = qdd;
-
-            // k2 ＝ f(y_j + h/2·k1)
-            std::vector<double> q2(n), qd2(n);
-            for (std::size_t i = 0; i < n; ++i) {
-                q2[i] = q[i] + 0.5 * h * k1q[i];
-                qd2[i] = qd[i] + 0.5 * h * k1qd[i];
-            }
-            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
-                                  failReason)) {
-                if (cancelledNow) { out.cancelled = true; break; }
-                singular = true;
-                anomalyDetail = failReason + "，RK4 stage 2";
-                break;
-            }
-            const std::vector<double> k2q = qd2;
-            const std::vector<double> k2qd = qdd;
-
-            // k3 ＝ f(y_j + h/2·k2)
-            for (std::size_t i = 0; i < n; ++i) {
-                q2[i] = q[i] + 0.5 * h * k2q[i];
-                qd2[i] = qd[i] + 0.5 * h * k2qd[i];
-            }
-            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
-                                  failReason)) {
-                if (cancelledNow) { out.cancelled = true; break; }
-                singular = true;
-                anomalyDetail = failReason + "，RK4 stage 3";
-                break;
-            }
-            const std::vector<double> k3q = qd2;
-            const std::vector<double> k3qd = qdd;
-
-            // k4 ＝ f(y_j + h·k3)
-            for (std::size_t i = 0; i < n; ++i) {
-                q2[i] = q[i] + h * k3q[i];
-                qd2[i] = qd[i] + h * k3qd[i];
-            }
-            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
-                                  failReason)) {
-                if (cancelledNow) { out.cancelled = true; break; }
-                singular = true;
-                anomalyDetail = failReason + "，RK4 stage 4";
-                break;
-            }
-            const std::vector<double> k4q = qd2;
-            const std::vector<double> k4qd = qdd;
-
-            // 状态推进（加权组合 1/6·(k1+2k2+2k3+k4)——RK4 标准格式）。
-            for (std::size_t i = 0; i < n; ++i) {
-                q[i] += (h / 6.0)
-                        * (k1q[i] + 2.0 * k2q[i] + 2.0 * k3q[i] + k4q[i]);
-                qd[i] += (h / 6.0)
-                         * (k1qd[i] + 2.0 * k2qd[i] + 2.0 * k3qd[i] + k4qd[i]);
             }
             tCur += h;
             ++out.integratorSteps;
+
+            // 状态读回（设备 postUpdate 回写值——q/qd 随推进更新）。
+            q = session.q();    // rad 或 m
+            qd = session.qd();  // rad/s 或 m/s
 
             // 异常检测（DYN-05 本义——每子步检查，首因即停）：
             //   非有限（NFR-COR-03 拒绝语义）或量级超检出界→发散。
@@ -737,7 +662,7 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
         ++compared;
     }
 
-    // 取消观察补偿：RK4 内层 break 的 cancelled 位已置；此处统一出口。
+    // 取消观察补偿：会话循环内 break 的 cancelled 位已置；此处统一出口。
     if (out.cancelled) {
         out.state = DynamicsValidity::ForwardCheckState::NotRun;
         return out;
@@ -779,8 +704,9 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
             core::DiagCode{std::string{kDynFdNumericAnomaly}}, request.conditionId,
             std::optional<std::string>{}, std::optional<std::string>{},
             std::string{"dynamics 正动力学一致性检查"}, anomalyDetail,
-            std::string{"检查模型质量/惯量参数（全零物性链不可正解积分）后重试——"
-                        "正动力学失败不判定模型无效（§6.3.5）"});
+            std::string{"检查模型质量/惯量参数与关节类型（全零物性链不可正解积分、"
+                        "移动关节链超出 ODE 力控承载）后重试——正动力学失败不判定"
+                        "模型无效（§6.3.5）"});
         out.diagnostics.push_back(std::move(rec));
         fillErrorFields();
         return out;
@@ -801,7 +727,6 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
         // 单位判定：全转动/连续→rad（rad/s）；全移动→m（m/s）；混合→无效句柄。
         bool allRotary = true;
         bool allPrismatic = true;
-        const runtime::RobotChain& chain = request.model->chain();
         for (const runtime::CanonicalJoint& cj : chain.joints) {
             if (cj.type == runtime::JointType::Prismatic) { allRotary = false; }
             else { allPrismatic = false; }
@@ -873,4 +798,4 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     return out;
 }
 
-}  // namespace sdurws::ird::dynamics
+}}}  // namespace sdurws::ird::dynamics

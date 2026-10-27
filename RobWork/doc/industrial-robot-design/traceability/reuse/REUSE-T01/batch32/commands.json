@@ -1,0 +1,54 @@
+{
+  "workingDirectory": "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork",
+  "developerEnvironment": [
+    "D:/software/Microsoft Visual Studio/2022/Community/Common7/Tools/Launch-VsDevShell.ps1",
+    "-Arch",
+    "amd64",
+    "-HostArch",
+    "amd64",
+    "-SkipAutomaticLocation"
+  ],
+  "configuration": [
+    "cmake",
+    "-S",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32",
+    "-B",
+    ".cache/b32-build-prefix",
+    "-G",
+    "Visual Studio 17 2022",
+    "-A",
+    "x64",
+    "-DRobWork_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake",
+    "-DRWSIM_TARGETS_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkSim/cmake/targets",
+    "-DCMAKE_PREFIX_PATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows;D:/software/Qt/6.11.1/msvc2022_64"
+  ],
+  "build": [
+    "cmake",
+    "--build",
+    ".cache/b32-build-prefix",
+    "--config",
+    "Release",
+    "--target",
+    "ird_event_lifetime_audit"
+  ],
+  "run": [
+    "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b32-build-prefix/Release/ird_event_lifetime_audit.exe",
+    "--gtest_output=xml:C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b32-run/gtest.xml",
+    "--ird_report=C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b32-run/ird-test-report.json"
+  ],
+  "pathPrefix": [
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin"
+  ],
+  "configurationExit": 0,
+  "buildExit": 0,
+  "runExit": 1,
+  "attempts": [
+    "b32-configure.log:工具链包装遇导出包路径转义失败",
+    "b32-configure-prefix-first.log:导入目标作用域缺GTest",
+    "b32-build-prefix-first.log:报告器缺math的Eigen路径",
+    "b32-configure-final.log/b32-build-final.log:成功；沿用已安装同渠道prefix，不冒充产品集成构建"
+  ],
+  "remote": "not executed"
+}

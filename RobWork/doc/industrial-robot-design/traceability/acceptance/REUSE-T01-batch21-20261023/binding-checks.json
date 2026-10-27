@@ -1,0 +1,772 @@
+[
+  {
+    "functionId": "foundation-governance.commit-lint.root-and-encoding",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "UTF8原生命令输出与显式根/脚本路径回退；Git根唯一，不新建仓库/路径解析平台"
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.Test-CommitMessage",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "合法前缀、空/泛化/80字符标题；Merge豁免，正文真实性仍人工，AllowWip仅兼容参数"
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.input-and-range",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "Message预检或真实git log/show范围；空范围显式无对象，不声称验证历史全部提交"
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.aggregate-exit",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "逐提交调用唯一Test-CommitMessage，错误累计并exit1；不是PR语义或复用正确性审查"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.root",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "真实契约存在性、三段根解析、设计树自检，标准文件工具而非机器人模型加载"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.Test-AnchorExists",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "项目编号标题前缀/数字边界正则，非通用Markdown解析器；不等同语义引用证明"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.Test-AnchorRequired",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "四权威文档和units要求章节；过程证据可整文件引用，不复制上游文档系统"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.index-and-contract",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "索引既有任务、结构/ready字段/前置存在/锚点/跨单元陷阱/分支句法；未证明前置已完成或任务语义可执行"
+  },
+  {
+    "functionId": "foundation-governance.validate-task.reuse-gate",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "已有reuse或ready/done REUSE契约转交原validate-reuse，非第二复用门禁实现"
+  },
+  {
+    "functionId": "foundation-governance.verify-task.preflight-and-dryrun",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "调用原validate-task和validate-reuse，DryRun也预检、仅打印verify不执行；不能当三命令真实通过"
+  },
+  {
+    "functionId": "foundation-governance.verify-task.execute-and-count",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "逐verify Push/Pop根、Invoke-Expression、退出码拒绝；Parse/CommandNotFound只标manual，PASS仅机器部分。结构化机器条目与散文识别边界仍待后续全量治理审查"
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.environment",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "用当前PS进程路径、独立GUID临时根及标准IO；不引第二测试/构建平台"
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.Invoke-Probe",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "真实子进程退出码+具名输出双判据，失败先记录再throw，不能零执行假通过"
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.fixtures-and-report",
+    "definitionMatches": true,
+    "pending": true,
+    "noFakeTargets": true,
+    "ownerNone": true,
+    "executionMatches": true,
+    "sources": [
+      {
+        "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "hashMatches": true,
+        "symbolLiteral": true,
+        "fullInputBound": true
+      }
+    ],
+    "inputs": [
+      {
+        "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWork/gtest/test-main.cpp",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "hashMatches": true
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+        "hashMatches": true
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+        "hashMatches": true
+      }
+    ],
+    "differences": "原8例/原共享对象稀疏clone/overlay/坏索引；finally完整性计数及受限Temp清理。仅补catalog已绑定两套gtest检出面，不放宽验证规则；红绿实跑分列"
+  }
+]

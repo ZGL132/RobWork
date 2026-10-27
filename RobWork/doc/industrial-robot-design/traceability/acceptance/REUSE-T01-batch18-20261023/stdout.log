@@ -1,0 +1,21 @@
+Note: Google Test filter = ReusePolicyBoundary.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ReusePolicyBoundary
+[ RUN      ] ReusePolicyBoundary.OrdinaryDottedNamesMatchLiterally
+[       OK ] ReusePolicyBoundary.OrdinaryDottedNamesMatchLiterally (0 ms)
+[ RUN      ] ReusePolicyBoundary.ProductionSessionRuleMustMatchRegexPrefixedLiteralName
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b18-20261023-020423-1105365130\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r18\PolicyBoundaryTest.cpp(42): error: Value of: rules.front().match(names.byId.at(ids.link1), names.byId.at(ids.link2))
+  Actual: false
+Expected: true
+
+[  FAILED  ] ReusePolicyBoundary.ProductionSessionRuleMustMatchRegexPrefixedLiteralName (0 ms)
+[----------] 2 tests from ReusePolicyBoundary (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ReusePolicyBoundary.ProductionSessionRuleMustMatchRegexPrefixedLiteralName
+
+ 1 FAILED TEST

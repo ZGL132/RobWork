@@ -1,0 +1,5 @@
+# BASE 44c8d59e4 对照运行（同一 75 契约全量套件）——证明全量套件失败为基线既有
+BASE TASKFILE-COUNT=75
+Write-Error: C:\Users\zgl18\AppData\Local\Temp\t40-base\run-base-validate-docs.ps1:7
+     | H1-H6 task reuse contract failed
+BASE VALIDATE-DOCS-EXIT=1

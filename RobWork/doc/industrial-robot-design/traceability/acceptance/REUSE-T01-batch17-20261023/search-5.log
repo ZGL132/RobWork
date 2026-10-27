@@ -1,0 +1,79 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:12:#   1. 骨架期的 INTERFACE 占位升级为 STATIC 库（目标名 sdurws_ird_core 不变，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:14:#   2. 注册 gtest 测试目标 sdurws_ird_core_test 与 UT-BUILD 红线用例；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:26:add_library(sdurws_ird_core STATIC
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:41:target_compile_features(sdurws_ird_core PUBLIC cxx_std_17)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:42:set_target_properties(sdurws_ird_core PROPERTIES
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:52:    target_compile_options(sdurws_ird_core PUBLIC /utf-8)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:58:target_include_directories(sdurws_ird_core PUBLIC
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:66:    target_link_libraries(sdurws_ird_core PUBLIC sdurw_math)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:72:    add_library(RWS::ird::core ALIAS sdurws_ird_core)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:75:# ---- 测试目标 sdurws_ird_core_test（随 CORE-T01 登记，不预建于骨架）----
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:80:add_executable(sdurws_ird_core_test
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:88:    test/CompareTest.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:92:target_compile_features(sdurws_ird_core_test PRIVATE cxx_std_17)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:93:set_target_properties(sdurws_ird_core_test PROPERTIES
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:101:    target_compile_options(sdurws_ird_core_test PRIVATE /utf-8)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:105:# sdurws_ird_core 同时验证"公共头可被正常 include＋库可链接"。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:106:target_link_libraries(sdurws_ird_core_test PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:107:    sdurws_ird_core
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:108:    sdurws_ird_testkit
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:113:target_compile_definitions(sdurws_ird_core_test PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:120:add_custom_command(TARGET sdurws_ird_core_test POST_BUILD
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:122:            $<TARGET_RUNTIME_DLLS:sdurws_ird_core_test>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:123:            $<TARGET_FILE_DIR:sdurws_ird_core_test>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:149:ird_add_gtest(sdurws_ird_core_test)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:158:get_target_property(_ird_core_link_libs sdurws_ird_core LINK_LIBRARIES)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:159:get_target_property(_ird_core_iface_libs sdurws_ird_core INTERFACE_LINK_LIBRARIES)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:161:    if(_lib MATCHES "^sdurws_ird_" AND NOT _lib STREQUAL "sdurws_ird_core")
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:163:            "core 依赖红线（R-1/R-2/T-1）：sdurws_ird_core 不得链接 industrialrobot "
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:17:#   1. 骨架期的 INTERFACE 占位升级为 STATIC 库（目标名 sdurws_ird_testkit
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:19:#   2. 注册 gtest 测试目标 sdurws_ird_testkit_test（数据根三态用例＋
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:46:add_library(sdurws_ird_testkit STATIC
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:62:target_compile_features(sdurws_ird_testkit PUBLIC cxx_std_17)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:63:set_target_properties(sdurws_ird_testkit PROPERTIES
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:72:    target_compile_options(sdurws_ird_testkit PUBLIC /utf-8)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:77:target_include_directories(sdurws_ird_testkit PUBLIC
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:82:# 消费者经 testkit 传递取得 core 头）。统一用真名 sdurws_ird_core：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:86:target_link_libraries(sdurws_ird_testkit PUBLIC sdurws_ird_core)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:91:    add_library(RWS::ird::testkit ALIAS sdurws_ird_testkit)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:96:target_compile_definitions(sdurws_ird_testkit PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:99:# ---- 测试目标 sdurws_ird_testkit_test（随 TK-T01 登记，不预建空目标）----
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:103:add_executable(sdurws_ird_testkit_test
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:107:    test/DatasetTest.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:111:    test/SetCheckTest.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:121:target_compile_definitions(sdurws_ird_testkit_test PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:123:target_compile_features(sdurws_ird_testkit_test PRIVATE cxx_std_17)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:124:set_target_properties(sdurws_ird_testkit_test PROPERTIES
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:130:    target_compile_options(sdurws_ird_testkit_test PRIVATE /utf-8)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:136:# 链接产品库 sdurws_ird_testkit 同时验证"公共头可正常 include＋库可链接"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:138:target_link_libraries(sdurws_ird_testkit_test PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:139:    sdurws_ird_testkit
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:147:target_compile_definitions(sdurws_ird_testkit_test PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:154:add_custom_command(TARGET sdurws_ird_testkit_test POST_BUILD
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:156:            $<TARGET_RUNTIME_DLLS:sdurws_ird_testkit_test>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:157:            $<TARGET_FILE_DIR:sdurws_ird_testkit_test>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:179:ird_add_gtest(sdurws_ird_testkit_test)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:191:target_link_libraries(sdurws_ird_testdata_lint PRIVATE sdurws_ird_testkit)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:199:add_executable(sdurws_ird_testkit_prochelper tools/prochelper/main.cpp)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:200:target_compile_features(sdurws_ird_testkit_prochelper PRIVATE cxx_std_17)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:201:set_target_properties(sdurws_ird_testkit_prochelper PROPERTIES
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:207:    RUNTIME_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:sdurws_ird_testkit_test>")
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:209:    target_compile_options(sdurws_ird_testkit_prochelper PRIVATE /utf-8)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:211:# helper 一起构建：verify 命令只构建 sdurws_ird_testkit_test，缺此依赖则
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:213:add_dependencies(sdurws_ird_testkit_test sdurws_ird_testkit_prochelper)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:215:# ---- Qt 测试辅助目标 sdurws_ird_testkit_qt（UI-T02 启用登记，WP-10-T02）----
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:222:#   2. sdurws_ird_testkit（本体）永不链接它——Qt 不经 testkit 传递进入生产
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:226:#      "`sdurws_ird_testkit_qt` 首消费者理由登记"——WP-10-T11 需 Qt Test
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:236:# testkit/CMakeLists.txt）。目标名 sdurws_ird_testkit_qt 为 ird_gates 形态
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:242:add_library(sdurws_ird_testkit_qt INTERFACE)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:245:target_include_directories(sdurws_ird_testkit_qt INTERFACE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:250:target_link_libraries(sdurws_ird_testkit_qt INTERFACE Qt6::Core)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:256:get_target_property(_ird_tkqt_link_libs sdurws_ird_testkit_qt LINK_LIBRARIES)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:257:get_target_property(_ird_tkqt_iface_libs sdurws_ird_testkit_qt INTERFACE_LINK_LIBRARIES)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:261:            "testkit_qt 依赖红线（testkit.md §3.5/§2.4）：sdurws_ird_testkit_qt "
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:273:# T-2（testkit.md §2.4）：sdurws_ird_testkit 链接接口只允许 core——出现
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:281:get_target_property(_ird_tk_link_libs sdurws_ird_testkit LINK_LIBRARIES)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:282:get_target_property(_ird_tk_iface_libs sdurws_ird_testkit INTERFACE_LINK_LIBRARIES)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:284:    if(_lib MATCHES "^sdurws_ird_" AND NOT _lib STREQUAL "sdurws_ird_core"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:285:                                      AND NOT _lib STREQUAL "sdurws_ird_testkit")
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:287:            "testkit 依赖红线（T-2）：sdurws_ird_testkit 仅可链接 core＋标准库，"

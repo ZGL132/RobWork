@@ -1,0 +1,5 @@
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack not found for TaskId: ACC-T01
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 

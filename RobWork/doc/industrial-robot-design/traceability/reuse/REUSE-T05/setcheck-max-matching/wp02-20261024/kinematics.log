@@ -1,0 +1,22 @@
+Note: Google Test filter = KinGoldenIkDedup.*:KinGoldenCoverage.ACC1_SampleSet*:KinGoldenCoverage.ACC5_Thread*
+[==========] Running 5 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from KinGoldenIkDedup
+[ RUN      ] KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1
+[       OK ] KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1 (54 ms)
+[ RUN      ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1
+[       OK ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1 (1 ms)
+[ RUN      ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5
+[       OK ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5 (1 ms)
+[----------] 3 tests from KinGoldenIkDedup (57 ms total)
+
+[----------] 2 tests from KinGoldenCoverage
+[ RUN      ] KinGoldenCoverage.ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1
+[       OK ] KinGoldenCoverage.ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1 (4566 ms)
+[ RUN      ] KinGoldenCoverage.ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5
+[       OK ] KinGoldenCoverage.ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5 (9281 ms)
+[----------] 2 tests from KinGoldenCoverage (13847 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test suites ran. (13905 ms total)
+[  PASSED  ] 5 tests.

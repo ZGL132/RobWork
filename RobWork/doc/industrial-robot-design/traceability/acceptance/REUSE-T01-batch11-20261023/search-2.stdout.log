@@ -1,0 +1,29 @@
+RobWork/RobWork/src/rw/math/Random.cpp:26:#include <boost/random/variate_generator.hpp>
+RobWork/RobWork/src/rw/math/Random.cpp:31:boost::mt19937 generator;
+RobWork/RobWork/src/rw/math/Random.cpp:36:boost::variate_generator< boost::mt19937&, dist_type >
+RobWork/RobWork/src/rw/math/Random.cpp:37:    normal_distribution (generator, boost::normal_distribution< double > (0, 1));
+RobWork/RobWork/src/rw/math/Random.cpp:47:    return distributor (generator);
+RobWork/RobWork/src/rw/math/Random.cpp:50:void Random::seed (unsigned seed)
+RobWork/RobWork/src/rw/math/Random.cpp:52:    // VC++ can't select the correct seed() method without a cast here.
+RobWork/RobWork/src/rw/math/Random.cpp:53:    generator.seed (static_cast< boost::mt19937::result_type > (seed));
+RobWork/RobWork/src/rw/math/Random.cpp:56:void Random::seed ()
+RobWork/RobWork/src/rw/math/Random.cpp:58:    seed ((unsigned) rw::common::TimerUtil::currentTimeMs ());
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:65:            return MetricUtil::dist1 (a, b);
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:104:            return MetricUtil::dist1Weighted (a, b, _weights);
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:137:            return MetricUtil::dist2 (a, b);
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:176:            return MetricUtil::dist2Weighted (a, b, _weights);
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:210:            return MetricUtil::distInf (a, b);
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:249:            return MetricUtil::distInfWeighted (a, b, _weights);
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:377:        inline static typename Metric< VectorType >::Ptr makeEuclidean ()
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:403:        inline static typename Metric< VectorType >::Ptr makeInfinity ()
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:441:        inline static typename Metric< VectorType >::Ptr makeManhattan ()
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:61:        static inline typename VectorType::value_type dist1 (const VectorType& a,
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:93:        dist1Weighted (const VectorType& a, const VectorType& b, const VectorType& scale)
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:132:        static inline typename VectorType::value_type dist2Sqr (const VectorType& a,
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:147:        static inline typename VectorType::value_type dist2 (const VectorType& a,
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:150:            return std::sqrt (dist2Sqr (a, b));
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:184:        dist2WeightedSqr (const VectorType& a, const VectorType& b, const VectorType& scale)
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:200:        dist2Weighted (const VectorType& a, const VectorType& b, const VectorType& scale)
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:202:            return std::sqrt (dist2WeightedSqr (a, b, scale));
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:227:        static inline typename VectorType::value_type distInf (const VectorType& a,
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:263:        distInfWeighted (const VectorType& a, const VectorType& b, const VectorType& scale)

@@ -1,0 +1,173 @@
+{
+  "rawFrozenScriptSha256": {
+    "validatorSha256": "1CF30F2D07419BA21B8B7DA7C43331A190A3DC0E0B37C1CDE6110DD98E46A77F",
+    "helperSha256": "25F27251FAFA9CB40146243AFC4916EA82B93CDF8708B6FA050C4B37D77F0E57",
+    "driverSha256": "4683B7C58A97B48A0794EC821C4AAEE30033AAE67508866B2E7BAA5F8244EA42"
+  },
+  "history": [
+    {
+      "attempt": "r1-ps7",
+      "expected": 142,
+      "executed": 30,
+      "passed": 7,
+      "failed": 23,
+      "skipped": 0,
+      "notRun": 112,
+      "complete": false,
+      "driverFailure": "Exception calling \"ReadAllText\" with \"1\" argument(s): \"Could not find a part of the path 'C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-reuse-0439029eeb7f45c5821f74238819d121\\RobWork\\RobWork\\gtest\\test-main.cpp'.\"",
+      "failedNames": [
+        "01-clean",
+        "07-inventory-omission",
+        "08-forged-blob",
+        "09-inventory-duplicate",
+        "10-inventory-unit",
+        "11-new-source",
+        "12-stale-change-hash",
+        "13-core-even-business",
+        "14-cpp-not-governance",
+        "15-missing-approval",
+        "16-unknown-capability",
+        "17-path-traversal",
+        "18-missing-task-proof",
+        "19-task-scope",
+        "20-forbidden-scope",
+        "21-stage-not-approved",
+        "22-final-debt-rejected",
+        "23-governance-not-algorithm-approval",
+        "24-upstream-readonly",
+        "26-deletion-undeclared",
+        "27-forged-debt-closure",
+        "28-arbitrary-task-ready",
+        "29-planned-not-executable"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r1-ps51",
+      "expected": 142,
+      "executed": 30,
+      "passed": 7,
+      "failed": 23,
+      "skipped": 0,
+      "notRun": 112,
+      "complete": false,
+      "driverFailure": "Exception calling \"ReadAllText\" with \"1\" argument(s): \"Could not find a part of the path 'C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-reuse-6a568186172642e8b5c5784d44b04c85\\RobWork\\RobWork\\gtest\\test-main.cpp'.\"",
+      "failedNames": [
+        "01-clean",
+        "07-inventory-omission",
+        "08-forged-blob",
+        "09-inventory-duplicate",
+        "10-inventory-unit",
+        "11-new-source",
+        "12-stale-change-hash",
+        "13-core-even-business",
+        "14-cpp-not-governance",
+        "15-missing-approval",
+        "16-unknown-capability",
+        "17-path-traversal",
+        "18-missing-task-proof",
+        "19-task-scope",
+        "20-forbidden-scope",
+        "21-stage-not-approved",
+        "22-final-debt-rejected",
+        "23-governance-not-algorithm-approval",
+        "24-upstream-readonly",
+        "26-deletion-undeclared",
+        "27-forged-debt-closure",
+        "28-arbitrary-task-ready",
+        "29-planned-not-executable"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r2-ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 139,
+      "failed": 3,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target",
+        "closure-new-file-no-independent-record",
+        "closure-new-file-omitted-final"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r2-ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 139,
+      "failed": 3,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target",
+        "closure-new-file-no-independent-record",
+        "closure-new-file-omitted-final"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r3-ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 141,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r3-ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 141,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r4-ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [],
+      "r4FrozenScriptHashesMatch": true
+    },
+    {
+      "attempt": "r4-ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [],
+      "r4FrozenScriptHashesMatch": true
+    }
+  ]
+}

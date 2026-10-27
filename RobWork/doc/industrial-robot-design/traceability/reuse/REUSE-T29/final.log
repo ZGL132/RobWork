@@ -1,0 +1,148 @@
+Note: Google Test filter = PresetRotationTest.*:CustomEaaTest.*:ResolveTest.*:ValidateTest.*:PresetConsistencyTest.*:InverseAndPointTest.*:ComposeTest.*:BaseMountConsistencyTest.*:BaseWorldReuse.*:WorkCellCompilerTest.*RT_BW_4:WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37:WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1:CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly:SnapshotTest.CreatePublishesSnapshotFields_RT_T09:SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1
+[==========] Running 53 tests from 12 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from PresetRotationTest
+[ RUN      ] PresetRotationTest.GroundIsExactlyIdentity_RT_BW_2
+[       OK ] PresetRotationTest.GroundIsExactlyIdentity_RT_BW_2 (0 ms)
+[ RUN      ] PresetRotationTest.InvertedIsFrozenRxPi_RT_BW_2_P_RT_4
+[       OK ] PresetRotationTest.InvertedIsFrozenRxPi_RT_BW_2_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4
+[       OK ] PresetRotationTest.WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.InvertedBaseZPointsWorldDown_P_RT_4
+[       OK ] PresetRotationTest.InvertedBaseZPointsWorldDown_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4
+[       OK ] PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2
+[       OK ] PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2 (0 ms)
+[ RUN      ] PresetRotationTest.CustomPresetHasNoFixedMatrix_Throws
+[       OK ] PresetRotationTest.CustomPresetHasNoFixedMatrix_Throws (0 ms)
+[----------] 7 tests from PresetRotationTest (0 ms total)
+
+[----------] 5 tests from CustomEaaTest
+[ RUN      ] CustomEaaTest.ZeroEaaYieldsIdentity
+[       OK ] CustomEaaTest.ZeroEaaYieldsIdentity (0 ms)
+[ RUN      ] CustomEaaTest.QuarterTurnAboutZMatchesAnalytic
+[       OK ] CustomEaaTest.QuarterTurnAboutZMatchesAnalytic (0 ms)
+[ RUN      ] CustomEaaTest.HalfTurnAboutXMatchesFrozenMatrix_P_RT_4
+[       OK ] CustomEaaTest.HalfTurnAboutXMatchesFrozenMatrix_P_RT_4 (0 ms)
+[ RUN      ] CustomEaaTest.NonFiniteEaaThrowsInputInvalid
+[       OK ] CustomEaaTest.NonFiniteEaaThrowsInputInvalid (0 ms)
+[ RUN      ] CustomEaaTest.DeterministicBitwiseRepeat
+[       OK ] CustomEaaTest.DeterministicBitwiseRepeat (0 ms)
+[----------] 5 tests from CustomEaaTest (0 ms total)
+
+[----------] 7 tests from ResolveTest
+[ RUN      ] ResolveTest.DefaultBaseResolvesGroundIdentity_RT_BW_3
+[       OK ] ResolveTest.DefaultBaseResolvesGroundIdentity_RT_BW_3 (0 ms)
+[ RUN      ] ResolveTest.GroundCarriesBasePosition
+[       OK ] ResolveTest.GroundCarriesBasePosition (0 ms)
+[ RUN      ] ResolveTest.InvertedResolvesFrozenMatrix
+[       OK ] ResolveTest.InvertedResolvesFrozenMatrix (0 ms)
+[ RUN      ] ResolveTest.WallResolvesFrozenMatrix
+[       OK ] ResolveTest.WallResolvesFrozenMatrix (0 ms)
+[ RUN      ] ResolveTest.CustomWithoutEaaRejected
+[       OK ] ResolveTest.CustomWithoutEaaRejected (0 ms)
+[ RUN      ] ResolveTest.CustomResolvesViaRodrigues
+[       OK ] ResolveTest.CustomResolvesViaRodrigues (0 ms)
+[ RUN      ] ResolveTest.NonFinitePositionRejected
+[       OK ] ResolveTest.NonFinitePositionRejected (0 ms)
+[----------] 7 tests from ResolveTest (0 ms total)
+
+[----------] 5 tests from ValidateTest
+[ RUN      ] ValidateTest.WellFormedTransformPasses
+[       OK ] ValidateTest.WellFormedTransformPasses (0 ms)
+[ RUN      ] ValidateTest.ReflectionMatrixRejected_RT_BW_6
+[       OK ] ValidateTest.ReflectionMatrixRejected_RT_BW_6 (0 ms)
+[ RUN      ] ValidateTest.NonOrthogonalMatrixRejected_RT_BW_6
+[       OK ] ValidateTest.NonOrthogonalMatrixRejected_RT_BW_6 (0 ms)
+[ RUN      ] ValidateTest.NonFiniteComponentsRejected_RT_BW_6
+[       OK ] ValidateTest.NonFiniteComponentsRejected_RT_BW_6 (0 ms)
+[ RUN      ] ValidateTest.NearOrthogonalWithinTolerancePasses
+[       OK ] ValidateTest.NearOrthogonalWithinTolerancePasses (0 ms)
+[----------] 5 tests from ValidateTest (0 ms total)
+
+[----------] 6 tests from PresetConsistencyTest
+[ RUN      ] PresetConsistencyTest.InvertedWithFrozenMatrixPasses
+[       OK ] PresetConsistencyTest.InvertedWithFrozenMatrixPasses (0 ms)
+[ RUN      ] PresetConsistencyTest.InvertedWithIdentityRejected
+[       OK ] PresetConsistencyTest.InvertedWithIdentityRejected (0 ms)
+[ RUN      ] PresetConsistencyTest.WallWithWrongPresetMatrixRejected
+[       OK ] PresetConsistencyTest.WallWithWrongPresetMatrixRejected (0 ms)
+[ RUN      ] PresetConsistencyTest.CustomWithIdentityRejected
+[       OK ] PresetConsistencyTest.CustomWithIdentityRejected (0 ms)
+[ RUN      ] PresetConsistencyTest.CustomWithRotatedMatrixPasses
+[       OK ] PresetConsistencyTest.CustomWithRotatedMatrixPasses (0 ms)
+[ RUN      ] PresetConsistencyTest.GroundAcceptsIdentityAndArbitraryRotation
+[       OK ] PresetConsistencyTest.GroundAcceptsIdentityAndArbitraryRotation (0 ms)
+[----------] 6 tests from PresetConsistencyTest (0 ms total)
+
+[----------] 6 tests from InverseAndPointTest
+[ RUN      ] InverseAndPointTest.NumericExamplePointTransform_RT_BW_1
+[       OK ] InverseAndPointTest.NumericExamplePointTransform_RT_BW_1 (0 ms)
+[ RUN      ] InverseAndPointTest.NumericExampleInverseRoundtrip_RT_BW_1
+[       OK ] InverseAndPointTest.NumericExampleInverseRoundtrip_RT_BW_1 (0 ms)
+[ RUN      ] InverseAndPointTest.NumericExampleGravityProjection_RT_BW_1
+[       OK ] InverseAndPointTest.NumericExampleGravityProjection_RT_BW_1 (0 ms)
+[ RUN      ] InverseAndPointTest.InverseRoundtripAllFourPresets_RT_BW_2
+[       OK ] InverseAndPointTest.InverseRoundtripAllFourPresets_RT_BW_2 (0 ms)
+[ RUN      ] InverseAndPointTest.InverseOfInvertedMatchesFrozenMatrix
+[       OK ] InverseAndPointTest.InverseOfInvertedMatchesFrozenMatrix (0 ms)
+[ RUN      ] InverseAndPointTest.InverseRejectsNonOrthogonalInput
+[       OK ] InverseAndPointTest.InverseRejectsNonOrthogonalInput (0 ms)
+[----------] 6 tests from InverseAndPointTest (0 ms total)
+
+[----------] 2 tests from ComposeTest
+[ RUN      ] ComposeTest.AssociativityTwoGroupings_RT_BW_1
+[       OK ] ComposeTest.AssociativityTwoGroupings_RT_BW_1 (0 ms)
+[ RUN      ] ComposeTest.ComposedTranslationMatchesManualFormula
+[       OK ] ComposeTest.ComposedTranslationMatchesManualFormula (0 ms)
+[----------] 2 tests from ComposeTest (0 ms total)
+
+[----------] 4 tests from BaseMountConsistencyTest
+[ RUN      ] BaseMountConsistencyTest.ExactMatchConsistent
+[       OK ] BaseMountConsistencyTest.ExactMatchConsistent (0 ms)
+[ RUN      ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4
+[       OK ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4 (0 ms)
+[ RUN      ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied
+[       OK ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied (0 ms)
+[ RUN      ] BaseMountConsistencyTest.WithinToleranceDeviationPasses
+[       OK ] BaseMountConsistencyTest.WithinToleranceDeviationPasses (0 ms)
+[----------] 4 tests from BaseMountConsistencyTest (0 ms total)
+
+[----------] 3 tests from BaseWorldReuse
+[ RUN      ] BaseWorldReuse.TinyAngleAndAxisOracle_REUSE_T29
+[       OK ] BaseWorldReuse.TinyAngleAndAxisOracle_REUSE_T29 (0 ms)
+[ RUN      ] BaseWorldReuse.RationalTransformConsumers_REUSE_T29
+[       OK ] BaseWorldReuse.RationalTransformConsumers_REUSE_T29 (0 ms)
+[ RUN      ] BaseWorldReuse.ValidationMetricBoundary_REUSE_T29
+[       OK ] BaseWorldReuse.ValidationMetricBoundary_REUSE_T29 (0 ms)
+[----------] 3 tests from BaseWorldReuse (0 ms total)
+
+[----------] 5 tests from WorkCellCompilerTest
+[ RUN      ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4
+[       OK ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4
+[       OK ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4
+[       OK ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37
+[       OK ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37 (0 ms)
+[ RUN      ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1
+[       OK ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1 (4 ms)
+[----------] 5 tests from WorkCellCompilerTest (5 ms total)
+
+[----------] 2 tests from SnapshotTest
+[ RUN      ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09
+[       OK ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1
+[       OK ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1 (2 ms)
+[----------] 2 tests from SnapshotTest (3 ms total)
+
+[----------] 1 test from CompilerTest
+[ RUN      ] CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly
+[       OK ] CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly (0 ms)
+[----------] 1 test from CompilerTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 53 tests from 12 test suites ran. (10 ms total)
+[  PASSED  ] 53 tests.

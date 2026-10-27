@@ -1,0 +1,24 @@
+38:class Parser {
+123:        case '{': return parseObject(depth);
+124:        case '[': return parseArray(depth);
+128:            v.text = parseString();
+143:                return parseNumber();
+164:    JsonValue parseObject(std::size_t depth)
+183:            const std::string key = parseString();
+219:    JsonValue parseArray(std::size_t depth)
+256:    std::string parseString()
+283:                case 'u':  out.append(parseUnicodeEscape()); break;
+299:    std::string parseUnicodeEscape()
+310:                return utf8Encode(full);
+317:        return utf8Encode(cp);
+338:    static std::string utf8Encode(unsigned cp)
+360:    JsonValue parseNumber()
+432:void dumpEscaped(const std::string& s, std::string* out)
+469:void dumpValue(const JsonValue& v, std::string* out)
+475:    case JsonValue::Kind::String: dumpEscaped(v.text, out); break;
+480:            dumpValue(v.items[i], out);
+488:            dumpEscaped(v.members[i].first, out);
+490:            dumpValue(v.members[i].second, out);
+555:        dumpValue(value, &out);
+566:            case JsonValue::Kind::String: dumpEscaped(v.text, o); break;
+584:                    dumpEscaped(v.members[i].first, o);

@@ -1,0 +1,222 @@
+[
+  {
+    "functionId": "optimization.ParetoTest.makeCid",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "symbol": "makeCid",
+        "qualifiedSymbol": "(global anonymous namespace)::makeCid",
+        "startLine": 68,
+        "endLine": 73,
+        "sha256": "66021aec4508062218551d680a485124ff27bdc3aabfb1faca68eb32113a0861"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "测试身份以种子填非零字节，不是ContentDigest算法；限Pareto单测输入，不能当真实内容寻址生产身份",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+        "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCandidate",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "symbol": "makeCandidate",
+        "qualifiedSymbol": "(global anonymous namespace)::makeCandidate",
+        "startLine": 78,
+        "endLine": 88,
+        "sha256": "2b64fd9a557f298fb9f83c808cd3d7efd262b05dc0f3ed3996c24478aa1126cf"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "两目标槽DTO装配，其余nullopt；实际调用生产Pareto接口，不含第二支配核心",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+        "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeTwoObjectives",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "symbol": "makeTwoObjectives",
+        "qualifiedSymbol": "(global anonymous namespace)::makeTwoObjectives",
+        "startLine": 91,
+        "endLine": 95,
+        "sha256": "bc1c9f29968f2bf448feb7fe149f5b7cf35500222ee7fbab46180c007286861e"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "复用生产makeObjectiveSet，只装配min包络/max裕量零容差",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+        "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "optimization.ParetoTest.idsOf",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "symbol": "idsOf",
+        "qualifiedSymbol": "(global anonymous namespace)::idsOf",
+        "startLine": 98,
+        "endLine": 106,
+        "sha256": "1c04082a980a616d201f5d8578a6e2959561bf516a958c9fb3e88550b0ee4fef"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "遍历实际entries投影ID供断言，不排序、不重建前沿",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+        "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  }
+]

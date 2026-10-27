@@ -1,0 +1,7 @@
+RobWork/doc/topics\plugins.hpp.md:18:<tr><td>rw::common::DOMParser::Factory</td><td>Different parsers understanding the Document Object Model.</td><td>
+RobWork/doc/sphinx\tutorials\plugins_sdurws.rst:38:- **SamplePlugin.json**: used by Qt5 for metainformation about the plugin (name, version etc.)
+RobWork/doc/sphinx\tutorials\plugins_sdurws.rst:54:In the hpp file the Q_PLUGIN_METADATA macro refers to the file SamplePlugin.json.
+RobWork/doc/sphinx\tutorials\plugins_sdurws.rst:57:.. literalinclude:: ../../../RobWorkStudio/example/pluginapp/SamplePlugin.json
+RobWork/doc/sphinx\tutorials\plugins_sdurws.rst:58:   :language: json
+RobWork/doc/sphinx\tutorials\plugins_sdurws.rst:60:   :caption: RobWorkStudio/example/pluginapp/SamplePlugin.json
+RobWork/doc/sphinx\manual\programming_conventions.rst:121:   DOMParser::Ptr parser = DOMParser::make();

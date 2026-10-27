@@ -1,0 +1,68 @@
+{
+  "candidate": "R3 Boost cpp_bin_float fixed 128-bit product / 4224-bit sums",
+  "head": "0a091394b9466c3fa7521d34162b1c8b64a843c4",
+  "python": "3.13.11 | packaged by Anaconda, Inc. | (main, Dec 10 2025, 21:21:58) [MSC v.1929 64 bit (AMD64)]",
+  "counts": {
+    "cases": 22831,
+    "reused_real_cpython_cases": 13168,
+    "finite_valid": 22600,
+    "overflow": 13291,
+    "production_overflow_errors": 3494,
+    "wide_formula_errors": 0,
+    "r3_overflow_errors": 0,
+    "r3_unchanged_path_errors": 0,
+    "r2_overflow_errors": 0,
+    "r2_unchanged_path_errors": 0,
+    "normal_rounding_differences": 36
+  },
+  "r3_verdict": "PASS",
+  "independent_acceptance": "NOT RUN",
+  "probe_stderr": {
+    "c4-r3-probe.exe": "candidate-new-calls=0\n",
+    "c4-r2-probe.exe": ""
+  },
+  "protocol_sha256": "51c1c46fbfbfc7f43a2472e10c7835776b9283fc3a153925ede43c102c48e610",
+  "failures": [],
+  "inputs": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T14/oracle.py",
+      "raw_sha256": "490adbca7ecd9acfa7f8ebfcfb2f505b464af98a1806006715cdf9a47ad1aab4"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T14/revision-r3/verify.py",
+      "raw_sha256": "6ba9f10a285af9fe26a4f23d1d5bbde4294800c1b7b523e23050376f387edc28"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T14/revision-r3/probe.cpp",
+      "raw_sha256": "c651b0a6cc1450d3a525e1f149857d7f8ad1c44008502e2f1716ccc1de2eac34"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T14/C4Probe.cpp",
+      "raw_sha256": "75644fbb82487ca78b5bb2d19b781cc9c4335eb64dc25b7ef7a10a091625bb39"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T14/revision-candidate/compare-candidate.cpp",
+      "raw_sha256": "50138bd571a58ec5ffbb95adf8e53c79acd58cb23bcf2f88ad495ee9024f9b16"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "raw_sha256": "c7b6518633a22618d56dc554707377752e1cf08654e6248a5945cd0664b24e75"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "raw_sha256": "3ae186a9157293e4c2082fa08e3de768bc28d14b39acac07fdaebe626a1ff847"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/boost/version.hpp",
+      "raw_sha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/boost/multiprecision/cpp_bin_float.hpp",
+      "raw_sha256": "7d6b9b721e860301f8004d1bda0ace7630fb905a7c5cc67216143765da983b2d"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/boost/multiprecision/cpp_int/multiply.hpp",
+      "raw_sha256": "25413c62b71c24e9a4a42ea210ee206701c2a97b976960a2f9a39299905ab64c"
+    }
+  ]
+}

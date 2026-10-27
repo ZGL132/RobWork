@@ -1,0 +1,2 @@
+verify-task-scope: GOV-T25 base=2ac114f33d21 head=0a091394b946 changed=5 allowedRules=7 forbiddenRules=4
+verify-task-scope: PASS GOV-T25 —— 5 个路径全部在允许面内

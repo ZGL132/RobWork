@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "reviewedCommit": "a3cb564810b3eae8515ba11bfed9c37756d808f4",
+  "originalFailedCommit": "e0bee2994eee0e8f3299ea5ccf200c354f4454be",
+  "result": "PASS",
+  "scope": "B10-P2-01返工复验；不含B11或全T01退出",
+  "closedFindings": [
+    "B10-P2-01"
+  ],
+  "newFindings": [],
+  "checks": {
+    "macros": 20,
+    "failedTargets": 0,
+    "removedUnits": 10,
+    "removedTargets": 13,
+    "evidenceRows": 58,
+    "inventoryReferences": 58,
+    "hashChecks": 466,
+    "failedHashes": 0,
+    "mainInventoryUnchanged": true
+  },
+  "actualMacroCalls": 47,
+  "gates": {
+    "failed": 0,
+    "passed": 3,
+    "skipped": 0,
+    "exitCodes": {
+      "task": 0,
+      "docs": 0,
+      "reuse": 0
+    }
+  },
+  "archives": {
+    "GTestPass": {
+      "preservedResult": "PASS",
+      "newlineOnly": 3,
+      "rerun": false,
+      "failed": 0,
+      "raw": 24,
+      "passed": 1,
+      "files": 27
+    },
+    "B10Fail": {
+      "files": 44,
+      "preservedResult": "FAIL",
+      "failed": 0,
+      "newlineOnly": 8,
+      "raw": 36
+    }
+  },
+  "pendingB10Relations": 58,
+  "preservedOpenFindings": [
+    "F-957",
+    "F-958"
+  ],
+  "notRun": [
+    "C++构建",
+    "GUI",
+    "既有25项API",
+    "GTest探测重跑",
+    "B11独立语义验收",
+    "DeepEvidence",
+    "全T01退出"
+  ],
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994",
+  "repositoryModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "wholeT01Pass": false
+}

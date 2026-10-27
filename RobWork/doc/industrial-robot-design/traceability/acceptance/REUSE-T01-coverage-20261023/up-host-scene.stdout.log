@@ -1,0 +1,9 @@
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:86:        void setWorkCell (rw::core::Ptr< rw::models::WorkCell > wc);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:89:        rw::core::Ptr< rw::models::WorkCell > getWorkCell ();
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:305:        DrawableNode::Ptr addRender (const std::string& name, rw::core::Ptr< rw::graphics::Render > render,
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:377:        bool removeDrawables (const rw::core::Ptr<rw::kinematics::Frame> f);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:384:        bool removeDrawables (const std::string& name);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:391:        bool removeDrawable (DrawableNode::Ptr drawable);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:399:        bool removeDrawable (DrawableNode::Ptr drawable, const rw::core::Ptr<rw::kinematics::Frame> f);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:406:        bool removeDrawable (const std::string& name);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:414:        bool removeDrawable (const std::string& name, const rw::core::Ptr<rw::kinematics::Frame> f);

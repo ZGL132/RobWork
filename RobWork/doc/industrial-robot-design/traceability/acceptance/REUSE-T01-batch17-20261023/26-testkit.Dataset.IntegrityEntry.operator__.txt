@@ -1,0 +1,6 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp
+sdurws::ird::testkit::IntegrityEntry::operator==
+109:     bool operator==(const IntegrityEntry& o) const noexcept
+110:     {
+111:         return path == o.path && sha256Hex == o.sha256Hex && sizeBytes == o.sizeBytes;
+112:     }

@@ -1,0 +1,32 @@
+Note: Google Test filter = TrjPlannerAvoidance.CollisionThenRework*:TrjPlannerAvoidance.BudgetExhausted*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from TrjPlannerAvoidance
+[ RUN      ] TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PlannerAvoidanceTest.cpp(604): error: Value of: result.directPathAdopted
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PlannerAvoidanceTest.cpp(605): error: Value of: result.directCollision.has_value()
+  Actual: false
+Expected: true
+
+[  FAILED  ] TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2 (0 ms)
+[ RUN      ] TrjPlannerAvoidance.BudgetExhaustedYieldsMaterialNotInfeasible_WP16T06_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PlannerAvoidanceTest.cpp(661): error: Expected equality of these values:
+  result.status
+    Which is: 1-byte object <00>
+  trj::AvoidanceStatus::SearchExhausted
+    Which is: 1-byte object <01>
+
+[  FAILED  ] TrjPlannerAvoidance.BudgetExhaustedYieldsMaterialNotInfeasible_WP16T06_ACC2 (0 ms)
+[----------] 2 tests from TrjPlannerAvoidance (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2
+[  FAILED  ] TrjPlannerAvoidance.BudgetExhaustedYieldsMaterialNotInfeasible_WP16T06_ACC2
+
+ 2 FAILED TESTS

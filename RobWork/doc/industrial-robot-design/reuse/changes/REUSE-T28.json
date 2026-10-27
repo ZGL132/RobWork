@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T28",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T28.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
+      "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-INERTIA"
+      ],
+      "boundary": "删除手写旋转与长方体公式，真实公开值API直接消费；全文件实审，既有产品公式/协议保留。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+      "sha256": "f71c84c2a179e9979e924dd20ee92b1696564cd91821683aacf92d4f4ed470d2",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-EIGEN"
+      ],
+      "boundary": "T27分解体不变，必要相对1e-12自检按所有者确认实施；当前头真实扰动/回归承接，原件不改写。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+      "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "既有gtest/testkit/上游测试供给；3新字面oracle/阈值用例，原独立对照保留。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/README.md"
+    }
+  ]
+}

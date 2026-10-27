@@ -1,0 +1,66 @@
+{
+  "head": "98c97238fa3c34aad51330b3b196439844badb69",
+  "base": "fd194d51b586085e26adeae4a73b72a06cb5ce21",
+  "rejected": "f2e65141259cd43ee5e63799514a733908440355",
+  "changedPaths": 89,
+  "manifests": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/artifact-manifest.json",
+      "count": 37
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/r2/artifact-manifest.json",
+      "count": 84
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/r2/rejected-f2e651412/safe-manifest.json",
+      "count": 78
+    }
+  ],
+  "original11Unchanged": true,
+  "rows": 69,
+  "inputBindingsBefore": 615,
+  "inputBindingsAfter": 502,
+  "historicalFindingsSemanticPrefix": true,
+  "historicalFindingsRawPrefix": true,
+  "f965": {
+    "id": "F-965",
+    "source": "reuse/core-identity-events-audit.md / batch28",
+    "severity": "major",
+    "status": "open",
+    "registeredAt": "2026-10-23",
+    "title": "core身份FNV非空向量偏离约定，公开ObjectId散列继承偏差",
+    "owner": "core / REUSE-T05",
+    "resolution": "独立固定整数向量探测4项2通过2失败；原core64通过。addShifted/addMulSmall用已变更hi/lo计算后项，非一次乘FNV素数；公开ObjectId hash真实失败。六Id及ContentVersion/ContentIdentity静态同族，不声称内容SHA或持久化损坏。T01不修核心；后续先核成熟已有能力/消费者兼容性，无现成API则最小修正提案获批后实施。"
+  },
+  "sourceChangesFromRejected": [],
+  "recordedIndependentTests": [
+    {
+      "run": "core",
+      "total": 64,
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0,
+      "failedTests": [],
+      "recordedExit": "0"
+    },
+    {
+      "run": "probe",
+      "total": 6,
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "failedTests": [
+        "ReuseCoreAudit.FnvNonemptyMatchesFixedVectors_CORE_T02",
+        "ReuseCoreAudit.PublicHashConsumesFnvResult_CORE_T02"
+      ],
+      "recordedExit": "1"
+    }
+  ],
+  "permissionCounts": {
+    "ARCH:3.6.1": 22,
+    "ARCH:3.6.3": 31,
+    "ARCH:3.6": 16
+  },
+  "errors": []
+}

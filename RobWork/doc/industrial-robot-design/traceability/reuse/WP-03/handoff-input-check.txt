@@ -1,0 +1,49 @@
+GOV-T25 WP-03 read-only handoff inspection; not independent acceptance
+inspected HEAD=881f576cd03b1d52576c8ca6c78f24647c70d56c
+inspected tree=e98cf3deb2c8f5680edc766e963235fe4954f25d
+Follow-up: owner authorized title-only correction to 9276f19b26bfe095cbe2ccf460a64dec39bf45e9; the inspected tree and commit body are unchanged. The inspected HEAD above remains the historical snapshot.
+hash comparison: original raw bytes or existing reuse normalized UTF8/LF; no binding is rewritten
+NO C++ build/test is run by this governance inspection.
+
+REUSE-T07: status=ready; manifest files 3 same/0 changed
+
+REUSE-T09: status=ready; manifest files 4 same/0 changed
+
+REUSE-T12: status=ready; manifest files 4 same/0 changed
+
+REUSE-T13: status=ready; manifest files 7 same/0 changed
+
+REUSE-T15: status=ready; manifest files 4 same/1 changed
+CHANGED RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+
+REUSE-T16: status=ready; manifest files 5 same/0 changed
+
+REUSE-T15 original verification scopeInputs: 29 same/1 changed
+CHANGED RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+
+REUSE-T16 original verification scopeInputs: 39 same/0 changed
+
+REUSE-T13 original XML counts (passed/skipped/failed/errors)
+runtime.xml: 305/0/0/0 (total=305)
+smoke.xml: 195/0/0/0 (total=195)
+modeling.xml: 474/0/0/0 (total=474)
+upstream.xml: 8/0/1/0 (total=9)
+disconnected.xml: 19/0/13/0 (total=32)
+
+REUSE-T15 original XML counts (passed/skipped/failed/errors)
+core.xml: 69/0/0/0 (total=69)
+runtime.xml: 305/0/0/0 (total=305)
+execution.xml: 27/0/0/0 (total=27)
+project.xml: 282/0/0/0 (total=282)
+smoke.xml: 67/0/0/0 (total=67)
+
+REUSE-T16 original XML counts (passed/skipped/failed/errors)
+diagnostics-final.xml: 122/0/0/0 (total=122)
+contract-final.xml: 26/0/0/0 (total=26)
+smoke.xml: 122/0/0/0 (total=122)
+diagnostics-r1.xml: 121/0/1/0 (total=122)
+
+Independent records search: no exact REUSE-T07/T09/T12/T13/T15/T16 task-named root acceptance records found; README all remain NOT RUN/pending. This is an index observation, not proof of authorship or universal absence.
+T12 coverage: original README 2026-10-23 integration supplement says repaired; current WP02 full reuse validation no longer hits drivetrain CMake REUSE-COVERAGE. T12 performance NOT RUN and independent acceptance remain unresolved.
+T15 core CMake change since 091e53353 is GOV-T24 smoke RobWork export-package prerequisite; FNV production/test source is unchanged. Existing old smoke evidence is historical only for current supply; cite GOV-T24 independent acceptance for current configuration.
+Shared/runtime/testkit consumers changed in later T17/T19/WP01/WP02 work. Old whole-module results are historical scoped evidence; do not label current whole-module acceptance PASS.

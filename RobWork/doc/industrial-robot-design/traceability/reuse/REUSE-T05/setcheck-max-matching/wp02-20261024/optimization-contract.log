@@ -1,0 +1,11 @@
+Note: Google Test filter = OptGoldenDatasetContract.ParetoSetMatchTraitsChannel*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OptGoldenDatasetContract
+[ RUN      ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2 (7 ms)
+[----------] 1 test from OptGoldenDatasetContract (7 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (7 ms total)
+[  PASSED  ] 1 test.

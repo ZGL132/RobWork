@@ -1,0 +1,61 @@
+== dup-key
+   OK kind=7
+   key='a' kind=2
+== float
+   OK kind=7
+   key='a' kind=4
+== exp
+   OK kind=7
+   key='a' kind=4
+== bool
+   OK kind=7
+   key='a' kind=1
+== null
+   OK kind=7
+   key='a' kind=0
+== leading-zero
+   ERR val=1 msg=syntax error
+== uint64max
+   OK kind=7
+   key='a' kind=3
+== uint64over
+   OK kind=7
+   key='a' kind=4
+== int64min
+   OK kind=7
+   key='a' kind=2
+== int64under
+   OK kind=7
+   key='a' kind=4
+== nul-escape
+   OK kind=7
+   key='a' kind=5
+== lone-high
+   ERR val=1 msg=syntax error
+== lone-low
+   ERR val=6 msg=illegal leading surrogate
+== surrogate-pair
+   OK kind=7
+   key='a' kind=5
+== raw-ctrl
+   ERR val=1 msg=syntax error
+== raw-utf8
+   OK kind=7
+   key='a' kind=5
+== escape-slash
+   OK kind=7
+   key='a' kind=5
+== escape-upper-hex
+   OK kind=7
+   key='a' kind=5
+== bom
+   ERR val=1 msg=syntax error
+== depth64-ok
+   OK kind=6
+== depth65-over
+   ERR val=5 msg=too deep
+== trailing
+   ERR val=2 msg=extra data
+== empty
+   ERR val=3 msg=incomplete JSON
+ALL DONE

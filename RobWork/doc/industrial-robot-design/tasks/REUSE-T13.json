@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T13",
+  "unit": "runtime",
+  "masterWp": "WP-A",
+  "title": "基础平台关节偏置映射正确性与上游复用收口",
+  "status": "done",
+  "branch": "codex/reuse-foundation",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-11",
+    "MDL-22",
+    "ARC-03",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#3.6",
+    "units/runtime.md#4.3",
+    "reuse/policy.md#1.1",
+    "traceability/reuse/REUSE-T13/README.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T13.json"
+  ],
+  "allowedFiles": [
+    "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T13.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T13.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "真实PrismaticJoint按m消费offset，q_auth=offset+q_rw及限位映射一致；正负偏置/多轴/安装旋转/旋转回归保持1e-9，禁止局部表示1e-6扩散",
+    "runtime唯一构造模型；公开API、名称、受控视图和任务私有State契约不变；不改上游/vcpkg/业务算法",
+    "生产上游结果实际消费、独立oracle、受影响集成测试及必要冒烟留原始日志/XML/报告；证据按适用输入引用",
+    "实施者只自查并交接确切SHA，不自签独验、不关闭独验债务、不合入、不远程"
+  ],
+  "note": "所有者指定基线a045120547704d4a40752728632334f56e0b9f5c，工作树D:/10_Source_Repos/21_robot/reuse-foundation。唯一共享文件实施权仅限本范围，不放宽权限或门禁。drivetrain/trajectory遗留仍由协调会话分配。 所有者已批准将WorkCellCompiler.cpp剩余功能纳入必要实审与迁移；编译器实现版本按已有缓存契约递增，不改变接口。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T13-20261025-r1.json（复跑原件在其同名目录），verdict=pass，绑定送验 SHA=f378f01c5199032e08c2cce7ba0251a2f783d505（base=a0451205，送验范围=基础平台关节偏置米制语义修复、轴对齐/OBJ转换复用收口与实现版本/1.1）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；验收员亲跑18项通过——runtime全套件306项真实复跑（305 passed/1设计内skip，T13新增4用例全OK）；断开注入实验、独立冒烟195/对端modeling 474按增量口径引用原件不重跑，上游Model3D.constructor mask差异归因作为遗留限制登记不构成本包阻断。限制（limitations原文口径）：validate-reuse仍为governance only（DEBT=16、UNRESOLVED=1399未关闭），不构成算法替换（migration §11）或普通IK/RNE放行；一般轴内部关节帧滚转表示可变与OBJ Indexed内部存储已按runtime.md登记为消费契约边界。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T13.json"
+  },
+  "outputs": [
+    "runtime偏置语义修复及重复offset旋转适配删除",
+    "现有任务记录中的简短交接索引及逐功能/文件证据",
+    "自查后交协调主会话安排独立验收"
+  ]
+}

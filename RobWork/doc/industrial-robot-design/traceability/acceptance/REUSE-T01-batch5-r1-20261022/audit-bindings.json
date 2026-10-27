@@ -1,0 +1,18 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+    "matches": true
+  }
+]

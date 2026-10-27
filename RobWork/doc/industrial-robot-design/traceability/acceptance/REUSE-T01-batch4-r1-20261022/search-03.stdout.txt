@@ -1,0 +1,197 @@
+RobWork/RobWork/src/rw/math/Random.cpp:26:#include <boost/random/variate_generator.hpp>
+RobWork/RobWork/src/rw/math/Random.cpp:31:boost::mt19937 generator;
+RobWork/RobWork/src/rw/math/Random.cpp:36:boost::variate_generator< boost::mt19937&, dist_type >
+RobWork/RobWork/src/rw/math/Random.cpp:37:    normal_distribution (generator, boost::normal_distribution< double > (0, 1));
+RobWork/RobWork/src/rw/math/Random.cpp:47:    return distributor (generator);
+RobWork/RobWork/src/rw/math/Random.cpp:50:void Random::seed (unsigned seed)
+RobWork/RobWork/src/rw/math/Random.cpp:52:    // VC++ can't select the correct seed() method without a cast here.
+RobWork/RobWork/src/rw/math/Random.cpp:53:    generator.seed (static_cast< boost::mt19937::result_type > (seed));
+RobWork/RobWork/src/rw/math/Random.cpp:56:void Random::seed ()
+RobWork/RobWork/src/rw/math/Random.cpp:58:    seed ((unsigned) rw::common::TimerUtil::currentTimeMs ());
+RobWork/RobWork/src/rw/math/Random.cpp:78:int Random::ranI (int from, int to)
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:86:    int seed = 0;
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:88:    // Run the test for 100 iterations, to make sure it does not succeed based on a lucky seed.
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:89:    while (seed < 100) {
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:90:        std::srand (seed++);
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:129:    int seed = 0;
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:131:    // Run the test for 100 iterations, to make sure it does not succeed based on a lucky seed.
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:132:    while (seed < 100) {
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:133:        std::srand (seed++);
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:174:    int seed = 0;
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:177:    while (seed < 100) {
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:178:        std::srand (seed++);
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:222:    // Run the test with 1000 different seeds:
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:223:    int seed = 0;
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:224:    while (seed < 100) {
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:225:        std::srand (seed++);
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:273:    // Run the test with 1000 different seeds:
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:274:    int seed = 0;
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:275:    while (seed < 100) {
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:276:        std::srand (seed++);
+RobWork/RobWork/gtest\proximity\collisionStrategy.cpp:295:    // We seed the random number generator so that we get reproducible results.
+RobWork/RobWork/gtest\proximity\collisionStrategy.cpp:296:    Math::seed(0);
+RobWork/RobWork/gtest\common\SerializationTest.cpp:84:		data4 = rw::math::Math::ranI(0, 10000);
+RobWork/RobWork/gtest\common\SerializationTest.cpp:85:		data5 = rw::math::Math::ranI(0, 10000);
+RobWork/RobWork/gtest\common\SerializationTest.cpp:86:		data6 = rw::math::Math::ranI(0, 255);
+RobWork/RobWork/gtest\common\ThreadTest.cpp:209:		Timer::sleepMs(Random::ranI(0,25));
+RobWork/RobWork/gtest\proximity\distanceStrategy.cpp:322:    // We seed the random number generator so that we get reproducible results.
+RobWork/RobWork/gtest\proximity\distanceStrategy.cpp:323:    Math::seed (0);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:245:    // We seed the random number generator so that we get reproducible results.
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:246:    Math::seed(0);
+RobWork/RobWork/gtest\math\UtilTest.cpp:109:	// The boost random generator uses Mersenne twister pseudo-random generator
+RobWork/RobWork/gtest\math\UtilTest.cpp:110:	// The random values should therefore be deterministic for a given seed
+RobWork/RobWork/gtest\math\UtilTest.cpp:111:    // Check that the correct values are obtained, and that seeding with the same
+RobWork/RobWork/gtest\math\UtilTest.cpp:114:    	Math::seed(10);
+RobWork/RobWork/gtest\math\UtilTest.cpp:117:    	const int ranI = Math::ranI(-200,7000);
+RobWork/RobWork/gtest\math\UtilTest.cpp:126:    	EXPECT_EQ(ranI,-51);
+RobWork/RobWork/gtest\math\UtilTest.cpp:153:    // Check another seed
+RobWork/RobWork/gtest\math\UtilTest.cpp:155:    	Math::seed(123456);
+RobWork/RobWork/gtest\math\UtilTest.cpp:158:    	const int ranI = Math::ranI(-200,7000);
+RobWork/RobWork/gtest\math\UtilTest.cpp:166:    	EXPECT_EQ(ranI,6760);
+RobWork/RobWork/gtest\math\UtilTest.cpp:197:    Math::seed(423); // seed the RNG - The seed was arbitrarily chosen
+RobWork/RobWork/gtest\math\UtilTest.cpp:217:    Math::seed(829); // seed the RNG - The seed was arbitrarily chosen
+RobWork/RobWork/gtest\math\UtilTest.cpp:231:    Math::seed(829);
+RobWork/RobWork/src\sandbox\geometry\RANSACFitting.hpp:86:				int idx = Math::ranI(0,data.size());
+RobWork/RobWork/src\sandbox\geometry\RANSACFitting.hpp:89:					int idxSecond = Math::ranI(0,data.size());
+RobWork/RobWork/src\sandbox\NvStanHull3D.h:7:NvStanHull.h : A convex hull generator written by Stan Melax
+RobWork/RobWork/src\sandbox\NvStanHull3D.cpp:4:NvStanHull.cpp : A convex hull generator written by Stan Melax
+RobWork/RobWork/src\sandbox\algorithms\ConstraintGenerator.hpp:42: * Constraint generator...
+RobWork/RobWork/src\rw\geometry\GeometryUtil.hpp:48:     * @brief Utility functions for calculating properties of geometry
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:101:		std::random_shuffle(ind.begin(),ind.end());
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:130:			std::random_shuffle(list[i].second.begin(),list[i].second.end());
+RobWork/RobWork/src\rw\geometry\Geometry.cpp:36:    int ri = Random::ranI (0xFF, 0xFFFFFF);
+RobWork/RobWork/src\rw\core\StringUtil.cpp:301:boost::mt19937 generator;
+RobWork/RobWork/src\rw\core\StringUtil.cpp:307:    double ran = distributor (generator);
+RobWork/RobWork/src\rw\geometry\Line.hpp:191:     * @brief A metric for calculating line-to-line distance.
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.hpp:145:         * @param metric [in] metric for calculating length of segments
+RobWork/RobWork/src\sandbox\optimization\TaxiCabOptimizer.hpp:62:	// previous result (for calculating tolerance)
+RobWork/RobWork/src\rw\geometry\IntersectUtil.hpp:40:     * @brief utility class for calculating intersection points between geometry primitives
+RobWork/RobWork/src\rw\graspplanning\DiceContactG3D.hpp:74:         * @brief initializes the contact generator on some object.
+RobWork/RobWork/src\sandbox\optimization\SimulatedAnnealingOptimizer.hpp:35:	//! Set deviation for calculating new states.
+RobWork/RobWork/src\rw\graspplanning\DiceContactG3D.cpp:94:            int idx      = Random::ranI (min, max);
+RobWork/RobWork/src\rw\graspplanning\DiceContactG3D.cpp:95:            int idx2     = Random::ranI (min, max);
+RobWork/RobWork/src\rw\graspplanning\DiceContactG3D.cpp:156:            int idx      = Random::ranI (min, max);
+RobWork/RobWork/src\rw\graspplanning\DiceContactG3D.cpp:157:            int idx2     = Random::ranI (min, max);
+RobWork/RobWork/src\sandbox\optimization\PowellOptimizer.hpp:50:	// previous result (for calculating tolerance)
+RobWork/RobWork/src\rw\common\TimerUtil.hpp:41:         * calculating wall time differences.
+RobWork/RobWork/src\rw\common\TimerUtil.hpp:50:         * calculating wall time differences.
+RobWork/RobWork/src\rw\common\TimerUtil.hpp:61:         * calculating wall time differences.
+RobWork/RobWork/src\rw\common\Timer.hpp:183:         * calculating wall time differences.
+RobWork/RobWork/src\rw\common\Timer.hpp:192:         * calculating wall time differences.
+RobWork/RobWork/src\rw\common\Timer.hpp:201:         * calculating wall time differences.
+RobWork/RobWork/src\rw\common\Timer.hpp:212:         * calculating wall time differences.
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:199:     * The rotation is blended by calculating equivalent angle axis rotations and blend
+RobWork/RobWork/src\sandbox\optimization\GoldenSectionLineSearch.hpp:60:	// for calculating tolerance
+RobWork/RobWork/src\rw\graspplanning\ApproachMeasure3D.hpp:36:         * surface normal. Grasps violating this will recieve high penalty on
+RobWork/RobWork/src\sandbox\optimization\FirstDifferences.hpp:77:	 * @param step [in] step size for calculating first differences (default: 1.0)
+RobWork/RobWork/src\sandbox\optimization\example_optimization.cpp:142:	Math::seed();
+RobWork/RobWork/src\rw\geometry\Plane.hpp:216:     * @brief A metric for calculating plane-to-plane distance.
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:68:    // Initialize grasp candidate generator
+RobWork/RobWork/src\sandbox\graspplanning\HGraspPlanner3D.hpp:130:     * @brief get the grasp generator
+RobWork/RobWork/src\sandbox\graspplanning\HGraspPlanner3D.cpp:62:    // 1. contact generator
+RobWork/RobWork/src\sandbox\graspplanning\HGraspPlanner3D.cpp:69:    DiceContactG3D _generator;
+RobWork/RobWork/src\sandbox\graspplanning\HGraspPlanner3D.cpp:72:        DContact3D con = _generator.generateNext();
+RobWork/RobWork/src\rw\geometry\Sphere.cpp:64:    /* Let's find the helper granulation value of the sphere generator.
+RobWork/RobWork/src\rw\geometry\Triangulate.hpp:31:     * @brief Class for triangulating a polygon
+RobWork/RobWork/src\sandbox\graspplanning\CG3Grasp2DGen.hpp:54:     * @brief initialize this contact generator using a 2d contour
+RobWork/RobWork/src\rwlibs\pathoptimization\pathlength\PathLengthOptimizer.cpp:142:        const int i1 = Random::ranI (0, (int) n - 2);
+RobWork/RobWork/src\rwlibs\pathoptimization\pathlength\PathLengthOptimizer.cpp:143:        const int i2 = Random::ranI (i1 + 2, (int) n);
+RobWork/RobWork/src\rwlibs\pathoptimization\pathlength\PathLengthOptimizer.cpp:190:        int i1    = Random::ranI (0, (int) n - 2);
+RobWork/RobWork/src\rwlibs\pathoptimization\pathlength\PathLengthOptimizer.cpp:191:        int i2    = Random::ranI (i1 + 2, (int) n);
+RobWork/RobWork/src\rwlibs\pathoptimization\pathlength\PathLengthOptimizer.cpp:192:        int index = Random::ranI (0, (int) result.front ().size ());
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:88:         * @param clearanceCalculator [in] Calculator for calculating the clearance
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:237:// interpolating, which is why it is left as a seperate method.
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceCalculator.hpp:35:     * A ClearanceCalculator provides a mean for calculating the clearance of for a state. While the
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFCL.cpp:546:                RW_LOG_DEBUG ("The objects are in collision! But still calculating a distance.");
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.cpp:164:            XMLCh tempStr[3]        = {chLatin_L, chLatin_S, chNull};
+RobWork/RobWork/src\rw\proximity\rwstrategy\BVTreeFactory.hpp:183:         * by calculating the covariance of the triangle mesh and use the eigen vectors
+RobWork/RobWork/src\rw\proximity\ProximityStrategy.hpp:52:     * relating them to frames.
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:117:    return std::make_pair (Random::ranI (0, dim), Random::ranI (0, dim));
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:253:        return cell.at (Random::ranI (0, (int) cell.size ()));
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:259:        return randomNodeFromCell (*cellsInUse.at (Random::ranI (0, (int) cellsInUse.size ())));
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:290:        int choice = Random::ranI (0, nodeCount);
+RobWork/RobWork/src\rw\proximity\ProximityCalculator.hpp:61:     * fitting aproach for calculating the respective proximity.
+RobWork/RobWork/src\rw\proximity\DistanceCalculator.hpp:44:     * @brief The DistanceCalculator implements an efficient way of calculating
+RobWork/RobWork/src\rw\models\Device.hpp:236:         * This method calculates the jacobian relating joint velocities (@f$
+RobWork/RobWork/src\rw\models\Device.hpp:306:         * This method calculates the jacobian relating joint velocities (@f$
+RobWork/RobWork/src\rw\proximity\CMakeLists.txt:2:set(SUBSYS_DESC "Everything to do with calculating the proximity between objects")
+RobWork/RobWork/src\rwlibs\opengl\glext_win32.h:32:** API Registry. The current version of the Registry, generator scripts
+RobWork/RobWork/src\rwlibs\opengl\glext_win32.h:10650:#ifndef GL_NV_shader_thread_shuffle
+RobWork/RobWork/src\rwlibs\opengl\glext_win32.h:10651:#define GL_NV_shader_thread_shuffle 1
+RobWork/RobWork/src\rwlibs\opengl\glext_win32.h:10652:#endif /* GL_NV_shader_thread_shuffle */
+RobWork/RobWork/src\rw\models\DeformableObject.hpp:87:         * triangulating the geometry. Vertices that are equal are merged into the same control
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.hpp:315:        //! List of seeds for the enhancement step
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.hpp:316:        std::vector< rw::math::Q > _seeds;
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:175:                _seeds.push_back ((_graph[n1].q + _graph[n2].q) / 2.0);
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:339:    for (size_t cnt = 0; cnt < std::min (_seeds.size (), _enhanceRandomFromSeedsCnt); cnt++) {
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:340:        int index = Random::ranI (0, (int) _seeds.size ());
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:341:        enhanceAround (_seeds[index]);
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:509:            _seeds.push_back ((_graph[edge].q1 + _graph[edge].q2) / 2.0);
+RobWork/RobWork/src\rwlibs\softbody\numerics\TrapMethod.hpp:31:         * @brief routine for calculating a definite integral using the trapezoidal rule
+RobWork/RobWork/src\rwlibs\swig\sdurw_assembly.i:225:    std::string generator;
+RobWork/RobWork/src\rwlibs\softbody\beam\ModRussel_NLP.cpp:143:// for calculating the total elastic potential energy, given a vector of angles for the beam
+RobWork/RobWork/src\rwlibs\softbody\beam\EBBeam.hpp:24:     * @brief Class for calculating the analytical solution to the Euler-Bernoulli beam model in
+RobWork/RobWork/src\rwlibs\softbody\beam\BeamGeometry.hpp:116:         * Kappa is the coefficient relating the i,k = (1,1) coefficients of strain to stress in a
+RobWork/RobWork/src\rwlibs\control\SyncVelocityRamp.hpp:33:     * between two configurations a quick as possible without violating the
+RobWork/RobWork/src\rwlibs\control\SyncVelocityRamp.hpp:40:         * @brief Constructs a ramp generator a device
+RobWork/RobWork/src\rwlibs\control\SyncVelocityRamp.hpp:46:         * @brief Constructs a ramp generator with specified velocity and acceleration limits
+RobWork/RobWork/src\rw\invkin\ClosedFormIK.hpp:41:     * The ClosedFormIK interface provides an interface for calculating the
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:85:           @param device [in] The device for which seeds are sampled.
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:91:           @param seed [in] Optional sampler of seeds to feed the IK solver.
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:93:           @param maxAttempts [in] Optional number of seeds to feed the IK
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:100:                                     rw::core::Ptr< QSampler > seed = NULL, int maxAttempts = -1);
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:39:                         QSampler::Ptr seed, int maxAttempts) :
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:41:        _state (state), _solver (solver), _seed (seed), _maxAttempts (maxAttempts)
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:45:        if (!_seed)
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:46:            _seed = QSampler::makeUniform (device);
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:62:            for (int cnt = 0; cnt < _maxAttempts && result.empty () && !_seed->empty (); ++cnt) {
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:63:                const Q q = _seed->sample ();
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:89:    QSampler::Ptr _seed;
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:132:                                  QSampler::Ptr seed, int maxAttempts)
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:134:    return ownedPtr (new IterativeQIKSampler (device, state, solver, seed, maxAttempts));
+RobWork/RobWork/src\rw\invkin\InvKinSolver.hpp:21:     * The InvKinSolver interface provides an interface for calculating
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:150:         * Variables used for calculating
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:62:     * calculating/approximating the inverse Jacobian are available, where the SVD method currently
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:106:     * calculating/approximating the inverse Jacobian are available, where the SVD method currently
+RobWork/RobWork/src\rw\invkin\IterativeMultiIK.hpp:45:     * The IterativeMultiIK interface provides an interface for calculating
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:52:     * calculating/approximating the inverse Jacobian are available, where the SVD method currently
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:97:     * calculating/approximating the inverse Jacobian are available, where the SVD method currently
+RobWork/RobWork/src\rw\invkin\IterativeIK.hpp:46:     * The IterativeIK interface provides an interface for calculating
+RobWork/RobWork/src\rw\pathplanning\PathAnalyzer.hpp:155:         * @param metric [in] Metric to use for calculating the distance in joint space.
+RobWork/RobWork/src\rw\math\Statistics.hpp:17:     * @brief Class for collecting data and calculating simple statistics.
+RobWork/RobWork/src\rw\math\Random.hpp:49:         * @brief Seeds the random number generator.
+RobWork/RobWork/src\rw\math\Random.hpp:53:        static void seed (unsigned seed);
+RobWork/RobWork/src\rw\math\Random.hpp:56:         * @brief Seeds the random number generator with current time of day
+RobWork/RobWork/src\rw\math\Random.hpp:60:        static void seed ();
+RobWork/RobWork/src\rw\math\Random.hpp:74:        static int ranI (int from, int to);
+RobWork/RobWork/src\rw\math\Random.cpp:26:#include <boost/random/variate_generator.hpp>
+RobWork/RobWork/src\rw\math\Random.cpp:31:boost::mt19937 generator;
+RobWork/RobWork/src\rw\math\Random.cpp:36:boost::variate_generator< boost::mt19937&, dist_type >
+RobWork/RobWork/src\rw\math\Random.cpp:37:    normal_distribution (generator, boost::normal_distribution< double > (0, 1));
+RobWork/RobWork/src\rw\math\Random.cpp:47:    return distributor (generator);
+RobWork/RobWork/src\rw\math\Random.cpp:50:void Random::seed (unsigned seed)
+RobWork/RobWork/src\rw\math\Random.cpp:52:    // VC++ can't select the correct seed() method without a cast here.
+RobWork/RobWork/src\rw\math\Random.cpp:53:    generator.seed (static_cast< boost::mt19937::result_type > (seed));
+RobWork/RobWork/src\rw\math\Random.cpp:56:void Random::seed ()
+RobWork/RobWork/src\rw\math\Random.cpp:58:    seed ((unsigned) rw::common::TimerUtil::currentTimeMs ());
+RobWork/RobWork/src\rw\math\Random.cpp:78:int Random::ranI (int from, int to)
+RobWork/RobWork/src\rw\math\Math.hpp:238:         * @brief Seeds the random number generator.
+RobWork/RobWork/src\rw\math\Math.hpp:242:        static void seed (unsigned seed);
+RobWork/RobWork/src\rw\math\Math.hpp:245:         * @brief Seeds the random number generator with current time of day
+RobWork/RobWork/src\rw\math\Math.hpp:249:        static void seed ();
+RobWork/RobWork/src\rw\math\Math.hpp:263:        static int ranI (int from, int to);
+RobWork/RobWork/src\rw\math\Math.cpp:41:void Math::seed (unsigned seed)
+RobWork/RobWork/src\rw\math\Math.cpp:43:    Random::seed (seed);
+RobWork/RobWork/src\rw\math\Math.cpp:44:    srand (seed);
+RobWork/RobWork/src\rw\math\Math.cpp:47:void Math::seed ()
+RobWork/RobWork/src\rw\math\Math.cpp:49:    Random::seed ();
+RobWork/RobWork/src\rw\math\Math.cpp:69:int Math::ranI (int from, int to)
+RobWork/RobWork/src\rw\math\Math.cpp:71:    return Random::ranI (from, to);
+RobWork/RobWork/src\rwlibs\assembly\AssemblyTask.cpp:63:    generator    = task->getPropertyMap ().get< std::string > ("Generator", "");
+RobWork/RobWork/src\rwlibs\assembly\AssemblyTask.cpp:109:    if (generator != "")
+RobWork/RobWork/src\rwlibs\assembly\AssemblyTask.cpp:110:        root->getPropertyMap ().set< std::string > ("Generator", generator);
+RobWork/RobWork/src\rwlibs\assembly\AssemblyTask.cpp:243:    res->generator    = generator;
+RobWork/RobWork/src\rwlibs\assembly\AssemblyTask.hpp:174:        //! @brief (optional) An identifier for the generator that created the task.
+RobWork/RobWork/src\rwlibs\assembly\AssemblyTask.hpp:175:        std::string generator;
+RobWork/RobWork/src\rwlibs\algorithms\RANSACModel.hpp:102:                std::random_shuffle (indices.begin (), indices.end ());
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.hpp:95:         * @brief Specifies an initial projection of the Jacobian before calculating the null-space

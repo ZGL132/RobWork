@@ -1,0 +1,639 @@
+[
+  {
+    "path": "acceptance.json",
+    "bytes": 8565,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "acceptance.md",
+    "bytes": 3026,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "archive-raw-byte-checks.json",
+    "bytes": 45633,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "audit.log",
+    "bytes": 120,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "audit.py",
+    "bytes": 5356,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "authored-whitespace.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "authored-whitespace.log",
+    "bytes": 0,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "before/commit-lint.ps1",
+    "bytes": 4784,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "before/test-governance-lite.ps1",
+    "bytes": 5837,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "binding-checks.json",
+    "bytes": 23376,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "checkout.log",
+    "bytes": 94,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "clone.log",
+    "bytes": 91,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "commands.json",
+    "bytes": 5893,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "commit-lint-frozen-range.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "commit-lint-frozen-range.log",
+    "bytes": 71,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "definitions-checks.json",
+    "bytes": 83,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "definitions-replay.json",
+    "bytes": 13180,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "definitions.log",
+    "bytes": 35,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "definitions.ps1",
+    "bytes": 1942,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "diff-check-windows.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "diff-check-windows.log",
+    "bytes": 23458,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "diff-check.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "diff-check.log",
+    "bytes": 4694231,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "finalize-first-attempt.log",
+    "bytes": 972,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "finalize.log",
+    "bytes": 88,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "finalize.py",
+    "bytes": 11002,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "git-status-end.log",
+    "bytes": 0,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "invalid-branch.json",
+    "bytes": 313066,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/default-ignores-optional-index.log",
+    "bytes": 939,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/empty-title.log",
+    "bytes": 205,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/free-body.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/generic-title.log",
+    "bytes": 233,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/governance-lite-report.json",
+    "bytes": 1691,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/no-prefix.log",
+    "bytes": 303,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/short-doc.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51/unknown-prefix.log",
+    "bytes": 301,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps51.log",
+    "bytes": 806,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/default-ignores-optional-index.log",
+    "bytes": 197,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/empty-title.log",
+    "bytes": 205,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/free-body.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/generic-title.log",
+    "bytes": 233,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/governance-lite-report.json",
+    "bytes": 983,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/no-prefix.log",
+    "bytes": 303,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/short-doc.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7/unknown-prefix.log",
+    "bytes": 301,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-before-ps7.log",
+    "bytes": 544,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/deep-rejects-invalid-index.log",
+    "bytes": 3386,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/default-ignores-optional-index.log",
+    "bytes": 2724,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/empty-title.log",
+    "bytes": 205,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/free-body.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/generic-title.log",
+    "bytes": 233,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/governance-lite-report.json",
+    "bytes": 1919,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/no-prefix.log",
+    "bytes": 303,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/short-doc.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51/unknown-prefix.log",
+    "bytes": 301,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps51.log",
+    "bytes": 232,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/deep-rejects-invalid-index.log",
+    "bytes": 2661,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/default-ignores-optional-index.log",
+    "bytes": 2724,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/empty-title.log",
+    "bytes": 205,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/free-body.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/generic-title.log",
+    "bytes": 233,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/governance-lite-report.json",
+    "bytes": 1115,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/no-prefix.log",
+    "bytes": 303,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/short-doc.log",
+    "bytes": 69,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7/unknown-prefix.log",
+    "bytes": 301,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "lite-ps7.log",
+    "bytes": 232,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "probes-driver.log",
+    "bytes": 204,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "probes.ps1",
+    "bytes": 2783,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "scope-and-script-checks.json",
+    "bytes": 617,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "scope.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "scope.log",
+    "bytes": 190,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "script-semantic-diff.txt",
+    "bytes": 1793,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "search-1.log",
+    "bytes": 272,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "search-2.log",
+    "bytes": 0,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "search-3.log",
+    "bytes": 3420,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "search-4.log",
+    "bytes": 0,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "search-replay.json",
+    "bytes": 2315,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "semantic-review.json",
+    "bytes": 4816,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "source-review.txt",
+    "bytes": 21523,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "validate-invalid-branch.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "validate-invalid-branch.log",
+    "bytes": 381,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "verify-invalid-branch-dryrun.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "verify-invalid-branch-dryrun.log",
+    "bytes": 469,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "verify-task-real.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "verify-task-real.log",
+    "bytes": 13273,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "verify-valid-dryrun.exit.txt",
+    "bytes": 3,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  },
+  {
+    "path": "verify-valid-dryrun.log",
+    "bytes": 5508,
+    "manifestOK": true,
+    "originalExists": true,
+    "originalEqual": true
+  }
+]

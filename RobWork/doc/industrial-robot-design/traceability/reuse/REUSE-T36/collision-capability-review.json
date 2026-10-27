@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-reuse-capability-review/1",
+  "capabilityId": "COLLISION",
+  "ownerUnit": "policy",
+  "reviewedVersion": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "date": "2026-10-26",
+  "task": "REUSE-T36（WP-13，F-961 policy 修复候选落地批；catalog 升级由本包独立验收覆盖）",
+  "upgrade": "candidate -> verified",
+  "basis": [
+    "上游公共接口定向阅读在案：CollisionDetector/CollisionStrategy/DistanceStrategy/ProximityStrategyRW/ProximitySetup/ProximitySetupRule（含 convertToRegEx 的 REGEX 约定分支，ProximitySetupRule.cpp:28-36）——catalog upstream 引用即检索与摘要绑定面",
+    "生产消费两行 adapter 证据齐备且真实执行：buildPolicyProximitySetup（ProximitySetup 系直接消费＋F-961 唯一适配点）与 RobWorkCollisionEvaluator 构造（内置 ProximityStrategyRW 实例化）——各持 ird-reuse-production/1 四套运行（normal/disconnected/oracle/upstreamComparison），disconnected 为真实生产变异红例（去适配回 F-961 反例红；后端实例化断开全会话构建 fail-fast 红），恢复复测绿（final-recheck 214/214）",
+    "F-961 修复实证：REGEX 前缀完整名的 EXCLUDE 规则 match 原名、存储 pattern 为 REGEX+字面转义串；普通点号名透传零扰动；恰 5 字节 REGEX 走上游字面分支（边界钉）——CollisionSessionNameRules/CollisionSessionUpstreamSemantics 三用例",
+    "全量回归：sdurws_ird_policy_test 214/214（211 基线＋3 F961 用例）；受影响消费者 kinematics 292（291 passed+1 既有环境 skip）/trajectory 193/modeling 480/optimization 215（214 passed+1 既有环境 skip）全绿零失败",
+    "红转绿 oracle 链完整：candidate/f961-red.log（未修复码 B18 反例 1 failed）→ f961-green.log（修复后 3/3）→ 本批落地复验（disconnected-bps/ctor 红＋final-recheck 绿）"
+  ],
+  "limits": [
+    "makeExclude/makeInclude 无字面名 API（全部经构造函数 convertToRegEx 解释 pattern）——字面化由产品侧 toUpstreamRulePattern 唯一适配点承接（镜像上游 REGEX 分支条件），上游调整该约定时镜像条件与用例须同批复核",
+    "内置 ProximityStrategyRW 仅 CollisionStrategy 能力（无 DistanceStrategy）；描述符 binary-collision+distance 不是运行距离能力证明；距离能力归运行期 dynamic_cast 探测",
+    "evaluate 当前按 scope 逐对直查后端、不消费 setup 过滤——本升级不声称碰撞误判修复，F-961 对碰撞结果的影响面止于公开 setup 规则输出",
+    "会话锁纪律与几何模型任务会话缓存边界照旧（catalog limits 与 ARCH §3.6/SA-19 不变；测试夹具构造模型为 ARCH §3.6.2.1 test-fixture 例外，不构成产品模型所有权变更）"
+  ],
+  "upstreamVersionCheck": "reviewedVersion 与 catalog baseline 同为 b12e8503；门禁 SUITABILITY 对 verified 能力执行 git show <version>:<upstream path> 与当前工作树逐文件摘要一致核对（上游只读未变）",
+  "reviewer": "REUSE-T36 实施会话（落地批自检）；独立验收按包验收条件另行执行并覆盖本升级"
+}

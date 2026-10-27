@@ -1,0 +1,485 @@
+[
+  {
+    "name": "cid",
+    "symbol": "core::ContentIdentity cid(const char* hex64)",
+    "startLine": 77,
+    "endLine": 80,
+    "sha256": "4138d8e1fddbe0637ac3b64f35e05f3d8f5e22b463d819d657b1e7beab028974"
+  },
+  {
+    "name": "cv",
+    "symbol": "core::ContentVersion cv(const char* hex64)",
+    "startLine": 82,
+    "endLine": 85,
+    "sha256": "cf71cf66e245fec1ab4a8f4c1b323bbd26c6ead22493930606f9b91de881b03b"
+  },
+  {
+    "name": "oid",
+    "symbol": "core::ObjectId oid(const char* hex32)",
+    "startLine": 87,
+    "endLine": 90,
+    "sha256": "b29fb234ba878a41b850bd60bdcf12cc99dc00f0268d5d020333060c1040242b"
+  },
+  {
+    "name": "objectInRevision",
+    "symbol": "bool objectInRevision(core::RevisionId, core::ObjectId, core::ContentVersion) const override",
+    "startLine": 98,
+    "endLine": 101,
+    "sha256": "237f389792a0a9e0709c4a26cf4b32d5b762aceaf42c7ccc00ccfbf8b9149e86"
+  },
+  {
+    "name": "standardCases",
+    "symbol": "std::vector<ev::CaseEntry> standardCases()",
+    "startLine": 105,
+    "endLine": 110,
+    "sha256": "6923fd330c1ba13f6922207b5c0b3655783f55d7c7c4d91256ef45eacd975023"
+  },
+  {
+    "name": "buildSnapshotFor",
+    "symbol": "ev::AnalysisSnapshot buildSnapshotFor(core::ProjectId project, core::BranchId branch,",
+    "startLine": 112,
+    "endLine": 136,
+    "sha256": "8474950957a9629ecd7fc8167b933bd6fd4632a7aa3dc1251c8b12f969f1c301"
+  },
+  {
+    "name": "standardKinProfile",
+    "symbol": "ev::RequiredEvidenceProfile standardKinProfile()",
+    "startLine": 139,
+    "endLine": 156,
+    "sha256": "b409d653e99c9dcc93265830cdb5fbddf6c51c6e353679afa3f2de9f4d78fa87"
+  },
+  {
+    "name": "ScriptedProducerRegistry",
+    "symbol": "explicit ScriptedProducerRegistry(std::map<std::string, std::uint32_t> table)",
+    "startLine": 161,
+    "endLine": 164,
+    "sha256": "46a0957f499b1ad223d0221cac3a239dbdd65e208c333e39d54262aca0a4cc41"
+  },
+  {
+    "name": "isRegistered",
+    "symbol": "bool isRegistered(std::string_view key) const override",
+    "startLine": 165,
+    "endLine": 168,
+    "sha256": "0cba8d058ae63c2b06f73fcd64793366fa813eca78c130cba84b0e1f6b8b82d7"
+  },
+  {
+    "name": "contractVersionMatches",
+    "symbol": "bool contractVersionMatches(std::string_view key, std::uint32_t version) const override",
+    "startLine": 169,
+    "endLine": 173,
+    "sha256": "ae8035da71956eb741aa871267692bc25be3357617e869838173fd2dcfbe1bbe"
+  },
+  {
+    "name": "registerProfile",
+    "symbol": "void registerProfile(ev::RequiredEvidenceProfile profile)",
+    "startLine": 182,
+    "endLine": 185,
+    "sha256": "36a9c10b68f62e9d88b3751201cb65af3c67b79ea2b2367b1b89c34469d99300"
+  },
+  {
+    "name": "findProfile",
+    "symbol": "const ev::RequiredEvidenceProfile* findProfile(std::string_view profileId,",
+    "startLine": 186,
+    "endLine": 191,
+    "sha256": "89d98de2bb927f8ef985250cf3355141c9add3e879c84331cca6ad535b5bfd82"
+  },
+  {
+    "name": "fullCoverage",
+    "symbol": "ev::CaseCoverageMatrix fullCoverage(const ev::AnalysisSnapshot& snapshot)",
+    "startLine": 198,
+    "endLine": 209,
+    "sha256": "560c90f2087e05f68fcb78606fa07e5c745174077a65e366ff1a5e8c28269741"
+  },
+  {
+    "name": "coverageMissing",
+    "symbol": "ev::CaseCoverageMatrix coverageMissing(const ev::AnalysisSnapshot& snapshot,",
+    "startLine": 212,
+    "endLine": 225,
+    "sha256": "4f2ae08917367ee724e206db198b74c06293ebbd0ae6d1dc9c12d52ad87ff2bc"
+  },
+  {
+    "name": "satisfiedItem",
+    "symbol": "ev::EvidenceItem satisfiedItem(std::string itemId)",
+    "startLine": 228,
+    "endLine": 235,
+    "sha256": "ca805e5e0826de0eeb7d26566a7b997f303f5771347ce385656776cf30dc3f22"
+  },
+  {
+    "name": "domainPayloadBytes",
+    "symbol": "std::vector<std::uint8_t> domainPayloadBytes()",
+    "startLine": 238,
+    "endLine": 241,
+    "sha256": "382f41e2f2f72c961ee808a5751074fb1fe40c49676b812f76d43915b0fd8524"
+  },
+  {
+    "name": "report",
+    "symbol": "void report(const core::DiagnosticRecord& record) override { reports.push_back(record); }",
+    "startLine": 253,
+    "endLine": 253,
+    "sha256": "5983a7690a1b621d164e24532073f51fceeeecc66fc6a2330b0683a5b919bdf0"
+  },
+  {
+    "name": "reportDev",
+    "symbol": "void reportDev(const std::string& channel, const std::string& message) override",
+    "startLine": 254,
+    "endLine": 257,
+    "sha256": "e8ed1f5749d18b42ef70f2ec8bc1a1105d6c9f5118fd0ff68a7cc11cfba92928"
+  },
+  {
+    "name": "hasReportCode",
+    "symbol": "bool hasReportCode(const std::string& code) const",
+    "startLine": 258,
+    "endLine": 266,
+    "sha256": "0b8d8433636181289074a8f9f44ea0606ea8574d9a6765dfe00a795a789269f0"
+  },
+  {
+    "name": "bind",
+    "symbol": "void bind(core::ContentIdentity mapId, std::string runtimeName, core::ObjectId object)",
+    "startLine": 272,
+    "endLine": 275,
+    "sha256": "be621b15b28919c8501c5bff9c764c64db2bbb3ac5e882f2f832495815c5232f"
+  },
+  {
+    "name": "tryResolve",
+    "symbol": "std::optional<core::ObjectId> tryResolve(core::ContentIdentity nameMapIdentity,",
+    "startLine": 276,
+    "endLine": 286,
+    "sha256": "6fb303c623676af82a99b9fc1041ef93ebf7edddd6cf93bad7f7112f7bde7618"
+  },
+  {
+    "name": "enqueue",
+    "symbol": "void enqueue(std::optional<ev::EvaluationOutput> output) { m_script.push_back(std::move(output)); }",
+    "startLine": 295,
+    "endLine": 295,
+    "sha256": "909818b70240a5b3847442eb2864c465523a42c034e392b31a2875e97e2c9ae7"
+  },
+  {
+    "name": "tryDecode",
+    "symbol": "std::optional<ev::EvaluationOutput> tryDecode(",
+    "startLine": 296,
+    "endLine": 305,
+    "sha256": "8af07d9000892339be53efc698f86b2b3f8b2ba8251aebf2d7941f8f00a93b49"
+  },
+  {
+    "name": "onEvent",
+    "symbol": "void onEvent(const core::DomainEvent& event) override { events.push_back(event); }",
+    "startLine": 315,
+    "endLine": 315,
+    "sha256": "0c8dda257eadd96975bd80b757e8b37f12a4db7093652de2528e7b07c4a59e00"
+  },
+  {
+    "name": "FaultInjectingPort",
+    "symbol": "explicit FaultInjectingPort(pd::IResultArchivePort& real)",
+    "startLine": 331,
+    "endLine": 334,
+    "sha256": "668e4c000965252aecaf387fc4af3194faf8520123f0aea56372b371dddaa991"
+  },
+  {
+    "name": "begin",
+    "symbol": "pd::ArchiveSessionRef begin(const pd::ArchiveRequest& request) override",
+    "startLine": 341,
+    "endLine": 345,
+    "sha256": "3536993e8d13a7ace566a11bf4bab43e1dfc2da005252271c67bf4a6748a742a"
+  },
+  {
+    "name": "writeBatch",
+    "symbol": "pd::ArchiveStatus writeBatch(pd::ArchiveSessionRef session,",
+    "startLine": 347,
+    "endLine": 356,
+    "sha256": "b180c77775adb14fb832c3e9441fbb0c832741d37ede8d7742d6e85f9dbc4b7f"
+  },
+  {
+    "name": "finalize",
+    "symbol": "pd::ArchiveStatus finalize(pd::ArchiveSessionRef session,",
+    "startLine": 358,
+    "endLine": 367,
+    "sha256": "84806d1b8e8888fdcd134cd9970f02e13c6bcef5f693c6bfbb9f5b3e6459d693"
+  },
+  {
+    "name": "abandon",
+    "symbol": "void abandon(pd::ArchiveSessionRef session, pd::ArchiveEndReason reason) override",
+    "startLine": 369,
+    "endLine": 373,
+    "sha256": "1e606efac6434fb4cd9f8095a0e5e24415fd5dd67660d4999fc308a300dec467"
+  },
+  {
+    "name": "ScriptedGateway",
+    "symbol": "explicit ScriptedGateway(pd::IResultArchivePort& port)",
+    "startLine": 384,
+    "endLine": 387,
+    "sha256": "0d3251e31a5f5f50fa4a4016f211f5f015cf1e6b0e6928d58b275c78caef2146"
+  },
+  {
+    "name": "redirect",
+    "symbol": "void redirect(pd::IResultArchivePort& port) { m_port = &port; }",
+    "startLine": 389,
+    "endLine": 389,
+    "sha256": "87a2b8b93ffd87e7d81b02f1707e4ed99b9a9e9db3feb6e876c6559eee2a2cd0"
+  },
+  {
+    "name": "setReacquireResult",
+    "symbol": "void setReacquireResult(bool ok) { m_reacquireResult = ok; }",
+    "startLine": 390,
+    "endLine": 390,
+    "sha256": "84553a68f82c33a0763a9e82239e3b09bf9f3b5257e854500c7b5b5b9912167e"
+  },
+  {
+    "name": "setReacquireAction",
+    "symbol": "void setReacquireAction(std::function<bool()> action) { m_reacquire = std::move(action); }",
+    "startLine": 391,
+    "endLine": 391,
+    "sha256": "bf88ce735fd0b5122f6c88e659d2397ccfbc93311cacd16d258f21b370313904"
+  },
+  {
+    "name": "port",
+    "symbol": "pd::IResultArchivePort& port() const override { return *m_port; }",
+    "startLine": 393,
+    "endLine": 393,
+    "sha256": "c5c58d6d1132baee553d956cab03211700ea232c8fb0af54384fbb4c2791dc81"
+  },
+  {
+    "name": "reacquireWriteAuthority",
+    "symbol": "bool reacquireWriteAuthority() override",
+    "startLine": 394,
+    "endLine": 402,
+    "sha256": "ead832ed2e517b4bb0325dc8ce4d64066d27e354eec85d6c40f2349b70044d7d"
+  },
+  {
+    "name": "SetUpTestSuite",
+    "symbol": "static void SetUpTestSuite()",
+    "startLine": 416,
+    "endLine": 430,
+    "sha256": "3497329cb972a7ab06183a6b44f7af9f8fea55437aaeae265e869bd55af9d60d"
+  },
+  {
+    "name": "TearDownTestSuite",
+    "symbol": "static void TearDownTestSuite()",
+    "startLine": 432,
+    "endLine": 437,
+    "sha256": "765ecc414e3a0460b6adc37279f53f41b84b252dc41745648c40c0edb9da402b"
+  },
+  {
+    "name": "SetUp",
+    "symbol": "void SetUp() override",
+    "startLine": 439,
+    "endLine": 461,
+    "sha256": "0922dd99bd34852bed5479f693f138690742f9dfe90c21c97af559d531c281ee"
+  },
+  {
+    "name": "registerStandardRun",
+    "symbol": "RunRegistration& registerStandardRun(core::TaskIdentity identity,",
+    "startLine": 467,
+    "endLine": 507,
+    "sha256": "6f2688c303d3e732835a74f19bcc316691b4948d8a946a2c56703d6141fef13c"
+  },
+  {
+    "name": "makeIdentity",
+    "symbol": "core::TaskIdentity makeIdentity()",
+    "startLine": 511,
+    "endLine": 520,
+    "sha256": "51f028af31cd65cd18436e8d5a61323f5901222b4bfa0c2b7b067a03f8c3f246"
+  },
+  {
+    "name": "makeArrival",
+    "symbol": "ArrivalEnvelope makeArrival(const core::TaskIdentity& identity, ResultKind kind)",
+    "startLine": 523,
+    "endLine": 536,
+    "sha256": "dd2090b587fa3237ef1a7102688eca1934e6aaae6a45c4d7c6e2a1f35cd26cab"
+  },
+  {
+    "name": "feasibleOutput",
+    "symbol": "ev::EvaluationOutput feasibleOutput()",
+    "startLine": 540,
+    "endLine": 553,
+    "sha256": "becfcdb1db8278bd10a0a7f789ebb2e10c5cf4ad769645af9bc150765bcf5d89"
+  },
+  {
+    "name": "makeAdmission",
+    "symbol": "ResultAdmission makeAdmission(std::vector<std::chrono::milliseconds>* delays = nullptr)",
+    "startLine": 556,
+    "endLine": 569,
+    "sha256": "7fc345ae43078b5b46d0308f03ee359836db7b67a71d1ff3b0ff3e78e88ba777"
+  },
+  {
+    "name": "readAll",
+    "symbol": "std::string readAll(const fs::path& file)",
+    "startLine": 571,
+    "endLine": 579,
+    "sha256": "c2e7dda58caae5aa08e275d337b702eb55638a4ecda6660e73ac89bf2dd6641a"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, RegisterRejectsCallerContractViolations)",
+    "startLine": 608,
+    "endLine": 636,
+    "sha256": "c0696957bc48b1977eb128ea2479e2a9e2fd30197e56cd79b9b8200de53dce2c"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, AppendAttemptSupersedesOldAttempts)",
+    "startLine": 639,
+    "endLine": 656,
+    "sha256": "abfbef1c582175cd0aa16cb7a96b5e980464ceb8b6848402c21db04c445ad1d5"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, MarkTerminatedWritesOnceAndMirrorsState)",
+    "startLine": 659,
+    "endLine": 692,
+    "sha256": "175ea355206db2dd35bc20d74195a694b32e4c6f08a688bc3962d1f9efb38ee3"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, UnknownRunRejectedWithNoArchiveWrite_EX_REG_1)",
+    "startLine": 698,
+    "endLine": 726,
+    "sha256": "d2b1a5f25a4725633b58df5dde7df22cf96ae6e68da005a599607eaa5552711a"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, FiveTupleFieldMismatchRejectedPerField_EX_REG_2)",
+    "startLine": 732,
+    "endLine": 763,
+    "sha256": "8f81810c8725cf974f5dcafc1f5f890d4b337728c477676cccc8366617d0bcab"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, StaleAttemptsAllRejected_EX_REG_3)",
+    "startLine": 769,
+    "endLine": 792,
+    "sha256": "41ba188da7894827435749a205c9e37ace6f51e1e828c03a92d98e9bb4f900c3"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, BindingMismatchAtSecondCheck)",
+    "startLine": 798,
+    "endLine": 827,
+    "sha256": "fb4af48cffc18c3ce31795f0ed4e246f8185d09a1da3424f17f62f33d8480ea7"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, KindOutsideAllowedSetRejected)",
+    "startLine": 829,
+    "endLine": 838,
+    "sha256": "e94a05039b8f03288b72d67ae4aa0d32dc4749c1884f8d2a39679213082d50e0"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1)",
+    "startLine": 842,
+    "endLine": 871,
+    "sha256": "445d295bc1d5acf244211089f6329ccf328d73896cc6562ae3b8160abad08cba"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, InterruptedTerminationNotInStepSevenRejectSet)",
+    "startLine": 875,
+    "endLine": 884,
+    "sha256": "d3176390725f46041822fddd8d2c4587f7adfb8a76663113f889737d86474715"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, FinalEnvelopeRedeliveryIdempotent_EX_REG_7)",
+    "startLine": 890,
+    "endLine": 931,
+    "sha256": "c3c19b2f108996f576c48e165c51681483897ee8e42e4faf2b63b83f72ac05bd"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, FinalEnvelopeContentConflictRejected_EX_REG_8)",
+    "startLine": 937,
+    "endLine": 964,
+    "sha256": "c5559183671a01d2fba1325cf835136b7c7d8874810861cd0ad55c06867ab782"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, ResultBatchAdmissionAndMultiBatch_F809)",
+    "startLine": 966,
+    "endLine": 1009,
+    "sha256": "8ed153199c4817adef1d8b0f612280c4bbea2c455dcbe31077b05b29b7867b86"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, CompletedWithDataInsufficientIsAdmitted_EX_ORT_1)",
+    "startLine": 1016,
+    "endLine": 1040,
+    "sha256": "79df46e093797a7564760e488dbc4039a5a492565e1dfb6fdc8ec41c5d49bd7d"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, HeadChangeNotInvolvedInAdmission_EX_REG_6)",
+    "startLine": 1050,
+    "endLine": 1071,
+    "sha256": "8cada2dafef826d12b21bed7f3e4e851874c45d821f82ac487701073de688a3b"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1)",
+    "startLine": 1075,
+    "endLine": 1097,
+    "sha256": "083e070070e99845381af77969016aba01170bec68267dd6521c576ff34da751"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, RuntimeNameResolutionGatesAdmission)",
+    "startLine": 1103,
+    "endLine": 1151,
+    "sha256": "8086ba523b15ad58a30154af48a9854640c32852b59c523b9189a3c3fdaee528"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, UndecodablePayloadRejected)",
+    "startLine": 1157,
+    "endLine": 1177,
+    "sha256": "d51a3c2a3d6cd2fd4b584cf8b6fa053a5d9791a9657b0a09b4549fa0f7ccfc16"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, ConstructionFailureFailsTask_EX_ORT_1)",
+    "startLine": 1179,
+    "endLine": 1203,
+    "sha256": "f369e2a3ee7b9d21253876723541e608a3d87ecd2b20779832884503e04b2488"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, ArchiveRetriesBoundedThenSucceeds)",
+    "startLine": 1209,
+    "endLine": 1229,
+    "sha256": "71434ae07ee5bc352332fd20c08fbe9790b7a75c1dfc3f0ea8d7e6b1c70f35c3"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5)",
+    "startLine": 1231,
+    "endLine": 1256,
+    "sha256": "52540414c529176c69d2d60ddd5bd820470d133153746fcb7faafa3df62b202f"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, AuthorityLostRejectedWithDiagnostics_EX_REG_5)",
+    "startLine": 1258,
+    "endLine": 1278,
+    "sha256": "7bb8e783c5717d7f5ac0cd8d7deee639189c42a35ca548567ae4f8cc72abb800"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, AuthorityReacquiredArchivesNormally_EX_REG_5)",
+    "startLine": 1280,
+    "endLine": 1315,
+    "sha256": "c19470656906311996d88a446ffc838c38a7b4a8e6022161d73fb7d33a411bd9"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, NonArchivedKindsPassClassificationOnly)",
+    "startLine": 1321,
+    "endLine": 1338,
+    "sha256": "230a6d053889d346d323197765bb4f85d2e22f13341edce4fdadd03b5d4df183"
+  },
+  {
+    "name": "TEST_F",
+    "symbol": "TEST_F(RunRegistryAdmissionTest, InvalidArrivalIdentityFailsFast)",
+    "startLine": 1344,
+    "endLine": 1350,
+    "sha256": "4972876a0827cd771884de1271cd66733f3b70a3e52423a32195c1a24703713a"
+  }
+]

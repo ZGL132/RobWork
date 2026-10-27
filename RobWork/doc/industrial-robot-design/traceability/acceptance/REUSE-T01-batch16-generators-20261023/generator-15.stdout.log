@@ -1,0 +1,6 @@
+== integrity 申报表（path / sizeBytes / sha256） ==
+  { "path": "inputs/scene-cases.json", "sha256": "e7b4f25c8fc4c8434a04797699ea73adc296127bed3f78caf3ce33b60321a014", "sizeBytes": 3442 },
+  { "path": "expected/analytic.json", "sha256": "b7af8c7e3a393648fe9a57816944b35389c25f9c085e6ee711a50aee72fd8b2c", "sizeBytes": 2686 },
+  { "path": "generate/make_pol_collision_analytic.mjs", "sha256": "55c80e787e88ae08c4e18e0e648786d9b6f3add22676f302aa64bc3163e39026", "sizeBytes": 6221 },
+expected/analytic.json 已写出：C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690\repo\.cache\b16-golden-replay\pol-collision-analytic\1.0.0\expected\analytic.json
+cases=6，碰撞例=2

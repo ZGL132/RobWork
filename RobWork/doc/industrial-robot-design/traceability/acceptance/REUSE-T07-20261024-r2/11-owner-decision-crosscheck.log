@@ -1,0 +1,13 @@
+== 1. owner decision record is in-tree at review head ==
+100644 blob b2c68a068ae5f258fc0cedc5bb17e711147ad0ac	RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1-fix/03-owner-decision.txt
+== 2. rework segment touches zero scripts / zero product src ==
+scripts paths in rework segment: 0
+product src paths in rework segment: 0
+== 3. T20 precedent form comparison (2ac114f33) ==
+T20: registers owner acceptance; only decision records changed; existing numeric/perf evidence cited, no C++ rerun (commit body).
+T07 rework: same form - decision record 03-owner-decision.txt + contract note segment + r1 artifacts ingested; zero product/script changes (verified above).
+== 4. workflow channel corroboration ==
+ListWorkflowRuns unavailable in this session (capability gap, recorded as-is). Session temp path prefix 'sess_dwf-dwfrun-d425945b' (this acceptance session) corroborates the workflow run id cited in 03-owner-decision.txt exists in this environment.
+== 5. r1 observation (stale comments Parts.cpp:281 / PartsTest.cpp:791) disposition check ==
+281:    // ---- ⑤⑥ 数值档（奇异/病态）：单侧 Jacobi SVD 重算（I-MDL-11"可逆、
+(r1 registered as non-blocking observation; rework batch made zero product changes -> not fixed this round, carried as observation)

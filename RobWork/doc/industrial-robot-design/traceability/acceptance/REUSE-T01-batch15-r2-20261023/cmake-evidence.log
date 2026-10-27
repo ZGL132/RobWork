@@ -1,0 +1,17 @@
+413: # 经 rw 头内联面需求由 sdurws 传递供给）。位置纪律：必须置于主链接声明
+414: # 之后——LinkageContractTest 的链接块提取取"首个 target_link_libraries"
+415: # 命中（UI-T45 实施期实证的门控块次序约束）。
+416: if(TARGET sdurws)
+417:     target_sources(sdurws_ird_ui_test PRIVATE
+418:         test/HostCompilePipelineTest.cpp
+419:         test/KinEvaluationChannelTest.cpp  # UI-T64——覆盖评估执行器（受理/切片/账面/迟到判定）
+420:         test/KinHostServicesAssemblyTest.cpp  # ★ KIN-P4——宿主服务装配（网关转译/导出写出/配置持久化——同源直编 TU 的具名自证面；project/io 符号面集成树专属）
+421:         test/View3DPreviewMarkerPositionTest.cpp  # UI-T77——预览协议 position 追加纪律（F-555；rw 头依赖面——冒烟树无框架目标不编）
+422:         test/SampleHighlightTest.cpp  # FIX-T2——F-495 样本级定位：高亮键解析四路径/契约等值含新字段/诚实降级（rw 头依赖面同上——自基础源列表移入本守卫，修基线冒烟 C1083）
+423:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostCompilePort.cpp
+424:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp
+425:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/QtTextBillboard.cpp  # UI-T77——被测 TU 的同源依赖（F-556 承载件）
+426:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinEvaluationChannel.cpp  # UI-T64——被测 TU 同源编入（HostCompilePort 先例形态）
+427:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinHostServicesAssembly.cpp)  # ★ KIN-P4——宿主服务装配 TU 同源编入（网关/写出/持久化用例的被测面）
+428:     target_include_directories(sdurws_ird_ui_test PRIVATE
+429:         ${CMAKE_CURRENT_SOURCE_DIR}

@@ -1,0 +1,37 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"RMS|rms|weighted|trapez|Trapez|Statistics|integrat\" RobWork/RobWork/src/rw/math/Statistics.hpp RobWork/RobWork/gtest/math/StatisticsTest.cpp RobWork/RobWork/src/rw/math RobWork/RobWork/src/rw/trajectory",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 3,
+    "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 4,
+    "command": "rg -n \"SUBSYS_NAME|SUBSYS_DEPS|rw_add_library|target_link_libraries\" RobWork/RobWork/src/rw/math/CMakeLists.txt RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 5,
+    "command": "rg -n \"Boost::headers|Boost_LIBRARIES|find_package\\(Boost|Boost REQUIRED\" RobWork/RobWork/cmake/RobWorkConfig.cmake.in RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  }
+]

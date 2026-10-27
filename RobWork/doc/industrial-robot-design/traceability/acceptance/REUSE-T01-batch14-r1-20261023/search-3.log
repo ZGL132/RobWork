@@ -1,0 +1,208 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:313:    const std::vector<std::uint8_t> bytes = ReportCodec::encodeData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:314:    const ReportSourceSpec decoded = ReportCodec::parseData(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:360:    const std::vector<std::uint8_t> bytes = ReportCodec::encodeFull(full);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:361:    const ReportFullFields decoded = ReportCodec::parseFull(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:803:        const co::ContentIdentity d1 = ReportCodec::digestFull(full);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:805:        const co::ContentIdentity d2 = ReportCodec::digestFull(full);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:837:    const std::vector<std::uint8_t> b1 = ReportCodec::encodeData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:838:    const std::vector<std::uint8_t> b2 = ReportCodec::encodeData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:840:    EXPECT_EQ(ReportCodec::digestData(spec), ReportCodec::digestData(spec));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:863:    const std::vector<std::uint8_t> bytes = ReportCodec::encodeData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:931:    const std::vector<std::uint8_t> bytes = ReportCodec::encodeFull(full);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:944:    const ReportFullFields decoded = ReportCodec::parseFull(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:964:    EXPECT_THROW((void)ReportCodec::encodeData(spec), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:966:        (void)ReportCodec::encodeData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:999:    EXPECT_THROW((void)ReportCodec::encodeFull(nanFull), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1006:    EXPECT_THROW((void)ReportCodec::encodeFull(infFull), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1013:    const auto bytes = ReportCodec::encodeFull(okFull);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1014:    const auto decoded = ReportCodec::parseFull(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1040:    EXPECT_THROW((void)ReportCodec::encodeFull(full), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1058:    const std::vector<std::uint8_t> bytes = ReportCodec::encodeData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1064:        EXPECT_THROW((void)ReportCodec::parseData(bad), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1070:        EXPECT_THROW((void)ReportCodec::parseData(bad), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1075:        EXPECT_THROW((void)ReportCodec::parseData(bad), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1081:        EXPECT_THROW((void)ReportCodec::parseData(bad), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp:1087:        EXPECT_THROW((void)ReportCodec::parseData(bad), ReportError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp:233:    const std::vector<std::uint8_t> bytes = ReportCodec::encodeData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp:234:    const ReportSourceSpec decoded = ReportCodec::parseData(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:228:    const std::string bytes = codec::dump(v);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:230:    const auto back = codec::parseStaticIdentity(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:238:    const std::string bytes1 = codec::dump(v);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:239:    const std::string bytes2 = codec::dump(v);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:242:    const auto back = codec::parseHeadRecord(bytes1);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:250:    const auto backWith = codec::parseRevisionManifest(codec::dump(with));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:254:    const auto backWithout = codec::parseRevisionManifest(codec::dump(without));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:257:    EXPECT_EQ(codec::dump(without).find("parentRevisionId"), std::string::npos);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:258:    EXPECT_EQ(codec::dump(without).find("introducedObjects"), std::string::npos);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:265:    const std::string bytes = codec::dump(v);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:270:    const auto back = codec::parseMetadataRecord(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:279:    const auto backFull = codec::parseCommandRecord(codec::dump(full));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:283:    const auto backMinimal = codec::parseCommandRecord(codec::dump(minimal));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:285:    EXPECT_EQ(codec::dump(minimal).find("\"inverse\""), std::string::npos);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:286:    EXPECT_EQ(codec::dump(minimal).find("\"confirmations\""), std::string::npos);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:293:    const auto backWith = codec::parseDraftDocument(codec::dump(withRefs));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:297:    const auto backNo = codec::parseDraftDocument(codec::dump(noRefs));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:299:    EXPECT_EQ(codec::dump(noRefs).find("externalRefs"), std::string::npos);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:306:        const auto back = codec::parseDraftDocument(codec::dump(d));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:323:    EXPECT_EQ(codec::dump(makeHeadRecord()), golden);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:329:    expectPureAscii(codec::dump(makeStaticIdentity()), "ProjectStaticIdentity");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:330:    expectPureAscii(codec::dump(makeHeadRecord()), "HeadRecord");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:331:    expectPureAscii(codec::dump(makeManifest(true)), "RevisionManifest");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:332:    expectPureAscii(codec::dump(makeMetadata()), "ProjectMetadataRecord");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:333:    expectPureAscii(codec::dump(makeCommand(true)), "CommandRecord");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:334:    expectPureAscii(codec::dump(makeDraft(true)), "DraftDocument");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:342:    const std::string bytes = codec::dump(v);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:346:    const auto back = codec::parseMetadataRecord(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:360:        codec::parseStaticIdentity(codec::dump(makeStaticIdentity()).substr(0, 10)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:363:        codec::parseHeadRecord(codec::dump(makeHeadRecord()).substr(0, 40)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:366:        codec::parseRevisionManifest(codec::dump(makeManifest(true)).substr(0, 60)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:369:        codec::parseMetadataRecord(codec::dump(makeMetadata()).substr(0, 60)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:372:        codec::parseCommandRecord(codec::dump(makeCommand(true)).substr(0, 60)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:375:        codec::parseDraftDocument(codec::dump(makeDraft(true)).substr(0, 60)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:382:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:384:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:390:    EXPECT_STORE_ERROR(codec::parseHeadRecord("not-json-at-all"),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:392:    EXPECT_STORE_ERROR(codec::parseHeadRecord(""), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:393:    EXPECT_STORE_ERROR(codec::parseHeadRecord("[1,2,3]"),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:410:    EXPECT_STORE_ERROR(codec::parseMetadataRecord(raw), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:416:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:418:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:425:    EXPECT_STORE_ERROR(codec::parseStaticIdentity(spaced), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:433:    const std::string full = codec::dump(base);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:449:        EXPECT_STORE_ERROR(codec::parseHeadRecord(removed),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:457:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:459:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:465:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:468:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:473:        codec::parseRevisionManifest("{\"revisionId\":\"" + std::string(kRevText)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:488:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:491:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:499:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:502:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":null,"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:511:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:514:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:520:    EXPECT_STORE_ERROR(codec::parseCommandRecord(cmd), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:523:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:528:    bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:531:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:537:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:540:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:546:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:557:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:562:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:570:        codec::parseRevisionManifest("{\"revisionId\":\"" + std::string(kRevText)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:586:    EXPECT_STORE_ERROR(codec::parseHeadRecord("{\"formatId\":\"rwdesign\","
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:608:    EXPECT_STORE_ERROR(codec::parseCommandRecord(cmdWith("ab").c_str()),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:610:    EXPECT_STORE_ERROR(codec::parseCommandRecord(cmdWith("CreateBranch").c_str()),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:612:    EXPECT_STORE_ERROR(codec::parseCommandRecord(cmdWith("project_create").c_str()),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:619:    std::string bytes = codec::dump(makeDraft(false));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:623:    EXPECT_STORE_ERROR(codec::parseDraftDocument(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:634:    EXPECT_STORE_ERROR(codec::parseRevisionManifest(manifestMinimal),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:641:    EXPECT_STORE_ERROR(codec::parseMetadataRecord(metaMinimal),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:648:    std::string bytes = codec::dump(makeDraft(true));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:652:    EXPECT_STORE_ERROR(codec::parseDraftDocument(bytes), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:665:    EXPECT_STORE_ERROR(codec::parseRevisionManifest(manifest),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:678:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:684:        codec::parseHeadRecord(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:707:        std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:711:        EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:715:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:719:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::FormatLegacy);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:725:    std::string bytes = codec::dump(makeHeadRecord());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:729:    EXPECT_STORE_ERROR(codec::parseHeadRecord(bytes), StoreErrorCode::FormatLegacy);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:737:    std::string bytes = codec::dump(makeDraft(true));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:748:    const auto back = codec::parseDraftDocument(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:756:    EXPECT_EQ(codec::dump(back).find("futureTopLevelField"), std::string::npos);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:759:    std::string same10 = codec::dump(makeDraft(true));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:761:    EXPECT_STORE_ERROR(codec::parseDraftDocument(same10), StoreErrorCode::StoreCorrupt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:767:    std::string bytes = codec::dump(makeMetadata());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:774:    const auto back = codec::parseMetadataRecord(bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:801:    const auto back = codec::parseDraftDocument(codec::dump(d));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:822:    const auto back = codec::parseDraftDocument(codec::dump(d));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:842:    EXPECT_STORE_ERROR(codec::parseDraftDocument(codec::dump(d)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:849:    EXPECT_STORE_ERROR(codec::parseDraftDocument(codec::dump(d2)),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:869:    const auto viaCodec = codec::contentVersionOf(payload);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:879:    EXPECT_EQ(codec::contentVersionOf("payload-A"), codec::contentVersionOf("payload-A"));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:880:    EXPECT_NE(codec::contentVersionOf("payload-A"), codec::contentVersionOf("payload-B"));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:882:    EXPECT_EQ(codec::contentVersionOf("").toCanonical(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:890:    EXPECT_EQ(codec::contentVersionOf("payload-A"), chunkedVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:904:    const auto back = codec::parseDraftDocument(codec::dump(d));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:908:    EXPECT_EQ(codec::contentVersionOf(back.payload),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:909:              codec::contentVersionOf(d.payload));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:923:    EXPECT_EQ(codec::parseHeadRecord(codec::dump(head)).manifestDigest, fakeDigest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:927:    EXPECT_EQ(codec::parseRevisionManifest(codec::dump(manifest)).objectRefs[0].digest256,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:933:        codec::parseDraftDocument(codec::dump(draft)).externalRefs[0].contentHash256,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp:946:        (void)codec::dump(d);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\Archive.cpp:85:/// 评审；ReportCodec::kCodecVersion 同纪律）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\Builder.cpp:1475:        const core::ContentIdentity dataIdentity = ReportCodec::digestData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.hpp:58: *     canonical 编码**（实现为：digest 置空串后 codec::dump 的字节经
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:428:    // 口径③）：digest 置空串后走 codec::dump（固定字段序＝§4.4.7 表
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:434:    const std::string canonical = codec::dump(probe);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:435:    std::string hex = codec::contentVersionOf(canonical).toCanonical();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:643:            existing = codec::parseRunManifest(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:760:        const core::ContentVersion incoming = codec::contentVersionOf(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:776:            if (codec::contentVersionOf(*existing) != incoming) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:882:    const std::string canonical = codec::dump(out);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:924:            existing = codec::parseRunManifest(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:1000:            = codec::contentVersionOf(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ConfirmationFlow.hpp:151: * 对字节做摘要；与对象内容版本同一算法路径 codec::contentVersionOf 的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:289:    w.u32(ReportCodec::kCodecVersion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:302:    if (version != ReportCodec::kCodecVersion) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:305:                              + std::to_string(ReportCodec::kCodecVersion) + "，实际 "
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:1227:std::vector<std::uint8_t> ReportCodec::encodeData(const ReportSourceSpec& spec)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:1255:ReportSourceSpec ReportCodec::parseData(const std::vector<std::uint8_t>& bytes)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:1285:core::ContentIdentity ReportCodec::digestData(const ReportSourceSpec& spec)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:1296:std::vector<std::uint8_t> ReportCodec::encodeFull(const ReportFullFields& full)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:1327:ReportFullFields ReportCodec::parseFull(const std::vector<std::uint8_t>& bytes)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportCodec.cpp:1367:core::ContentIdentity ReportCodec::digestFull(const ReportFullFields& full)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:9: * codec::contentVersionOf 唯一入口，CR-02）之上。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:190:    const core::ContentVersion cv = codec::contentVersionOf(payloadBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:288:            codec::contentVersionOf(std::string_view{
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:374:    const core::ContentVersion actual = codec::contentVersionOf(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:494:        const core::ContentVersion actual = codec::contentVersionOf(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\DraftServiceImpl.cpp:116: *   ②canonical 解析（codec::parseDraftDocument——语法/版本/字段级校验；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\DraftServiceImpl.cpp:146:        doc = codec::parseDraftDocument(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\DraftServiceImpl.cpp:363:    const std::string canonical = codec::dump(persisted);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.hpp:31: *   本类**不持有任何哈希实现**——内容版本一律经 codec::contentVersionOf()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportModel.cpp:734:    const core::ContentIdentity dataIdentity = ReportCodec::digestData(spec);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src\ReportModel.cpp:735:    const core::ContentIdentity contentIdentity = ReportCodec::digestFull(full);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:459:                draft = codec::parseDraftDocument(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:586:                manifest = codec::parseRevisionManifest(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:621:        ProjectMetadataRecord record = codec::parseMetadataRecord(payload);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1016:    m_authoritative = codec::parseMetadataRecord(std::string{
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1089:        identity = codec::parseStaticIdentity(*identityBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1355:        const std::string metaPayload = codec::dump(m0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1383:        const std::string manifestBytes = codec::dump(r0Manifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1385:            = codec::contentVersionOf(manifestBytes).toCanonical().substr(3);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1426:                     codec::dump(initCommand));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1427:        writeOrThrow(assembly / "project.json", codec::dump(staticIdentity));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ProjectStoreImpl.cpp:1428:        writeOrThrow(assembly / "HEAD", codec::dump(head));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\QueryPortImpl.cpp:167:        const HeadRecord head = codec::parseHeadRecord(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\QueryPortImpl.cpp:260:    const CommandRecord command = codec::parseCommandRecord(readStoreFile(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\QueryPortImpl.cpp:511:                codec::parseDraftDocument(readStoreFile(entry.path()));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\QueryPortImpl.cpp:605:                codec::parseRunManifest(readStoreFile(manifestFile));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\SolidifyServiceImpl.cpp:44: *   codec::contentVersionOf（core ContentDigester）——无第二哈希路径。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\SolidifyServiceImpl.cpp:605:    const std::string copyHash = codec::contentVersionOf(copyBytesView).toCanonical();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:173:    snapshot.head = codec::parseHeadRecord(*headBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:237:            const ProjectMetadataRecord record = codec::parseMetadataRecord(text);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:493:        ProjectStaticIdentity identity = codec::parseStaticIdentity(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:495:        const std::string dumped = codec::dump(identity);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:508:        HeadRecord head = codec::parseHeadRecord(snapshot.headBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:510:        const std::string dumped = codec::dump(head);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:536:        DraftDocument doc = codec::parseDraftDocument(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:538:        const std::string dumped = codec::dump(doc);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.hpp:46: *   codec::contentVersionOf（内部即 core::ContentDigester——core.md v0.1
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:126:    const core::ContentVersion actual = codec::contentVersionOf(*readBack);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:401:    const std::string metadataPayload = codec::dump(candidate);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:403:        codec::contentVersionOf(metadataPayload);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:420:        s.cv = codec::contentVersionOf(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:461:    const std::string manifestBytes = codec::dump(manifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:466:        codec::contentVersionOf(manifestBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:470:    const std::string commandBytes = codec::dump(plan.command);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:472:        codec::contentVersionOf(commandBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:705:        const std::string headBytes = codec::dump(newHead);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:738:                selfCheckOk = (codec::parseHeadRecord(*headBytes) == newHead);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:933:        head = codec::parseHeadRecord(*headBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:999:                        codec::parseRevisionManifest(*bytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:1028:                codec::parseMetadataRecord(payload);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:1157:    return codec::parseHeadRecord(*bytes);

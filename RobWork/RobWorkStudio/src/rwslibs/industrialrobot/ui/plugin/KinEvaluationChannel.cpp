@@ -73,6 +73,13 @@ public:
     {
         return m_snapshot->worldToBase();
     }
+    // REUSE-T17 锚能力：快照本体即 IRuntimeModelView——shared_ptr 隐式转换
+    // 保持真实引用计数（深拷贝保活，非 no-op deleter 伪装）；同视图多次
+    // 调用同源（恒为 m_snapshot 所指快照）。
+    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+    {
+        return m_snapshot;
+    }
 
 private:
     /// 快照存活期锚（任务闭包经 shared_ptr 捕获——存活到任务结束）。

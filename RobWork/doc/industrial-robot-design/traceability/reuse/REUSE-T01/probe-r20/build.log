@@ -1,0 +1,7 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\ird-core\Release\sdurws_ird_core.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\ird-project\Release\sdurws_ird_project.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\ird-testkit\Release\sdurws_ird_testkit.lib
+  ProjectBoundaryTest.cpp
+  ird_project_boundary_audit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\Release\ird_project_boundary_audit.exe

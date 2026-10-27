@@ -1,0 +1,97 @@
+{
+  "taskId": "REUSE-T12",
+  "baseCommit": "3e8cec6ef9d27d165613cbed912a0960f746a02d",
+  "reviewedCommit": "6fb26b31ddcd514ba2d3dab8ff548b977b54c9c6",
+  "branch": "redesign-main",
+  "verdict": "fail",
+  "createdAt": "2026-10-25T00:00:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T12/WP-A 单次验收子智能体（dynamic-workflows 独立验收·REUSE-T12·r1）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施者不得自签。",
+    "constraints": "未参与实施；只验收不修复、不改任务状态、不推进下一任务。除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作；对 build/ 集成树仅做受影响目标增量构建与测试执行（AGENTS §4 增量口径）。所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 3e8cec6ef..6fb26b31d 送验实现（REUSE-T12 传动映射数值核复用上游线性代数、删除自写 SVD/求逆；原登记 REUSE-T09 经 27ff6d6f7 改号 T12）：现场与送验链核对、verify-task-scope 指定 Base/Head 复跑与逐提交归因、契约五条 acceptance 逐项（migration §1.1 四维、生产路径与自写核删除 diff 实证、校验顺序/阈值、集成构建+42/42+15/15 测试真实复跑+断开实验证据原件核对、ird_gates/validate-reuse/validate-docs 实跑）、红线合集（H1-H6 锚点、L2 零 Qt、六类端口、CLOSURE 冻结、上游+vcpkg 净零、门禁未放宽、PASS/FAIL/SKIP/NOT RUN 分列）、提交链（commit-lint、前缀、一包一组、正文与证据一致）。",
+  "counts": {
+    "failed": 2,
+    "passed": 13,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "15 项验收检查：13 passed / 2 failed（均为 acceptance5 实锤缺口）；测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场：branch=redesign-main；HEAD=af90631f1，送验 head 6fb26b31d 为其祖先（git merge-base --is-ancestor 通过）；base 3e8cec6ef 为核心实施提交 f74f483d5 的直接父（git log %h %p 实证）；工作区仅他任务 REUSE-T10 验收产物目录未跟踪，未触碰。",
+    "范围①主线段：verify-task-scope 显式 -Base 3e8cec6ef -Head 6fb26b31d exit=1 FAIL——changed=415，337 out-of-scope + 禁止面命中 3 类（reuse/catalog.json←f378f01c5/a63157aec/a1393ad4a；functions/modeling.json←2daace508/a1393ad4a；traceability/reuse/REUSE-T11/**←30b5a2343/a1393ad4a），git log 逐文件归因全部为送验段内其他任务提交（T13 集成、T09 收口、RPY/modeling 线），无一是 T12 提交。",
+    "范围①逐提交归因（T12 侧合规）：T12 相关 5 提交文件清单逐一核对——bc9f1f748（7 文件：MappingCore.cpp/hpp、CMakeLists.txt、MappingR2GoldenTest.cpp、migration.md、t11-* 证据）、f74f483d5（10 文件）、27ff6d6f7（5 文件改号）、c5a22b209（17 文件收口+disconnected 证据）、6fb26b31d（merge 无文件）——全部落契约 allowedFiles，零 forbiddenFiles、零 scripts/、零他单元文件。范围工具字面 FAIL 系送验段主线混编所致（任务说明已明示该 Base/Head 口径与隔离起点 8e4a08ac8），不指向 T12 越界；隔离段 8e4a08ac8..f74f483d5 复跑同样 FAIL（364）同因（段内含 EAA/覆盖清查等他任务提交）。",
+    "acceptance1（§1.1 四维+上游适用）：migration.md §2 保留（1e-12/1e8 阈值、§7.2 顺序、DT-* 诊断码、matVec 等业务面、RowMatrix/接口签名）/删除（singularValuesJacobi 全核、Gauss-Jordan 消元体、kDtJacobiOrthogonalRelative、kDtJacobiMaxSweeps）/适配（svd 归一化乘回、inverse 转换+非有限 fail-fast）/归属（分解求逆归上游 sdurw_math、业务合法性归 drivetrain）逐项在位；§3 上游适用证据含符号行号（LinearAlgebra.hpp:65 svd、LinearAlgebra.cpp:55-63 JacobiSVD、hpp:132-135 inverse），pseudoInverse 明示仅评估不采用（与 note 一致）；准确性（独立解析 oracle+R2 黄金回归双路锚）、架构（PRIVATE sdurw_math 薄适配、与 REUSE-T07 同款落位）、简洁性（自写核 176 行删除、适配层仅容器/尺度）、运行效果（测试全绿）均核。",
+    "acceptance2（生产路径+删除实证）：现树 MappingCore.cpp:211 调用 rw::math::LinearAlgebra::svd、:247 调用 rw::math::LinearAlgebra::inverse（生产 singularValues/invertSquareMatrix 唯一路径）；8e4a08ac8..6fb26b31d diff 实证删除 singularValuesJacobi 全核（含 60 轮 sweep 循环与旋转体）与 Gauss-Jordan 消元体及两迭代常量；drivetrain 全目录 grep 无 Jacobi/Gauss-Jordan 代码残留（仅 :1085 一处过时注释，见 issues）；pseudoInverse 在 drivetrain 零引用；无任何运行时旧算法回退分支（代码注释明示『不吞错，无旧算法回退』且无备用路径）。",
+    "acceptance3（顺序/诊断/阈值）：validateCoupledWindow 校验序（MappingCore.cpp:503-722）＝非方阵→空窗口→窗口关节合法性→维度→轴序→非有限（先于比较）→块对角一致性→自由轴零传动比→奇异（:683，σmin≤σmax×1e-12）→病态（:704，κ>1e8），与 §7.2 顺序一致；kDtSingularSigmaRatio=1e-12（:161，P-DT-2 同族留痕注释在位）、kWellConditionedLimit=1.0e8（MappingCore.hpp:136）均未放宽；DT-MATRIX-SINGULAR/ILL-CONDITIONED 比较型诊断（compareOf 携带 σmin/σmax 比值与 κ，actual/expected/无量纲）语义保持；无伪逆/截断奇异值放行路径（invertSquareMatrix 逆结果非有限 fail-fast 抛 DT-MATRIX-SINGULAR，:248-253）；modeling 旋转 1e-6 决议不适用（drivetrain 数值容差为附录 D 第 9 项标量相对 1e-9，测试注释独立声明）。",
+    "acceptance4 构建：集成树 build/（CMakeCache RWS_BUILD_INDUSTRIALROBOT:BOOL=ON）增量构建 sdurws_ird_drivetrain + sdurws_ird_drivetrain_test + sdurws_ird_drivetrain_contract_test 全部 exit 0（04 号证据；契约 verify 第 3 条的 .cache/t11-smoke 树已不存在，以集成树等价执行，见 limitations）。",
+    "acceptance4 单元测试：sdurws_ird_drivetrain_test.exe（PATH 前置框架/vcpkg DLL）exit 0，42/42 passed、0 failed/0 skipped/0 notRun（05-int-drivetrain-test.xml tests=\"42\" failures=\"0\"；含 38 既有金样回归＋DtMappingR2Linalg 组 4 新增）；对端契约回归 sdurws_ird_drivetrain_contract_test.exe exit 0，15/15 passed（05-int-drivetrain-contract.xml failures=\"0\"）。新增 4 用例核名：InverseAnalyticOracle_WindowConsumers（C=[[2,1],[1,3]] 伴随法手算逆独立 oracle＋两真实生产消费面）、SingularValuesAnalyticSpectrum_ConditionNumber（正交相似解析谱 σ={3,1}）、ThresholdBoundaries_TwoGates（1e-12/1e8 两分界各两侧）、ScaleExtremes_ConditionInvariant（diag(1e±200) 归一防平方上/下溢）。",
+    "acceptance4 断开实验证据原件核对：disconnected/inverse/MappingCore.mutated.cpp:247 求逆返回值 ×1.0e300（DISCONNECT-MUTATION 标记在码）→ run.log 真实转红 DT-INERTIA-NOT-POSITIVE-DEFINITE 异常、gtest.xml tests=1 failures=1；disconnected/singular/MappingCore.mutated.cpp:212 svd 结果被 Constant(1.0) 覆盖（DISCONNECT-MUTATION 标记在码）→ run.log 断言 actual κ=1 vs expected 3 失败、gtest.xml tests=1 failures=1。断开上游调用真实失败成立（acceptance4『断开上游调用真实失败』满足）。",
+    "acceptance5 门禁：ird_gates.cmake 直跑（IRD_ROOT+自测目录）exit 0，『R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中』（06 号）；validate-reuse -TaskFile REUSE-T12.json exit 0 PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399；REUSE-AD-PENDING 为既有 pending 提示，非本包阻断）（09 号）；validate-docs -TaskFile REUSE-T12.json exit 1 FAIL——Write-Error『ready task has empty or missing field outputs: REUSE-T12』（08 号），见 issues。",
+    "红线-H1-H6：H1 直接调用上游 API（最高复用优先级）；H2 无平行实现（自写核删除+零备用路径+pseudoInverse 不采用）；H3 适配上游（Eigen 容器转换、沿用上游 svd/inverse 接口与 sdurw_math 目标，产品中文契约保持）；H4 覆盖代码/测试/文档/门禁（本轮各面均核）；H5 本包为所有者 2026-10-23 授权的传动复用（note 在案），无未批准新核心/上游扩展（上游+vcpkg 净零）；H6 逐文件凭证（production-singularValues.json/production-invertSquareMatrix.json ird-reuse-production/1 bindings 含 SHA256、functions/drivetrain.json 两 adapter 行结项 migrated）；AGENTS.md H1 锚点与 ci/upstream-reuse-governance.github-workflow.yml 在位。",
+    "红线-架构/冻结：L2 零 Qt（drivetrain src+include grep Qt 类/Q_OBJECT/QtCore 等零命中）；六类端口与跨单元边界（MappingCore.cpp include 仅本单元公共头+rw/math/LinearAlgebra.hpp+标准库，全目录无他单元私有头引用）；CLOSURE 冻结——T12 全部 5 提交对 reuse/closures.json 逐提交 git diff --quiet 零差异（范围字面差异经 git log 归因仅 2daace508『依据独立验收关闭RPY两项复用债务』合法闭环，非 T12 触碰，GOV-T21-r2 同款口径）；上游+vcpkg 净零（范围 diff 对 RobWork/RobWork/src、RobWorkSim/src、vcpkg 零路径）；门禁/性能/权限未放宽（ird_gates+validate-reuse 实测通过、阈值常量原值、T12 提交零脚本改动、core::UnitToken 等按既有权限消费）；PASS/FAIL/SKIP/NOT RUN 分列（README 验证分档表、normal 报告 passed/failed/skipped 分列、本轮 05/06/08/09 号输出均显式）。",
+    "提交链④：commit-lint -Range 3e8cec6ef..6fb26b31d → 19/21 PASS（07 号）；2 FAIL 为 9e1fe9c2e/340dc88a4（T09 轨迹多项式实施提交，标题前缀 [REUSE-T09] 不在合法前缀清单——属 T09 侧历史提交，commit-lint 自身按 F-012 豁免提示不回写；T09 独立验收已另行登记 d804e43ef），非 T12 内容；T12 相关提交前缀全合规（f74f483d5/bc9f1f748 [units]、27ff6d6f7/82cd82ff7/c5a22b209/6fb26b31d [governance]）；一包一组成立（实施→改号→集成收口→合并同步，各提交标题与实际 diff 一致——抽查 f74f483d5『复用上游LinearAlgebra并删除自写SVD/求逆』标题与 8e4a08ac8..f74f483d5 diff 相符）；送验范围两端与指令一致。",
+    "次要发现：MappingCore.cpp:1085 注释仍写『Gauss-Jordan 部分主元，确定性——文件头注』——该行在 8e4a08ac8:1170 描述旧实现，bc9f1f748 替换为上游 inverse 后未同步（同提交已正确更新函数体注释与文件头），属本包引入的过时注释（AGENTS §2），随 issues 3 一并更正。"
+  ],
+  "integrationTest": {
+    "drivetrain": {
+      "tests": 42,
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "05-int-drivetrain-test.xml",
+      "note": "38 既有金样回归＋DtMappingR2Linalg 4 新增（解析逆 oracle/解析谱/阈值邻界/极端尺度）"
+    },
+    "drivetrainContract": {
+      "tests": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "05-int-drivetrain-contract.xml"
+    }
+  },
+  "commands": [
+    { "name": "scope-mainline", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T12.json -Base 3e8cec6ef9d27d165613cbed912a0960f746a02d -Head 6fb26b31ddcd514ba2d3dab8ff548b977b54c9c6", "exitCode": 1, "passed": false, "log": "02-scope.log", "note": "FAIL=415 changed/337 out-of-scope/3 禁止面命中；逐提交归因全部他任务提交，T12 提交零越界（检查 2/3）" },
+    { "name": "scope-isolated", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile …REUSE-T12.json -Base 8e4a08ac8 -Head f74f483d5", "exitCode": 1, "passed": false, "log": "03-scope-isolated.log", "note": "隔离段补充复跑 FAIL=364，同因（段内含 EAA/覆盖清查等他任务提交）" },
+    { "name": "build-affected", "command": "cmake --build build --config Release --target sdurws_ird_drivetrain sdurws_ird_drivetrain_test sdurws_ird_drivetrain_contract_test", "exitCode": 0, "passed": true, "log": "04-build.log", "note": "集成树等价执行（.cache/t11-smoke 已不存在，见 limitations）" },
+    { "name": "int-drivetrain-test", "command": "sdurws_ird_drivetrain_test.exe --gtest_output=xml:…05-int-drivetrain-test.xml（PATH 前置 build/RobWork bin|libs/Release＋vcpkg installed/x64-windows/bin）", "exitCode": 0, "passed": true, "log": "05-int-drivetrain-test.log", "xml": "05-int-drivetrain-test.xml" },
+    { "name": "int-drivetrain-contract", "command": "sdurws_ird_drivetrain_contract_test.exe --gtest_output=xml:…05-int-drivetrain-contract.xml（同上 PATH）", "exitCode": 0, "passed": true, "log": "05-int-drivetrain-contract.log", "xml": "05-int-drivetrain-contract.xml" },
+    { "name": "gate-engine", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=$TEMP/reuse-t12-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "06-gate-engine.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 3e8cec6ef..6fb26b31d", "exitCode": 1, "passed": false, "log": "07-commit-lint.log", "note": "19/21 PASS；2 FAIL 为 T09 提交（[REUSE-T09] 前缀），非 T12 内容，详见检查 13" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"…validate-docs.ps1 -TaskFile …REUSE-T12.json\"（含 validate-task＋validate-reuse）", "exitCode": 1, "passed": false, "log": "08-validate-docs.log", "note": "FAIL：ready task has empty or missing field outputs: REUSE-T12（validate-task.ps1:74 ready 必需字段）——issues 1" },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T12.json", "exitCode": 0, "passed": true, "log": "09-validate-reuse.log" }
+  ],
+  "executionNotes": [
+    "契约 verify 第 3 条的 .cache/t11-smoke 冒烟树在本仓库已不存在（ls 实证，.cache 仅 lean-verification/reuse-tests/t07/t09/t10 五目录）；按 AGENTS §4 增量口径改用集成树 build/（RWS_BUILD_INDUSTRIALROBOT=ON）构建同三目标并真实运行测试，数值与回归覆盖不减。",
+    "README.md 第 12 行『断开实验真实转红 5/5（含既有 MatrixGateBlockers）』指实施期第一轮移除 svd 调用的整集运行；收口补全节登记的第二轮变异实验为逐用例单测（两处 gtest.xml 均 tests=1 failures=1）——两轮证据互补自洽，断链证明成立。",
+    "送验段为主线串行混编段：verify-task-scope 的区间语义无法表达离散提交子集，工具字面 FAIL 已按逐提交归因核清（T12 提交零越界），与 GOV-T21-r2 对 2daace508 的归因口径同型。"
+  ],
+  "issues": [
+    "ISSUE-1（阻断，acceptance5『文档门禁通过』未满足）：tasks/REUSE-T12.json 缺 outputs 字段——validate-task.ps1:74 将 outputs 列为 ready 任务必需字段，validate-docs -TaskFile REUSE-T12.json 实跑 Write-Error『ready task has empty or missing field outputs: REUSE-T12』exit 1（证据 08-validate-docs.log）；对照 REUSE-T09/T10/T13 契约均在实施期提交内携带 outputs（T09 见 340dc88a4、T10 见 e453006ea），T12 改号提交 27ff6d6f7 与收口提交 c5a22b209 均未补。可执行修复：在 tasks/REUSE-T12.json 增补 outputs 数组（如：上游 svd/inverse 生产接线与自写核删除、独立 oracle/邻界/极端尺度用例与断链证据、production bindings 凭证与 functions/drivetrain.json 结项、性能前后测量〔随 ISSUE-2 补齐后写入〕），随后复跑 validate-docs -TaskFile 至 exit 0。",
+    "ISSUE-2（阻断，acceptance5『固定条件性能前后测量记录实际调用场景与预算』未满足）：性能前后测量 NOT RUN——traceability/reuse/drivetrain-linalg/README.md:16 实施方自登记『基线 exe 未留存、冻结对比超出本会话预算……登记为独验前待补项』；本包为核心数值核替换，AGENTS §4 数值/性能验收不能省略，验收指令亦明确『数值/性能项必须真实执行』。可执行修复：固定输入集（如覆盖良态/邻界的窗口 C 矩阵组）对当版 singularValues（LinearAlgebra::svd）与 invertSquareMatrix（LinearAlgebra::inverse）真实生产路径实测调用耗时并记录调用场景与预算登记入 README 分档表；旧基线缺失部分如实登记对比口径（理论同阶论证已在案，但实测当版数据为必要交付）。",
+    "ISSUE-3（次要，随 ISSUE-1/2 同提交更正）：MappingCore.cpp:1085 注释仍写『Gauss-Jordan 部分主元，确定性——文件头注』——实现已换上游 LinearAlgebra::inverse（Eigen LU），同提交内其余 Gauss-Jordan 注释均已更新，仅此行漏改（8e4a08ac8:1170 旧文本比对实证），违反 AGENTS §2 过时注释禁令。可执行修复：改为描述上游 inverse 路径的确定性来源。"
+  ],
+  "notRun": [],
+  "limitations": "FAIL 判定仅由 ISSUE-1/2（acceptance5 两项实锤缺口）触发；ISSUE-3 为次要随改项。本轮其余 13 项检查（含数值回归 42+15 真实复跑、断链证据、四维定位、红线合集）均实测通过，不因 fail 否定其证据效力；第 2 轮验收应在 issues 修复后仅复跑 validate-docs、性能证据核对与 1085 行注释核对，不必全量重验。verify-task-scope 指定 Base/Head 字面 FAIL 已归因为主线混编（T12 提交零越界），不列入 issues；commit-lint 2 个 FAIL 属 T09 历史提交（F-012 豁免不回写，T09 独验已登记）。构建以集成树等价执行（t11-smoke 不在），三目标与测试真实运行。REUSE-AD-PENDING（ui/plugin 两文件无权限授予）为在途 AD 审计既有 pending，非本包新增。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/03-scope-isolated.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/04-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/05-int-drivetrain-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/05-int-drivetrain-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/05-int-drivetrain-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/05-int-drivetrain-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/06-gate-engine.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/07-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/08-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/09-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1.json"
+  ]
+}

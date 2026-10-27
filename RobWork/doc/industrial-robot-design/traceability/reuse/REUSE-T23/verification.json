@@ -1,0 +1,60 @@
+{
+  "base": "4585a59b97838bc97a111836296fc6936689781c",
+  "task": "REUSE-T23",
+  "independentAcceptance": "NOT RUN",
+  "performance": "NOT RUN: successful path keeps the same switch and enum/optional writes; order-only non-numerical fix",
+  "runs": [
+    {
+      "label": "red",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/red.xml",
+        "sha256": "2df95d2389c07b48adca085f42a16ab6f2af5d4037c83954916702f9e78e53a9"
+      },
+      "report": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/red-report.json",
+        "sha256": "d9f7ef183445754fa236dfb3731f1cab2cb2b227cf568341e5c3a6f815b3f970"
+      }
+    },
+    {
+      "label": "green",
+      "exitCode": 0,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/green.xml",
+        "sha256": "cd9ead2ea485a28031dd32f70c6b014eb5c8ff983b9ed4983c2d3c7d965c58a4"
+      },
+      "report": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/green-report.json",
+        "sha256": "556e3ba7c84a20201b5b8e42ba90a119d8c264acc9c54ced53d764360d9a9590"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp",
+      "rawSha256": "3d8296c7c1646cb51026ef10cfd2fce30ea1f44c664363a65ceefc75812f958f"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+      "rawSha256": "017242e12dc287776286f2fb9a636f593e5024fe8b3e483ca053ddd726ea18bc"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/RunRegistry.hpp",
+      "rawSha256": "9cb3cade551e0a29f0bfd5e79bd559662001b2daa96daeef237f2fb81ad82e65"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+      "rawSha256": "c4ea8bb6a1246feda9bea8cd516e4eae22163effdd94bf2d626c298e2120cf43"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/run-tests.ps1",
+      "rawSha256": "f950307cb15f83506751faff927aab1e5ef5856b37030ee17d79e6a13cde879c"
+    }
+  ]
+}

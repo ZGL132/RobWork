@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "dynamics.fd.evaluate.core",
+  "target": "sdurws_ird_dynamics",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+      "sha256": "f6951c8475aaa0a374511c77524bb38af881a882d43d3031fce5802e2d66ccff"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+      "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp",
+      "sha256": "16ab18d0fb14247411422b1b670d6531f62e75cdc30f131d8e70ad9b351b5ee6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp",
+      "sha256": "de57acd48234314f3ad27b8fcd40e58f8f04b73a43d6553bd2f93e383f8d7517"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp",
+      "sha256": "d605f1c73c051264c9d494b519fcf7cc57aea581d8a9d240850016f64ff86d57"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "sha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/run-fd.ps1",
+      "sha256": "e3d4df2ec09df532b0fc9e7f7085b1ba62e95e8e2013bdbb733e4647fb491575"
+    }
+  ],
+  "normal": {
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/normal-full-suite.xml",
+      "sha256": "333dfbefa6ee8e2113adc70f6a0b1e4745e560174d360eb32ba29f17e045b535"
+    },
+    "command": "VS x64 集成树: cmake --build build --config Release --target sdurws_ird_dynamics sdurws_ird_dynamics_test 后 pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/run-fd.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label normal-full-suite（dynamics 全量 119 项＝DynForward 13 项 ODE 会话域断言零放松＋既有套件；本run兼作断开实验原字节恢复后的复验）",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/normal-full-suite.log",
+      "sha256": "7d319e5e85c1629c25d2f9e3c25dc6dc57c51719c899be8061503ed3e59183d8"
+    },
+    "exitCode": 0
+  },
+  "oracle": {
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/oracle.xml",
+      "sha256": "7bef6498ed65da0f67cf1dc59cd2712b74b34c7ec7f1bbdd8d7a9d0d8f1aefbf"
+    },
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/run-fd.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label oracle -Filter 'DynForward.AnalyticStraightConfigurationPassed_DYN05:DynForward.DeterministicRepeat_NFR_COR_02:DynForward.PayloadEventSameSourceConsistency_DYN05'（独立物理 oracle：伸直构型匀加速解析界对照＋同输入双跑逐位确定性＋负载事件共源重建会话一致性——禁自比）",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/oracle.log",
+      "sha256": "ccd7d38f4e2af0c86e4e184aad6c67482dc7fc9faef7c1d9e59883ef93015a07"
+    },
+    "exitCode": 0
+  },
+  "upstreamComparison": {
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/normal-full-suite.xml",
+      "sha256": "333dfbefa6ee8e2113adc70f6a0b1e4745e560174d360eb32ba29f17e045b535"
+    },
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/run-fd.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label normal-full-suite（同一 XML 绑定并写明：产品无独立直连对照用例——DynForward 全部用例生产路径即经 runtime::buildFdEngineSession 受控会话真实路由上游 PhysicsEngine initPhysics/step（sdurwsim_ode 实体后端），数值行为由 oracle 组独立物理基准钉扎；上游测试底噪 sdurwsim_ode-gtest 见任务契约 verify 阶段 B 登记）",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/normal-full-suite.log",
+      "sha256": "7d319e5e85c1629c25d2f9e3c25dc6dc57c51719c899be8061503ed3e59183d8"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/disconnected.log",
+      "sha256": "9fe4b971f891d25afd684307689b789f1c46324b99aca0312a9cf28040e6024d"
+    },
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/disconnected.xml",
+      "sha256": "4951cc3530a936a9e19de7ab1ce903734316b3c7d15517cafe9cc9d88c1da935"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/disconnected-mutated-ForwardDynamics-zeroforce.cpp.txt",
+      "sha256": "b42dd4b1a10b3722c7d15eff05fe525dad2117655571e5c1a44acbaccef4a258"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "description": "采样保持力输入通道去除（session.setForceTargets 实参改零向量——τ_ref 不再进入引擎，会话消费链断裂）",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+      "originalSha256": "f6951c8475aaa0a374511c77524bb38af881a882d43d3031fce5802e2d66ccff"
+    },
+    "command": "变异＝ForwardDynamics.cpp:592 setForceTargets(tauRef[j].tauTotal) 实参改 std::vector<double>(size, 0.0)（变异副本 disconnected-mutated-ForwardDynamics-zeroforce.cpp.txt）→重建 sdurws_ird_dynamics_test→VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/run-fd.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label disconnected -Filter 'DynForward.AnalyticStraightConfigurationPassed_DYN05'（exit 1＋真实断言失败＝引擎力输入链断裂复现）；git checkout 原字节恢复并重建，normal-full-suite 复验 119 passed"
+  }
+}

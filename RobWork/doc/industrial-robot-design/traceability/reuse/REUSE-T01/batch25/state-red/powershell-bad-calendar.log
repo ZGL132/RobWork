@@ -1,0 +1,10 @@
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1 : run.leaseExpir
+esAt must be >= run.startedAt
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-state.ps1
+ 
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1 : heartbeat.upda
+tedAt ('2020-01-01T08:30:00+08:00') < run.startedAt ('2020-99-99T10:00:00+00:00')——状态被旧写入回退
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-state.ps1
+ 

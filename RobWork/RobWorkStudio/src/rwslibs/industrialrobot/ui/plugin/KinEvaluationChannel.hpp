@@ -128,6 +128,12 @@ public:
     {
         return m_delegate->worldToBase();
     }
+    /// 锚能力（REUSE-T17）——纯转发委托的 runtimeModelView()；委托为纯值
+    /// 视图时转发其缺省空返回（能力缺席如实传递，不做二次包装）。
+    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+    {
+        return m_delegate->runtimeModelView();
+    }
 
 private:
     /// 当前委托（空＝未绑定——attachView 前的合法初始态）。

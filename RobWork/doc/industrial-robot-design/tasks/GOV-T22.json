@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "GOV-T22",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "补强上游权限与逐功能生产证据门禁",
+  "status": "done",
+  "branch": "gov-t22",
+  "dependsOn": [
+    "GOV-T21"
+  ],
+  "requirements": [
+    "KIN-01",
+    "DYN-01",
+    "DYN-05"
+  ],
+  "designRefs": [
+    "reuse/migration.md#12-下一阶段实施与重构工作包2026-10-22",
+    "reuse/audit-contract.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "powershell -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "cmake --build build --config Release --target ird_gates"
+  ],
+  "allowedFiles": [
+    "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/audit-contract.md",
+    "RobWork/doc/industrial-robot-design/reuse/policy.md",
+    "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T22.json",
+    "RobWork/doc/industrial-robot-design/tasks/GOV-T22.json",
+    ".github/workflows/upstream-reuse-governance.yml",
+    "RobWork/scripts/industrialrobot/ci/upstream-reuse-governance.github-workflow.yml"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**/*.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**/*.hpp",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "catalog-v2",
+    "permission-and-function-gates",
+    "junit-json"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "原GOV-T21校验保持；新增正负夹具PS7/PS5.1真实执行",
+    "精确权限/逐功能/正向证据/阶段准入/新鲜度与关闭记录校验",
+    "独立会话冻结SHA验收，本任务不自签pass或算法批准"
+  ],
+  "implementationState": "local-independent-pass-remote-delivery-blocked",
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "note": "第三轮独立验收本地治理pass，前两轮fail保留。status保持ready：远程推送受127.0.0.1:17890代理不可达阻断，远程CI/保护未验证，未合入redesign-main；不表示算法迁移或全1401功能审计完成。2026-10-24 独立验收收口：所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」授权工作流内单次验收子智能体（GOV-T23/T24 先例同型；实施者不得自签，本轮验收员未参与实施）第4轮独立验收 9/9 通过——verdict=pass，绑定送验SHA 0d0d3ca3ecedd7649b7f7b9b60dcaabd7a89cb5c，记录 traceability/acceptance/GOV-T22-20261024-r1.json（复跑原件在其同名目录：0d0d3ca3e 临时 detached worktree 真实执行 validate-reuse、治理矩阵 PS7/PS5.1 各 136 例、validate-docs、ird_gates 引擎 17 自测零命中，夹具保留 r2 135 例全保，commit-lint 8/8）；据此由登记步骤置 done，后续纯记录提交不属于被验实现 SHA；远程交付阻断维持单列登记，禁远程令（AGENTS §0）下远程条目 NOT RUN 口径不变。字面区间处置：送验链 scope 字面 FAIL 318 路径＝本任务 20261022 三轮验收证据登记产物，按记录 checks[1] 甄别口径判非阻断；allowedFiles 不补验收路径——validate-reuse.ps1 GOV-SCOPE 冻结白名单（12 文件＋ird_gates.cmake）禁止扩面，实测补入即『GOV-T22 cannot authorize』FAIL（r3/r1 记录同裁决：补 allowedFiles 属放宽门禁；纳入机器豁免面属所有者决策），r1 记录与证据目录以本 note 登记路径为准；登记段（0d0d3ca3e..登记链 HEAD）scope 对 r1 证据与 evidence-index.json 路径的越界同为该处置面（登记产物，非实现面），提交后复跑为准；字面区间（-Base 39b57abd -Head HEAD）另混入 r1 head 后其他任务包内容与登记产物（GOV-T21 F-970/F-971 同型甄别），机器核验面＝送验链 39b57abd..0d0d3ca3e（commit-lint 8/8、实质 12 文件全命中 allowedFiles）。2026-10-24 登记后门禁实测处置：commit-lint -Range 39b57abd..HEAD 5/159——717594e5c/3a61e300f＝F-970、9e1fe9c2e/340dc88a4/3e8cec6ef＝F-971，全部在册豁免、零新增违规；verify-task-scope -Base 39b57abd -Head 0d0d3ca3e 318 路径全为本任务 20261022 三轮验收证据登记产物（checks[1] 甄别，F-972 转登台账）；两门禁字面红均为已登记签名，机器豁免面变更（补 allowedFiles／改门禁脚本）属所有者决策，本登记不执行。",
+  "independentAcceptance": {
+    "commit": "474cab7678de83b44c6071e4300b20b77b2b868b",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1.json",
+    "reviewedCommit": "0d0d3ca3ecedd7649b7f7b9b60dcaabd7a89cb5c",
+    "verdict": "pass"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T22.json"
+  }
+}

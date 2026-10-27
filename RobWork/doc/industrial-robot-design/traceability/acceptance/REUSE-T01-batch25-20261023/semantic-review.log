@@ -1,0 +1,22 @@
+[
+  {
+    "stored": "state-before.ps1",
+    "rawEqual": false,
+    "equalAfterOnlyCRLFtoLF": true,
+    "storedCRLF": 307,
+    "parentCRLF": 0,
+    "storedChars": 19767,
+    "parentChars": 19460
+  },
+  {
+    "stored": "pipeline-before.ps1",
+    "rawEqual": true,
+    "equalAfterOnlyCRLFtoLF": true,
+    "storedCRLF": 0,
+    "parentCRLF": 0,
+    "storedChars": 11261,
+    "parentChars": 11261
+  }
+]
+prior evidence preserved=42
+semantic rows=19

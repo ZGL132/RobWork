@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T30",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T30.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+      "sha256": "f296c73e438cf11e0eeb8bb7ec739cddd98e9dad1380c09e9aba86f54c3c81ee",
+      "mode": "adapter",
+      "capabilities": [
+        "RUNTIME-DWC-MODEL"
+      ],
+      "boundary": "REUSE-T30/WP-06 注释级定向核同步（代码零变更）：3c 段补固定段复合刚体裁决（Fixed 关节编译为 FixedFrame 不入设备关节集，下游连杆体经 findParentFrom<Joint> 回溯最近上游活动关节，速度积 getSubPart(0,_jointIdx+1) 固定关节零贡献，body→关节多对一）；4c 段补集合语义=存在性校验说明（多重集多对一同构不敏感，逐体事实钉测试）。S7 映射保持 Body.hpp body-frame 契约与 §8.2 canonical 逐字语义；GAP-RNE-FRAME（权威轴≠z 时上游 RNE 按关节系解释 masscenter 错位）按所有者 2026-10-25 裁决登记不实施修复。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/production/runtime.compileDynamicWorkCell.json"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+      "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "REUSE-T30/WP-06 新增 3 个 oracle 测试：①非零 zeroOffset 默认 State 位姿/bounds/Device 同一性（期望取值点 q_auth=zeroOffset+q_rw——T13 语义复用）；②固定段复合刚体（body→关节多重集、同段角速度相等独立期望 (0,0,q̇1)、跨段两关节贡献期望——不用 set 同构假 PASS；上游 getVelocity linear 参考点语义未文档化已登记，不作物理断言）；③RNE 可消费性（单 z 轴非退化全分量手算：静止 cross(com,F)、ddq 合成 (I_zz+m(rx²+ry²))·α、validate/solve DOF+1/setPayload 通道；§12.5 探测许可仅测试不接生产）。测试侧 grant 含任务私有 State 写（setQ/setJointVelocities）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/production/runtime.compileDynamicWorkCell.json"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "GOV-T24",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "WP-01 定向核查并修复主线准入与构建供给",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13",
+    "reuse/policy.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T24.json",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test ird_gates",
+    "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build/govt24-smoke -G \"Visual Studio 17 2022\" -A x64 -DCMAKE_TOOLCHAIN_FILE=\"$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake\" -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64 -DRobWork_DIR=\"$PWD/RobWork/RobWork/cmake\" -DVCPKG_OVERRIDE_FIND_PACKAGE_NAME=vcpkg_find_package"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/tasks/GOV-T24.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T24.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T24-20261024-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "WP-01 主线准入（IRD-GATE-LIB 三变量阻断消除）与冒烟 RobWork 导出包供给修复及原始证据"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "kinematics/CMakeLists.txt 三变量接线改为条件分支显式合法目标（集成三分支名不变；冒烟经 sdurw_math/sdurw_models 同名 ALIAS〔drivetrain/modeling 先例〕＋RW::sdurw_models 接口传递覆盖 sdurw_kinematics，不建 sdurw_kinematics 冒烟别名）；门禁代码/词表零改动，引擎直跑含自测正负例零命中",
+    "冒烟供给根因（vcpkg 拦截对 RobWorkConfig Boost HINTS 的转义崩溃＋框架配置期验证器 NO_DEFAULT_PATH 解析不了 vcpkg Boost 1.92 Boost::atomic 裸名 synchronization 与 Threads::Threads）以探针复现留痕；修复落 core/CMakeLists.txt 尾段前置绑定（find_package(Threads REQUIRED)＋synchronization 空 INTERFACE 目标；core 是 add_subdirectory 序首单元——modeling/CMakeLists.txt 被REUSE-T11 closed 冻结证据链绑定、根 CMakeLists 无矩阵覆盖，落点裁决证据在案），集成模式经 NOT TARGET sdurw_math 守卫零影响；冒烟配置参数 RobWork_DIR＋VCPKG_OVERRIDE_FIND_PACKAGE_NAME=vcpkg_find_package 按探针证据登记",
+    "实际受影响目标增量构建、门禁、必要独立冒烟通过；受影响测试真实运行分列 passed/failed/skipped/notRun；未解决环境缺供如实标 NOT RUN 并说明影响"
+  ],
+  "note": "所有者授权主工作树redesign-main串行，本地提交不操作远程；WP别名仅用于migration调度。本包起始SHA=fac3d030a0e301c32972a7bf4564a071fc8e9e0d（WP-00收口提交）。准入前定向核查已完成（证据traceability/reuse/REUSE-T19/govt24-wp01-20261024/）：问题A根因=ird_gates第1步文本解析不展开变量、第2e步按字面token判未知目标族；问题B根因=vcpkg toolchain find_package拦截对RobWorkConfig.cmake:108 Boost HINTS C:\\local的再展开转义崩溃＋框架RW_verify_library配置期验证在NO_DEFAULT_PATH下无法解析vcpkg Boost 1.92 boost_atomic接口裸名synchronization（boost_atomic.dll实际零该导入，集成树链接期由Windows SDK synchronization.lib解析）与未定义的Threads::Threads，递归判定sdurw元库not found。修复不触碰框架源码/构建文件/vcpkg/门禁，无新依赖、无算法变化（无数值核心）。逐功能矩阵按绑定新鲜度同步：functions/kinematics.json（两 CMake 区段行号/摘要、45 处 inputs/nonOverlap、FkEvaluator 证据绑定）、functions/core.json（新增 GOV_T24_smoke_supply 区段行）、permissions.json（3 处 REUSE-T19 build 绑定）；modeling 侧矩阵/证据零触碰（closed 冻结链保持原样）。历史 changes 凭证（T19/T07）按设计保留旧值，现行哈希由 GOV-T24 凭证承载。本包不授权WP-02或算法替换。2026-10-24 独立验收收口：所有者明确指令的单次验收子智能体（GOV-T23 先例同型，未解除常规禁令）实测 10/10 通过——verdict=pass，绑定 reviewedCommit=df0b35fc2b32068dcfe3745d1b29a81c58d17f77，记录 traceability/acceptance/GOV-T24-20261024-r1.json（复跑原件在其同名目录：门禁引擎零命中/validate-docs PASS/集成 292+57 复跑/冒烟原件核对）；据此登记 done，后续纯记录提交不属于被验实现 SHA。遗留（不属本包退出条件）：冒烟 kinematics test exe 因 T19 遗留 runtime 视图集成专属缺口 NOT RUN（LNK2019 原件在案），归 T19 语义/后续包处置。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T24.json"
+  }
+}

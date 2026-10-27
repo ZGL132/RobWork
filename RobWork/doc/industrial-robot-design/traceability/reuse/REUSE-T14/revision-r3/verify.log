@@ -1,0 +1,17 @@
+{
+  "r3_verdict": "PASS",
+  "counts": {
+    "cases": 22831,
+    "reused_real_cpython_cases": 13168,
+    "finite_valid": 22600,
+    "overflow": 13291,
+    "production_overflow_errors": 3494,
+    "wide_formula_errors": 0,
+    "r3_overflow_errors": 0,
+    "r3_unchanged_path_errors": 0,
+    "r2_overflow_errors": 0,
+    "r2_unchanged_path_errors": 0,
+    "normal_rounding_differences": 36
+  },
+  "independent_acceptance": "NOT RUN"
+}

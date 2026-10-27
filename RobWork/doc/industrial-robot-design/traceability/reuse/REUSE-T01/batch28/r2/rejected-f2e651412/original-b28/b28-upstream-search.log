@@ -1,0 +1,38 @@
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimUtilityPlugin.cpp:290:            _graspRestPoseDialog->setUniqueID (id);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.hpp:89:    void setUniqueID (const std::string& id) { _id = id; }
+RobWork/RobWorkSim/src\rwsim\rwphysics\ContactGraph.cpp:366:    out << node._idx << "\" ";    // TODO: need unique id
+RobWork/RobWork/src\rw\core\Event.hpp:90:    class Event
+RobWork/RobWork/src\rw\core\ExtensionPoint.hpp:40:         * @param id [in] unique identifier of this extension point
+RobWork/RobWork/src\rw\core\ExtensionPoint.hpp:49:        //! @brief get unique identifier of this extensionpoint
+RobWork/RobWork/src\rw\core\Extension.hpp:57:             * @param id_ [in] a unique id of the extension.
+RobWork/RobWork/src\rw\core\Extension.hpp:64:            //! @brief A unique id of an extension.
+RobWork/RobWork/src\rw\core\Extension.hpp:98:         * @param id [in] a unique id of the extension.
+RobWork/RobWork/src\rw\core\Extension.hpp:114:        //! @brief a unique id that uniquely identifies this extension in its owner Plugin
+RobWork/RobWork/src\rw\core\Plugin.hpp:35:         * @param id [in] unique identifier of this plugin
+RobWork/RobWork/src\rw\core\Plugin.hpp:68:         * @brief Get unique identifier of plugin.
+RobWork/RobWork/src\rw\geometry\Geometry.hpp:38:     * Each geometry must have a unique ID. This is either auto
+RobWork/RobWork/src\rw\kinematics\StateStructure.hpp:285:        int _stateSetupUniqueId;
+RobWork/RobWork/src\rw\kinematics\StateStructure.cpp:33:StateStructure::StateStructure () : _version (0), _root (NULL), _stateSetupUniqueId (0)
+RobWork/RobWork/src\rw\kinematics\StateStructure.cpp:340:    State newState (qstate, tstate, _stateSetupUniqueId);
+RobWork/RobWork/src\rw\kinematics\StateStructure.cpp:341:    _stateSetupUniqueId++;
+RobWork/RobWork/src\rw\kinematics\StateSetup.hpp:111:         * @param id [in] the unique id of the frame
+RobWork/RobWork/src\rw\kinematics\StateSetup.hpp:118:         * @param id [in] the unique id of the frame
+RobWork/RobWork/src\rw\kinematics\StateData.hpp:41:     * a unique id, and a unique name, when inserted into the StateStructure.
+RobWork/RobWork/src\rw\kinematics\StateCache.hpp:36:     * a unique id, and a unique name, when inserted into the StateStructure.
+RobWork/RobWork/src\rwlibs\assembly\AssemblyControlStrategy.hpp:131:         * @brief All implementations should provide a unique id, which will be used for
+RobWork/RobWork/src\rwlibs\assembly\AssemblyControlStrategy.hpp:133:         * @return a string with the unique id of the control strategy.
+RobWork/RobWork/src\rw\kinematics\State.hpp:117:            return State (this->_q_state * scale, this->_tree_state, this->getUniqueId ());
+RobWork/RobWork/src\rw\kinematics\State.hpp:127:            return State (this->_q_state / scale, this->_tree_state, this->getUniqueId ());
+RobWork/RobWork/src\rw\kinematics\State.hpp:137:            return State (scale * state._q_state, state._tree_state, state.getUniqueId ());
+RobWork/RobWork/src\rw\kinematics\State.hpp:150:            return State (this->_q_state + b._q_state, this->_tree_state, this->getUniqueId ());
+RobWork/RobWork/src\rw\kinematics\State.hpp:163:            return State (this->_q_state - b._q_state, this->_tree_state, this->getUniqueId ());
+RobWork/RobWork/src\rw\kinematics\State.hpp:171:        State operator- () const { return State (-_q_state, _tree_state, getUniqueId ()); }
+RobWork/RobWork/src\rw\kinematics\State.hpp:261:        int getUniqueId () const { return _stateUniqueId; }
+RobWork/RobWork/src\rw\kinematics\State.hpp:324:               int stateUniqueId);
+RobWork/RobWork/src\rw\kinematics\State.hpp:330:        int _stateUniqueId;
+RobWork/RobWork/src\rw\kinematics\State.cpp:29:State::State (const QState& q_state, const TreeState& tree_state, int stateUniqueId) :
+RobWork/RobWork/src\rw\kinematics\State.cpp:30:    _tree_state (tree_state), _q_state (q_state), _stateUniqueId (stateUniqueId)
+RobWork/RobWork/src\rw\kinematics\State.cpp:134:    //_stateUniqueId = from.getUniqueId();
+RobWork/RobWork/src\rw\kinematics\State.cpp:167:    if (_tree_state.getStateSetup ()->getTree ()->getDefaultState ().getUniqueId () !=
+RobWork/RobWork/src\rw\kinematics\State.cpp:168:        _stateUniqueId) {
+RobWork/RobWork/src\rw\kinematics\State.cpp:202:            oarchive.write( _stateUniqueId, "StateID");

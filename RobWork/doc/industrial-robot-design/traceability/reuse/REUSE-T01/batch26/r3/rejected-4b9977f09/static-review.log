@@ -1,0 +1,257 @@
+{
+  "head": "4b9977f096d0b3d58687ecc94013f435e5b0502c",
+  "status": "",
+  "autocrlf": "false",
+  "changedFiles": 589,
+  "outOfScope": [],
+  "gitlinks": [],
+  "bom": "efbbbf",
+  "minimalMergePatch": true,
+  "archiveSummaries": [
+    {
+      "batch": "B24",
+      "original": "C:/Users/zgl18/AppData/Local/Temp/ird-b24-accept-7d7d2502",
+      "expected": 173,
+      "checked": 173,
+      "passed": 173,
+      "failed": 0
+    },
+    {
+      "batch": "B25",
+      "original": "C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c",
+      "expected": 159,
+      "checked": 159,
+      "passed": 159,
+      "failed": 0
+    },
+    {
+      "batch": "B23",
+      "original": "Git d0fcb96f62a863684848161f7b8ecd93ef0be302",
+      "expected": 136,
+      "checked": 136,
+      "passed": 136,
+      "failed": 0
+    }
+  ],
+  "bindingSummary": {
+    "newRows": 10,
+    "oldRowDeltas": [
+      {
+        "functionId": "foundation-governance.pipeline-lock.Get-LockMutexName",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.Read-Lock",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.Test-Fencing",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.root",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.actions",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.root",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.regressions",
+        "changedKeys": [
+          "auditEvidence",
+          "sources",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.Convert-ToIso",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.Compare-Iso",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.Test-NonNegativeInteger",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.root",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.schema",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.heartbeat",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.fencing-presence",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.attempts",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.policy",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.contract-index",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.queue",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.phase",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.acceptance",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.failure-record",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.run",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.history",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.docRefs",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.narrative-limit",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.verdict",
+        "changedKeys": [
+          "inputs"
+        ]
+      }
+    ],
+    "pendingOwnerOnly": true,
+    "bindingChecks": 110,
+    "bindingFailed": 0
+  }
+}

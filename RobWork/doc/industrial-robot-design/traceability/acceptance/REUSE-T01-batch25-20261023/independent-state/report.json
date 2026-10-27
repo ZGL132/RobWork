@@ -1,0 +1,194 @@
+[
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "boolean-tick",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "negative-tick",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "int64-tick",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "negative-attempt",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "boolean-policy",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "fractional-lease",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "string-lease",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "zero-lease",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "int64-policy",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "equal-instant-offsets",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "uppercase-guid",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "case": "guid-N-format",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "boolean-tick",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "negative-tick",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "int64-tick",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "negative-attempt",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "boolean-policy",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "fractional-lease",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "string-lease",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "zero-lease",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "int64-policy",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "equal-instant-offsets",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "uppercase-guid",
+    "expectedExit": 0,
+    "actualExit": 0,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "case": "guid-N-format",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "passed": true
+  }
+]

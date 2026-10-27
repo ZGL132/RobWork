@@ -1,0 +1,1166 @@
+[
+  {
+    "functionId": "core.audit-b28.Identity.tryParseId128",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "tryParseId128",
+        "qualifiedSymbol": "sdurws::ird::core::detail::tryParseId128",
+        "startLine": 28,
+        "endLine": 53,
+        "sha256": "618d54228efeec3e7ad316049192b9599cf6dd8800661b53dbf1c0862f0497aa",
+        "region": "bool tryParseId128(std::string_view tag, std::string_view text,\n                   std::array<std::uint8_t, 16>* out) noexcept\n{\n    // 前缀 tag 逐字符匹配：类型误用（rev- 串喂给 ObjectId）在此即失败。\n    if (text.size() != tag.size() + 32) {           // 总长固定：tag＋32 hex\n        return false;\n    }\n    for (std::size_t i = 0; i < tag.size(); ++i) {\n        if (text[i] != tag[i]) {                    // tag 逐字符（含大小写——tag 本身小写）\n            return false;\n        }\n    }\n    // 十六进制体：恰 32 个、仅 [0-9a-f]（大写 A-F 拒绝——规范文本唯一小写）。\n    const std::size_t body = tag.size();\n    for (std::size_t i = 0; i < 32; ++i) {\n        const char c = text[body + i];\n        unsigned nibble;\n        if (c >= '0' && c <= '9')      { nibble = static_cast<unsigned>(c - '0'); }\n        else if (c >= 'a' && c <= 'f') { nibble = static_cast<unsigned>(c - 'a') + 10u; }\n        else { return false; }                      // 大写/字母 g 以后/符号/空白/中文等一律拒绝\n        // 字节序＝文本序：每两个字符合成一字节，高半字节在前——与 formatId128 对称。\n        if ((i & 1u) == 0u) { (*out)[i / 2] = static_cast<std::uint8_t>(nibble << 4); }\n        else { (*out)[i / 2] = static_cast<std::uint8_t>((*out)[i / 2] | nibble); }\n    }\n    return true;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.formatId128",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "formatId128",
+        "qualifiedSymbol": "sdurws::ird::core::detail::formatId128",
+        "startLine": 55,
+        "endLine": 66,
+        "sha256": "3bc10661a05bf0e430308852c37723b81450e5e083f826dadd7ee8cafb3190da",
+        "region": "std::string formatId128(std::string_view tag, const std::array<std::uint8_t, 16>& bytes)\n{\n    static constexpr char kHex[] = \"0123456789abcdef\";   // 规范文本唯一小写（§4.1）\n    std::string s;\n    s.reserve(tag.size() + 32);\n    s.append(tag);\n    for (const std::uint8_t b : bytes) {                 // 字节序＝文本序（高半字节在前）\n        s.push_back(kHex[b >> 4]);\n        s.push_back(kHex[b & 0x0Fu]);\n    }\n    return s;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.fnv1a128",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "fnv1a128",
+        "qualifiedSymbol": "sdurws::ird::core::detail::fnv1a128",
+        "startLine": 71,
+        "endLine": 120,
+        "sha256": "28ad5b40c5f8e75ce4fe1c1c9e815b6a6f7b086839f78a96da0c63b9c59e0032",
+        "region": "void fnv1a128(const std::uint8_t* data, std::size_t n,\n              std::uint64_t* outHi, std::uint64_t* outLo) noexcept\n{\n    // FNV-1a 128 偏移基＝0x6C62272E07BB0142_62B821756295C58D；素数＝2^88+2^8+0x3B。\n    // 状态 (hi,lo) 视作 128 位大端整数：迭代\"异或字节→乘素数（模 2^128）\"。\n    std::uint64_t hi = 0x6C62272E07BB0142ULL;\n    std::uint64_t lo = 0x62B821756295C58DULL;\n\n    // 累加一个 128 位项（无回绕加法）。\n    const auto add = [&](std::uint64_t th, std::uint64_t tl) {\n        const std::uint64_t nl = lo + tl;\n        const std::uint64_t c = (nl < lo) ? 1ULL : 0ULL;\n        hi = hi + th + c;\n        lo = nl;\n    };\n    // 累加 state << shift（shift∈[0,127]；≥64 时低字全零、高字＝lo 左移）。\n    const auto addShifted = [&](unsigned s) {\n        if (s == 0)        { add(hi, lo); return; }\n        if (s >= 64)       { add(lo << (s - 64), 0ULL); return; }\n        add((lo >> (64 - s)) | (hi << s), lo << s);\n    };\n    // 64×64→高 64 位（32 位分解，避免编译器扩展头文件）。\n    const auto mulHi64 = [](std::uint64_t a, std::uint64_t b) -> std::uint64_t {\n        const std::uint64_t al = a & 0xFFFFFFFFULL, ah = a >> 32;\n        const std::uint64_t bl = b & 0xFFFFFFFFULL, bh = b >> 32;\n        const std::uint64_t p00 = al * bl;\n        const std::uint64_t p01 = al * bh;\n        const std::uint64_t p10 = ah * bl;\n        const std::uint64_t p11 = ah * bh;\n        const std::uint64_t mid = (p00 >> 32) + (p01 & 0xFFFFFFFFULL) + (p10 & 0xFFFFFFFFULL);\n        return p11 + (p01 >> 32) + (p10 >> 32) + (mid >> 32);\n    };\n    // 累加 state * m（m<2^64；128 位截断：低＝lo*m，高＝mulHi(lo,m)＋lo 高字贡献 hi*m）。\n    const auto addMulSmall = [&](std::uint64_t m) {\n        const std::uint64_t tl = lo * m;\n        const std::uint64_t th = mulHi64(lo, m) + hi * m;\n        add(th, tl);\n    };\n\n    for (std::size_t i = 0; i < n; ++i) {\n        // 异或字节（进入 128 位状态最低字节＝lo 低 8 位）\n        lo ^= static_cast<std::uint64_t>(data[i]);\n        // 乘素数：p = 2^88 + 2^8 + 0x3B（三项分解累加，模 2^128）\n        addShifted(88);\n        addShifted(8);\n        addMulSmall(0x3BULL);\n    }\n    *outHi = hi;\n    *outLo = lo;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.generateId128Bytes",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "generateId128Bytes",
+        "qualifiedSymbol": "sdurws::ird::core::detail::generateId128Bytes",
+        "startLine": 125,
+        "endLine": 143,
+        "sha256": "9dbd983f26aa13c477ff137a4fbd3cc441f2327574d2c8f7b38e1d657e42df87",
+        "region": "std::array<std::uint8_t, 16> generateId128Bytes()\n{\n    // random_device 播种一次（thread_local）：进程内每线程独立引擎，无锁并发。\n    // 生成器选择与契约：§4.1 明文\"random_device 播种的 mt19937_64\"——非密码学\n    // 承诺，唯一性要求＝128 位随机空间下的碰撞概率可忽略。\n    thread_local std::mt19937_64 engine{std::random_device{}()};\n    std::array<std::uint8_t, 16> bytes{};\n    do {\n        const std::uint64_t w1 = engine();\n        const std::uint64_t w2 = engine();\n        for (int i = 0; i < 8; ++i) {                    // 大端装配：高字节在低下标（与 hex 序一致）\n            bytes[static_cast<std::size_t>(i)] = static_cast<std::uint8_t>(w1 >> (56 - 8 * i));\n            bytes[static_cast<std::size_t>(i) + 8] = static_cast<std::uint8_t>(w2 >> (56 - 8 * i));\n        }\n    } while (std::all_of(bytes.begin(), bytes.end(),\n                         [](std::uint8_t b) { return b == 0; }));\n    // 保留值纪律：全零重取（§4.1——\"generate() 检验非零（零则重取）\"）。\n    return bytes;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.generate",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "generate",
+        "qualifiedSymbol": "sdurws::ird::core::ObjectId::generate",
+        "startLine": 150,
+        "endLine": 155,
+        "sha256": "8355710a72c06783cb00988ef8394b58da628d25928e699f3f8745b255828f81",
+        "region": "#define IRD_CORE_IMPLEMENT_ID_TYPE(TYPE_NAME, TAG_LIT)                                  \\\n    TYPE_NAME TYPE_NAME::generate() {                                                   \\\n        TYPE_NAME id;                                                                   \\\n        id.bytes = detail::generateId128Bytes();                                        \\\n        return id;                                                                      \\\n    }                                                                                   \\"
+      }
+    ],
+    "expandedSymbols": [
+      "sdurws::ird::core::ObjectId::generate",
+      "sdurws::ird::core::ProjectId::generate",
+      "sdurws::ird::core::BranchId::generate",
+      "sdurws::ird::core::RevisionId::generate",
+      "sdurws::ird::core::RunId::generate",
+      "sdurws::ird::core::EventId::generate"
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.fromCanonical",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "fromCanonical",
+        "qualifiedSymbol": "sdurws::ird::core::ObjectId::fromCanonical",
+        "startLine": 156,
+        "endLine": 167,
+        "sha256": "cec7f48f50c1282f2a0efec9452d15bd0d4456f28a860c099f78df80e060c605",
+        "region": "    TYPE_NAME TYPE_NAME::fromCanonical(std::string_view text) {                         \\\n        TYPE_NAME id;                                                                   \\\n        if (!detail::tryParseId128(TAG_LIT, text, &id.bytes)) {                         \\\n            /* 抛出轨迹：错误前缀稳定 core/identity/parse（§4.10/§5.1 错误行）。          \\\n               附带原文前 64 字符助诊断——超长截断防日志洪泛。 */                          \\\n            const std::size_t n = std::min<std::size_t>(text.size(), 64);               \\\n            throw CoreError(std::string{\"core/identity/parse: \" TAG_LIT \" 期望 <tag><32 小写 hex>，实际: \\\"\"} \\\n                            + std::string(text.substr(0, n)) + \"\\\"（长度 \"                           \\\n                            + std::to_string(text.size()) + \"）\");                      \\\n        }                                                                               \\\n        return id;                                                                      \\\n    }                                                                                   \\"
+      }
+    ],
+    "expandedSymbols": [
+      "sdurws::ird::core::ObjectId::fromCanonical",
+      "sdurws::ird::core::ProjectId::fromCanonical",
+      "sdurws::ird::core::BranchId::fromCanonical",
+      "sdurws::ird::core::RevisionId::fromCanonical",
+      "sdurws::ird::core::RunId::fromCanonical",
+      "sdurws::ird::core::EventId::fromCanonical"
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.tryFromCanonical",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "tryFromCanonical",
+        "qualifiedSymbol": "sdurws::ird::core::ObjectId::tryFromCanonical",
+        "startLine": 168,
+        "endLine": 172,
+        "sha256": "96865da70a719dff966433207b38c3f0cdc957cbbd8fbdee40e2cf5b125b8313",
+        "region": "    std::optional<TYPE_NAME> TYPE_NAME::tryFromCanonical(std::string_view text) noexcept { \\\n        TYPE_NAME id;                                                                   \\\n        if (!detail::tryParseId128(TAG_LIT, text, &id.bytes)) { return std::nullopt; }  \\\n        return id;                                                                      \\\n    }                                                                                   \\"
+      }
+    ],
+    "expandedSymbols": [
+      "sdurws::ird::core::ObjectId::tryFromCanonical",
+      "sdurws::ird::core::ProjectId::tryFromCanonical",
+      "sdurws::ird::core::BranchId::tryFromCanonical",
+      "sdurws::ird::core::RevisionId::tryFromCanonical",
+      "sdurws::ird::core::RunId::tryFromCanonical",
+      "sdurws::ird::core::EventId::tryFromCanonical"
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.toCanonical",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "toCanonical",
+        "qualifiedSymbol": "sdurws::ird::core::ObjectId::toCanonical",
+        "startLine": 173,
+        "endLine": 175,
+        "sha256": "75b2583e3a8fa66c6d13338ac91d02e914b63f714042b24c24506981bfb07a41",
+        "region": "    std::string TYPE_NAME::toCanonical() const {                                        \\\n        return detail::formatId128(TAG_LIT, bytes);                                     \\\n    }                                                                                   \\"
+      }
+    ],
+    "expandedSymbols": [
+      "sdurws::ird::core::ObjectId::toCanonical",
+      "sdurws::ird::core::ProjectId::toCanonical",
+      "sdurws::ird::core::BranchId::toCanonical",
+      "sdurws::ird::core::RevisionId::toCanonical",
+      "sdurws::ird::core::RunId::toCanonical",
+      "sdurws::ird::core::EventId::toCanonical"
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.isValid",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "isValid",
+        "qualifiedSymbol": "sdurws::ird::core::ObjectId::isValid",
+        "startLine": 176,
+        "endLine": 186,
+        "sha256": "f9b924bc6a3c5d3a11ee992b69c8a76066a70dd5798f18d215a894634e9f7bfc",
+        "region": "    bool TYPE_NAME::isValid() const noexcept {                                          \\\n        return std::any_of(bytes.begin(), bytes.end(),                                  \\\n                           [](std::uint8_t b) { return b != 0; });                      \\\n    }\n\nIRD_CORE_IMPLEMENT_ID_TYPE(ObjectId,   \"obj-\")\nIRD_CORE_IMPLEMENT_ID_TYPE(ProjectId,  \"prj-\")\nIRD_CORE_IMPLEMENT_ID_TYPE(BranchId,   \"brn-\")\nIRD_CORE_IMPLEMENT_ID_TYPE(RevisionId, \"rev-\")\nIRD_CORE_IMPLEMENT_ID_TYPE(RunId,      \"run-\")\nIRD_CORE_IMPLEMENT_ID_TYPE(EventId,    \"evt-\")"
+      }
+    ],
+    "expandedSymbols": [
+      "sdurws::ird::core::ObjectId::isValid",
+      "sdurws::ird::core::ProjectId::isValid",
+      "sdurws::ird::core::BranchId::isValid",
+      "sdurws::ird::core::RevisionId::isValid",
+      "sdurws::ird::core::RunId::isValid",
+      "sdurws::ird::core::EventId::isValid"
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.tryParseAttempt",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "tryParseAttempt",
+        "qualifiedSymbol": "sdurws::ird::core::(anonymous namespace)::tryParseAttempt",
+        "startLine": 194,
+        "endLine": 209,
+        "sha256": "472fe9baeb689fa770c5a66f48a28c143f414cbd55d8d276416f06dcf7540dc0",
+        "region": "bool tryParseAttempt(std::string_view body, std::uint64_t* out) noexcept\n{\n    if (body.empty() || body[0] < '1' || body[0] > '9') {\n        return false;   // 空/0 开头（含 \"att-0\" 保留值）/符号/前导零全部在此拒绝\n    }\n    std::uint64_t v = 0;\n    for (const char c : body) {\n        if (c < '0' || c > '9') { return false; }\n        const std::uint64_t d = static_cast<std::uint64_t>(c - '0');\n        // 溢出预检：v > (2^64-1-d)/10 时 v*10+d 必溢出——逐步检查不依赖 errno。\n        if (v > (0xFFFFFFFFFFFFFFFFULL - d) / 10ULL) { return false; }\n        v = v * 10ULL + d;\n    }\n    *out = v;\n    return true;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.fromCanonical",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "fromCanonical",
+        "qualifiedSymbol": "sdurws::ird::core::AttemptId::fromCanonical",
+        "startLine": 213,
+        "endLine": 223,
+        "sha256": "37792d079ba7b07abcdf370e387b357442c2c7094626477ed351b999afe0e42e",
+        "region": "AttemptId AttemptId::fromCanonical(std::string_view text)\n{\n    AttemptId a;\n    if (text.size() < 5 || text.substr(0, 4) != \"att-\"\n        || !tryParseAttempt(text.substr(4), &a.value)) {\n        const std::size_t n = std::min<std::size_t>(text.size(), 64);\n        throw CoreError(std::string{\"core/identity/parse: att- 期望 <十进制≥1>，实际: \\\"\"}\n                        + std::string(text.substr(0, n)) + \"\\\"（长度 \" + std::to_string(text.size()) + \"）\");\n    }\n    return a;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.tryFromCanonical",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "tryFromCanonical",
+        "qualifiedSymbol": "sdurws::ird::core::AttemptId::tryFromCanonical",
+        "startLine": 225,
+        "endLine": 233,
+        "sha256": "9e6d4bdf58e75550f17c34bd14a34cf52c1a250104bc96267a209da2da276d15",
+        "region": "std::optional<AttemptId> AttemptId::tryFromCanonical(std::string_view text) noexcept\n{\n    AttemptId a;\n    if (text.size() < 5 || text.substr(0, 4) != \"att-\"\n        || !tryParseAttempt(text.substr(4), &a.value)) {\n        return std::nullopt;\n    }\n    return a;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.toCanonical",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "toCanonical",
+        "qualifiedSymbol": "sdurws::ird::core::AttemptId::toCanonical",
+        "startLine": 235,
+        "endLine": 238,
+        "sha256": "bd0c6c0d03f4fa6889c9b75d11d9feffae052a83657b0b234d2dae1c0f0a1409",
+        "region": "std::string AttemptId::toCanonical() const\n{\n    return \"att-\" + std::to_string(value);\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.isValid",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "isValid",
+        "qualifiedSymbol": "sdurws::ird::core::TaskIdentity::isValid",
+        "startLine": 243,
+        "endLine": 248,
+        "sha256": "5bd2344806987bd7a9c232c6130e935573f889f02cc5829b8e366469fa3cbc89",
+        "region": "bool TaskIdentity::isValid() const noexcept\n{\n    // 五字段全合法（§5.1；UT-ID-T\"缺一即 false\"）。\n    return project.isValid() && branch.isValid() && revision.isValid()\n        && run.isValid() && attempt.isValid();\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.equal",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::TaskIdentity::operator==",
+        "startLine": 250,
+        "endLine": 255,
+        "sha256": "cf5a5e0d47d15e75d92f30b7f159ce66d5d9bd2cd0c9f5c194053641aa66cae1",
+        "region": "bool TaskIdentity::operator==(const TaskIdentity& o) const noexcept\n{\n    // 精确等值（附录 D 第 12 项：身份比较无容差）。\n    return project == o.project && branch == o.branch && revision == o.revision\n        && run == o.run && attempt == o.attempt;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.order",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 6,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "symbol": "operator<",
+        "qualifiedSymbol": "sdurws::ird::core::TaskIdentity::operator<",
+        "startLine": 257,
+        "endLine": 265,
+        "sha256": "a60a101a37a5fe40dedff81cfb51aa29cd62cf1e4813d0b1904eb6a44e4627a5",
+        "region": "bool TaskIdentity::operator<(const TaskIdentity& o) const noexcept\n{\n    // 字典序仅作容器键（§5.1\"仅容器用\"）——无业务排序语义，勿用于展示。\n    if (project != o.project)   { return project < o.project; }\n    if (branch != o.branch)     { return branch < o.branch; }\n    if (revision != o.revision) { return revision < o.revision; }\n    if (run != o.run)           { return run < o.run; }\n    return attempt < o.attempt;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.toToken.ProvenanceKind",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Provenance.cpp",
+        "symbol": "toToken",
+        "qualifiedSymbol": "sdurws::ird::core::toToken(ProvenanceKind)",
+        "startLine": 19,
+        "endLine": 29,
+        "sha256": "148714d0d45597daadbad4fdc5b33a536b0e94eea07e059ef9050bbe2ee6d274",
+        "region": "const char* toToken(ProvenanceKind kind) noexcept\n{\n    switch (kind) {\n    case ProvenanceKind::UserProvided:      return \"user-provided\";\n    case ProvenanceKind::GeometricEstimate: return \"geometric-estimate\";\n    case ProvenanceKind::CatalogBackfill:   return \"catalog-backfill\";\n    case ProvenanceKind::ImportMapped:      return \"import-mapped\";\n    case ProvenanceKind::DerivedReadOnly:   return \"derived-readonly\";\n    }\n    return \"unknown\";   // 不可达（五枚举全覆盖）；保返回避免 UB\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.provenanceKindFromToken",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Provenance.cpp",
+        "symbol": "provenanceKindFromToken",
+        "qualifiedSymbol": "sdurws::ird::core::provenanceKindFromToken",
+        "startLine": 31,
+        "endLine": 39,
+        "sha256": "01badd509163d0a93e44745490b1f5bd5aaee0eee066a67a208d2d40a6637e72",
+        "region": "std::optional<ProvenanceKind> provenanceKindFromToken(std::string_view token) noexcept\n{\n    if (token == \"user-provided\")      { return ProvenanceKind::UserProvided; }\n    if (token == \"geometric-estimate\") { return ProvenanceKind::GeometricEstimate; }\n    if (token == \"catalog-backfill\")   { return ProvenanceKind::CatalogBackfill; }\n    if (token == \"import-mapped\")      { return ProvenanceKind::ImportMapped; }\n    if (token == \"derived-readonly\")   { return ProvenanceKind::DerivedReadOnly; }\n    return std::nullopt;   // 未知 token（try 轨——装载层错误收集用）\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.ValueProvenance.make",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Provenance.cpp",
+        "symbol": "make",
+        "qualifiedSymbol": "sdurws::ird::core::ValueProvenance::make",
+        "startLine": 44,
+        "endLine": 86,
+        "sha256": "200f7024df59f69fae82b759ad3ef0570b09d3a158483acffb0265d994945094",
+        "region": "ValueProvenance ValueProvenance::make(ProvenanceKind kind,\n                                      std::optional<ObjectId> sourceObject,\n                                      std::optional<ContentVersion> sourceVersion,\n                                      std::optional<std::string> methodTag)\n{\n    // 不变量 P-1（§4.3）：sourceVersion 有值 ⇒ sourceObject 有值。\n    // 版本只能挂在对象上——无对象的版本没有归属，属调用方契约违约。\n    if (sourceVersion.has_value() && !sourceObject.has_value()) {\n        throw CoreError(\"core/provenance/p1: sourceVersion 需要 sourceObject\"\n                        \"（P-1 不变量：版本挂于对象）\");\n    }\n    // 对象/版本若提供则必须合法（保留值\"空\"不作为有效来源）。\n    if (sourceObject.has_value() && !sourceObject->isValid()) {\n        throw CoreError(\"core/provenance/p1: sourceObject 为保留值（全零）——\"\n                        \"无效来源对象\");\n    }\n\n    // methodTag 语法校验（§4.3：[a-z0-9./_-]、非空、≤64；词表归产生单元——\n    // core 只管字符集/长度，不认识具体方法名）。\n    if (methodTag.has_value()) {\n        const std::string& tag = *methodTag;\n        if (tag.empty() || tag.size() > 64) {\n            throw CoreError(\"core/provenance/method-tag: 长度须为 1..64，实际 \"\n                            + std::to_string(tag.size()));\n        }\n        const bool ok = std::all_of(tag.begin(), tag.end(), [](char c) {\n            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')\n                || (c >= '0' && c <= '9')\n                || c == '.' || c == '/' || c == '_' || c == '-';\n        });\n        if (!ok) {\n            throw CoreError(\"core/provenance/method-tag: 含非法字符（允许\"\n                            \" [a-z0-9./_-]）: \" + tag);\n        }\n    }\n\n    ValueProvenance v;\n    v.kind = kind;\n    v.sourceObject = std::move(sourceObject);\n    v.sourceVersion = std::move(sourceVersion);\n    v.methodTag = std::move(methodTag);\n    return v;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.ValueProvenance.equal",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Provenance.cpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::ValueProvenance::operator==",
+        "startLine": 88,
+        "endLine": 93,
+        "sha256": "39c1b70f1e61de1b1c3427a947142227406f9230267e6a04fd9e6642a4cc8753",
+        "region": "bool ValueProvenance::operator==(const ValueProvenance& o) const noexcept\n{\n    // 四字段全等（optional 的比较含\"有无\"维度）。\n    return kind == o.kind && sourceObject == o.sourceObject\n        && sourceVersion == o.sourceVersion && methodTag == o.methodTag;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.EvaluationMode",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "toToken",
+        "qualifiedSymbol": "sdurws::ird::core::toToken(EvaluationMode)",
+        "startLine": 15,
+        "endLine": 23,
+        "sha256": "16029656fc08e4d4b9de225da7983c972c6a87165f889005ebd6dd2aa63c375c",
+        "region": "const char* toToken(EvaluationMode v) noexcept\n{\n    switch (v) {\n    case EvaluationMode::Preview:  return \"preview\";\n    case EvaluationMode::Quick:    return \"quick\";\n    case EvaluationMode::Verified: return \"verified\";\n    }\n    return \"unknown\";\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.evaluationModeFromToken",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "evaluationModeFromToken",
+        "qualifiedSymbol": "sdurws::ird::core::evaluationModeFromToken",
+        "startLine": 25,
+        "endLine": 31,
+        "sha256": "2d5ebd915ca2b233b62e01bb60b77e1631be061978d389c5b42bf8ddcaf5b035",
+        "region": "std::optional<EvaluationMode> evaluationModeFromToken(std::string_view token) noexcept\n{\n    if (token == \"preview\")  { return EvaluationMode::Preview; }\n    if (token == \"quick\")    { return EvaluationMode::Quick; }\n    if (token == \"verified\") { return EvaluationMode::Verified; }\n    return std::nullopt;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.TaskOutcome",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "toToken",
+        "qualifiedSymbol": "sdurws::ird::core::toToken(TaskOutcome)",
+        "startLine": 34,
+        "endLine": 43,
+        "sha256": "93290f876a1f5ad3b499e5b7038291392803f481763cd2902cdc1b4181da4ae4",
+        "region": "const char* toToken(TaskOutcome v) noexcept\n{\n    switch (v) {\n    case TaskOutcome::Completed:   return \"completed\";\n    case TaskOutcome::Canceled:    return \"canceled\";\n    case TaskOutcome::Failed:      return \"failed\";\n    case TaskOutcome::Interrupted: return \"interrupted\";\n    }\n    return \"unknown\";\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.taskOutcomeFromToken",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "taskOutcomeFromToken",
+        "qualifiedSymbol": "sdurws::ird::core::taskOutcomeFromToken",
+        "startLine": 45,
+        "endLine": 52,
+        "sha256": "71347add0a77d7fb9157048ece406f3797571f65dcb8c3d1fe0eb423f3a19335",
+        "region": "std::optional<TaskOutcome> taskOutcomeFromToken(std::string_view token) noexcept\n{\n    if (token == \"completed\")   { return TaskOutcome::Completed; }\n    if (token == \"canceled\")    { return TaskOutcome::Canceled; }\n    if (token == \"failed\")      { return TaskOutcome::Failed; }\n    if (token == \"interrupted\") { return TaskOutcome::Interrupted; }\n    return std::nullopt;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.EngineeringStatus",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "toToken",
+        "qualifiedSymbol": "sdurws::ird::core::toToken(EngineeringStatus)",
+        "startLine": 55,
+        "endLine": 64,
+        "sha256": "5b91c1cc7e02abeb0062c3286606f43ee46c5c494aaad15710f0932e998b8ebe",
+        "region": "const char* toToken(EngineeringStatus v) noexcept\n{\n    switch (v) {\n    case EngineeringStatus::Feasible:             return \"feasible\";\n    case EngineeringStatus::EngineeringInfeasible: return \"engineering-infeasible\";\n    case EngineeringStatus::DataInsufficient:      return \"data-insufficient\";\n    case EngineeringStatus::NotApplicable:         return \"not-applicable\";\n    }\n    return \"unknown\";\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.engineeringStatusFromToken",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "engineeringStatusFromToken",
+        "qualifiedSymbol": "sdurws::ird::core::engineeringStatusFromToken",
+        "startLine": 66,
+        "endLine": 73,
+        "sha256": "b80038ebe49483c46e56006f263ba3c4625a770a57eafe0d46cb32e94e6bbc0f",
+        "region": "std::optional<EngineeringStatus> engineeringStatusFromToken(std::string_view token) noexcept\n{\n    if (token == \"feasible\")              { return EngineeringStatus::Feasible; }\n    if (token == \"engineering-infeasible\") { return EngineeringStatus::EngineeringInfeasible; }\n    if (token == \"data-insufficient\")      { return EngineeringStatus::DataInsufficient; }\n    if (token == \"not-applicable\")         { return EngineeringStatus::NotApplicable; }\n    return std::nullopt;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.TaskState",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "toToken",
+        "qualifiedSymbol": "sdurws::ird::core::toToken(TaskState)",
+        "startLine": 76,
+        "endLine": 90,
+        "sha256": "9e1c780813c031e96cf8442d4171db52299363ef4c08f7503a400ecb322e882d",
+        "region": "const char* toToken(TaskState v) noexcept\n{\n    switch (v) {\n    case TaskState::Queued:     return \"queued\";\n    case TaskState::Preparing:  return \"preparing\";\n    case TaskState::Running:    return \"running\";\n    case TaskState::Paused:     return \"paused\";\n    case TaskState::Canceling:  return \"canceling\";\n    case TaskState::Canceled:   return \"canceled\";\n    case TaskState::Completed:  return \"completed\";\n    case TaskState::Failed:     return \"failed\";\n    case TaskState::Interrupted: return \"interrupted\";\n    }\n    return \"unknown\";\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.taskStateFromToken",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+        "symbol": "taskStateFromToken",
+        "qualifiedSymbol": "sdurws::ird::core::taskStateFromToken",
+        "startLine": 92,
+        "endLine": 104,
+        "sha256": "e08447a3e64ac63a516865ae56709ffbf1c1a0073f8fdc447e2350e22f86d6cc",
+        "region": "std::optional<TaskState> taskStateFromToken(std::string_view token) noexcept\n{\n    if (token == \"queued\")      { return TaskState::Queued; }\n    if (token == \"preparing\")   { return TaskState::Preparing; }\n    if (token == \"running\")     { return TaskState::Running; }\n    if (token == \"paused\")      { return TaskState::Paused; }\n    if (token == \"canceling\")   { return TaskState::Canceling; }\n    if (token == \"canceled\")    { return TaskState::Canceled; }\n    if (token == \"completed\")   { return TaskState::Completed; }\n    if (token == \"failed\")      { return TaskState::Failed; }\n    if (token == \"interrupted\") { return TaskState::Interrupted; }\n    return std::nullopt;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.codeSyntaxOk",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "symbol": "codeSyntaxOk",
+        "qualifiedSymbol": "sdurws::ird::core::(anonymous namespace)::codeSyntaxOk",
+        "startLine": 16,
+        "endLine": 35,
+        "sha256": "5429cb93494f354ea17b6d23a89b9279393353b3bcdac91272580117a03df8cf",
+        "region": "bool codeSyntaxOk(const std::string& code) noexcept\n{\n    if (code.empty() || code.size() > 64) { return false; }\n    auto alnum = [](char c) {\n        return (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');\n    };\n    if (!alnum(code.front())) { return false; }\n    bool prevDash = false;\n    for (const char c : code) {\n        if (alnum(c)) {\n            prevDash = false;\n        } else if (c == '-') {\n            if (prevDash) { return false; }   // 连续连字符拒绝（[--] 形态）\n            prevDash = true;\n        } else {\n            return false;                     // 小写/下划线/空白等一律拒绝\n        }\n    }\n    return !prevDash;                          // 尾连字符拒绝\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.DiagnosticRecord.make",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "symbol": "make",
+        "qualifiedSymbol": "sdurws::ird::core::DiagnosticRecord::make",
+        "startLine": 39,
+        "endLine": 69,
+        "sha256": "7ff6e4ae5247f1a6725e269c8dada8fd2cd48ac312a5095bc115f06eddc8ff76",
+        "region": "DiagnosticRecord DiagnosticRecord::make(DiagCode code, std::optional<ObjectId> subject,\n                                        std::optional<std::string> localName,\n                                        std::optional<std::string> runtimeName,\n                                        std::string context, std::string cause,\n                                        std::string recommendedAction,\n                                        std::optional<ComparativeFields> comparison,\n                                        DiagnosticLevel level)\n{\n    // C-3①：code 句法（§4.8 DiagCode 行——前缀 core/diag/code）。\n    if (!codeSyntaxOk(code)) {\n        throw CoreError(\"core/diag/code: 码句法非法（^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64）: \"\n                        + code);\n    }\n    // C-3②：必填串非空（context/cause/recommendedAction 三字段——ERR-01 承载）。\n    if (context.empty() || cause.empty() || recommendedAction.empty()) {\n        throw CoreError(\"core/diag/required: context/cause/recommendedAction 均为必填非空\");\n    }\n    DiagnosticRecord r;\n    r.code = std::move(code);\n    r.subject = std::move(subject);\n    r.localName = std::move(localName);\n    r.runtimeName = std::move(runtimeName);\n    r.context = std::move(context);\n    r.cause = std::move(cause);\n    r.recommendedAction = std::move(recommendedAction);\n    r.comparison = std::move(comparison);\n    // 级别（F-618 尾参——缺省 Error 由声明处缺省实参承载；此处照抄入值，\n    // 不做词表校验：DiagnosticLevel 仅两值且为强类型枚举，无第三态可错）。\n    r.level = level;\n    return r;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.DiagnosticRecord.equal",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::DiagnosticRecord::operator==",
+        "startLine": 71,
+        "endLine": 79,
+        "sha256": "2c5043026df7b7f971316fccd36d6512756e62c5572ef88f630c36f08c30c4c7",
+        "region": "bool DiagnosticRecord::operator==(const DiagnosticRecord& o) const noexcept\n{\n    // level 参与等值（F-618）：级别是记录语义的一部分——同码同级不同级别\n    // 的两记录不等（序列化往返 parse(encode(x))==x 的全字段等值依赖此点）。\n    return code == o.code && subject == o.subject && localName == o.localName\n        && runtimeName == o.runtimeName && context == o.context\n        && cause == o.cause && recommendedAction == o.recommendedAction\n        && comparison == o.comparison && level == o.level;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.make",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "symbol": "make",
+        "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding::make",
+        "startLine": 81,
+        "endLine": 91,
+        "sha256": "724cc09d53de2f3f1e7ba43f89882c459a72a5c426489529a84208942670fa2c",
+        "region": "ConfirmableFinding ConfirmableFinding::make(DiagnosticRecord record)\n{\n    // C-1（SA-15）：可确认诊断必为比较型——无三要素则不可确认（直接走普通记录）。\n    if (!record.comparison.has_value()) {\n        throw CoreError(\"core/diag/c1: 可确认诊断必为比较型（comparison 缺失）\");\n    }\n    ConfirmableFinding f;\n    f.record = std::move(record);\n    f.state = ConfirmationState::Pending;\n    return f;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.confirm",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "symbol": "confirm",
+        "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding::confirm",
+        "startLine": 93,
+        "endLine": 102,
+        "sha256": "ccbf90d00e7cc087b1d41ec41507ea8c00464b5b81419eb6f67320a5d7e70128",
+        "region": "void ConfirmableFinding::confirm(ConfirmationCredential credential)\n{\n    // 状态机前置：仅 Pending 可确认（Confirmed/Rejected 的推进归 project §7.1）。\n    if (state != ConfirmationState::Pending) {\n        throw CoreError(\"core/diag/state: 仅 Pending 态可确认\");\n    }\n    state = ConfirmationState::Confirmed;\n    this->credential = std::move(credential);   // C-2：Confirmed ⇔ 凭据在场\n                                                //（this-> 消歧——参数名与成员同名）\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.reject",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "symbol": "reject",
+        "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding::reject",
+        "startLine": 104,
+        "endLine": 112,
+        "sha256": "553f3c51dab9ef7f845eeab3c7a6857ede8c9cb59185e3cd663581028758b6e4",
+        "region": "void ConfirmableFinding::reject()\n{\n    if (state != ConfirmationState::Pending) {\n        throw CoreError(\"core/diag/state: 仅 Pending 态可否决\");\n    }\n    state = ConfirmationState::Rejected;\n    // C-2：Rejected 不得携带凭据——保证字段为空（如有历史残留则清）。\n    credential.reset();\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.equal",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 9,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding::operator==",
+        "startLine": 114,
+        "endLine": 117,
+        "sha256": "206cd163edf6834fad48b766b462168020587336c81bcf01d3eceaeaa50b3811",
+        "region": "bool ConfirmableFinding::operator==(const ConfirmableFinding& o) const noexcept\n{\n    return record == o.record && state == o.state && credential == o.credential;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.toToken.DomainEventKind",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "toToken",
+        "qualifiedSymbol": "sdurws::ird::core::toToken(DomainEventKind)",
+        "startLine": 17,
+        "endLine": 26,
+        "sha256": "ecfd4a4e151827a4ea0b3fb5f7d3ecc2bbc144c5b2b9c198431f7ef4eced5f7d",
+        "region": "const char* toToken(DomainEventKind kind) noexcept\n{\n    switch (kind) {\n    case DomainEventKind::RevisionCommitted:       return \"revision-committed\";\n    case DomainEventKind::DependencyInvalidated:   return \"dependency-invalidated\";\n    case DomainEventKind::TaskStatusChanged:       return \"task-status-changed\";\n    case DomainEventKind::ResultArchived:          return \"result-archived\";\n    }\n    return \"unknown\";\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.domainEventKindFromToken",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "domainEventKindFromToken",
+        "qualifiedSymbol": "sdurws::ird::core::domainEventKindFromToken",
+        "startLine": 28,
+        "endLine": 35,
+        "sha256": "9bb0782172fd7cc0ce02b82d8406021c044268c4f2ffd5d96049679d4535879f",
+        "region": "std::optional<DomainEventKind> domainEventKindFromToken(std::string_view token) noexcept\n{\n    if (token == \"revision-committed\")     { return DomainEventKind::RevisionCommitted; }\n    if (token == \"dependency-invalidated\") { return DomainEventKind::DependencyInvalidated; }\n    if (token == \"task-status-changed\")    { return DomainEventKind::TaskStatusChanged; }\n    if (token == \"result-archived\")        { return DomainEventKind::ResultArchived; }\n    return std::nullopt;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.RevisionCommitted",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "DomainEvent::make",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::make(RevisionCommittedPayload)",
+        "startLine": 38,
+        "endLine": 46,
+        "sha256": "fa8d1dc905b1f9e0e26ad52ccdf05a97d998afdbaa71f6882369b7710d91875c",
+        "region": "DomainEvent DomainEvent::make(RevisionCommittedPayload payload)\n{\n    DomainEvent e;\n    e.id = EventId::generate();\n    e.emittedAtUtc = std::chrono::system_clock::now();\n    e.kind = DomainEventKind::RevisionCommitted;\n    e.payload = std::move(payload);\n    return e;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.DependencyInvalidated",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "DomainEvent::make",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::make(DependencyInvalidatedPayload)",
+        "startLine": 48,
+        "endLine": 56,
+        "sha256": "6594988a6c1d3953874834b6b6ebcd8052dd787a5134fdfda17216a8e6875a23",
+        "region": "DomainEvent DomainEvent::make(DependencyInvalidatedPayload payload)\n{\n    DomainEvent e;\n    e.id = EventId::generate();\n    e.emittedAtUtc = std::chrono::system_clock::now();\n    e.kind = DomainEventKind::DependencyInvalidated;\n    e.payload = std::move(payload);\n    return e;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.TaskStatusChanged",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "DomainEvent::make",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::make(TaskStatusChangedPayload)",
+        "startLine": 58,
+        "endLine": 66,
+        "sha256": "62cc0e8a3acce84ebc292cec27e627c5c2d757b1e8a58640bbed2934d1ac0d1c",
+        "region": "DomainEvent DomainEvent::make(TaskStatusChangedPayload payload)\n{\n    DomainEvent e;\n    e.id = EventId::generate();\n    e.emittedAtUtc = std::chrono::system_clock::now();\n    e.kind = DomainEventKind::TaskStatusChanged;\n    e.payload = std::move(payload);\n    return e;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.ResultArchived",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "DomainEvent::make",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::make(ResultArchivedPayload)",
+        "startLine": 68,
+        "endLine": 76,
+        "sha256": "40f9575502c9b985a8d95bcaba1ba9c9fca56c0b658869f79e91e6651bbafc5a",
+        "region": "DomainEvent DomainEvent::make(ResultArchivedPayload payload)\n{\n    DomainEvent e;\n    e.id = EventId::generate();\n    e.emittedAtUtc = std::chrono::system_clock::now();\n    e.kind = DomainEventKind::ResultArchived;\n    e.payload = std::move(payload);\n    return e;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asRevisionCommitted",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "asRevisionCommitted",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::asRevisionCommitted",
+        "startLine": 79,
+        "endLine": 86,
+        "sha256": "f80567cfcc23b9bb4253ad9fd89b96f98eefe685e544202d626657c447140614",
+        "region": "const RevisionCommittedPayload& DomainEvent::asRevisionCommitted() const\n{\n    if (kind != DomainEventKind::RevisionCommitted) {\n        throw CoreError(\"core/events/kind-payload: kind 与载荷备选不一致\"\n                        \"（RevisionCommitted）\");\n    }\n    return std::get<RevisionCommittedPayload>(payload);\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asDependencyInvalidated",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "asDependencyInvalidated",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::asDependencyInvalidated",
+        "startLine": 88,
+        "endLine": 95,
+        "sha256": "7e6b25bd3e7ac1c1cb6be38f0e1e8c8f048a23eb2f05db63cdadee70d3c7d08a",
+        "region": "const DependencyInvalidatedPayload& DomainEvent::asDependencyInvalidated() const\n{\n    if (kind != DomainEventKind::DependencyInvalidated) {\n        throw CoreError(\"core/events/kind-payload: kind 与载荷备选不一致\"\n                        \"（DependencyInvalidated）\");\n    }\n    return std::get<DependencyInvalidatedPayload>(payload);\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asTaskStatusChanged",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "asTaskStatusChanged",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::asTaskStatusChanged",
+        "startLine": 97,
+        "endLine": 104,
+        "sha256": "62d8d83a4247038f277be4e170bc18e48ae4f6b0984c76e86c7c44a4bcdc2bcd",
+        "region": "const TaskStatusChangedPayload& DomainEvent::asTaskStatusChanged() const\n{\n    if (kind != DomainEventKind::TaskStatusChanged) {\n        throw CoreError(\"core/events/kind-payload: kind 与载荷备选不一致\"\n                        \"（TaskStatusChanged）\");\n    }\n    return std::get<TaskStatusChangedPayload>(payload);\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asResultArchived",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "asResultArchived",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::asResultArchived",
+        "startLine": 106,
+        "endLine": 113,
+        "sha256": "b3a89487b87a7bfabd4ff32154bf3c5c21df7ab7f572601237872bc5e9191209",
+        "region": "const ResultArchivedPayload& DomainEvent::asResultArchived() const\n{\n    if (kind != DomainEventKind::ResultArchived) {\n        throw CoreError(\"core/events/kind-payload: kind 与载荷备选不一致\"\n                        \"（ResultArchived）\");\n    }\n    return std::get<ResultArchivedPayload>(payload);\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.equal",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::DomainEvent::operator==",
+        "startLine": 115,
+        "endLine": 121,
+        "sha256": "d5c6350dae060ddee797cf51e1ac321dd84d0eea68c4df19c1e65f3b72da3fff",
+        "region": "bool DomainEvent::operator==(const DomainEvent& o) const\n{\n    // emittedAtUtc 参与相等（同一事件对象的语义比较）——时钟精度内等同即可，\n    // 测试以构造同值或同 id 为主。\n    return id == o.id && emittedAtUtc == o.emittedAtUtc && kind == o.kind\n           && payload == o.payload;\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceSubscription",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 12,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "ReferenceSubscription",
+        "qualifiedSymbol": "sdurws::ird::core::(anonymous namespace)::ReferenceSubscription::unsubscribe",
+        "startLine": 127,
+        "endLine": 144,
+        "sha256": "5b4ecff31f7f58f0563d70a425ec6a08f88cac01f3dc0f72624496bd57f5a205",
+        "region": "class ReferenceSubscription final : public IEventSubscription {\npublic:\n    ReferenceSubscription(ReferenceEventBus* bus, IDomainEventSink* sink)\n        : bus_(bus), sink_(sink) {}\n\n    void unsubscribe() override\n    {\n        if (bus_ != nullptr) {\n            bus_->removeSink(sink_);\n            bus_ = nullptr;    // 幂等：二次调用 no-op\n            sink_ = nullptr;\n        }\n    }\n\nprivate:\n    ReferenceEventBus* bus_;\n    IDomainEventSink* sink_;\n};"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.publish",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 12,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "publish",
+        "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus::publish",
+        "startLine": 148,
+        "endLine": 156,
+        "sha256": "bbf90221c8bc9358a5d0c2d873ce41a9833904bf043eef54d0a181586ccf51f6",
+        "region": "void ReferenceEventBus::publish(const DomainEvent& event)\n{\n    // 投递序＝订阅序（同发布者 FIFO——参考实现单线程投递）；\n    // 快照副本遍历：sink 在回调内退订不影响本次遍历（避免迭代器失效）。\n    const auto snapshot = sinks_;\n    for (IDomainEventSink* sink : snapshot) {\n        sink->onEvent(event);\n    }\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.subscribe",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 12,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "subscribe",
+        "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus::subscribe",
+        "startLine": 158,
+        "endLine": 162,
+        "sha256": "0b9cf173fae550be7868338eaf97687592cf97fecbd5fdab3a854d24a51fc416",
+        "region": "std::unique_ptr<IEventSubscription> ReferenceEventBus::subscribe(IDomainEventSink& sink)\n{\n    sinks_.push_back(&sink);\n    return std::make_unique<ReferenceSubscription>(this, &sink);\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.removeSink",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 12,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "removeSink",
+        "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus::removeSink",
+        "startLine": 164,
+        "endLine": 169,
+        "sha256": "c35ff7c90d92b6cce312fe66b44626c679bc14edb2bdbd19f3f087e159098376",
+        "region": "void ReferenceEventBus::removeSink(IDomainEventSink* sink)\n{\n    // 友元访问路径（ReferenceSubscription 的成员函数可调用）：\n    // 本类声明 removeSink 为公有方法并在头文件作为实现细节注释——测试内组件。\n    sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.subscriberCount",
+    "permissionRef": "ARCH:3.6",
+    "inputs": 12,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+        "symbol": "subscriberCount",
+        "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus::subscriberCount",
+        "startLine": 171,
+        "endLine": 174,
+        "sha256": "c8dd613fba86537a4179c3963982ce2272aa2b822b92c5ada51e6a5fc9375776",
+        "region": "std::size_t ReferenceEventBus::subscriberCount() const noexcept\n{\n    return sinks_.size();\n}"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.value-comparisons",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::ObjectId::operator==",
+        "startLine": 81,
+        "endLine": 115,
+        "sha256": "ab94828480c9da0d6ab98dda2f6f795feb124e615ddd36e115b9f03acd9efe31",
+        "region": "#define IRD_CORE_DEFINE_ID_TYPE(TYPE_NAME, TAG_LIT, DOC)                              \\\n    /** DOC */                                                                        \\\n    struct TYPE_NAME {                                                                \\\n        /** 128 位原始字节；全零＝空（保留值纪律，§4.1 U-1）。字节序＝规范文本序。 */     \\\n        std::array<std::uint8_t, 16> bytes{};                                         \\\n        /** 生成非零随机新值（thread_local mt19937_64；零则重取——保留值不可出现）。线程安全。 */ \\\n        static TYPE_NAME generate();                                                  \\\n        /** 严格解析 \"#TAG_LIT<32 小写 hex>\"；tag 不符/长度/字符集违约抛 CoreError（§5.1 错误行）。 */ \\\n        static TYPE_NAME fromCanonical(std::string_view text);                        \\\n        /** try 轨：解析失败返回 nullopt 不抛（io 错误收集场景，REQ-05/AT-02）。 */      \\\n        static std::optional<TYPE_NAME> tryFromCanonical(std::string_view text) noexcept; \\\n        /** 规范文本 \"#TAG_LIT<32 小写 hex>\"（与 parse 构成 parse(format(x))==x 往返）。 */ \\\n        std::string toCanonical() const;                                              \\\n        /** 非全零（保留值恒 false）。noexcept 纯值比较。 */                            \\\n        bool isValid() const noexcept;                                                \\\n        /** 字节精确相等（附录 D 第 12 项：无容差）。 */                                 \\\n        bool operator==(const TYPE_NAME& o) const noexcept { return bytes == o.bytes; } \\\n        bool operator!=(const TYPE_NAME& o) const noexcept { return !(*this == o); }   \\\n        /** 字节字典序（容器键用；§5.1 规定 operator< 存在）。 */                        \\\n        bool operator<(const TYPE_NAME& o) const noexcept { return bytes < o.bytes; }  \\\n    };                                                                                \\\n\n// 逐类型展开（注释＝§4.1 类型表行原文的浓缩；分配者字段供阅读，不改变 core 行为）：\nIRD_CORE_DEFINE_ID_TYPE(ObjectId, \"obj-\",\n    /** 持久化对象稳定身份，跨修订不变（ARC-04/§6.2）；分配者＝project（对象创建时一次）；\n        编码/编址归 project/io，名称映射归 runtime。tag＝\"obj-\"。 */\n);\nIRD_CORE_DEFINE_ID_TYPE(ProjectId, \"prj-\",\n    /** 项目身份（project.json 创建期一次写入；另存为换新 id，PM-05）；分配者＝project。tag＝\"prj-\"。 */\n);\nIRD_CORE_DEFINE_ID_TYPE(BranchId, \"brn-\",\n    /** 方案分支身份（PM-12：分支记录 baseRevisionId）；分配者＝project；分支表归 project。tag＝\"brn-\"。 */\n);\nIRD_CORE_DEFINE_ID_TYPE(RevisionId, \"rev-\",\n    /** 修订身份（一次命令提交＝一个修订，ARC-01）；分配者＝project。"
+      }
+    ],
+    "expandedSymbols": [
+      "sdurws::ird::core::ObjectId::operator==",
+      "sdurws::ird::core::ObjectId::operator!=",
+      "sdurws::ird::core::ObjectId::operator<",
+      "sdurws::ird::core::ProjectId::operator==",
+      "sdurws::ird::core::ProjectId::operator!=",
+      "sdurws::ird::core::ProjectId::operator<",
+      "sdurws::ird::core::BranchId::operator==",
+      "sdurws::ird::core::BranchId::operator!=",
+      "sdurws::ird::core::BranchId::operator<",
+      "sdurws::ird::core::RevisionId::operator==",
+      "sdurws::ird::core::RevisionId::operator!=",
+      "sdurws::ird::core::RevisionId::operator<",
+      "sdurws::ird::core::RunId::operator==",
+      "sdurws::ird::core::RunId::operator!=",
+      "sdurws::ird::core::RunId::operator<",
+      "sdurws::ird::core::EventId::operator==",
+      "sdurws::ird::core::EventId::operator!=",
+      "sdurws::ird::core::EventId::operator<"
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.value-comparisons",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::AttemptId::operator==",
+        "startLine": 126,
+        "endLine": 140,
+        "sha256": "a22e351f5a0b34ea97b0a378ad2d826c3b3ba2d6a8ca0d4003577b87b045656d",
+        "region": "struct AttemptId {\n    std::uint64_t value = 0;   ///< ≥1 合法；0＝空（保留值）——att-0 解析在边界失败\n\n    /// 严格解析 \"att-<十进制>\"：仅数字、无符号/前导零/空白；0 与 2^64 溢出拒绝。\n    static AttemptId fromCanonical(std::string_view text);\n    /// try 轨：失败返回 nullopt 不抛。\n    static std::optional<AttemptId> tryFromCanonical(std::string_view text) noexcept;\n    /// 规范文本 \"att-<十进制>\"。\n    std::string toCanonical() const;\n    /// value ≥ 1。\n    bool isValid() const noexcept { return value >= 1; }\n    bool operator==(AttemptId o) const noexcept { return value == o.value; }\n    bool operator!=(AttemptId o) const noexcept { return value != o.value; }\n    bool operator< (AttemptId o) const noexcept { return value <  o.value; }\n};"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.notEqual",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+        "symbol": "operator!=",
+        "qualifiedSymbol": "sdurws::ird::core::TaskIdentity::operator!=",
+        "startLine": 154,
+        "endLine": 157,
+        "sha256": "b3eba47aefe22df2be99079de37ba3fbe0a1b5fba5ce59845fd6f204099fecba",
+        "region": "    bool operator==(const TaskIdentity& o) const noexcept;\n    bool operator!=(const TaskIdentity& o) const noexcept { return !(*this == o); }\n    /// 字典序（project→branch→revision→run→attempt）；仅容器键用，无业务排序语义。\n    bool operator<(const TaskIdentity& o) const noexcept;"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IrdCoreIdHash",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+        "symbol": "operator()",
+        "qualifiedSymbol": "sdurws::ird::core::IrdCoreIdHash<T>::operator()",
+        "startLine": 166,
+        "endLine": 174,
+        "sha256": "3bc46fcaf4c26588dafe5b56e317949ef1ce55e7be7a56755f8e10674083588a",
+        "region": "/// 置于本命名空间（std 内不放自定义模板）；std::hash 特化经继承取得。\ntemplate <typename T> struct IrdCoreIdHash {\n    std::size_t operator()(const T& id) const noexcept {\n        std::uint64_t hi = 0, lo = 0;\n        detail::fnv1a128(id.bytes.data(), id.bytes.size(), &hi, &lo);\n        return static_cast<std::size_t>(hi ^ lo);\n    }\n};\n"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.std.hash.AttemptId",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 5,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+        "symbol": "operator()",
+        "qualifiedSymbol": "std::hash<sdurws::ird::core::AttemptId>::operator()",
+        "startLine": 186,
+        "endLine": 191,
+        "sha256": "93c7515bed34e326b3c7a821c5e488536e716f1ec53c3f9ec1f87fd49d3d17db",
+        "region": "template <> struct hash<sdurws::ird::core::AttemptId> {\n    /// 64 位值直接散列（0＝空保留值同样可散列——放入容器是调用方决定）。\n    std::size_t operator()(const sdurws::ird::core::AttemptId& a) const noexcept {\n        return std::hash<std::uint64_t>{}(a.value);\n    }\n};"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Identity.std.hash.TaskIdentity",
+    "permissionRef": "ARCH:3.6.1",
+    "inputs": 8,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+        "symbol": "operator()",
+        "qualifiedSymbol": "std::hash<sdurws::ird::core::TaskIdentity>::operator()",
+        "startLine": 193,
+        "endLine": 211,
+        "sha256": "3f268cb3e398665dc3dbf882c3a9b99715c6688ff527215fddf65d893f6fad39",
+        "region": "template <> struct hash<sdurws::ird::core::TaskIdentity> {\n    /// 五字段顺序组合（size_t 溢出按无回绕加法惯例——散列质量非契约项）。\n    std::size_t operator()(const sdurws::ird::core::TaskIdentity& t) const noexcept {\n        const std::size_t h1 = std::hash<sdurws::ird::core::ProjectId>{}(t.project);\n        const std::size_t h2 = std::hash<sdurws::ird::core::BranchId>{}(t.branch);\n        const std::size_t h3 = std::hash<sdurws::ird::core::RevisionId>{}(t.revision);\n        const std::size_t h4 = std::hash<sdurws::ird::core::RunId>{}(t.run);\n        const std::size_t h5 = std::hash<sdurws::ird::core::AttemptId>{}(t.attempt);\n        std::size_t h = h1;\n        h ^= h2 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);\n        h ^= h3 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);\n        h ^= h4 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);\n        h ^= h5 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);\n        return h;\n    }\n};\n\n}  // namespace std\n"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.ValueProvenance.notEqual",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "operator!=",
+        "qualifiedSymbol": "sdurws::ird::core::ValueProvenance::operator!=",
+        "startLine": 93,
+        "endLine": 94,
+        "sha256": "e39276ba84ed5b513afc5d2020a85b701a0a992cf4c0523c7de4a8a132ae60a5",
+        "region": "    bool operator==(const ValueProvenance& o) const noexcept;\n    bool operator!=(const ValueProvenance& o) const noexcept { return !(*this == o); }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.provided",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "provided",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::provided",
+        "startLine": 130,
+        "endLine": 137,
+        "sha256": "0b4d90faba6eafa9357d0ab984f45cdff4d80e011e358e03f4ba903ca70c9285",
+        "region": "    static SourcedValue provided(T value, ValueProvenance provenance)\n    {\n        SourcedValue v;\n        v.state_ = FieldState::Provided;\n        v.value_ = std::move(value);\n        v.provenance_ = std::move(provenance);\n        return v;\n    }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.notProvided",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "notProvided",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::notProvided",
+        "startLine": 140,
+        "endLine": 145,
+        "sha256": "cc4736cc98222a36ac746027732eaa3c64cc2a17f33025c6d4def94ba7eaa129",
+        "region": "    static SourcedValue notProvided()\n    {\n        SourcedValue v;\n        v.state_ = FieldState::NotProvided;\n        return v;\n    }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.notApplicable",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "notApplicable",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::notApplicable",
+        "startLine": 148,
+        "endLine": 153,
+        "sha256": "aad26923f41aaab526bb6063e52d01696db997e7e7f46398f7641800d00ce88c",
+        "region": "    static SourcedValue notApplicable()\n    {\n        SourcedValue v;\n        v.state_ = FieldState::NotApplicable;\n        return v;\n    }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.invalid",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "invalid",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::invalid",
+        "startLine": 156,
+        "endLine": 166,
+        "sha256": "ed9047b2904774be8354afbc9b7b2e0a10a5d7d21a3742010d51415aa73f93f3",
+        "region": "    static SourcedValue invalid(std::string rawInput)\n    {\n        if (rawInput.empty()) {\n            throw CoreError(\"core/provenance/invalid: 原始输入串不得为空\"\n                            \"（非法态的存在意义是保留原串）\");\n        }\n        SourcedValue v;\n        v.state_ = FieldState::Invalid;\n        v.rawInput_ = std::move(rawInput);\n        return v;\n    }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.state",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "state",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::state",
+        "startLine": 169,
+        "endLine": 169,
+        "sha256": "669bbf2a7555292564ae6366462ef179e449dc416650feabde34b1e193c33bbd",
+        "region": "    FieldState state() const noexcept { return state_; }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.tryValue",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "tryValue",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::tryValue",
+        "startLine": 174,
+        "endLine": 182,
+        "sha256": "1dd6f5a6b7ede100ffb84b8c7b8b3af08be645d59233a5cf12f33ca857540a61",
+        "region": "    std::optional<T> tryValue() const noexcept\n    {\n        if (state_ != FieldState::Provided) { return std::nullopt; }\n        return value_;\n    }\n\n    /**\n     * @brief 取值（抛出轨迹）：前置 state()==Provided。\n     *"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.value",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "value",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::value",
+        "startLine": 184,
+        "endLine": 199,
+        "sha256": "fd44aa0e028e619eb98af328355d874f3f87b183bbc779c5c79b046ffd36b8bc",
+        "region": "     * @throws CoreError 非 Provided 态（消息含四态 token——\"缺失＝零\"通道被切断）\n     */\n    const T& value() const\n    {\n        if (state_ != FieldState::Provided) {\n            throw CoreError(std::string{\"core/provenance/value: 状态为 \"}\n                            + stateToken(state_) + \"，无值可取（缺失不得转零/伪造）\");\n        }\n        return value_;\n    }\n\n    /**\n     * @brief 原始输入串（前置 state()==Invalid）。\n     *\n     * @return 非法输入原文（导入层登记的原串，供诊断/修正回路）\n     * @throws CoreError 非 Invalid 态"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.invalidRawInput",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "invalidRawInput",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::invalidRawInput",
+        "startLine": 201,
+        "endLine": 208,
+        "sha256": "a7d0821ff90f84ae1e4dcb5e17ef4bcc976146435134a45ef2ab72117235fa4a",
+        "region": "    const std::string& invalidRawInput() const\n    {\n        if (state_ != FieldState::Invalid) {\n            throw CoreError(std::string{\"core/provenance/invalid-raw: 状态为 \"}\n                            + stateToken(state_) + \"，无原始输入串\");\n        }\n        return rawInput_;\n    }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.provenance",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "provenance",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::provenance",
+        "startLine": 210,
+        "endLine": 214,
+        "sha256": "c6e6e0a0e60c29a054ea1cd1203594611a7a004d568b7bb060edd4ef0d600dd6",
+        "region": "    /**\n     * @brief 来源记录（仅 Provided 有语义——§4.3 表\"无意义\"态返回默认对象，\n     *        调用方须先查 state()；此处按表承诺返回默认而非抛错）。\n     */\n    const ValueProvenance& provenance() const noexcept { return provenance_; }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.equal",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::operator==",
+        "startLine": 216,
+        "endLine": 229,
+        "sha256": "e579416b9defd0609acd0dfcc92961faebf1da13ab5016a960572e9bceeb9ba2",
+        "region": "    /// 相等＝状态与对应载荷全等（Provided 比值＋来源；Invalid 比原串；空态互等）。\n    bool operator==(const SourcedValue& o) const noexcept\n    {\n        if (state_ != o.state_) { return false; }\n        switch (state_) {\n        case FieldState::Provided:\n            return value_ == o.value_ && provenance_ == o.provenance_;\n        case FieldState::Invalid:\n            return rawInput_ == o.rawInput_;\n        default:\n            return true;   // NotProvided/NotApplicable 无载荷\n        }\n    }\n    bool operator!=(const SourcedValue& o) const noexcept { return !(*this == o); }"
+      }
+    ]
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.stateToken",
+    "permissionRef": "ARCH:3.6.3",
+    "inputs": 7,
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+        "symbol": "stateToken",
+        "qualifiedSymbol": "sdurws::ird::core::SourcedValue<T>::stateToken",
+        "startLine": 232,
+        "endLine": 244,
+        "sha256": "a517d609d00c75c4451d63b288cd5275f1d9a0b6e10e2beb9e1e49ad6268f460",
+        "region": "    /// 四态 token（§4.3 token 列——错误消息机器判读用；文件内局部）。\n    static const char* stateToken(FieldState s) noexcept\n    {\n        switch (s) {\n        case FieldState::Provided:      return \"provided\";\n        case FieldState::NotProvided:   return \"not-provided\";\n        case FieldState::NotApplicable: return \"not-applicable\";\n        case FieldState::Invalid:       return \"invalid\";\n        }\n        return \"unknown\";\n    }\n\n    FieldState state_ = FieldState::NotProvided;   ///< 四态（默认 NotProvided）"
+      }
+    ]
+  }
+]

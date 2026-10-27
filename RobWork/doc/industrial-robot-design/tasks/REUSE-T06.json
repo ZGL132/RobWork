@@ -3,10 +3,14 @@
   "taskId": "REUSE-T06",
   "unit": "foundation-governance",
   "masterWp": "WP-A",
-  "title": "全量回归与零债务最终验收",
-  "status": "planned",
-  "branch": "reuse-t06",
+  "title": "WP-20 全量回归与零债务最终收口——20单元最终模式复核＋删死扫尾＋父任务归位",
+  "status": "done",
+  "branch": "redesign-main",
   "dependsOn": [
+    "REUSE-T01",
+    "REUSE-T02",
+    "REUSE-T03",
+    "REUSE-T04",
     "REUSE-T05"
   ],
   "requirements": [
@@ -15,12 +19,69 @@
     "KIN-01"
   ],
   "designRefs": [
-    "reuse/migration.md",
-    "reuse/policy.md",
-    "reuse/extensions/required-proposals.md"
+    "reuse/migration.md#12.8",
+    "reuse/migration.md#13.3",
+    "reuse/migration.md#13.4",
+    "reuse/policy.md#1.1",
+    "traceability/reuse/REUSE-T06/final-mode-statistics.json",
+    "traceability/reuse/REUSE-T06/pending-retention-classification.json",
+    "traceability/reuse/REUSE-T06/dead-core-sweep.md"
   ],
   "verify": [
-    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
+    "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile @('RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T03.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json')\"（-TaskFile 仅收 ready/done 契约——REUSE-TASK-STATE 拒绝 planned 入列；T04/T05 planned 由全库文档门禁覆盖）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 56bc2814064f5824dbd5e9ab9f763915494a7fac..HEAD",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json -Base 56bc2814064f5824dbd5e9ab9f763915494a7fac -Head HEAD"
   ],
-  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。"
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T03.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T04.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T05.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T02.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T03.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T06.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T06/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "RobWork/RobWorkStudio/src/**",
+    "main"
+  ],
+  "outputs": [
+    "20单元 functions/catalog/inventory 终态统计快照（final-mode-statistics.json：functions 2231行＝migrated 1630〔business-specific 1594＋adapter 30＋direct 6〕＋closed 2＋audited 3＋proposal 2＋pending 594；catalog verified 17/candidate 23；inventory 1401条基点冻结不改）",
+    "pending 594行逐组保留理由三分类登记（pending-retention-classification.json：业务专属自持348／待批124／待后续包122）",
+    "删死核心扫尾与测试回流检查记录（dead-core-sweep.md：RneaChain族/computeGeometry全树零命中、完整位姿DLS已删仅位置保留面GAP-IK-01、RK4保留面GAP-FD-BUILD-01、特性开关/#if 0/TODO零残留、ReferenceEventBus生产装配零引用、test-fixture grant封闭、RigView测试目标隔离）",
+    "REUSE-T02/T03 父任务scope消费归位done（引用REUSE-T13/T17/T19/T30/T51/GOV-T27独验记录）；REUSE-T04/T05 scope消费进度登记保留planned；migration §13.3各行终态标注与§13.2 WP-20 blocked解除"
+  ],
+  "interUnit": false,
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T06.json"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "acceptance": [
+    "最终判断从关闭记录与矩阵行得出，不改原 classification/基点（§12.8）：inventory 1401条（audit-required 1383）为T01审计基点冻结面，本轮仅统计不回写；functions矩阵行status/decision零改动，终态以统计快照固化",
+    "pending不得冒充关闭：594行逐组归入业务专属自持（348——测试独立oracle/稳定码/单位/策略/写协议权威/T34候选否决保留）/待批（124——GAP-DIGEST-01未批准23、reporting AD结构墙64、ui宿主呈现墙19、GAP-IK-01/GAP-FD-BUILD-01/PTP候选3关联面等）/待后续包（122——Boost.Endian渠道已批60、MATH-ROT族20、modeling面23等），理由逐组登记且映射到具体行集",
+    "删死核实以rg全树实测为准：已删旧核无回流（RneaChain族/computeGeometry/完整位姿DLS零命中）；在档保留面全部有blocked登记（仅位置3维DLS＋约束5函数＝GOV-T27 §8清单GAP-IK-01；RK4＋质量阵消元＝GAP-FD-BUILD-01；自持SHA＝GAP-DIGEST-01），不假关不漏登",
+    "测试/备用路径无生产回流：core::ReferenceEventBus生产装配零代码引用（T41后仅类本体/注释/测试语义钉）；test-fixture origin grant恰2个且均在/test/路径；RigView等替身仅测试目标；宿主例外封闭清单与ARCH §3.6.2一致",
+    "本包零产品代码变更：不触碰 src/include/CMake/测试代码，验证矩阵为文档/治理门禁＋复用检查，无C++重验义务（AGENTS §4文档行）；发现项如实登记不改矩阵行（CORE-EVENT等16行differences文本F-967滞后字样留登记批处置）",
+    "开放面如实移交独验：T42~T48/T50/T52八契约ready实施完成待独验；GAP-IK-01/GAP-FD-BUILD-01/GAP-PRJ-DIAG-BOUNDARY-01/F-966/F-974/F-975及GOV-T21接收待所有者；T04/T05父任务planned保留有据；不以上述未决冒称全局PASS，最终模式及确切版本（本契约allowedFiles内统计三件＋本轮HEAD）交独立验收员执行"
+  ],
+  "note": "本包起始SHA=56bc2814064f5824dbd5e9ab9f763915494a7fac（工作区干净核实）。§12.8四项收口对照：①逐文件/逐功能关联证据——final-mode-statistics.json全20单元统计＋closures.json/functions行交叉，最终判断从关闭记录得出（REUSE-T12~T28/T30/T36/T40/T41/T49/T51/T54/GOV-T27独验pass收口done；T42~T48/T50/T52 ready送验在途）；②旧路径/开关/旁路/重复工具/黄金内核检查——dead-core-sweep.md全项实测，独立测试oracle保留不删成同源互证；③最终迁移模式统计/集成回归/冒烟——本包零产品代码变更，集成回归引用各收口包原始证据（REUSE-T30 runtime 309/T51 kinematics 297/T52 dynamics 119/T54 project 290/GOV-T27 297/T41 execution 157+38等），干净检出可构建由T54独立冒烟批与各包独验复跑承载，新增CI检查（ird_gates/commit-lint/verify-task-scope）随登记批实际执行；④unresolved/pending/未批提案/必需测试跳过/未关闭缺陷如实分列阻断面——594 pending三分类不假关，八契约待独验＋六开放裁决项单列，结论限定本轮版本/范围，不声称不存在不可发现语义重复。父任务归位：T02/T03 scope已消费完归位done（引用子任务独验记录），T04（FD实施blocked）/T05（剩余pending三分类待后续包）如实保留planned——dependsOn未全满足为登记事实，最终验收由独验员按§12.8判定阻断面，本包不以清空无关债务为目标（WP-20行原文口径）。CORE-EVENT 16行differences文本含「F967待改」滞后字样（F-967已fixed并独验pass）：属登记滞后非缺陷回潮，生产装配零引用经rg核实，行面刷新留CORE-EVENT审计收口批次，不属本包授权面。独立验收待所有者另开会话执行，实施者不自签。 2026-10-27 独验返回修复批：独验方按 taskFiles 逐文件调 validate-docs/verify-task-scope 契约校验——暴露两点：①收口批 ImplResult.taskFiles 误列证据产物（非契约文件被当契约解析，missing taskId/无效 JSON 基元），重提 taskFiles 收敛为 ready/done 契约三份（T02/T03/T06；T04/T05 planned 不得入 validate-docs -TaskFile——TASK-STATE 硬约束，其改动面由 T06 契约 allowedFiles 全覆盖核验）；②REUSE-T02~T05 契约 allowedFiles 空缺——verify-task-scope 对每个契约要求非空允许面且须覆盖 Base..Head 全部 changed 路径，四契约按本收口批共同登记面补齐 10 条（五契约＋migration＋三 changes＋REUSE-T06 证据目录通配）。收口批事实与统计零变化，本批仅治理面修补。 2026-10-27 独立验收收口：verdict=pass，记录 traceability/acceptance/REUSE-T06-20261026-r1.json（复跑原件在其同名目录 evidence/），绑定 reviewedCommit=6dc43acc1f95953f9c458397b6ef43e6109d6b08、baseCommit=56bc2814064f5824dbd5e9ab9f763915494a7fac；counts 26 passed/0 failed/0 skipped/3 notRun（含统计全量独立重算、24 份独验记录亲读、9 组 rg 复跑、5 项门禁实跑；零产品变更批无 C++/GUI 重验义务，-DeepEvidence 与 gate-all 按增量口径不跑）；非阻断登记卫生项（gates 两日志滞后于送验 head）随本登记批刷新。授权口径＝所有者另开会话独立验收（UI-T86/T54 等先例同型），实施者不自签。据此本契约登记 done——WP-20/T06 最终收口闭合，migration §13.3 WP-20 行随之收口。"
 }

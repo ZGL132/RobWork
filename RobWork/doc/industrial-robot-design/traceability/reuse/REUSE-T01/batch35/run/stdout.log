@@ -1,0 +1,77 @@
+[==========] Running 19 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from LogFileAudit
+[ RUN      ] LogFileAudit.KeepOneIncludesActiveFile_DT_LOG_ROTATE
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp(51): error: Value of: fs::exists(fs::path(base.string() + ".1"))
+  Actual: true
+Expected: false
+DT-LOG：rotateFiles=1应只剩活动文件
+
+[  FAILED  ] LogFileAudit.KeepOneIncludesActiveFile_DT_LOG_ROTATE (21 ms)
+[ RUN      ] LogFileAudit.ReducedRetentionRemovesOldGenerations_DT_LOG_ROTATE
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp(70): error: Value of: fs::exists(fs::path(base.string() + ".2"))
+  Actual: true
+Expected: false
+总保留数降到2后旧二代应清除
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp(71): error: Value of: fs::exists(fs::path(base.string() + ".3"))
+  Actual: true
+Expected: false
+旧三代应清除
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp(72): error: Value of: fs::exists(fs::path(base.string() + ".4"))
+  Actual: true
+Expected: false
+旧四代应清除
+
+[  FAILED  ] LogFileAudit.ReducedRetentionRemovesOldGenerations_DT_LOG_ROTATE (21 ms)
+[ RUN      ] LogFileAudit.BinaryByteCountAndOpenFailure_DT_LOG_IO
+[       OK ] LogFileAudit.BinaryByteCountAndOpenFailure_DT_LOG_IO (1 ms)
+[ RUN      ] LogFileAudit.UpstreamStreamFailureNeedsExplicitPolicy_REUSE_UTIL_LOG
+[       OK ] LogFileAudit.UpstreamStreamFailureNeedsExplicitPolicy_REUSE_UTIL_LOG (0 ms)
+[ RUN      ] LogFileAudit.Utf8AndPhysicalNewlineStayOnOneRecord_DT_LOG_TEXT
+[       OK ] LogFileAudit.Utf8AndPhysicalNewlineStayOnOneRecord_DT_LOG_TEXT (16 ms)
+[ RUN      ] LogFileAudit.UpstreamFileWriterOpensWithTruncation_REUSE_UTIL_LOG
+[       OK ] LogFileAudit.UpstreamFileWriterOpensWithTruncation_REUSE_UTIL_LOG (23 ms)
+[----------] 6 tests from LogFileAudit (84 ms total)
+
+[----------] 12 tests from DiagLogging
+[ RUN      ] DiagLogging.DtLog1_TwoTierSplitKeepsUserFileCleanOfDevLinesAndInternalPatterns
+[       OK ] DiagLogging.DtLog1_TwoTierSplitKeepsUserFileCleanOfDevLinesAndInternalPatterns (4 ms)
+[ RUN      ] DiagLogging.DtLog2_ConcurrentWritesKeepSameThreadFifoAndGlobalStableOrder
+[       OK ] DiagLogging.DtLog2_ConcurrentWritesKeepSameThreadFifoAndGlobalStableOrder (163 ms)
+[ RUN      ] DiagLogging.DtLog3_WriteFailureInjectedStaysNonBlockingAndBounded
+[       OK ] DiagLogging.DtLog3_WriteFailureInjectedStaysNonBlockingAndBounded (3 ms)
+[ RUN      ] DiagLogging.DtLog4_DisabledLoggingLeavesFormalDiagnosticsIntact
+[       OK ] DiagLogging.DtLog4_DisabledLoggingLeavesFormalDiagnosticsIntact (0 ms)
+[ RUN      ] DiagLogging.DtLog5_WorkerBatchReplayRestoresOrderAndFillsChannelGap
+[       OK ] DiagLogging.DtLog5_WorkerBatchReplayRestoresOrderAndFillsChannelGap (25 ms)
+[ RUN      ] DiagLogging.DtLogThrottleAndSamplingWindowBehavior
+[       OK ] DiagLogging.DtLogThrottleAndSamplingWindowBehavior (10 ms)
+[ RUN      ] DiagLogging.DtLogOverflowDropsOldestDebugTraceAndCountsDevDiagnostic
+[       OK ] DiagLogging.DtLogOverflowDropsOldestDebugTraceAndCountsDevDiagnostic (8 ms)
+[ RUN      ] DiagLogging.DtLogRotationGenerationsShiftWithRealFiles
+[       OK ] DiagLogging.DtLogRotationGenerationsShiftWithRealFiles (5 ms)
+[ RUN      ] DiagLogging.DtLogTruncationMarks4KiBUtf8Safe
+[       OK ] DiagLogging.DtLogTruncationMarks4KiBUtf8Safe (32 ms)
+[ RUN      ] DiagLogging.DtLogCallerViolationsFailFastWithUsage
+[       OK ] DiagLogging.DtLogCallerViolationsFailFastWithUsage (1 ms)
+[ RUN      ] DiagLogging.DtPdiag7_DefaultsAreConfigurableEngineeringDefaults
+[       OK ] DiagLogging.DtPdiag7_DefaultsAreConfigurableEngineeringDefaults (4 ms)
+[ RUN      ] DiagLogging.DtPex8_HeaderDefinesPayloadOnlyNoExecutionFrameContract
+[       OK ] DiagLogging.DtPex8_HeaderDefinesPayloadOnlyNoExecutionFrameContract (1 ms)
+[----------] 12 tests from DiagLogging (261 ms total)
+
+[----------] 1 test from LogTestSuite
+[ RUN      ] LogTestSuite.LogTest
+[       OK ] LogTestSuite.LogTest (0 ms)
+[----------] 1 test from LogTestSuite (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 19 tests from 3 test suites ran. (345 ms total)
+[  PASSED  ] 17 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] LogFileAudit.KeepOneIncludesActiveFile_DT_LOG_ROTATE
+[  FAILED  ] LogFileAudit.ReducedRetentionRemovesOldGenerations_DT_LOG_ROTATE
+
+ 2 FAILED TESTS

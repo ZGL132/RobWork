@@ -1,0 +1,4309 @@
+{
+ "schemaVersion": "ird-reuse-functions/1",
+ "unit": "reporting",
+ "functions": [
+  {
+   "functionId": "reporting.ReportArchiveCoordinator.publish",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Archive.cpp",
+     "symbol": "ReportArchiveCoordinator::publish",
+     "qualifiedSymbol": "sdurws::ird::reporting::ReportArchiveCoordinator::publish",
+     "startLine": 226,
+     "endLine": 512,
+     "sha256": "02c239e0c3a3f55411f45739129d24cbf22f7b8a175913ad7234eed626e94cf0"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-FILE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+    "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+   },
+   "differences": "经产物sink/归档端口编排，需核project唯一写权与证据身份；IOUtil不等于归档事务，禁止另建对象库或越权直接写",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    }
+   ],
+   "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T45/nonoverlap-reporting.json",
+    "sha256": "050d3981eab94e66b0cbf806200ed2334fb48281b051d439f7514f70420f253d"
+   }
+  },
+  {
+   "functionId": "reporting.contract_test.TestMainReport.main",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "NFR-COR-01"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp",
+     "symbol": "main",
+     "qualifiedSymbol": "::main",
+     "startLine": 1,
+     "endLine": 43,
+     "sha256": "cf4ed0af0f8ae73a7530a356610e3b0b122f436cd7b512045950ff7808eecd1e"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting_contract_test"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+   },
+   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+    }
+   ],
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+    "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+   },
+   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+   "functionId": "reporting.test.TestMainReport.main",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "NFR-COR-01"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp",
+     "symbol": "main",
+     "qualifiedSymbol": "::main",
+     "startLine": 1,
+     "endLine": 46,
+     "sha256": "b9e3c42c9e33f8ed7c554bbc16127f2d6f71a51b9341048289de79ca53a6041a"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting_test"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+   },
+   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+    }
+   ],
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+    "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+   },
+   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+   "functionId": "reporting.CMake.ird_add_gtest",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "NFR-COR-01"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "symbol": "ird_add_gtest",
+     "qualifiedSymbol": "ird_add_gtest",
+     "startLine": 409,
+     "endLine": 421,
+     "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting_test",
+    "sdurws_ird_reporting_contract_test"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "TEST-HARNESS",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+   },
+   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+    }
+   ],
+   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T45/nonoverlap-reporting.json",
+    "sha256": "050d3981eab94e66b0cbf806200ed2334fb48281b051d439f7514f70420f253d"
+   }
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u8",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u8",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u8",
+     "startLine": 53,
+     "endLine": 53,
+     "sha256": "60edec8bd19bf88527c49a8d9036141d71210adb48c2fa0bb73df7d892cdf3a0"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "单字节流消费，不需另建工具层",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u16",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u16",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u16",
+     "startLine": 54,
+     "endLine": 58,
+     "sha256": "726265696d702b37437045f0a272773d30a6a975a96dbb2dfb0c09393e2df32b"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "手写大端，候选既有Boost Endian public load/store_big_u16",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u32",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u32",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u32",
+     "startLine": 59,
+     "endLine": 65,
+     "sha256": "68aed36ac19264febbd1ad233fd487540759cb97f81f0e87d8155a65fbb558ac"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "手写大端，候选Boost public load/store_big_u32，长度仍要界限检查",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.u64",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u64",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u64",
+     "startLine": 66,
+     "endLine": 71,
+     "sha256": "b457060ee56205d81360af5a4a846d682cb692e0dbb85a1748f6925f163e2b03"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "手写大端，候选Boost public load/store_big_u64",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.i64",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "i64",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::i64",
+     "startLine": 74,
+     "endLine": 74,
+     "sha256": "27ce3d67ffa6f536865510ad4971f8e679f930ade8f24fab33a800cf6c433574"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "补码与时间整数字节契约，signed转换边界须回归",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.f64",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "f64",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::f64",
+     "startLine": 78,
+     "endLine": 88,
+     "sha256": "ccb7d5e8c6bff39228e1bbf31acafd8864223cbcd971fcf32acf48b0eab858d7"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "memcpy位模式委托u64；NaN/Inf拒绝，保留-0，不新建浮点编码平台",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.boolean",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "boolean",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::boolean",
+     "startLine": 91,
+     "endLine": 91,
+     "sha256": "6cfbbd1e8b218a503e71155d668a66361a331ed968e5fb991344dd0c3b8a7359"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "0/1布尔profile，Reader拒绝其他值",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.presence",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "presence",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::presence",
+     "startLine": 94,
+     "endLine": 94,
+     "sha256": "0d6bf1bcd905f6a2929bff6a0ccfb7cdf8377894ad149c10ffc9da29b320c563"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "0/1可选位，禁止把缺失与默认值合并",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.raw",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "raw",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::raw",
+     "startLine": 97,
+     "endLine": 100,
+     "sha256": "0bb4ad940892a459a4af78ace1151b8c51ab9f0c84c8a6457f8025f2d3554dea"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "既有vector insert/memcpy，Reader先need；保留定长身份原字节",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.string",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "string",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::string",
+     "startLine": 103,
+     "endLine": 111,
+     "sha256": "7019349538baa3f5ad360d4197787dcce8f377aa5089b30620a8c9ad7d70c783"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "u32长度+原字节，仅查NUL不证明完整UTF8；Writer超长cast、Reader剩余界限分别审",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.unitToken",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "unitToken",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::unitToken",
+     "startLine": 115,
+     "endLine": 122,
+     "sha256": "dd88c3f421922bad4aa1356ba23abfe8dbe92425584eedcd2b03ce1077c6a1ef"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "写symbol/读core::UnitToken::find，唯一单位权威不迁出core",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u8",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u8",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u8",
+     "startLine": 145,
+     "endLine": 149,
+     "sha256": "2997ed2281ff8c9f31c3f94848698c55451a5953733563377bafdbd8858aa994"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "单字节流消费，不需另建工具层",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u16",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u16",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u16",
+     "startLine": 150,
+     "endLine": 157,
+     "sha256": "4bf915eb4dfa71223e6e8d5620a9c58267e54320df45f137920e545af0a537dc"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "手写大端，候选既有Boost Endian public load/store_big_u16",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u32",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u32",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u32",
+     "startLine": 158,
+     "endLine": 167,
+     "sha256": "bc2f083ece773c9866c71162385e91a304b7c8e3c677092a07a72fddc8d42068"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "手写大端，候选Boost public load/store_big_u32，长度仍要界限检查",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.u64",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "u64",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u64",
+     "startLine": 168,
+     "endLine": 177,
+     "sha256": "d645343af220f0ff393f55182073e68c9a034b3650f739772bfd0094f1af197f"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "手写大端，候选Boost public load/store_big_u64",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.i64",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "i64",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::i64",
+     "startLine": 178,
+     "endLine": 178,
+     "sha256": "ed33b1d77b254748fc29e89f6121598781c5ba64212b4e789d1badf778e83425"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "补码与时间整数字节契约，signed转换边界须回归",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.f64",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "f64",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::f64",
+     "startLine": 181,
+     "endLine": 191,
+     "sha256": "e7dfcd524527740d9182c68aa685a0c25fecb13db4156d7a0e3faf242f54ab51"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "memcpy位模式委托u64；NaN/Inf拒绝，保留-0，不新建浮点编码平台",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.boolean",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "boolean",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::boolean",
+     "startLine": 193,
+     "endLine": 201,
+     "sha256": "9e13241a8f10c34bcab9b979ed3abdef399fba291e08ded61c6744fd032af41a"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "0/1布尔profile，Reader拒绝其他值",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.presence",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "presence",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::presence",
+     "startLine": 204,
+     "endLine": 212,
+     "sha256": "67681843e78e8579e6e80f667646e100665b36ca73edf80c770bc982d515a927"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "0/1可选位，禁止把缺失与默认值合并",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.raw",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "raw",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::raw",
+     "startLine": 215,
+     "endLine": 220,
+     "sha256": "6219b281f27b16b52d224e2f13211887409f8af5318d6295a2e054ad725f0093"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "既有vector insert/memcpy，Reader先need；保留定长身份原字节",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.string",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "string",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::string",
+     "startLine": 230,
+     "endLine": 241,
+     "sha256": "53a3c2a64952e8b0b6221aec2f8a366d5ebf89ae62f2081555382c261f057ff7"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "u32长度+原字节，仅查NUL不证明完整UTF8；Writer超长cast、Reader剩余界限分别审",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.unitToken",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "unitToken",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::unitToken",
+     "startLine": 244,
+     "endLine": 253,
+     "sha256": "3385a21112bd63ae5c2f3d57c907f8625915cabc7b4d64e4d433c998c0801a7a"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "写symbol/读core::UnitToken::find，唯一单位权威不迁出core",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Writer.take",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "take",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::take",
+     "startLine": 125,
+     "endLine": 125,
+     "sha256": "1d8ee217bc4fac9f2b793c7604279babd91a621d48da92d19918a0673ff9ce6e"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "移动返回现有vector，无新缓存/序列化框架",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.pointer",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "Reader",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::Reader",
+     "startLine": 138,
+     "endLine": 138,
+     "sha256": "1600fb26b21a126739ff6893e11664398e567c4ae0f3fd19c329ba4ee2d33c66"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "借持指针/size构造，不拥有字节，不得跨输入寿命",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.vector",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "Reader",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::Reader",
+     "startLine": 140,
+     "endLine": 143,
+     "sha256": "8d9f689eb4a4a62e87945f3b01f06a5a536a6e933c0888b51cf5f41443a1b263"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "vector构造委托借持指针，不复制输入，生命周期同上",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.rawArray",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "rawArray",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::rawArray",
+     "startLine": 222,
+     "endLine": 227,
+     "sha256": "be38c7fa1d2e5bf5a04d9ca72c960dbec7e6258e8b182ad5e7afdd5677775ff9"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "模板定长数组复用raw与need，不建第二身份表示",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.expectEnd",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "expectEnd",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::expectEnd",
+     "startLine": 256,
+     "endLine": 263,
+     "sha256": "dcc4836ce867aa5d1d7aebc6e8ebc9a38f733a470977ff5b6f3aca97fd0bbf2a"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "顶层必须全耗尽；提取data body共享时不能丢此检查",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Reader.need",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "need",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::need",
+     "startLine": 267,
+     "endLine": 274,
+     "sha256": "479c2c394d895633a15d417b060acfcc6e5977a5b38cd0369aa8290ace786188"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "所有Reader字节读取先做剩余长度守卫；不能证明reserve(n)前有内存预算",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Header",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeHeader",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeHeader",
+     "startLine": 286,
+     "endLine": 290,
+     "sha256": "a4449c9a60b26963cea9f1de1dfa01bda299961961608517133e7b05df08d273"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readHeader",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readHeader",
+     "startLine": 293,
+     "endLine": 308,
+     "sha256": "86f78a8374d37a29d9239114ac5364a4024846bf443370fec988c59f78717163"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "magic/编码器版本固定，BINArchive宿主字节与头不等价",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Time",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeTime",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeTime",
+     "startLine": 323,
+     "endLine": 327,
+     "sha256": "bcb324052cbb39256cbee8615da1a89d16cbbe4da0dd3b8baceb8a4773388ccc"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readTime",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readTime",
+     "startLine": 329,
+     "endLine": 337,
+     "sha256": "d5bdf9158c6d5bf2b1bcad935a40d9944f30071001ed7a633c38003a66d329e7"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "UTC纳秒整数，readTime注释称MSVC同纳秒待核；未实跑不承诺无损",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Enum",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeEnum",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeEnum",
+     "startLine": 344,
+     "endLine": 348,
+     "sha256": "d6368ffd044619158089fc656ce46a063f8770a304f95aac5f2e4a48a12b7bf5"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readEnum",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readEnum",
+     "startLine": 352,
+     "endLine": 362,
+     "sha256": "37f70c015467c75ba136d3c4d1b45915ccba7b209df897fc4136954ceefe9c14"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "u8声明序与读端maxExclusive，枚举扩展需编码器版本；不新建注册表",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.OptionalIdentity",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeOptionalIdentity",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeOptionalIdentity",
+     "startLine": 381,
+     "endLine": 387,
+     "sha256": "31a8a517d0a2dff5f71c2ae552379400c4069ad832717782306c6b69f4e80284"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readOptionalIdentity",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readOptionalIdentity",
+     "startLine": 389,
+     "endLine": 397,
+     "sha256": "b7ea4e05433b5173e15c48bf5c74ba82dafcc4986dd2b1aa9f90a55dbfa94394"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "presence+core32字节，只搬运身份",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.TaskIdentity",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeTaskIdentity",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeTaskIdentity",
+     "startLine": 401,
+     "endLine": 408,
+     "sha256": "0811c3a2adc35c0a284ed05eceef66001ec616f4d09f8ecb0aa57b2449e1ca06"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readTaskIdentity",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readTaskIdentity",
+     "startLine": 410,
+     "endLine": 419,
+     "sha256": "d9fd35d779321a7c38720be053860a334515e22d63cfe3b626b37fa81fed11c9"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "core任务五元组/attempt u64，不重新解释名称",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Provenance",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeProvenance",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeProvenance",
+     "startLine": 427,
+     "endLine": 442,
+     "sha256": "e067ffcc5e530f83aa44142f78f778aeff0928bbbd9c4c924041eba0d55d6642"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readProvenance",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readProvenance",
+     "startLine": 444,
+     "endLine": 462,
+     "sha256": "8dbb431260f258c165b887d588b7c860aede7ecc68dd457e1a212b4db7bc8621"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "core来源kind/可选method/sourceObject/sourceVersion，仅搬运",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.SourcedDouble",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeSourcedDouble",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeSourcedDouble",
+     "startLine": 466,
+     "endLine": 481,
+     "sha256": "9bd7e780b1c07641d97ce17b26704c062cdb4c4d8fa360e7221082f103a24ec8"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readSourcedDouble",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readSourcedDouble",
+     "startLine": 483,
+     "endLine": 500,
+     "sha256": "eedf9a9acc1dd71156cf14abfe8e4421234c469c750890174fbf0418b90abcbd"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "core四态Provided值+来源/Invalid原串；仍由core构造语义",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ComparativeValue",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeComparativeValue",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeComparativeValue",
+     "startLine": 503,
+     "endLine": 507,
+     "sha256": "9c1ecc8047c513bbc9070d12800a0538dac8d1eec45f14765031e55eb4448f24"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readComparativeValue",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readComparativeValue",
+     "startLine": 509,
+     "endLine": 515,
+     "sha256": "1aee1ac4e60a0111cfd4a96eb87d4c54c22f5febfd2b0034acc89622e9fd1e1a"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "数量与core单位，非第二换算器",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ComparativeFields",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeComparativeFields",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeComparativeFields",
+     "startLine": 518,
+     "endLine": 522,
+     "sha256": "6f5ad106b8d4bd6e21cdc399d5c7404c5f949fe76726f260510bef9740e2765d"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readComparativeFields",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readComparativeFields",
+     "startLine": 524,
+     "endLine": 530,
+     "sha256": "ed75344773011dd23d031ee65c5af7b5b8b15b5618079162bc22be05c4bde446"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "actual/expected字段序，数据消费非判定规则",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.InvalidationReason",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeInvalidationReason",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeInvalidationReason",
+     "startLine": 534,
+     "endLine": 539,
+     "sha256": "be38696737987346e91f85b79a981cdf4f28ce9dba0fb1c4d0ba77411330a65c"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readInvalidationReason",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readInvalidationReason",
+     "startLine": 541,
+     "endLine": 549,
+     "sha256": "49c15a4b492751fe272ede5b1ebb64308f4da4b703f6e42bf1f0250ca836e83d"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "evidence依赖key/detail/kind原值搬运，不重算资格",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.BaselineResult",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeBaselineResult",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeBaselineResult",
+     "startLine": 553,
+     "endLine": 560,
+     "sha256": "83b696b7986bbd391239205b3f99196eeafcd2739d7b01237181a52d76440ba4"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readBaselineResult",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readBaselineResult",
+     "startLine": 562,
+     "endLine": 574,
+     "sha256": "6847b031a4d58a3aad12158390f6b75b8eda5520f67b4a6449a70a3f18b4f675"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "evidence一致性结果/差异维度，零第二比较权威",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.FieldValue",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeFieldValue",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeFieldValue",
+     "startLine": 581,
+     "endLine": 593,
+     "sha256": "b04aef5bff798ff1780a161a04272822abafe161d061d514f19bafad89d69216"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readFieldValue",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readFieldValue",
+     "startLine": 595,
+     "endLine": 607,
+     "sha256": "36561b2c96d8fd3812fb1ae7304df1a2ec17e7adc7fa42fe3a10450b77349297"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "key/数量/可选text/unit，核心四态保持",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ResultBinding",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeResultBinding",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeResultBinding",
+     "startLine": 610,
+     "endLine": 614,
+     "sha256": "d635cd155f834779874826478d5b21f690a2bea9878878189f049f82c5b89c35"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readResultBinding",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readResultBinding",
+     "startLine": 616,
+     "endLine": 622,
+     "sha256": "8f03ddbeb94ff9fbe9b4e47ca4af1d2590d096934572e87f131144ab14a46702"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "fieldPath/runId引用，非直接读写结果库",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.EvidenceBinding",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeEvidenceBinding",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeEvidenceBinding",
+     "startLine": 625,
+     "endLine": 637,
+     "sha256": "e005cffd1d4d8fa62a6490cf6bb8572270b9f33ea6c6174f9bd6e8d6769019f2"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readEvidenceBinding",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readEvidenceBinding",
+     "startLine": 639,
+     "endLine": 656,
+     "sha256": "f25e94d948d33a4c578504de9bf4e940bf9aca56b02d677b604328103c1cf95e"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "引用/作用域/status搬运，非自造ResultEnvelope",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.JumpTarget",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeJumpTarget",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeJumpTarget",
+     "startLine": 659,
+     "endLine": 673,
+     "sha256": "c30dbae986b29f5e443a2ca9eaf34cbe98eae5f1fa98fc3393b6efa919c7eeb6"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readJumpTarget",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readJumpTarget",
+     "startLine": 675,
+     "endLine": 694,
+     "sha256": "eca5d5c7e5a34345f172e906cc1a7683b3eaee90e8429fb995b4c4378119c705"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "可选case/object/run引用，不带WorkCell句柄",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.SectionEntry",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeSectionEntry",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeSectionEntry",
+     "startLine": 698,
+     "endLine": 715,
+     "sha256": "130cba8a22c4e3731f18fc47e97483f15853c7582a5bbca1f5d7ce35c35e6cf4"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readSectionEntry",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readSectionEntry",
+     "startLine": 717,
+     "endLine": 741,
+     "sha256": "7b622dd04a496ad1894617266a370c3b91187f438b2ac55b947ae1f717ce476f"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "case/evidence/fields/jump/result固定字段序，vector数量先reserve风险待验",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.MissingItem",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeMissingItem",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeMissingItem",
+     "startLine": 744,
+     "endLine": 748,
+     "sha256": "54e7308aa435bbdfc5722d5c538b74362c87eebc80d778dced7b516bd1774cb3"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readMissingItem",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readMissingItem",
+     "startLine": 750,
+     "endLine": 756,
+     "sha256": "e20bcf17fa662f25e9e60cebe7c8902384eb5378806199fe08944a4b63e40dbe"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "缺项id/reason原值，稳定文案来源仍诊断链",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.EligibilityNote",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeEligibilityNote",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeEligibilityNote",
+     "startLine": 760,
+     "endLine": 765,
+     "sha256": "19650dceda78df353a19fb21256f6afeeca37ed0abb265f2600fde9ccdfdbbc7"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readEligibilityNote",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readEligibilityNote",
+     "startLine": 767,
+     "endLine": 774,
+     "sha256": "5694674b3175bdbd77d63649a6d3c857fe1918a5bb434fafefd5afe654e6295d"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "只承载两资格bool/note，不在报告重新判定工程通过",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.DiagRefEntry",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeDiagRefEntry",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeDiagRefEntry",
+     "startLine": 779,
+     "endLine": 806,
+     "sha256": "64e4753bd2e557d9e60553edbf6b574432698e00f004f538480de2fc63bb0759"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readDiagRefEntry",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readDiagRefEntry",
+     "startLine": 808,
+     "endLine": 838,
+     "sha256": "1923bec1bb8839b2433460b2fb8674adab9831ca2b2cf502edfc30f7416c3efd"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "稳定码/分类/严重度/对比/来源投影；不造diagnostics注册表/用户文案",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.CurrentnessSnapshot",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeCurrentnessSnapshot",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeCurrentnessSnapshot",
+     "startLine": 846,
+     "endLine": 867,
+     "sha256": "9a9fd5c4a7017cb697cfd973a704985120bfa7d5fbceddb1ce915a7f2373de7b"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readCurrentnessSnapshot",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readCurrentnessSnapshot",
+     "startLine": 869,
+     "endLine": 887,
+     "sha256": "7859788b32cd0e95fc478788982fa263e10c62661cc58256b52e2460f76b019b"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "evidence当前性冻结投影，computedAt进入存储编码但不入内容身份",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.Section",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeSection",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeSection",
+     "startLine": 892,
+     "endLine": 928,
+     "sha256": "80e7d88430f2ce7b91d696c882899e8425dd5b02a94e03365a59f4c5cef64063"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readSection",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readSection",
+     "startLine": 930,
+     "endLine": 975,
+     "sha256": "c2975129ee3c3964e6d75d0421b5c2cb04baa6fbd66d9e05004015b6b2496a4f"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "章节字段与vector作用域/来源搬运，不另算当前性或生成证据",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ReviewComment",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeReviewComment",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeReviewComment",
+     "startLine": 982,
+     "endLine": 991,
+     "sha256": "22feb6c3bf393e107f200fc8f6de6a319f5d0a5125d5ed82ff8007cfb1c60ada"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readReviewComment",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readReviewComment",
+     "startLine": 993,
+     "endLine": 1003,
+     "sha256": "91d8e4e1eeea542b427aebee0349ef91a1725fc87a16cd42833bace9e91978bc"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "评审时间/作者/章节/文本固定编码",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.SignOff",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeSignOff",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeSignOff",
+     "startLine": 1007,
+     "endLine": 1013,
+     "sha256": "160a47ca290545bf86435a9db15f7b1371bb42b7ad296b8a154646b70d335c10"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readSignOff",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readSignOff",
+     "startLine": 1015,
+     "endLine": 1023,
+     "sha256": "48600a7f729d5383bcb51730514ede938bf869c06f1e1099689cbc62a8681526"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "时间/签署人/声明摘要/状态，签署语义不由codec生成",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.TradeOff",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeTradeOff",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeTradeOff",
+     "startLine": 1026,
+     "endLine": 1034,
+     "sha256": "ff38a5869c41ab93fec92239d8bacccee176df44e1e56c53e9e734eeb79e170c"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readTradeOff",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readTradeOff",
+     "startLine": 1036,
+     "endLine": 1045,
+     "sha256": "7d4786ea48ca75fdfb4fd81c81c11a9ee2faba9033209dccd134e6d759997305"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "理由/可选章节/topic业务映射",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.VariantDiff",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeVariantDiff",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeVariantDiff",
+     "startLine": 1049,
+     "endLine": 1059,
+     "sha256": "df3d89d76f31fbb555f588acc97a30f80a547355672af461fefccc68981e7904"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readVariantDiff",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readVariantDiff",
+     "startLine": 1061,
+     "endLine": 1074,
+     "sha256": "91dfbd3bce8514da0e84dc2d18ad256922f9b45b108b0485211ea360369ad66a"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "baseline结果/模型与修订引用/tradeoffs，仅编码不计算diff",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.VersionEntry",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeVersionEntry",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeVersionEntry",
+     "startLine": 1078,
+     "endLine": 1085,
+     "sha256": "4e8e1e52e899ecb0e750bfaf902c9e100b090186c4f6d0125be8ea148e2840f9"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readVersionEntry",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readVersionEntry",
+     "startLine": 1087,
+     "endLine": 1096,
+     "sha256": "06457cd0cf23882905024d9bab46484ce52c143cc579d7300d42f2094f5588d1"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "actor/time/reason/reportId/version记录，禁止覆写历史",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ReviewMetadata",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeReviewMetadata",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeReviewMetadata",
+     "startLine": 1101,
+     "endLine": 1126,
+     "sha256": "b55b289fe0403d2e5d18d684e7c0140153d35756c847deb9d7596a0ad2bae1ba"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readReviewMetadata",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readReviewMetadata",
+     "startLine": 1128,
+     "endLine": 1154,
+     "sha256": "5e5b14894902856bff92033c47662a057e1531b8a429d9499eda82589334e90a"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "基础修订/快照/版本史/评论/评审/签署/diff，身份与权限不由archive接管",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.ResultDataSourceRef",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeResultDataSourceRef",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeResultDataSourceRef",
+     "startLine": 1164,
+     "endLine": 1174,
+     "sha256": "c18adc241eac53daec70decbfb8ee14c31977352b8e08920f3b29f3234fc15be"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readResultDataSourceRef",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readResultDataSourceRef",
+     "startLine": 1176,
+     "endLine": 1191,
+     "sha256": "0da19c0dfaa6e937f30e3526246db44a7fed164e31526f7e8f944c2b13e93a3c"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "作用域/基线/run/slice/snapshot原字节，不重建结果",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.UnitPreference",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "writeUnitPreference",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::writeUnitPreference",
+     "startLine": 1195,
+     "endLine": 1202,
+     "sha256": "884a0c15e092934b9a5ddfca407a8e9503f8e7ba606b67b03a739afd93bc8396"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "readUnitPreference",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::readUnitPreference",
+     "startLine": 1204,
+     "endLine": 1219,
+     "sha256": "b9cd9414c78bb31c5fb79d04b6e7fa0252e44b9897148b211a7ca18d0c759e16"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "QuantityKind与core已注册unit映射，未知/重复键策略需原测试验证",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.anonymous.digestBytes",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "digestBytes",
+     "qualifiedSymbol": "sdurws::ird::reporting::(anonymous namespace)::digestBytes",
+     "startLine": 312,
+     "endLine": 319,
+     "sha256": "2ccbbd5e991618d8cf603049d15411ab33b1ca09e520224891af90a53579c439"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "真实core ContentDigester唯一摘要，不在reporting复制SHA",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.encodeData",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "ReportCodec::encodeData",
+     "qualifiedSymbol": "sdurws::ird::reporting::ReportCodec::encodeData",
+     "startLine": 1227,
+     "endLine": 1253,
+     "sha256": "720f3409123b06c45ab1041de3bc9ce583c73e3bb5409739a9837c8d1afc6426"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "十个固定Data字段/内嵌头，模型引用不变；vector长度cast及内存预算待核",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.parseData",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "ReportCodec::parseData",
+     "qualifiedSymbol": "sdurws::ird::reporting::ReportCodec::parseData",
+     "startLine": 1255,
+     "endLine": 1283,
+     "sha256": "67c941487d3f753d8314a8bb743f14462752bf8bbc2e7d9a4445c03d4eda2721"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "Data全耗尽，实际字段读取与parseFull重复；T05可仅提取当前TU readDataBody",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.digestData",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "ReportCodec::digestData",
+     "qualifiedSymbol": "sdurws::ird::reporting::ReportCodec::digestData",
+     "startLine": 1285,
+     "endLine": 1290,
+     "sha256": "190ad5899b9ef2fc3bf1934932db4771216a65328116c26f96e4957ab0562c1c"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "encodeData后core摘要，不把旧黄金值重产当验收",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.encodeFull",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "ReportCodec::encodeFull",
+     "qualifiedSymbol": "sdurws::ird::reporting::ReportCodec::encodeFull",
+     "startLine": 1296,
+     "endLine": 1325,
+     "sha256": "1a898d4c1cf3700d25c65332e8db59f9da6dd75f0a4900cac4815ae4e1dd02bf"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "先严格递增order拒绝，直接嵌入encodeData返回字节，非第二Data writer",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.parseFull",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "ReportCodec::parseFull",
+     "qualifiedSymbol": "sdurws::ird::reporting::ReportCodec::parseFull",
+     "startLine": 1327,
+     "endLine": 1365,
+     "sha256": "4a28b1c4079a55f8edd6ea6b628c7f8e82acacf6f3dc4d72c51cfe9ce266f719"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "复制Data字段读取而非调用parseData；提取body仍须Full末尾expectEnd，不加通用反射平台",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  },
+  {
+   "functionId": "reporting.ReportCodec.public.ReportCodec.digestFull",
+   "ownerUnit": "reporting",
+   "requirements": [
+    "RPT-01",
+    "NFR-COR-02"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+     "symbol": "ReportCodec::digestFull",
+     "qualifiedSymbol": "sdurws::ird::reporting::ReportCodec::digestFull",
+     "startLine": 1367,
+     "endLine": 1390,
+     "sha256": "62c0089ac79b27f09c36eb73d09f0af15db43514455387df82f0262a314a7c70"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_reporting"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-BINARCHIVE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
+    "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
+   },
+   "differences": "仅身份副本清Currentness computedAt，原记录编码保留时间；F815回归不可丢",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+     "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.hpp",
+     "sha256": "de31fd460dd9e5b18c5296c1c5080824642d27600b101b9a05572b7eb894ebef"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+     "sha256": "8d4dde1ba16395cdbe0eaf279e446c8cc968a702bf5a7c64c3827e6552a341a0"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp",
+     "sha256": "070231d5f7799a05e6766cdcccc16ff4b61804ae00f236aac393ec44360a1934"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+     "sha256": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+     "sha256": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d"
+    }
+   ],
+   "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+  }
+ ]
+}

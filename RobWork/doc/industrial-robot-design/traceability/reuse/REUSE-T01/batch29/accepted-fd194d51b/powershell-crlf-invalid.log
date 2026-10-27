@@ -1,0 +1,6 @@
+
+C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b29-acc-054fbe31\fixture\crlf.ps1 : schemaVersion must be ird-pipeline-batc
+h/1
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,crlf.ps1
+ 

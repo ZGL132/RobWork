@@ -1,0 +1,71 @@
+Note: Google Test filter = ReuseCoreAudit.*:EventTest.*
+[==========] Running 6 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from ReuseCoreAudit
+[ RUN      ] ReuseCoreAudit.FnvEmptyMatchesOffset_CORE_T02
+[       OK ] ReuseCoreAudit.FnvEmptyMatchesOffset_CORE_T02 (0 ms)
+[ RUN      ] ReuseCoreAudit.FnvNonemptyMatchesFixedVectors_CORE_T02
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b28-68277e2f39\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\CoreIdentitySuitabilityTest.cpp(33): error: Expected equality of these values:
+  0xd228cb696f1a8cafULL
+    Which is: 15143577400729308335
+  hi
+    Which is: 460904609760664242
+
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b28-68277e2f39\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\CoreIdentitySuitabilityTest.cpp(34): error: Expected equality of these values:
+  0x78912b704e4a8964ULL
+    Which is: 8687772917524236644
+  lo
+    Which is: 5404137713416647504
+
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b28-68277e2f39\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\CoreIdentitySuitabilityTest.cpp(36): error: Expected equality of these values:
+  0xf1f90b7bf705b5efULL
+    Which is: 17435980059394815471
+  hi
+    Which is: 4129850099704016164
+
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b28-68277e2f39\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\CoreIdentitySuitabilityTest.cpp(37): error: Expected equality of these values:
+  0x1517163834145e4dULL
+    Which is: 1519707829908561485
+  lo
+    Which is: 16694879608624906240
+
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b28-68277e2f39\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\CoreIdentitySuitabilityTest.cpp(39): error: Expected equality of these values:
+  0x2f57eaee93cff23fULL
+    Which is: 3411453553159434815
+  hi
+    Which is: 16512228471934229545
+
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b28-68277e2f39\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\CoreIdentitySuitabilityTest.cpp(40): error: Expected equality of these values:
+  0x8177f0c93cb989fdULL
+    Which is: 9329189900219156989
+  lo
+    Which is: 11620338771254396900
+
+[  FAILED  ] ReuseCoreAudit.FnvNonemptyMatchesFixedVectors_CORE_T02 (0 ms)
+[ RUN      ] ReuseCoreAudit.PublicHashConsumesFnvResult_CORE_T02
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-b28-68277e2f39\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\CoreIdentitySuitabilityTest.cpp(47): error: Expected equality of these values:
+  static_cast<std::size_t>(0xae201a27af767bc2ULL)
+    Which is: 12547057319604026306
+  std::hash<ObjectId>{}(id)
+    Which is: 4928209873120418765
+
+[  FAILED  ] ReuseCoreAudit.PublicHashConsumesFnvResult_CORE_T02 (0 ms)
+[ RUN      ] ReuseCoreAudit.UpstreamEventFifoAndRemoval_CORE_T08
+[       OK ] ReuseCoreAudit.UpstreamEventFifoAndRemoval_CORE_T08 (0 ms)
+[----------] 4 tests from ReuseCoreAudit (0 ms total)
+
+[----------] 2 tests from EventTest
+[ RUN      ] EventTest.GlobalCallbackFunctions
+[       OK ] EventTest.GlobalCallbackFunctions (0 ms)
+[ RUN      ] EventTest.EventListener
+[       OK ] EventTest.EventListener (0 ms)
+[----------] 2 tests from EventTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 4 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ReuseCoreAudit.FnvNonemptyMatchesFixedVectors_CORE_T02
+[  FAILED  ] ReuseCoreAudit.PublicHashConsumesFnvResult_CORE_T02
+
+ 2 FAILED TESTS

@@ -1,0 +1,386 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp
+index 2eb0df79b..ad3f588a6 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp
+@@ -34,6 +34,7 @@
+ #include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // installationPresetRotation（§6.2 冻结矩阵对照）
+ #include <sdurws/ird/runtime/CanonicalModel.hpp>
+ #include <sdurws/ird/runtime/Compiler.hpp>
++#include <sdurws/ird/runtime/CacheKey.hpp>
+ #include <sdurws/ird/runtime/Description.hpp>
+ #include <sdurws/ird/runtime/Errors.hpp>
+ #include <sdurws/ird/runtime/Resource.hpp>
+@@ -456,6 +457,19 @@ TEST(CompilerTest, CompilesTenStageChainAndPublishes_RT_T11_ACC3)
+     const RuntimeSnapshot& snap = *out.snapshot;
+     // 来源定位（S1 锚定 → §9.1 快照身份域）与请求一致。
+     EXPECT_EQ(snap.revision(), req.revision);
++    // REUSE-T13/§9.4：真实发布链必须携带新实现版本，旧WC缓存不能复用。
++    EXPECT_EQ(compiler.implementationVersion(), "ird-runtime-canonical-compiler/1.1");
++    EXPECT_EQ(snap.compilerVersion(), compiler.implementationVersion());
++    // 同模型/选项不升级版本会沿原公式得到同一旧WC键；仅变实现版本，
++    // 必须由既有判定器拒绝旧产物，无需另建缓存或修改公共契约版本。
++    const auto oldKey = RuntimeCompileCacheKeyBuilder(compiler.contractVersion(),
++        "ird-runtime-canonical-compiler/1.0").buildKey(snap.model(), req.options);
++    const auto newKey = RuntimeCompileCacheKeyBuilder(compiler.contractVersion(),
++        compiler.implementationVersion()).buildKey(snap.model(), req.options);
++    EXPECT_FALSE(newKey.workCellKey == oldKey.workCellKey);
++    const auto compatibility = judgeCompileCacheCompatibility(newKey, oldKey);
++    EXPECT_EQ(compatibility.verdict, CompileCacheCompatibility::Verdict::Incompatible);
++    EXPECT_EQ(compatibility.reasons, std::vector<std::string>{"compiler-changed"});
+     EXPECT_EQ(snap.project(), h.project);
+     EXPECT_EQ(snap.branch(), h.branch);
+     // 模型身份＝模型内容身份（装配取值口径的端到端一致——CR-05 前提）。
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp
+index d8572e676..ef303e430 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp
+@@ -936,7 +936,12 @@ TEST(RuntimeSnapshotTest, FactoryRetainsRequestedMeshResources_T30)
+     bool found=false;
+     for(const auto& object:out.snapshot->workCellHandle()->getObjects()){
+         for(const auto& geometry:object->getGeometry()){
+-            if(geometry->getGeometryData()->getType()==rw::geometry::GeometryData::PlainTriMesh){found=true;}
++            // REUSE-T13：网格存储由上游选择，快照承诺实际三角面而非Plain类型。
++            const auto type=geometry->getGeometryData()->getType();
++            if(type==rw::geometry::GeometryData::PlainTriMesh || type==rw::geometry::GeometryData::IdxTriMesh){
++                EXPECT_EQ(geometry->getGeometryData()->getTriMesh(false)->size(),1u);
++                found=true;
++            }
+         }
+     }
+     EXPECT_TRUE(found)<<"请求带真实网格，正式快照却只保留代理";
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp
+index aad90a90e..318a42bfc 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp
+@@ -37,6 +37,7 @@
+ #include <rw/kinematics/Kinematics.hpp>     // frameTframe/worldTframe（真实基线 FK）
+ #include <rw/kinematics/StateStructure.hpp> // RT-AD-1 真实异常触发点
+ #include <rw/math/Q.hpp>
++#include <rw/models/PrismaticJoint.hpp> // REUSE-T13同模型直接上游对照
+ #include <rw/models/Joint.hpp>              // WC 侧关节字段读取（RT-AD-2）
+ #include <rw/models/SerialDevice.hpp>
+ #include <rw/models/WorkCell.hpp>
+@@ -750,3 +751,140 @@ TEST(WorkCellCompilerTest, RichFixtureCompilesWithToolAndScene_RT_T07)
+     ASSERT_TRUE(!device.isNull());
+     EXPECT_STREQ(device->getEnd()->getName().c_str(), "IRB_T.Flange");
+ }
++
++/**
++ * @brief REUSE-T13/MDL-11/RT-EQ-1：移动关节的米制零偏必须形成平移。
++ *
++ * 期望直接由几何定义 p=T_origin*(axis*(offset+q_rw)) 得到，不调用产品
++ * jointStaticTransform或上游关节变换作oracle。覆盖正负Z/X/Y/斜轴、正负
++ * 偏置与构型，并在地面/侧装下核世界系；1e-9是原编译链容差，不能借用
++ * 已批准的表示转换1e-6。每次编译独立WC，每个构型独占State。
++ */
++TEST(WorkCellCompilerTest, PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1)
++{
++    const double invSqrt3 = 1.0 / std::sqrt(3.0);
++    const std::array<rw::math::Vector3D<double>, 9> axes = {
++        rw::math::Vector3D<double>(0, 0, 1),
++        rw::math::Vector3D<double>(0, 0, -1),
++        rw::math::Vector3D<double>(1, 0, 0),
++        rw::math::Vector3D<double>(0, 1, 0),
++        rw::math::Vector3D<double>(invSqrt3, invSqrt3, invSqrt3),
++        rw::math::normalize(rw::math::Vector3D<double>(1e-8, 0, 1)),
++        rw::math::normalize(rw::math::Vector3D<double>(1e-7, 0, -1)),
++        rw::math::normalize(rw::math::Vector3D<double>(0, 1e-6, 1)),
++        rw::math::normalize(rw::math::Vector3D<double>(0, 1e-7, -1))};
++    for (const auto preset : {InstallationPresetToken::Ground, InstallationPresetToken::Wall}) {
++      for (const bool rotatedOrigin : {false, true}) {
++        for (const auto& axis : axes) {
++            for (const double offset : {0.25, -0.25}) {
++                Fixture f = minimalFixture();
++                f.world.installPreset = core::SourcedValue<InstallationPresetToken>::provided(
++                    preset, testfixture::userProv());
++                f.world.T_world_base = rw::math::Transform3D<double>(
++                    rw::math::Vector3D<double>(0.1, -0.2, 0.3), installationPresetRotation(preset));
++                auto& moving = f.chain.joints[0];
++                moving.type = JointType::Prismatic;
++                moving.axis = axis;
++                moving.zeroOffset = offset;  // m；旋转关节的rad不得混入此分支。
++                moving.bounds = JointBounds{-1.0, 2.0};
++                moving.origin = rw::math::Transform3D<double>(
++                    rw::math::Vector3D<double>(0.2, 0.3, -0.1),
++                    rotatedOrigin ? rw::math::Rotation3D<double>(0, -1, 0, 1, 0, 0, 0, 0, 1)
++                                  : detail::identityTransform3D().R());
++                f.chain.joints[1].type = JointType::Fixed;
++                f.chain.joints[1].bounds = std::nullopt;
++                f.chain.joints[1].origin = detail::identityTransform3D();
++                const auto model = f.build();
++                const auto out = compileWorkCell(model);
++                const auto device = out.workCell->findDevice<rw::models::SerialDevice>(out.deviceName);
++                ASSERT_FALSE(device.isNull());
++                ASSERT_EQ(device->getJoints().size(), 1u);
++                // makeLookAt适用性：内部关节轴须为权威轴，且正交、右手；
++                // 滚转只选内部坐标，不允许镜像或近反向轴丢失横向分量。
++                const auto alignment = rw::math::inverse(moving.origin.R())
++                    * device->getJoints()[0]->getTransform(out.workCell->getDefaultState()).R();
++                const rw::math::Vector3D<double> x(alignment(0,0),alignment(1,0),alignment(2,0));
++                const rw::math::Vector3D<double> y(alignment(0,1),alignment(1,1),alignment(2,1));
++                const rw::math::Vector3D<double> z(alignment(0,2),alignment(1,2),alignment(2,2));
++                for (int c=0;c<3;++c) {
++                    EXPECT_NEAR(z[c],axis[c],kFkTolerance);
++                    EXPECT_NEAR(rw::math::cross(x,y)[c],z[c],kFkTolerance);
++                }
++                EXPECT_NEAR(x.norm2(),1.0,kFkTolerance);
++                EXPECT_NEAR(y.norm2(),1.0,kFkTolerance);
++                EXPECT_NEAR(rw::math::dot(x,y),0.0,kFkTolerance);
++                const auto bounds = device->getJoints()[0]->getBounds();
++                EXPECT_NEAR(bounds.first[0], -1.0 - offset, kFkTolerance);
++                EXPECT_NEAR(bounds.second[0], 2.0 - offset, kFkTolerance);
++                for (const double q : {0.0, 0.125, -0.125}) {
++                    rw::kinematics::State state = out.workCell->getDefaultState();
++                    device->setQ(rw::math::Q(1, q), state);
++                    const auto basePose = device->baseTend(state);
++                    if (axis == rw::math::Vector3D<double>(0, 0, 1)) {
++                        // 同一origin、同一权威构型，与原生关节直接调用对照；
++                        // 下方解析oracle仍独立，避免仅与上游自身互证。
++                        const rw::models::PrismaticJoint reference("direct", moving.origin);
++                        const auto direct = reference.getTransform(offset+q);
++                        expectTransformClose(basePose, direct.R(), direct.P(), "原生PrismaticJoint同构型");
++                    }
++                    // 例如Z轴offset=0.25、q=0.125：独立长度期望为0.375m。
++                    const auto expectedBase = moving.origin * (axis * (offset + q));
++                    const auto worldPose = rw::kinematics::Kinematics::worldTframe(device->getEnd(), state);
++                    const auto expectedWorld = f.world.T_world_base * expectedBase;
++                    for (int r = 0; r < 3; ++r) {
++                        EXPECT_NEAR(basePose.P()[r], expectedBase[r], kFkTolerance);
++                        EXPECT_NEAR(worldPose.P()[r], expectedWorld[r], kFkTolerance);
++                        for (int c = 0; c < 3; ++c) {
++                            EXPECT_NEAR(basePose.R()(r, c), moving.origin.R()(r, c), kFkTolerance)
++                                << "移动关节偏置和构型均不得引入额外旋转";
++                            EXPECT_NEAR(worldPose.R()(r, c), (f.world.T_world_base.R() * moving.origin.R())(r, c), kFkTolerance);
++                        }
++                    }
++                }
++            }
++        }
++      }
++    }
++}
++
++/**
++ * @brief REUSE-T13/RT-EQ-1：旋转和连续关节仍按rad折叠零偏，不改变原语义。
++ *
++ * 使用既有独立Rodrigues oracle，覆盖多轴/近极轴、正负偏置、小角和非零q；连续
++ * 关节仍显式无限位。此处不改变既有全链FK独立Rodrigues对照。
++ */
++TEST(WorkCellCompilerTest, RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1)
++{
++    for (const auto type : {JointType::Revolute, JointType::Continuous}) {
++        for (const double offset : {0.25, -0.25, 1e-8}) {
++          for (const auto axis : {rw::math::Vector3D<double>(0,0,1),
++                                 rw::math::Vector3D<double>(0,1,0),
++                                 rw::math::normalize(rw::math::Vector3D<double>(1e-7,0,1)),
++                                 rw::math::normalize(rw::math::Vector3D<double>(1e-8,0,-1))}) {
++            Fixture f = minimalFixture();
++            f.chain.joints[0].type = type;
++            f.chain.joints[0].axis = axis;
++            f.chain.joints[0].zeroOffset = offset;
++            if (type == JointType::Continuous) { f.chain.joints[0].bounds = std::nullopt; }
++            f.chain.joints[1].type = JointType::Fixed;
++            f.chain.joints[1].bounds = std::nullopt;
++            const auto out = compileWorkCell(f.build());
++            const auto device = out.workCell->findDevice<rw::models::SerialDevice>(out.deviceName);
++            ASSERT_FALSE(device.isNull());
++            for (const double q : {0.0, 0.125, -0.125}) {
++                rw::kinematics::State state = out.workCell->getDefaultState();
++                device->setQ(rw::math::Q(1, q), state);
++                const auto pose = device->baseTend(state);
++                const double angle = offset + q;  // rad，独立平面旋转期望。
++                const auto expected = canonicalRodrigues(axis, angle);
++                for (int r = 0; r < 3; ++r) {
++                    EXPECT_NEAR(pose.P()[r], 0.0, kFkTolerance);
++                    for (int c = 0; c < 3; ++c) {
++                        EXPECT_NEAR(pose.R()(r, c), expected(r, c), kFkTolerance);
++                    }
++                }
++            }
++          }
++        }
++    }
++}
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp
+index cc4379793..d14741534 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp
+@@ -43,6 +43,7 @@
+ #include <rw/core/Ptr.hpp>
+ #include <rw/geometry/Box.hpp>              // 标记盒参数读取（getParameters）
+ #include <rw/geometry/Cylinder.hpp>         // 连杆圆柱参数读取（getRadius/getHeight）
++#include <rw/geometry/TriMesh.hpp>
+ #include <rw/geometry/Geometry.hpp>         // 帧绑定/帧内位姿读取
+ #include <rw/kinematics/FixedFrame.hpp>
+ #include <rw/kinematics/Frame.hpp>
+@@ -61,8 +62,11 @@
+ 
+ #include <algorithm>
+ #include <cmath>
++#include <clocale>
+ #include <cstddef>
+ #include <cstdint>
++#include <future>
++#include <filesystem>
+ #include <map>
+ #include <string>
+ #include <vector>
+@@ -819,13 +823,13 @@ TEST(WorkCellGeometryTest, ResourceMeshStlAttachedEndToEnd_RT_GEO_7)
+ 
+ /**
+  * MA-01 OBJ 端到端：文本 OBJ（v/f 三角）经 LoaderOBJ 解析合并挂接——
+- * 同名面存在且类型＝PlainTriMesh。
++ * 同名面存在，使用上游IndexedTriMesh，并验证实际三角顶点。
+  */
+ TEST(WorkCellGeometryTest, ResourceMeshObjAttachedEndToEnd_RT_GEO_7)
+ {
+     Fixture f = threeSpanRichFixture();
+     const std::string objText =
+-        "v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\nf 1 2 3\nf 1 2 4\n";
++        "v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\ng first\nf 1 2 3\ng second\nf 1 2 4\n";
+     const std::vector<std::uint8_t> objBytes(objText.begin(), objText.end());
+     rebindResource(f, 0, digestOfBytes(objBytes), "m1.obj");
+     const CanonicalModel model = f.build();
+@@ -841,9 +845,40 @@ TEST(WorkCellGeometryTest, ResourceMeshObjAttachedEndToEnd_RT_GEO_7)
+         scopedName(map, f.chain.links.at(1).objectId, NameScope::LinkFrame) + ".visual";
+     ASSERT_TRUE(geoms.count(link1Visual) != 0)
+         << "OBJ 网格缺失（名字面=" << link1Visual << "）";
+-    EXPECT_EQ(geoms.at(link1Visual).type,
+-              rw::geometry::GeometryData::PlainTriMesh)
+-        << "OBJ 挂接非网格几何（解析合并面违约）";
++    EXPECT_EQ(geoms.at(link1Visual).type, rw::geometry::GeometryData::IdxTriMesh);
++    // REUSE-T13：物理顶点/三角面是业务契约，Plain/Indexed的内部存储不是。
++    // 不依赖上游的面顺序，独立检查两个三角的面积、顶点范围和总数。
++    std::size_t checked = 0;
++    for (const auto& object : out.workCell->getObjects()) {
++        for (const auto& geometry : object->getGeometry()) {
++            if (geometry->getName() != link1Visual) { continue; }
++            const auto mesh = geometry->getGeometryData()->getTriMesh(false);
++            ASSERT_EQ(mesh->size(), 2u);
++            double totalArea = 0.0;
++            bool xyFace = false, xzFace = false;
++            for (std::size_t i = 0; i < mesh->size(); ++i) {
++                const auto tri = mesh->getTriangle(i);
++                const auto normal = rw::math::cross(tri[1]-tri[0], tri[2]-tri[0]);
++                totalArea += normal.norm2()/2.0;
++                // 独立解析期望：两个g对象各一面，保留顶点与绕序；允许对象遍历换序。
++                EXPECT_EQ(tri[0], rw::math::Vector3D<double>(0,0,0));
++                EXPECT_EQ(tri[1], rw::math::Vector3D<double>(1,0,0));
++                if (tri[2] == rw::math::Vector3D<double>(0,1,0)) {
++                    EXPECT_EQ(normal, rw::math::Vector3D<double>(0,0,1)); xyFace = true;
++                } else {
++                    EXPECT_EQ(tri[2], rw::math::Vector3D<double>(0,0,1));
++                    EXPECT_EQ(normal, rw::math::Vector3D<double>(0,-1,0)); xzFace = true;
++                }
++                for (int v=0; v<3; ++v) { for (int c=0; c<3; ++c) {
++                    EXPECT_GE(tri[v][c], 0.0); EXPECT_LE(tri[v][c], 1.0);
++                } }
++            }
++            EXPECT_NEAR(totalArea, 1.0, 1e-9); // 两个直角单位三角，各0.5m²。
++            EXPECT_TRUE(xyFace && xzFace) << "多对象合并丢面或重复面";
++            ++checked;
++        }
++    }
++    EXPECT_EQ(checked, 1u);
+ }
+ 
+ /**
+@@ -912,7 +947,97 @@ TEST(WorkCellGeometryTest, ContentMeshesWithoutPathHint_T30)
+         const auto out=compileWorkCell(f.build(),&provider);ASSERT_FALSE(out.workCell.isNull());
+         std::map<std::string,GeometryView> geoms;collectGeometries(*out.workCell,geoms);
+         EXPECT_TRUE(std::any_of(geoms.begin(),geoms.end(),[](const auto& entry){
+-            return entry.second.type==rw::geometry::GeometryData::PlainTriMesh;
++            return entry.second.type==rw::geometry::GeometryData::PlainTriMesh
++                || entry.second.type==rw::geometry::GeometryData::IdxTriMesh;
+         }))<<"有真实内容却因缺hint丢失网格";
+     }
+ }
++
++/**
++ * @brief REUSE-T13/MDL-04：同摘要资源并发编译不得相互truncate/remove。
++ * 每个任务独占provider、WC与State；共享的只有不可变输入，重复8路×8次，
++ * 每次验证真实STL有3个三角，不能以代理回退或工作线程异常代替成功。
++ */
++TEST(WorkCellGeometryTest, ConcurrentSameMeshCompiles_REUSE_T13)
++{
++    const auto bytes = makeBinaryStl(3);
++    auto f = threeSpanRichFixture();
++    rebindResource(f, 0, digestOfBytes(bytes), "same.stl");
++    const auto model = f.build();
++    const auto id = f.manifest[0].resourceId;
++    std::vector<std::future<bool>> jobs;
++    for (int i=0; i<8; ++i) {
++        jobs.push_back(std::async(std::launch::async, [&model, &bytes, id]() {
++            InMemoryMeshProvider provider({{id, bytes}});
++            for (int run=0; run<8; ++run) {
++                const auto out = compileWorkCell(model, &provider);
++                bool found = false;
++                for (const auto& object : out.workCell->getObjects()) {
++                    for (const auto& geometry : object->getGeometry()) {
++                        if (geometry->getGeometryData()->getType() == rw::geometry::GeometryData::PlainTriMesh) {
++                            if (geometry->getGeometryData()->getTriMesh(false)->size()!=3) { return false; }
++                            found = true;
++                        }
++                    }
++                }
++                if (!found) { return false; }
++            }
++            return true;
++        }));
++    }
++    for (auto& job : jobs) { EXPECT_TRUE(job.get()); }
++}
++
++#ifdef _WIN32
++/**
++ * @brief REUSE-T13：上游加载成功/抛错后均保持任务线程原locale。
++ * 仅新建测试线程启用UCRT线程locale，线程退出即释放；不修改进程全局。
++ * 缺endsolid的ASCII STL真实触发上游异常，runtime须回退代理且恢复环境。
++ */
++TEST(WorkCellGeometryTest, LoaderRestoresThreadLocale_REUSE_T13)
++{
++    auto job = std::async(std::launch::async, []() -> std::string {
++        _configthreadlocale(_ENABLE_PER_THREAD_LOCALE);
++        const char* locale = std::setlocale(LC_ALL, ".UTF8");
++        if (locale == nullptr) { return "测试前置：.UTF8 locale不可用"; }
++        // 只快照本包前缀目录；本用例在并发用例结束后执行，不删除任何他人资源。
++        const auto meshDirectories = []() {
++            std::vector<std::filesystem::path> paths;
++            for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::temp_directory_path())) {
++                if (entry.path().filename().string().rfind("ird-mesh-",0)==0) { paths.push_back(entry.path()); }
++            }
++            std::sort(paths.begin(),paths.end()); return paths;
++        };
++        const auto directoriesBefore = meshDirectories();
++        for (const int mode : {_ENABLE_PER_THREAD_LOCALE, _DISABLE_PER_THREAD_LOCALE}) {
++          _configthreadlocale(mode);
++          const std::string expectedLocale(std::setlocale(LC_ALL,nullptr));
++          for (const std::string text : {std::string("solid broken\n"),
++             std::string("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n")}) {
++            const std::vector<std::uint8_t> bytes(text.begin(), text.end());
++            auto f=threeSpanRichFixture();
++            rebindResource(f, 0, digestOfBytes(bytes), text[0]=='s' ? "bad.stl" : "good.obj");
++            InMemoryMeshProvider provider({{f.manifest[0].resourceId, bytes}});
++            const auto model = f.build();
++            const auto expectedName = scopedName(buildRuntimeNameMap(model),
++                f.chain.links.at(1).objectId, NameScope::LinkFrame) + ".visual";
++            const auto out=compileWorkCell(model, &provider);
++            if (out.workCell.isNull() || std::string(std::setlocale(LC_ALL,nullptr))!=expectedLocale
++                || _configthreadlocale(0)!=mode) { return "生产加载后locale/模式不一致：mode="+std::to_string(mode)
++                    +" expected="+expectedLocale+" actual="+std::setlocale(LC_ALL,nullptr); }
++            // 异常必须回退为图元，有效OBJ必须真挂网格；不能仅凭编译成功证明加载路径。
++            std::size_t meshes = 0;
++            for (const auto& object : out.workCell->getObjects()) {
++                for (const auto& geometry : object->getGeometry()) {
++                    if (geometry->getName()==expectedName
++                        && geometry->getGeometryData()->getType()==rw::geometry::GeometryData::IdxTriMesh) { ++meshes; }
++                }
++            }
++            if (meshes != (text[0]=='s' ? 0u : 1u)) { return "实际网格数不一致："+std::to_string(meshes); }
++          }
++        }
++        return meshDirectories()==directoriesBefore ? "" : "加载成功/异常后遗留临时目录";
++    });
++    EXPECT_EQ(job.get(), "") << "加载器必须恢复调用前locale/模式、真实消费网格并清理临时文件";
++}
++#endif

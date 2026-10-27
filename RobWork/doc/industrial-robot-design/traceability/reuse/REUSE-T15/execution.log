@@ -1,0 +1,69 @@
+Note: Google Test filter = *Registry*:*Registry*.*
+[==========] Running 27 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from TaskCapabilityRegistry
+[ RUN      ] TaskCapabilityRegistry.DeclareLookupMinimalFallback_PEX7_S55
+[       OK ] TaskCapabilityRegistry.DeclareLookupMinimalFallback_PEX7_S55 (0 ms)
+[----------] 1 test from TaskCapabilityRegistry (0 ms total)
+
+[----------] 25 tests from RunRegistryAdmissionTest
+[ RUN      ] RunRegistryAdmissionTest.RegisterRejectsCallerContractViolations
+[       OK ] RunRegistryAdmissionTest.RegisterRejectsCallerContractViolations (35 ms)
+[ RUN      ] RunRegistryAdmissionTest.AppendAttemptSupersedesOldAttempts
+[       OK ] RunRegistryAdmissionTest.AppendAttemptSupersedesOldAttempts (30 ms)
+[ RUN      ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState
+[       OK ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState (36 ms)
+[ RUN      ] RunRegistryAdmissionTest.UnknownRunRejectedWithNoArchiveWrite_EX_REG_1
+[       OK ] RunRegistryAdmissionTest.UnknownRunRejectedWithNoArchiveWrite_EX_REG_1 (30 ms)
+[ RUN      ] RunRegistryAdmissionTest.FiveTupleFieldMismatchRejectedPerField_EX_REG_2
+[       OK ] RunRegistryAdmissionTest.FiveTupleFieldMismatchRejectedPerField_EX_REG_2 (27 ms)
+[ RUN      ] RunRegistryAdmissionTest.StaleAttemptsAllRejected_EX_REG_3
+[       OK ] RunRegistryAdmissionTest.StaleAttemptsAllRejected_EX_REG_3 (33 ms)
+[ RUN      ] RunRegistryAdmissionTest.BindingMismatchAtSecondCheck
+[       OK ] RunRegistryAdmissionTest.BindingMismatchAtSecondCheck (32 ms)
+[ RUN      ] RunRegistryAdmissionTest.KindOutsideAllowedSetRejected
+[       OK ] RunRegistryAdmissionTest.KindOutsideAllowedSetRejected (36 ms)
+[ RUN      ] RunRegistryAdmissionTest.TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1 (28 ms)
+[ RUN      ] RunRegistryAdmissionTest.InterruptedTerminationNotInStepSevenRejectSet
+[       OK ] RunRegistryAdmissionTest.InterruptedTerminationNotInStepSevenRejectSet (29 ms)
+[ RUN      ] RunRegistryAdmissionTest.FinalEnvelopeRedeliveryIdempotent_EX_REG_7
+[       OK ] RunRegistryAdmissionTest.FinalEnvelopeRedeliveryIdempotent_EX_REG_7 (55 ms)
+[ RUN      ] RunRegistryAdmissionTest.FinalEnvelopeContentConflictRejected_EX_REG_8
+[       OK ] RunRegistryAdmissionTest.FinalEnvelopeContentConflictRejected_EX_REG_8 (49 ms)
+[ RUN      ] RunRegistryAdmissionTest.ResultBatchAdmissionAndMultiBatch_F809
+[       OK ] RunRegistryAdmissionTest.ResultBatchAdmissionAndMultiBatch_F809 (38 ms)
+[ RUN      ] RunRegistryAdmissionTest.CompletedWithDataInsufficientIsAdmitted_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.CompletedWithDataInsufficientIsAdmitted_EX_ORT_1 (29 ms)
+[ RUN      ] RunRegistryAdmissionTest.HeadChangeNotInvolvedInAdmission_EX_REG_6
+[       OK ] RunRegistryAdmissionTest.HeadChangeNotInvolvedInAdmission_EX_REG_6 (35 ms)
+[ RUN      ] RunRegistryAdmissionTest.SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1 (37 ms)
+[ RUN      ] RunRegistryAdmissionTest.RuntimeNameResolutionGatesAdmission
+[       OK ] RunRegistryAdmissionTest.RuntimeNameResolutionGatesAdmission (37 ms)
+[ RUN      ] RunRegistryAdmissionTest.UndecodablePayloadRejected
+[       OK ] RunRegistryAdmissionTest.UndecodablePayloadRejected (29 ms)
+[ RUN      ] RunRegistryAdmissionTest.ConstructionFailureFailsTask_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.ConstructionFailureFailsTask_EX_ORT_1 (33 ms)
+[ RUN      ] RunRegistryAdmissionTest.ArchiveRetriesBoundedThenSucceeds
+[       OK ] RunRegistryAdmissionTest.ArchiveRetriesBoundedThenSucceeds (45 ms)
+[ RUN      ] RunRegistryAdmissionTest.ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5
+[       OK ] RunRegistryAdmissionTest.ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5 (31 ms)
+[ RUN      ] RunRegistryAdmissionTest.AuthorityLostRejectedWithDiagnostics_EX_REG_5
+[       OK ] RunRegistryAdmissionTest.AuthorityLostRejectedWithDiagnostics_EX_REG_5 (34 ms)
+[ RUN      ] RunRegistryAdmissionTest.AuthorityReacquiredArchivesNormally_EX_REG_5
+[       OK ] RunRegistryAdmissionTest.AuthorityReacquiredArchivesNormally_EX_REG_5 (41 ms)
+[ RUN      ] RunRegistryAdmissionTest.NonArchivedKindsPassClassificationOnly
+[       OK ] RunRegistryAdmissionTest.NonArchivedKindsPassClassificationOnly (32 ms)
+[ RUN      ] RunRegistryAdmissionTest.InvalidArrivalIdentityFailsFast
+[       OK ] RunRegistryAdmissionTest.InvalidArrivalIdentityFailsFast (27 ms)
+[----------] 25 tests from RunRegistryAdmissionTest (879 ms total)
+
+[----------] 1 test from ContractSuiteFacilities
+[ RUN      ] ContractSuiteFacilities.FaultPointIdRegistryMatchesSection11Handover
+[       OK ] ContractSuiteFacilities.FaultPointIdRegistryMatchesSection11Handover (0 ms)
+[----------] 1 test from ContractSuiteFacilities (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 27 tests from 3 test suites ran. (918 ms total)
+[  PASSED  ] 27 tests.

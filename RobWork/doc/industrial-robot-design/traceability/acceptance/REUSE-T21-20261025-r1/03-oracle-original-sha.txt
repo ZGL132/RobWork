@@ -1,0 +1,1 @@
+f576345dbcd24a9ea077eda5c9eaef0bebda7c8ddfa8acbce5c0280388664dff *RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T21/production-oracle.json

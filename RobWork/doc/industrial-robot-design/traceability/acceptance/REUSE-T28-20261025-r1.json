@@ -1,0 +1,100 @@
+{
+  "taskId": "REUSE-T28",
+  "baseCommit": "4794f64476945d3b8cf6974bb3e778b6ba419f95",
+  "reviewedCommit": "ea8ac53baa8923d93c6233ca88db77f8e8778291",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T07:40:31+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T28/WP-12 单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何受跟踪文件、未提交、未切分支、未建工作树、未远程操作、未重配构建树（仅增量构建受影响目标与在 build/ 生成性能探针临时 obj/exe）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 4794f644..ea8ac53 送验实现（唯一实施提交 ea8ac53ba）：现场与祖先关系、verify-task-scope 显式 Base/Head、提交链与 commit-lint、门禁目录/公共接口/CMake/冻结面零差异机器核验、ird_gates 引擎直跑、validate-docs 一次过、受影响目标增量构建与 modeling_test/modeling_contract_test 真实复跑、实施方扰动与性能证据原件 sha256 绑定核对、性能探针独验重跑、契约三条 acceptance 与 note/status 逐条映射。",
+  "counts": {
+    "failed": 0,
+    "passed": 13,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "13 项验收检查；测试计数另列（integrationTest），性能 checksum 复现另列（performance），互不相加"
+  },
+  "checks": [
+    "现场与送验链：分支 redesign-main，HEAD=0ca544e49；git merge-base --is-ancestor 证实 ea8ac53 为 HEAD 祖先，其后仅 governance 补登提交（REUSE-T29 等），ea8ac53..HEAD 之间 modeling 产品源码与 REUSE-T28 traceability 目录零改动（git diff --name-only 为空）；工作区仅 31 个未跟踪验收产物（各任务独验记录，按约定不提交），无受跟踪文件修改。验收树与送验树在 modeling 范围等价。",
+    "范围：verify-task-scope 显式 -Base 4794f6447694 -Head ea8ac53baa8 exit 0，『PASS REUSE-T28 —— 60 个路径全部在允许面内』，allowedRules=9 forbiddenRules=3；60 文件=3 产品文件＋契约/manifest/矩阵/catalog/凭证证据，无 RobWork/RobWork/src/**、无 vcpkg/**、无 cmake/ 门禁文件。",
+    "门禁零改动：git diff --exit-code 4794f644..ea8ac53 -- industrialrobot/cmake/ 退出 0 零差异；modeling 公共头 include/ 与 modeling/CMakeLists.txt 同命令退出 0——公共接口/CMake/依赖不变（acceptance 第 3 条）机器证实。",
+    "冻结面/CLOSURE：其他任务 traceability（REUSE-T07 等）零触碰；reuse/migration.md、policy.md、inventory.json 零触碰；catalog.json 唯一状态变化为 MATH-INERTIA candidate→verified（由本包 verification/README 证据支撑，非 closed 翻转）；REUSE-T27.json 仅 masterWp WP-A→WP-E 归属校正＋note 追加说明，status 仍 ready、独验状态未翻转，与提交正文声明一致。",
+    "提交链：4794f644..ea8ac53 恰 1 个提交 ea8ac53ba『[governance] REUSE-T28 复用惯量旋转和长方体并修正相对自检』，一包一组；commit-lint -Range exit 0 PASS（1 个提交全部合规）；正文宣称与实测逐项一致（68/8、扰动 2f/1f+1p/2f、性能 scene4 5.4%–8.6%、status ready 非 done、NOT RUN 分列）。",
+    "门禁引擎直跑：cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=%TEMP%/reuset28-acc-selftest -P ird_gates.cmake exit 0，『全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中』；日志含自测 fail_*（r1/r3/r4/r5/t1/t2/sub/r4cliff/perf_lookalike）按预期检出、pass_*（r4comment/r4cliff）无误报。",
+    "文档/契约/复用：validate-docs -TaskFile REUSE-T28.json exit 0——validate-task PASS (1 tasks)、validate-reuse PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-docs PASS (20 units, 12 trace entries, 404 task files)；REUSE-AD-PENDING 为既有 AD 审计 pending 提示（GOV-T24 独验已同样登记），非本包新增阻断。",
+    "增量构建：cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test exit 0（首次因 Git Bash MSYS 路径转换 /nologo 失败，MSYS_NO_PATHCONV=1 重跑通过，失败日志未留盘、成功日志 03-build.log）；build/CMakeCache.txt RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 确认在先。",
+    "modeling_test 真实复跑（PATH 前置 build/RobWork/bin/Release、build/RobWorkStudio/libs|bin/Release、vcpkg installed/x64-windows/bin）：479 tests 全量＝479 passed/0 failed/0 skipped/0 notRun，exit 0；含 MdlInertiaTransformReuse 三个新测试 RationalRotationAndScale/MixedOffsetsAndStrictOutput/RelativeSymmetryScaleAndBoundary 全 OK——覆盖实施方 68 项筛选集（其 filter 套件均在本 exe 内，全集过则子集必过）与 acceptance 第 2 条字面张量/非平凡旋转/多尺度/混合段/重复确定性/相对阈值闭边界断言。",
+    "契约测试真实复跑：sdurws_ird_modeling_contract_test 17 tests 全量＝17 passed/0 failed/0 skipped/0 notRun，exit 0——覆盖实施方 8 项契约筛选集（MdlDescriptionBridgeContract/MdlGoldenPeerContract/MdlCompileBridgeContract）。",
+    "acceptance 第 1 条逐条落实：diff 证实 PropertyEstimation.cpp 删除手写 accumulateRotatedInertia（R·diag(I)·Rᵀ 展开）与长方体三条主惯量公式，原入口改消费 rw::math::InertiaMatrix<double>::makeCuboidInertia 与 part.rotation*InertiaMatrix(ixx,iyy,izz)*inverse(part.rotation) 完整九项投影；上游 API 真实存在——InertiaMatrix.hpp:125 三参构造、:181/:181/:196 Rotation3D*InertiaMatrix 与 InertiaMatrix*Rotation3D、:298 makeCuboidInertia(mass,x,y,z)、Rotation3D.hpp inverse；makeCuboidInertia 对角公式与被删公式逐项等义（Ixx=m/12(y²+z²) 对应入参 x=a,y=b,z=L）。InertiaMath.hpp 仅改对称性检查为九项最大绝对元素相对 1e-12（方案 A），SPD/三角/错误 token/签名不变，未放宽固定阈值。",
+    "acceptance 第 2 条扰动/对照证据原件核对：送验提交 ea8ac53 版本 7 个关键证据（final.xml/final.log/contract.xml/contract.log/final-build.log/architecture-gates.log/performance.log）经 git show|sha256sum 与 verification.json 声明完全一致；3 个产品文件绑定 sha256 一致；五份扰动原件计数与 note 逐项一致——rotated-disconnected 2 tests/2 failed（SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2、MixedOffsetsAndStrictOutput）、cuboid-disconnected 2/1f（1 passed+1 failed，圆柱用例保留 PASS）、eigen-disconnected 2/2f、baseline 2/1f、candidate-absolute 23/1f；README 如实登记旋转/工厂扰动执行于相对自检修正前（源相同适用）及首次 cmd 启动失败不冒称断开成功。",
+    "性能真实复现（独验重跑 run-performance.cmd，08-performance-rerun.log）：MSVC /O2 /MD /DNDEBUG、100 万次×3 轮×5 场景，五场景 checksum 与实施方原件逐位一致（70026944.00000000/67441287.68002722/61647544.88912559/152397897.99990493/1010000.00000000）——数值确定性成立；ratio 同量级（scene0-2 旋转内核约 1.95–2.38×、scene3<1、scene4 本轮 0.94–1.07 波动），与所有者三条接受记录（verification.json performance.decisions＋README 原文引用）吻合，接受仅限本包测量、不外推预算。"
+  ],
+  "integrationTest": {
+    "modeling": {
+      "tests": 479,
+      "passed": 479,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "note": "全量运行（无 filter），含实施方 68 项筛选集与 MdlInertiaTransformReuse 全部新测试",
+      "exitCode": 0,
+      "xml": "04-modeling-test.xml"
+    },
+    "modelingContract": {
+      "tests": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "note": "全量运行（无 filter），含实施方 8 项契约筛选集",
+      "exitCode": 0,
+      "xml": "04-modeling-contract.xml"
+    }
+  },
+  "performance": {
+    "rerun": "08-performance-rerun.log（独验执行实施方 run-performance.cmd）",
+    "checksumDeterministic": true,
+    "scenes": "scene0-2 旋转约 1.95–2.38×、scene3 工厂<1×、scene4 完整自检本轮 0.94–1.07×（实施方原件 5.4%–8.6%）",
+    "ownerAcceptance": "三条决定见 verification.json performance.decisions 与 REUSE-T28/README.md §性能与所有者决定；仅适用本包，不外推预算"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T28.json -Base 4794f64476945d3b8cf6974bb3e778b6ba419f95 -Head ea8ac53baa8923d93c6233ca88db77f8e8778291", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "build", "command": "MSYS_NO_PATHCONV=1 cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test -- /nologo /verbosity:minimal", "exitCode": 0, "passed": true, "log": "03-build.log" },
+    { "name": "modeling-test", "command": "sdurws_ird_modeling_test.exe --gtest_output=xml:…（PATH 前置框架/vcpkg DLL 目录）", "exitCode": 0, "passed": true, "log": "04-modeling-test.log", "xml": "04-modeling-test.xml" },
+    { "name": "modeling-contract-test", "command": "sdurws_ird_modeling_contract_test.exe --gtest_output=xml:…（PATH 前置框架/vcpkg DLL 目录）", "exitCode": 0, "passed": true, "log": "04-modeling-contract.log", "xml": "04-modeling-contract.xml" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 4794f64476945d3b8cf6974bb3e778b6ba419f95..ea8ac53baa8923d93c6233ca88db77f8e8778291", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "gate-engine", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=<temp>/reuset28-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "06-gate-engine.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T28.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" },
+    { "name": "performance-rerun", "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/run-performance.cmd", "exitCode": 0, "passed": true, "log": "08-performance-rerun.log" },
+    { "name": "evidence-sha256", "command": "git show ea8ac53:<path> | sha256sum 逐文件与 verification.json 声明比对（7 证据＋3 产品绑定）", "exitCode": 0, "passed": true },
+    { "name": "zero-diff-freeze", "command": "git diff --exit-code 4794f644..ea8ac53 -- industrialrobot/cmake/ ＆ modeling/include/ ＆ modeling/CMakeLists.txt；git diff --name-only ea8ac53..HEAD -- modeling 源码与 REUSE-T28 traceability", "exitCode": 0, "passed": true }
+  ],
+  "executionNotes": [
+    "verify-task-scope/build/commit-lint/gate-engine/validate-docs/性能复跑均由本独验会话亲自执行；测试 exe 由本会话增量构建后运行，构建树源码与送验树在 modeling 范围一致（检查 1）。",
+    "工作区文件 sha256 与 git blob 不同系 core.autocrlf=true 行尾检出转换：git blob 层面（git show ea8ac53）sha256 与 verification.json 声明完全一致，非篡改。",
+    "首轮构建命令因 Git Bash 将 /nologo 转换为路径而失败（exit 1），属独验会话运行环境问题，与送验内容无关；MSYS_NO_PATHCONV=1 重跑一次通过，未重配构建树。",
+    "扰动测试（rotated/cuboid/eigen-disconnected）未由独验重跑：需向构建树注入 mutated 源码并重编译，且实施方原件 sha256 已绑定送验提交、失败计数与 note 一致、README 如实登记执行时序——按 AGENTS §4『已有且输入/工具链/范围仍适用的原始证据直接引用』处理，引用而非冒称复跑。"
+  ],
+  "issues": [],
+  "notRun": [],
+  "limitations": "PASS 仅覆盖 REUSE-T28/WP-12 送验范围（4794f644..ea8ac53）：物性惯量旋转与长方体惯量直接复用及相对自检配套修正。validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399 未关闭），不构成 WP-12 其余项（BaseWorldTransform/DescriptionValidator owner 核对、DH 转换及其他物性候选）、migration §11 算法替换或 REUSE-T02 的放行；T13 模型真值未独验前普通 IK/RNE 仍不放行（契约与提交正文声明，本验收未重开该裁决）。T27 独验状态保持 NOT RUN/ready 未翻转。整机/GUI 性能、线程压力、分配失败注入、无关模块 NOT RUN（实施方如实登记，本独验未扩大）。本包契约 status=ready 非 done——独验 PASS 是集成前置，登记收口由所有者/后续治理步骤执行。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/03-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/04-modeling-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/04-modeling-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/04-modeling-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/04-modeling-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/06-gate-engine.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/07-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/08-performance-rerun.log"
+  ]
+}

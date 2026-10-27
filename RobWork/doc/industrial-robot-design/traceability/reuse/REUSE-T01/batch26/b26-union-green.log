@@ -1,0 +1,16 @@
+pwsh union 0 expected 0 passed True
+pwsh same-new 0 expected 0 passed True
+pwsh theirs-modify 0 expected 0 passed True
+pwsh both-modify 1 expected 1 passed True
+pwsh deletion 1 expected 1 passed True
+pwsh note-diff 1 expected 1 passed True
+pwsh note-case 1 expected 1 passed True
+pwsh schema-case 1 expected 1 passed True
+powershell union 0 expected 0 passed True
+powershell same-new 0 expected 0 passed True
+powershell theirs-modify 0 expected 0 passed True
+powershell both-modify 1 expected 1 passed True
+powershell deletion 1 expected 1 passed True
+powershell note-diff 1 expected 1 passed True
+powershell note-case 1 expected 1 passed True
+powershell schema-case 1 expected 1 passed True

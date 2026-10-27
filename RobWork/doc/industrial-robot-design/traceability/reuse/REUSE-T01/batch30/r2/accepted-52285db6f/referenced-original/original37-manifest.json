@@ -1,0 +1,190 @@
+{
+  "batch": "B30",
+  "entries": [
+    {
+      "path": "b30-build.log",
+      "bytes": 1540,
+      "rawSha256": "0ea9c2975d0dd53b9ec3ba2415739150e59d1114c4afc38215c30ff7f660def2"
+    },
+    {
+      "path": "b30-configure-r2.log",
+      "bytes": 1183,
+      "rawSha256": "d7f06b0f8e65b567b4d036eb4311a8029de3b31dfc34763a7ea2198d5e503842"
+    },
+    {
+      "path": "b30-configure.log",
+      "bytes": 2050,
+      "rawSha256": "d886f55bbe44ffe22cf3008414b56e591f8c67f0154c65865b21e9111017186c"
+    },
+    {
+      "path": "b30-final-build.log",
+      "bytes": 526,
+      "rawSha256": "e4baea33ca394bd39ccccd041ebf11c743a30d62611576cb30faa4829c268599"
+    },
+    {
+      "path": "b30-final-validate-docs.exit.txt",
+      "bytes": 1,
+      "rawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "b30-final-validate-docs.log",
+      "bytes": 2724,
+      "rawSha256": "a795e865d3818b63878e959cb9976feb869be9290302582ce1c705355790696a"
+    },
+    {
+      "path": "b30-final-validate-reuse.exit.txt",
+      "bytes": 1,
+      "rawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "b30-final-validate-reuse.log",
+      "bytes": 2486,
+      "rawSha256": "591216b83cbf2cb35dbbcf09c94df21c33e1d94fabdb6866f339bd3f43a15c87"
+    },
+    {
+      "path": "b30-final-validate-task.exit.txt",
+      "bytes": 1,
+      "rawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "b30-final-validate-task.log",
+      "bytes": 2517,
+      "rawSha256": "f282bd438fbca004e708dc310ed55912be8fe0ec30ce5cba6dbb98c16ad849d6"
+    },
+    {
+      "path": "b30-final-vs.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b30-run-vs.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b30-upstream-search.log",
+      "bytes": 0,
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "b30-validate-docs.exit.txt",
+      "bytes": 1,
+      "rawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "b30-validate-docs.log",
+      "bytes": 249,
+      "rawSha256": "2624da00cb2d7f3947d44ee23a795bc38bee5eab0c5b5b1e4ed8e9c0abfadc4e"
+    },
+    {
+      "path": "b30-validate-reuse.exit.txt",
+      "bytes": 1,
+      "rawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "b30-validate-reuse.log",
+      "bytes": 105,
+      "rawSha256": "d3b87b60ae437746780f37c52f5659a72cf0f8e4281aaf9928eb14f19cd2ecb3"
+    },
+    {
+      "path": "b30-validate-task.exit.txt",
+      "bytes": 1,
+      "rawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "b30-validate-task.log",
+      "bytes": 434,
+      "rawSha256": "306655e33f7c2b54f8f2503f30a437f4499bd210d6bdd63c70b4994fabf81895"
+    },
+    {
+      "path": "b30-vs-r2.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b30-vs.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 1325,
+      "rawSha256": "92f7c0043041a4175bba0cf090d934bc6a445cf16dca19e5d57eeca251ee01a3"
+    },
+    {
+      "path": "DigestSuitabilityTest.cpp",
+      "bytes": 6065,
+      "rawSha256": "dfb9e1871ab9396156c5f313644bbffb0784f3183b29c47521e794159c3919d5"
+    },
+    {
+      "path": "final-run/exit.txt",
+      "bytes": 1,
+      "rawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "final-run/gtest.xml",
+      "bytes": 8482,
+      "rawSha256": "7cc201de5e907e3f81d026413c66b39e4e49dcc638ccdaca10d7ec72145de70f"
+    },
+    {
+      "path": "final-run/ird-test-report.json",
+      "bytes": 10292,
+      "rawSha256": "5c0004f07903c3448ec6f8ebd0d2e7b82a0f28bd2353b85204d39fbf4a974534"
+    },
+    {
+      "path": "final-run/stdout.log",
+      "bytes": 3371,
+      "rawSha256": "632cae69b741b1b596398a0a23fcbe988bbb3ecdaf7a0e9ed9a742c805e07668"
+    },
+    {
+      "path": "oracle-vectors.json",
+      "bytes": 1899,
+      "rawSha256": "642a90912cdb766591c9e07edace170a24d13015d1899f8b907de9a51f34a569"
+    },
+    {
+      "path": "oracle.py",
+      "bytes": 444,
+      "rawSha256": "702f732539ffb01df690ea060ceb87672f71dcebadec93e1e6ae796b587ce618"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2396,
+      "rawSha256": "ae6c3a512292d66aa16719dafd58b1f99dbe2d117cfb1a60d69a41a025715da9"
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 1,
+      "rawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 3976,
+      "rawSha256": "3da56157a10f1290bccdbb9188b676afb7389e99875a6fc90f024ddbf3bc660b"
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 4954,
+      "rawSha256": "8eb001cfd9790170fe8dbc9e7aa1b0ea48a13097c4b4d48dcc4e6dfa46a72485"
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 2049,
+      "rawSha256": "2365e5c56b85efddb7d8d584ca18744e417ad79189642f201a5c14ca32bcfa92"
+    },
+    {
+      "path": "search.json",
+      "bytes": 108678,
+      "rawSha256": "5e3d962477e5c944c400d1224083958d4d550e6b3855228688f5cef03f3b22f1"
+    },
+    {
+      "path": "source-comparison.json",
+      "bytes": 253,
+      "rawSha256": "d2591cbea831d5cc1d4984a1dc6103dcd8097ced4a84e70d096163f182af71d6"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 873,
+      "rawSha256": "2670fe1a8fb6a6c856dac67f40b631837650350775d8c2a3a826439297b5fc1f"
+    }
+  ]
+}

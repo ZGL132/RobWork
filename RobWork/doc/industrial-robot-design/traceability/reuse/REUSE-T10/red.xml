@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="16" failures="4" disabled="0" errors="0" time="0.183" timestamp="2026-10-23T09:16:07.639" name="AllTests">
+  <testsuite name="EAA" tests="13" failures="4" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T09:16:07.639">
+    <testcase name="Test_ADL" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="CastTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="41" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="CrossProductTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="55" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="MiscTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="71" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="scalarOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="301" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="Vector3DOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="319" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="EAAOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="358" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="EigenOperatorTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="392" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="MathOperators" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="430" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA" />
+    <testcase name="SmallAngleMatrixPrecision_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="454" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.639" classname="EAA">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464&#x0A;The difference between actual (i, j) and expected (i, j) is 1e-08, which exceeds 1e-12, where&#x0A;actual (i, j) evaluates to 0,&#x0A;expected (i, j) evaluates to -1e-08, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464
+The difference between actual (i, j) and expected (i, j) is 1e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to -1e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464&#x0A;The difference between actual (i, j) and expected (i, j) is 1e-08, which exceeds 1e-12, where&#x0A;actual (i, j) evaluates to 0,&#x0A;expected (i, j) evaluates to 1e-08, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464
+The difference between actual (i, j) and expected (i, j) is 1e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to 1e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464&#x0A;The difference between actual (i, j) and expected (i, j) is 9.9999999999999823e-08, which exceeds 1e-12, where&#x0A;actual (i, j) evaluates to 0,&#x0A;expected (i, j) evaluates to -9.9999999999999823e-08, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464
+The difference between actual (i, j) and expected (i, j) is 9.9999999999999823e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to -9.9999999999999823e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464&#x0A;The difference between actual (i, j) and expected (i, j) is 9.9999999999999823e-08, which exceeds 1e-12, where&#x0A;actual (i, j) evaluates to 0,&#x0A;expected (i, j) evaluates to 9.9999999999999823e-08, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464
+The difference between actual (i, j) and expected (i, j) is 9.9999999999999823e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to 9.9999999999999823e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:460&#x0A;The difference between value[2] and theta is 1.1714006467872641e-11, which exceeds 1e-15, where&#x0A;value[2] evaluates to 3.7416456727674732e-06,&#x0A;theta evaluates to 3.7416573867739411e-06, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;theta=3.7416573867739411e-06&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:460
+The difference between value[2] and theta is 1.1714006467872641e-11, which exceeds 1e-15, where
+value[2] evaluates to 3.7416456727674732e-06,
+theta evaluates to 3.7416573867739411e-06, and
+1e-15 evaluates to 1.0000000000000001e-15.
+theta=3.7416573867739411e-06
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464&#x0A;The difference between actual (i, j) and expected (i, j) is 1.1714006467872641e-11, which exceeds 1e-12, where&#x0A;actual (i, j) evaluates to -3.7416456727587429e-06,&#x0A;expected (i, j) evaluates to -3.7416573867652107e-06, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464
+The difference between actual (i, j) and expected (i, j) is 1.1714006467872641e-11, which exceeds 1e-12, where
+actual (i, j) evaluates to -3.7416456727587429e-06,
+expected (i, j) evaluates to -3.7416573867652107e-06, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464&#x0A;The difference between actual (i, j) and expected (i, j) is 1.1714006467872641e-11, which exceeds 1e-12, where&#x0A;actual (i, j) evaluates to 3.7416456727587429e-06,&#x0A;expected (i, j) evaluates to 3.7416573867652107e-06, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:464
+The difference between actual (i, j) and expected (i, j) is 1.1714006467872641e-11, which exceeds 1e-12, where
+actual (i, j) evaluates to 3.7416456727587429e-06,
+expected (i, j) evaluates to 3.7416573867652107e-06, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:460&#x0A;The difference between value[2] and theta is 7.8314091322972956e-15, which exceeds 1e-15, where&#x0A;value[2] evaluates to 0.00099999999999216861,&#x0A;theta evaluates to 0.001, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;theta=0.001&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:460
+The difference between value[2] and theta is 7.8314091322972956e-15, which exceeds 1e-15, where
+value[2] evaluates to 0.00099999999999216861,
+theta evaluates to 0.001, and
+1e-15 evaluates to 1.0000000000000001e-15.
+theta=0.001
+]]></failure>
+    </testcase>
+    <testcase name="SmallAngleVectorConversion_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="468" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.640" classname="EAA">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:472&#x0A;The difference between actual (1, 0) and sin (theta) is 9.9999999999999998e-13, which exceeds 1e-15, where&#x0A;actual (1, 0) evaluates to 0,&#x0A;sin (theta) evaluates to 9.9999999999999998e-13, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:472
+The difference between actual (1, 0) and sin (theta) is 9.9999999999999998e-13, which exceeds 1e-15, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 9.9999999999999998e-13, and
+1e-15 evaluates to 1.0000000000000001e-15.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:473&#x0A;The difference between actual (0, 1) and -sin (theta) is 9.9999999999999998e-13, which exceeds 1e-15, where&#x0A;actual (0, 1) evaluates to 0,&#x0A;-sin (theta) evaluates to -9.9999999999999998e-13, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:473
+The difference between actual (0, 1) and -sin (theta) is 9.9999999999999998e-13, which exceeds 1e-15, where
+actual (0, 1) evaluates to 0,
+-sin (theta) evaluates to -9.9999999999999998e-13, and
+1e-15 evaluates to 1.0000000000000001e-15.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:472&#x0A;The difference between actual (1, 0) and sin (theta) is 1e-08, which exceeds 1e-15, where&#x0A;actual (1, 0) evaluates to 0,&#x0A;sin (theta) evaluates to 1e-08, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:472
+The difference between actual (1, 0) and sin (theta) is 1e-08, which exceeds 1e-15, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 1e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:473&#x0A;The difference between actual (0, 1) and -sin (theta) is 1e-08, which exceeds 1e-15, where&#x0A;actual (0, 1) evaluates to 0,&#x0A;-sin (theta) evaluates to -1e-08, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:473
+The difference between actual (0, 1) and -sin (theta) is 1e-08, which exceeds 1e-15, where
+actual (0, 1) evaluates to 0,
+-sin (theta) evaluates to -1e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:472&#x0A;The difference between actual (1, 0) and sin (theta) is 9.9999999999999823e-08, which exceeds 1e-15, where&#x0A;actual (1, 0) evaluates to 0,&#x0A;sin (theta) evaluates to 9.9999999999999823e-08, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:472
+The difference between actual (1, 0) and sin (theta) is 9.9999999999999823e-08, which exceeds 1e-15, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 9.9999999999999823e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:473&#x0A;The difference between actual (0, 1) and -sin (theta) is 9.9999999999999823e-08, which exceeds 1e-15, where&#x0A;actual (0, 1) evaluates to 0,&#x0A;-sin (theta) evaluates to -9.9999999999999823e-08, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:473
+The difference between actual (0, 1) and -sin (theta) is 9.9999999999999823e-08, which exceeds 1e-15, where
+actual (0, 1) evaluates to 0,
+-sin (theta) evaluates to -9.9999999999999823e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:474&#x0A;The difference between actual (2, 2) and 1. is 4.9960036108132044e-15, which exceeds 1e-15, where&#x0A;actual (2, 2) evaluates to 0.999999999999995,&#x0A;1. evaluates to 1, and&#x0A;1e-15 evaluates to 1.0000000000000001e-15.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:474
+The difference between actual (2, 2) and 1. is 4.9960036108132044e-15, which exceeds 1e-15, where
+actual (2, 2) evaluates to 0.999999999999995,
+1. evaluates to 1, and
+1e-15 evaluates to 1.0000000000000001e-15.
+]]></failure>
+    </testcase>
+    <testcase name="NearlyParallelVectors_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="478" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.640" classname="EAA">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:484&#x0A;The difference between (actual - expected).normInf () and 0. is 1e-08, which exceeds 1e-12, where&#x0A;(actual - expected).normInf () evaluates to 1e-08,&#x0A;0. evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;theta=1e-08&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:484
+The difference between (actual - expected).normInf () and 0. is 1e-08, which exceeds 1e-12, where
+(actual - expected).normInf () evaluates to 1e-08,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+theta=1e-08
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:484&#x0A;The difference between (actual - expected).normInf () and 0. is 9.9999999999999823e-08, which exceeds 1e-12, where&#x0A;(actual - expected).normInf () evaluates to 9.9999999999999823e-08,&#x0A;0. evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;theta=9.9999999999999995e-08&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:484
+The difference between (actual - expected).normInf () and 0. is 9.9999999999999823e-08, which exceeds 1e-12, where
+(actual - expected).normInf () evaluates to 9.9999999999999823e-08,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+theta=9.9999999999999995e-08
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:484&#x0A;The difference between (actual - expected).normInf () and 0. is 9.9999999392252903e-09, which exceeds 1e-12, where&#x0A;(actual - expected).normInf () evaluates to 9.9999999392252903e-09,&#x0A;0. evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;theta=3.1415926435897932&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:484
+The difference between (actual - expected).normInf () and 0. is 9.9999999392252903e-09, which exceeds 1e-12, where
+(actual - expected).normInf () evaluates to 9.9999999392252903e-09,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+theta=3.1415926435897932
+]]></failure>
+    </testcase>
+    <testcase name="SmallFloatAngle_REUSE_T08A" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp" line="488" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.640" classname="EAA">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:492&#x0A;The difference between actual (1, 0) and sin (theta) is 1.0000000116860974e-07, which exceeds 1e-12f, where&#x0A;actual (1, 0) evaluates to 0,&#x0A;sin (theta) evaluates to 1.0000000116860974e-07, and&#x0A;1e-12f evaluates to 9.999999960041972e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp:492
+The difference between actual (1, 0) and sin (theta) is 1.0000000116860974e-07, which exceeds 1e-12f, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 1.0000000116860974e-07, and
+1e-12f evaluates to 9.999999960041972e-13.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="RPYTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T09:16:07.640">
+    <testcase name="Test" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\RPYTest.cpp" line="25" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.640" classname="RPYTest" />
+  </testsuite>
+  <testsuite name="QuaternionTest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.182" timestamp="2026-10-23T09:16:07.640">
+    <testcase name="Conversion" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\QuaternionTest.cpp" line="152" status="run" result="completed" time="0.182" timestamp="2026-10-23T09:16:07.640" classname="QuaternionTest" />
+    <testcase name="MiscTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\QuaternionTest.cpp" line="178" status="run" result="completed" time="0." timestamp="2026-10-23T09:16:07.823" classname="QuaternionTest" />
+  </testsuite>
+</testsuites>

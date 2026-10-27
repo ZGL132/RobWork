@@ -1,0 +1,21 @@
+{
+  "sha": "ee9cc79bd68ec27b8b2f95901dddd78d6c57d5d2",
+  "scope": "B5-P2-01 rework only",
+  "result": "PASS",
+  "closedFindings": [
+    "B5-P2-01"
+  ],
+  "gateExitCodes": {
+    "task": 0,
+    "reuse": 0,
+    "docs": 0
+  },
+  "archive": {
+    "normalizedEqual": 32,
+    "newlineOnly": 3,
+    "byteEqual": 29,
+    "files": 32
+  },
+  "noBatch6Review": true,
+  "pendingPreserved": true
+}

@@ -1,0 +1,27 @@
+== CLOSURE/frozen paths in range:
+0
+== full commit message 59d76f8a4:
+[WP-19-T49] F-959 黄金生成脚本修复落地与全文件解决批收口
+
+所有者 2026-10-26 批量批准落地裁决表第 1~4 项，F-959 原 blocked 解阻，§13.3
+原包边界扩至全文件解决批。
+
+- make_import_expectations.mjs 随 F01 期望面同步：unsupported 8→3、去
+  joint-velocity-limit×5、增 mappedVelocityCount=5 与说明，头注计数约定同步；
+  manifest.json integrity（f30a5573…/7491）/history 重登记。expected 数据零
+  变化、零 C++ 产品代码变化——按 T01 审计口径同步过期脚本，不重产旧错误
+  黄金数据洗绿。
+- 重放一致性收口：replay-generators-t49.mjs 隔离执行 29 生成器 29/29 exit0、
+  规范化对照漂移 0、mdl-urdf-import 两份 expected 原始字节逐位一致
+  （landing-generator-replay.json）。
+- 受影响消费者真实回归：testkit 121/121＋modeling 480/480（MdlGoldenImport
+  消费 mappedVelocityCount 钉 F01 映射面）＋contract 17/17＋ird_gates 零命中
+  （landing-* 原件）。
+- 全文件解决批一次收口：foundation-governance fixtureGeneration 行
+  business-specific/migrated（区段 46-154 重铺＋manifest 摘要级联）＋
+  scriptHeader 载体行（1-45）＋changes/REUSE-T49.json 凭证；契约解阻
+  （allowedFiles/note/acceptance/verify）；findings F-959 改 fixed；
+  migration §13.2/§13.3 更新。
+- GoldenImportTest.cpp:294-296 既有过期文档注（T16 创建时即有）不属漂移链
+  本批不改，留独立 cosmetic 缺陷归所有者归类。实施完成待独验。
+

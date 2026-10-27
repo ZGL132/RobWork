@@ -1,0 +1,983 @@
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp [158-193]
+158:     void doSetLog(rw::core::Log::Ptr) override {}
+159: 
+160:     /// @brief 单构型碰撞判定（QConstraint 契约的实现点——适配语义见类注）。
+161:     bool doInCollision(const rw::math::Q& q) const override
+162:     {
+163:         // 第一步：装配 SingleState 查询（kind 与样本数匹配契约——恰 1 个
+164:         // 构型且 pathParameters 为空，policy §6.2；违约由 evaluate 入口
+165:         // fail-fast——本适配器保证不触雷）。
+166:         policy::CollisionQuery query;
+167:         query.kind = policy::CollisionQueryKind::SingleState;
+168:         query.configurations = {q};
+169:         // stopAtFirstFinding＝筛选/淘汰场景（§6.2 字段语义——单构型查询
+170:         // 的对逐对查询可在首个发现即停；输出仍带 coverage）。
+171:         query.stopAtFirstFinding = true;
+172: 
+173:         // 第二步：直穿会话评估（会话构造后只读——并发只读安全由会话
+174:         // backendQueryMutex 保证，policy §9.3；本适配器零额外同步）。
+175:         const policy::CollisionEvaluation evaluation = m_session->evaluate(query, m_ctx);
+176: 
+177:         // 第三步：三态映射（仅"Completed＋Applicable＋finalized"可采信）。
+178:         if (evaluation.status == policy::CollisionEvaluationStatus::Completed
+179:             && evaluation.finalized
+180:             && evaluation.applicability == policy::ScopeApplicability::Applicable) {
+181:             for (const policy::CollisionFinding& finding : evaluation.findings) {
+182:                 // 仅 Collision 种类构成碰撞（MarginViolation 非碰撞——§7.4）。
+183:                 if (finding.kind == policy::CollisionFindingKind::Collision) {
+184:                     return true;  // 碰撞→剪枝（§10.3 流程图"碰撞→剪枝"）
+185:                 }
+186:             }
+187:             return false;  // 无碰撞发现→扩展继续
+188:         }
+189:         // 不可采信（finalized=false / EmptyScope / DisabledByPolicy）——
+190:         // 保守"碰撞"＋观测计数（KIN-05：绝不视为无碰撞）。
+191:         ++untrustedObserved;
+192:         return true;
+193:     }
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp [617-690]
+617:         // 性经进程级 Math::seed 约束；uint64 种子截断为 unsigned 的映射是
+618:         // 确定性的（同种子同截断），不破坏 NFR-COR-02；并发 search 的种
+619:         // 子互扰归装配面线程约束——评估器 SingleThread）。
+620:         // ---------------------------------------------------------------
+621:         rw::math::Math::seed(static_cast<unsigned>(request.seed));
+622: 
+623:         // ---------------------------------------------------------------
+624:         // 第三步：定位设备（只读视图查询——名称为⑥端口解析产物透传；
+625:         // 未命中＝调用方违约 fail-fast，不猜测名称——R-4/ARC-04）。
+626:         // ---------------------------------------------------------------
+627:         const rw::core::Ptr<const rw::models::SerialDevice> device =
+628:             request.workCell->findDevice(request.deviceRuntimeName);
+629:         if (device.isNull()) {
+630:             throw TrajectoryError("trajectory/planner/device-unresolved",
+631:                                   "设备在快照只读视图中不可解析: "
+632:                                       + request.deviceRuntimeName);
+633:         }
+634:         const std::size_t dof = device->getDOF();
+635:         if (request.fromQ.size() != dof) {
+636:             throw TrajectoryError("trajectory/planner/dof-mismatch",
+637:                                   "构型维度与设备自由度不一致：构型 "
+638:                                       + std::to_string(request.fromQ.size()) + "，设备 "
+639:                                       + std::to_string(dof));
+640:         }
+641: 
+642:         // ---------------------------------------------------------------
+643:         // 第四步：构造碰撞约束/采样器/规划器（装配序见类注；规划器局部
+644:         // 对象——每次 search 独立，无跨调用状态）。
+645:         // ---------------------------------------------------------------
+646:         const AdapterCallContext ctx(&request.cancel);
+647:         // policy 会话适配约束（rw::core::ownedPtr 接管生命周期；合并约束
+648:         // 持有其 Ptr——存活期覆盖规划器）。
+649:         rw::core::Ptr<PolicySessionQConstraint> policyConstraint =
+650:             rw::core::ownedPtr(new PolicySessionQConstraint(request.session, &request.cancel));
+651:         // 设备 bounds 约束（编译产物权威限位——构型守卫与采样盒同源）。
+652:         rw::core::Ptr<rw::pathplanning::QConstraint> boundsConstraint =
+653:             rw::pathplanning::QConstraint::makeBounds(device->getBounds());
+654:         // 合并（碰撞＋限位双约束——构型与边都受限）。
+655:         rw::core::Ptr<rw::pathplanning::QConstraint> mergedConstraint =
+656:             rw::pathplanning::QConstraint::makeMerged(policyConstraint, boundsConstraint);
+657:         // 逐轴欧氏度量（rad|m 混合计量——与本域路径长度/选择序同口径）。
+658:         const rw::math::QMetric::Ptr metric =
+659:             rw::math::MetricFactory::makeEuclidean<rw::math::Q>();
+660:         // 边约束（直线插值离散检查——分辨率＝edge-resolution，§10.2）。
+661:         const rw::pathplanning::QEdgeConstraint::Ptr edge =
+662:             rw::pathplanning::QEdgeConstraint::make(mergedConstraint, metric,
+663:                                                     tuning.resolution);
+664:         // 规划约束（构型＋边）。
+665:         const rw::pathplanning::PlannerConstraint plannerConstraint =
+666:             rw::pathplanning::PlannerConstraint::make(mergedConstraint, edge);
+667:         // 约束采样器（均匀采样设备 bounds，再经合并约束过滤——采样失败
+668:         // 返回空 Q，RRT 内部重试）。
+669:         const rw::pathplanning::QSampler::Ptr sampler =
+670:             rw::pathplanning::QSampler::makeConstrained(
+671:                 rw::pathplanning::QSampler::makeUniform(device->getBounds()),
+672:                 mergedConstraint);
+673:         // RRT-Connect 规划器（黄金算例锁定选型——词表注释）。
+674:         const rw::pathplanning::QToQPlanner::Ptr planner =
+675:             rwlibs::pathplanners::RRTPlanner::makeQToQPlanner(
+676:                 plannerConstraint, sampler, metric, tuning.extend,
+677:                 rwlibs::pathplanners::RRTPlanner::RRTConnect);
+678: 
+679:         // ---------------------------------------------------------------
+680:         // 第五步：K 轮候选循环（预算先到先停；取消轮边界轮询——§15.1）。
+681:         // 每轮：query 产出一条候选路径→立即 PathSequence 复核→收集。
+682:         // ---------------------------------------------------------------
+683:         PlanSearchResult result;
+684:         SearchExhaustedRecord exhaustedRecord;
+685:         // 墙钟账目：start/deadline 双锚——预算判定用 deadline，消耗账目
+686:         // 用 start（SearchExhaustedRecord.consumedBudgetS 的如实来源）。
+687:         const auto startClock = std::chrono::steady_clock::now();
+688:         const auto deadline = startClock
+689:             + std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+690:                 std::chrono::duration<double>(request.timeBudgetS));
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp [110-205]
+110: GenerationBatch BaselinePerturbGenerator::generateNextBatch(const GenerationContext& ctx)
+111: {
+112:     // 第 1 步：防御复验（配置面＋策略参数面——生成器是两者共同的消费入口；
+113:     // 绕过 validateConfiguration 直调本接口也拦截——最后防线，与
+114:     // generateSeededLhsCandidates/canonicalizeRunConfiguration 同款纪律）。
+115:     validateConfiguration(ctx.config);
+116:     validateBaselinePerturbParams(m_params);
+117: 
+118:     // 第 2 步：取消位（空批＋cancelled——§12.2 取消语义）。
+119:     if (ctx.cancellationRequested) {
+120:         GenerationBatch batch;
+121:         batch.cancelled = true;
+122:         return batch;
+123:     }
+124: 
+125:     // 第 3 步：代序（单批策略——邻域在第 0 代完整枚举）。
+126:     if (ctx.generationIndex > 0U) {
+127:         GenerationBatch batch;
+128:         batch.exhausted = true;
+129:         return batch;
+130:     }
+131: 
+132:     // 第 4 步：扰动维度集＝未锁定且授权的连续/量化绑定（§8.2"锁定集外
+133:     // 扰动"/OPT-02——锁定绑定出现在补丁即拒绝，生成域预先排除）；枚举/
+134:     // 离散器件维度不在扰动域（无连续邻域语义——±Δ 无定义；登记于头文件
+135:     // 类注）；bindingId 字典序＝确定性维度序。
+136:     std::vector<const VariableBinding*> dims;
+137:     dims.reserve(ctx.config.variables.size());
+138:     for (const auto& b : ctx.config.variables) {
+139:         if (b.locked || !b.authorized) {
+140:             continue;  // 锁定/未授权维度不扰动（§5.4——出现在补丁即拒绝）
+141:         }
+142:         if (b.kind == VariableKind::Continuous || b.kind == VariableKind::Quantized) {
+143:             dims.push_back(&b);
+144:         }
+145:     }
+146:     std::sort(dims.begin(), dims.end(),
+147:               [](const VariableBinding* a, const VariableBinding* b) {
+148:                   return a->bindingId < b->bindingId;
+149:               });
+150: 
+151:     GenerationBatch batch;
+152: 
+153:     // 第 5 步：基线候选恒为批首元素（§8.2"基线候选……总是生成并参与
+154:     // 评估"/OPT-11——空补丁有确定身份，label 不参与身份 I-OPT-8）。
+155:     CandidatePatch baseline;
+156:     baseline.label = "baseline";
+157:     batch.candidates.push_back(std::move(baseline));
+158: 
+159:     // 第 6 步：预算与邻域规模。非基线候选上限 n＝maxCandidates−1（§8.2
+160:     // "生成器受 OptimizationBudget 约束"；maxCandidates≥1 已校验无下溢）；
+161:     // 邻域总量＝2m（m 维各 ±Δ 一点）。n==0（预算仅基线）或 m==0（无连续/
+162:     // 量化授权维度）均为合法退化——批＝仅基线，exhausted 如实置位。
+163:     const std::uint32_t n = ctx.config.budget.maxCandidates - 1U;
+164:     const std::size_t m = dims.size();
+165:     if (n == 0U || m == 0U) {
+166:         batch.exhausted = true;
+167:         return batch;
+168:     }
+169: 
+170:     // 第 7~8 步：OFAT ±Δ 确定性轮转调度——第 i 个邻域候选取维度 v＝i mod m、
+171:     // 方向 sign＝第 0 轮（i/m==0）正向、第 1 轮负向；调度上限 2m（全部
+172:     // (维度,方向) 对）。逐点做合法性预检（有限/界内/正性词表位），不合法
+173:     // 方向跳过不生成（邻域枚举语义即"合法邻点"——跳过是采样设计而非静默
+174:     // 纠错，登记于头文件算法第 7 步）；收集满 n 个或调度耗尽即止。
+175:     std::uint32_t collected = 0;
+176:     for (std::uint32_t i = 0; i < 2U * m && collected < n; ++i) {
+177:         const VariableBinding& b = *dims[i % m];
+178:         const int sign = (i < m) ? 1 : -1;  // 第 0 轮 +Δ、第 1 轮 −Δ（轮转序）
+179: 
+180:         // 单步扰动幅度 Δ_v（§8.2 表第二行"步长/比例入 config"）：
+181:         //   Quantized→绑定 step（网格邻点——步长字面承载于 config.opt
+182:         //   variables 内）；Continuous→perturbRatio×行程（比例承载于装配期
+183:         //   配置面 BaselinePerturbParams，默认 0.01＝附录 C 表①冻结值）。
+184:         // step 语义由 VariableBinding 契约保证：Quantized 恒 >0（Continuous
+185:         // 恒 0 不进本分支）；量化绑定的防御位（step≤0）属研究定义非法，
+186:         // 交由补丁构造/绑定校验面拒绝，此处不重复判定（单一职责）。
+187:         const double delta = (b.kind == VariableKind::Quantized)
+188:                                  ? b.step
+189:                                  : m_params.perturbRatio * (b.upperBound - b.lowerBound);
+190:         const double value = b.defaultValue + sign * delta;
+191: 
+192:         // 合法性预检（三查——任一不过即跳过该方向）：
+193:         //   a) 有限：defaultValue/界值异常（NaN/Inf）时扰动值无配置语义；
+194:         //   b) 界内：[lowerBound, upperBound] 闭区间（越界方向不是邻点）；
+195:         //   c) 正性词表位：valueMustBePositive（I-MDL-11 传动比等——需求
+196:         //      原文值域硬约束）维度候选值须 >0。该位定义在**词表条目**上
+197:         //      （VariableDefinition——绑定结构无此字段），经 matchDefinition
+198:         //      查表；未知绑定查不到条目时不预判正性（补丁构造随后按研究
+199:         //      定义非法 fail-fast——两道防线各司其职）。
+200:         const bool finite = std::isfinite(value);
+201:         const bool inBounds = value >= b.lowerBound && value <= b.upperBound;
+202:         const VariableDefinition* def
+203:             = matchDefinition(b.bindingId, ctx.config.stage);
+204:         const bool positive = def == nullptr || !def->valueMustBePositive
+205:                               || value > 0.0;
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp [185-250]
+185:             continue;
+186:         }
+187:         unique.push_back(&c);
+188:     }
+189: 
+190:     // ---- 第 3 步：非支配分层（逐层筛选——文件头注②；每轮在剩余集中
+191:     //      取"不被任何同轮候选支配"者为当前层；扫描序＝去重后首见序，
+192:     //      层内收集序＝首见序——两序都只是中间态，最终序由第 4 步全序
+193:     //      比较器定死，NFR-COR-02） ----
+194:     const std::size_t n = unique.size();
+195:     std::vector<std::size_t> rank(n, 0);     ///< 每候选非支配 rank（0 基）
+196:     std::vector<bool> assigned(n, false);    ///< 是否已入层
+197:     std::size_t remaining = n;               ///< 剩余未分层候选数
+198:     for (std::size_t currentRank = 0; remaining > 0; ++currentRank) {
+199:         // 当前层：未被层外剩余集中任何未分层候选支配的候选。
+200:         // O(剩余²) 支配判定——R1 预算 ≤256 候选（卡 §4.3 OptimizationBudget
+201:         // 默认），最坏 6.5 万次纯函数调用，无性能顾虑。
+202:         std::vector<std::size_t> front;
+203:         for (std::size_t i = 0; i < n; ++i) {
+204:             if (assigned[i]) {
+205:                 continue;  // 已入前序层——不再参与本轮筛选。
+206:             }
+207:             bool dominatedByAny = false;
+208:             for (std::size_t j = 0; j < n; ++j) {
+209:                 if (j == i || assigned[j]) {
+210:                     continue;  // 同候选/已分层候选不参与支配本轮。
+211:                 }
+212:                 if (dominates(*unique[j], *unique[i], objectives)) {
+213:                     dominatedByAny = true;
+214:                     break;
+215:                 }
+216:             }
+217:             if (!dominatedByAny) {
+218:                 front.push_back(i);
+219:             }
+220:         }
+221:         // front 非空恒成立（有限偏序下剩余集中至少一个极小元——若为空
+222:         // 属算法缺陷，fail-fast 不死循环）。
+223:         if (front.empty()) {
+224:             throw OptimizationError(kOptInputInvalid,
+225:                                     "buildFront: 非支配分层异常（空层）——"
+226:                                     "内部一致性缺陷");
+227:         }
+228:         for (const std::size_t i : front) {
+229:             rank[i] = currentRank;
+230:             assigned[i] = true;
+231:             --remaining;
+232:         }
+233:     }
+234: 
+235:     // ---- 第 4 步：稳定排序（三键全序——§7.4/DOPT-8；键②用**严格浮点
+236:     //      比较**，容差不进排序键——文件头注①：容差近似相等非传递，混入
+237:     //      即破坏全序；键③ CandidateId 字节字典序兜底——无巧合平局） ----
+238:     const std::vector<MetricDefinition> defs = metricDefinitions();  // 排序前
+239:     // 一次构建（比较器内查表——方向权威消费面；非热路径逐次构造）。
+240:     std::vector<std::size_t> order(n);
+241:     for (std::size_t i = 0; i < n; ++i) {
+242:         order[i] = i;
+243:     }
+244:     std::sort(order.begin(), order.end(),
+245:               [&](std::size_t lhs, std::size_t rhs) {
+246:                   // 键①：非支配 rank 升序（前沿层序——第一前沿最先）。
+247:                   if (rank[lhs] != rank[rhs]) {
+248:                       return rank[lhs] < rank[rhs];
+249:                   }
+250:                   // 键②：激活目标值依次按方向严格比较（目标次序＝
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp [270-330]
+270:     // ---- 第 1 步：解析外括号（确定性上界——三角形不等式覆盖全部关节
+271:     // 角；NoDevice/NoTcp/FrameUnresolved 走 Expected 值面，环境/快照
+272:     // 事实不属调用方违约）。----
+273:     const Expected<AnalyticReachBound> bound =
+274:         computeAnalyticReachBound(view, tcp);
+275:     if (!bound.ok()) {
+276:         return Expected<EnvelopeResult>::err(bound.error());
+277:     }
+278:     const double reachUpper = bound.get().totalRadius;  // m（Rup——外括号）
+279: 
+280:     // ---- 结果骨架（恒近似标注——KIN-10/AT-26 的类型化落点；身份回填
+281:     // 中 seed/referenceQ 由实现从 query 覆写——防调用方两处不一致）。----
+282:     EnvelopeResult result;
+283:     result.precision = EnvelopePrecision::Approximate;
+284:     result.contractVersion = kEnvelopeContractVersion;
+285:     result.directionCount = query.directionCount;
+286:     result.reachUpperBound = reachUpper;
+287:     result.identity = query.identity;
+288:     result.identity.seed = query.seed;
+289:     result.identity.referenceQ = query.referenceQ;
+290: 
+291:     // 方向集（§7.2 黄金设施复用——斐波那契螺旋，黄金锁定；与 seed 无关
+292:     // ——方向离散是配置参数不是随机量）。
+293:     const std::vector<rw::math::Vector3D<double>> directions =
+294:         generateDirections(query.directionCount);
+295: 
+296:     // 逐自由度评价区间（evaluationIntervals 唯一实现点——初值生成与
+297:     // 限位评价同源，防两套真值；每计算一次，逐探针复用）。
+298:     const std::vector<JointInterval> intervals = evaluationIntervals(view);
+299: 
+300:     // 射线记录预置（方向生成序；NotRun 初值——取消/设施失败路径的
+301:     // 未开始方向即此初值的自然保留，RegionCoverage 槽位预置同款）。
+302:     result.rays.resize(query.directionCount);
+303:     for (std::uint32_t j = 0; j < query.directionCount; ++j) {
+304:         result.rays[j].directionIndex = j;
+305:         result.rays[j].direction = directions[j];
+306:     }
+307: 
+308:     // ---- 第 2 步：入口取消检查（取消已请求→零探测返回；全部方向
+309:     // NotRun——D-KIN-9 取消不是结局，partial 如实标记）。----
+310:     if (query.cancellationProbe && query.cancellationProbe()) {
+311:         result.cancelled = true;
+312:         for (EnvelopeRayRecord& ray : result.rays) {
+313:             ray.reason = "协作取消（入口检查——零探测返回；重跑同 seed 可复算）";
+314:         }
+315:         return Expected<EnvelopeResult>::ok(std::move(result));
+316:     }
+317: 
+318:     // ---- 第 3 步：逐方向射线边界（等差径向站点扫描＋外端区间二分
+319:     // 收敛——头注算法 2/3/4 步，KIN-P5/审查 A04 重构版；单线程顺序执行，
+320:     // 方向序＝生成序）。----
+321:     //
+322:     // 旧算法（内锚点几何序列 Rup·2⁻ᵏ＋hi=Rup 免探测）的两处缺陷（审查
+323:     // A04 反例驱动）：
+324:     //   ①上界点被当作"已证不可达"免探测——错误表述：三角形不等式取等
+325:     //     时（共线串联）上界点恰可达（六轴同轴链 TCP 距轴 1 m 的零位
+326:     //     构型精确到达 (1,0,0)），旧算法对这类方向系统性漏检整条射线；
+327:     //   ②几何序列在原点邻域过密、在 (Rup/2, Rup] 只有一个探测点——
+328:     //     窄环带（如 [0.4,0.5]·Rup）落在探测缝隙里即全灭，且全灭被并入
+329:     //     Computed 态输出 rMax=0 的"确定结论"，掩盖"没有找到"的事实。
+330:     // 新算法把预算改为 M＝anchorProbesMax 个等差站点 t_j＝Rup·j/M
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp [375-440]
+375:                 // 设施失败（F-746③ 同族非终局）：停止全部，剩余方向
+376:                 // NotRun 如实标记；facility 已由探针转载底层 outcome
+377:                 // 素材（stage/detail 原值——不加工）。
+378:                 ray.state = EnvelopeRayState::NotRun;
+379:                 ray.reason = "求解设施失败（径向站点扫描中断——该方向证据缺失）";
+380:                 result.facilityFailure = facility;
+381:                 stopAll = true;
+382:                 break;
+383:             }
+384:             // NotFound：本站点探明不可达——记录为当前外端（后续可达站
+385:             // 的外边界区间即 [下一可达站, 本站]），继续内扫。
+386:             hi = t;
+387:         }
+388: 
+389:         if (stopAll) {
+390:             break;
+391:         }
+392: 
+393:         if (!anchored) {
+394:             // ---- 站点全灭：未找到可达样本（KIN-P5/审查 A04 诚实性
+395:             // 修复）。低置信观测而非确定结论：可能是真不可达，也可能
+396:             // 可达集窄于站点分辨率（Rup/M）或数值搜索未果（近似根源
+397:             // 2）。旧行为（Computed＋rMax=0 的"近似空确定结论"）废除
+398:             // ——"找到半径为零"与"没有找到"自此在状态词表分立。----
+399:             ray.state = EnvelopeRayState::NoSampleFound;
+400:             ray.rMax = 0.0;  // 占位——本态下 rMax 无语义（EnvelopeRayRecord 注）
+401:             ray.reason =
+402:                 "未找到可达样本（低置信——探测分辨率 Rup/"
+403:                 + std::to_string(query.anchorProbesMax)
+404:                 + " 内无命中；不构成该方向确定性不可达结论——搜索未果不作"
+405:                 "不可行证明，窄于分辨率的可达带亦可能被漏检）";
+406:             continue;
+407:         }
+408: 
+409:         // ---- 3b. 外端区间二分收敛（(lo, hi] 上对分——mid 可达则外推
+410:         // lo、不可达则内缩 hi；lo=hi（可达站＝上界点）时区间已空、循环
+411:         // 自然不进入。终止＝区间宽 ≤ positionTolerance（物理分辨率早停）
+412:         // 或迭代数耗尽（精度兜底）。rMax＝lo——"已证实可达的最远距离"
+413:         // 下估计。----
+414:         for (std::uint32_t it = 0;
+415:              it < query.bisectIterationsMax && (hi - lo) > query.positionTolerance;
+416:              ++it) {
+417:             const double mid = lo + (hi - lo) / 2.0;  // 中点（不越界形态）
+418:             const ProbeVerdict verdict =
+419:                 probeReachability(mid, directions[j], view, tcp, query,
+420:                                   intervals, probeSerial, ray.probeCount,
+421:                                   &facility);
+422:             if (verdict == ProbeVerdict::Reached) {
+423:                 lo = mid;  // 可达侧外推
+424:                 continue;
+425:             }
+426:             if (verdict == ProbeVerdict::Cancelled) {
+427:                 ray.state = EnvelopeRayState::NotRun;
+428:                 ray.reason = "协作取消（二分中断）";
+429:                 result.cancelled = true;
+430:                 stopAll = true;
+431:                 break;
+432:             }
+433:             if (verdict == ProbeVerdict::Facility) {
+434:                 ray.state = EnvelopeRayState::NotRun;
+435:                 ray.reason = "求解设施失败（二分中断——该方向证据缺失）";
+436:                 result.facilityFailure = facility;
+437:                 stopAll = true;
+438:                 break;
+439:             }
+440:             hi = mid;  // 不可达侧内缩（含搜索未果——近似根源 2）
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp [360-469]
+360: bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
+361: {
+362:     // 场景现取（studio 公开 API 直供——getView 中介零需要）。
+363:     if (m_studio == nullptr) {
+364:         return false;
+365:     }
+366:     WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
+367:     if (scene.isNull()) {
+368:         return false;
+369:     }
+370:     // 挂接锚 WorkCell 三级现取（F-550② 修复——会话预览是会话编辑面
+371:     // 〔PM-11/协议头注〕，草稿期（首应用前）就必须可见；此前实现把
+372:     // "宿主已有发布 WorkCell"当前置，新项目增工位/区域后三维恒空白）：
+373:     //   ①宿主 WorkCell（发布链 setWorkCell 后——常态路径）；
+374:     //   ②场景当前 WorkCell（宿主装载，或上次装入的会话预览锚——复用）；
+375:     //   ③新建会话预览锚装入场景（ensureSessionPreviewAnchor——仅场景
+376:     //     层，studio 模型层零触碰）。
+377:     // "无锚不画"是框架硬约束（场景挂接 API 在场景无 WorkCell 时抛异常
+378:     // ——WorkCellScene::addDrawable 防御），修复让锚恒在位而非放弃渲染。
+379:     rw::models::WorkCell::Ptr workcell = m_studio->getWorkCell();
+380:     if (workcell.isNull()) {
+381:         workcell = ensureSessionPreviewAnchor(*scene);
+382:     }
+383:     if (workcell.isNull()) {
+384:         return false;  // 锚不可得（视图缺位等装配降级——诚实失败）
+385:     }
+386:     Frame* const world = workcell->getWorldFrame();
+387:     if (world == nullptr) {
+388:         return false;
+389:     }
+390: 
+391:     // ①清旧组（节点名清单逐个删——原子替换语义的"先清"半区）。
+392:     clear();
+393: 
+394:     // ②工位标记（UI-T77——F-555 双形态）：
+395:     //   - position 形态（世界系点位）：坐标轴＋标签一体自绘
+396:     //     （StationMarkerRender）挂 WORLD 根帧——工位作为带坐标的空间点
+397:     //     在三维可辨（此前标记恒渲染于参考系原点＝工位坐标投影链丢失）；
+398:     //     投影方保证到达本形态的 position 已可用（World 恒等或参考帧已
+399:     //     解析——变换失败降级为挂帧形态），故无需再解析 frameName；
+400:     //   - 挂帧形态（position 空，UI-T33 旧语义）：findFrame 挂 FrameAxis
+401:     //     （坐标轴随帧动——会话/示教移动零重投；帧不可解析＝跳过并计数
+402:     //     ——失败可见面）。
+403:     //   两形态标签统一走 Qt 纹理化文本（QtTextBillboard——F-556：GLUT
+404:     //   位图字体无 CJK，UTF-8 工位名乱码的替代承载；标签名独立命名空间
+405:     //   防与轴同名冲突——removeDrawable 按名逐个删互不干扰）。
+406:     // 帧解析锚＝上方现取的挂接锚 WC（F-550②——发布前＝会话预览锚，
+407:     // "WORLD" 别名经 WorkCell::findFrame 特判命中其根帧；发布后＝编译
+408:     // 产物 WC，同一别名命中发布根帧——两态查找语义一致）。
+409:     int unresolved = 0;
+410:     for (const View3DFrameMarker& marker : update.frameMarkers) {
+411:         if (marker.position.has_value()) {
+412:             // 点值形态：轴＋标签一体挂 WORLD（世界系点位——见上注）。
+413:             const std::string nodeName =
+414:                 std::string(kPreviewPrefix) + "marker3d-" + marker.label;
+415:             scene->addRender(nodeName,
+416:                              rw::core::ownedPtr(new StationMarkerRender(
+417:                                  *marker.position, marker.label)),
+418:                              world);
+419:             m_nodeNames.push_back(nodeName);
+420:             continue;
+421:         }
+422:         Frame* const frame = workcell->findFrame(marker.frameName);
+423:         if (frame == nullptr) {
+424:             ++unresolved;  // 失败可见面在投影方摘要——此处计数不虚构坐标轴
+425:             continue;
+426:         }
+427:         const rw::core::Ptr<Frame> framePtr(frame);  // 非 owning 包装（场景树持有帧存活）
+428:         const std::string axisName =
+429:             std::string(kPreviewPrefix) + "marker-" + marker.label;
+430:         scene->addFrameAxis(axisName, 0.25, frame);  // 轴长 0.25 m（工位尺度）
+431:         m_nodeNames.push_back(axisName);
+432:         // 标签（Qt 纹理化文本——F-556 替代件；挂帧随动，帧原点上方）。
+433:         const std::string labelName =
+434:             std::string(kPreviewPrefix) + "label-" + marker.label;
+435:         scene->addRender(labelName,
+436:                          rw::core::ownedPtr(
+437:                              new QtTextBillboardRender(marker.label, framePtr)),
+438:                          frame);
+439:         m_nodeNames.push_back(labelName);
+440:     }
+441: 
+442:     // ③区域边界框（世界系八角点 12 棱线框——辨识蓝）。
+443:     if (update.boxOutline.has_value()) {
+444:         const std::string nodeName = std::string(kPreviewPrefix) + "box";
+445:         scene->addRender(nodeName,
+446:                          rw::core::ownedPtr(new RegionOutlineRender(*update.boxOutline)),
+447:                          world);
+448:         m_nodeNames.push_back(nodeName);
+449:     }
+450: 
+451:     // ④采样格（点阵着色——Good 绿/Weak 黄/Failed 红；空＝中性灰）。
+452:     if (update.sampleGrid.has_value()) {
+453:         const std::string nodeName = std::string(kPreviewPrefix) + "grid";
+454:         scene->addRender(nodeName,
+455:                          rw::core::ownedPtr(new SampleGridRender(*update.sampleGrid)),
+456:                          world);
+457:         m_nodeNames.push_back(nodeName);
+458:     }
+459: 
+460:     // 失败可见面追加到摘要（协议值不可变——摘要由投影方承载；此处经
+461:     // 节点名留痕：未解析帧计数以独立占位节点名可查——Dev 面诊断锚）。
+462:     if (unresolved > 0) {
+463:         const std::string nodeName = std::string(kPreviewPrefix) + "unresolved-"
+464:                                      + std::to_string(unresolved);
+465:         m_nodeNames.push_back(nodeName);  // 名单留痕（无渲染体——诊断锚）
+466:     }
+467:     return true;
+468: }
+469: 
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp [506-530]
+506: void HostView3DPreviewBackend::clear()
+507: {
+508:     if (m_studio == nullptr) {
+509:         return;
+510:     }
+511:     WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
+512:     if (scene.isNull()) {
+513:         m_nodeNames.clear();
+514:         return;
+515:     }
+516:     for (const std::string& name : m_nodeNames) {
+517:         scene->removeDrawable(name);  // 幂等（不存在＝false，无副作用）
+518:     }
+519:     m_nodeNames.clear();
+520: }
+521: 
+522: }  // namespace ui
+523: }  // namespace ird
+524: }  // namespace sdurws
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp [55-78]
+55: void StoreCloseSupervisor::start()
+56: {
+57:     // 幂等先判（F-638）：线程仍在监督中＝直接 no-op——宿主重复触发（如
+58:     // 关闭入口重入）安全。运行态检查必须先于 join：join 收割语义仅在
+59:     // **非运行态**成立，若先 join 则运行态重复 start 会阻塞在运行中线程
+60:     // 上（直至监督循环退出——最长可达阈值＋宽限），既违背幂等 no-op 语
+61:     // 义，又把调用线程无辜挂住。
+62:     if (m_running.load(std::memory_order_acquire)) {
+63:         return;
+64:     }
+65:     // 收割上一轮已自然退出（①/③/④路径 return）的线程对象——thread 赋
+66:     // 值前必须 join，否则 std::terminate。可达此处即非运行态（上判已滤
+67:     // 运行态）：线程要么从未启动（不 joinable＝天然跳过）、要么已自然
+68:     // 退出（joinable＝收割；join 后 running 位必已被线程自身清除——见
+69:     // superviseLoop 收尾，acquire 读到 false 与线程的 release 清位配对）。
+70:     if (m_thread.joinable()) {
+71:         m_thread.join();
+72:     }
+73:     // 复位本次监督的过程态（观测位不在此复位——历史事实保留，见 stop 注；
+74:     // 过程位与线程状态配对复位，保证 start/stop 多轮使用语义清晰）。
+75:     m_stopRequested.store(false, std::memory_order_release);
+76:     m_running.store(true, std::memory_order_release);
+77:     m_thread = std::thread([this] { superviseLoop(); });
+78: }
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp [95-180]
+95: void StoreCloseSupervisor::superviseLoop()
+96: {
+97:     // 阈值计时起点（t0＝start 时刻——Config.abandonThreshold 的量度基准）。
+98:     const auto now = [this] {
+99:         return m_clock ? m_clock()
+100:                        : std::chrono::steady_clock::now();
+101:     };
+102:     const auto t0 = now();
+103:     const auto tDiag = t0 + m_config.abandonThreshold;  // ②段兜底诊断时点
+104:     const auto tGiveUp = tDiag + m_config.giveUpGrace;  // ③段放弃监督时点
+105:     bool abandonDiagWritten = false;  // ③段一次性标志（Dev 日志恰一条）
+106: 
+107:     // 监督循环（①~④序——头文件 start() 注）：**先观测后查停止**——
+108:     // 循环体首拍必须完成闭合观测再让位给 stop 请求（宿主 start 后立即
+109:     // stop 的短会话形态下，闭合事实不被停止请求吞掉；此后每拍同序）。
+110:     // 线程约束澄清（tick 单线程域）：调度推进（TaskScheduler::tick——
+111:     // 取消协议/排空监视/自动兜底的推进泵）归宿主**调度循环线程**（真实
+112:     // 宿主形态：关闭期间调度循环持续 tick——Scheduler.hpp"tick 仅调度域
+113:     // 单线程"）；本监督线程**只观测不驱动**（并发 tick＝锁域违例——
+114:     // 实测会死锁），这正是"编排线程只观察不推进"（Lifecycle.cpp
+115:     // awaitStoreClosed 同款纪律）的监督面表达。
+116:     //   ① store 已闭合 → 记观测退出（关闭完成——监督成功收场）；
+117:     //   ② 越兜底阈值仍未闭合 → 一次性 Dev 日志（"残留会话"告知——project
+118:     //      §9.7 登记义务：强制 abandonAll 已由宿主调度循环的排空自动兜底
+119:     //      承载，本日志承载"若仍未闭合说明存在非任务侧在途引用"的诚实
+120:     //      告知）；
+121:     //   ③ 越放弃宽限仍未闭合 → Dev 日志＋放弃退出（不阻塞进程退出——
+122:     //      project §9.7 原文义务；非任务侧引用〔在途命令/草稿保存〕不是
+123:     //      abandon 处置面，监督不能替它清零，如实留痕后退出）；
+124:     //   ④ stop() 请求 → 退出（宿主主动收敛——run 返回后的正常路径）。
+125:     while (true) {
+126:         // ① 闭合观测（closed() 为内部互斥快照查询——并发安全）。
+127:         if (m_store.closed()) {
+128:             m_storeClosedObserved.store(true, std::memory_order_release);
+129:             m_running.store(false, std::memory_order_release);
+130:             return;
+131:         }
+132: 
+133:         // ④ 停止请求（在闭合观测**之后**检查——首拍观测优先语义）。
+134:         if (m_stopRequested.load(std::memory_order_acquire)) {
+135:             break;
+136:         }
+137: 
+138:         const auto t = now();
+139: 
+140:         // ② 兜底诊断（一次性——超阈值瞬间恰一条，不逐拍刷屏）。
+141:         if (!abandonDiagWritten && t >= tDiag) {
+142:             abandonDiagWritten = true;
+143:             m_abandonDiagObserved.store(true, std::memory_order_release);
+144:             if (m_devLog != nullptr) {
+145:                 m_devLog->logDev(
+146:                     kCloseSupervisorChannel,
+147:                     "关闭排空超阈值仍未闭合：强制 abandonAll(ForceTerminated) "
+148:                     "已由排空编排自动兜底承载；若存储上下文仍未闭合，说明存在"
+149:                     "非任务侧在途引用（在途命令/草稿保存）——继续监督至宽限");
+150:             }
+151:         }
+152: 
+153:         // ③ 放弃监督（不阻塞进程退出——§9.7 原文义务）。路径序：先
+154:         // 置观测位（宿主 wait-gaveUp 循环的释放面）→**写日志**→清
+155:         // running→return——日志写入先于线程退出，join 返回后必然可见。
+156:         if (t >= tGiveUp) {
+157:             m_gaveUp.store(true, std::memory_order_release);
+158:             if (m_devLog != nullptr) {
+159:                 m_devLog->logDev(
+160:                     kCloseSupervisorChannel,
+161:                     "关闭监督放弃：宽限期内存储上下文仍未闭合（非任务侧在途"
+162:                     "引用未释放）——残留事实已留痕，监督退出不阻塞进程退出；"
+163:                     "请人工核查在途命令/草稿保存持有者");
+164:             }
+165:             m_running.store(false, std::memory_order_release);
+166:             return;
+167:         }
+168: 
+169:         // 拍间隔（awaitStoreClosed 同款 1 ms 拍频——避免忙等烧核；clock
+170:         // 注入形态下的真实睡眠与虚拟推进解耦：测试用短阈值＋真实拍频）。
+171:         std::this_thread::sleep_for(m_config.pollInterval);
+172:     }
+173: 
+174:     // ④ stop() 请求退出——走到此处即宿主主动收敛（闭合与否以观测位为
+175:     // 准——m_storeClosedObserved 只在真实观测到 closed() 时置位）。
+176:     m_running.store(false, std::memory_order_release);
+177: }
+178: 
+179: }  // namespace workflow
+180: }  // namespace ird
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs [63-103]
+63: function trapezoid(ts, ys) {
+64:   let sum = 0;
+65:   for (let i = 1; i < ts.length; ++i) {
+66:     sum += 0.5 * (ys[i - 1] + ys[i]) * (ts[i] - ts[i - 1]);
+67:   }
+68:   return sum;
+69: }
+70: 
+71: /**
+72:  * 单样本封闭式动力学（平面二连杆——文件头公式直写；返回逐关节分项）。
+73:  * @param m 模型（质量/质心/惯量/杆长/摩擦）
+74:  * @param gz 基座系重力 Z 分量（m/s²——地面 −9.81 / 倒挂 +9.81）
+75:  * @param q qd qdd 逐关节列（rad、rad/s、rad/s²）
+76:  */
+77: function rneaReference(m, gz, q, qd, qdd) {
+78:   const [m1, m2] = [m.links[0].massKg, m.links[1].massKg];
+79:   const [c1, c2] = [m.links[0].comFromJointM, m.links[1].comFromJointM];
+80:   const [i1, i2] = [m.links[0].inertiaYyAboutCom, m.links[1].inertiaYyAboutCom];
+81:   const L1 = m.link1LengthM;
+82:   const out = [];
+83:   for (let j = 0; j < 2; ++j) {
+84:     const cosQ2 = Math.cos(q[1]);
+85:     const M11 = m1 * c1 * c1 + i1 + m2 * (L1 * L1 + c2 * c2 + 2 * L1 * c2 * cosQ2) + i2;
+86:     const M12 = m2 * (c2 * c2 + L1 * c2 * cosQ2) + i2;
+87:     const M22 = m2 * c2 * c2 + i2;
+88:     const grav = j === 0
+89:       ? gz * (m1 * c1 * Math.cos(q[0]) + m2 * (L1 * Math.cos(q[0]) + c2 * Math.cos(q[0] + q[1])))
+90:       : gz * m2 * c2 * Math.cos(q[0] + q[1]);
+91:     const inertia = j === 0 ? M11 * qdd[0] + M12 * qdd[1] : M12 * qdd[0] + M22 * qdd[1];
+92:     const h = m2 * L1 * c2 * Math.sin(q[1]);
+93:     const cori = j === 0 ? -h * (2 * qd[0] * qd[1] + qd[1] * qd[1]) : h * qd[0] * qd[0];
+94:     const sgn0 = qd[j] > 0 ? 1 : qd[j] < 0 ? -1 : 0; // sgn₀(0)=0（D-DYN-7）
+95:     const fric = m.friction.provided
+96:       ? m.friction.viscous * qd[j] + m.friction.coulomb * sgn0 + m.friction.bias
+97:       : 0; // 摩擦缺失＝分项按 0 继续（MDL-16/DYN-06——降级标记由产品面承载）
+98:     const total = grav + inertia + cori + fric + 0; // 外力项 R1 恒 0（P-DYN-3）
+99:     out.push({ tauGravity: grav, tauInertia: inertia, tauCoriolisCentrifugal: cori,
+100:                tauFriction: fric, tauExternal: 0, tauTotal: total });
+101:   }
+102:   return out;
+103: }
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs [353-450]
+353: function closeWithin(a, b, tol) {
+354:   // 附录 D C4：|value−reference| ≤ relative·|reference|＋absolute（参考元＝b）。
+355:   return Math.abs(a - b) <= tol.relative * Math.abs(b) + tol.absolute;
+356: }
+357: 
+358: function dominates(a, b, objectives) {
+359:   // 第一步：∀i aᵢ 不劣于 bᵢ（min: a≤b∨closeWithin；max: a≥b∨closeWithin）。
+360:   for (const o of objectives) {
+361:     const av = a.metrics[o.field];
+362:     const bv = b.metrics[o.field];
+363:     const notWorse =
+364:       o.direction === "min" ? av <= bv || closeWithin(av, bv, o.tolerance)
+365:                             : av >= bv || closeWithin(av, bv, o.tolerance);
+366:     if (!notWorse) return false;
+367:   }
+368:   // 第二步：∃j 严格优于（差异须超出容差——近似相等互不支配的自洽性）。
+369:   for (const o of objectives) {
+370:     const av = a.metrics[o.field];
+371:     const bv = b.metrics[o.field];
+372:     const close = closeWithin(av, bv, o.tolerance);
+373:     const strictly =
+374:       o.direction === "min" ? av < bv && !close : av > bv && !close;
+375:     if (strictly) return true;
+376:   }
+377:   return false;
+378: }
+379: 
+380: // 目标集声明（metricId token → 指标字段名）——声明序即排序键②消费序。
+381: function bindObjectives(list) {
+382:   const fieldOf = {
+383:     "opt.metric.envelope": "envelope",
+384:     "opt.metric.structural-mass": "structuralMass",
+385:     "opt.metric.min-joint-margin": "minJointMargin",
+386:   };
+387:   return list.map((o) => ({ ...o, field: fieldOf[o.metricId] }));
+388: }
+389: 
+390: // buildFront 独立复算：去重保首见 → NSGA 逐层（剩余集内互不支配）→
+391: // 稳定排序三键（rank 升序→声明序严格字典序〔无容差〕→CandidateId 字典序）。
+392: function buildFront(members, objectives) {
+393:   const objectivesBound = bindObjectives(objectives);
+394:   const unique = [];
+395:   let duplicatesDropped = 0;
+396:   for (const m of members) {
+397:     if (unique.some((u) => u.candidateId === m.candidateId)) {
+398:       ++duplicatesDropped;
+399:       continue;
+400:     }
+401:     unique.push(m);
+402:   }
+403:   const n = unique.length;
+404:   const rank = new Array(n).fill(0);
+405:   const assigned = new Array(n).fill(false);
+406:   let remaining = n;
+407:   for (let r = 0; remaining > 0; ++r) {
+408:     const front = [];
+409:     for (let i = 0; i < n; ++i) {
+410:       if (assigned[i]) continue;
+411:       let dominatedByAny = false;
+412:       for (let j = 0; j < n; ++j) {
+413:         if (j === i || assigned[j]) continue;
+414:         if (dominates(unique[j], unique[i], objectivesBound)) {
+415:           dominatedByAny = true;
+416:           break;
+417:         }
+418:       }
+419:       if (!dominatedByAny) front.push(i);
+420:     }
+421:     if (front.length === 0) throw new Error("分层异常（空层）——黄金复算缺陷");
+422:     for (const i of front) {
+423:       rank[i] = r;
+424:       assigned[i] = true;
+425:       --remaining;
+426:     }
+427:   }
+428:   const order = Array.from({ length: n }, (_, i) => i);
+429:   order.sort((lhs, rhs) => {
+430:     if (rank[lhs] !== rank[rhs]) return rank[lhs] - rank[rhs];
+431:     for (const o of objectivesBound) {
+432:       const vl = unique[lhs].metrics[o.field];
+433:       const vr = unique[rhs].metrics[o.field];
+434:       if (vl < vr) return o.direction === "min" ? -1 : 1;
+435:       if (vr < vl) return o.direction === "min" ? 1 : -1;
+436:     }
+437:     return unique[lhs].candidateId < unique[rhs].candidateId
+438:       ? -1
+439:       : unique[lhs].candidateId > unique[rhs].candidateId
+440:         ? 1
+441:         : 0;
+442:   });
+443:   const entries = order.map((i) => ({
+444:     candidateId: unique[i].candidateId,
+445:     isBaseline: unique[i].isBaseline,
+446:     nondominationRank: rank[i],
+447:     paretoNondominated: rank[i] === 0,
+448:   }));
+449:   return {
+450:     entries,
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp [44-100]
+44: CheckResult checkCloseWithin(std::string_view fieldPath, double actualSi,
+45:                              double referenceSi, core::Tolerance tolerance,
+46:                              std::string_view sourceTag) noexcept
+47: {
+48:     (void)sourceTag;   // 详情透传字段——TK-T10 Report 消费；本函数只判 passed
+49:     CheckResult result;
+50:     // 委托 core::closeWithin（唯一公式实现点——CR-06 diff 通过后的合法消费；
+51:     // 非有限输入 core 侧返回 false——不静默通过，NFR-COR-03）。
+52:     if (!core::closeWithin(actualSi, referenceSi, tolerance)) {
+53:         result.failures.push_back(
+54:             makeDetail(std::string{fieldPath}, false, 0, actualSi, referenceSi, tolerance));
+55:         result.passed = false;
+56:     }
+57:     return result;
+58: }
+59: 
+60: CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
+61:                                 const std::vector<double>& actualSi,
+62:                                 const std::vector<double>& referenceSi,
+63:                                 core::Tolerance tolerance,
+64:                                 std::string_view sourceTag) noexcept
+65: {
+66:     (void)sourceTag;
+67:     CheckResult result;
+68: 
+69:     // 长度不匹配：失败并列出缺失/额外索引（§4.3.3 表——非异常，测试失败级）。
+70:     // 缺失侧值以 NaN 占位（机器可读——非有限即显式缺失语义）。
+71:     const std::size_t common = std::min(actualSi.size(), referenceSi.size());
+72:     for (std::size_t i = 0; i < common; ++i) {
+73:         // 逐元素 C4（防正负抵消——不以差值总和替代）。
+74:         if (!core::closeWithin(actualSi[i], referenceSi[i], tolerance)) {
+75:             std::string path{fieldPathTemplate};
+76:             path += std::string("[");
+77:             path += std::to_string(i);
+78:             path += std::string("]");
+79:             result.failures.push_back(
+80:                 makeDetail(path, true, i, actualSi[i], referenceSi[i], tolerance));
+81:             result.passed = false;
+82:         }
+83:     }
+84:     if (actualSi.size() != referenceSi.size()) {
+85:         // 额外索引逐条登记（较长侧的超出元素缺失对侧）。
+86:         const auto& longer = actualSi.size() > referenceSi.size() ? actualSi : referenceSi;
+87:         const bool actualLonger = actualSi.size() > referenceSi.size();
+88:         for (std::size_t i = common; i < longer.size(); ++i) {
+89:             CompareDetail d = makeDetail(std::string(fieldPathTemplate) + "[" + std::to_string(i) + "]",
+90:                                          true, i, actualLonger ? longer[i] : 0.0,
+91:                                          actualLonger ? 0.0 : longer[i], tolerance);
+92:             d.actual = actualLonger ? longer[i] : std::nan("");
+93:             d.expected = actualLonger ? std::nan("") : longer[i];
+94:             result.failures.push_back(d);
+95:             result.passed = false;
+96:         }
+97:     }
+98:     return result;
+99: }
+100: 
+
+FILE RobWork/RobWork/src/sandbox/optimization/Optimizer.hpp [20-83]
+20: // forward declaration of StopCondition
+21: class StopCondition;
+22: 
+23: /** @addtogroup optimization */
+24: /*@{*/
+25: 
+26: /**
+27:  * @brief Base class for function optimizers.
+28:  *
+29:  * Finds minima of Multi-Input Single-Output functions.
+30:  */
+31: class Optimizer {
+32: public:
+33: 	//! Smart pointer.
+34: 	typedef rw::core::Ptr<Optimizer> Ptr;
+35: 
+36: 	//! Optimizer state data structure for logging.
+37: 	struct State {
+38: 		unsigned long step;
+39: 		VectorType guess;
+40: 		ResultType value;
+41: 		double error;
+42: 	};
+43: 
+44: public:
+45: 	/**
+46: 	 * @brief Constructor.
+47: 	 *
+48: 	 * @param function [in] a function to minimize
+49: 	 */
+50: 	Optimizer(typename FunctionType::Ptr function);
+51: 
+52: 	//! Destructor.
+53: 	virtual ~Optimizer();
+54: 
+55: 	//! Get optimized function.
+56: 	typename FunctionType::Ptr getFunction() const {
+57: 		return _function;
+58: 	}
+59: 
+60: 	//! Set optimized function
+61: 	virtual void setFunction(typename FunctionType::Ptr function) {
+62: 		_function = function;
+63: 	}
+64: 
+65: 	/**
+66: 	 * @brief Perform optimization.
+67: 	 *
+68: 	 * Resets iteration count, tolerance & clears log.
+69: 	 *
+70: 	 * @param initialGuess [in] initial guess for the function minimum
+71: 	 * @param stopCondition [in] stop condition for the algorithm
+72: 	 *
+73: 	 * @return Optimization result.
+74: 	 */
+75: 	VectorType optimize(VectorType initialGuess,
+76: 			const StopCondition& stopCondition);
+77: 
+78: 	/**
+79: 	 * @brief Get current result.
+80: 	 */
+81: 	VectorType getCurrentGuess() const {
+82: 		return _currentGuess;
+83: 	}
+
+FILE RobWork/RobWork/src/rw/common/BINArchive.hpp [286-311]
+286:         //! @copydoc InputArchive::doRead(Eigen::MatrixXd&, const std::string&)
+287:         virtual void doRead (Eigen::MatrixXd& val, const std::string& id) { readMatrix (val, id); }
+288: 
+289:         //! @copydoc InputArchive::doRead(Eigen::VectorXd&, const std::string&)
+290:         virtual void doRead (Eigen::VectorXd& val, const std::string& id) { readMatrix (val, id); }
+291: 
+292:         //! @copydoc InputArchive::doRead(std::vector<bool>&,const std::string&)
+293:         template< class T > void readValue (std::vector< T >& val, const std::string& id)
+294:         {
+295:             uint32_t s = 0;
+296:             _ifs->read ((char*) &s, sizeof (uint32_t));
+297:             // std::cout << "LEN:" << s << std::endl;
+298:             val.resize (s);
+299:             for (uint32_t i = 0; i < s; i++) {
+300:                 T& tmp = val[i];
+301:                 _ifs->read ((char*) &(tmp), sizeof (T));
+302:             }
+303:         }
+304: 
+305:         //! @copydoc InputArchive::doRead(bool&,const std::string&)
+306:         template< class T > void readValue (T& val, const std::string& id)
+307:         {
+308:             _ifs->read ((char*) &val, sizeof (val));
+309:             // std::cout << val << " ";
+310:         }
+311: 
+
+FILE RobWork/doc/industrial-robot-design/reuse/migration.md [133-149]
+133: ### 12.5 工作包 3：REUSE-T01 全项目双向审计
+134: 
+135: 每批都执行需求定位→上游检索/阅读→产品反查→最小运行探测→功能矩阵决策；无需每批通读整个库。批次只区分审计范围，不新增单元或改变既有 owner。
+136: 
+137: | 批次 | 覆盖单元/资产 | 关键输出与上游检索方向 |
+138: | --- | --- | --- |
+139: | 校准与内核 | runtime、core、evidence、policy、diagnostics、testkit | 模型/名称/State、数学/单位、证据/诊断权威、碰撞适配、测试夹具/报告；区分 owner 与 adapter |
+140: | 计算能力 | modeling、kinematics、trajectory、dynamics、drivetrain | 变换/DH/SVD、FK/Jacobian/IK、采样/规划/插值/时间律、RNE/FD；复核 16 已知项并找隐藏核心 |
+141: | 业务编排 | requirements、selection、optimization、workflow | 区域/工况、目录与筛选、搜索/随机源/优化、门控编排；不能把整单元当作 business-specific |
+142: | 平台与宿主 | project、execution、io、reporting、ui | 加载/序列化、worker 物化/调度、资源/导入/导出、呈现例外；检索上游工具、示例、测试和构建可复用点 |
+143: 
+144: - [ ] 每个功能给出 direct/adapter/business-specific/pending/proposal 决策；沿调用链反查共同 helper、inline、测试辅助和生成器。已观察适配也要验证权限与结果消费。
+145: - [ ] catalog 加入已实际读到的测试/示例/文档/target 和限制；functions 矩阵关联具体源码区段/摘要、需求/AT、权限与候选排除。不把上游测试直接复制为产品自己的平行测试基础。
+146: - [ ] 最小探测优先使用现有上游/产品测试目标与模型；需加探测测试时严格限原公共 API，记录依赖和范围，不能提前把实验接入生产，也不能把实验输出记为生产正向证据。
+147: - [ ] 分别验证 GAP-IK/RNE/FD/TRJ；未满足的功能提交最小扩展提案，保留搜索/反例/替代/影响/回滚。没有足够证据不得宣称缺库；提案未批不得补写核心。
+148: - [ ] 独立审查全 20 单元的覆盖与决策，生成覆盖/重复/缺口报告；矩阵审计完成可以包含明确阻塞的提案，但依赖该缺口的迁移任务不得 ready。审计完成不能等同零债务结项。
+149: 
+
+FILE RobWork/doc/industrial-robot-design/reuse/audit-contract.md [18-26]
+18: `inventory.json` 保留不可变文件基线；功能矩阵补充语义，不能替换或清空库存。当前 1401 个基线文件、16 个已知重复文件、2 个已观察适配文件只是已登记事实，不是范围或白名单；其余文件仍须审计。运行报告从上述数据生成。
+19: 
+20: ## 2. 需求驱动的双向审计
+21: 
+22: 每批执行：需求/AT 与真实入口定位 → 上游公共头、实现、测试、示例、文档、CMake 定向检索 → 阅读单位/坐标系/所有权/失败语义 → 反查产品隐藏实现与调用链 → 最小适用性探测 → 功能决策与独立审查。不设“先读完整个 RobWork 才可审计产品”的前置。
+23: 
+24: 第一批校准 runtime 模型/State/名称、变换、FK/Jacobian/SVD；再按依赖推进 IK、RNE/FD、碰撞、轨迹/采样，以及加载、IO、工具、测试和构建。最终覆盖全部 20 单元及既有 adapter；计算核心、测试辅助、黄金数据生成器、inline/template/macro、可执行脚本、页面内代码与 CMake 均在范围内。纯访问器等样板可按明确语义规则成组，不能整目录认定 business-specific。
+25: 
+26: 搜索保存命令、范围、版本、命中和已排除候选；无命中须继续检查相邻抽象、测试、示例和构建注册。GAP 表示待验证差异，不证明上游无能力。进度和估算以代表批次实测为准，不承诺推测工期或百分比收益。

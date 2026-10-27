@@ -1,0 +1,6 @@
+=== 门禁目录 zero-diff ===
+cmake/ 零差异 PASS
+=== 上游/依赖 forbiddenFiles zero-diff ===
+上游+vcpkg 零差异 PASS
+=== 收口/冻结登记面 zero-diff ===
+closures/findings/catalog/inventory 零差异 PASS

@@ -1,0 +1,9 @@
+REUSE-T20 title-only correction authorized by owner
+Owner reply: 允许本次仅更正标题
+old=881f576cd03b1d52576c8ca6c78f24647c70d56c
+new=9276f19b26bfe095cbe2ccf460a64dec39bf45e9
+tree=e98cf3deb2c8f5680edc766e963235fe4954f25d
+bodySha256=314926a869eb9deb29acd987ac8180d99541155fe1e9ff001f0d0319f903c750
+tree unchanged: PASS
+body unchanged: PASS
+No fetch/pull/push; no source edit in amended tree.

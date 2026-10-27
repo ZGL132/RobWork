@@ -1,0 +1,4 @@
+== cmd: verify-task-scope -Base c27349a80 -Head 8e4a08ac8 (collapsed/impl segment) ==
+verify-task-scope: REUSE-T07 base=c27349a80d61 head=8e4a08ac8249 changed=286 allowedRules=18 forbiddenRules=3
+verify-task-scope: PASS REUSE-T07 —— 286 个路径全部在允许面内
+exit=0

@@ -1,0 +1,359 @@
+/**
+ * @file UpstreamSuitabilityTest.cpp
+ * @brief REUSE-T01 公共 API 适用性探测；不是生产复用正向证据。
+ *
+ * 按 audit-contract §2 验证候选能力，不复制产品求解器。
+ * 模型仅为测试私有夹具，State/求解器在单用例内独占，不授予业务构造权限。
+ */
+#include <gtest/gtest.h>
+#include <rw/invkin/ParallelIKSolver.hpp>
+#include <rw/invkin/JacobianIKSolver.hpp>
+#include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/StateStructure.hpp>
+#include <rw/math/LinearAlgebra.hpp>
+#include <rw/math/Q.hpp>
+#include <rw/math/Polynomial.hpp>
+#include <rw/math/RPY.hpp>
+#include <rw/math/EAA.hpp>
+#include <rw/geometry/GeometryUtil.hpp>
+#include <rw/models/ParallelDevice.hpp>
+#include <rw/models/ParallelLeg.hpp>
+#include <rw/models/RevoluteJoint.hpp>
+#include <rw/models/PrismaticJoint.hpp>
+#include <rw/models/SerialDevice.hpp>
+#include <rw/models/RigidObject.hpp>
+#include <rw/kinematics/MovableFrame.hpp>
+#include <rwsim/dynamics/FixedBody.hpp>
+#include <rwsim/dynamics/RigidDevice.hpp>
+#include <rwsim/util/RecursiveNewtonEuler.hpp>
+#include <rwsimlibs/bullet/BtSimulator.hpp>
+#include <rw/trajectory/LinearInterpolator.hpp>
+#include <rw/trajectory/LloydHaywardBlend.hpp>
+#include <array>
+#include <cmath>
+#include <limits>
+#include <memory>
+#include <Eigen/Cholesky>
+
+// 验证建模 SPD 判定的候选能力：上游特征值求解能否保留排序及极小尺度。
+TEST(ReuseAudit, SymmetricEigenvaluesAcrossScales) {
+    for (double scale : {1.0, 1e-150, 1e-300}) {
+        Eigen::MatrixXd m = Eigen::MatrixXd::Zero(3, 3);
+        m.diagonal() << scale, 2 * scale, 3 * scale;
+        const auto decomposition = rw::math::LinearAlgebra::eigenDecompositionSymmetric(m);
+        ASSERT_EQ(3, decomposition.second.size());
+        for (int i = 0; i < 3; ++i)
+            EXPECT_NEAR(i + 1.0, decomposition.second[i] / scale, 1e-12);
+    }
+}
+
+// GAP-IK：同一帧链的单 leg 视图可否调用掩码 IK；不新建另一份模型链。
+TEST(ReuseAudit, SingleLegMaskedPositionOnExistingFrames) {
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+    StateStructure structure;
+    auto* base = new FixedFrame("base", Transform3D<>());
+    auto* joint = new RevoluteJoint("joint", Transform3D<>());
+    auto* tcp = new FixedFrame("tcp", Transform3D<>(Vector3D<>(1, 0, 0)));
+    structure.addFrame(base, structure.getRoot());
+    structure.addFrame(joint, base);
+    structure.addFrame(tcp, joint);
+    joint->setActive(true);
+    State state = structure.getDefaultState();
+    ParallelLeg leg(std::vector<Frame*>{base, joint, tcp});
+    ParallelDevice device(ParallelDevice::Legs{&leg}, "view", state);
+    device.setBounds({Q(1, -3.14), Q(1, 3.14)});
+    rw::invkin::ParallelIKSolver solver(&device);
+    solver.setMaxIterations(100);
+    solver.setMaxError(1e-10);
+    VectorND<6, bool> enabled;
+    for (int i = 0; i < 6; ++i) enabled[i] = i < 3;
+    // 目标姿态故意与关节角不一致，证明关掉姿态约束确实参与求解。
+    rw::invkin::ParallelIKSolver::Target target(tcp,
+        Transform3D<>(Vector3D<>(std::cos(0.4), std::sin(0.4), 0)), enabled);
+    const auto solutions = solver.solve(std::vector<rw::invkin::ParallelIKSolver::Target>{target}, state);
+    ASSERT_EQ(1u, solutions.size());
+    EXPECT_NEAR(0.4, solutions.front()[0], 1e-8);
+    EXPECT_DOUBLE_EQ(0.0, joint->getData(state)[0]); // 调用者 State 未被修改。
+}
+
+// GAP-TRJ：静止端点可构成五次 smoothstep；这不证明任意端导数或七次时间律等价。
+TEST(ReuseAudit, LloydBlendRestToRestQuintic) {
+    using namespace rw::trajectory;
+    LinearInterpolator<double> start(0.0, 0.0, 1.0);
+    LinearInterpolator<double> end(1.0, 1.0, 1.0);
+    LloydHaywardBlend<double> blend(&start, &end, 0.5, 7.5);
+    EXPECT_DOUBLE_EQ(0.0, blend.x(0.0));
+    EXPECT_DOUBLE_EQ(1.0, blend.x(1.0));
+    EXPECT_NEAR(0.5, blend.x(0.5), 1e-14);
+    EXPECT_NEAR(0.0, blend.dx(0.0), 1e-14);
+    EXPECT_NEAR(0.0, blend.dx(1.0), 1e-14);
+    EXPECT_NEAR(0.0, blend.ddx(0.0), 1e-14);
+    EXPECT_NEAR(0.0, blend.ddx(1.0), 1e-14);
+}
+
+// GAP-RNE：单移动关节的广义力应为 m(a-g)，不能把力矩输出当作移动力。
+TEST(ReuseAudit, PrismaticWrenchProjectionAgainstNewtonLaw) {
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+    using namespace rwsim::dynamics;
+    StateStructure structure;
+    auto* base = new FixedFrame("base", Transform3D<>());
+    auto* joint = new PrismaticJoint("slider", Transform3D<>());
+    auto* tcp = new FixedFrame("tcp", Transform3D<>());
+    auto* carrier = new MovableFrame("body");
+    structure.addFrame(base, structure.getRoot());
+    structure.addFrame(joint, base);
+    structure.addFrame(tcp, joint);
+    structure.addFrame(carrier, joint);
+    joint->setActive(true);
+    const State state = structure.getDefaultState();
+    const auto serial = rw::core::ownedPtr(new SerialDevice(base, tcp, "slider", state));
+    BodyInfo info;
+    info.mass = 2.0; // kg；独立解析真值 F=2*(3+9.81) N。
+    info.masscenter = Vector3D<>::zero();
+    info.inertia = InertiaMatrix<>(1, 1, 1);
+    const auto baseObject = rw::core::ownedPtr(new RigidObject(base));
+    const auto baseBody = rw::core::ownedPtr(new FixedBody(info, baseObject));
+    const auto linkObject = rw::core::ownedPtr(new RigidObject(carrier));
+    const auto rigid = rw::core::ownedPtr(new RigidDevice(baseBody, {{info, linkObject}}, serial));
+    rwsim::util::RecursiveNewtonEuler solver(rigid);
+    ASSERT_TRUE(solver.validate());
+    solver.setGravity(Vector3D<>(0, 0, -9.81));
+    const auto wrenches = solver.solve(state, Q(1, 0.0), Q(1, 3.0));
+    ASSERT_EQ(2u, wrenches.size()); // DOF+1，最后一项为工具载荷。
+    EXPECT_NEAR(25.62, wrenches[0].force()[2], 1e-12);
+    const auto motorTorques = solver.solveMotorTorques(state, Q(1, 0.0), Q(1, 3.0));
+    // 明确记录接口差异：现有 torque API 对移动关节仍投影 torque，不能直接复用它。
+    EXPECT_NEAR(0.0, motorTorques[0], 1e-12);
+}
+
+// GAP-TRJ：通用 Polynomial 已能求七次及 jerk，不把“无命名七次轨迹类”当作缺库。
+TEST(ReuseAudit, ExistingPolynomialSepticWithThirdDerivative) {
+    const rw::math::Polynomial<> p(std::vector<double>{0, 0, 0, 0, 35, -84, 70, -20});
+    for (double end : {0.0, 1.0}) {
+        const auto derivatives = p.evaluateDerivatives(end, 3);
+        EXPECT_NEAR(end, derivatives[0], 1e-12);
+        for (int order = 1; order <= 3; ++order)
+            EXPECT_NEAR(0.0, derivatives[order], 1e-12);
+    }
+    const auto midpoint = p.evaluateDerivatives(0.5, 3);
+    EXPECT_NEAR(0.5, midpoint[0], 1e-12);
+    EXPECT_NEAR(-52.5, midpoint[3], 1e-12);
+}
+
+// 替换三处手写 SVD 前核对排序、奇异形态与矩阵重构；不依赖旧 Jacobi 实现作真值。
+TEST(ReuseAudit, PublicSvdSingularAndWellConditioned) {
+    for (double last : {0.0, 0.5}) {
+        Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(3, 3);
+        matrix.diagonal() << 3.0, 2.0, last;
+        Eigen::MatrixXd u, v;
+        Eigen::VectorXd sigma;
+        rw::math::LinearAlgebra::svd(matrix, u, sigma, v);
+        ASSERT_EQ(3, sigma.size());
+        EXPECT_NEAR(3.0, sigma[0], 1e-12);
+        EXPECT_NEAR(2.0, sigma[1], 1e-12);
+        EXPECT_NEAR(last, sigma[2], 1e-12);
+        EXPECT_LE((u * sigma.asDiagonal() * v.transpose() - matrix).norm(), 1e-12);
+    }
+}
+
+// 建模可优先用更高层 GeometryUtil；排序及张量重构在公开 API 边界验证。
+TEST(ReuseAudit, PrincipalInertiaFromGeometryUtil) {
+    const auto result = rw::geometry::GeometryUtil::calculatePrincipalInertia(
+        rw::math::InertiaMatrix<>(1.0, 2.0, 3.0));
+    EXPECT_NEAR(1.0, result.second[0], 1e-12);
+    EXPECT_NEAR(2.0, result.second[1], 1e-12);
+    EXPECT_NEAR(3.0, result.second[2], 1e-12);
+}
+
+// GAP-FD 限制探测：当前 Bullet 的公共 addDevice 明确拒绝，不能把已链接误认为力控制已接通。
+TEST(ReuseAudit, BulletDynamicDeviceInsertionIsNotImplemented) {
+    rwsimlibs::bullet::BtSimulator simulator;
+    rw::kinematics::State state;
+    EXPECT_THROW(simulator.addDevice(nullptr, state), rw::core::Exception);
+    // 此用例证明未实现入口，未运行机器人 force→step；不构成 DYN-05 通过。
+}
+
+// GAP-IK：Euler分量约束与参考系EAA分量约束不是同一个误差空间。
+TEST(ReuseAudit, EulerMaskCannotBeSubstitutedByEaaRows) {
+    using namespace rw::math;
+    // RobWork RPY 参数顺序是 yaw/pitch/roll，产品字段顺序是 roll/pitch/yaw。
+    // 仅 roll 改变；固定 yaw/pitch 时，空间 EAA 的 y/z 仍出现非零分量。
+    const auto actual = RPY<>(0.7, 0.4, 0.6).toRotation3D();
+    const auto desired = RPY<>(0.7, 0.4, 1.2).toRotation3D();
+    const RPY<> actualAngles(actual), desiredAngles(desired);
+    EXPECT_NEAR(0.0, desiredAngles[0] - actualAngles[0], 1e-12); // yaw 固定。
+    EXPECT_NEAR(0.0, desiredAngles[1] - actualAngles[1], 1e-12); // pitch 固定。
+    const EAA<> spatialError = actual * EAA<>(inverse(actual) * desired);
+    EXPECT_GT(std::hypot(spatialError[1], spatialError[2]), 0.2);
+}
+
+// 上游选择的反例：JacobianIKSolver 在半周目标处的公开收敛结果须用独立姿态误差复核。
+TEST(ReuseAudit, JacobianSolverHalfTurnNeedsIndependentValidation) {
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+    StateStructure structure;
+    auto* base = new FixedFrame("base", Transform3D<>());
+    auto* joint = new RevoluteJoint("joint", Transform3D<>());
+    auto* tcp = new FixedFrame("tcp", Transform3D<>());
+    structure.addFrame(base, structure.getRoot());
+    structure.addFrame(joint, base);
+    structure.addFrame(tcp, joint);
+    joint->setActive(true);
+    State state = structure.getDefaultState();
+    const auto device = rw::core::ownedPtr(new SerialDevice(base, tcp, "view", state));
+    rw::invkin::JacobianIKSolver solver(device, state);
+    // 夹具只有绕 Z 的关节；绕 X 半周不可达，不能把 RPY 首参误当 roll。
+    const Transform3D<> target(RPY<>(0, 0, rw::math::Pi).toRotation3D());
+    const bool reportedConverged = solver.solveLocal(target, 1e-6, state, 2);
+    EXPECT_TRUE(reportedConverged); // 实测上游差异，不允许生产沿用其成功判定。
+    const EAA<> actualResidual(inverse(device->baseTend(state).R()) * target.R());
+    EXPECT_NEAR(rw::math::Pi, actualResidual.angle(), 1e-12);
+}
+
+// GAP-IK/KIN-02：ParallelIK耗尽预算后仍可能返回候选，非空不能作为成功证据。
+TEST(ReuseAudit, ParallelSolverBudgetExhaustionStillReturnsCandidate) {
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+    StateStructure structure;
+    auto* base = new FixedFrame("base", Transform3D<>());
+    auto* joint = new RevoluteJoint("joint", Transform3D<>());
+    auto* tcp = new FixedFrame("tcp", Transform3D<>(Vector3D<>(1, 0, 0)));
+    structure.addFrame(base, structure.getRoot());
+    structure.addFrame(joint, base);
+    structure.addFrame(tcp, joint);
+    joint->setActive(true);
+    State state = structure.getDefaultState();
+    ParallelLeg leg(std::vector<Frame*>{base, joint, tcp});
+    ParallelDevice device(ParallelDevice::Legs{&leg}, "view", state);
+    device.setBounds({Q(1, -3.14), Q(1, 3.14)});
+    rw::invkin::ParallelIKSolver solver(&device);
+    solver.setMaxIterations(2);
+    solver.setMaxError(1e-10);
+    VectorND<6, bool> enabled;
+    for (int i = 0; i < 6; ++i) enabled[i] = i < 3;
+    const Transform3D<> target(Vector3D<>(2, 0, 0));
+    const auto solutions = solver.solve(
+        std::vector<rw::invkin::ParallelIKSolver::Target>{{tcp, target, enabled}}, state);
+    // 独立几何界限：TCP只能在半径1 m的圆上，(2,0,0)至少相差1 m。
+    ASSERT_EQ(1u, solutions.size());
+    State candidate = state;
+    device.setQ(solutions.front(), candidate);
+    EXPECT_NEAR(1.0, (leg.baseTend(candidate).P() - target.P()).norm2(), 1e-12);
+    EXPECT_DOUBLE_EQ(0.0, joint->getData(state)[0]); // 输入State仍未被上游solve修改。
+}
+
+// MDL-10：标准DH可用上游API直接构造；与Craig约定不能混用。
+TEST(ReuseAudit, StandardDhMatchesOrderedRigidTransforms) {
+    using namespace rw::math;
+    const double alpha = 0.4, a = 0.3, d = -0.2, theta = 0.7; // rad、m、m、rad。
+    const auto standard = Transform3D<>::DH(alpha, a, d, theta);
+    // 用独立四因子几何定义作对照，不调用产品dhCoreTransform等旧实现。
+    const auto composition = Transform3D<>(RPY<>(theta, 0, 0).toRotation3D())
+        * Transform3D<>(Vector3D<>(0, 0, d))
+        * Transform3D<>(Vector3D<>(a, 0, 0))
+        * Transform3D<>(RPY<>(0, 0, alpha).toRotation3D());
+    EXPECT_LT((standard.e() - composition.e()).norm(), 1e-14);
+    EXPECT_GT((standard.e() - Transform3D<>::craigDH(alpha, a, d, theta).e()).norm(), 0.1);
+}
+
+// KIN-04：上游能对齐反向向量，但其默认半周轴与产品固定X分支不同。
+TEST(ReuseAudit, AntiparallelAlignmentNeedsExplicitRollConvention) {
+    using namespace rw::math;
+    const Vector3D<> z(0, 0, 1);
+    const auto aligned = EAA<>(z, -z).toRotation3D();
+    EXPECT_LT((aligned * z + z).norm2(), 1e-14);
+    const auto productConvention = RPY<>(0, 0, Pi).toRotation3D();
+    EXPECT_LT((productConvention * z + z).norm2(), 1e-14);
+    // 两者都满足方向；相差的工具滚转不能当成无关误差丢弃。
+    EXPECT_NEAR(Pi, EAA<>(inverse(aligned) * productConvention).angle(), 1e-12);
+}
+
+// TRJ-05：非零端导数和时间缩放也可交上游Polynomial求值，不仅限静止端点。
+TEST(ReuseAudit, PolynomialNonzeroEndpointDerivativesWithTimeScale) {
+    // 独立解析端点：p(0)及各阶导为1/2/6/24；p(1)为36/168/756/3024。
+    const std::array<double, 4> left{1, 2, 6, 24}, right{36, 168, 756, 3024};
+    for (double h : {0.5, 2.0}) { // 段时长，s；物理时间t=h*u。
+        // 在系数上完成u=t/h替换，再以物理时间求导；避免把断言两边同除h冒充缩放测试。
+        std::vector<double> temporalCoefficients;
+        for (int i = 0; i < 8; ++i)
+            temporalCoefficients.push_back((i + 1.0) / std::pow(h, i));
+        const rw::math::Polynomial<> temporal(temporalCoefficients);
+        for (double u : {0.0, 1.0}) {
+            const auto derivatives = temporal.evaluateDerivatives(h * u, 3);
+            const auto& expected = u == 0.0 ? left : right;
+            for (int k = 0; k <= 3; ++k)
+                EXPECT_NEAR(expected[k] / std::pow(h, k),
+                            derivatives[k], 1e-9);
+        }
+    }
+}
+
+// REQ-10/REQ-11：普通及近奇异姿态须保持同一旋转，不能只核字段换序。
+TEST(ReuseAudit, RpyNearGimbalRoundTripPreservesRotation) {
+    using namespace rw::math;
+    for (double pitch : {-Pi / 2 + 1e-8, -0.4, 0.4, Pi / 2 - 1e-8}) {
+        const auto original = RPY<>(0.7, pitch, -0.2).toRotation3D();
+        const auto recovered = RPY<>(original, 1e-12).toRotation3D();
+        for (int i = 0; i < 3; ++i)
+            for (int j = 0; j < 3; ++j)
+                EXPECT_NEAR(original(i, j), recovered(i, j), 1e-12);
+    }
+}
+
+// 精确奇异分支也保持旋转；源码r12指R(0,1)，不能误读为R(1,2)。
+TEST(ReuseAudit, RpyExactGimbalPreservesRotationWithDifferentFields) {
+    using namespace rw::math;
+    const auto original = RPY<>(0.7, Pi / 2, -0.2).toRotation3D();
+    const RPY<> recoveredRpy(original, 1e-12);
+    const auto recovered = recoveredRpy.toRotation3D();
+    // R01=sin(roll-yaw)=-sin(0.9)，故上游yaw=0、roll=-0.9，同一旋转。
+    EXPECT_NEAR(0.0, recoveredRpy[0], 1e-12);
+    EXPECT_NEAR(-0.9, recoveredRpy[2], 1e-12);
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            EXPECT_NEAR(original(i, j), recovered(i, j), 1e-12);
+    // 负奇异分支与正分支不等价，分别核实，不能用一个分支推断另一个。
+    const auto negative = RPY<>(0.7, -Pi / 2, -0.2).toRotation3D();
+    const auto negativeRecovered = RPY<>(negative, 1e-12).toRotation3D();
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            EXPECT_NEAR(negative(i, j), negativeRecovered(i, j), 1e-12);
+}
+
+// MDL-06：同一矩阵跨轴极端尺度不同于整体缩放，不能沿用前三种尺度结论。
+TEST(ReuseAudit, MixedScaleEigenLosesTinyPositiveAxis) {
+    Eigen::MatrixXd inertia = Eigen::MatrixXd::Zero(3, 3);
+    inertia.diagonal() << std::numeric_limits<double>::denorm_min(), 1.0, 1e300;
+    const auto eigen = rw::math::LinearAlgebra::eigenDecompositionSymmetric(inertia);
+    // 上游谱解在该输入缩放后丢失小轴；这是直接用最小特征值判SPD的限制。
+    EXPECT_EQ(0.0, eigen.second.minCoeff());
+    EXPECT_GT(inertia(0, 0), 0.0); // 独立对角矩阵oracle：所有对角严格正。
+}
+
+// 同一既有Eigen依赖的LLT是候选原语，无需自持LDLT；本用例只核列明输入。
+TEST(ReuseAudit, ExistingEigenLltKeepsMixedScaleAndStrictBoundary) {
+    Eigen::Matrix3d inertia = Eigen::Matrix3d::Zero();
+    inertia.diagonal() << std::numeric_limits<double>::denorm_min(), 1.0, 1e300;
+    EXPECT_EQ(Eigen::Success, Eigen::LLT<Eigen::Matrix3d>(inertia).info());
+    for (double off : {std::nextafter(1.0, 0.0), 1.0, std::nextafter(1.0, 2.0)}) {
+        // 左上块特征值为1±off，第三轴为1；零不能加epsilon当正数。
+        inertia.setIdentity();
+        inertia(0, 1) = inertia(1, 0) = off;
+        EXPECT_EQ(off < 1.0 ? Eigen::Success : Eigen::NumericalIssue,
+                  Eigen::LLT<Eigen::Matrix3d>(inertia).info());
+    }
+}
+
+// MDL-06：完全相同的两行使该块精确秩1；谱为0/2e-14/1，严格SPD必须拒绝。
+TEST(ReuseAudit, ExistingEigenLltRejectsExactRankOneDecimalBlock) {
+    Eigen::Matrix3d inertia = Eigen::Matrix3d::Zero();
+    inertia(0, 0) = inertia(0, 1) = inertia(1, 0) = inertia(1, 1) = 1e-14;
+    inertia(2, 2) = 1.0;
+    EXPECT_EQ(Eigen::NumericalIssue, Eigen::LLT<Eigen::Matrix3d>(inertia).info());
+}

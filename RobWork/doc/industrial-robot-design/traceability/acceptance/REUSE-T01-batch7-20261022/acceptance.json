@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "taskId": "REUSE-T01",
+  "batch": 7,
+  "frozenSha": "7af7e86a18e34384677c2599a4f8812ad262908f",
+  "comparedBase": "ee9cc79bd68ec27b8b2f95901dddd78d6c57d5d2",
+  "verdict": "PASS",
+  "findings": [],
+  "verdictScope": "第七批26条新增功能关系及相关catalog/检索证据的独立语义验收，仅治理登记；不判REUSE-T01整体通过",
+  "scope": {
+    "newRelations": 26,
+    "coreMain": 1,
+    "evidenceMain": 1,
+    "snapshotPrimitives": 10,
+    "slicePrimitives": 10,
+    "evidenceAndEvaluatorPrimitives": 4,
+    "allNewDecisionAndStatus": "pending",
+    "totalRegistered": 200,
+    "totalPending": 197,
+    "totalProposal": 3,
+    "closedFiles": 0
+  },
+  "verified": {
+    "sourceHashes": {
+      "passed": 26,
+      "failed": 0
+    },
+    "cmakeInputHashes": {
+      "passed": 26,
+      "failed": 0
+    },
+    "catalogSourceAndTargetHashes": {
+      "passed": 8,
+      "failed": 0
+    },
+    "searchReplay": {
+      "passed": 2,
+      "failed": 0,
+      "hits": [
+        "110/110",
+        "31/31"
+      ],
+      "exitAndHitMultisetsMatch": true
+    },
+    "task": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "docs": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "docs.log",
+      "deepEvidence": "NOT RUN"
+    },
+    "reuse": {
+      "status": "PASS",
+      "exitCode": 0,
+      "head": "7af7e86a18e34384677c2599a4f8812ad262908f",
+      "log": "reuse.log",
+      "governanceOnly": true
+    },
+    "scopedDiff": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "scoped-diff.log"
+    },
+    "prohibitedSourceDiff": {
+      "exitCode": 0,
+      "empty": true,
+      "areas": [
+        "产品源码/CMake",
+        "RobWork框架源码",
+        "RobWorkSim框架源码",
+        "vcpkg"
+      ]
+    },
+    "archiveSample": {
+      "passed": 10,
+      "failed": 0,
+      "byteEqual": 8,
+      "newlineOnly": 2,
+      "batch5r2": 5,
+      "batch6": 5,
+      "semanticReReview": false
+    }
+  },
+  "semanticReview": [
+    "逐项读取26个实际源码区段并核对全限定符号。Snapshot/Slice、Evidence/Evaluator原语均位于sdurws::ird::evidence匿名命名空间；两文件Reader未误写为Snapshot/Slice嵌套命名空间；两个main正确为::main，functionId保留文件身份。",
+    "Snapshot与Slice各10原语显式大端：u16字符串长度、65535上限、NUL拒绝、u32字节块长度和预算、u64整数位通道均真实。Reader借持const输入，need用剩余字节预算并携偏移诊断，readLengthString拒绝NUL；尾随拒绝在各自Reader/parse消费路径。SnapshotIncomplete和SliceIncomplete没有合并。",
+    "evidence职责与ARCH PA-1/3.6.3、units/evidence §2/§5.2及CON-01/CON-05/CON-06一致。NFR-COR-02关联规范顺序和稳定字节，NFR-COR-03关联缺失/截断拒绝。低层共用不能转移快照、切片、Profile或manifest身份权威。",
+    "Evidence/Evaluator共4原语确为大端u32与u32长度字符串，区别于Snapshot/Slice的u16字符串。Profile的itemId排序和manifest的key排序、各自magic/版本/摘要域均保留；未把它们视作统一身份协议。",
+    "产品target sdurws_ird_evidence、sdurws_ird_core_test、sdurws_ird_evidence_test真实声明并直接含所列源文件。evidence/TestMainReport还用于既有contract_test；本批pending样本不宣称覆盖所有消费者或完成后续适配。",
+    "两个TestMainReport均InitGoogleTest、安装既有testkit监听器、返回RUN_ALL_TESTS，零Qt。designRefs指向AGENTS §4与testkit §7.2/7.3，NFR-COR-01为测试支撑追溯，不冒充main本身提供数值独立oracle。",
+    "TEST-HARNESS上游sdurw-gtest-main确为gtest/CMakeLists里的STATIC目标，编译test-main.cpp/TestEnvironment.cpp，链接GTest和sdurw_core。main注册全局Environment，SetUp调用RobWork::init和testfilesDir，读取TestSuiteConfig.xml；不是任意产品可用的CONFIG运行组件，不可与自有main盲链，也不能强加框架初始化或Qt/宿主条件。",
+    "UTIL-BINARCHIVE新增evidence owner/value关系仅表示本域编码/身份职责，不授予上游模型/State写权限。BINArchive原生标量字节与格式化字符串长度不能替代产品大端/预算/失败协议；两个能力仍candidate，26行仍pending。",
+    "audit-contract精确允许两个既有gtest根CMake的文档约束已核；对应治理脚本142项/双PowerShell门禁独立验收由另验收者承担，本次不背书其正负例完备性。"
+  ],
+  "caveats": [
+    "200为当前已登记样本数；197 pending、3 proposal、closedFiles=0，不是全部20单元实际功能审计闭合。",
+    "不批准T01整体退出、T02、算法替换、新核心、上游扩展或新增HOST/模型操作权限。",
+    "旧B5r2/B6只抽核各5份原件一致性，不重新语义审查旧批或背书其未执行项。",
+    "task首次以错误RepoRoot参数调用失败，日志保留task-root-argument-first-attempt.*；按Git根纠正后真实重跑exit0，此为验收调用修正，不是产品缺陷。"
+  ],
+  "notRun": [
+    "142项治理正负例及PS5.1/PS7完整门禁重放（另验收者负责）",
+    "C++构建/API探测/GUI测试（无C++变化）",
+    "上游完整测试集",
+    "跨端实际执行",
+    "生产断开/扰动试验",
+    "全库DeepEvidence",
+    "全REUSE-T01退出验收"
+  ],
+  "checkout": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\\repo",
+  "checkoutClean": true,
+  "parentTreeModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "evidence": [
+    "new-rows.json",
+    "source-excerpts.log",
+    "hash-checks.json",
+    "search-replay.json",
+    "search-1.log",
+    "search-2.log",
+    "semantic-authorities.log",
+    "targets-and-upstream.log",
+    "archive-sample-checks.json",
+    "task.log",
+    "task.exit.txt",
+    "docs.log",
+    "docs.exit.txt",
+    "reuse.log",
+    "reuse.exit.txt",
+    "scoped-diff.log",
+    "scoped-diff.exit.txt",
+    "prohibited-source-diff.log",
+    "final-status.log"
+  ]
+}

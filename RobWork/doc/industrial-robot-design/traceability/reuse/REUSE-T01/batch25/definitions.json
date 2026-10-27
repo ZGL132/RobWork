@@ -1,0 +1,520 @@
+[
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "function",
+    "symbol": "Convert-ToIso",
+    "startLine": 42,
+    "endLine": 46
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "function",
+    "symbol": "Compare-Iso",
+    "startLine": 49,
+    "endLine": 53
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "function",
+    "symbol": "Test-NonNegativeInteger",
+    "startLine": 55,
+    "endLine": 57
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) {",
+    "startLine": 28,
+    "endLine": 32
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$docBase = Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design\"",
+    "startLine": 33,
+    "endLine": 33
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $docBase)) { throw \"repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定仓库根）\" }",
+    "startLine": 34,
+    "endLine": 34
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $StateFile) { $StateFile = Join-Path $docBase \"traceability/pipeline/state.json\" }",
+    "startLine": 35,
+    "endLine": 35
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $StateFile)) { throw \"state file not found: $StateFile\" }",
+    "startLine": 36,
+    "endLine": 36
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$s = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json",
+    "startLine": 38,
+    "endLine": 38
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$errors = @()",
+    "startLine": 39,
+    "endLine": 39
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$isoPattern = \"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?([+-]\\d{2}:\\d{2}|Z)?$\"",
+    "startLine": 59,
+    "endLine": 59
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$shaPattern = \"^[0-9a-f]{40}$\"",
+    "startLine": 60,
+    "endLine": 60
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.schemaVersion -ne \"ird-pipeline/1\") { $errors += \"schemaVersion must be 'ird-pipeline/1', got '$($s.schemaVersion)'\" }",
+    "startLine": 63,
+    "endLine": 63
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$knownPhases = @(\"paused\",\"idle\",\"implementing\",\"awaiting_acceptance\",\"awaiting_merge\",\"awaiting_unit_review\",\"blocked\",\"stopped\")",
+    "startLine": 64,
+    "endLine": 64
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($knownPhases -notcontains $s.phase) { $errors += \"invalid phase: '$($s.phase)'（合法值：$($knownPhases -join '/')）\" }",
+    "startLine": 65,
+    "endLine": 65
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$heartbeatAt = Convert-ToIso $s.heartbeat.updatedAt",
+    "startLine": 68,
+    "endLine": 68
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($heartbeatAt -notmatch $isoPattern) {",
+    "startLine": 69,
+    "endLine": 79
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-NonNegativeInteger $s.heartbeat.ticksNoProgress)) { $errors += \"heartbeat.ticksNoProgress must be an integer >= 0\" }",
+    "startLine": 80,
+    "endLine": 80
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-NonNegativeInteger $s.tickCount)) { $errors += \"tickCount must be an integer >= 0（v1.4：锁内 tickId 的状态侧计数）\" }",
+    "startLine": 81,
+    "endLine": 81
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$parsedTickToken = [guid]::Empty",
+    "startLine": 86,
+    "endLine": 86
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$hasTickTokenProp = ($null -ne ($s.PSObject.Properties | Where-Object { $_.Name -eq \"tickToken\" }))",
+    "startLine": 87,
+    "endLine": 87
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $hasTickTokenProp) { $errors += \"tickToken field is required（string GUID or null；paused/idle 可为 null——v1.5）\" }",
+    "startLine": 88,
+    "endLine": 89
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$hasFailureRecordProp = ($null -ne ($s.PSObject.Properties | Where-Object { $_.Name -eq \"lastFailureRecord\" }))",
+    "startLine": 94,
+    "endLine": 94
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $hasFailureRecordProp) { $errors += \"lastFailureRecord field is required（structured record or null；PIPE v1.6）\" }",
+    "startLine": 95,
+    "endLine": 95
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($k in @(\"implement\",\"fix\",\"accept\")) {",
+    "startLine": 98,
+    "endLine": 100
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$policyBools = @(\"strictQueueOrder\",\"autoDiscovery\",\"unitCheckpoint\",\"unitCheckpointExemptFirstUnit\",\"firstUnitCheckpointExempted\")",
+    "startLine": 103,
+    "endLine": 103
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($k in $policyBools) {",
+    "startLine": 104,
+    "endLine": 107
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($null -eq $s.policy.autoMerge) { $errors += \"policy missing: autoMerge\" }",
+    "startLine": 108,
+    "endLine": 119
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($k in @(\"noProgressLimit\",\"maxImplementRestarts\",\"maxFixCycles\")) {",
+    "startLine": 120,
+    "endLine": 122
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.policy.noProgressLimit -ne $null -and $s.policy.noProgressLimit -lt 1) { $errors += \"policy.noProgressLimit must be >= 1\" }",
+    "startLine": 123,
+    "endLine": 123
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($null -eq $s.policy.leaseMinutes -or $null -eq $s.policy.leaseMinutes.implement -or $null -eq $s.policy.leaseMinutes.acceptance) {",
+    "startLine": 124,
+    "endLine": 127
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$taskMap = @{}",
+    "startLine": 130,
+    "endLine": 130
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "Get-ChildItem (Join-Path $docBase \"tasks\") -Recurse -Filter \"*.json\" -ErrorAction SilentlyContinue | ForEach-Object {",
+    "startLine": 131,
+    "endLine": 136
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$claimability = $null",
+    "startLine": 141,
+    "endLine": 141
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$seen = @()",
+    "startLine": 142,
+    "endLine": 142
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$qi = 0",
+    "startLine": 143,
+    "endLine": 143
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$validateTaskScript = Join-Path $RepoRoot \"RobWork/scripts/industrialrobot/validate-task.ps1\"",
+    "startLine": 144,
+    "endLine": 144
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($q in @($s.queue)) {",
+    "startLine": 145,
+    "endLine": 183
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$needsTask = @(\"implementing\",\"awaiting_acceptance\",\"awaiting_merge\") -contains $s.phase",
+    "startLine": 186,
+    "endLine": 186
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($needsTask -and -not $s.currentTask) { $errors += \"phase '$($s.phase)' requires currentTask to be set\" }",
+    "startLine": 187,
+    "endLine": 187
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ((@(\"idle\",\"paused\") -contains $s.phase) -and $s.currentTask) { $errors += \"phase '$($s.phase)' must have currentTask = null\" }",
+    "startLine": 188,
+    "endLine": 188
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.currentTask -and -not $taskMap.ContainsKey(\"$($s.currentTask)\")) { $errors += \"currentTask references unknown task: $($s.currentTask)\" }",
+    "startLine": 189,
+    "endLine": 189
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.currentTask -and \"$($taskMap[\"$($s.currentTask)\"].status)\" -eq \"done\") { $errors += \"currentTask is already done: $($s.currentTask)\" }",
+    "startLine": 190,
+    "endLine": 190
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($needsTask) {",
+    "startLine": 192,
+    "endLine": 206
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.phase -eq \"awaiting_acceptance\") {",
+    "startLine": 207,
+    "endLine": 209
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.phase -eq \"awaiting_merge\") {",
+    "startLine": 210,
+    "endLine": 223
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($hasFailureRecordProp) {",
+    "startLine": 227,
+    "endLine": 252
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (@(\"idle\",\"paused\",\"blocked\") -contains $s.phase) {",
+    "startLine": 253,
+    "endLine": 256
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$hasRun = ($null -ne $s.run)",
+    "startLine": 259,
+    "endLine": 259
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.phase -eq \"implementing\") {",
+    "startLine": 260,
+    "endLine": 265
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($hasRun) {",
+    "startLine": 266,
+    "endLine": 282
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$hi = 0",
+    "startLine": 285,
+    "endLine": 285
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($h in @($s.history)) {",
+    "startLine": 286,
+    "endLine": 292
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($k in @(\"pipeline\",\"acceptance\",\"contractCompilation\",\"agents\",\"dtbTaskRegistry\",\"taskContracts\")) {",
+    "startLine": 295,
+    "endLine": 297
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.docRefs -and $s.docRefs.b1BatchManifest) {",
+    "startLine": 298,
+    "endLine": 304
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($s.pausedReason -and $s.pausedReason.Length -gt 200) { $errors += \"pausedReason exceeds 200 chars（PIPE §0.2 状态纪律：长叙述移入 PIPE 增量修订或验收记录）\" }",
+    "startLine": 307,
+    "endLine": 307
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }",
+    "startLine": 309,
+    "endLine": 309
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "$headLine = \"validate-state: PASS (phase=$($s.phase), queue=$(@($s.queue).Count), history=$(@($s.history).Count), tasks indexed=$($taskMap.Count))\"",
+    "startLine": 310,
+    "endLine": 310
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($claimability) {",
+    "startLine": 311,
+    "endLine": 317
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Assert-Equal",
+    "startLine": 24,
+    "endLine": 26
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Assert-ExitCode",
+    "startLine": 28,
+    "endLine": 30
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Invoke-Lock",
+    "startLine": 32,
+    "endLine": 40
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Get-LockMutexName",
+    "startLine": 42,
+    "endLine": 52
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Assert-LockActionWaitsOnMutex",
+    "startLine": 54,
+    "endLine": 85
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Invoke-StateValidation",
+    "startLine": 87,
+    "endLine": 98
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "Set-StrictMode -Version Latest",
+    "startLine": 11,
+    "endLine": 11
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$ErrorActionPreference = \"Stop\"",
+    "startLine": 12,
+    "endLine": 12
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) {",
+    "startLine": 14,
+    "endLine": 16
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$lockScript = Join-Path $RepoRoot \"RobWork/scripts/industrialrobot/pipeline-lock.ps1\"",
+    "startLine": 18,
+    "endLine": 18
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$stateScript = Join-Path $RepoRoot \"RobWork/scripts/industrialrobot/validate-state.ps1\"",
+    "startLine": 19,
+    "endLine": 19
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$script:statePowerShell = (Get-Process -Id $PID).Path",
+    "startLine": 21,
+    "endLine": 21
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$sourceState = Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design/traceability/pipeline/state.json\"",
+    "startLine": 22,
+    "endLine": 22
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) (\"ird-pipeline-regression-\" + [guid]::NewGuid().ToString(\"N\"))",
+    "startLine": 100,
+    "endLine": 100
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "try {",
+    "startLine": 101,
+    "endLine": 270
+  }
+]

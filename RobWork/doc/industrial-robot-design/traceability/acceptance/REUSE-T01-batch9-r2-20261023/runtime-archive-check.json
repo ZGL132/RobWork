@@ -1,0 +1,152 @@
+[
+  {
+    "name": "acceptance.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "acceptance.md",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "additional-source-binding.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "authority-and-build-binding.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "binary-and-cache-binding.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "build.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "build.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "checkout.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "configure.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "configure.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "driver.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "driver.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "environment.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "fetch.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "gtest.xml",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "ird-test-report.json",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "observed-counterexample.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "report-cross-check.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "run-probe.ps1",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "scoped-diff.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "scoped-diff.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "source-hash-checks.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "source-inspection.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "tests.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "tests.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  }
+]

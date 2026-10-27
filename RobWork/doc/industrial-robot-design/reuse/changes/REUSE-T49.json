@@ -1,0 +1,15 @@
+{
+ "schemaVersion": "ird-reuse-change/1",
+ "taskId": "REUSE-T49",
+ "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T49.json",
+ "files": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs",
+   "sha256": "f30a5573a1fd65c784660af65300782547d433ef175f2e43a614353837555813",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "F-959 黄金生成脚本修复落地（所有者 2026-10-26 批量批准落地裁决表第 1~4 项，原 blocked 解阻）：生成器随 2026-10-20 F01 期望面同步——counts.unsupported 8→3、去 joint-velocity-limit×5、增 mappedVelocityCount=5＋mappedVelocityNote（与入库 expected 逐字段一致），头注计数约定同步；隔离重放（replay-generators-t49.mjs，29 数据集）产物与 expected 原始字节逐位一致、29/29 exit0。expected 数据零变化、零C++产品代码变化——按 T01 审计口径同步过期脚本，不重产旧错误黄金数据洗绿；testkit/modeling 三套件与 ird_gates 证据见 REUSE-T49/landing-*。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T49/README.md"
+  }
+ ]
+}

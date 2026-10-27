@@ -1,0 +1,10 @@
+legacy Debug 反例（2026-10-23 独立验收复跑，验收人亲自执行）：
+命令同 Release 版（PATH 前缀 /d/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin，
+cwd=acceptance-sub1/legacy-dbg-cwd（临时空目录），timeout 60）。
+观察：gtest 部分正常完成（1 passed），随后 stderr 出现 CRT 断言两行：
+  minkernel\crts\ucrt\src\appcrt\heap\debug_heap.cpp(904) : Assertion failed: _CrtIsValidHeapPointer(block)
+  minkernel\crts\ucrt\src\appcrt\heap\debug_heap.cpp(908) : Assertion failed: is_block_type_valid(header->_block_use)
+进程随即被 _CrtDbgReport 模态对话框阻塞（无窗口环境挂起，timeout 60 未能终结），
+由验收人 taskkill //F 终止（PID 6912）。因此本运行无自然进程退出码；症状本体
+（旧实现把静态对象地址交拥有型 Append → gtest 退出时对非堆对象 delete →
+debug CRT 堆断言 904/908）已原样捕获于 acceptance-sub1/legacy-dbg-console.log。

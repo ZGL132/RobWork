@@ -3,7 +3,7 @@
 #
 # 设计依据：
 #   - units/core.md §3.3（命名空间/目标/CMake 集成）、§3.2（依赖：仅 C++17
-#     标准库＋sdurw_math，零 Qt、零 industrialrobot 其他单元）
+#     标准库＋sdurw_math＋FNV/C4 私有 Boost 头（各GAP授权），零 Qt、零 industrialrobot 其他单元）
 #   - development-task-breakdown.md §5.1（双模式/目标命名/C++17 约定）、
 #     §5.5（gtest 接入定稿：vcpkg 安装＋find_package(GTest CONFIG REQUIRED)）
 #   - 需求 NFR-MNT-01（计算内核零 Qt）、ARC-02（架构可维护）
@@ -21,6 +21,10 @@
 # 即配置失败（失败即停，不静默跳过测试目标）。不消费框架的 USE_gtest/
 # RW::gtest（从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
 find_package(GTest CONFIG REQUIRED)
+
+# GAP-CORE-FNV-01：复用 vcpkg 已安装的固定精度整数，禁止隐式 include 供给。
+# Boost 仅用于 Identity.cpp/Compare.cpp 的获批私有算术；公共头不暴露 Boost 类型或新增运行库。
+find_package(Boost CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 add_library(sdurws_ird_core STATIC
@@ -65,6 +69,11 @@ target_include_directories(sdurws_ird_core PUBLIC
 if(TARGET sdurw_math)
     target_link_libraries(sdurws_ird_core PUBLIC sdurw_math)
 endif()
+
+# 此依赖只有私有头文件，没有需传递给静态库消费者的链接库；明确取已找到
+# imported target 的头目录，避免把整个 Boost 目标族引入产品链接许可表。
+target_include_directories(sdurws_ird_core PRIVATE
+    $<TARGET_PROPERTY:Boost::headers,INTERFACE_INCLUDE_DIRECTORIES>)
 
 # 别名（集成模式）：供其余单元以 RWS::ird::core 消费；冒烟模式无别名
 # （与骨架期行为一致，DTB §5.1）。
@@ -169,3 +178,30 @@ foreach(_lib IN LISTS _ird_core_link_libs _ird_core_iface_libs)
             "发现 ${_lib}（ARCHITECTURE §3.2）")
     endif()
 endforeach()
+
+# ---- 冒烟 RobWork 导出包供给前置绑定（GOV-T24/WP-01）----
+# 本单元是 add_subdirectory 序中首个被处理的单元——此前置绑定先于一切消费
+# RobWork 导出包的单元（modeling/kinematics/drivetrain 的 find_package
+# (RobWork CONFIG REQUIRED)）执行。两重环境适配（探针复现与修复证据：
+# traceability/reuse/REUSE-T19/govt24-wp01-20261024/）：
+#   1. RobWorkConfig 的 rw_find_components→RW_verify_library 配置期验证在
+#      find_library(... NO_DEFAULT_PATH) 下解析不了 vcpkg Boost 1.92 的
+#      Boost::atomic 接口裸名 synchronization（boost_atomic.dll 实际零该
+#      导入——同步原语经 Kernel32；集成树链接期由 Windows SDK 的
+#      synchronization.lib 顺带解析）与尚未定义的 Threads::Threads，递归
+#      判定 sdurw 元库"Looking for sdurw - not found"而配置失败；
+#   2. 冒烟配置须带 VCPKG_OVERRIDE_FIND_PACKAGE_NAME=vcpkg_find_package
+#      参数（vcpkg 拦截宏对 RobWorkConfig 内 find_package(Boost ...
+#      HINTS "C:\local") 的再展开存在转义崩溃——T07 既有参数先例）。
+# 此处以真实 Threads 目标＋空接口目标显式承载 synchronization 名字
+# （消费侧零链接语义变化）。守卫＝两模式判定的标准形态：集成树
+# sdurw_math 真实目标存在即整体跳过，集成模式零影响。GLOBAL＝IMPORTED
+# 目标默认仅本目录及子目录可见，后续兄弟单元的 find_package(RobWork)
+# 验证链在同层目录解析该名字，须全局可见（Threads::Threads 由现代
+# find 模块建为 GLOBAL，同因）。
+if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math)
+    find_package(Threads REQUIRED)
+    if(NOT TARGET synchronization)
+        add_library(synchronization INTERFACE IMPORTED GLOBAL)
+    endif()
+endif()

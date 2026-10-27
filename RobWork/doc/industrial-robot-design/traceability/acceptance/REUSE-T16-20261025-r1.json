@@ -1,0 +1,88 @@
+{
+  "taskId": "REUSE-T16",
+  "baseCommit": "f378f01c5199032e08c2cce7ba0251a2f783d505",
+  "reviewedCommit": "e128dd8e960190c29dcdd283f91b97085cab0671",
+  "branch": "redesign-main（送验谱系 codex/reuse-foundation；e128dd8e9 经 git merge-base --is-ancestor 实测为当前 HEAD e8ee7d31d 祖先）",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T04:54:01+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T16/单次验收子智能体（独立验收·REUSE-T16·r1）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施（实施由另一串行会话完成）；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配构建树（仅增量构建受影响目标）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件；只验收不修复、不改任务状态、不推进下一任务。"
+  },
+  "scope": "独立验收 f378f01c5199032e08c2cce7ba0251a2f783d505..e128dd8e960190c29dcdd283f91b97085cab0671（REUSE-T16 原字节文件保留总数边界修正与报告复用送验范围；base 系契约登记基线，reviewHead 系 git log --grep REUSE-T16 首末推导的末提交 e128dd8e9，其正文以「diagnostics REUSE-T16先例」提及该任务）：verify-task-scope 显式 Base/Head 复跑与字面 FAIL 归因分解、契约三条 acceptance 逐项增量重验（公开协议/owner 核查、diagnostics 两测试目标增量构建与真实复跑、DiagRetention 边界用例核对、原始证据适用性链、继承缺口不伪报核对、validate 批次复跑）、H1—H6 与架构红线抽查（L2 零 Qt、六类端口、CLOSURE 冻结、平行实现回流、门禁未放宽、计数分列）、提交链与正文-证据一致性核对。",
+  "counts": {
+    "failed": 0,
+    "passed": 15,
+    "notRun": 2,
+    "skipped": 0,
+    "unit": "15 项验收检查（第 15 项为送验 head 后工作树正交变化核验，属第 6/9 项证据适用性的补充实测）；其中第 2 项 verify-task-scope 的字面命令结果为 FAIL（248 越界路径），经逐文件归因全部落于非 T16 自有面（同交付提交的 T15/T14 面、T12 drivetrain 收口、批次门禁工具与 F-958 系列治理提交），T16 自有 43 文件全在 allowed 面、禁止面零命中，故按 T16 范围实质合规计入通过并在 checks[1]/limitations 显式登记字面结果；测试/套件计数另列于 tests 字段，互不相加"
+  },
+  "checks": [
+    "现场与范围构成：branch=redesign-main、HEAD=e8ee7d31d（送验 head 之后仅 T09/T12 治理登记提交，非被验内容）；git merge-base --is-ancestor 确认 e128dd8e9 为当前 HEAD 祖先；范围含 8 提交（c5a22b209 T12收口、091e53353 T15+T16 实施一包、439f410c7 批次门禁工具、6fb26b31d 合并 T12 drivetrain、fbd51e765/f7bb53943/46cb03430/e128dd8e9 F-958 系列与 T18 登记）；工作树未跟踪项仅为各任务既有验收产物目录，本会话未触碰。",
+    "范围复跑：verify-task-scope.ps1 -TaskFile REUSE-T16.json -Base f378f01c5 -Head e128dd8e9 exit 1——字面 FAIL：changed=291、allowedRules=11、forbiddenRules=3，248 路径 out-of-scope、0 路径 forbidden 命中。逐文件归因（按首次引入提交分解，01b-scope-attribution.md）：248 = c5a22b209 16（T12 drivetrain 收口）＋ 091e53353 内 62（T15 自有面 53 减 4 个 GAP 提案文件命中本契约 reuse/extensions/** ＋ T14 失败候选证据 13，构成实测 5 源码＋1 manifest＋3 functions＋1 契约＋51 traceability＋1 units）＋ 439f410c7 79（批次工具与 validation-batch 证据）＋ 6fb26b31d 合并新引入 1 ＋ F-958 系列 90（fbd51e765 19＋f7bb53943 2＋46cb03430 18＋e128dd8e9 51）；T16 自有面 43 文件（diagnostics 5 源文件＋契约/manifest/矩阵 3＋traceability/reuse/REUSE-T16 证据 29＋units/diagnostics.md 1＋reuse/extensions 5）全部命中 allowedFiles 且全部来自唯一实施提交 091e53353，其余 7 个提交对 T16 面零触碰（逐提交 diff 交集实测）；禁止面（RobWork/RobWork/src/**、RobWorkSim/src/**、vcpkg/**）零命中。与契约 note「本轮两个有界能力包及失败候选记录作为一个本地交付提交」及 T15 独验先例（同提交批次归因）一致。",
+    "契约 acceptance[0] 之 GAP 授权边界：GAP-DIAG-RETENTION-01.md 所有者授权节载明提案规范 SHA-256 b42f0478…锁定、所有者答复原文「批准方案A」（2026-10-23）、范围恰为「只修原 FileLogFileOps 的 keep=1 和降低保留数边界，沿既有 filesystem/锁/错误轨，不另建框架」；实测 diff 未越界——未动上游/vcpkg（禁止面零命中）、未新建日志框架或第二报告路径（TestMainReport.cpp 仅 23 行安装既有 testkit installTestRecordListener）、无未申请的新核心。",
+    "契约 acceptance[0] 之原公开协议与 owner 不变：Logging.hpp diff（blob c49eb2dc→56590f41，8+/7-）逐行核对全部为注释——打开策略/轮转语义/线程安全/m_impl 说明的事实纠正与 keepFiles 语义补充，class FileLogFileOps 声明、构造/析构与全部方法签名零变化，正合 GAP 提案「Logging.hpp 只纠正与既有逐行开写关事实不符的注释」；functions/diagnostics.json 中 ownerUnit=diagnostics 绑定 267 处，T16 未触碰 runtime/execution/project 模型或状态权威源码（范围内 diagnostics 源码改动仅 Logging.cpp/FileLogFileOps 一处）。",
+    "rotateFile 实现与授权方案 A 逐条吻合（Logging.cpp diff 61 行）：keep=1 时 return removeRegular(file) 仅删活动文件不留 .1；降低保留数以 directory_iterator 按本日志文件名前缀清理规范正整数后缀高代（suffix.front()=='0' 拒绝前导零、非数字拒绝、按长度/字典序比较避免超长后缀整数溢出）；symlink_status+is_regular_file 守卫拒绝目录/符号链接/非普通文件；std::lock_guard(m_impl->mtx) 沿原互斥；全部失败沿原 bool+error_code 错误轨；不递归删除。",
+    "契约 acceptance[1] 之集成测试真实复跑（含 testkit 变化影响覆盖）：增量构建 sdurws_ird_diagnostics_test 与 sdurws_ird_diagnostics_contract_test exit 0（core/diagnostics/testkit 库随 HEAD 树增量重编重链）；sdurws_ird_diagnostics_test.exe 实跑 123 tests＝123 passed/0 failed/0 skipped/0 notRun、exit 0（11-diag/11b-diag XML＋11 log＋13 原生 JSON ird-test-report/1 分列 decisive=true）——123＝原始 122＋F-968 后续新增 1 例（DtReg5_ParamSchemaFailureClearsNames_F968，送验 head 之后 HEAD 树新增，送验 head 无此例），与预期严格吻合；本次复跑同时覆盖了一个实施期从未跑过的组合：diagnostics（T16 版）＋testkit（F-958 监听器所有权修复版 fbd51e765）——F-958 修复晚于实施提交 091e53353，实施期 diagnostics-final.xml 跑的是修复前 testkit，本轮在修复后组合下全套通过。",
+    "DiagRetention 五例边界逐一确认 OK（真实文件回归）：KeepOnePipeline_DT_LOG_ROTATE（keep=1 真实管线不留 .1）、ShrinkExpandAndMissingGeneration_DT_LOG_ROTATE（5→2/2→5/缺代）、ProtectUnrelatedPaths_DT_LOG_ROTATE（近似文件名/非规范后缀不误删）、RefuseDirectoryCollision_DT_LOG_ROTATE（目录碰撞保护）、AbsentActiveFile_DT_LOG_ROTATE（无活动文件）——用例名与 GAP 提案验收清单（keep=1/2/N、5→2、2→5、缺失代、无活动文件、近似名字/非规范后缀保护）一一对应，本轮复跑日志与 XML 原件确认 5/5 通过。",
+    "契约测试复跑：sdurws_ird_diagnostics_contract_test.exe 实跑 26 tests＝26 passed/0 failed/0 skipped/0 notRun、exit 0（12/12b XML＋12 log＋14 原生 JSON），与原始 contract-final.xml 26/0/0 完全一致；对端契约（DIAG-T10 testkit 谓词双面对账）在 testkit 监听器修复后组合下仍通过。",
+    "原始证据适用性与对照：T16 自有面 43 文件全部来自 091e53353 且后续 7 提交零触碰（归因实测），changes/REUSE-T16.json 逐文件凭证 5/5 sha256 与送验 head blob 精确一致（Logging.cpp e2bead1b…、Logging.hpp 574af124…、LoggingTest.cpp 089621d7…、TestMainReport.cpp c0f36463…、CMakeLists.txt 6359d097…）——原始证据（diagnostics-final.xml 122/0/0、contract-final.xml 26/0/0、smoke.xml 122/0/0）输入与送验实现逐字节绑定，直接引用合规（AGENTS §4 增量口径）；README 登记的 diagnostics-r1.xml 首跑 121/0/1 失败原件（Windows retain.log. 归一夹具缺陷）保留未洗掉，夹具修正后 122 通过路径有据。",
+    "契约 acceptance[2] 之继承缺口不伪报：verification.json 如实登记实施期 validate-reuse/validate-docs/validate-task 均 FAIL（exitCode 1，reason「继承drivetrain/CMakeLists.txt REUSE-COVERAGE；本会话不接管」）、independentAcceptance=「NOT RUN」、mergeReadiness=「NOT APPROVED: 全量门禁及独验未过」，三套件 PASS 计数分列（122/26/122）未与门禁状态混列——继承缺口未被伪报，独验未实施者自签；该阻断后由范围内 6fb26b31d 合入清除。",
+    "文档/契约/复用批次复跑：validate-docs.ps1 -TaskFile REUSE-T16.json exit 0（16-validate-batch.log）——validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-task: PASS (1 tasks)、validate-docs: PASS (20 units, 12 trace entries, 404 task files)；余 10 条 REUSE-AD-PENDING（reporting/runtime/trajectory/ui 等权限待授权）为分支既有状态，与送验期批次日志同形，非本包引入。",
+    "红线抽查：L2 零 Qt——diagnostics src/include 全目录 grep 无任何 Qt include（含 DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 用例本轮复跑通过）；六类端口/runtime 唯一模型 owner——T16 未触碰 runtime/execution/project 源码，Logging.cpp/FileLogFileOps 为产品内文件操作接缝，无模型/状态权威侵入，worker 值载荷与既有脱敏服务调用不变；CLOSURE 冻结——reuse/closures.json 在范围内 git diff --exit-code 零差异；H1/H2 平行实现回流——rotateFile 单点修复无第二实现、无新日志框架（diff 全审），TestMainReport 复用既有 testkit 监听器（CMake 注释明示仅测试侧依赖，产品目标不链 testkit）；H3 沿用上游类型与标准 filesystem/互斥/bool 错误轨；H5 GAP 授权有界范围；H6 逐文件凭证 5/5 sha256 精确绑定＋package-diagnostic.ps1 语义诊断 PASS（15-verification-summary.txt 引用原件）。",
+    "门禁未放宽：范围内 cmake/ 门禁目录唯一变化为 ird_gates_whitelist.cmake（F-958 的 sdurws_ird_testkit_lsnchild 工具边 IRD_TOOL_TARGET_EDGES＋T-1 豁免表各增一条）——属 testdata_lint 同型登记制（DTB §4.5 第 869 行登记册明示「同型登记，非放宽门禁」，与白名单 4 处一致），T-1 红线语义未动，该变化属 F-958 治理链（46cb03430 已子代理独验）非 T16 面；治理脚本 6 文件改动全部来自 439f410c7（T15 独验已逐一审读），本轮复核 validate-reuse.ps1 diff：仅 TaskFile 参数数组化＋批次循环，每份选中契约仍执行原 CheckTask，全量库存/权限/生产链检查不减少；ird_gates 引擎直跑（IRD_ROOT 指向本仓库、独立自测目录）exit 0，「R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」（17-ird-gates.log）；PASS/FAIL/SKIP/NOT RUN 未混列——verification.json 与 13/14 原生 JSON 的 passed/failed/skipped/notRun/envUnavailable/datasetInvalid 全部分列。",
+    "提交链：commit-lint.ps1 -Range f378f01c5..e128dd8e9 exit 0，8 个提交全部合规（18-commit-lint.log），标题中文前缀（[governance]×6、[units]×1、[ACC]×1）；091e53353 一包一组（T15+T16 同批交付＋T14 失败候选证据，正文与 README 均声明「整体回退本提交」的回滚边界，与契约 note 一致）；正文与证据一致——091e53353 正文「日志真实回归122通过、契约26通过、冒烟122通过」与 diagnostics-final.xml/contract-final.xml/smoke.xml 原件逐一相符，实施期三门禁 FAIL 与独验 NOT RUN 如实登记；F-958 系列各提交正文与 listener-ownership 证据目录对应。",
+    "（补充）送验 head 之后工作树的 diagnostics 正交变化核验：e128dd8e9..HEAD 之间 ParamSchema.cpp 有 F-968 逻辑修复（输出槽 swap 语义）＋StableCodeRegistryTest.cpp 新增 1 例、testkit 有 SetCheck 能力扩展（监听器面 RecordListener.hpp/Report.cpp 零变化）——T16 自有面（Logging.cpp/Logging.hpp/LoggingTest.cpp/TestMainReport.cpp/CMakeLists.txt）零差异实测；本轮复跑为现树组合（123 例含 F-968 新例），DiagRetention 五例仅依赖与送验实现逐字节相同的 Logging.cpp，行为结论直接代表送验实现。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T16.json' -Base f378f01c5199032e08c2cce7ba0251a2f783d505 -Head e128dd8e960190c29dcdd283f91b97085cab0671\"", "exitCode": 1, "passed": "literal-FAIL-decomposed（248 越界路径逐文件归因全部落于非 T16 自有面；T16 自有 43 文件全合规、禁止面零命中，见 checks[1]/01b-scope-attribution.md）", "log": "01-scope-fullrange.log" },
+    { "name": "forbidden-and-frozen-zero-diff", "command": "git diff --name-only f378f01c..e128dd8e | grep -E '^RobWork/RobWork/src/|^RobWork/RobWorkSim/src/|^vcpkg/'（exit 1 零命中）；git diff --exit-code f378f01c..e128dd8e -- reuse/closures.json（零差异）；git diff --name-only … -- industrialrobot/cmake/（仅 ird_gates_whitelist.cmake，登记制定性见 checks[12]）", "exitCode": 0, "passed": true },
+    { "name": "manifest-sha256", "command": "git show e128dd8e:<diagnostics 五文件> | sha256sum 对照 changes/REUSE-T16.json", "exitCode": 0, "passed": true, "log": "00-head-and-manifest-sha256.log" },
+    { "name": "diag-test-build", "command": "cmake --build build --config Release --target sdurws_ird_diagnostics_test && cmake --build build --config Release --target sdurws_ird_diagnostics_contract_test", "exitCode": 0, "passed": true },
+    { "name": "diag-test-run", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_diagnostics_test.exe --gtest_output=xml:<证据目录>\\11b-diag-test-rerun.xml --ird_report=<证据目录>\\13-diag-report-rerun.json（PATH 前置 build/RobWork/bin|libs/Release＋vcpkg installed/x64-windows/bin）", "exitCode": 0, "passed": true, "log": "11-diag-test-rerun.log", "xml": "11b-diag-test-rerun.xml" },
+    { "name": "contract-test-run", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_diagnostics_contract_test.exe --gtest_output=xml:<证据目录>\\12b-contract-test-rerun.xml --ird_report=<证据目录>\\14-contract-report-rerun.json（同上 PATH 前置）", "exitCode": 0, "passed": true, "log": "12-contract-test-rerun.log", "xml": "12b-contract-test-rerun.xml" },
+    { "name": "validate-batch", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T16.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "16-validate-batch.log" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=%TEMP%/t16-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "17-ird-gates.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range f378f01c5199032e08c2cce7ba0251a2f783d505..e128dd8e960190c29dcdd283f91b97085cab0671", "exitCode": 0, "passed": true, "log": "18-commit-lint.log" }
+  ],
+  "tests": {
+    "diagnosticsRerun": { "total": 123, "passed": 123, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "xml": "11b-diag-test-rerun.xml", "nativeJson": "13-diag-report-rerun.json", "note": "123＝原始 122＋F-968 后续新增 1 例（送验 head 树无此例）；T16 自有面源码与送验 head 逐字节相同（manifest sha256 5/5 一致），本轮另覆盖实施期未跑过的 testkit 监听器修复后组合" },
+    "contractRerun": { "total": 26, "passed": 26, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "xml": "12b-contract-test-rerun.xml", "nativeJson": "14-contract-report-rerun.json" },
+    "diagRetentionCases": { "suite": "DiagRetention", "cases": ["KeepOnePipeline_DT_LOG_ROTATE", "ShrinkExpandAndMissingGeneration_DT_LOG_ROTATE", "ProtectUnrelatedPaths_DT_LOG_ROTATE", "RefuseDirectoryCollision_DT_LOG_ROTATE", "AbsentActiveFile_DT_LOG_ROTATE"], "passed": 5, "failed": 0 },
+    "originalEvidenceCited": {
+      "applicability": "T16 自有面 43 文件全部来自 091e53353 且后续 7 提交零触碰＋changes/REUSE-T16.json 5/5 sha256 与送验 head blob 一致（AGENTS §4 增量口径：输入仍适用的原始证据直接引用）",
+      "diagnosticsFinal": "122 passed / 0 skipped / 0 failed（diagnostics-final.xml，实施期 091e53353 树）",
+      "contractFinal": "26 passed / 0 skipped / 0 failed（contract-final.xml）",
+      "smoke": "122 passed / 0 skipped / 0 failed（smoke.xml，独立冒烟；构建面输入零变化）",
+      "firstRunFailure": "diagnostics-r1.xml 121/0/1 失败原件保留（Windows retain.log. 归一为活动文件的夹具缺陷，修正后 122 通过，未放宽生产规则）"
+    }
+  },
+  "issues": [],
+  "notRun": [
+    { "item": "diagnostics 独立冒烟树重建复跑", "reason": "原始 smoke.xml 122/0/0（实施期真实运行）按增量口径直接引用：冒烟与集成的 122 例同源于逐字节相同的 Logging 实现，冒烟构建面（diagnostics CMakeLists）在送验 head 与实施提交零差异；testkit 监听器修复不改变 diagnostics 冒烟构建图且监听器面零变化、运行行为面已由本轮集成复跑覆盖；原冒烟树位于旧工作树 reuse-foundation（A/B 时代遗留，AGENTS §0 保留不清理），不在本仓库验收现场，未在本仓库重建冒烟树。" },
+    { "item": "runtime/execution/project/core 等无关消费套件现树重跑", "reason": "T16 未触碰其源码（归因实测），validate-reuse 全量 changed=94 面 PASS（16-validate-batch.log）；按 AGENTS §4 增量口径不重跑不受影响模块，T15 面回归由同日 REUSE-T15-20261025-r1 独验覆盖。" }
+  ],
+  "limitations": "PASS 绑定送验 head e128dd8e960190c29dcdd283f91b97085cab0671，仅覆盖 REUSE-T16 送验范围的 T16 自有面。verify-task-scope 对该范围的字面结果为 FAIL（248 越界路径）：逐文件归因全部落于同交付提交的 T15/T14 自有面（各有独立契约与验收流程，T15 已于 REUSE-T15-20261025-r1 同日独验 pass）、c5a22b209/6fb26b31d 的 T12 drivetrain 收口、439f410c7 批次门禁工具（自含 23 例正负例证据）、以及 F-958 系列（fbd51e765/f7bb53943/46cb03430/e128dd8e9，46cb03430 已子代理独验实施与测试层面）；T16 自有 43 文件全部在 allowed 面内、forbiddenFiles 零命中，未修改任何文件或门禁迁就。送验 head 之后工作树存在 ParamSchema F-968 修复与 testkit SetCheck 扩展（正交变化，监听器面零变化，T16 自有面零差异实测），本轮测试复跑为现树组合（123 例含 F-968 新例），DiagRetention 边界结论直接代表送验实现。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399），不构成算法合规或全量准入结论；REUSE-AD-PENDING（10 条）为分支既有权限待授权状态。日志保留总数含活动文件、不新增多进程/fsync 保证为 GAP 授权边界内的既有语义登记，非本包新增承诺。记录与证据仅落盘未提交，由登记步骤统一提交。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/00-head-and-manifest-sha256.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/01-scope-fullrange.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/01b-scope-attribution.md",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/out-of-scope-paths.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/11-diag-test-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/11-diag-test-rerun.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/11b-diag-test-rerun.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/12-contract-test-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/12-contract-test-rerun.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/12b-contract-test-rerun.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/13-diag-report-rerun.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/14-contract-report-rerun.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/15-verification-summary.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/16-validate-batch.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/17-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/18-commit-lint.log"
+  ]
+}

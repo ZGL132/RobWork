@@ -1,0 +1,116 @@
+{
+  "taskId": "WP-12",
+  "contracts": ["REUSE-T33", "REUSE-T34"],
+  "baseCommit": "2f0ee6dcc581da0e0f18ffacbdfa60080af5b062",
+  "reviewedCommit": "0e14bf3e79e46a830ca1b882e4a67ecddf4335e7",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T04:10:40+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "WP-12 单次验收子智能体（独立会话，未参与实施，只验收不修复）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何受跟踪文件、未提交、未切分支、未建工作树、未远程操作、未重配构建树（仅对既有 build/ 树增量构建受影响目标与生成 t34-perf 临时 obj/exe）；所有结论仅依据本会话亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "闭合复验（历史首轮验收因 REUSE-T33 final.log 绑定漂移被 WP-12 收口门禁阻断，该绑定已经治理提交 13680ab87 专项诊断处置——本轮以当前实测为准）：送验范围 2f0ee6dcc..0e14bf3e7（4 提交：01b770ae6 T33缩减批、09bf7d921 T34、00d835e59 门禁修复、0e14bf3e7 孤儿候选清理）。①两契约 verify-task-scope 显式 -Base/-Head 落盘；②契约 acceptance 逐项清单式增量复验（仍适用原始证据直接引用）；③红线抽查 H1—H6/架构红线/CLOSURE 冻结/无平行回流；④当前 HEAD 实跑 validate-docs -TaskFile 双契约数组传参门禁。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "12 项验收检查；测试计数另列（integrationTest），性能 checksum/比值复现另列（performance），互不相加"
+  },
+  "checks": [
+    "现场与冻结范围：分支 redesign-main，HEAD=00086c884；送验 head 0e14bf3e7 经 git merge-base --is-ancestor 证实为 HEAD 祖先；送验范围恰 4 提交（[WP-12-T33]×3＋[WP-12-T34]×1，一包一组可回滚）；0e14bf3e7..HEAD 无 modeling/runtime 产品源码改动（git diff --name-only 实测，其后仅 WP-15/19 批次与治理登记），验收树与送验树在本包范围等价；受跟踪工作树零修改（git status 仅未跟踪验收产物）。T34 verification.json base=710890faa 系缩减批前身时点（其提交『收口一：惯量旋转/RPY反解/占位圆柱换上游』被 01b770ae6 缩减批取代，不在送验链），T34 证据时点如实登记，最终联合范围以本验收显式 Base/Head 复跑为准。",
+    "范围（①）：verify-task-scope 显式 -Base 2f0ee6dcc581… -Head 0e14bf3e79e4… 两契约均 exit 0——『PASS REUSE-T33/REUSE-T34 —— 49 个路径全部在允许面内』allowedRules=15 forbiddenRules=3；49 文件=5 产品/测试文件＋7 治理文档＋37 traceability 证据，无 RobWork/RobWork/src/**、RobWork/RobWorkSim/src/**、vcpkg/**（forbidden 面零命中）。",
+    "提交链：commit-lint -Range 2f0ee6dcc..0e14bf3e7 exit 0『PASS（4 个提交全部合规）』；范围 diff --stat 共 49 文件 +39303/−5541。",
+    "T33-acc1 唯一实现换上游（H1/H2 核心面）：diff 证实 RpyPresentation.hpp rotationToRpy 删除手写解析反解、直接消费 rw::math::RPY(R)——上游实存核对 RPY.cpp:28-72（通支 _rpy(0)=atan2(r21,r11)/_rpy(2)=atan2(r32,r33)、奇异判据 fabs(cosβ)<epsilon、奇异支两支 z 角取号相反 -atan2/+atan2 字面核实）与 RPY.hpp:68（epsilon 默认 1e-5，与产品镜像判据 sqrt(R00²+R10²)<1e-5 同式）；产品 (roll,pitch,yaw)=上游 (x角,pitch,z角) 反向换序，通支 roll/yaw 与原公式同式同值、pitch asin→上游 atan2(sinβ,cosβ)（ULP 级，呈现精度 1e-6 不可见）；万向锁 roll=0 产品约定保留、yaw=atan2(−R01,R11) 配角公式（两支同式——不宜从上游 x 角换算的实现结论与上游源码核实一致）；PanelModel.cpp 逐字同款第二实现删除（G1 收口），formatPose 改消费 rpyview::rotationToRpy 唯一实现——同单元双轨消除。",
+    "T33-acc2 独立 oracle＋扰动断开＋回归：PluginPanelTest 新增 MdlPanelRpy.RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33（①通支网格往返 1e-12＋与上游 RPY 换序 EXPECT_EQ 位级对照（直接消费证据）②精确 ±π/2 万向锁字面矩阵 roll=0/pitch=±π/2/yaw 字面值＋重建 1e-12 ③近奇异带 π/2−1e-6 规范化 roll=0＋带内重建 O(带宽)≤2e-6 如实登记）；独验增量构建后复跑 sdurws_ird_modeling_test 全量＝480/480 passed exit 0（含该 oracle 用例 [OK] 实测，60 suites），sdurws_ird_modeling_contract_test＝17/17 exit 0——与送验 final.xml(480/0)/contract.xml(17/0) 计数一致。扰动断开原件核对：rpy-disconnected.xml 1 test/1 failure（红例即本 oracle 用例——roll×2 突变实测红）、restored-green.xml 0 failure；突变源 rpy-mutated.hpp 与 production-rpy.json mutation 声明一致——按 AGENTS §4 引用原件（断开需注入突变源重编译，原件绑定送验树且全量复跑含对应用例全绿）。",
+    "T33-acc3 插件链接面＋A/D blocked：独验增量构建 exit 0 含 sdurws_ird_modeling_plugin 与 sdurws_ird_modeling_app（构建日志 8 处目标产出）——STATIC $<LINK_ONLY> 传递链接面集成实证在本机复现（G4）；独立冒烟树无插件目标不外推（G6，如实登记未见翻案）。A（Import.cpp 惯量旋转）/D（Template.cpp 占位圆柱）在送验范围零改动（diff 无）——UI-T53 closures 冻结面未触碰，候选原件（import-rotated-*/template-*/canonicalbridge-*/dhconvert-*）存 git 历史 01b770ae6、tip 无孤儿（0e14bf3e7 清理与 verification.json candidateEvidenceNotLanded 声明一致），blocked 移交 REUSE-T35（解冻须所有者对 closed 行启动验收）登记完备。",
+    "final.log 绑定漂移闭合（本轮核心判据）：工作树 final.log 严格 UTF-8 实测（pwsh UTF8Encoding throwOnInvalid 扫描 85349 字节零无效位）；Digest 口径（validate-reuse.ps1:41-44 文本规范化 SHA256）PS5.1(powershell) 与 pwsh7 双运行时复算——final.log 均=c8e05abe…（=production-rpy.json normal.log 绑定）、production-rpy.json 均=d2e0af4d…（=verification.json 绑定）、modeling/CMakeLists.txt 均=638d9bde…（字节口径 sha256 与 Digest 文本口径之别为本次差异根因，非篡改）；送验树 0e14bf3e7 上的旧绑定（漂移值时代）由 13680ab87 治理提交级联重钉（该提交恰改 final.log/production-rpy.json/verification.json/functions-modeling.json/tasks-T33/migration.md 六文件，与 migration §310 处置记录逐项一致）；④ validate-docs 门禁实跑 exit 0 且日志零 REUSE-POSITIVE/FAIL——此前三度阻断项核销，绑定目标稳定。",
+    "T34-acc1 SVD 候选实测不落地（G8）：runtime/src 在送验范围零变更（git diff 实测——生产保持手写单侧 Jacobi，DescriptionValidator.cpp/CanonicalModel.cpp 绑定钉原样 Digest 与送验树逐一吻合）；functions/runtime.json singularValuesOneSidedJacobi 保持 decision=pending/status=pending（所有者单项性能裁决，与 T07 接受悬置并列）；performance.log 三规模 2.597/2.154/1.944×、σ相对差 7.48e-16/1.07e-15/2.10e-15、σ-only 直连 Eigen 2.7086μs 未批渠道仅量化；独验复跑 run-performance.cmd exit 0：比值 2.439/1.985/1.989×（同量级退化）、σ相对差三值与原件逐位一致（7.48e-16/1.07e-15/2.10e-15——确定性成立）——预声明判定规则『任何退化即不落地生产』结论可复现；perf TU 独立 cl 编译不入任何 CMake 目标（modeling/runtime CMakeLists.txt grep 零引用实测）。",
+    "T34-acc2 判定链 oracle 扩展＋断开：DescriptionValidatorTest 新增 ExactSingularBoundaryDiscrimination_T34（对角阵独立手算：diag(1,1e-12) 取等落奇异档、nextafter 严格高于分界落病态档 quantity 判别面、diag(2,5e-15) 对 2e-12 四量级判距、diag(1,1e-6) 阈下健康面）与 RepeatedValidationBitwiseDeterministic_T34（重复校验 σmin/threshold 逐位一致）——独验复跑 runtime_test 中两用例均 [OK]；断开原件 boundary-disconnected.xml 2 tests/2 failures（SingularCBlocked_RT_CPL_1＋ExactSingularBoundaryDiscrimination_T34，kSingularSigmaRatio 1e-12→1e-14 突变）、restored-green.xml 0 failure——引用原件（突变注入理由同上）；sdurws_ird_runtime_test 独验复跑＝311 passed＋1 既有 skip（ContractSuite.ChildProcessWorker_RT_ID_1）exit 0，与 final.xml（312 tests/0 failures）一致。",
+    "T34-acc3 CanonicalModel 两见证终审：CanonicalModelTest 新增 InertiaWitnessMixedScaleAndExtremes_T34（混合尺度小正轴 1e-300/5e-324 合法 SPD 接受、半正定 diag(1,1,0)/Cauchy 违例/秩 1 外积拒绝、相对不对称 1e-14 级接受/1e-11 级拒绝阈两侧）——独验复跑 [OK]；functions/runtime.json symmetrizedSpdWitness 与 relativeAsymmetry 两行 business-specific/audited（T32 先例形态），auditEvidence 绑定 probe-r6 反例三件（gtest.xml/ird-test-report.json/UpstreamSuitabilityTest.cpp）＋nonOverlapEvidence=T34 README（Digest 8e82a031 与树一致）——『带证据保留』落实；differences 如实登记谱解候选被 probe-r6 混合尺度反例证伪、Eigen::LLT 直连属未批新依赖渠道（上游 LinearAlgebra 无 LLT 公开入口）、矩阵『不批准保留自持LDLT』系补证前状态。",
+    "③ 红线抽查：H1 直接消费上游 API（rw::math::RPY(R)，catalog MATH-ROT review.status=verified 既有面、upstream RPY.hpp/cpp sha 与 verification.json 绑定一致）；H2 无平行实现（PanelModel 副本删除、SVD 候选不落地、无新写核心）；H3 沿用上游类型/目标 sdurw_math、产品中文契约与 sdurws::ird 命名空间保留、中文头注按 REUSE-T33 依据更新（AGENTS §2）；H4 代码/测试/文档/证据/门禁全链适用；H5 无未批新核心落地（A/D/SVD/requirements 第三份反解均未落地或移交）；H6 上游文件/符号/版本绑定＋search 检索证据＋逐文件凭证齐备（RPY.hpp=97386026/RPY.cpp=20289937/LinearAlgebra.hpp=32ce2b2c Digest 核对一致）；架构红线：RpyPresentation.hpp 仅 std+rw/math include 零 Qt、无跨单元私有头（runtime 测试文件属 runtime 单元）、closed 行未翻转（modeling.json rpyToRotation/rpyToEaa 仍 status=closed）、migration.md 范围内变化＝WP-12 残包推进如实登记（A/D blocked、T35 planned、WP-12 不标完成）、无 old/ 回流、契约 status=ready 未自标 done。",
+    "④ 门禁（当前 HEAD 实测）：pwsh -NoProfile validate-docs.ps1 -TaskFile @('REUSE-T33.json','REUSE-T34.json')（PowerShell 数组传参）exit 0——validate-task PASS (2 tasks)、validate-reuse PASS governance only（inventory=1401 units=20 changed=111 DEBT=16 UNRESOLVED=1399）、validate-docs PASS (20 units, 12 trace entries, 424 task files, 30 registered assets)；REUSE-AD-PENDING 为既有 AD 审计 pending 提示（policy/COllisionQuery、reporting/ReportCodec、runtime/Snapshot、ui/HostView3D*——REUSE-T28 独验同样登记），非本包新增阻断。"
+  ],
+  "integrationTest": {
+    "modelingTest": {
+      "tests": 480,
+      "passed": 480,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "note": "全量（无 filter），含 MdlPanelRpy.RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33 oracle 与既有 479 基线",
+      "exitCode": 0,
+      "xml": "05-modeling-test.xml"
+    },
+    "modelingContractTest": {
+      "tests": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "note": "全量（无 filter）",
+      "exitCode": 0,
+      "xml": "05-modeling-contract.xml"
+    },
+    "runtimeTest": {
+      "tests": 312,
+      "passed": 311,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "note": "全量（无 filter），skip=ContractSuite.ChildProcessWorker_RT_ID_1（既有 skip，与实施方 final.xml 一致）；含 ExactSingularBoundaryDiscrimination_T34/RepeatedValidationBitwiseDeterministic_T34/InertiaWitnessMixedScaleAndExtremes_T34 三新用例 [OK]",
+      "exitCode": 0,
+      "xml": "06-runtime-test.xml"
+    }
+  },
+  "performance": {
+    "rerun": "07-performance-rerun.log（独验执行 REUSE-T34/run-performance.cmd，cl /O2 /MD 独立 TU）",
+    "degradationReproduced": true,
+    "scenes": "n=3 2.439×、n=6 1.985×、n=12 1.989×（实施原件 2.597/2.154/1.944×，同量级退化）；σ相对差 7.48e-16/1.07e-15/2.10e-15 与原件逐位一致",
+    "verdict": "预声明判定规则（无既有预算，任何退化即不落地生产）结论可复现——SVD 候选维持不落地，交所有者单项裁决；仅适用本包测量，不外推预算"
+  },
+  "commands": [
+    { "name": "scope-t33", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json -Base 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062 -Head 0e14bf3e79e46a830ca1b882e4a67ecddf4335e7\"", "exitCode": 0, "passed": true, "log": "01-scope-t33.log" },
+    { "name": "scope-t34", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json -Base 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062 -Head 0e14bf3e79e46a830ca1b882e4a67ecddf4335e7\"", "exitCode": 0, "passed": true, "log": "01-scope-t34.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/commit-lint.ps1' -Range 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062..0e14bf3e79e46a830ca1b882e4a67ecddf4335e7\"", "exitCode": 0, "passed": true, "log": "02-commit-lint.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile @('RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json'); exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "03-validate-docs.log" },
+    { "name": "build", "command": "MSYS_NO_PATHCONV=1 cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test sdurws_ird_modeling_plugin sdurws_ird_modeling_app sdurws_ird_runtime_test -- /nologo /verbosity:minimal", "exitCode": 0, "passed": true, "log": "04-build.log" },
+    { "name": "modeling-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_output=xml:<acc>/05-modeling-test.xml（PATH 前置 build/RobWork/bin|RobWorkStudio/libs|bin Release）", "exitCode": 0, "passed": true, "log": "05-modeling-test.log", "xml": "05-modeling-test.xml" },
+    { "name": "modeling-contract-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_contract_test.exe --gtest_output=xml:<acc>/05-modeling-contract.xml", "exitCode": 0, "passed": true, "log": "05-modeling-contract.log", "xml": "05-modeling-contract.xml" },
+    { "name": "runtime-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_runtime_test.exe --gtest_output=xml:<acc>/06-runtime-test.xml", "exitCode": 0, "passed": true, "log": "06-runtime-test.log", "xml": "06-runtime-test.xml" },
+    { "name": "performance-rerun", "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/run-performance.cmd", "exitCode": 0, "passed": true, "log": "07-performance-rerun.log" },
+    { "name": "digest-dual-runtime", "command": "powershell/pwsh -NoProfile 复刻 validate-reuse.ps1 Digest（ReadAllText→CRLF 归一→UTF8 SHA256）复算 final.log=c8e05abe…、production-rpy.json=d2e0af4d…、modeling/CMakeLists.txt=638d9bde…（双运行时一致）＋strict-UTF8 扫描 final.log 85349 字节零无效位", "exitCode": 0, "passed": true },
+    { "name": "evidence-digest-audit", "command": "git show 0e14bf3e7:<path> 复算 T33/T34 verification.json 关键绑定 Digest（3 产品文件＋production-rpy.json＋README＋上游 RPY.hpp/cpp/Rotation3D.hpp/LinearAlgebra.hpp＋T34 生产原样钉）逐项比对", "exitCode": 0, "passed": true },
+    { "name": "freeze-and-orphan", "command": "git diff --name-only 2f0ee6dcc..0e14bf3e7（无 Import.cpp/Template.cpp/runtime/src）；01b770ae6 候选原件存在性＋tip 目录孤儿扫描（零孤儿）；runtime.json/modeling.json/catalog MATH-ROT 状态行读取", "exitCode": 0, "passed": true }
+  ],
+  "executionNotes": [
+    "rN 顺位说明：工作树与 git 历史（git log --all --diff-filter=A）均无既有 WP-12-* 落盘验收记录——历史首轮 fail 验收未落盘，其阻断项（REUSE-POSITIVE: traceability/reuse/REUSE-T33/final.log）已在 migration.md §310 与治理提交 13680ab87 登记处置；本记录为 WP-12 首个落盘验收记录，按顺位命名 r1。",
+    "绑定核对的口径结论：verification.json/production-rpy.json 的 sha256 字段为 Digest 文本口径（validate-reuse.ps1:41-44，CRLF 归一化后 SHA256），与 git blob/磁盘字节 sha256 不同属正常（如 modeling/CMakeLists.txt 字节 3876d896/Digest 638d9bde）；独验以双运行时 Digest 复算与门禁实跑为准。",
+    "T33/T34 扰动断开与恢复（rpy-disconnected/boundary-disconnected/restored-green）未由独验复跑：需向构建树注入突变源并重编译；原件 Digest 绑定送验树、红例名与突变描述与 diff 代码逐项一致、复跑全量含对应 oracle 用例全绿——按 AGENTS §4『输入/工具链/范围仍适用的原始证据直接引用』处理。",
+    "T33 rpy-oracle 定向跑（rpy-oracle.xml）未单独复现：其断言面已由全量 480 项复跑覆盖（同一用例 [OK]）。",
+    "构建在既有 build/ 树增量执行（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 在先确认），未重配构建树；首查工作树字节 sha256 与绑定不符系字节/文本口径之别，经 Digest 复算全部闭合，无篡改迹象。",
+    "T34 verification.json base=710890faa 为缩减批前身时点（提交『收口一：惯量旋转/RPY反解/占位圆柱换上游』后被 01b770ae6 缩减批取代，不在送验链祖先上）——T34 证据生成时点的如实记录；最终联合范围以本验收显式 -Base/-Head 复跑 PASS 为准，不影响 runtime 改动内容与绑定。",
+    "本会话 grep 检索 05-modeling-test.log 时未加 -a 标志曾误判无 T33 用例，加 -a 后确认 [RUN]/[OK] 均在——记录在案防误读。"
+  ],
+  "issues": [],
+  "notRun": [],
+  "limitations": "PASS 仅绑定送验范围 2f0ee6dcc..0e14bf3e7（送验 head 0e14bf3e79e4）及两契约 acceptance 面：T33 C 插件面（RPY 反解唯一实现换上游＋G1/G4/G5/G6）与 T34（SVD 候选实测不落地＋判定链 oracle/断开＋CanonicalModel 两见证带证据保留）。两契约 status=ready 未翻转，登记收口由所有者/后续治理步骤执行；本 PASS 不等于 WP-12 整体完成（T29 性能 blocked、REUSE-T35 planned 且前置=所有者对 A/D closed 行解冻裁决、T13 真值独验未放行前普通 IK/RNE 仍不放行）。validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399），不构成全库算法合规或 migration §11 算法替换放行。性能复跑为同一台机器当前状态实测，σ相对差逐位一致、比值同量级，接受判定仍归所有者单项裁决。Digest 口径加固（显式解码或拒收无效 UTF-8 证据）超出本次授权未实施，后续证据文件如再混入非 UTF-8 字节可能复现同型漂移（migration §310 已登记待所有者裁决）——非本包阻断。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/01-scope-t33.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/01-scope-t34.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/02-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/03-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/04-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/05-modeling-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/05-modeling-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/05-modeling-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/05-modeling-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/06-runtime-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/06-runtime-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/07-performance-rerun.log"
+  ]
+}

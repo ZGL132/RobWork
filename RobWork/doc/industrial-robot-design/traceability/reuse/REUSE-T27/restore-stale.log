@@ -1,0 +1,2027 @@
+Note: Google Test filter = MdlInertiaReuse.*:MdlPropertyEstimation.*:MdlRobotDesign.IMdl5*:MdlRobotDesign.IMdl3*:MdlParts.ToolBodyAssertions*:MdlImport.*:MdlReadiness.*:MdlCommandPrepare.HardAssert*:LinAlgeTest.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*
+[==========] Running 65 tests from 10 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from MdlRobotDesign
+[ RUN      ] MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp(264): error: Value of: checkInvariants(missingBase).empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp(322): error: Value of: hasViolation(checkInvariants(badTriangle), InvariantId::IMdl5, "inertia.triangle")
+  Actual: false (未找到违例 I-MDL-5（subject 含 "inertia.triangle"）；实际条数=3)
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp(326): error: Value of: checkInvariants(missingBody).empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3 (0 ms)
+[----------] 2 tests from MdlRobotDesign (0 ms total)
+
+[----------] 1 test from MdlParts
+[ RUN      ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PartsTest.cpp(145): error: Value of: checkInvariants(makeValidTool()).empty()
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PartsTest.cpp(167): error: Value of: hasViolation(checkInvariants(badTriangle), InvariantId::IMdl5, "tool.body.inertia.triangle")
+  Actual: false (未找到违例 I-MDL-5（tool.body.inertia.triangle）)
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PartsTest.cpp(184): error: Value of: hasViolation(checkInvariants(design), InvariantId::IMdl5, "links[1].body.inertia.triangle")
+  Actual: false (未找到违例 I-MDL-5（links[1].body.inertia.triangle）)
+Expected: true
+
+[  FAILED  ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3 (0 ms)
+[----------] 1 test from MdlParts (0 ms total)
+
+[----------] 16 tests from MdlPropertyEstimation
+[ RUN      ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(145): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+单段估算意外失败（阶段公因）
+
+unknown file: error: C++ exception with description "runtime/expected/get-on-error: 对错误态调用 get()" thrown in the test body.
+
+[  FAILED  ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(145): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+单段估算意外失败（阶段公因）
+
+unknown file: error: C++ exception with description "runtime/expected/get-on-error: 对错误态调用 get()" thrown in the test body.
+
+[  FAILED  ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(145): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+单段估算意外失败（阶段公因）
+
+unknown file: error: C++ exception with description "runtime/expected/get-on-error: 对错误态调用 get()" thrown in the test body.
+
+[  FAILED  ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(145): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+单段估算意外失败（阶段公因）
+
+unknown file: error: C++ exception with description "runtime/expected/get-on-error: 对错误态调用 get()" thrown in the test body.
+
+[  FAILED  ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(145): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+单段估算意外失败（阶段公因）
+
+unknown file: error: C++ exception with description "runtime/expected/get-on-error: 对错误态调用 get()" thrown in the test body.
+
+[  FAILED  ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(396): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+
+[  FAILED  ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(145): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+单段估算意外失败（阶段公因）
+
+unknown file: error: C++ exception with description "runtime/expected/get-on-error: 对错误态调用 get()" thrown in the test body.
+
+[  FAILED  ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(489): error: Expected equality of these values:
+  ordinaryEig
+    Which is: { 0, 0, 0 }
+  expected
+    Which is: { 2, 2, 2 }
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(498): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(508): error: Expected equality of these values:
+  value
+    Which is: 0
+  scale
+    Which is: 1e-300
+三重特征值应等于各向同性对角值，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(508): error: Expected equality of these values:
+  value
+    Which is: 0
+  scale
+    Which is: 1e-300
+三重特征值应等于各向同性对角值，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(508): error: Expected equality of these values:
+  value
+    Which is: 0
+  scale
+    Which is: 1e-300
+三重特征值应等于各向同性对角值，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(508): error: Expected equality of these values:
+  value
+    Which is: 0
+  scale
+    Which is: 1.0000000000000001e+300
+三重特征值应等于各向同性对角值，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(508): error: Expected equality of these values:
+  value
+    Which is: 0
+  scale
+    Which is: 1.0000000000000001e+300
+三重特征值应等于各向同性对角值，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(508): error: Expected equality of these values:
+  value
+    Which is: 0
+  scale
+    Which is: 1.0000000000000001e+300
+三重特征值应等于各向同性对角值，scale=1.0000000000000001e+300
+
+[  FAILED  ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(528): error: Expected equality of these values:
+  synthesisSelfCheck(zero)
+    Which is: "not-positive-definite"
+  ""
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(540): error: Expected equality of these values:
+  synthesisSelfCheck(atTolerance)
+    Which is: "not-positive-definite"
+  ""
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(550): error: Expected equality of these values:
+  synthesisSelfCheck(triangle)
+    Which is: "not-positive-definite"
+  "triangle-inequality-violated"
+
+[  FAILED  ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4 (0 ms)
+[----------] 16 tests from MdlPropertyEstimation (0 ms total)
+
+[----------] 2 tests from MdlInertiaReuse
+[ RUN      ] MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 5, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 1, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=9.9999999999999999e-161
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e-100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=0.001
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+100
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1e+160
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 2, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 3, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(880): error: The difference between actual[k]/scale and spectrum[k] is 4, which exceeds 1e-12, where
+actual[k]/scale evaluates to 0,
+spectrum[k] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+主惯量谱／升序／尺度不变性，scale=1.0000000000000001e+300
+
+[  FAILED  ] MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27 (6 ms)
+[ RUN      ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.0000000000000001e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999993e-300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(904): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999991
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(904): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.0000000000000002e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(899): error: Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999997e+300
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(904): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(913): error: Expected equality of these values:
+  violations.empty()
+    Which is: false
+  maximum==2.0
+    Which is: true
+
+[  FAILED  ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27 (0 ms)
+[----------] 2 tests from MdlInertiaReuse (6 ms total)
+
+[----------] 31 tests from MdlImport
+[ RUN      ] MdlImport.MapWorkCellXml_ChannelImplementedR1Retired_WP13T17_ACC1
+[       OK ] MdlImport.MapWorkCellXml_ChannelImplementedR1Retired_WP13T17_ACC1 (0 ms)
+[ RUN      ] MdlImport.Mapper_ReentrantStateless_WP13T05_ACC1
+[       OK ] MdlImport.Mapper_ReentrantStateless_WP13T05_ACC1 (0 ms)
+[ RUN      ] MdlImport.MapXacroExpanded_ProvenanceRecorded_WP13T05_ACC1
+[       OK ] MdlImport.MapXacroExpanded_ProvenanceRecorded_WP13T05_ACC1 (0 ms)
+[ RUN      ] MdlImport.FullUrdf_FieldMappingRowsObservable_WP13T05_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp(608): error: Value of: report.submittable
+  Actual: false
+Expected: true
+
+[  FAILED  ] MdlImport.FullUrdf_FieldMappingRowsObservable_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.MissingInertial_NotProvidedInDefaults_WP13T05_ACC2
+[       OK ] MdlImport.MissingInertial_NotProvidedInDefaults_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.PartialOriginAttributes_DefaultZeroNotIllegal_F570
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp(727): error: Value of: outcome.report.submittable
+  Actual: false
+Expected: true
+URDF 规范合法的部分缺省 origin 不得阻断提交
+
+[  FAILED  ] MdlImport.PartialOriginAttributes_DefaultZeroNotIllegal_F570 (0 ms)
+[ RUN      ] MdlImport.IllegalOriginTextStillRejected_F570
+[       OK ] MdlImport.IllegalOriginTextStillRejected_F570 (0 ms)
+[ RUN      ] MdlImport.NonFiniteOriginXyzNan_Rejected_F633
+[       OK ] MdlImport.NonFiniteOriginXyzNan_Rejected_F633 (0 ms)
+[ RUN      ] MdlImport.NonFiniteOriginRpyInf_Rejected_F633
+[       OK ] MdlImport.NonFiniteOriginRpyInf_Rejected_F633 (0 ms)
+[ RUN      ] MdlImport.PhysicalIllegality_ReportErrorItems_WP13T05_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp(902): error: Value of: triangleBad
+  Actual: false
+Expected: true
+λmax>λmid+λmin→inertia-triangle 错误项（diag(10,1,1)）
+
+[  FAILED  ] MdlImport.PhysicalIllegality_ReportErrorItems_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.NameConflictAndIllegalValue_Preserved_WP13T05_ACC2
+[       OK ] MdlImport.NameConflictAndIllegalValue_Preserved_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.MissingAxis_DefaultPlusXPendingConfirm_WP13T05_ACC3
+[       OK ] MdlImport.MissingAxis_DefaultPlusXPendingConfirm_WP13T05_ACC3 (0 ms)
+[ RUN      ] MdlImport.ZeroAxis_ReportOnlyInvalidNotSubmittable_WP13T05_ACC3
+[       OK ] MdlImport.ZeroAxis_ReportOnlyInvalidNotSubmittable_WP13T05_ACC3 (0 ms)
+[ RUN      ] MdlImport.NonFiniteAxis_ReportOnly_WP13T05_ACC3
+[       OK ] MdlImport.NonFiniteAxis_ReportOnly_WP13T05_ACC3 (0 ms)
+[ RUN      ] MdlImport.MimicJoint_TypePreservedBlocked_WP13T05_ACC4
+[       OK ] MdlImport.MimicJoint_TypePreservedBlocked_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.PlanarJoint_UnsupportedNoDraft_WP13T05_ACC4
+[       OK ] MdlImport.PlanarJoint_UnsupportedNoDraft_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.MultiBranch_NoSelectionRejected_WP13T05_ACC4
+[       OK ] MdlImport.MultiBranch_NoSelectionRejected_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.SixRevoluteChain_FullTemplateRange_WP13T05_ACC4
+[       OK ] MdlImport.SixRevoluteChain_FullTemplateRange_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.SevenRevoluteChain_FullTemplateRange_WP13T05_ACC4
+[       OK ] MdlImport.SevenRevoluteChain_FullTemplateRange_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.FiveAxes_BeyondRange_DraftEditable_WP13T05_ACC4
+[       OK ] MdlImport.FiveAxes_BeyondRange_DraftEditable_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.PrismaticInChain_HybridFullRange_WP13T19_AT36
+[       OK ] MdlImport.PrismaticInChain_HybridFullRange_WP13T19_AT36 (0 ms)
+[ RUN      ] MdlImport.SevenAxesWithPrismatic_HybridFullRange_WP13T19_AT36
+[       OK ] MdlImport.SevenAxesWithPrismatic_HybridFullRange_WP13T19_AT36 (0 ms)
+[ RUN      ] MdlImport.FourAxesWithPrismatic_StillBlocked_WP13T19_AT36
+[       OK ] MdlImport.FourAxesWithPrismatic_StillBlocked_WP13T19_AT36 (0 ms)
+[ RUN      ] MdlImport.HybridChainStage_Parameterization_R1KeepsBlocked_R2Unlocks_WP13T19
+[       OK ] MdlImport.HybridChainStage_Parameterization_R1KeepsBlocked_R2Unlocks_WP13T19 (0 ms)
+[ RUN      ] MdlImport.MultiBranch_WithSelection_AuxCandidatesNotRejected_WP13T05_ACC4
+[       OK ] MdlImport.MultiBranch_WithSelection_AuxCandidatesNotRejected_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.DeepSplit_SelectionResidualBranches_WP13T05_ACC4
+[       OK ] MdlImport.DeepSplit_SelectionResidualBranches_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.Continuous_WorkingRangePendingConfirm_WP13T05_ACC4
+[       OK ] MdlImport.Continuous_WorkingRangePendingConfirm_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.Determinism_SameBytesSameOptionsSameOutput_WP13T05_ACC5
+[       OK ] MdlImport.Determinism_SameBytesSameOptionsSameOutput_WP13T05_ACC5 (0 ms)
+[ RUN      ] MdlImport.Diags_SortedBySourceLineOrder_WP13T05_ACC5
+[       OK ] MdlImport.Diags_SortedBySourceLineOrder_WP13T05_ACC5 (0 ms)
+[ RUN      ] MdlImport.InertialRpy_RotatesInertiaToLinkFrame_WP13T05_ACC2
+[       OK ] MdlImport.InertialRpy_RotatesInertiaToLinkFrame_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.AxisNormSqOverflow_ReportInvalidNotSubmittable_F587
+[       OK ] MdlImport.AxisNormSqOverflow_ReportInvalidNotSubmittable_F587 (0 ms)
+[----------] 31 tests from MdlImport (1 ms total)
+
+[----------] 1 test from MdlCanonicalBridge
+[ RUN      ] MdlCanonicalBridge.LinksMappingBodyAndGeometry_WP13T12_ACC1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(860): error: Value of: built.ok()
+  Actual: false
+Expected: true
+modeling/codec: 解码产物违反不变量 I-MDL-5（subject=links[1].body.inertia.spd）——字节绕过构造边界被拒（NFR-COR-03）
+
+[  FAILED  ] MdlCanonicalBridge.LinksMappingBodyAndGeometry_WP13T12_ACC1 (0 ms)
+[----------] 1 test from MdlCanonicalBridge (0 ms total)
+
+[----------] 2 tests from ModelingManualBody
+[ RUN      ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1330): error: Value of: out
+  Actual: false
+Expected: true
+
+[  FAILED  ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17 (0 ms)
+[ RUN      ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1372): error: Value of: out
+  Actual: false
+Expected: true
+惯量未通过：六分量须有限、张量须正定且满足主惯量三角不等式（kg·m²）。
+
+[  FAILED  ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17 (0 ms)
+[----------] 2 tests from ModelingManualBody (0 ms total)
+
+[----------] 8 tests from MdlReadiness
+[ RUN      ] MdlReadiness.LegalWorkingSetAllLayersPassAndPureFunction
+[       OK ] MdlReadiness.LegalWorkingSetAllLayersPassAndPureFunction (0 ms)
+[ RUN      ] MdlReadiness.NotProvidedOnlyNoteKeepsReadyReachable_WP13T23
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ReadinessTest.cpp(181): error: Expected equality of these values:
+  report.notes.size()
+    Which is: 0
+  std::size_t{1}
+    Which is: 1
+
+[  FAILED  ] MdlReadiness.NotProvidedOnlyNoteKeepsReadyReachable_WP13T23 (0 ms)
+[ RUN      ] MdlReadiness.InformationalNoteStillAggregatesReadyWithNotes_WP13T23
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ReadinessTest.cpp(212): error: Expected equality of these values:
+  report.notes.size()
+    Which is: 0
+  std::size_t{2}
+    Which is: 2
+
+[  FAILED  ] MdlReadiness.InformationalNoteStillAggregatesReadyWithNotes_WP13T23 (0 ms)
+[ RUN      ] MdlReadiness.ShortCircuitPriorityStopsAtFirstBlockingLayer
+[       OK ] MdlReadiness.ShortCircuitPriorityStopsAtFirstBlockingLayer (0 ms)
+[ RUN      ] MdlReadiness.L11PolicyUnresolvableBlocksWithoutSilentTravelSkip
+[       OK ] MdlReadiness.L11PolicyUnresolvableBlocksWithoutSilentTravelSkip (0 ms)
+[ RUN      ] MdlReadiness.ResultGroupsStableOrderByLayerThenSubject
+[       OK ] MdlReadiness.ResultGroupsStableOrderByLayerThenSubject (0 ms)
+[ RUN      ] MdlReadiness.L9CouplingStageLockAndR2NumericCheck_WP13T18
+[       OK ] MdlReadiness.L9CouplingStageLockAndR2NumericCheck_WP13T18 (0 ms)
+[ RUN      ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25
+[       OK ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25 (0 ms)
+[----------] 8 tests from MdlReadiness (0 ms total)
+
+[----------] 1 test from MdlCommandPrepare
+[ RUN      ] MdlCommandPrepare.HardAssertBlocksWithPreciseDiagnostic
+[       OK ] MdlCommandPrepare.HardAssertBlocksWithPreciseDiagnostic (0 ms)
+[----------] 1 test from MdlCommandPrepare (0 ms total)
+
+[----------] 1 test from LinAlgeTest
+[ RUN      ] LinAlgeTest.LinearAlgebraTest
+[       OK ] LinAlgeTest.LinearAlgebraTest (0 ms)
+[----------] 1 test from LinAlgeTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 65 tests from 10 test suites ran. (10 ms total)
+[  PASSED  ] 43 tests.
+[  FAILED  ] 22 tests, listed below:
+[  FAILED  ] MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3
+[  FAILED  ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3
+[  FAILED  ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3
+[  FAILED  ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1
+[  FAILED  ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1
+[  FAILED  ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1
+[  FAILED  ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1
+[  FAILED  ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1
+[  FAILED  ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2
+[  FAILED  ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2
+[  FAILED  ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23
+[  FAILED  ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2
+[  FAILED  ] MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27
+[  FAILED  ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27
+[  FAILED  ] MdlImport.FullUrdf_FieldMappingRowsObservable_WP13T05_ACC2
+[  FAILED  ] MdlImport.PartialOriginAttributes_DefaultZeroNotIllegal_F570
+[  FAILED  ] MdlImport.PhysicalIllegality_ReportErrorItems_WP13T05_ACC2
+[  FAILED  ] MdlCanonicalBridge.LinksMappingBodyAndGeometry_WP13T12_ACC1
+[  FAILED  ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17
+[  FAILED  ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17
+[  FAILED  ] MdlReadiness.NotProvidedOnlyNoteKeepsReadyReachable_WP13T23
+[  FAILED  ] MdlReadiness.InformationalNoteStillAggregatesReadyWithNotes_WP13T23
+
+22 FAILED TESTS

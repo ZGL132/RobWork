@@ -1,0 +1,21 @@
+=== R1 CLOSURE freeze: segA+B (64ef0fd0..0032c8e78) closures.json ===
+ZERO-DIFF exit=0
+=== R1b CLOSURE freeze: rework segment (6921197dd..af7c623ae) ===
+ZERO-DIFF exit=0
+=== R2 contract zero-change: commits touching tasks/GOV-T21.json ===
+64ef0fd07 [governance] 建立上游复用文档约束与可执行门禁
+=== R3 upstream+vcpkg net-zero in full range ===
+(empty=net-zero)
+=== R4 L2 zero-Qt spot-check (modeling headers, current tree) ===
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp:0
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp:0
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp:0
+grep exit nonzero = no Qt match in any file
+=== R5 acceptance-6 originals exist (branch protection, pre-remote-ban) ===
+branch-protection-pinned.json
+branch-protection.json
+=== R6 H1-H6 anchor spot-check: AGENTS.md + CI + PR template ===
+2
+.github/pull_request_template.md
+.github/workflows/upstream-reuse-governance.yml
+=== R7 inventory units (acceptance-1/2) ===

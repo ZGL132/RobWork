@@ -1,0 +1,5 @@
+InvalidOperation: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\pipeline-lock.ps1:163
+Line |
+ 163 |  } catch [System.IO] {
+     |          ~~~~~~~~~~~
+     | Unable to find type [System.IO].

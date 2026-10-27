@@ -1,0 +1,34 @@
+== reuse-contract.ps1 blob at three points ==
+5c05e6fb95e7c31bd46e34e03eb4851030dae58d
+44ac6d2db41d83380f4a4170faa6640aca2760e2
+44ac6d2db41d83380f4a4170faa6640aca2760e2
+== which commits changed it after impl head ==
+a1393ad4a [governance] 以原库RPY和EAA替换modeling重复旋转核心
+54f0beda6 [governance] 撤销EAA补丁并将局部旋转转换对照设为1e-6
+e453006ea [governance] 按批准补丁修正上游EAA小角精度并核验范围
+== worktree vs HEAD normalized diff (expect clean) ==
+CMakeLists.txt: CLEAN (autocrlf-only, no content drift)
+CouplingMath.hpp: CLEAN
+== closures.json content ==
+{
+  "schemaVersion": "ird-reuse-closures/1",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+      "baselineBlob": "3fedec5b24ee89eea7b5c8dd2b85efc6e00d19fe",
+      "currentSha256": "2d81267428a41d56e6cce9d321f63c40321d24b708b489a7aa5b0f771a1e9512",
+      "functionKeys": [
+        "modeling.rpyToRotation|MATH-ROT",
+        "modeling.rpyToEaa|MATH-ROT"
+      ],
+      "migrationCommit": "a1393ad4ac88f18a57ddb463c204a91e2887a76c",
+      "acceptance": {
+        "commit": "30b5a2343f4d08ce0b203fdbc2c5b7cfee867c27",
+        "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T11-20261023.json",
+        "reviewedCommit": "a1393ad4ac88f18a57ddb463c204a91e2887a76c"
+      }
+    }
+  ]
+}
+== core.autocrlf ==
+true

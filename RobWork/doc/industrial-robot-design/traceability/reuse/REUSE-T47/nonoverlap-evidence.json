@@ -1,0 +1,112 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T47",
+ "unit": "evidence",
+ "description": "business-specific 判定的 nonOverlap 证据（族判定＋行级差异引用；族检索记录与决策文件见批目录）。",
+ "entries": [
+  {
+   "functionId": "evidence.aggregateVerdict",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：六级判定/工程与执行轴分离归evidence；不搬到适配层，不允许业务自行构造结果包络。需要继续核稳定诊断文案来源及全部输入消费者"
+  },
+  {
+   "functionId": "evidence.Snapshot.appendU16",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Snapshot.appendU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Snapshot.appendU64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Snapshot.appendLengthString",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Snapshot.appendLengthBytes",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Snapshot.Reader.readU16",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Snapshot.Reader.readU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Snapshot.Reader.readU64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Snapshot.Reader.readLengthString",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Snapshot.Reader.readLengthBytes",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Slice.appendU16",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Slice.appendU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Slice.appendU64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Slice.appendLengthString",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Slice.appendLengthBytes",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权"
+  },
+  {
+   "functionId": "evidence.Slice.Reader.readU16",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Slice.Reader.readU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Slice.Reader.readU64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Slice.Reader.readLengthString",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Slice.Reader.readLengthBytes",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约"
+  },
+  {
+   "functionId": "evidence.Evidence.appendU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份"
+  },
+  {
+   "functionId": "evidence.Evidence.appendLenStr",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份"
+  },
+  {
+   "functionId": "evidence.Evaluator.appendU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份"
+  },
+  {
+   "functionId": "evidence.Evaluator.appendLenStr",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份"
+  },
+  {
+   "functionId": "evidence.CMake.ird_add_gtest",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台"
+  }
+ ]
+}

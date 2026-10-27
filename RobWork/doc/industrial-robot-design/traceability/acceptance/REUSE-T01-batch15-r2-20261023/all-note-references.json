@@ -1,0 +1,122 @@
+[
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "kind": "auditEvidence",
+    "match": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "kind": "auditEvidence",
+    "match": true
+  }
+]

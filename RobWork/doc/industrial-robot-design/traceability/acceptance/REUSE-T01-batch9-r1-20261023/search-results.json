@@ -1,0 +1,66 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"class.*IKinRuntimeView|public.*IKinRuntimeView|public.*kinematics::IKinRuntimeView\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot --glob \"*.hpp\" --glob \"*.cpp\"",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"zeroOffset|q_authoritative|qLower|qUpper|findDevice|defaultState\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 3,
+    "command": "rg -n \"class IRuntimeModelView|workCell\\(|makeState|nameResolver|tryDynamicWorkCell\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Snapshot.hpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 4,
+    "command": "rg -n \"class FrozenRuntimeView|m_model|m_worldToBase|source.model|class SnapshotViewAdapter|m_snapshot\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 5,
+    "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 6,
+    "command": "rg -n \"PrismaticJoint|doGetTransform|getTransform|multiplyTransform\" RobWork/RobWork/src/rw/models/PrismaticJoint.cpp RobWork/RobWork/src/rw/models/PrismaticJoint.hpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 7,
+    "command": "rg -n \"zeroOffset|Prismatic|jointStaticTransform|q_authoritative|q_rw\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 8,
+    "command": "rg -n \"FkEquivalence|Prismatic|zeroOffset|threeJointFixture\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  }
+]

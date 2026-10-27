@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T26",
+  "unit": "trajectory",
+  "masterWp": "WP-A",
+  "title": "直接复用RobWork四元数插值并删除重复核心",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "TRJ-02",
+    "TRJ-06",
+    "NFR-COR-01",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/trajectory.md#8.2",
+    "units/trajectory.md#8.3",
+    "reuse/migration.md#13.3"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T26.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T26.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T26.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "删除手写slerp及无用分量/归一/点积/角差辅助；直接消费Quaternion normalize/slerp，业务边界点积使用Vector3D dot；无备用核心",
+    "端点位级、最短弧、微小角/pi和任意初态解析独立oracle及上游直接对照，原容差不降低；位置凸组合/IK端口/取消/失败素材契约保留",
+    "真实生产返回值扰动失败、受影响消费者回归和性能实际对照；整文件功能实审；独验未执行不得done"
+  ],
+  "note": "直接复用迁移，WP-11笛卡尔姿态子包；起点507db46bba838bb170e1fbfaf5784a389ad3790d。仅值类型API和局部适配，不依赖T13模型真值、不替换IK，不改公共接口/CMake/依赖/框架。完整文件必要实审，禁止恢复自写fallback。独验NOT RUN，不操作远程。 已实施删除旧核心；最终23单元+16消费者passed、failed=0、skipped=0；生产扰动3failed后恢复。所有者明确接受本次一般角约6-10%/近pi约0.3-2.7%微基准开销并要求交独验；独验NOT RUN、ready非done。原件traceability/reuse/REUSE-T26/README.md。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T26-20261025-r1.json（复跑原件在其同名目录），verdict=pass（10项检查failed=0/skipped=0；集成测试计数另列191+69互不相加；扰动重放、上游gtest、内存/线程/整机按口径引用原件或如实登记NOT RUN），绑定送验 SHA=704667b598967d9849dd02f113dd28ec3ad93a8e（base=507db46bba838bb170e1fbfaf5784a389ad3790d，送验范围单提交）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（42路径全在允许面）、手写slerp及辅助删除实审＋Eigen slerp语义等价核对、独立oracle/上游对照/边界用例审阅、bindings sha256与送验blob逐项命中、增量构建exit 0、trajectory单元191/191与契约消费者69/69真实复跑（含T26两新用例）、性能微基准独立重跑与所有者接受量级一致（checksum新旧全等）、ird_gates直跑11类零命中、validate-docs三合一exit 0、commit-lint PASS、closures冻结零触碰；limitations：validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399），性能开销限于所有者接受的微基准口径不外推，本PASS不构成进入REUSE-T02或算法替换（migration §11）的放行。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T26.json"
+  },
+  "outputs": [
+    "Quaternion直接生产消费与重复核心删除",
+    "独立解析对照/上游对照/生产断开/性能/消费者原始证据和精确文件功能凭证；交独验"
+  ]
+}

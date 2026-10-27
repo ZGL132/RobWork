@@ -10,7 +10,12 @@
  *     §4.4（字段级契约——字段序即 §4.4 表列序）、§8.11（版本判定与拒绝）；
  *   - 需求 CON-01（身份/版本包络持久化）、NFR-DEP-04/PM-06（版本拒绝＋
  *     升级指引数据）、NFR-COR-02（确定性：同值必同字节）；
- *   - 任务契约 tasks/foundation/PRJ-T04.json acceptance 1～4。
+ *   - 任务契约 tasks/foundation/PRJ-T04.json acceptance 1～4；
+ *   - 任务契约 tasks/REUSE-T54.json（P5/T05-project 解析家族迁移批）：
+ *     parse 半区的 DOM 构建消费 Boost.JSON（boost::json 公共依赖渠道经
+ *     所有者 2026-10-26 A4 裁决批准——vcpkg 公共渠道，登记见
+ *     traceability/reuse/REUSE-T43/byte-primitives-decision.md §6）；
+ *     canonical 词法门与全部磁盘契约语义仍归本单元自持（头契约零变化）。
  *
  * 背景说明（CR-02 处置——为什么本编解码器没有哈希路径）：
  *   foundation-contract-review CR-02（已关闭）：摘要算法只调用 core

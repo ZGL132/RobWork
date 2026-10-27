@@ -1,0 +1,44 @@
+Note: Google Test filter = CollisionSessionNameRules.*:CollisionSessionUpstreamSemantics.*
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from CollisionSessionNameRules
+[ RUN      ] CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp(1207): error: Value of: rules.front().match("REGEXarm.link_1", "REGEXarm.link_2")
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp(1208): error: Value of: rules.front().match("REGEXarm.link_2", "REGEXarm.link_1")
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp(1209): error: Value of: rules.front().matchOne("REGEXarm.link_1")
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp(1215): error: Expected equality of these values:
+  rules.front().getPatterns().first
+    Which is: "REGEXarm.link_1"
+  "REGEXREGEXarm\\.link_1"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp(1216): error: Expected equality of these values:
+  rules.front().getPatterns().second
+    Which is: "REGEXarm.link_2"
+  "REGEXREGEXarm\\.link_2"
+
+[  FAILED  ] CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961 (1 ms)
+[ RUN      ] CollisionSessionNameRules.PlainDottedNamesPassThroughLiterally_F961
+[       OK ] CollisionSessionNameRules.PlainDottedNamesPassThroughLiterally_F961 (0 ms)
+[----------] 2 tests from CollisionSessionNameRules (1 ms total)
+
+[----------] 1 test from CollisionSessionUpstreamSemantics
+[ RUN      ] CollisionSessionUpstreamSemantics.RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961
+[       OK ] CollisionSessionUpstreamSemantics.RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961 (0 ms)
+[----------] 1 test from CollisionSessionUpstreamSemantics (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (2 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961
+
+ 1 FAILED TEST

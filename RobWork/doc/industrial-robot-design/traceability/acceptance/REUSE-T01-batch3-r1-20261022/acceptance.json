@@ -1,0 +1,58 @@
+{
+  "task": "REUSE-T01 batch3 independent acceptance",
+  "reviewedCommit": "dfc317f234d9253b2e07bdea89a9bb3028e6db9d",
+  "baseCommit": "ce1af19667e6e3e439e15600e5bed7940b171942",
+  "verdict": "FAIL",
+  "gates": {
+    "reuse": 0,
+    "task": 0,
+    "docs": 0,
+    "diff": 0
+  },
+  "counts": {
+    "catalogHashChecks": 20,
+    "searchExitMatches": 8,
+    "sourceHashChecks": 18,
+    "searchHitMultisetMatches": 8,
+    "newFunctions": 18,
+    "inputHashChecks": 18,
+    "closedFiles": 0,
+    "allFunctions": 95,
+    "pending": 95,
+    "searchReplay": 8,
+    "newCandidateCapabilities": 4
+  },
+  "findings": [
+    {
+      "lines": [
+        46,
+        83
+      ],
+      "functions": [
+        "diagnostics.FileLogFileOps.appendLine",
+        "diagnostics.LoggingPipeline.log"
+      ],
+      "priority": "P2",
+      "issue": "两条日志实现只关联ERR-01；ERR-01规定三轴正交与稳定诊断字段，不规定日志落盘/排队。units/diagnostics.md O-6明确日志权威NFR-REL-05、ARCH7.8，DIAG-T07及units/diagnostics7/9.6可提供直接任务/规范追溯。应按日志真实契约登记，不能以单元泛ID代替语义关联。",
+      "file": "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json"
+    },
+    {
+      "lines": [
+        62
+      ],
+      "functions": [
+        "execution.WorkerSupervisor.spawnNewWorker"
+      ],
+      "priority": "P2",
+      "issue": "permissionRef ARCH:3.6.3指向evidence/diagnostics承重边界；worker进程启动/任务隔离对应ARCH3.6.4。当前pending不授予权限，但错误来源仍破坏逐功能权限追溯。",
+      "file": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    }
+  ],
+  "limitations": [
+    "仅本批候选登记验收，不是20单元全功能审计通过，不是T02准入",
+    "无生产源码变动；C++/Qt/新适用性实验/远程CI未执行",
+    "候选API/目标存在和摘要一致不证明生产适用性；HOST锚和State仍是pending债务，未授权",
+    "initial checkout encountered Windows long paths; enabled clone-local core.longpaths and forced frozen checkout; final checkout clean"
+  ],
+  "evidenceDirectory": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-batch3-55f128a984bc4d798680242812c50324"
+}

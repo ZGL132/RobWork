@@ -1,0 +1,376 @@
+RobWork/RobWorkSim/gtest\TestEnvironment.cpp:22:#include <rw/core/DOMParser.hpp>
+RobWork/RobWorkSim/gtest\TestEnvironment.cpp:28:using rw::core::DOMParser;
+RobWork/RobWorkSim/gtest\TestEnvironment.cpp:61:	    const DOMParser::Ptr parser = DOMParser::make();
+RobWork/RobWorkSim/src\rwsim\control\BeamJointController.cpp:3:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\control\BodyController.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellSaver.cpp:2:#include <rw/core/DOMParser.hpp>
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellSaver.cpp:663:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellSaver.cpp:675:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWorkSim/src\rwsim\control\PDController.cpp:3:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:24:#include <rw/core/macros.hpp>
+RobWork/RobWork/gtest\TestEnvironment.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/gtest\TestEnvironment.cpp:29:using rw::core::DOMParser;
+RobWork/RobWork/gtest\TestEnvironment.cpp:64:        const DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/gtest\TestEnvironment.cpp:77:        const DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:3:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\control\SpringJointController.cpp:3:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\sandbox\proximity\dito.cpp:26:CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+RobWork/RobWork/gtest\task\GraspTaskTest.cpp:202:TEST(GraspTaskLoaderSaver, DOMParser) {
+RobWork/RobWorkSim/src\rwsim\contacts\ContactStrategyTracking.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\dynamics\ContactDataMap.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\util\DistModel.cpp:3:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\dynamics\KinematicDevice.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\dynamics\MaterialDataMap.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\util\PlaneModel.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\sandbox\MovingAverage.hpp:12:#include <rw/common/macros.hpp>
+RobWork/RobWork/src\sandbox\AsciiPathSaver.hpp:5:#include <rw/common/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\util\LinePolar.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsim\util\LineFit.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\sandbox\loaders\Dae.hpp:13:// we use this macro to define some standard interface functione on
+RobWork/RobWork/src\sandbox\graspplanning\CG3Grasp2DGen.cpp:25:#include <rw/common/macros.hpp>
+RobWork/RobWork/src\sandbox\loaders\ColladaLoader.cpp:32:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\sandbox\loaders\ColladaLoader.cpp:90:    XercesDOMParser parser;
+RobWork/RobWork/src\sandbox\loaders\ColladaLoader.cpp:106:    XercesDOMParser parser;
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEThreading.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEJoint.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:21:#include <rw/common/macros.hpp>
+RobWork/RobWork/gtest\common\LogTestSuite.cpp:24:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEBody.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/gtest\common\ThreadTest.cpp:26:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\task\TypeRepository.hpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/gtest\core\PluginTest.cpp:22:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/gtest\core\PluginTest.cpp:29:    const DOMParser::Ptr parser = DOMParser::make();
+RobWork/RobWork/src\rwlibs\opengl\DrawableFactory.cpp:30:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\opengl\RWGLTexture.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\opengl\SceneOpenGL.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:92:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:105:    if (!DOMParser::Factory::hasDOMParser (ext))
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:106:        RW_THROW ("No DOMParser can be created for a file with the extension " << ext << "!");
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.cpp:107:    DOMParser::Ptr parser = DOMParser::Factory::getDOMParser (ext);
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:214:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:224:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:237:    if (!DOMParser::Factory::hasDOMParser (ext)) {
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:238:        RW_WARN ("No DOMParser can be created for a file with the extension " << ext << "!");
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:241:    DOMParser::Ptr parser = DOMParser::Factory::getDOMParser (ext);
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:254:    if (!DOMParser::Factory::hasDOMParser (ext)) {
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:255:        RW_WARN ("No DOMParser can be created for a file with the extension " << ext << "!");
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.cpp:258:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskLoader.hpp:38:     * @brief Loader for the RobWork task format, using the DOMParser.
+RobWork/RobWork/src\rwlibs\task\loader\DOMTaskSaver.hpp:38:     * @brief Saver for the RobWork task format, using the DOMParser.
+RobWork/RobWork/src\rwlibs\task\loader\TaskLoader.hpp:106:             * format, a loader based on the DOMParser is used. The DOMParser is always used for the
+RobWork/RobWork/src\rwlibs\task\loader\TaskSaver.hpp:91:             * format, a saver based on the DOMParser is used. The DOMParser is always used for the
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:39:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:358:    XercesDOMParser parser;
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskLoader.cpp:368:    XercesDOMParser parser;
+RobWork/RobWork/src\rwlibs\calibration\xml\XmlCalibrationSaver.cpp:21:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rwlibs\calibration\xml\XmlCalibrationSaver.cpp:85:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src\rwlibs\calibration\xml\XmlCalibrationSaver.cpp:96:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src\rwlibs\task\loader\XMLTaskSaver.cpp:31:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtRWCollisionConfiguration.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\calibration\xml\XmlCalibrationLoader.cpp:21:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rwlibs\calibration\xml\XmlCalibrationLoader.cpp:68:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rwlibs\calibration\Calibration.hpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyYaobi.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyPQP.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\control\JointController.hpp:24:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\control\SyncVelocityRamp.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFactory.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyBullet.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\mathematica\RawArray.hpp:31:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\mathematica\ListPlot.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\mathematica\List.hpp:30:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\mathematica\Mathematica.hpp:28:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\softbody\beam\BeamGeometry.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\softbody\beam\BeamStartGuess.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\softbody\beam\ModRusselBeamIpopt.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\softbody\beam\RusselIntegrand.cpp:19:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\XQPController.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PartialIndexTable.hpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLExpand.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsimlibs\gui\log\MathematicaPlotWidget.cpp:26:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\pathplanners\arw\ARWQToQPlanner.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\pathplanners\arw\ARWExpand.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core.hpp:27:#include <rw/core/BoostXMLParser.hpp>
+RobWork/RobWork/src\rw\core.hpp:32:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\core.hpp:53:#include <rw/core/macros.hpp>
+RobWork/RobWorkSim/src\rwsimlibs\gui\log\SimulatorStatisticsWidget.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\plugin\PluginFactory.hpp:24:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\plugin\FactoryMacro.hpp:18:#ifndef RW_PLUGIN_FACTORYMACRO_HPP
+RobWork/RobWork/src\rw\plugin\FactoryMacro.hpp:19:#define RW_PLUGIN_FACTORYMACRO_HPP
+RobWork/RobWork/src\rw\plugin\FactoryMacro.hpp:30: * @brief Macro to be used when loading dynamically
+RobWork/RobWork/src\rw\plugin\FactoryMacro.hpp:32: * Given a class MyPlugin call this macro in the MyPlugin.cpp
+RobWork/RobWork/src\rw\plugin\FactoryMacro.hpp:46:#endif /*RW_PLUGIN_FACTORYMACRO_HPP*/
+RobWork/RobWork/src\rw\plugin\DynamicLibraryLoaderBase.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\QPSolver.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\QPController.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\BoostXMLParser.hpp:17:#ifndef RW_COMMON_BOOSTXMLPARSER_
+RobWork/RobWork/src\rw\common\BoostXMLParser.hpp:18:#define RW_COMMON_BOOSTXMLPARSER_
+RobWork/RobWork/src\rw\common\BoostXMLParser.hpp:20:#include <rw/core/BoostXMLParser.hpp>
+RobWork/RobWork/src\rw\common\BoostXMLParser.hpp:24:    "#include <rw/common/BoostXMLParser.hpp> is deprecated use #include <rw/core/BoostXMLParser.hpp> instead")
+RobWork/RobWork/src\rw\common\BoostXMLParser.hpp:27:    "#include <rw/common/BoostXMLParser.hpp> is deprecated use #include <rw/core/BoostXMLParser.hpp> instead"
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\DOMParser.hpp:17:#ifndef RW_COMMON_DOMPARSER_HPP
+RobWork/RobWork/src\rw\common\DOMParser.hpp:18:#define RW_COMMON_DOMPARSER_HPP
+RobWork/RobWork/src\rw\common\DOMParser.hpp:20:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\common\DOMParser.hpp:24:    "#include <rw/common/DOMParser.hpp> is deprecated use #include <rw/core/DOMParser.hpp> instead")
+RobWork/RobWork/src\rw\common\DOMParser.hpp:27:    "#include <rw/common/DOMParser.hpp> is deprecated use #include <rw/core/DOMParser.hpp> instead"
+RobWork/RobWork/src\rwlibs\algorithms\MovingAverage.cpp:10:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\trajectory\TrajectorySequence.hpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\Cache.hpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\INIArchive.hpp:24:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\invkin\IterativeMultiIK.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\algorithms\kdtree\KDTreeQ.hpp:27:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\FileCache.hpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\invkin\IterativeIK.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\algorithms\kdtree\KDTree.hpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\trajectory\TimeMetricUtil.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\pathplanning\StopCriteria.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\trajectory\SQUADInterpolator.hpp:27:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:28:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\macros.hpp:18:#ifndef RW_COMMON_MACROS_HPP
+RobWork/RobWork/src\rw\common\macros.hpp:19:#define RW_COMMON_MACROS_HPP
+RobWork/RobWork/src\rw\common\macros.hpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\macros.hpp:25:    "#include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead")
+RobWork/RobWork/src\rw\common\macros.hpp:27:#warning "#include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead"
+RobWork/RobWork/src\rw\common\LogFileWriter.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\geometry\Cone.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:27:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\Serializable.hpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\IOUtil.hpp:84:         * rwAssert() is called by the RW_ASSERT() macro.
+RobWork/RobWork/src\rw\trajectory\InterpolatorTrajectory.hpp:26:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\proximity\rwstrategy\SAPFilterStrategy.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\ThreadPool.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\math\VectorND.hpp:28:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\IOUtil.cpp:23:#include "macros.hpp"
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\proximity\rwstrategy\ProximityStrategyRW.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\geometry\IndexedPolygon.hpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.hpp:26:    class DOMParser;
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.hpp:95:         * @param parser [in] DOMParser to use
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.hpp:100:                           rw::core::Ptr< rw::core::DOMParser > parser);
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.cpp:20:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.cpp:209:    /* DOMParser::make() as of this writing returns the default XML parser */
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.cpp:210:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.cpp:218:    /* DOMParser::make() as of this writing returns the default XML parser */
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.cpp:219:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.cpp:226:                                                         DOMParser::Ptr parser)
+RobWork/RobWork/src\rw\math\Vector.hpp:25:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\proximity\rwstrategy\BVTreeFactory.hpp:25:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapLoader.cpp:20:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapLoader.cpp:210:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapLoader.cpp:223:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\core\PropertyMap.hpp:28:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\trajectory\CubicSplineInterpolator.hpp:27:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\DOMCoreBasisTypes.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:18:#ifndef RW_CORE_BOOSTXMLPARSER_HPP
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:19:#define RW_CORE_BOOSTXMLPARSER_HPP
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:32:     * @brief a DOMParser implementation based on the Boost xml parser in propertytree
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:34:    class BoostXMLParser : public DOMParser
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:38:        BoostXMLParser ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:40:        //! @copydoc DOMParser::load(const std::string&)
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:42:        //! @copydoc DOMParser::load(std::istream&)
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:44:        //! @copydoc DOMParser::save(const std::string&)
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:46:        //! @copydoc DOMParser::save(std::ostream&)
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:49:        //! @copydoc DOMParser::setDebug
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:58:        //! @copydoc DOMParser::getRootElement
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:64:         * If the BoostXMLParser is used outside main (as a part of global
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:69:         * should not be necessary to specify the initializer explicitly if BoostXMLParser is to be
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:75:            //! @brief Initializes BoostXMLParser when constructed.
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:98:         * @param parser [in] the BoostXMLParser.
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:102:                      rw::core::Ptr< boost::property_tree::ptree > root, BoostXMLParser* parser) :
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:177:        BoostXMLParser* _parser;
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:18:#include "BoostXMLParser.hpp"
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:32:BoostXMLParser::BoostInitializer::BoostInitializer ()
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:51:const BoostXMLParser::BoostInitializer BoostXMLParser::initializer;
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:53:BoostXMLParser::BoostXMLParser () : _debug (false)
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:59:void BoostXMLParser::load (const std::string& filename)
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:78:void BoostXMLParser::load (std::istream& input)
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:96:void BoostXMLParser::save (const std::string& filename)
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:112:void BoostXMLParser::save (std::ostream& output)
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:133:    BoostXMLParser* _parser;
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:138:                  rw::core::Ptr< boost::property_tree::ptree > root, BoostXMLParser* parser) :
+RobWork/RobWork/src\rw\trajectory\CircularInterpolator.hpp:25:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\DOMParser.hpp:18:#ifndef RW_CORE_DOMPARSER_HPP
+RobWork/RobWork/src\rw\core\DOMParser.hpp:19:#define RW_CORE_DOMPARSER_HPP
+RobWork/RobWork/src\rw\core\DOMParser.hpp:41:    class DOMParser
+RobWork/RobWork/src\rw\core\DOMParser.hpp:45:        DOMParser (){};
+RobWork/RobWork/src\rw\core\DOMParser.hpp:49:        typedef rw::core::Ptr< DOMParser > Ptr;
+RobWork/RobWork/src\rw\core\DOMParser.hpp:52:        virtual ~DOMParser () {}
+RobWork/RobWork/src\rw\core\DOMParser.hpp:82:         * @note not all DOMParser implementations support schema validation
+RobWork/RobWork/src\rw\core\DOMParser.hpp:104:        static rw::core::Ptr< DOMParser > make ();
+RobWork/RobWork/src\rw\core\DOMParser.hpp:109:         * @extensionpoint{ rw::core::DOMParser::Factory,rw::core::DOMParser,rw.core.DOMParser }
+RobWork/RobWork/src\rw\core\DOMParser.hpp:110:         * \class DOMParser
+RobWork/RobWork/src\rw\core\DOMParser.hpp:114:         * @brief a factory for DOMParsers. This factory defines an
+RobWork/RobWork/src\rw\core\DOMParser.hpp:115:         * extension point for DOMParsers. Typically this is for parsing xml files,
+RobWork/RobWork/src\rw\core\DOMParser.hpp:117:         * can be a DOMParser.
+RobWork/RobWork/src\rw\core\DOMParser.hpp:119:        class Factory : public rw::core::ExtensionPoint< DOMParser >
+RobWork/RobWork/src\rw\core\DOMParser.hpp:124:                rw::core::ExtensionPoint< DOMParser > ("rw.core.DOMParser",
+RobWork/RobWork/src\rw\core\DOMParser.hpp:132:            static rw::core::Ptr< DOMParser > getDOMParser (const std::string& format);
+RobWork/RobWork/src\rw\core\DOMParser.hpp:139:            static bool hasDOMParser (const std::string& format);
+RobWork/RobWork/src\rw\core\DOMParser.cpp:1:#include "DOMParser.hpp"
+RobWork/RobWork/src\rw\core\DOMParser.cpp:3:#include <rw/core/BoostXMLParser.hpp>
+RobWork/RobWork/src\rw\core\DOMParser.cpp:10:rw::core::Ptr< DOMParser > DOMParser::make ()
+RobWork/RobWork/src\rw\core\DOMParser.cpp:12:    return rw::core::ownedPtr (new BoostXMLParser ());
+RobWork/RobWork/src\rw\core\DOMParser.cpp:15:rw::core::Ptr< DOMParser > DOMParser::Factory::getDOMParser (const std::string& format)
+RobWork/RobWork/src\rw\core\DOMParser.cpp:18:    DOMParser::Factory ep;
+RobWork/RobWork/src\rw\core\DOMParser.cpp:23:        // else try casting to DOMParser
+RobWork/RobWork/src\rw\core\DOMParser.cpp:24:        DOMParser::Ptr loader = ext->getObject ().cast< DOMParser > ();
+RobWork/RobWork/src\rw\core\DOMParser.cpp:28:        return rw::core::ownedPtr (new BoostXMLParser ());
+RobWork/RobWork/src\rw\core\DOMParser.cpp:33:bool DOMParser::Factory::hasDOMParser (const std::string& format)
+RobWork/RobWork/src\rw\core\DOMParser.cpp:40:    DOMParser::Factory ep;
+RobWork/RobWork/src\rw\core\DOMParser.cpp:50:std::vector< std::string > DOMParser::Factory::getSupportedFormats() {
+RobWork/RobWork/src\rw\geometry\Cylinder.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\common\ThreadTask.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\Plugin.cpp:6:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\core\Plugin.cpp:278:    const DOMParser::Ptr parser = DOMParser::Factory::getDOMParser ("XML");
+RobWork/RobWork/src\rw\math\Rotation3D.hpp:26:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\Message.hpp:45:     * RW_THROW and RW_WARN of macros.hpp have been introduced for the throwing
+RobWork/RobWork/src\rw\core\Message.hpp:59:         * file macros.hpp.
+RobWork/RobWork/src\rw\math\Random.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\macros.hpp:18:#ifndef RW_CORE_macros_HPP
+RobWork/RobWork/src\rw\core\macros.hpp:19:#define RW_CORE_macros_HPP
+RobWork/RobWork/src\rw\core\macros.hpp:22: * @file macros.hpp
+RobWork/RobWork/src\rw\core\macros.hpp:139: * RW_ASSERT() is an assertion macro in the style of assert(). RW_ASSERT() can
+RobWork/RobWork/src\rw\core\macros.hpp:160: * RW_ASSERT_MSG() is an assertion macro similar to RW_ASSERT(). RW_ASSERT_MSG() can
+RobWork/RobWork/src\rw\core\Log.hpp:61:     * or using one one the RW_LOG, RW_LOGLINE or RW_LOG2 macros, e.g.
+RobWork/RobWork/src\rw\math\Q.hpp:28:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\core\Log.cpp:20://#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\geometry\QHull3D.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\geometry\Polygon.hpp:29:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\geometry\QHullND.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\geometry\QHullND.hpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\graspplanning\Contour2DInfoMap.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\math\PolynomialSolver.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\math\PolynomialND.hpp:27:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\math\Polynomial.hpp:25:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\graspplanning\SemiForceClosureFilter.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\math\PerspectiveTransform2D.hpp:26:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\math\Math.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders.hpp:45:#include <rw/loaders/rwxml/XMLParser.hpp>
+RobWork/RobWork/src\rw\loaders.hpp:46:#include <rw/loaders/rwxml/XMLParserUtil.hpp>
+RobWork/RobWork/src\rw\math\Line2DPolar.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\models\CompositeJointDevice.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\models\DependentRevoluteJoint.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\models\CompositeDevice.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\models\DependentPrismaticJoint.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\proximity\CollisionDetector.cpp:25:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\geometry\Tube.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\proximity\BasicFilterStrategy.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\models\MobileDevice.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\plugin.hpp:31:#include <rw/plugin/FactoryMacro.hpp>
+RobWork/RobWork/src\rw\models\Models.cpp:25:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\sensor\Image.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\sensor\Image.hpp:29:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\graphics\WorkCellScene.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\Model3DFactory.cpp:38:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\image\PGMLoader.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\ImageLoader.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\model3d\Loader3DS.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\image\PPMLoader.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\model3d\LoaderAC3D.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\colsetup\CollisionSetupLoader.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\image\RGBLoader.cpp:20:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\models\TreeDevice.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\model3d\LoaderTRI.cpp:4:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\path\PathLoader.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\rwxml\XML.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\model3d\Model3DS.cpp:84:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\path\PathLoaderCSV.cpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\models\WorkCell.hpp:27:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\model3d\STLFile.cpp:19:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParserUtil.cpp:18:#include "XMLParserUtil.hpp"
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParser.hpp:18:#ifndef RW_LOADERS_XMLPARSER_HPP
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParser.hpp:19:#define RW_LOADERS_XMLPARSER_HPP
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParser.hpp:212:#endif /*XMLPARSER_HPP_*/
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.cpp:36:xercesc::DOMDocument* XercesDocumentReader::readDocument (XercesDOMParser& parser,
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.cpp:49:    // parser.setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.cpp:50:    parser.setValidationScheme (xercesc::XercesDOMParser::Val_Always);
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.cpp:65:xercesc::DOMDocument* XercesDocumentReader::readDocument (XercesDOMParser& parser,
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.cpp:74:xercesc::DOMDocument* XercesDocumentReader::readDocument (XercesDOMParser& parser,
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.cpp:87:    parser.setValidationScheme (xercesc::XercesDOMParser::Val_Auto);
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParserUtil.hpp:18:#ifndef RW_LOADERS_XMLPARSERUTIL_HPP
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParserUtil.hpp:19:#define RW_LOADERS_XMLPARSERUTIL_HPP
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParserUtil.hpp:810:#endif /*XMLPARSERUTIL_HPP_*/
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParser.cpp:18:#include "XMLParser.hpp"
+RobWork/RobWork/src\rw\loaders\xml\XMLPropertyLoader.cpp:28:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLPropertyLoader.cpp:360:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\xml\XMLPropertyLoader.cpp:371:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\xml\XMLPathSaver.cpp:24:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWLoader.cpp:20:#include "XMLParserUtil.hpp"
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWLoader.cpp:31:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLProximitySetupLoader.cpp:33:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLProximitySetupLoader.cpp:120:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\xml\XMLProximitySetupLoader.cpp:130:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWParser.cpp:24:#include "XMLParser.hpp"
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWParser.cpp:27:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:23:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLPathLoader.cpp:43:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLPathLoader.cpp:76:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\xml\XMLPathLoader.cpp:87:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.hpp:21:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.hpp:28:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.hpp:263:        static xercesc::DOMDocument* readDocument (xercesc::XercesDOMParser& parser,
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.hpp:279:        static xercesc::DOMDocument* readDocument (xercesc::XercesDOMParser& parser,
+RobWork/RobWork/src\rw\loaders\xml\XercesUtils.hpp:298:        static xercesc::DOMDocument* readDocument (xercesc::XercesDOMParser& parser,
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWParser.hpp:21:#include <rw/loaders/rwxml/XMLParserUtil.hpp>
+RobWork/RobWork/src\rw\kinematics\FKRange.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:58:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:67:    XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWPreParser.cpp:22:#include "XMLParser.hpp"
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWPreParser.cpp:23:#include "XMLParserUtil.hpp"
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWPreParser.cpp:26:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.hpp:42:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.hpp:191:             xercesc::XercesDOMParser parser;
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.hpp:202:             parser.setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
+RobWork/RobWork/src\rw\loaders\dom\DOMPathSaver.cpp:20:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMPathSaver.cpp:129:                                       DOMParser::Ptr parser)
+RobWork/RobWork/src\rw\loaders\dom\DOMPathSaver.cpp:148:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMPathSaver.cpp:156:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:22:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapLoader.cpp:24:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapLoader.cpp:330:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapLoader.cpp:343:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:47:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.hpp:25:    class DOMParser;
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.hpp:83:         * @param parser [in] DOMParser to use
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.hpp:88:                           rw::core::Ptr< rw::core::DOMParser > parser);
+RobWork/RobWork/src\rw\loaders\dom\DOMPathLoader.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMPathLoader.cpp:127:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMPathLoader.cpp:142:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupLoader.cpp:21:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupLoader.cpp:32:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupLoader.cpp:43:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:21:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:42:#include <rw/loaders/rwxml/XMLParserUtil.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:1241:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:1253:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:20:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:225:                                DOMParser::Ptr parser)
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:261:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:270:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.cpp:19:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.cpp:76:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.cpp:83:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.cpp:89:                                                        Ptr< DOMParser > parser)
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:185:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:194:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.cpp:18:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.cpp:79:    /* DOMParser::make() as of this writing returns the default XML parser */
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.cpp:80:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.cpp:88:    /* DOMParser::make() as of this writing returns the default XML parser */
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.cpp:89:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.cpp:96:                                                     DOMParser::Ptr parser)
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.hpp:25:    class DOMParser;
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.hpp:98:         * @param parser [in] DOMParser to use
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.hpp:103:                           rw::core::Ptr< rw::core::DOMParser > parser);
+RobWork/RobWork/src\rw\kinematics\QState.hpp:26:#include <rw/core/macros.hpp>
+RobWork/RobWork/src\rw\kinematics\StateData.cpp:22:#include <rw/core/macros.hpp>

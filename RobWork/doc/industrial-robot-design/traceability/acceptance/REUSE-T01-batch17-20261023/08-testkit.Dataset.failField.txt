@@ -1,0 +1,7 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::(anonymous namespace)::failField
+24: [[noreturn]] void failField(const std::string& fieldPath, const std::string& reason)
+25: {
+26:     throw TestKitError(TestKitErrorKind::DatasetInvalid,
+27:                        "dataset-invalid: " + fieldPath + ": " + reason);
+28: }

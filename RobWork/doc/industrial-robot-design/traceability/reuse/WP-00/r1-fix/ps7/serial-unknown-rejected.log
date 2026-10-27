@@ -1,0 +1,6 @@
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-c10144ac8b0f40309f9a46eb71c01b72\RobWork\scripts\industrialrobot\validate-task.ps1:123
+Line |
+ 123 |  … 9]+)*)$') { throw "invalid branch '$($t.branch)' (expect redesign-mai …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | invalid branch 'arbitrary-branch' (expect redesign-main / wp03-t01 / doc-t03 / codex/reuse-foundation):
+     | SERIAL-T01

@@ -1,0 +1,6 @@
+[       OK ] DiagCatalogFactory.DtCat2_TerminalKindsDistinct (0 ms)
+[----------] 11 tests from DiagCatalogFactory (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 24 tests from 2 test suites ran. (7 ms total)
+[  PASSED  ] 24 tests.

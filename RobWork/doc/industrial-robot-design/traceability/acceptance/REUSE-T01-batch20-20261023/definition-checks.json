@@ -1,0 +1,190 @@
+[
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "match": true
+  }
+]

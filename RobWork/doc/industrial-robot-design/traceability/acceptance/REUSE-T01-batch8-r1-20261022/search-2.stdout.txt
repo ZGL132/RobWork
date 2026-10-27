@@ -1,0 +1,13 @@
+RobWork/RobWork/src/rw/core/DOMParser.hpp:41:    class DOMParser
+RobWork/RobWork/src/rw/core/DOMParser.hpp:104:        static rw::core::Ptr< DOMParser > make ();
+RobWork/RobWork/src/rw/core/DOMParser.hpp:110:         * \class DOMParser
+RobWork/RobWork/src/rw/core/DOMParser.hpp:132:            static rw::core::Ptr< DOMParser > getDOMParser (const std::string& format);
+RobWork/RobWork/src/rw/core/DOMParser.hpp:139:            static bool hasDOMParser (const std::string& format);
+RobWork/RobWork/src/rw/core/DOMParser.cpp:3:#include <rw/core/BoostXMLParser.hpp>
+RobWork/RobWork/src/rw/core/DOMParser.cpp:10:rw::core::Ptr< DOMParser > DOMParser::make ()
+RobWork/RobWork/src/rw/core/DOMParser.cpp:12:    return rw::core::ownedPtr (new BoostXMLParser ());
+RobWork/RobWork/src/rw/core/DOMParser.cpp:15:rw::core::Ptr< DOMParser > DOMParser::Factory::getDOMParser (const std::string& format)
+RobWork/RobWork/src/rw/core/DOMParser.cpp:27:    if (StringUtil::toUpper (format) == "XML")
+RobWork/RobWork/src/rw/core/DOMParser.cpp:28:        return rw::core::ownedPtr (new BoostXMLParser ());
+RobWork/RobWork/src/rw/core/DOMParser.cpp:33:bool DOMParser::Factory::hasDOMParser (const std::string& format)
+RobWork/RobWork/src/rw/core/DOMParser.cpp:37:    if (StringUtil::toUpper (format) == "XML")

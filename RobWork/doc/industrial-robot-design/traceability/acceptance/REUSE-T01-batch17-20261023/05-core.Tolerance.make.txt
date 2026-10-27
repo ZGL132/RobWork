@@ -1,0 +1,18 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp
+sdurws::ird::core::Tolerance::make
+57:     static Tolerance make(double relative, double absolute)
+58:     {
+59:         const bool relOk = relative >= 0.0 && relative == relative
+60:                         && relative - relative == 0;
+61:         const bool absOk = absolute >= 0.0 && absolute == absolute
+62:                         && absolute - absolute == 0;
+63:         if (!relOk || !absOk) {
+64:             throw CoreError("core/compare/tolerance: 两分量均须 ≥0 且有限"
+65:                             "（相对 " + std::to_string(relative) + "，绝对 "
+66:                             + std::to_string(absolute) + "）");
+67:         }
+68:         Tolerance t;
+69:         t.relative = relative;
+70:         t.absolute = absolute;
+71:         return t;
+72:     }

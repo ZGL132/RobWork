@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T26",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T26.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+      "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52",
+      "mode": "adapter",
+      "capabilities": [
+        "TRAJ-SLERP"
+      ],
+      "boundary": "公开Quaternion直接消费替换重复slerp；Vector3D dot替换手写点积；保留原产品边界/端口，整文件逐功能实审，独验NOT RUN。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+      "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "原gtest/testkit夹具增加独立735闭式和上游边界对照；独立oracle只在测试，端口替身不代替真实数值核心。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md"
+    }
+  ]
+}

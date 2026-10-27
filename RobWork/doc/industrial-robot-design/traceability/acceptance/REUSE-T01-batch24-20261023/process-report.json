@@ -1,0 +1,1241 @@
+[
+  {
+    "name": "fixture-init",
+    "argv": [
+      "git",
+      "init",
+      "--quiet",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "fixture-commit",
+    "argv": [
+      "git",
+      "-C",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-c",
+      "user.name=Acceptance",
+      "-c",
+      "user.email=acceptance@example.invalid",
+      "-c",
+      "commit.gpgsign=false",
+      "commit",
+      "--quiet",
+      "--allow-empty",
+      "-m",
+      "fixture"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "fixture-worktree",
+    "argv": [
+      "git",
+      "-C",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "worktree",
+      "add",
+      "--quiet",
+      "--detach",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "HEAD"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-before-clone-acquire",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch24\\lock-before.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-before-clone-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch24\\lock-before.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "f4f26596-ff28-4f0c-bcc8-f20969869c70"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-before-worktree-acquire",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch24\\lock-before.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-acquire",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-busy",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 3,
+    "expectedExit": 3,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-wrong-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-wrong-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-held",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "56fcaa53-ce59-4c9b-84b9-df9d6bdee8a4"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "56fcaa53-ce59-4c9b-84b9-df9d6bdee8a4"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-none",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-absent-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "56fcaa53-ce59-4c9b-84b9-df9d6bdee8a4"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-stale-acquire",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-takeover",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-stale-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "ef3bebcf-e33f-4d62-aad0-5771a8785b7e"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-stale-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "ef3bebcf-e33f-4d62-aad0-5771a8785b7e"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-new-owner",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-clone-new-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "fa5e52a0-4e58-4be2-b42d-ce0fb9cd4e87"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-acquire",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-busy",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 3,
+    "expectedExit": 3,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-wrong-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-wrong-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-held",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "f3f97b10-eae4-448e-a358-30665aa8aab9"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "f3f97b10-eae4-448e-a358-30665aa8aab9"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-none",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-absent-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "f3f97b10-eae4-448e-a358-30665aa8aab9"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-stale-acquire",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-takeover",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-stale-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "302bcd1b-6587-40fc-8b9f-91dccd9f67ea"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-stale-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "302bcd1b-6587-40fc-8b9f-91dccd9f67ea"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-new-owner",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-worktree-new-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "6f146f21-5c9c-4ed7-9f4d-98ae8852517b"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-missing-root",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\missing",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "pwsh-non-git-root",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\bad-root",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "powershell-before-clone-acquire",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch24\\lock-before.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-before-clone-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch24\\lock-before.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "af6d680d-46d5-406b-9e23-853d712270c1"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-before-worktree-acquire",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch24\\lock-before.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-acquire",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-busy",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 3,
+    "expectedExit": 3,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-wrong-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-wrong-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-held",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "1b7a6aa0-945e-4560-808e-910ea49e8c3a"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "1b7a6aa0-945e-4560-808e-910ea49e8c3a"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-none",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-absent-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "1b7a6aa0-945e-4560-808e-910ea49e8c3a"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-stale-acquire",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-takeover",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-stale-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "renew",
+      "-Token",
+      "05348490-3844-4bdf-8acc-96dcd0aec307"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-stale-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "05348490-3844-4bdf-8acc-96dcd0aec307"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-new-owner",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-clone-new-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\clone",
+      "-Action",
+      "release",
+      "-Token",
+      "d4ce8d57-f1ca-4954-91b2-afd919b7c6c8"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-acquire",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-busy",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 3,
+    "expectedExit": 3,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-wrong-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-wrong-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "wrong"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-held",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "7a4a1097-20c1-4c6b-8192-aaefe7d555fa"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "7a4a1097-20c1-4c6b-8192-aaefe7d555fa"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-none",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-absent-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "7a4a1097-20c1-4c6b-8192-aaefe7d555fa"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-stale-acquire",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-takeover",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-stale-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "c8c847e3-1ab6-468f-99aa-3ce3a9f93a35"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-stale-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "c8c847e3-1ab6-468f-99aa-3ce3a9f93a35"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-new-owner",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-worktree-new-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "931a80fa-3929-49ff-bb34-42797bb8c8c7"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-missing-root",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\missing",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "powershell-non-git-root",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\repo\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b24-accept-7d7d2502\\fixtures\\bad-root",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  }
+]

@@ -1,0 +1,111 @@
+[
+  {
+    "id": 1,
+    "originalExit": 0,
+    "outputLines": 34,
+    "exit": 0,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "class Event|EventListener|subscribe|unsubscribe|Provenance|SourcedValue",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "-g",
+      "*.hpp",
+      "-g",
+      "*.cpp"
+    ]
+  },
+  {
+    "id": 2,
+    "originalExit": 0,
+    "outputLines": 54,
+    "exit": 0,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "EventTest|EventListener|unsubscribe|Provenance|SourcedValue",
+      "RobWork/RobWork/gtest",
+      "RobWork/RobWorkSim/gtest",
+      "RobWork/RobWork/example",
+      "RobWork/RobWorkSim/example",
+      "-g",
+      "*.cpp",
+      "-g",
+      "*.hpp",
+      "-g",
+      "CMakeLists.txt"
+    ]
+  },
+  {
+    "id": 3,
+    "originalExit": 0,
+    "outputLines": 4,
+    "exit": 0,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "EventListener|subscribe|unsubscribe|provenance|SourcedValue",
+      "RobWork/doc/apidoc",
+      "RobWork/doc/gfx",
+      "RobWork/doc/layout",
+      "RobWork/doc/manual",
+      "RobWork/doc/ressources",
+      "RobWork/doc/sphinx",
+      "RobWork/doc/topics",
+      "RobWork/doc/tutorials",
+      "-g",
+      "*.md",
+      "-g",
+      "*.rst",
+      "-g",
+      "*.hpp",
+      "-g",
+      "*.cpp"
+    ]
+  },
+  {
+    "id": 4,
+    "originalExit": 0,
+    "outputLines": 3,
+    "exit": 0,
+    "arguments": [
+      "rg",
+      "-n",
+      "EventTest|Event.hpp|EventBus.cpp",
+      "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "RobWork/RobWork/gtest/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt"
+    ]
+  },
+  {
+    "id": 5,
+    "originalExit": 0,
+    "outputLines": 37,
+    "exit": 0,
+    "arguments": [
+      "rg",
+      "-n",
+      "ReferenceEventBus|m_eventBus|m_revisionSubscription|m_requirementsRevisionSubscription|UiPlugin.cpp|sdurws_ird_ui_plugin",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt"
+    ]
+  },
+  {
+    "id": 6,
+    "originalExit": 0,
+    "outputLines": 34,
+    "exit": 0,
+    "arguments": [
+      "rg",
+      "-n",
+      "RAII|SourcedValue|methodTag|v0.5",
+      "RobWork/doc/industrial-robot-design/units/core.md"
+    ]
+  }
+]

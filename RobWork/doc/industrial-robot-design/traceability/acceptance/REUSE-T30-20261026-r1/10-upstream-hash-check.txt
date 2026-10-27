@@ -1,0 +1,9 @@
+MATCH  RobWork/RobWork/src/rw/models/JointDevice.hpp
+MATCH  RobWork/RobWorkSim/src/rwsim/dynamics/DynamicWorkCell.hpp
+MATCH  RobWork/RobWork/src/rw/kinematics/MovableFrame.hpp
+MATCH  RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp
+MATCH  RobWork/RobWork/src/rw/models/RigidObject.hpp
+MATCH  RobWork/RobWorkSim/src/rwsim/dynamics/MaterialDataMap.hpp
+MATCH  RobWork/RobWorkSim/src/rwsim/dynamics/FixedBody.hpp
+MATCH  RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp
+MATCH  RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp

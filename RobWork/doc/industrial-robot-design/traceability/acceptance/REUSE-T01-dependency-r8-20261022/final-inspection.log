@@ -1,0 +1,13 @@
+bb997f1cfb89c8d8eb24b457d2c82d4c0711af44
+336:boost_endian_DIR:PATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/boost_endian
+405:boost_property_tree_DIR:PATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/boost_property_tree
+530:CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022
+532:CMAKE_GENERATOR_INSTANCE:INTERNAL=D:/software/Microsoft Visual Studio/2022/Community
+534:CMAKE_GENERATOR_PLATFORM:INTERNAL=x64
+536:CMAKE_GENERATOR_TOOLSET:INTERNAL=
+18://  BOOST_VERSION % 100 is the patch level
+19://  BOOST_VERSION / 100 % 1000 is the minor version
+20://  BOOST_VERSION / 100000 is the major version
+22:#define BOOST_VERSION 109200
+25://  BOOST_LIB_VERSION must be defined to be the same as BOOST_VERSION
+30:#define BOOST_LIB_VERSION "1_92"

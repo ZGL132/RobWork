@@ -1,0 +1,65 @@
+{
+  "executed": 8,
+  "passed": 8,
+  "failed": 0,
+  "skipped": 0,
+  "helperSha256": "0B1C20B46F47CF067E358E147C19A48124F233F4C6B9A838D34D5D89E8124251",
+  "cases": [
+    {
+      "name": "real-modeling-cmake",
+      "expectedReject": false,
+      "rejected": false,
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "cmake-line-comment",
+      "expectedReject": false,
+      "rejected": false,
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "cmake-inline-comment",
+      "expectedReject": false,
+      "rejected": false,
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "cpp-line-comment",
+      "expectedReject": false,
+      "rejected": false,
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "cpp-model-include-still-rejected",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/sample.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cpp-state-write-still-rejected",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/sample.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cmake-uncommented-type-still-rejected",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cpp-preprocessor-not-a-comment",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/sample.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    }
+  ]
+}

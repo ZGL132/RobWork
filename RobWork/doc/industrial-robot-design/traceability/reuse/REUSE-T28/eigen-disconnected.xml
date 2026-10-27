@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0." timestamp="2026-10-24T14:25:53.560" name="AllTests">
+  <testsuite name="MdlRobotDesign" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T14:25:53.560">
+    <testcase name="IMdl5_BodyPhysicalAssertions_WP13T03_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp" line="299" status="run" result="completed" time="0." timestamp="2026-10-24T14:25:53.560" classname="MdlRobotDesign">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp:322&#x0A;Value of: hasViolation(checkInvariants(badTriangle), InvariantId::IMdl5, &quot;inertia.triangle&quot;)&#x0A;  Actual: false (未找到违例 I-MDL-5（subject 含 &quot;inertia.triangle&quot;）；实际条数=3)&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp:322
+Value of: hasViolation(checkInvariants(badTriangle), InvariantId::IMdl5, "inertia.triangle")
+  Actual: false (未找到违例 I-MDL-5（subject 含 "inertia.triangle"）；实际条数=3)
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp:326&#x0A;Value of: checkInvariants(missingBody).empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\RobotDesignTest.cpp:326
+Value of: checkInvariants(missingBody).empty()
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="MdlInertiaReuse" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T14:25:53.560">
+    <testcase name="UpstreamAndAssertionConsumers_REUSE_T27" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp" line="890" status="run" result="completed" time="0." timestamp="2026-10-24T14:25:53.560" classname="MdlInertiaReuse">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 2.9999999999999996e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 4.0000000000000001e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.0000000000000001e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 4.9999999999999993e-300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999993e-300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:905&#x0A;Value of: violations.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正定且三角有裕量的非对角张量应被原消费者接受&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:905
+Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 2.9999999999999996&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 4&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 4.9999999999999991&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999991
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:905&#x0A;Value of: violations.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正定且三角有裕量的非对角张量应被原消费者接受&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:905
+Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 2.9999999999999996e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 2.9999999999999996e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 4.0000000000000002e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.0000000000000002e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900&#x0A;Expected equality of these values:&#x0A;  actual[k]&#x0A;    Which is: 0&#x0A;  direct[k]&#x0A;    Which is: 4.9999999999999997e+300&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:900
+Expected equality of these values:
+  actual[k]
+    Which is: 0
+  direct[k]
+    Which is: 4.9999999999999997e+300
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:905&#x0A;Value of: violations.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正定且三角有裕量的非对角张量应被原消费者接受&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:905
+Value of: violations.empty()
+  Actual: false
+Expected: true
+正定且三角有裕量的非对角张量应被原消费者接受
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:914&#x0A;Expected equality of these values:&#x0A;  violations.empty()&#x0A;    Which is: false&#x0A;  maximum==2.0&#x0A;    Which is: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:914
+Expected equality of these values:
+  violations.empty()
+    Which is: false
+  maximum==2.0
+    Which is: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,38 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/PolicyBoundaryTest.cpp",
+    "match": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+    "match": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+    "match": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+    "match": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+    "match": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/gtest.xml",
+    "match": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/ird-test-report.json",
+    "match": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/stdout.log",
+    "match": true
+  }
+]

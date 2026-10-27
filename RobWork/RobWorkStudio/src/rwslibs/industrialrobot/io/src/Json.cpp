@@ -34,6 +34,8 @@
 #include <sdurws/ird/io/Budget.hpp>
 #include <sdurws/ird/io/IoDiagnostics.hpp>
 
+#include "IoUtf8.hpp"   // 单元私有共享头：UTF-8 DFA/严格校验/系统错误映射单实现（REUSE-T38 合流）
+
 #include <algorithm>
 #include <array>
 #include <charconv>
@@ -94,100 +96,11 @@ constexpr std::string_view kSchemaVersionKey = "schemaVersion";
 constexpr std::string_view kUtf8Bom = "\xEF\xBB\xBF";
 
 // =====================================================================
-// UTF-8 严格校验 DFA（无 BOM 编码判定——§5.9.1 编码行"无效序列拒绝"）
+// 严格 UTF-8 校验与系统错误映射——收编至单元私有共享头 src/IoUtf8.hpp
+// （REUSE-T38/WP-15批次B：本文件原持第二份 kUtf8Dfa/strictUtf8Check/
+// mapSystemError 副本，与 Csv.cpp 合流为单实现；"JSON 仅 UTF-8、UTF-16
+// BOM 在入口拒绝"的通道差异语义保持在 parseBytes 入口，不变）。
 // =====================================================================
-
-/// DFA 状态值：0＝接受态，12＝拒绝态（字节序列非法：超长编码/代理区/
-/// 超 U+10FFFF/悬空续字节）。与 Csv.cpp 同款语义。
-inline constexpr std::uint32_t kUtf8Reject = 12;
-
-/**
- * UTF-8 严格校验转移表——Björn Höhrmann 的经典压缩 DFA（公共域实现，
- * 与 Csv.cpp 的表逐字节同源：JSON 通道与 CSV 通道共用同一"严格 UTF-8"
- * 判定语义——IO-D09 不猜转码；两份副本暂不合流为 src/ 私有共享头，避免
- * 本任务触碰 IO-T03 已落位文件，合流留待后续治理任务）。
- * 用法：state = kUtf8Dfa[256 + state + kUtf8Dfa[byte]]，逐字节推进；
- * state == kUtf8Reject 即非法。
- */
-const std::uint8_t kUtf8Dfa[] = {
-    // 前 256 项：字节 → 字符类（减少转移表尺寸）。
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,  9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
-    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-    8,8,2,2,2,2,2,2,2,2,2,2,2,2,2,2,  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-   10,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3, 11,6,6,6,5,8,8,8,8,8,8,8,8,8,8,8,
-    // 后 144 项：状态 × 字符类 → 下一状态。
-    0,12,24,36,60,96,84,12,12,12,48,72, 12,12,12,12,12,12,12,12,12,12,12,12,
-   12, 0,12,12,12,12,12, 0,12, 0,12,12, 12,24,12,12,12,12,12,24,12,24,12,12,
-   12,12,12,12,12,12,12,24,12,12,12,12, 12,24,12,12,12,12,12,12,12,24,12,12,
-   12,12,12,12,12,12,12,36,12,36,12,12, 12,36,12,12,12,12,12,36,12,36,12,12,
-   12,36,12,12,12,12,12,12,12,12,12,12, 12,12,12,12,12,12,12,12,12,12,12,12,
-    0,12,12,12,12,12,12,12, 0,12,12,12, 12,12,12,12, 0,12,12,12,12,12,12,12,
-    0,12,12,12,12,12,12,12, 0,12,12,12, 12,12,12,12,12,12,12,12,12,12,12,12,
-   12,12,12,12,12,12,12,12,12,12,12,12, 12,12,12,12,12,12,12,12,12,12,12,12,
-};
-
-/**
- * @brief 严格 UTF-8 校验（全文一遍 DFA）。
- *
- * JSON 通道与 CSV 通道的编码语义差异（§5.9.1 编码行 vs §5.2 编码行）：
- * CSV 接受 UTF-16LE/BE（BOM 判定后解码）；JSON **仅 UTF-8**——UTF-16
- * BOM 在剥离判定处即被拒绝（见 parseBytes 入口），无 BOM 的任意字节流
- * 经本函数判定，非法序列＝IO-FORMAT-JSON-ENCODING 稳定拒绝。
- *
- * @param bytes     [in] 待校验字节流（BOM 剥离后）
- * @param failIndex [out] 首个非法字节的下标（0 起——编码错误定位用）
- * @return true＝合法 UTF-8；false＝非法（failIndex 有效）
- */
-bool strictUtf8Check(std::string_view bytes, std::size_t* failIndex)
-{
-    std::uint32_t state = 0;   // 起始＝接受态
-    for (std::size_t i = 0; i < bytes.size(); ++i) {
-        const std::uint8_t b = static_cast<std::uint8_t>(bytes[i]);
-        state = kUtf8Dfa[256 + state + kUtf8Dfa[b]];
-        if (state == kUtf8Reject) {
-            *failIndex = i;
-            return false;
-        }
-    }
-    // 悬空多字节序列（文档截断在多字节字符中段）同样非法——终态非接受。
-    if (state != 0) {
-        *failIndex = bytes.size();
-        return false;
-    }
-    return true;
-}
-
-// =====================================================================
-// std::error_code → io 资源错误码（文件读失败四分类——§4.2.5）
-// =====================================================================
-
-/**
- * @brief std::error_code → io 资源错误码（与 Csv.cpp 同名助手同款映射：
- *        不存在→NOT-FOUND、只读介质→READONLY、锁竞争→LOCK-CONFLICT、
- *        磁盘满→PACK-DISK-FULL、其余保守归 ACCESS-DENIED——"无法访问"
- *        语义最近；未合流私有头的理由同 kUtf8Dfa 表注）。
- */
-IoErrorCode mapSystemError(const std::error_code& ec)
-{
-    if (ec == std::errc::no_such_file_or_directory) {
-        return IoErrorCode::ResNotFound;
-    }
-    if (ec == std::errc::no_space_on_device || ec == std::errc::file_too_large) {
-        return IoErrorCode::PackDiskFull;
-    }
-    if (ec == std::errc::read_only_file_system) {
-        return IoErrorCode::ResReadonly;
-    }
-    if (ec == std::errc::device_or_resource_busy || ec == std::errc::no_lock_available
-        || ec == std::errc::resource_unavailable_try_again) {
-        return IoErrorCode::ResLockConflict;
-    }
-    return IoErrorCode::ResAccessDenied;
-}
 
 // =====================================================================
 // 位置游标（行列跟踪——JsonSourceSpan 口径：列按 UTF-8 字节计）

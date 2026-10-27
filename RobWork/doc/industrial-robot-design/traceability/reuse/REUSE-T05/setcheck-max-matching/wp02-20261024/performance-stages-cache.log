@@ -1,0 +1,13 @@
+probe start argc=3
+profile loaded
+stages n=64 density=sparse edges=72 matched=37 evaluate_ms=0.255 graph_ms=0.010 checked_ms=0.042 greedy_checked_ms=0.021 convert_ms=0.001 peakWS=5.0
+stages n=256 density=sparse edges=1292 matched=216 evaluate_ms=4.060 graph_ms=0.159 checked_ms=0.299 greedy_checked_ms=0.141 convert_ms=0.002 peakWS=5.4
+stages n=1024 density=sparse edges=20762 matched=970 evaluate_ms=95.158 graph_ms=2.166 checked_ms=5.559 greedy_checked_ms=2.835 convert_ms=0.003 peakWS=9.4
+stages n=4096 density=sparse edges=333399 matched=4068 evaluate_ms=1342.986 graph_ms=27.222 checked_ms=285.736 greedy_checked_ms=52.378 convert_ms=0.007 peakWS=58.9
+stages n=64 density=medium edges=398 matched=57 evaluate_ms=0.463 graph_ms=0.052 checked_ms=0.103 greedy_checked_ms=0.028 convert_ms=0.000 peakWS=58.9
+stages n=256 density=medium edges=6401 matched=256 evaluate_ms=4.640 graph_ms=0.483 checked_ms=1.276 greedy_checked_ms=0.442 convert_ms=0.001 peakWS=58.9
+stages n=1024 density=medium edges=102442 matched=1024 evaluate_ms=89.573 graph_ms=8.452 checked_ms=45.964 greedy_checked_ms=6.006 convert_ms=0.002 peakWS=58.9
+stages n=64 density=dense edges=1485 matched=64 evaluate_ms=0.308 graph_ms=0.113 checked_ms=0.189 greedy_checked_ms=0.023 convert_ms=0.000 peakWS=58.9
+stages n=256 density=dense edges=23852 matched=256 evaluate_ms=4.667 graph_ms=1.547 checked_ms=5.731 greedy_checked_ms=0.392 convert_ms=0.001 peakWS=58.9
+stages n=1024 density=dense edges=380394 matched=1024 evaluate_ms=88.920 graph_ms=26.882 checked_ms=83.159 greedy_checked_ms=6.839 convert_ms=0.002 peakWS=67.2
+done mode=stages

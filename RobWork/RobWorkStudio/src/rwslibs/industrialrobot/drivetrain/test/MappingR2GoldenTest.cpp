@@ -7,7 +7,10 @@
  *         传动比时与既有对角路径逐项一致）、R1 阻断反例保留、§7.2 矩阵
  *         形态全表阻断（非方/奇异/病态/非有限——阻止不降级）、R2 反射
  *         惯量完整矩阵与窗口投影、三方消费同一矩阵内容身份（§7.4-4）
- *         ——任务契约 WP-18-T05 acceptance 1/2/3 的测试面。
+ *         ——任务契约 WP-18-T05 acceptance 1/2/3 的测试面；另含
+ *         DtMappingR2Linalg 上游线性代数复用组（独立 oracle/解析谱/
+ *         阈值邻界/极端尺度——REUSE-T12）与 DtMappingR2LinalgPerf 固定
+ *         输入性能实测组（REUSE-T12 返工性能证据生产者）。
  *
  * 设计依据：
  *   - units/drivetrain.md §5.3（方向/符号/轴序全文唯一约定）、§7.1～
@@ -24,10 +27,11 @@
  *   - 任务契约 tasks/foundation/WP-18-T05.json acceptance 1/2/3
  *
  * 黄金数据纪律（§14.1）：本文件的参考期望值全部由**测试侧独立参考实现**
- * 计算（逐元素标量闭式——下三角逆/转置乘积的解析形态，非产品 Gauss-
- * Jordan 路径），与产品实现（DriveTrainMappingCore R2 路径）形成两路
- * 求值；另以手算常数锚点钉住绝对量级防"两路同错"。容差：连续量标量
- * 相对 1×10⁻⁹（附录 D 第 9 项）；零值锚点用绝对容差。
+ * 计算（逐元素标量闭式——下三角逆/转置乘积的解析形态，非产品求逆路径；
+ * 上游线性代数复用 起产品侧为上游 rw::math::LinearAlgebra::inverse），与产品实
+ * 现（DriveTrainMappingCore R2 路径）形成两路求值；另以手算常数锚点钉
+ * 住绝对量级防"两路同错"。容差：连续量标量相对 1×10⁻⁹（附录 D 第 9 项）；
+ * 零值锚点用绝对容差。
  *
  * 用例与单元卡故障注入矩阵的对应关系在每 TEST 的注释首行标注（DT-R2
  * 组编号——§14.2 表行）。
@@ -45,8 +49,11 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -236,7 +243,8 @@ dt::DriveTrainModel rawNondiagonalModel()
  *
  *   C_w ＝ [[0.02, 0.004],   C_w⁻¹ ＝ [[50, −20],
  *           [0,    0.01]]            [0,  100]]
- * （det＝2×10⁻⁴；伴随法解析逆——参考实现与产品 Gauss-Jordan 双路独立）。
+ * （det＝2×10⁻⁴；伴随法解析逆——参考实现与产品求逆路径（上游线性代数复用 起
+ *   为上游 Eigen LU）双路独立）。
  * κ(C_w)＝σmax/σmin≈2.3——深良态域。θ_off＝{0.5, −0.25} rad（偏置只影响
  * 绝对位置——§5.3）。
  */
@@ -289,7 +297,8 @@ TEST(DtMappingR2Golden, CoupledWindowAnalytic_WP18T05_ACC1)
     EXPECT_EQ(out.completeness, dt::CompletenessState::Complete);
 
     // ---- 独立参考实现（逐样本标量闭式——C_w⁻¹ 用解析形态 [[50,−20],[0,
-    // 100]]，非产品 Gauss-Jordan 路径）：θ＝θ_off＋C⁻¹·q；θ̇＝C⁻¹·q̇；
+    // 100]]，非产品求逆路径——上游线性代数复用 起产品侧为上游 Eigen LU）：
+    // θ＝θ_off＋C⁻¹·q；θ̇＝C⁻¹·q̇；
     // θ̈＝C⁻¹·q̈；τ_ideal＝Cᵀ·τ；τ_m＝τ_ideal＋J·θ̈（M-12 口径④）。
     const double cinv[2][2] = {{50.0, -20.0}, {0.0, 100.0}}; // 解析逆（无量纲）
     const double cw[2][2] = {{0.02, 0.004}, {0.0, 0.01}};    // 窗口矩阵（无量纲）
@@ -921,4 +930,304 @@ TEST(DtMappingR2Golden, SameMatrixIdentityThreeConsumers_WP18T05_ACC2)
 
     // 空清单按不一致处置（无消费切片可核对——防误用放行）。
     EXPECT_FALSE(dt::checkMatrixContentIdentityAlignment({}).aligned);
+}
+
+// =====================================================================
+// 上游线性代数复用 上游线性代数复用（rw::math::LinearAlgebra::svd/inverse——
+// 自写 Jacobi/Gauss-Jordan 核已删除）：经公共入口消费真实生产结果；
+// 独立解析 oracle、两档阈值邻界与极端有限尺度。
+// =====================================================================
+
+/**
+ * 上游线性代数复用（准确性）：非对角良态窗口 C＝[[2,1],[1,3]]，逆＝(1/5)×[[3,−1],
+ * [−1,2]]＝[[0.6,−0.2],[−0.2,0.4]]（伴随法手算——独立解析 oracle，与上游
+ * Eigen LU 生产路径双路独立）。经两个真实生产消费面断言：
+ *   ① evaluate 窗口运动映射 θ_W＝C⁻¹·q（θ_off 全零——rawCoupledModel 默认；
+ *     JointSeriesView 逐时刻单样本各轴共用该时刻值（既有语义）——q＝1、
+ *     q̇＝3 共用 → θ_W＝C⁻¹·(1,1)＝(0.4,0.2)、θ̇_W＝C⁻¹·(3,3)＝(1.2,0.6)）；
+ *   ② 反射惯量窗口投影 J_reflected(wi)＝Σ_mm J_rotor(mm)·C⁻¹(mm,wi)²
+ *     （J_rotor＝{1,2} kg·m²：J_ref(0)＝0.36＋0.08＝0.44、
+ *     J_ref(1)＝0.04＋0.32＝0.36）。
+ * 容差按附录 D 第 9 项标量相对 1×10⁻⁹（closeRel——双路浮点求值路径差）。
+ */
+TEST(DtMappingR2Linalg, InverseAnalyticOracle_WindowConsumers)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "DYN-04", "NFR-COR-02"},
+                  std::vector<std::string>{"AT-38"});
+
+    const dt::RowMatrix c = mat2(2.0, 1.0, 1.0, 3.0);
+    dt::DriveTrainModel model = rawCoupledModel(
+        2, c, {1.0, 1.0}, makeWindow(c, jointAxis(0).jointId, jointAxis(1).jointId));
+    // 窗口转子条目齐备（§9.3 完整矩阵/窗口投影以 diag(J_rotor)≻0 为前提）。
+    model.rotor.push_back(rotor(1.0));
+    model.rotor.push_back(rotor(2.0));
+
+    dt::DriveTrainMappingCore coreImpl;
+    dt::ICouplingMatrixValidator& validator = coreImpl;
+    const auto gate = validator.validate(model, dt::StageCapability::R2Capability);
+    ASSERT_TRUE(gate.accepted) << "κ(C)≈1.95 深良态域——校验必须通过";
+
+    // ① 窗口运动映射（θ_W＝C⁻¹·q；样本手工构造给定值——期望值手算独立）。
+    dt::JointSeriesView series;
+    series.jointIds.push_back(jointAxis(0).jointId);
+    series.jointIds.push_back(jointAxis(1).jointId);
+    series.caseId = idFrom<core::ObjectId>("dt11-case-linalg");
+    series.upstreamSliceId.bytes
+        = idFrom<core::ContentIdentity>("dt11-upstream-slice").bytes;
+    {
+        dt::JointDriveSample sample;
+        sample.t = 0.0;        // s
+        sample.q = 1.0;        // rad（各轴共用该时刻值——JointSeriesView 语义）
+        sample.qd = 3.0;       // rad/s
+        sample.qdd = 0.0;      // rad/s²
+        sample.tauJoint = 0.0; // N·m（本用例不消费力矩面）
+        sample.segmentId = "seg-linalg";
+        series.samples.push_back(sample);
+    }
+    dt::IDriveTrainMappingEvaluator& evaluator = coreImpl;
+    const dt::DriveTrainMappingOutput out
+        = evaluator.evaluate(model, series, nullptr, dt::StageCapability::R2Capability);
+    ASSERT_EQ(out.motorSeries.size(), 2U);
+    EXPECT_PRED_FORMAT2(closeRel, out.motorSeries[0].samples[0].theta, 0.4);    // 0.6−0.2
+    EXPECT_PRED_FORMAT2(closeRel, out.motorSeries[1].samples[0].theta, 0.2);    // −0.2＋0.4
+    EXPECT_PRED_FORMAT2(closeRel, out.motorSeries[0].samples[0].thetaDot, 1.2); // 1.8−0.6
+    EXPECT_PRED_FORMAT2(closeRel, out.motorSeries[1].samples[0].thetaDot, 0.6); // −0.6＋1.2
+
+    // ② 反射惯量窗口投影（g＝C⁻¹(mm,wi)：第 0 列 {0.6,−0.2}、第 1 列
+    // {−0.2,0.4}——解析平方和见函数头注）。
+    dt::IReflectedInertiaEvaluator& inertiaEval = coreImpl;
+    const dt::ReflectedInertiaResult inertia = inertiaEval.evaluate(model, {});
+    ASSERT_EQ(inertia.axes.size(), 2U);
+    EXPECT_TRUE(inertia.axes[0].windowProjected);
+    EXPECT_TRUE(inertia.axes[1].windowProjected);
+    EXPECT_PRED_FORMAT2(closeRel, inertia.axes[0].jReflectedJointSide, 0.44);
+    EXPECT_PRED_FORMAT2(closeRel, inertia.axes[1].jReflectedJointSide, 0.36);
+}
+
+/**
+ * 上游线性代数复用（准确性）：奇异值谱解析对照——正交相似变换不变奇异值。
+ * C＝R(π/6)·diag(3,1)·R(π/6)ᵀ（对称阵，解析 σ＝{3,1}、κ＝3）；经
+ * validate 的 conditionNumber 字段直接对照解析谱（上游 SVD 降序
+ * 契约与比值判据的数值能力实证）。展开：cosθ＝√3/2、sinθ＝1/2 →
+ * C＝[[2.5, √3/2],[√3/2, 1.5]]。
+ */
+TEST(DtMappingR2Linalg, SingularValuesAnalyticSpectrum_ConditionNumber)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    const double s3 = std::sqrt(3.0) / 2.0;
+    const dt::RowMatrix c = mat2(2.5, s3, s3, 1.5);
+    const dt::DriveTrainModel model = rawCoupledModel(
+        2, c, {1.0, 1.0}, makeWindow(c, jointAxis(0).jointId, jointAxis(1).jointId));
+
+    dt::DriveTrainMappingCore coreImpl;
+    dt::ICouplingMatrixValidator& validator = coreImpl;
+    const auto gate = validator.validate(model, dt::StageCapability::R2Capability);
+    ASSERT_TRUE(gate.accepted) << "κ＝3 良态——校验必须通过";
+    EXPECT_PRED_FORMAT2(closeRel, gate.conditionNumber, 3.0);
+}
+
+/**
+ * 上游线性代数复用（阈值邻界）：两档业务分界的邻界行为——上游 SVD 数值在分界
+ * 带可判定，不掩盖问题也不误拒（对角阵奇异值＝|对角元|，解析期望与浮
+ * 点实现无关）：
+ *   奇异分界 σmin/σmax vs 1×10⁻¹²：diag(1, 5×10⁻¹³) → DT-MATRIX-SINGULAR；
+ *     diag(1, 2×10⁻¹²) → 非奇异但 κ＝5×10¹¹＞1×10⁸ → 两档可区分落病态档。
+ *   病态分界 κ vs 1×10⁸：diag(1, 2×10⁸) → DT-MATRIX-ILL-CONDITIONED；
+ *     diag(1, 5×10⁷) → 良态接受。
+ */
+TEST(DtMappingR2Linalg, ThresholdBoundaries_TwoGates)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    dt::DriveTrainMappingCore coreImpl;
+    dt::ICouplingMatrixValidator& validator = coreImpl;
+
+    // ---- 奇异档：σmin/σmax＝5×10⁻¹³ ≤ 1×10⁻¹²。
+    {
+        const dt::DriveTrainModel m = rawCoupledModel(
+            2, mat2(1.0, 0.0, 0.0, 5e-13), {1.0, 5e-13},
+            makeWindow(mat2(1.0, 0.0, 0.0, 5e-13), jointAxis(0).jointId,
+                       jointAxis(1).jointId));
+        const auto gate = validator.validate(m, dt::StageCapability::R2Capability);
+        EXPECT_FALSE(gate.accepted);
+        ASSERT_FALSE(gate.diagnostics.empty());
+        EXPECT_EQ(gate.diagnostics.front().code, std::string(dt::kDtMatrixSingular));
+    }
+    // ---- 分界上侧：2×10⁻¹² 非奇异，落病态档（两档可区分）。
+    {
+        const dt::DriveTrainModel m = rawCoupledModel(
+            2, mat2(1.0, 0.0, 0.0, 2e-12), {1.0, 2e-12},
+            makeWindow(mat2(1.0, 0.0, 0.0, 2e-12), jointAxis(0).jointId,
+                       jointAxis(1).jointId));
+        const auto gate = validator.validate(m, dt::StageCapability::R2Capability);
+        EXPECT_FALSE(gate.accepted);
+        ASSERT_FALSE(gate.diagnostics.empty());
+        EXPECT_EQ(gate.diagnostics.front().code,
+                  std::string(dt::kDtMatrixIllConditioned));
+    }
+    // ---- 病态分界上侧：κ＝2×10⁸ ＞ 1×10⁸。
+    {
+        const dt::DriveTrainModel m = rawCoupledModel(
+            2, mat2(1.0, 0.0, 0.0, 2e8), {1.0, 2e8},
+            makeWindow(mat2(1.0, 0.0, 0.0, 2e8), jointAxis(0).jointId,
+                       jointAxis(1).jointId));
+        const auto gate = validator.validate(m, dt::StageCapability::R2Capability);
+        EXPECT_FALSE(gate.accepted);
+        ASSERT_FALSE(gate.diagnostics.empty());
+        EXPECT_EQ(gate.diagnostics.front().code,
+                  std::string(dt::kDtMatrixIllConditioned));
+    }
+    // ---- 病态分界下侧：κ＝5×10⁷ ≤ 1×10⁸——良态接受（不误拒）。
+    {
+        const dt::DriveTrainModel m = rawCoupledModel(
+            2, mat2(1.0, 0.0, 0.0, 5e7), {1.0, 5e7},
+            makeWindow(mat2(1.0, 0.0, 0.0, 5e7), jointAxis(0).jointId,
+                       jointAxis(1).jointId));
+        const auto gate = validator.validate(m, dt::StageCapability::R2Capability);
+        EXPECT_TRUE(gate.accepted) << "κ＝5×10⁷ 良态域——不得误拒";
+    }
+}
+
+/**
+ * 上游线性代数复用（尺度）：极端有限尺度不破坏判定——适配层先按 max|a_ij| 归一
+ * 再分解、奇异值整体乘回（比值判据不变；未缩放时 1e200² 会平方上溢、
+ * 1e-200² 会平方下溢——modeling 包同族适配经验）：
+ *   diag(1×10²⁰⁰, 1×10²⁰⁰) 与 diag(1×10⁻²⁰⁰, 1×10⁻²⁰⁰)：κ＝1 良态接受。
+ */
+TEST(DtMappingR2Linalg, ScaleExtremes_ConditionInvariant)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    dt::DriveTrainMappingCore coreImpl;
+    dt::ICouplingMatrixValidator& validator = coreImpl;
+
+    for (const double scale : {1e200, 1e-200}) {
+        const dt::RowMatrix c = mat2(scale, 0.0, 0.0, scale);
+        const dt::DriveTrainModel m = rawCoupledModel(
+            2, c, {scale, scale},
+            makeWindow(c, jointAxis(0).jointId, jointAxis(1).jointId));
+        const auto gate = validator.validate(m, dt::StageCapability::R2Capability);
+        EXPECT_TRUE(gate.accepted) << "scale：kappa=1 必须良态接受";
+        EXPECT_PRED_FORMAT2(closeRel, gate.conditionNumber, 1.0);
+    }
+}
+
+// =====================================================================
+// 上游线性代数复用（性能实测——REUSE-T12 返工 2026-10-25，验收 ISSUE-2
+// 『固定条件性能前后测量』）：固定输入集（深良态/解析谱/病态分界邻界
+// 良态/极端尺度归一适配四组 2×2 窗口 C 矩阵——覆盖良态到邻界）对
+// singularValues（上游 LinearAlgebra::svd）与 invertSquareMatrix（上游
+// LinearAlgebra::inverse）的**真实生产入口**端到端计时：
+//   · singularValues 的生产调用方＝validateCoupledWindow 谱条件数检查
+//     （§7.2 检查序末两步，代码内唯一调用点）——经
+//     ICouplingMatrixValidator::validate(R2Capability) 触达；
+//   · invertSquareMatrix 的生产调用方＝反射惯量窗口投影 C⁻¹（§9.3，
+//     代码内唯一调用点）——经 IReflectedInertiaEvaluator::evaluate 触达。
+// 测量口径：每场景先预热 200 次，再逐次 std::chrono::steady_clock 采样
+// 2000 次（纯函数重复调用无状态污染），报告 min/p50/mean/p95（μs）。
+// 预算与机器环境登记于证据 README 分档表（性能量不做硬断言——避免
+// 机器差异造成回归抖动，AGENTS §4『数值/性能验收不能省略』由证据落盘
+// 满足）；本用例仅断言两生产入口调用成功且结果有限，作为可复跑的
+// 性能证据生产者，数据随运行日志与 per-exe ird-test-report 落盘。
+// =====================================================================
+TEST(DtMappingR2LinalgPerf, FixedInputLatency_SvdInverseProducers)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    struct PerfScene
+    {
+        const char* name;          ///< 场景名（README 分档表行键）
+        dt::RowMatrix c;           ///< 窗口 C 矩阵（2×2，无量纲传动比）
+        std::vector<double> ratios; ///< 对角传动比（与 C 同源——块对角一致）
+    };
+    const double s3 = std::sqrt(3.0) / 2.0;
+    const std::vector<PerfScene> scenes = {
+        // 深良态（κ≈2.62——解析逆 oracle 同款矩阵）。
+        {"deepWell", mat2(2.0, 1.0, 1.0, 3.0), {1.0, 1.0}},
+        // 解析谱（κ＝3——正交相似 diag(3,1)，SVD 谱路径典型工况）。
+        {"analyticSpectrum", mat2(2.5, s3, s3, 1.5), {1.0, 1.0}},
+        // 病态分界下侧邻界（κ＝5×10⁷ ≤ 1×10⁸——良态接受域内贴界）。
+        {"nearIllConditioned", mat2(1.0, 0.0, 0.0, 5e7), {1.0, 5e7}},
+        // 极端尺度归一适配（κ＝1——max|a_ij| 归一乘回分支全走；取 1e100
+        // 而非 ScaleExtremes 的 1e200：反射惯量端 J_ref＝(C⁻¹)ᵀ·diag(J_rotor)·C⁻¹
+        // 在 1e200 尺度平方下溢出正定域（DT-INERTIA-NOT-POSITIVE-DEFINITE
+        // 防线真实触发——§9.3 既有覆盖面），1e100 下 J_ref≈2×10⁻²⁰⁰ 有限
+        // 正定，两生产入口均可评估）。
+        {"scaleExtreme", mat2(1e100, 0.0, 0.0, 1e100), {1e100, 1e100}},
+    };
+
+    constexpr int kWarmup = 200;
+    constexpr int kSamples = 2000;
+
+    dt::DriveTrainMappingCore coreImpl;
+    dt::ICouplingMatrixValidator& validator = coreImpl;
+    dt::IReflectedInertiaEvaluator& inertiaEval = coreImpl;
+
+    for (const PerfScene& scene : scenes) {
+        dt::DriveTrainModel model = rawCoupledModel(
+            2, scene.c, scene.ratios,
+            makeWindow(scene.c, jointAxis(0).jointId, jointAxis(1).jointId));
+        // 窗口转子条目齐备（§9.3 完整矩阵/窗口投影以 diag(J_rotor)≻0 为前提
+        // ——反射惯量路径不降级）。
+        model.rotor.push_back(rotor(1.0));
+        model.rotor.push_back(rotor(2.0));
+
+        // ---- 生产入口①：validate(R2) → validateCoupledWindow → singularValues。
+        for (int i = 0; i < kWarmup; ++i) {
+            (void)validator.validate(model, dt::StageCapability::R2Capability);
+        }
+        std::vector<double> svdNs;
+        svdNs.reserve(static_cast<std::size_t>(kSamples));
+        for (int i = 0; i < kSamples; ++i) {
+            const auto t0 = std::chrono::steady_clock::now();
+            const auto gate = validator.validate(model, dt::StageCapability::R2Capability);
+            const auto t1 = std::chrono::steady_clock::now();
+            ASSERT_TRUE(gate.accepted) << scene.name << "：良态场景必须被接受";
+            ASSERT_TRUE(std::isfinite(gate.conditionNumber) && gate.conditionNumber > 0.0)
+                << scene.name << "：谱条件数必须有限且为正";
+            svdNs.push_back(static_cast<double>(
+                std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+        }
+
+        // ---- 生产入口②：反射惯量 evaluate → invertSquareMatrix（窗口投影）。
+        for (int i = 0; i < kWarmup; ++i) {
+            (void)inertiaEval.evaluate(model, {});
+        }
+        std::vector<double> invNs;
+        invNs.reserve(static_cast<std::size_t>(kSamples));
+        for (int i = 0; i < kSamples; ++i) {
+            const auto t0 = std::chrono::steady_clock::now();
+            const dt::ReflectedInertiaResult inertia = inertiaEval.evaluate(model, {});
+            const auto t1 = std::chrono::steady_clock::now();
+            ASSERT_EQ(inertia.axes.size(), 2U);
+            ASSERT_TRUE(inertia.axes[0].windowProjected && inertia.axes[1].windowProjected)
+                << scene.name << "：全窗口模型反射惯量必须走窗口投影";
+            invNs.push_back(static_cast<double>(
+                std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+        }
+
+        // ---- 统计输出（ns → μs；min/p50/mean/p95——排序分位）。
+        const auto report = [kSamples](const char* entry, const char* sceneName,
+                                       std::vector<double>& ns) {
+            std::sort(ns.begin(), ns.end());
+            double sum = 0.0;
+            for (const double v : ns) {
+                sum += v;
+            }
+            const double usPerNs = 1e-3;
+            const std::size_t p50 = ns.size() / 2;
+            const std::size_t p95 = static_cast<std::size_t>(0.95 * static_cast<double>(ns.size()));
+            std::printf("[dt-linalg-perf] entry=%s scene=%s n=%d min=%.3fus p50=%.3fus mean=%.3fus p95=%.3fus\n",
+                        entry, sceneName, kSamples, ns.front() * usPerNs,
+                        ns[p50] * usPerNs, (sum / static_cast<double>(ns.size())) * usPerNs,
+                        ns[p95] * usPerNs);
+        };
+        report("validate->singularValues", scene.name, svdNs);
+        report("reflectedInertia->invertSquareMatrix", scene.name, invNs);
+    }
 }

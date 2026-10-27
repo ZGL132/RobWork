@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "runtime.rne.device.factory",
+  "target": "sdurws_ird_runtime",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+      "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+      "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
+      "sha256": "39b298bba8bd1e55a8d91af869f332cfcfdba326a61423a724fd992d2ba6af04"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
+      "sha256": "27d1b17a72611ce4bded8939f1ab92b5a124dc5e1d088009b00c6f3a3c868f84"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
+      "sha256": "6c284faa7234ccd632e501de06fc9eeeaeec7b78f16ac8d6d70bfa477accd1d4"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp",
+      "sha256": "ddb4b8b72b8dac6788b33349faeb3f17b76d452819177aa99dfae22df2b02c93"
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "sha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/run-dynamics.ps1",
+      "sha256": "ff63ddaa6c19ed2fc20b37f264924752b0ec2c3205404dd2d63fb3d3f4b0ef9e"
+    }
+  ],
+  "normal": {
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/full-suite.xml",
+      "sha256": "f8255ee884167bf4a298dc2f3eb8cb5898977e3d3ce94f18dcf4529f045a6986"
+    },
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/run-dynamics.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label full-suite（119 项＝118 既有断言零放松＋REUSE-T52 增测）",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/full-suite.log",
+      "sha256": "dd402a04af234427c28bad4d3bd4d0f6846410532606a3105c0b8492108e7621"
+    },
+    "exitCode": 0
+  },
+  "oracle": {
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/oracle.xml",
+      "sha256": "80f8fe847151ebc45c90b5cdd67438f8ed5281cbfbeb4b4cd7ee69938e5db893"
+    },
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/run-dynamics.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label oracle -Filter 'DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52:DynRnea.QuasiStaticEnergyBalancePotentialDelta_REUSE_T52:DynGolden.*'（独立物理 oracle：弯曲构型手算叉积平衡＋准静态功率积分＝手算势能差＋黄金数据集拉格朗日独立参考——禁自比）",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/oracle.log",
+      "sha256": "99059f9f1f8b75344b586bb59613e52be33b33b434e90881dbed15ca393b9e05"
+    },
+    "exitCode": 0
+  },
+  "upstreamComparison": {
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/upstream-comparison.xml",
+      "sha256": "040a9ddd1f05b591b190debbebd550837d1674947f9620460c2d94f2c66b8cd7"
+    },
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/run-dynamics.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label upstream-comparison -Filter 'DynRnea.UpstreamDirectComparison_REUSE_T52'（同模型同 State：测试侧内联同构 RNE 载体直连 RecursiveNewtonEuler::solve，与产品评估器全量通道 τ EXPECT_EQ 逐位一致——生产路径真实路由经上游）",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/upstream-comparison.log",
+      "sha256": "9f812731e7b9ce94416324d47b72fac936e9a65118c2330a8c8daf3d10610a1c"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/disconnected.log",
+      "sha256": "c916b76186aea8101350cf8ac899920c8161969f1e69780429e4dcd146b64b72"
+    },
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/disconnected.xml",
+      "sha256": "a7960ad06830edda1013d0200a84ca1fd6a85a904dc7584c94680817175f96a0"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/disconnected-mutated-RneConsumptionDevice.cpp.txt",
+      "sha256": "f3d4876946ed4445f17bb375a8cb473a35fe2f4978d75f194c83bca4edb275fc"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "description": "GAP-RNE-FRAME 关节帧质心换算断开（权威连杆系值直喂——权威轴≠z 时质心世界位置错位）",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
+      "originalSha256": "6c284faa7234ccd632e501de06fc9eeeaeec7b78f16ac8d6d70bfa477accd1d4"
+    },
+    "command": "变异＝buildRneConsumptionDevice 内 info.masscenter 换算行改连杆系直喂（变异副本 RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/disconnected-mutated-RneConsumptionDevice.cpp.txt）→重建→VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/run-dynamics.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label disconnected -Filter 'DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52:DynRnea.StaticGravityTwoLinkAnalytic'（exit 非零＋2 断言真实失败＝GAP-RNE-FRAME 复现：权威轴≠z 质心世界位置错位）；已恢复并全量复验 119 passed"
+  }
+}

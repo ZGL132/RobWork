@@ -1,0 +1,71 @@
+# stages dense-only x3 (reviewed tree 9276f19b2 export, MSVC 19.42 /O2 /Ob2, 2026-10-25T06:15:43+08:00)
+probe start argc=4
+profile loaded
+stages n=64 density=dense edges=1485 matched=64 evaluate_ms=1.485 graph_ms=0.280 checked_ms=2.469 greedy_checked_ms=0.667 convert_ms=0.001 peakWS=5.5
+stages n=256 density=dense edges=23852 matched=256 evaluate_ms=23.327 graph_ms=3.103 checked_ms=45.132 greedy_checked_ms=10.018 convert_ms=0.004 peakWS=10.4
+stages n=1024 density=dense edges=380394 matched=1024 evaluate_ms=404.033 graph_ms=51.967 checked_ms=807.366 greedy_checked_ms=162.233 convert_ms=0.014 peakWS=68.1
+done mode=stages
+probe start argc=4
+profile loaded
+stages n=64 density=dense edges=1485 matched=64 evaluate_ms=1.553 graph_ms=0.268 checked_ms=2.146 greedy_checked_ms=0.688 convert_ms=0.001 peakWS=5.4
+stages n=256 density=dense edges=23852 matched=256 evaluate_ms=26.594 graph_ms=3.208 checked_ms=47.656 greedy_checked_ms=11.234 convert_ms=0.004 peakWS=9.4
+stages n=1024 density=dense edges=380394 matched=1024 evaluate_ms=418.393 graph_ms=50.462 checked_ms=765.110 greedy_checked_ms=160.644 convert_ms=0.012 peakWS=67.6
+done mode=stages
+probe start argc=4
+profile loaded
+stages n=64 density=dense edges=1485 matched=64 evaluate_ms=1.649 graph_ms=0.290 checked_ms=2.164 greedy_checked_ms=0.716 convert_ms=0.001 peakWS=5.5
+stages n=256 density=dense edges=23852 matched=256 evaluate_ms=24.541 graph_ms=3.162 checked_ms=48.973 greedy_checked_ms=10.900 convert_ms=0.004 peakWS=9.7
+stages n=1024 density=dense edges=380394 matched=1024 evaluate_ms=400.586 graph_ms=50.769 checked_ms=751.301 greedy_checked_ms=189.290 convert_ms=0.013 peakWS=67.9
+done mode=stages
+# old dense-only x3
+probe start argc=4
+profile loaded
+mode=old n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=0.66 analyticMB=0.0 peakWS=5.1
+mode=old n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=2.41 analyticMB=0.0 peakWS=5.2
+mode=old n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=10.05 analyticMB=0.0 peakWS=5.3
+done mode=old
+probe start argc=4
+profile loaded
+mode=old n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=1.33 analyticMB=0.0 peakWS=5.1
+mode=old n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=3.82 analyticMB=0.0 peakWS=5.2
+mode=old n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=9.81 analyticMB=0.0 peakWS=5.3
+done mode=old
+probe start argc=4
+profile loaded
+mode=old n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=0.72 analyticMB=0.0 peakWS=5.1
+mode=old n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=2.31 analyticMB=0.0 peakWS=5.2
+mode=old n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=9.09 analyticMB=0.0 peakWS=5.3
+done mode=old
+# new dense-only x3
+probe start argc=4
+profile loaded
+mode=new n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=2.79 analyticMB=0.1 peakWS=5.5
+mode=new n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=40.68 analyticMB=0.8 peakWS=8.8
+mode=new n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=632.38 analyticMB=12.8 peakWS=48.1
+done mode=new
+probe start argc=4
+profile loaded
+mode=new n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=2.53 analyticMB=0.1 peakWS=5.5
+mode=new n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=40.06 analyticMB=0.8 peakWS=8.8
+mode=new n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=641.98 analyticMB=12.8 peakWS=47.5
+done mode=new
+probe start argc=4
+profile loaded
+mode=new n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=2.55 analyticMB=0.1 peakWS=5.5
+mode=new n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=39.72 analyticMB=0.8 peakWS=8.7
+mode=new n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=622.16 analyticMB=12.8 peakWS=48.0
+done mode=new
+# new full (incl 4096 sparse) x1
+probe start argc=3
+profile loaded
+mode=new n=64 density=sparse tol=0.01 matched=37 edges~82 best_ms=1.59 analyticMB=0.0 peakWS=5.2
+mode=new n=256 density=sparse tol=0.01 matched=216 edges~1311 best_ms=25.65 analyticMB=0.0 peakWS=5.6
+mode=new n=1024 density=sparse tol=0.01 matched=970 edges~20972 best_ms=420.09 analyticMB=0.7 peakWS=8.8
+mode=new n=4096 density=sparse tol=0.01 matched=4068 edges~335544 best_ms=6735.68 analyticMB=10.3 peakWS=52.8
+mode=new n=64 density=medium tol=0.05 matched=57 edges~410 best_ms=1.73 analyticMB=0.0 peakWS=52.8
+mode=new n=256 density=medium tol=0.05 matched=256 edges~6554 best_ms=31.23 analyticMB=0.2 peakWS=52.8
+mode=new n=1024 density=medium tol=0.05 matched=1024 edges~104858 best_ms=480.54 analyticMB=3.2 peakWS=52.8
+mode=new n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=2.52 analyticMB=0.1 peakWS=52.8
+mode=new n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=41.04 analyticMB=0.8 peakWS=52.8
+mode=new n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=617.13 analyticMB=12.8 peakWS=52.8
+done mode=new

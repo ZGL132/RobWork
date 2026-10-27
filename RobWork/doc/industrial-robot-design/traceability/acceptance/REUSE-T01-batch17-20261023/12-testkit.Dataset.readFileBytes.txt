@@ -1,0 +1,13 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::(anonymous namespace)::readFileBytes
+85: std::string readFileBytes(const std::filesystem::path& p)
+86: {
+87:     std::ifstream in(p, std::ios::binary);
+88:     if (!in) {
+89:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+90:                            "env-unavailable: 无法读取文件 " + p.string());
+91:     }
+92:     std::ostringstream ss;
+93:     ss << in.rdbuf();
+94:     return ss.str();
+95: }

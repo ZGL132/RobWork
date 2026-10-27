@@ -1,0 +1,8 @@
+独立验收三方归一化比对（验收员重做，非引用实施方 dfa-table-merged-equal.txt）
+提取口径：kUtf8Dfa 表体自 "{" 行起至 "}；"，mapSystemError 自声明行次行起至函数末 "}"；
+归一化：剥离 // 注释与全部空白。比较对象：
+  base(e5364bd6ca00) Json.cpp / base Csv.cpp / head(2fe4cd4fe817) IoUtf8.hpp
+DFA 表体归一化 sha256 前 16 位＝716ff003321bf151（len=1084）三方一致 → DFA_TABLE_THREE_WAY_EQUAL
+mapSystemError 归一化 sha256 前 16 位＝effbbc7af3b1f894（len=449）三方一致 → MAPSYSTEMERROR_THREE_WAY_EQUAL
+注：共享头声明行带 inline 修饰（inline const / inline IoErrorCode），声明行排除后表体/函数体逐字节一致；
+utf8Step 推进式 kUtf8Dfa[256+state+kUtf8Dfa[b]] 与两 TU 原内联式逐字相同（head IoUtf8.hpp 实读）。

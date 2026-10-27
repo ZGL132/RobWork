@@ -1,0 +1,205 @@
+RobWork/RobWork/gtest/common\ThreadTest.cpp:22:#include <rw/common/ThreadPool.hpp>
+RobWork/RobWork/gtest/common\ThreadTest.cpp:24:#include <rw/common/ThreadTask.hpp>
+RobWork/RobWork/gtest/common\ThreadTest.cpp:37:static const unsigned int STOPJOB = 10; // ThreadPool should be able to shut down before reaching job JOBS
+RobWork/RobWork/gtest/common\ThreadTest.cpp:43:void workFunction(ThreadPool* pool, unsigned int id) {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:44:	Timer::sleepMs(50);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:61:void workFunctionStop(ThreadPool* pool, unsigned int id) {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:63:		Timer::sleepMs(50);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:70:			Timer::sleepMs(500); // slow it a bit down to give main thread time to call stop
+RobWork/RobWork/gtest/common\ThreadTest.cpp:83:	ThreadPool::Ptr pool = ownedPtr(new ThreadPool(THREADS));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:92:		ThreadPool::WorkFunction work;
+RobWork/RobWork/gtest/common\ThreadTest.cpp:109:	pool->waitForEmptyQueue();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:130:	ThreadPool::Ptr dummyPool = ownedPtr(new ThreadPool(THREADS));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:131:	ThreadPool::Ptr pool = ownedPtr(new ThreadPool(THREADS));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:133:	ThreadTask::Ptr task = ownedPtr(new ThreadTask(pool));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:135:	EXPECT_EQ(task->getState() , ThreadTask::INITIALIZATION);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:136:	EXPECT_EQ(task->getThreadPool() , pool);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:137:	EXPECT_TRUE(task->setThreadPool(dummyPool));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:138:	EXPECT_EQ(task->getThreadPool() , dummyPool);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:139:	EXPECT_TRUE(task->setThreadPool(pool));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:140:	EXPECT_EQ(task->getThreadPool(),pool);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:148:	ThreadTask::Ptr subtask1 = ownedPtr(new ThreadTask(task));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:155:	EXPECT_NE(task->getState() , ThreadTask::INITIALIZATION);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:157:	EXPECT_FALSE(task->setThreadPool(dummyPool));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:159:	EXPECT_EQ(task->getThreadPool(),pool);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:161:	ThreadTask::Ptr subtask2 = ownedPtr(new ThreadTask(task));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:166:	ThreadTask::TaskState state;
+RobWork/RobWork/gtest/common\ThreadTest.cpp:168:	while (state != ThreadTask::IDLE) state = task->wait(state);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:169:	EXPECT_EQ(task->getState(),ThreadTask::IDLE);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:174:	EXPECT_EQ(subtask1->getState(),ThreadTask::DONE);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:175:	EXPECT_EQ(subtask2->getState(),ThreadTask::DONE);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:176:	EXPECT_EQ(task->getState(),ThreadTask::DONE);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:202:class SubTask: public ThreadTask {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:204:	SubTask(ThreadPool::Ptr pool, unsigned int taskID, unsigned int id): ThreadTask(pool), _taskID(taskID), _id(id) {};
+RobWork/RobWork/gtest/common\ThreadTest.cpp:209:		Timer::sleepMs(Random::ranI(0,25));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:211:	void subTaskDone(ThreadTask* subtask) { // should not be called!
+RobWork/RobWork/gtest/common\ThreadTest.cpp:228:class Task: public ThreadTask {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:230:	Task(ThreadPool::Ptr pool, unsigned int id): ThreadTask(pool), _id(id), _idleTaskAdded(false) {}
+RobWork/RobWork/gtest/common\ThreadTest.cpp:238:		EXPECT_EQ(addSubTask(ownedPtr(new SubTask(getThreadPool(),_id,0))),true);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:239:		EXPECT_EQ(addSubTask(ownedPtr(new SubTask(getThreadPool(),_id,1))),true);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:241:	void subTaskDone(ThreadTask* subtask) {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:249:			EXPECT_EQ(addSubTask(ownedPtr(new SubTask(getThreadPool(),_id,2))),true);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:260:			EXPECT_EQ(addSubTask(ownedPtr(new SubTask(getThreadPool(),_id,3))),true);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:269:		EXPECT_EQ(addSubTask(ownedPtr(new SubTask(getThreadPool(),_id,4))),false);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:276:class MainTask: public ThreadTask {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:278:	MainTask(ThreadPool::Ptr pool): ThreadTask(pool) {};
+RobWork/RobWork/gtest/common\ThreadTest.cpp:285:			ThreadTask::Ptr task = ownedPtr(new Task(getThreadPool(),i));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:290:	void subTaskDone(ThreadTask* subtask) {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:305:		EXPECT_FALSE(addSubTask(ownedPtr(new Task(getThreadPool(),100))));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:310:	ThreadPool::Ptr pool = ownedPtr(new ThreadPool(THREADS));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:311:	ThreadTask::Ptr task = ownedPtr(new MainTask(pool));
+RobWork/RobWork/gtest/common\ThreadTest.cpp:316:		EXPECT_NE(task->getState() , ThreadTask::INITIALIZATION);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:322:		EXPECT_EQ(task->getState(),ThreadTask::DONE);
+RobWork/RobWork/gtest/common\ThreadTest.cpp:460:TEST(ThreadPoolTest,timed_test_5sec) {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:461:	long start = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:464:	long end = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:471:TEST(ThreadPoolTest_Abort, timed_test_20sec) {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:472:	long start = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:475:	long end = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:482:TEST(ThreadTaskTest, timed_test_5sec) {
+RobWork/RobWork/gtest/common\ThreadTest.cpp:484:	long start = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:487:	long end = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:495:TEST(ThreadTaskTest_InvocationOrder, times_test_20sec) { 
+RobWork/RobWork/gtest/common\ThreadTest.cpp:497:	long start = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/gtest/common\ThreadTest.cpp:500:	long end = rw::common::Timer::currentTimeMs();
+RobWork/RobWork/src/rw/common\CMakeLists.txt:32:        ThreadPool.cpp
+RobWork/RobWork/src/rw/common\CMakeLists.txt:36:        ThreadTask.cpp
+RobWork/RobWork/src/rw/common\CMakeLists.txt:38:        TimerUtil.cpp
+RobWork/RobWork/src/rw/common\CMakeLists.txt:82:        ThreadPool.hpp
+RobWork/RobWork/src/rw/common\CMakeLists.txt:86:        ThreadTask.hpp
+RobWork/RobWork/src/rw/common\CMakeLists.txt:88:        TimerUtil.hpp
+RobWork/RobWork/example\snippets\ex-threadpool.cpp:1:#include <rw/common/ThreadPool.hpp>
+RobWork/RobWork/example\snippets\ex-threadpool.cpp:16:void loadFile(ThreadPool* pool, const std::string &file) {
+RobWork/RobWork/example\snippets\ex-threadpool.cpp:36:	ThreadPool::Ptr pool = ownedPtr(new ThreadPool(std::atoi(argv[1])));
+RobWork/RobWork/example\snippets\ex-threadpool.cpp:38:		ThreadPool::WorkFunction work = boost::bind(&loadFile,boost::arg<1>(),argv[i]);
+RobWork/RobWork/example\snippets\ex-threadpool.cpp:41:	pool->waitForEmptyQueue();
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:1:#include <rw/common/ThreadPool.hpp>
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:2:#include <rw/common/ThreadTask.hpp>
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:12:class LoadTask: public ThreadTask {
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:14:	LoadTask(ThreadTask::Ptr parent, const std::string &file): ThreadTask(parent), _file(file) {};
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:35:class MainTask: public ThreadTask {
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:37:	MainTask(ThreadPool::Ptr pool, const std::vector<std::string> &files): ThreadTask(pool), _files(files) {};
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:51:	void subTaskDone(ThreadTask* subtask) {
+RobWork/RobWork/example\snippets\ex-threadtask.cpp:77:	ThreadPool::Ptr pool = ownedPtr(new ThreadPool(std::atoi(argv[1])));
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:22: * @file ThreadPool.hpp
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:24: * \copydoc rw::common::ThreadPool
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:50:     * For more complex behaviour please look at the ThreadTask type,
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:51:     * which has a higher abstraction for adding tasks to a ThreadPool.
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:53:    class ThreadPool
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:57:        typedef rw::core::Ptr< ThreadPool > Ptr;
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:71:        ThreadPool (int threads = -1);
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:74:        virtual ~ThreadPool ();
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:101:        typedef boost::function< void (ThreadPool*) > WorkFunction;
+RobWork/RobWork/src/rw/common\ThreadPool.hpp:114:        void waitForEmptyQueue ();
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:18:#include "ThreadPool.hpp"
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:30:ThreadPool::ThreadPool (int threads) :
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:45:ThreadPool::~ThreadPool ()
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:52:unsigned int ThreadPool::getNumberOfThreads () const
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:57:void ThreadPool::stop ()
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:68:bool ThreadPool::isStopping ()
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:73:void ThreadPool::addWork (WorkFunction work)
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:83:        basio::post (_service, boost::bind (&ThreadPool::runWrap, this, work));
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:87:unsigned int ThreadPool::getQueueSize ()
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:92:void ThreadPool::waitForEmptyQueue ()
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:100:void ThreadPool::runWrap (WorkFunction work)
+RobWork/RobWork/src/rw/common\ThreadPool.cpp:107:                  "ThreadPool!");
+RobWork/RobWork/src/rw/common\TimerUtil.cpp:18:#include "TimerUtil.hpp"
+RobWork/RobWork/src/rw/common\TimerUtil.cpp:33:double TimerUtil::currentTime ()
+RobWork/RobWork/src/rw/common\TimerUtil.cpp:38:void TimerUtil::sleepMs (int period)
+RobWork/RobWork/src/rw/common\TimerUtil.cpp:47:void TimerUtil::sleepUs (int period)
+RobWork/RobWork/src/rw/common\TimerUtil.cpp:57:long long TimerUtil::currentTimeMs ()
+RobWork/RobWork/src/rw/common\TimerUtil.cpp:70:long long TimerUtil::currentTimeUs ()
+RobWork/RobWork/src/rw/common\TimerUtil.hpp:22: * @file TimerUtil.hpp
+RobWork/RobWork/src/rw/common\TimerUtil.hpp:33:    class TimerUtil
+RobWork/RobWork/src/rw/common\TimerUtil.hpp:43:        static long long currentTimeMs ();
+RobWork/RobWork/src/rw/common\TimerUtil.hpp:70:        static void sleepMs (int period);
+RobWork/RobWork/src/rw/common\Timer.hpp:22:#include <rw/common/TimerUtil.hpp>
+RobWork/RobWork/src/rw/common\Timer.hpp:185:        static long currentTimeSec () { return (long) (TimerUtil::currentTimeMs () / 1000); }
+RobWork/RobWork/src/rw/common\Timer.hpp:194:        static long currentTimeMs () { return (long) TimerUtil::currentTimeMs (); }
+RobWork/RobWork/src/rw/common\Timer.hpp:205:        static long currentTimeUs () { return (long) TimerUtil::currentTimeUs (); }
+RobWork/RobWork/src/rw/common\Timer.hpp:214:        static double currentTime () { return TimerUtil::currentTime (); }
+RobWork/RobWork/src/rw/common\Timer.hpp:221:        static void sleepMs (int period) { TimerUtil::sleepMs (period); }
+RobWork/RobWork/src/rw/common\Timer.hpp:228:        static void sleepUs (int period) { TimerUtil::sleepUs (period); }
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:22: * @file ThreadTask.hpp
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:24: * \copydoc rw::common::ThreadTask
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:39:    class ThreadPool;
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:51:     * beforehand if some task can be split into multiple smaller subtasks or not. The ThreadTask
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:56:     * The ThreadTask can utilize a ThreadPool of arbitrary size (down to 0 threads).
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:62:     * There are two ways to use the ThreadTask:
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:65:     * processing. One can use the ThreadPool size to adjust the number of threads one wants to use
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:73:     *  run() is the main work unit of the ThreadTask.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:79:     *  done() is the final function called before the ThreadTask is ended completely.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:86:    class ThreadTask
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:90:        typedef rw::core::Ptr< ThreadTask > Ptr;
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:114:        ThreadTask (ThreadTask::Ptr parent);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:119:         * @param pool [in] (optional) a pointer to the ThreadPool to use.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:121:        ThreadTask (rw::core::Ptr< ThreadPool > pool = NULL);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:126:        virtual ~ThreadTask ();
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:129:         * @brief Set which ThreadPool to use to do the actual execution of work.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:134:        bool setThreadPool (rw::core::Ptr< ThreadPool > pool);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:137:         * @brief Get the ThreadPool that is used by this task currently.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:139:         * @return pointer to the ThreadPool.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:141:        rw::core::Ptr< ThreadPool > getThreadPool ();
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:171:        virtual void subTaskDone (ThreadTask* subtask);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:193:         * assigned ThreadPool.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:209:        TaskState wait (ThreadTask::TaskState previous);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:226:         * @param subtask the ThreadTask to add as child.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:229:        bool addSubTask (ThreadTask::Ptr subtask);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:232:         * @brief Get the subtasks currently added to the ThreadTask.
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:235:        std::vector< ThreadTask::Ptr > getSubTasks ();
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:271:        typedef boost::function< void (ThreadTask*) > ParentCallback;
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:273:        void runWrap (ThreadPool* pool);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:274:        void doneWrap (ThreadPool* pool);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:275:        void callbackParent (ThreadTask* task);
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:280:        ThreadSafeVariable< rw::core::Ptr< ThreadPool > >* _pool;
+RobWork/RobWork/src/rw/common\ThreadTask.hpp:284:        ThreadSafeVariable< std::vector< rw::core::Ptr< ThreadTask > > >* _children;
+RobWork/RobWork/src/rw/common\Timer.cpp:20:#include "TimerUtil.hpp"
+RobWork/RobWork/src/rw/common\Timer.cpp:48:    _relativeTime = (long) TimerUtil::currentTimeMs ();
+RobWork/RobWork/src/rw/common\Timer.cpp:62:    _relativeTime = (long) TimerUtil::currentTimeMs ();
+RobWork/RobWork/src/rw/common\Timer.cpp:69:        const long now = (long) TimerUtil::currentTimeMs ();
+RobWork/RobWork/src/rw/common\Timer.cpp:79:        _relativeTime = (long) TimerUtil::currentTimeMs ();
+RobWork/RobWork/src/rw/common\Timer.cpp:99:        return _totalTime + (long) TimerUtil::currentTimeMs () - _relativeTime;
+RobWork/RobWork/src/rw/common\Timer.cpp:107:        timems += (long) TimerUtil::currentTimeMs () - _relativeTime;
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:18:#include "ThreadTask.hpp"
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:20:#include <rw/common/ThreadPool.hpp>
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:30:ThreadTask::ThreadTask (ThreadTask::Ptr parent) :
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:31:    _pool (new ThreadSafeVariable< ThreadPool::Ptr > (parent != NULL ? parent->getThreadPool ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:36:    _children (new ThreadSafeVariable< std::vector< ThreadTask::Ptr > > (
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:37:        std::vector< ThreadTask::Ptr > ())),
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:43:ThreadTask::ThreadTask (ThreadPool::Ptr pool) :
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:44:    _pool (new ThreadSafeVariable< ThreadPool::Ptr > (pool)),
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:48:    _children (new ThreadSafeVariable< std::vector< ThreadTask::Ptr > > (
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:49:        std::vector< ThreadTask::Ptr > ())),
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:55:ThreadTask::~ThreadTask ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:67:bool ThreadTask::setThreadPool (ThreadPool::Ptr pool)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:82:ThreadPool::Ptr ThreadTask::getThreadPool ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:87:void ThreadTask::run ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:90:void ThreadTask::subTaskDone (ThreadTask* subtask)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:97:void ThreadTask::idle ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:100:void ThreadTask::done ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:103:bool ThreadTask::execute ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:108:    std::vector< ThreadTask::Ptr > children;
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:112:        // 1. setThreadPool() and addSubTask() is not currently changing the pool or adding subtasks
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:124:    // The ThreadPool can not change anymore (state is IN_QUEUE) so we just read it without holding
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:126:    ThreadPool::Ptr pool = _pool->getVariable ();
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:129:        ThreadPool::WorkFunction workFct =
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:130:            boost::bind (&ThreadTask::runWrap, this, boost::arg< 1 > ());
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:136:    for (ThreadTask::Ptr subtask : children) {
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:142:ThreadTask::TaskState ThreadTask::wait (ThreadTask::TaskState previous)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:147:void ThreadTask::waitUntilDone ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:149:    ThreadTask::TaskState state = _state->getVariable ();
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:155:ThreadTask::TaskState ThreadTask::getState ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:160:bool ThreadTask::addSubTask (ThreadTask::Ptr subtask)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:179:        std::vector< ThreadTask::Ptr > children = _children->getVariable ();
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:183:            boost::bind (&ThreadTask::callbackParent, this, boost::arg< 1 > ()));
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:197:std::vector< ThreadTask::Ptr > ThreadTask::getSubTasks ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:202:void ThreadTask::setKeepAlive (bool keepAlive)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:229:bool ThreadTask::keepAlive ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:234:void ThreadTask::registerFailure (const Exception& e)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:242:std::list< Exception > ThreadTask::getExceptions () const
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:247:void ThreadTask::runWrap (ThreadPool* pool)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:260:            "Please catch boost::thread_interrupted exception thrown in ThreadTask run funtion!");
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:272:void ThreadTask::callbackParent (ThreadTask* task)
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:288:void ThreadTask::tryIdle ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:330:void ThreadTask::finish ()
+RobWork/RobWork/src/rw/common\ThreadTask.cpp:338:            "Please catch boost::thread_interrupted exception thrown in ThreadTask done funtion!");

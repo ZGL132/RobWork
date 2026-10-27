@@ -1,0 +1,25 @@
+Note: Google Test filter = BaseWorldReuse.ValidationMetricBoundary_REUSE_T29
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from BaseWorldReuse
+[ RUN      ] BaseWorldReuse.ValidationMetricBoundary_REUSE_T29
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(862): error: Expected equality of these values:
+  failure.has_value()
+    Which is: false
+  error>5e-13
+    Which is: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(865): error: Value of: checkWorldBaseTransform(rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0),reflected)).has_value()
+  Actual: false
+Expected: true
+
+[  FAILED  ] BaseWorldReuse.ValidationMetricBoundary_REUSE_T29 (0 ms)
+[----------] 1 test from BaseWorldReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] BaseWorldReuse.ValidationMetricBoundary_REUSE_T29
+
+ 1 FAILED TEST

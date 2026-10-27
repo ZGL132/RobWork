@@ -1,0 +1,74 @@
+Note: Google Test filter = Set*.*:StableOrder.*:Repro*.*
+[==========] Running 22 tests from 8 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from SetEquivalent
+[ RUN      ] SetEquivalent.OrderIndependentEquivalent_UT_SET
+[       OK ] SetEquivalent.OrderIndependentEquivalent_UT_SET (17 ms)
+[ RUN      ] SetEquivalent.IdentityValueMismatchLocated_UT_SET
+[       OK ] SetEquivalent.IdentityValueMismatchLocated_UT_SET (0 ms)
+[----------] 2 tests from SetEquivalent (17 ms total)
+
+[----------] 2 tests from SetDuplicates
+[ RUN      ] SetDuplicates.ActualDuplicateIdentity_UT_SET
+[       OK ] SetDuplicates.ActualDuplicateIdentity_UT_SET (0 ms)
+[ RUN      ] SetDuplicates.ExpectedDuplicateThrows_UT_SET
+[       OK ] SetDuplicates.ExpectedDuplicateThrows_UT_SET (0 ms)
+[----------] 2 tests from SetDuplicates (0 ms total)
+
+[----------] 6 tests from SetNumeric
+[ RUN      ] SetNumeric.NumericOnlyMatching_UT_SET
+[       OK ] SetNumeric.NumericOnlyMatching_UT_SET (0 ms)
+[ RUN      ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET
+[       OK ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET (0 ms)
+[ RUN      ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594
+[       OK ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594 (0 ms)
+[ RUN      ] SetNumeric.TrueAmbiguityStillDetected_F594
+[       OK ] SetNumeric.TrueAmbiguityStillDetected_F594 (0 ms)
+[ RUN      ] SetNumeric.GreedyTrapAugmented_UT_SET
+[       OK ] SetNumeric.GreedyTrapAugmented_UT_SET (0 ms)
+[ RUN      ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET
+[       OK ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET (0 ms)
+[----------] 6 tests from SetNumeric (0 ms total)
+
+[----------] 1 test from StableOrder
+[ RUN      ] StableOrder.SameOrderAndFirstDivergence_UT_ORD
+[       OK ] StableOrder.SameOrderAndFirstDivergence_UT_ORD (0 ms)
+[----------] 1 test from StableOrder (0 ms total)
+
+[----------] 1 test from SetGuard
+[ RUN      ] SetGuard.ScaleLimitThrows_UT_SET
+[       OK ] SetGuard.ScaleLimitThrows_UT_SET (1 ms)
+[----------] 1 test from SetGuard (1 ms total)
+
+[----------] 2 tests from SetMatchCore
+[ RUN      ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET
+[       OK ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET (2 ms)
+[ RUN      ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET
+[       OK ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET (232 ms)
+[----------] 2 tests from SetMatchCore (235 ms total)
+
+[----------] 3 tests from ReproRecordData
+[ RUN      ] ReproRecordData.DefaultsMatchDesign_UT_FIX
+[       OK ] ReproRecordData.DefaultsMatchDesign_UT_FIX (0 ms)
+[ RUN      ] ReproRecordData.JsonRoundTrip_UT_FIX
+[       OK ] ReproRecordData.JsonRoundTrip_UT_FIX (0 ms)
+[ RUN      ] ReproRecordData.FromJsonRejectsInvalid_UT_FIX
+[       OK ] ReproRecordData.FromJsonRejectsInvalid_UT_FIX (0 ms)
+[----------] 3 tests from ReproRecordData (0 ms total)
+
+[----------] 5 tests from ReproBenchmark
+[ RUN      ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1
+[       OK ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1 (23 ms)
+[ RUN      ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2
+[       OK ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2 (0 ms)
+[ RUN      ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3
+[       OK ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3 (0 ms)
+[ RUN      ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1 (0 ms)
+[ RUN      ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1 (21 ms)
+[----------] 5 tests from ReproBenchmark (46 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 8 test suites ran. (300 ms total)
+[  PASSED  ] 22 tests.

@@ -1,0 +1,316 @@
+{
+ "generatedAt": "2026-10-27",
+ "generator": "WP-20 T06 最终收口（node 现场统计）",
+ "baseline": {
+  "branch": "redesign-main",
+  "head": "56bc28140"
+ },
+ "functions": {
+  "grandTotal": 2231,
+  "byUnit": {
+   "core": {
+    "total": 242,
+    "byStatus": {
+     "pending": 126,
+     "migrated": 116
+    },
+    "byDecision": {
+     "pending": 126,
+     "business-specific": 116
+    }
+   },
+   "diagnostics": {
+    "total": 267,
+    "byStatus": {
+     "pending": 35,
+     "migrated": 232
+    },
+    "byDecision": {
+     "pending": 35,
+     "business-specific": 232
+    }
+   },
+   "drivetrain": {
+    "total": 15,
+    "byStatus": {
+     "migrated": 15
+    },
+    "byDecision": {
+     "adapter": 2,
+     "business-specific": 13
+    }
+   },
+   "dynamics": {
+    "total": 23,
+    "byStatus": {
+     "pending": 3,
+     "proposal": 2,
+     "migrated": 18
+    },
+    "byDecision": {
+     "pending": 3,
+     "proposal": 2,
+     "business-specific": 16,
+     "adapter": 2
+    }
+   },
+   "evidence": {
+    "total": 27,
+    "byStatus": {
+     "migrated": 27
+    },
+    "byDecision": {
+     "business-specific": 27
+    }
+   },
+   "execution": {
+    "total": 151,
+    "byStatus": {
+     "pending": 64,
+     "migrated": 87
+    },
+    "byDecision": {
+     "pending": 64,
+     "business-specific": 87
+    }
+   },
+   "foundation-governance": {
+    "total": 136,
+    "byStatus": {
+     "migrated": 13,
+     "pending": 123
+    },
+    "byDecision": {
+     "business-specific": 13,
+     "pending": 123
+    }
+   },
+   "io": {
+    "total": 18,
+    "byStatus": {
+     "migrated": 16,
+     "pending": 2
+    },
+    "byDecision": {
+     "business-specific": 16,
+     "pending": 2
+    }
+   },
+   "kinematics": {
+    "total": 61,
+    "byStatus": {
+     "migrated": 45,
+     "pending": 16
+    },
+    "byDecision": {
+     "adapter": 2,
+     "business-specific": 43,
+     "pending": 16
+    }
+   },
+   "modeling": {
+    "total": 133,
+    "byStatus": {
+     "migrated": 83,
+     "closed": 2,
+     "pending": 48
+    },
+    "byDecision": {
+     "adapter": 7,
+     "business-specific": 78,
+     "pending": 48
+    }
+   },
+   "optimization": {
+    "total": 25,
+    "byStatus": {
+     "migrated": 25
+    },
+    "byDecision": {
+     "business-specific": 25
+    }
+   },
+   "policy": {
+    "total": 78,
+    "byStatus": {
+     "migrated": 41,
+     "pending": 37
+    },
+    "byDecision": {
+     "business-specific": 39,
+     "pending": 37,
+     "adapter": 2
+    }
+   },
+   "project": {
+    "total": 436,
+    "byStatus": {
+     "pending": 27,
+     "migrated": 409
+    },
+    "byDecision": {
+     "pending": 27,
+     "business-specific": 409
+    }
+   },
+   "reporting": {
+    "total": 68,
+    "byStatus": {
+     "migrated": 4,
+     "pending": 64
+    },
+    "byDecision": {
+     "business-specific": 4,
+     "pending": 64
+    }
+   },
+   "requirements": {
+    "total": 49,
+    "byStatus": {
+     "migrated": 48,
+     "pending": 1
+    },
+    "byDecision": {
+     "business-specific": 47,
+     "direct": 1,
+     "pending": 1
+    }
+   },
+   "runtime": {
+    "total": 189,
+    "byStatus": {
+     "pending": 28,
+     "audited": 2,
+     "migrated": 159
+    },
+    "byDecision": {
+     "pending": 28,
+     "business-specific": 148,
+     "adapter": 9,
+     "direct": 4
+    }
+   },
+   "selection": {
+    "total": 52,
+    "byStatus": {
+     "migrated": 52
+    },
+    "byDecision": {
+     "business-specific": 51,
+     "direct": 1
+    }
+   },
+   "testkit": {
+    "total": 116,
+    "byStatus": {
+     "migrated": 116
+    },
+    "byDecision": {
+     "business-specific": 116
+    }
+   },
+   "trajectory": {
+    "total": 95,
+    "byStatus": {
+     "pending": 1,
+     "migrated": 93,
+     "audited": 1
+    },
+    "byDecision": {
+     "pending": 1,
+     "adapter": 8,
+     "business-specific": 86
+    }
+   },
+   "ui": {
+    "total": 40,
+    "byStatus": {
+     "pending": 19,
+     "migrated": 21
+    },
+    "byDecision": {
+     "pending": 19,
+     "business-specific": 21
+    }
+   },
+   "workflow": {
+    "total": 10,
+    "byStatus": {
+     "migrated": 10
+    },
+    "byDecision": {
+     "business-specific": 10
+    }
+   }
+  },
+  "decisionStatusCross": {
+   "pending/pending": 594,
+   "business-specific/migrated": 1594,
+   "adapter/migrated": 30,
+   "proposal/proposal": 2,
+   "adapter/closed": 2,
+   "direct/migrated": 6,
+   "business-specific/audited": 3
+  }
+ },
+ "catalog": {
+  "total": 40,
+  "byReviewStatus": {
+   "verified": 17,
+   "candidate": 23
+  },
+  "verified": [
+   "KIN-FK",
+   "KIN-IK",
+   "MATH-SVD",
+   "DYN-RNE",
+   "MATH-ROT",
+   "TRAJ-SLERP",
+   "COLLISION",
+   "MATH-EIGEN",
+   "MATH-INERTIA",
+   "MATH-POLYNOMIAL",
+   "PATH-PLANNING",
+   "MATH-METRIC",
+   "RUNTIME-WC-MODEL",
+   "RUNTIME-DWC-MODEL",
+   "RUNTIME-AXIS-ALIGN",
+   "RUNTIME-MESH-LOAD",
+   "RUNTIME-GEOMETRY-CARRIER"
+  ],
+  "candidate": [
+   "DYN-FD",
+   "TRAJ-LINEAR",
+   "TRAJ-HIGH",
+   "MATH-DH",
+   "MATH-RANDOM",
+   "GEOM-SPHERE-SAMPLING",
+   "UTIL-LOG",
+   "UTIL-THREAD",
+   "UTIL-FILE",
+   "HOST-SCENE",
+   "PATH-SIMPLIFY",
+   "UTIL-BINARCHIVE",
+   "HOST-LINES",
+   "MATH-STATS",
+   "UTIL-UNITS",
+   "TEST-HARNESS",
+   "UTIL-TEXT",
+   "MATH-TRAPEZOID",
+   "UTIL-XML",
+   "HOST-FRAME",
+   "HOST-TEXT",
+   "MODEL-BOUNDS",
+   "CORE-EVENT"
+  ]
+ },
+ "inventory": {
+  "total": 1401,
+  "byClassification": {
+   "audit-required": 1383,
+   "migration-debt": 16,
+   "existing-adapter": 2
+  },
+  "note": "T01 审计基点冻结面——§12.8 不改原 classification/基点，最终判断从 functions 行与 closure 记录得出"
+ }
+}

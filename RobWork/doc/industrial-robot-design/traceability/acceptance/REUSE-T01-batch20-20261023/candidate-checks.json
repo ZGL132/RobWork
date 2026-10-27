@@ -1,0 +1,32 @@
+[
+  {
+    "capabilityId": "MATH-RANDOM",
+    "path": "RobWork/RobWork/src/rw/math/Random.hpp",
+    "match": true
+  },
+  {
+    "capabilityId": "MATH-RANDOM",
+    "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capabilityId": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/IOUtil.hpp",
+    "match": true
+  },
+  {
+    "capabilityId": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capabilityId": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/IOUtil.cpp",
+    "match": true
+  },
+  {
+    "capabilityId": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "match": true
+  }
+]

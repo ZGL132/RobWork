@@ -1,0 +1,44 @@
+[==========] Running 9 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from Joint
+[ RUN      ] Joint.Prismatic
+[       OK ] Joint.Prismatic (0 ms)
+[ RUN      ] Joint.Revolute
+[       OK ] Joint.Revolute (0 ms)
+[ RUN      ] Joint.Universal
+[       OK ] Joint.Universal (0 ms)
+[ RUN      ] Joint.PrismaticUniversal
+[       OK ] Joint.PrismaticUniversal (0 ms)
+[ RUN      ] Joint.Spherical
+[       OK ] Joint.Spherical (0 ms)
+[ RUN      ] Joint.PrismaticSpherical
+[       OK ] Joint.PrismaticSpherical (0 ms)
+[----------] 6 tests from Joint (0 ms total)
+
+[----------] 1 test from PrismaticJointTest
+[ RUN      ] PrismaticJointTest.PrismaticJoint
+[       OK ] PrismaticJointTest.PrismaticJoint (0 ms)
+[----------] 1 test from PrismaticJointTest (0 ms total)
+
+[----------] 1 test from Transform3DTest
+[ RUN      ] Transform3DTest.Transform3D
+[       OK ] Transform3DTest.Transform3D (0 ms)
+[----------] 1 test from Transform3DTest (0 ms total)
+
+[----------] 1 test from Model3D
+[ RUN      ] Model3D.constructor
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWork\gtest\geometry\Model3DTest.cpp(19): error: Expected equality of these values:
+  m.getMask ()
+    Which is: 1
+  0
+
+[  FAILED  ] Model3D.constructor (0 ms)
+[----------] 1 test from Model3D (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 4 test suites ran. (0 ms total)
+[  PASSED  ] 8 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] Model3D.constructor
+
+ 1 FAILED TEST

@@ -1,0 +1,63 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Diagnostics.cpp:14: *     的 policyDiagCode switch 表一处；Errors.cpp registryCode 自本任务起
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Diagnostics.cpp:47:    for (const std::string_view entry : policyDiagCodes()) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Diagnostics.cpp:61:    const PolicyDiagCodeTable& table = policyDiagCodes();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Diagnostics.cpp:116:        return core::DiagnosticRecord::make(std::string{code}, std::move(subject),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Compatibility.cpp:65:    policyDiagCode(PolicyDiagCode::VersionIncompatible);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Compatibility.cpp:167:    return core::DiagnosticRecord::make(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\SystemDefaultPolicy.cpp:50:    return core::DiagnosticRecord::make(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\SystemDefaultPolicy.cpp:51:        std::string{policyDiagCode(PolicyDiagCode::ObjectMissing)},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:72:    policyDiagCode(PolicyDiagCode::JntTableInvalid);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:75:    policyDiagCode(PolicyDiagCode::JntEngineeringRangeInvalid);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:79:    policyDiagCode(PolicyDiagCode::CllNameUnresolved);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:82:    policyDiagCode(PolicyDiagCode::CllEvaluationFailed);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:134: * @brief 关节限位评估诊断记录构造（core::DiagnosticRecord::make 的评估语境
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:149:makeJointDiagnostic(std::string_view code, const std::optional<core::ObjectId>& subject,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:154:    return core::DiagnosticRecord::make(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:298:                out.diagnostics.push_back(makeJointDiagnostic(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:328:            out.diagnostics.push_back(makeJointDiagnostic(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:406:                    out.diagnostics.push_back(makeJointDiagnostic(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\JointLimits.cpp:532:                out.diagnostics.push_back(makeJointDiagnostic(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:95:    policyDiagCode(PolicyDiagCode::CllContextExpired);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:98:    policyDiagCode(PolicyDiagCode::CllDetectorUnavailable);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:101:    policyDiagCode(PolicyDiagCode::CllEvaluationFailed);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:104:    policyDiagCode(PolicyDiagCode::CllGeometryMissing);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:107: * @brief 评估期诊断记录构造（core::DiagnosticRecord::make 的评估语境包装
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\CollisionQuery.cpp:128:    return core::DiagnosticRecord::make(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Errors.cpp:5: *         （registryCode）自 POL-T10 起委托 Diagnostics.cpp 的建议码表：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Errors.cpp:31: * @brief 异常码 → 建议码枚举的映射（registryCode 的委托桥）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Errors.cpp:35: * （§9.6 清单＋表尾补登——对应关系与 POL-T02~T07 的 registryCode 字面量
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Errors.cpp:102:std::string_view registryCode(PolicyErrorCode code) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\Errors.cpp:110:    return policyDiagCode(diagCodeOf(code));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyPort.cpp:61:    policyDiagCode(PolicyDiagCode::ObjectMissing);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyPort.cpp:77:    return core::DiagnosticRecord::make(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyPort.cpp:208:                std::string_view{registryCode(e.code())}, key.first,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyPort.cpp:252:                std::string_view{registryCode(e.code())}, key.first,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:71:    policyDiagCode(PolicyDiagCode::InfoDefaultApplied);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:90: * @param code      [in] 稳定错误码（registryCode 映射为诊断码串）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:100:core::DiagnosticRecord makeErrorDiag(PolicyErrorCode code, core::ObjectId subject,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:105:    return core::DiagnosticRecord::make(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:106:        std::string{registryCode(code)}, subject,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:386:std::optional<PolicyThreshold> resolveThresholdSlot(const std::optional<RawThresholdInput>& raw,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:404:        outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:427:            outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:441:            outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:470:        outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:489:ParseOutcome runParsePipeline(const RawPolicyInput& input,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:521:        outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:536:        outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:568:                    outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:585:    std::optional<PolicyThreshold> safetyClearance = resolveThresholdSlot(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:593:        outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:603:    std::optional<PolicyThreshold> nearLimitRatio = resolveThresholdSlot(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:607:    std::optional<PolicyThreshold> conditionNumberWarning = resolveThresholdSlot(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:613:    std::optional<PolicyThreshold> travelLimit = resolveThresholdSlot(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:627:        core::DiagnosticRecord info = core::DiagnosticRecord::make(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:655:                    outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:677:                outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:705:                    outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:733:                    outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:759:                outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:777:        outcome.diagnostics.push_back(makeErrorDiag(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:858:    // const 而无赋值算子——构造途径可用，见 runParsePipeline 发布点注释）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:859:    ParseOutcome outcome = runParsePipeline(input, context);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src\PolicyParsing.cpp:871:    return std::move(runParsePipeline(input, context).diagnostics);

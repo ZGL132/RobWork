@@ -1,0 +1,32 @@
+[
+  {
+    "axis": "1, 0, 0",
+    "failedAssertions": 5,
+    "translationFailureCount": 1,
+    "actualAxialDisplacementMetres": 0.125,
+    "expectedAxialDisplacementMetres": 0.375,
+    "cosineFailures": 2,
+    "sineFailures": 2,
+    "rotationAngleFromRecordedSineCosineRad": 0.25
+  },
+  {
+    "axis": "0, 1, 0",
+    "failedAssertions": 5,
+    "translationFailureCount": 1,
+    "actualAxialDisplacementMetres": 0.125,
+    "expectedAxialDisplacementMetres": 0.375,
+    "cosineFailures": 2,
+    "sineFailures": 2,
+    "rotationAngleFromRecordedSineCosineRad": 0.25
+  },
+  {
+    "axis": "0, 0, 1",
+    "failedAssertions": 5,
+    "translationFailureCount": 1,
+    "actualAxialDisplacementMetres": 0.125,
+    "expectedAxialDisplacementMetres": 0.375,
+    "cosineFailures": 2,
+    "sineFailures": 2,
+    "rotationAngleFromRecordedSineCosineRad": 0.25
+  }
+]

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "kinematics.IkSolver.solve",
+  "target": "sdurws_ird_kinematics",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+      "sha256": "ab4c3b1c1785df2f830d807dff362d91630c47a59925bb5dfb1d3a542bd10825"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+      "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+      "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+      "sha256": "1f5abeb77da3ef34cad133cf9ff59f3990591c368f66be7d65e6e54d064dc39b"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp",
+      "sha256": "3084ff3b5c8856d3721df26e4406d11815851acd01b2703757333d2296b83c94"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp",
+      "sha256": "2fda9476ef9aeec23a8b8129ae19d127e8bf936e231c14db91e9251010b03b07"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/ParallelDevice.hpp",
+      "sha256": "aee0b3bfc3f57bf1c9643916726af91b2cf15b79db8201375ee97f3955fdd181"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/invkin/CMakeLists.txt",
+      "sha256": "5a37689be67e9055010d4e52b28619921c67ec46703f3ac54a7a8f3e5bb50cb4"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+      "sha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/run-tests.ps1",
+      "sha256": "3dc9e2dce199b171c175d26a221bfb7f9addf31b97dddfcfb9797b24742b1b77"
+    }
+  ],
+  "normal": {
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label normal-kinik -Filter 'KinIk.*'",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/normal-kinik.xml",
+      "sha256": "014eecfdbf081a94ad3171ffcc88ae85d2ce6d371d0a7f7a495ee4ad91f6ae14"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/normal-kinik.log",
+      "sha256": "ed9ada9be14a1b9a9b94a9c20d3b5404d12a649ba92d1772e8e374fca01e0ffc"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "KinIk.ConvergesOnReachableTarget_WP15T04_ACC2",
+      "KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1",
+      "KinIk.NamedTcpRealSolveAndReachBound_REQ01_A15",
+      "KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2",
+      "KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3",
+      "KinIk.MultiInitNoConvergenceCarriesSearchRecord_WP15T04_ACC2"
+    ]
+  },
+  "disconnected": {
+    "command": "VS x64 集成树（生产 Ik.cpp 变异构建后）: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label disconnected-upstream -Filter 'KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51:KinIk.ConvergesOnReachableTarget_WP15T04_ACC2'",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/disconnected-upstream.xml",
+      "sha256": "d6fa7c151fbaee136e0f286c9f8a47140f6c13644b22b0244547dcb62e29b578"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/disconnected-upstream.log",
+      "sha256": "fc0459b8bae4a127ebdec2c2c6b2b33e4ac6c27720912f74fbfaa4bb60fb2765"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+      "originalSha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c",
+      "description": "真实生产变异（扰动上游返回值消费——上游停判据失效面）：src/Ik.cpp REUSE-T51 上游分支的 solveLocal 调用第 2 实参由 upstreamMaxError（min(位置容差,姿态容差)）改为 1e9——上游对任何初值立即假报收敛，迭代计数恒 0、解位形停在初值处。GAP-IK-01 §1『非空vector/成功bool均需独立任务残差校验』的产品独立双容差复核（正解 FK 回代）随即拦截假成功：两收敛断言用例（初值非解）的真收敛消失→零候选→SolutionsFound 断言真实失败（2/2 failed，exit 1）。该实验同时证明：独立复核非装饰——假成功不得放行为可行解。恢复最终源码（originalSha256）重建后复测绿（final-recheck 297=296 passed+1 既有环境 skip）。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/production/Ik.mutated.cpp",
+      "sha256": "83d8990c3cae90e7aea9440006717b73ce153e2c35b46e925e4234d190e42555"
+    }
+  },
+  "oracle": {
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label oracle-closedform -Filter 'KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51:KinGoldenIkDedup.*'",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/oracle-closedform.xml",
+      "sha256": "5f0171fc885dabd468f8d9a9c2e3f4285caa74d6a232d999e2a4fdc370f8a979"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/oracle-closedform.log",
+      "sha256": "46c056aafb53dbf29dfc5dea6df0ef887c96a12154dbf2eb0c055a97d48e8cf2"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51",
+      "KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1",
+      "KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1",
+      "KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS x64 集成树: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label upstream-comparison -Filter 'KinIk.FullPoseUpstreamDirectComparison_REUSE_T51:KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51'",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/upstream-comparison.xml",
+      "sha256": "219e704778c9aafe23fef2233e2aa2899a4f90232265d1e473cf73df2b1a84dd"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/upstream-comparison.log",
+      "sha256": "82e69184561cf3eeccdcb467e27355df1bfe0b2c248a2c98296dfb369d52b85c"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "KinIk.FullPoseUpstreamDirectComparison_REUSE_T51",
+      "KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51"
+    ]
+  },
+  "note": "上游真实消费链（业务入口→上游调用→返回值消费）：IkSolver::solve 完整位姿普通模式经 T17 锚（runtimeModelView→已编译 WorkCell）取 SerialDevice/任务私有 State，JacobianIKSolver::solveLocal(bTed,min(posTol,oriTol),state,1) 单步循环逐步驱动（SVD 伪逆步），返回 bool/state 的 q 经 JointMapping::qAuthoritativeFromRuntime 映射回权威角后交 FkEvaluator 独立 FK 复算双容差判定。normal=KinIk 全组 39 用例（可达收敛/双构型保留/命名 TCP/取消/逐位确定性/不可达搜索未果）；oracle=闭式独立参考（附录 D 第 9 项——与产品零共享代码）解集等价＋黄金数据集；upstreamComparison=同模型同初值直接上游消费逐位一致＋单步循环/单次调用轨迹同一性；disconnected=上游停判据扰动红例（产品独立复核拦截假成功）＋恢复复测绿。"
+}

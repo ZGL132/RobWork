@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T28",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "物性惯量旋转及长方体惯量直接复用上游",
+  "status": "done",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-05",
+    "MDL-16",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/modeling.md#5.3",
+    "units/modeling.md#9.4.6",
+    "reuse/migration.md#13.3"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T28.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T28.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T28.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/**",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T27.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T28-20261025-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "删除手写惯量旋转展开及长方体主惯量公式，直接消费InertiaMatrix乘法/inverse(Rotation3D)/makeCuboidInertia；经所有者确认九项最大绝对元素落实原相对1e-12，严格SPD/三角规则、业务公式/协议不变",
+    "独立字面张量/非平凡旋转/多尺度/混合段/重复确定性及上游直接对照，真实生产返回值扰动、受影响消费者及性能",
+    "沿用原math依赖/公共接口/owner；不新建包装或模型层；性能退化无预算需明确接受，独验NOT RUN不得done"
+  ],
+  "note": "migration §13 WP-12（区别于DTB主交付masterWp=WP-E）；本包完成物性惯量旋转和长方体惯量的直接复用，WP-12仍余BaseWorld/DescriptionValidator按实际owner核对、DH转换及其他物性候选，受缺口批准/模型真值约束。WP-12直接复用子包；起点4794f64476945d3b8cf6974bb3e778b6ba419f95。PropertyEstimation单点替换，不改公共接口/CMake/依赖/框架/模型owner；保留原圆柱/平行轴产品公式与估算/确认流契约。GeometryUtil几何估算不能替代既有精确公式或任意张量平移；无新数学核心。T27严格SPD/三角与独验状态不改，相对自检按本包确认修正；不依赖未独验T13的模型映射，不放行IK/RNE。 本轮实际修改3产品文件；直接迁移2项/必要配套相对自检1项/独立缺陷0项。所有者已确认相对尺度方案A并分别接受旋转及最终相对自检具体开销；最终68passed/0failed/0skipped，契约8passed/0failed/0skipped，3真实扰动分别2failed、1failed+1passed、2failed；旧实现及未修相对候选的真实失败原件保留。原T27源体不变但证据随当前绑定承接；独验NOT RUN，ready非done。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T28-20261025-r1.json（复跑原件在其同名目录），verdict=pass（13项检查failed=0/notRun=0/skipped=0；测试计数另列479+17互不相加），绑定送验 SHA=ea8ac53baa8923d93c6233ca88db77f8e8778291（base=4794f64476945d3b8cf6974bb3e778b6ba419f95，送验范围单提交）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（60路径全在允许面）、门禁目录/公共头/CMakeLists零差异机器核验、冻结面零触碰（catalog仅MATH-INERTIA candidate→verified）、手写惯量旋转与长方体公式删除及InertiaMatrix乘法/inverse/makeCuboidInertia上游消费逐条实审、相对1e-12自检按所有者确认方案A落实、7证据＋3产品绑定sha256与送验blob全一致、增量构建exit 0、modeling全量479/479与契约17/17真实复跑（含三个新测试）、扰动原件计数与note逐项一致、性能探针独立重跑五场景checksum逐位一致（scene0-2约1.95-2.38×、scene3<1、scene4与所有者三条接受记录吻合）、ird_gates直跑11类零命中、validate-docs三合一exit 0、commit-lint PASS；limitations：validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399），不构成WP-12其余项、migration §11算法替换或REUSE-T02放行，T13未独验前普通IK/RNE仍不放行。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T28.json"
+  },
+  "outputs": [
+    "上游惯量旋转/长方体惯量直接消费和旧公式删除",
+    "本包定向验证/性能/完整文件功能审计证据，待独验"
+  ]
+}

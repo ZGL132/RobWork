@@ -149,4 +149,14 @@ TEST(DigestCanonical, RoundtripAndStrictParse_UT_ID_D)
     EXPECT_EQ(ContentIdentity::tryFromCanonical("cv-" + std::string(64, '0')), std::nullopt);         // tag 误用
     EXPECT_EQ(cv.toCanonical().substr(0, 2) == "cv", true);
 }
+/** GAP-CORE-FNV-01：公开摘要 hash 复用同一 FNV128，SHA 内容不变（B30 反例）。 */
+TEST(DigestFnv, PublicDigestTypes_CORE_T02)
+{
+    ContentVersion v; ContentIdentity id;
+    for (std::size_t i=0;i<v.bytes.size();++i) {
+        v.bytes[i]=static_cast<std::uint8_t>(i); id.bytes[i]=v.bytes[i];
+    }
+    EXPECT_EQ(static_cast<std::size_t>(0xd84cf67ff3e90eeeULL),std::hash<ContentVersion>{}(v));
+    EXPECT_EQ(static_cast<std::size_t>(0xd84cf67ff3e90eeeULL),std::hash<ContentIdentity>{}(id));
+}
 }  // namespace

@@ -1,0 +1,70 @@
+Note: Google Test filter = SelBackfill*
+[==========] Running 26 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from SelBackfillSynthesis
+[ RUN      ] SelBackfillSynthesis.GoldenValuesMassComInertia_MDL16
+[       OK ] SelBackfillSynthesis.GoldenValuesMassComInertia_MDL16 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RotorInertiaNeverEntersSynthesis_SEL10
+[       OK ] SelBackfillSynthesis.RotorInertiaNeverEntersSynthesis_SEL10 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNonPositiveMass_NFRCOR03
+[       OK ] SelBackfillSynthesis.RejectsNonPositiveMass_NFRCOR03 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNonFiniteInput_NFRCOR03
+[       OK ] SelBackfillSynthesis.RejectsNonFiniteInput_NFRCOR03 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNotPositiveDefinite_MDLL06A2
+[       OK ] SelBackfillSynthesis.RejectsNotPositiveDefinite_MDLL06A2 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsTriangleInequality_MDLL06A3
+[       OK ] SelBackfillSynthesis.RejectsTriangleInequality_MDLL06A3 (0 ms)
+[ RUN      ] SelBackfillSynthesis.AcceptsDegeneratePlanarEquality_MDLL06A3
+[       OK ] SelBackfillSynthesis.AcceptsDegeneratePlanarEquality_MDLL06A3 (0 ms)
+[----------] 7 tests from SelBackfillSynthesis (0 ms total)
+
+[----------] 4 tests from SelBackfillCodec
+[ RUN      ] SelBackfillCodec.PayloadRoundTripDeterministic_CON05
+[       OK ] SelBackfillCodec.PayloadRoundTripDeterministic_CON05 (0 ms)
+[ RUN      ] SelBackfillCodec.EncodeRejectsCallerContractViolations
+[       OK ] SelBackfillCodec.EncodeRejectsCallerContractViolations (0 ms)
+[ RUN      ] SelBackfillCodec.DecodeRejectsMalformedAndForeignVersions
+[       OK ] SelBackfillCodec.DecodeRejectsMalformedAndForeignVersions (0 ms)
+[ RUN      ] SelBackfillCodec.RecordObjectRoundTripWithRecalcNotice_AT30
+[       OK ] SelBackfillCodec.RecordObjectRoundTripWithRecalcNotice_AT30 (0 ms)
+[----------] 4 tests from SelBackfillCodec (0 ms total)
+
+[----------] 7 tests from SelBackfillAssembly
+[ RUN      ] SelBackfillAssembly.GoldenAssemblyTakesCatalogValues_SEL10
+[       OK ] SelBackfillAssembly.GoldenAssemblyTakesCatalogValues_SEL10 (0 ms)
+[ RUN      ] SelBackfillAssembly.RejectsUnknownDevice
+[       OK ] SelBackfillAssembly.RejectsUnknownDevice (0 ms)
+[ RUN      ] SelBackfillAssembly.RejectsMountMismatch_SEL10
+[       OK ] SelBackfillAssembly.RejectsMountMismatch_SEL10 (0 ms)
+[ RUN      ] SelBackfillAssembly.RejectsMissingMotorHousingInertia_PSEL6
+[       OK ] SelBackfillAssembly.RejectsMissingMotorHousingInertia_PSEL6 (0 ms)
+[ RUN      ] SelBackfillAssembly.RejectsMissingGearboxHousingInertia_PSEL6
+[       OK ] SelBackfillAssembly.RejectsMissingGearboxHousingInertia_PSEL6 (0 ms)
+[ RUN      ] SelBackfillAssembly.RejectsLockIdentityMismatch
+[       OK ] SelBackfillAssembly.RejectsLockIdentityMismatch (0 ms)
+[ RUN      ] SelBackfillAssembly.RejectsInvalidRatio_IMDL11
+[       OK ] SelBackfillAssembly.RejectsInvalidRatio_IMDL11 (0 ms)
+[----------] 7 tests from SelBackfillAssembly (0 ms total)
+
+[----------] 8 tests from SelBackfillPlan
+[ RUN      ] SelBackfillPlan.HandlerTokenDotlessAndPayloadVersion_PSEL3
+[       OK ] SelBackfillPlan.HandlerTokenDotlessAndPayloadVersion_PSEL3 (0 ms)
+[ RUN      ] SelBackfillPlan.PlanHappyPathExactlyOneObjectWrite_AT30
+[       OK ] SelBackfillPlan.PlanHappyPathExactlyOneObjectWrite_AT30 (0 ms)
+[ RUN      ] SelBackfillPlan.PlanReusesBaselineRecordObjectId_PA2
+[       OK ] SelBackfillPlan.PlanReusesBaselineRecordObjectId_PA2 (0 ms)
+[ RUN      ] SelBackfillPlan.PlanRejectsForeignPayloadVersion_NFRDEP04
+[       OK ] SelBackfillPlan.PlanRejectsForeignPayloadVersion_NFRDEP04 (0 ms)
+[ RUN      ] SelBackfillPlan.PlanRejectsMalformedPayload
+[       OK ] SelBackfillPlan.PlanRejectsMalformedPayload (0 ms)
+[ RUN      ] SelBackfillPlan.PlanRejectsLockRefOutsideBaseline
+[       OK ] SelBackfillPlan.PlanRejectsLockRefOutsideBaseline (0 ms)
+[ RUN      ] SelBackfillPlan.PlanAcceptsLockRefInsideBaseline
+[       OK ] SelBackfillPlan.PlanAcceptsLockRefInsideBaseline (0 ms)
+[ RUN      ] SelBackfillPlan.PlanRejectsSynthesisTriangleViolation_MDL06
+[       OK ] SelBackfillPlan.PlanRejectsSynthesisTriangleViolation_MDL06 (0 ms)
+[----------] 8 tests from SelBackfillPlan (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 26 tests from 4 test suites ran. (0 ms total)
+[  PASSED  ] 26 tests.

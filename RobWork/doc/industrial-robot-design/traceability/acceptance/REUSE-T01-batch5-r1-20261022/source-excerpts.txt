@@ -1,0 +1,525 @@
+FUNCTION drivetrain.ByteWriter.putU32 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 54-59
+54:     void putU32(std::uint32_t v)
+55:     {
+56:         for (int i = 0; i < 4; ++i) {
+57:             m_bytes.push_back(static_cast<std::uint8_t>((v >> (8 * i)) & 0xFF));
+58:         }
+59:     }
+FUNCTION drivetrain.ByteWriter.putU64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 61-66
+61:     void putU64(std::uint64_t v)
+62:     {
+63:         for (int i = 0; i < 8; ++i) {
+64:             m_bytes.push_back(static_cast<std::uint8_t>((v >> (8 * i)) & 0xFF));
+65:         }
+66:     }
+FUNCTION drivetrain.ByteWriter.putF64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 69-75
+69:     void putF64(double v)
+70:     {
+71:         std::uint64_t bits = 0;
+72:         static_assert(sizeof(bits) == sizeof(v), "double 必须为 64 位（IEEE-754）");
+73:         std::memcpy(&bits, &v, sizeof(bits));
+74:         putU64(bits);
+75:     }
+FUNCTION drivetrain.ByteWriter.putString RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 82-86
+82:     void putString(const std::string& s)
+83:     {
+84:         putU32(static_cast<std::uint32_t>(s.size()));
+85:         m_bytes.insert(m_bytes.end(), s.begin(), s.end());
+86:     }
+FUNCTION drivetrain.ByteReader.getU32 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 129-137
+129:     std::uint32_t getU32()
+130:     {
+131:         require(4);
+132:         std::uint32_t v = 0;
+133:         for (int i = 0; i < 4; ++i) {
+134:             v |= static_cast<std::uint32_t>(m_bytes[m_pos++]) << (8 * i);
+135:         }
+136:         return v;
+137:     }
+FUNCTION drivetrain.ByteReader.getU64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 139-147
+139:     std::uint64_t getU64()
+140:     {
+141:         require(8);
+142:         std::uint64_t v = 0;
+143:         for (int i = 0; i < 8; ++i) {
+144:             v |= static_cast<std::uint64_t>(m_bytes[m_pos++]) << (8 * i);
+145:         }
+146:         return v;
+147:     }
+FUNCTION drivetrain.ByteReader.getF64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 149-155
+149:     double getF64()
+150:     {
+151:         const std::uint64_t bits = getU64();
+152:         double v = 0.0;
+153:         std::memcpy(&v, &bits, sizeof(v));
+154:         return v;
+155:     }
+FUNCTION drivetrain.ByteReader.getString RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp 179-196
+179:     std::string getString()
+180:     {
+181:         const std::uint32_t len = getU32();
+182:         require(len);
+183:         // F-795 守卫（流末空串形式 UB 消除）：require(n) 只核对 m_pos+n>
+184:         // size，对 len==0 恒过——而当 pos==size（流恰在串头耗尽）时，下方
+185:         // &m_bytes[m_pos] 是对 vector 的越界取址（operator[] 前置条件要求
+186:         // 下标 < size()，没有"仅取址不取值"豁免）：MSVC Debug 构建容器断
+187:         // 言崩、release 构建为形式 UB。空串不需要任何字节——直接返回空
+188:         // 串、不触碰 operator[]（回归用例
+189:         // DtMappingGolden.GetStringStreamEndEmptyGuard_F_795 钉扎）。
+190:         if (len == 0) {
+191:             return std::string();
+192:         }
+193:         std::string s(reinterpret_cast<const char*>(&m_bytes[m_pos]), len);
+194:         m_pos += len;
+195:         return s;
+196:     }
+FUNCTION dynamics.DynamicsReplayProjector.sampleAt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Replay.cpp 230-348
+230: std::optional<ReplaySample> DynamicsReplayProjector::sampleAt(const ReplayData& data,
+231:                                                               double t) const
+232: {
+233:     // ---- 第 1 步：查询时刻有限性（调用方错误 fail-fast——NaN/±Inf 无
+234:     //      查询意义，NFR-COR-03 不静默）----
+235:     if (!std::isfinite(t)) {
+236:         throw DynamicsError(
+237:             "replay-time-invalid",
+238:             "回放查询时刻非有限：t=" + std::to_string(t)
+239:                 + " s（NaN/±Inf 不构成合法时刻——调用方错误）");
+240:     }
+241: 
+242:     // ---- 第 2 步：空集空态（合法空态——不伪造帧）----
+243:     if (data.frames.empty()) {
+244:         return std::nullopt;
+245:     }
+246: 
+247:     const ReplayFrame& first = data.frames.front();
+248:     const ReplayFrame& last = data.frames.back();
+249: 
+250:     // ---- 第 3 步：越界空态（不外推——§4.3"不平滑、不插值外推"纪律：
+251:     //      越界时刻的数据不存在，呈现侧应停在端点而非虚构运动）----
+252:     if (t < first.t || t > last.t) {
+253:         return std::nullopt;
+254:     }
+255: 
+256:     // ---- 第 4 步：二分定位区间（upper_bound：首个 t帧 > 查询 t 的帧——
+257:     //      查询 t 所在区间为 [idx-1, idx]；t==末帧时 upper_bound 返回
+258:     //      end()，但 t==last.t 已在下方精确命中分支处理）----
+259:     // 谓词签名＝comp(value, element)——value（查询时刻）在前、元素（帧）
+260:     // 在后：query < f.t 为 true 的首帧即首个大于查询时刻的帧。
+261:     const auto frameAfterQuery = [](double query, const ReplayFrame& f) {
+262:         return query < f.t;
+263:     };
+264:     const auto it = std::upper_bound(data.frames.begin(), data.frames.end(), t,
+265:                                      frameAfterQuery);
+266: 
+267:     // ---- 第 5 步：精确命中检查（upper_bound 前一帧时刻==查询 t 即帧点
+268:     //      ——原值直拷，exact=true）----
+269:     if (it != data.frames.begin()) {
+270:         const ReplayFrame& candidate = *(it - 1);
+271:         if (candidate.t == t) {
+272:             ReplaySample hit;
+273:             hit.exact = true;
+274:             hit.t = t;
+275:             hit.segmentIndex = candidate.segmentIndex; // 帧段号直通
+276:             hit.joints = candidate.joints;             // 帧原值拷贝（零混合）
+277:             hit.completeAllJoints = candidate.completeAllJoints;
+278:             return hit;
+279:         }
+280:     }
+281: 
+282:     // ---- 第 6 步：区间线性插值（exact=false——显示投影语义：插值点仅
+283:     //      是相邻样本的线性过渡呈现，τ·q̇ 恒等式与能量积分只在样本点
+284:     //      成立，插值值不得回流统计/评估）----
+285:     // it 必非 begin()（t ≥ first.t 已保证）且必非 end()（t < last.t——
+286:     // t==last.t 已走精确命中），区间两端均存在。
+287:     const ReplayFrame& left = *(it - 1);
+288:     const ReplayFrame& right = *it;
+289: 
+290:     // 插值系数 α∈[0,1)：分母 tR−tL>0 由帧 t 严格递增保证（构建步纪律）。
+291:     // 防御：若出现相等（构造违约）拒绝插值——不产生除零。
+292:     if (!(right.t > left.t)) {
+293:         throw DynamicsError(
+294:             "series-non-monotonic",
+295:             "回放数据帧时间非严格递增：tL=" + std::to_string(left.t)
+296:                 + " s，tR=" + std::to_string(right.t) + " s（buildReplayData "
+297:                 "产物不可能形态——数据集违约）");
+298:     }
+299:     const double alpha = (t - left.t) / (right.t - left.t); // 无量纲 ∈ (0,1)
+300: 
+301:     ReplaySample out;
+302:     out.exact = false;
+303:     out.t = t;
+304:     // 段归属取左帧：区间 [tL,tR) 归左段（保守边界——同 §5.4"样本时刻
+305:     // t≥tEvent 生效"的左闭精神；exact 分支为帧段号直通）。
+306:     out.segmentIndex = left.segmentIndex;
+307: 
+308:     // ---- 第 7 步：逐关节双指针对齐插值（两帧 joints 均 jointIndex 升序
+309:     //      ——合并遍历零重排；共有关节线性混合，单侧独有关节取单侧值
+310:     //      并置不完整位——无对侧数据源，不跨帧虚构）----
+311:     out.completeAllJoints = true;
+312:     std::size_t i = 0;  // 左帧关节游标
+313:     std::size_t j = 0;  // 右帧关节游标
+314:     while (i < left.joints.size() || j < right.joints.size()) {
+315:         if (j >= right.joints.size()
+316:             || (i < left.joints.size() && left.joints[i].jointIndex < right.joints[j].jointIndex)) {
+317:             // 仅左帧有该关节：取左值（右无数据源——单侧值直拷）。
+318:             out.joints.push_back(left.joints[i]);
+319:             out.completeAllJoints = false;
+320:             ++i;
+321:         } else if (i >= left.joints.size()
+322:                    || right.joints[j].jointIndex < left.joints[i].jointIndex) {
+323:             // 仅右帧有该关节：取右值（左无数据源）。
+324:             out.joints.push_back(right.joints[j]);
+325:             out.completeAllJoints = false;
+326:             ++j;
+327:         } else {
+328:             // 两帧共有关节：五量线性混合 q_mix=(1−α)·qL+α·qR（量纲同源）。
+329:             const ReplayJointState& l = left.joints[i];
+330:             const ReplayJointState& r = right.joints[j];
+331:             ReplayJointState mixed;
+332:             mixed.jointIndex = l.jointIndex;
+333:             mixed.jointObjectId = l.jointObjectId; // 同关节恒同 id（取左）
+334:             mixed.jointType = l.jointType;         // 同关节恒同类型
+335:             mixed.q = (1.0 - alpha) * l.q + alpha * r.q;                             // rad|m
+336:             mixed.qd = (1.0 - alpha) * l.qd + alpha * r.qd;                          // rad/s|m/s
+337:             mixed.qdd = (1.0 - alpha) * l.qdd + alpha * r.qdd;                       // rad/s²|m/s²
+338:             mixed.generalizedForce = (1.0 - alpha) * l.generalizedForce
+339:                                      + alpha * r.generalizedForce;                   // N·m|N
+340:             mixed.mechanicalPower = (1.0 - alpha) * l.mechanicalPower
+341:                                     + alpha * r.mechanicalPower;                     // W
+342:             out.joints.push_back(std::move(mixed));
+343:             ++i;
+344:             ++j;
+345:         }
+346:     }
+347:     return out;
+348: }
+FUNCTION kinematics.rodrigues RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp 380-397
+380: inline Mat4 rodrigues(double ax, double ay, double az, double angle)
+381: {
+382:     const double c = std::cos(angle);
+383:     const double s = std::sin(angle);
+384:     const double t = 1.0 - c;
+385:     Mat4 m{};
+386:     m[0][0] = t * ax * ax + c;
+387:     m[0][1] = t * ax * ay - s * az;
+388:     m[0][2] = t * ax * az + s * ay;
+389:     m[1][0] = t * ax * ay + s * az;
+390:     m[1][1] = t * ay * ay + c;
+391:     m[1][2] = t * ay * az - s * ax;
+392:     m[2][0] = t * ax * az - s * ay;
+393:     m[2][1] = t * ay * az + s * ax;
+394:     m[2][2] = t * az * az + c;
+395:     m[3][3] = 1.0;
+396:     return m;
+397: }
+FUNCTION kinematics.mul4 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp 408-419
+408: inline Mat4 mul4(const Mat4& a, const Mat4& b)
+409: {
+410:     Mat4 r{};
+411:     for (int i = 0; i < 4; ++i) {
+412:         for (int j = 0; j < 4; ++j) {
+413:             double s = 0.0;
+414:             for (int k = 0; k < 4; ++k) { s += a[i][k] * b[k][j]; }
+415:             r[i][j] = s;
+416:         }
+417:     }
+418:     return r;
+419: }
+FUNCTION kinematics.referenceFk RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp 429-518
+429: inline RefChainResult referenceFk(const rt::CanonicalModel& model,
+430:                                   const std::vector<double>& q)
+431: {
+432:     const auto& joints = model.chain().joints;
+433:     const rt::CanonicalTool& tool = model.tools().at(0);
+434: 
+435:     Mat4 acc = identity4();
+436:     std::vector<double> jac;
+437:     std::size_t qi = 0;
+438:     std::vector<std::array<double, 3>> axisPts;
+439:     std::vector<std::array<double, 3>> axisDirs;
+440:     std::vector<rt::JointType> kinds;
+441: 
+442:     for (const auto& j : joints) {
+443:         // origin 复合（父→关节系）。
+444:         Mat4 o = identity4();
+445:         for (int r = 0; r < 3; ++r) {
+446:             for (int c = 0; c < 3; ++c) {
+447:                 o[r][c] = j.origin.R()(static_cast<std::size_t>(r),
+448:                                        static_cast<std::size_t>(c));
+449:             }
+450:             o[r][3] = j.origin.P()[static_cast<std::size_t>(r)];
+451:         }
+452:         acc = mul4(acc, o);
+453:         if (j.type == rt::JointType::Fixed) { continue; }
+454: 
+455:         // 轴点/轴方向（运动前、基座系——雅可比源数据）。
+456:         std::array<double, 3> dir = {0.0, 0.0, 0.0};
+457:         for (int r = 0; r < 3; ++r) {
+458:             for (int c = 0; c < 3; ++c) {
+459:                 dir[r] += acc[r][c] * j.axis[static_cast<std::size_t>(c)];
+460:             }
+461:         }
+462:         axisPts.push_back({acc[0][3], acc[1][3], acc[2][3]});
+463:         axisDirs.push_back(dir);
+464:         kinds.push_back(j.type);
+465: 
+466:         if (j.type == rt::JointType::Prismatic) {
+467:             // 移动沿关节系轴：运动变换＝T( axis·q )（关节系内直写）。
+468:             Mat4 motion = translation4(j.axis[0] * q[qi], j.axis[1] * q[qi],
+469:                                        j.axis[2] * q[qi]);
+470:             acc = mul4(acc, motion);
+471:         } else {
+472:             acc = mul4(acc, rodrigues(j.axis[0], j.axis[1], j.axis[2], q[qi]));
+473:         }
+474:         ++qi;
+475:     }
+476: 
+477:     // TCP 偏置复合。
+478:     Mat4 t = identity4();
+479:     for (int r = 0; r < 3; ++r) {
+480:         for (int c = 0; c < 3; ++c) {
+481:             t[r][c] = tool.tcpOffset.R()(static_cast<std::size_t>(r),
+482:                                          static_cast<std::size_t>(c));
+483:         }
+484:         t[r][3] = tool.tcpOffset.P()[static_cast<std::size_t>(r)];
+485:     }
+486:     RefChainResult out;
+487:     out.tcp = mul4(acc, t);
+488: 
+489:     // 几何雅可比（基座系——标准定义直算；行主序 [row*n+col]——与
+490:     // PoseMetrics.jacobian 的行优先契约一致）。
+491:     const double px = out.tcp[0][3];
+492:     const double py = out.tcp[1][3];
+493:     const double pz = out.tcp[2][3];
+494:     const std::size_t n = axisPts.size();
+495:     out.jacobian6xN.assign(6 * n, 0.0);
+496:     for (std::size_t k = 0; k < n; ++k) {
+497:         std::array<double, 6> col = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+498:         if (kinds[k] == rt::JointType::Prismatic) {
+499:             col[0] = axisDirs[k][0];
+500:             col[1] = axisDirs[k][1];
+501:             col[2] = axisDirs[k][2];
+502:         } else {
+503:             const std::array<double, 3>& a = axisDirs[k];
+504:             std::array<double, 3> d = {px - axisPts[k][0], py - axisPts[k][1],
+505:                                        pz - axisPts[k][2]};
+506:             col[0] = a[1] * d[2] - a[2] * d[1];
+507:             col[1] = a[2] * d[0] - a[0] * d[2];
+508:             col[2] = a[0] * d[1] - a[1] * d[0];
+509:             col[3] = a[0];
+510:             col[4] = a[1];
+511:             col[5] = a[2];
+512:         }
+513:         for (std::size_t r = 0; r < 6; ++r) {
+514:             out.jacobian6xN[r * n + k] = col[r];
+515:         }
+516:     }
+517:     return out;
+518: }
+FUNCTION policy.ByteWriter.u32 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp 88-94
+88:     void u32(std::uint32_t v)
+89:     {
+90:         m_buf.push_back(static_cast<std::uint8_t>(v >> 24));
+91:         m_buf.push_back(static_cast<std::uint8_t>(v >> 16));
+92:         m_buf.push_back(static_cast<std::uint8_t>(v >> 8));
+93:         m_buf.push_back(static_cast<std::uint8_t>(v));
+94:     }
+FUNCTION policy.ByteWriter.f64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp 116-120
+116:     void f64(double value)
+117:     {
+118:         const auto bits = PolicyCodec::canonicalF64(value);
+119:         raw(bits.data(), bits.size());
+120:     }
+FUNCTION policy.ByteWriter.lengthPrefixedText RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp 103-113
+103:     void lengthPrefixedText(std::string_view text)
+104:     {
+105:         // 长度上限防御：超过 u32 表示域即拒绝（实际不可达，纵深防御——
+106:         // 静默截断会破坏往返，违背 NFR-COR-03）。
+107:         if (text.size() > kMaxPrefixedLength) {
+108:             throw PolicyError(PolicyErrorCode::EncodingInvalid,
+109:                               "长度前缀文本超出 u32 表示域（理论防御路径）");
+110:         }
+111:         u32(static_cast<std::uint32_t>(text.size()));
+112:         raw(text.data(), text.size());
+113:     }
+FUNCTION policy.ByteReader.u32 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp 168-179
+168:     std::uint32_t u32()
+169:     {
+170:         if (remaining() < 4) {
+171:             fail("载荷越界（读 u32 时剩余不足）");
+172:         }
+173:         const std::uint32_t v = (static_cast<std::uint32_t>(m_data[m_pos]) << 24)
+174:             | (static_cast<std::uint32_t>(m_data[m_pos + 1]) << 16)
+175:             | (static_cast<std::uint32_t>(m_data[m_pos + 2]) << 8)
+176:             | static_cast<std::uint32_t>(m_data[m_pos + 3]);
+177:         m_pos += 4;
+178:         return v;
+179:     }
+FUNCTION policy.ByteReader.f64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp 212-220
+212:     double f64()
+213:     {
+214:         if (remaining() < 8) {
+215:             fail("载荷越界（读 f64 位模式时剩余不足）");
+216:         }
+217:         const double value = PolicyCodec::parseCanonicalF64(m_data + m_pos);
+218:         m_pos += 8;   // parseCanonicalF64 只读不推进游标——消费量在此登记
+219:         return value;
+220:     }
+FUNCTION policy.ByteReader.text RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp 200-209
+200:     std::string text()
+201:     {
+202:         const std::uint32_t n = u32();
+203:         if (remaining() < n) {
+204:             fail("文本载荷越界（声明长度超过剩余字节）");
+205:         }
+206:         std::string s(reinterpret_cast<const char*>(m_data + m_pos), n);
+207:         m_pos += n;
+208:         return s;
+209:     }
+FUNCTION selection.ByteWriter.u32 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 123-129
+123:     void u32(std::uint32_t v)
+124:     {
+125:         for (int shift = 0; shift < 32; shift += 8) {
+126:             const std::uint8_t b = static_cast<std::uint8_t>((v >> shift) & 0xFFu);
+127:             raw(&b, 1);
+128:         }
+129:     }
+FUNCTION selection.ByteWriter.f64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 134-143
+134:     void f64(double v)
+135:     {
+136:         std::uint64_t bits = 0;
+137:         static_assert(sizeof(bits) == sizeof(v), "double 必须为 8 字节");
+138:         std::memcpy(&bits, &v, sizeof(bits));
+139:         for (int shift = 0; shift < 64; shift += 8) {
+140:             const std::uint8_t b = static_cast<std::uint8_t>((bits >> shift) & 0xFFu);
+141:             raw(&b, 1);
+142:         }
+143:     }
+FUNCTION selection.ByteWriter.str RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 145-149
+145:     void str(const std::string& s)
+146:     {
+147:         u32(static_cast<std::uint32_t>(s.size()));
+148:         raw(s.data(), s.size());
+149:     }
+FUNCTION selection.ByteReader.u32 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 218-227
+218:     std::uint32_t u32()
+219:     {
+220:         std::uint32_t v = 0;
+221:         for (int i = 0; i < 4; ++i) {
+222:             std::uint8_t b = 0;
+223:             raw(&b, 1);
+224:             v |= static_cast<std::uint32_t>(b) << (8 * i);
+225:         }
+226:         return v;
+227:     }
+FUNCTION selection.ByteReader.f64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 235-249
+235:     double f64()
+236:     {
+237:         std::uint64_t bits = 0;
+238:         for (int i = 0; i < 8; ++i) {
+239:             std::uint8_t b = 0;
+240:             raw(&b, 1);
+241:             bits |= static_cast<std::uint64_t>(b) << (8 * i);
+242:         }
+243:         double v = 0;
+244:         std::memcpy(&v, &bits, sizeof(v));
+245:         if (!m_failFlag && !isFiniteNumber(v)) {
+246:             fail("非有限 double（NFR-COR-03）");
+247:         }
+248:         return v;
+249:     }
+FUNCTION selection.ByteReader.str RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 250-265
+250:     std::string str()
+251:     {
+252:         const std::uint32_t n = u32();
+253:         if (m_failFlag) { return {}; }
+254:         if (!require(n)) { return {}; }
+255:         // 长度上限防御（1 MiB）：协议字段均为短文本，超长＝畸形字节——
+256:         // 防失控分配（解码不可信输入的资源纪律）。
+257:         constexpr std::uint32_t kMaxStringBytes = 1024u * 1024u;
+258:         if (n > kMaxStringBytes) {
+259:             fail("字符串字段超长（" + std::to_string(n) + " 字节——畸形载荷）");
+260:             return {};
+261:         }
+262:         std::string s(reinterpret_cast<const char*>(m_bytes.data() + m_pos), n);
+263:         m_pos += n;
+264:         return s;
+265:     }
+FUNCTION ui.SampleGridRender.draw RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp 268-344
+268:     void draw(const DrawableNode::RenderInfo& info,
+269:               DrawableNode::DrawType type, double alpha) const override
+270:     {
+271:         (void)info;
+272:         (void)type;
+273:         const PreviewColorScope colorScope;
+274:         // 格线骨架（UI-T52 字面化——采样格的线段呈现：灰细线与着色点并
+275:         // 存〔格线＝格结构、点＝样本锚——两层视觉语义分离〕；空＝无格）。
+276:         if (!m_gridLines.empty()) {
+277:             glLineWidth(1.0f);
+278:             glColor4f(0.55f, 0.55f, 0.60f, static_cast<float>(alpha));  // 格线灰
+279:             glBegin(GL_LINES);
+280:             for (const auto& seg : m_gridLines) {
+281:                 glVertex3d(seg.first[0], seg.first[1], seg.first[2]);
+282:                 glVertex3d(seg.second[0], seg.second[1], seg.second[2]);
+283:             }
+284:             glEnd();
+285:         }
+286:         // 采样点渲染（点阵着色——评估就位＝逐点分色；空＝中性灰诚实空态）。
+287:         glPointSize(5.0f);
+288:         glBegin(GL_POINTS);
+289:         for (std::size_t i = 0; i < m_samples.size(); ++i) {
+290:             glColor4f(0.6f, 0.6f, 0.6f, static_cast<float>(alpha));  // 中性灰
+291:             if (i < m_states.size()) {
+292:                 applyCellColor(m_states[i]);  // 评估就位＝逐点分色
+293:             }
+294:             const Vector3D<double>& p = m_samples[i];
+295:             glVertex3d(p[0], p[1], p[2]);
+296:         }
+297:         glEnd();
+298:         glPointSize(1.0f);
+299:         // 高亮样本叠加层（FIX-T2——"蓝框=当前选中"：放大点＋蓝描边环，
+300:         // 蓝色＝区域框缺省档词表同源（F-495 建议语义零新增色值）；
+301:         // nullopt＝无高亮零产出——诚实空态不画占位）。
+302:         if (m_highlighted.has_value()) {
+303:             const Vector3D<double>& h = *m_highlighted;
+304:             // 放大点芯（约 3 倍点径——与 5px 常规点在视觉上明确分层）。
+305:             glPointSize(14.0f);
+306:             // 词表是RGB三元组，glColor4fv会越界读取第4个float作为alpha，
+307:             // 导致14px点芯透明/随机透明；显式使用回调alpha，保持宿主透明语义。
+308:             glColor4f(ui::palette::kRegionTintDefaultGl[0],
+309:                       ui::palette::kRegionTintDefaultGl[1],
+310:                       ui::palette::kRegionTintDefaultGl[2],static_cast<float>(alpha));
+311:             glBegin(GL_POINTS);
+312:             glVertex3d(h[0], h[1], h[2]);
+313:             glEnd();
+314:             glPointSize(1.0f);
+315:             // 蓝描边环（选中框语义的采样点形态——三轴小环近似"框"：
+316:             // 世界系半径 0.06 m 与采样格间距同量级，工位级视距可辨）。
+317:             glColor4f(ui::palette::kRegionTintDefaultGl[0],
+318:                       ui::palette::kRegionTintDefaultGl[1],
+319:                       ui::palette::kRegionTintDefaultGl[2],
+320:                       static_cast<float>(alpha));
+321:             glLineWidth(2.0f);
+322:             constexpr double kHighlightRingRadius = 0.06;  // m——环半径
+323:             for (int axis = 0; axis < 3; ++axis) {
+324:                 glBegin(GL_LINE_LOOP);
+325:                 for (int step = 0; step < 24; ++step) {
+326:                     // 圆周参数化（24 段近似圆——固定管线无 GLU 依赖；
+327:                     // 三正交平面各一环＝三轴环近似球框）。
+328:                     const double theta = 2.0 * 3.14159265358979323846
+329:                                        * static_cast<double>(step) / 24.0;
+330:                     const double c = std::cos(theta) * kHighlightRingRadius;
+331:                     const double s = std::sin(theta) * kHighlightRingRadius;
+332:                     Vector3D<double> p = h;
+333:                     switch (axis) {
+334:                     case 0: p[1] += c; p[2] += s; break;  // XY 平面环
+335:                     case 1: p[0] += c; p[2] += s; break;  // XZ 平面环
+336:                     default: p[0] += c; p[1] += s; break;  // YZ 平面环
+337:                     }
+338:                     glVertex3d(p[0], p[1], p[2]);
+339:                 }
+340:                 glEnd();
+341:             }
+342:             glLineWidth(1.0f);
+343:         }
+344:     }

@@ -1,0 +1,198 @@
+{
+  "taskId": "GOV-T23",
+  "baseCommit": "58962b338505fc9f69b6a9f1a50e2d55712efffc",
+  "repairBaseCommit": "4d0f1ab024f093b65d9839d090b124da721aa69f",
+  "reviewedCommit": "85cfc8f570edc66fa7b20195e75e3587ab9c8e3d",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-24T07:08:32.0039604+08:00",
+  "supersedes": {
+    "reviewedCommit": "4d0f1ab024f093b65d9839d090b124da721aa69f",
+    "historicalVerdict": "fail",
+    "meaning": "仅以本次确切送验版的复验结论替代当前问题的未闭环状态；R1原FAIL证据不改写。",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1.json"
+  },
+  "resolvedIssues": [
+    "GOV-T23-R1-01"
+  ],
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "/root/accept_gov_t23",
+    "authorization": "沿用所有者本次唯一独立验收子智能体例外及GOV-T23-R1-01复验授权；未另建代理。",
+    "constraints": "未切分支、修改实现/任务状态、commit、合并或远程同步，未推进WP-01；只新增本次r2证据。"
+  },
+  "scope": "独立审查4d0..85cf两个脚本、GOV-T23契约、README、实际变化矩阵绑定和新增原始证据；根规则/架构与GOV-T24/T25沿用R1适用结果。",
+  "counts": {
+    "failed": 0,
+    "passed": 7,
+    "notRun": 5,
+    "skipped": 0,
+    "unit": "7项独验检查；命令、测试及摘要绑定另列，互不相加"
+  },
+  "checks": [
+    "真实主线/旧契约缺Base具名拒绝；显式Base仍检出越界；detached空隐式范围拒绝；任务分支非空默认范围兼容。",
+    "当前12项套件真实通过，断言同时核退出码和具名输出；原红例确实暴露假绿。",
+    "31个实际变化矩阵绑定独立重算匹配，status/decision未变、newMigrated=0。",
+    "全包显式范围114路径通过；契约只补确切r1/r2证据允许面，未扩大生产权限；根规则和GOV-T24/T25输入未变，引用R1通过项。"
+  ],
+  "commands": [
+    {
+      "name": "serial-mainline",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -SerialMainlineOnly -OutputDir RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/ps7",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "expectedPattern": "governance-lite: PASS",
+      "passed": true,
+      "started": "2026-10-24T07:06:47.4446401+08:00",
+      "finished": "2026-10-24T07:06:56.5712219+08:00",
+      "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/serial-mainline.log"
+    },
+    {
+      "name": "legacy-codex-no-base",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json -Head 85cfc8f570edc66fa7b20195e75e3587ab9c8e3d",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "expectedPattern": "requires explicit -Base",
+      "passed": true,
+      "started": "2026-10-24T07:06:56.5732737+08:00",
+      "finished": "2026-10-24T07:06:57.2596658+08:00",
+      "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/legacy-codex-no-base.log"
+    },
+    {
+      "name": "legacy-codex-explicit-base-control",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json -Base 58962b338505fc9f69b6a9f1a50e2d55712efffc -Head 85cfc8f570edc66fa7b20195e75e3587ab9c8e3d",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "expectedPattern": "\\[out-of-scope\\][\\s\\S]*verify-task-scope: FAIL",
+      "passed": true,
+      "started": "2026-10-24T07:06:57.2597912+08:00",
+      "finished": "2026-10-24T07:06:58.037129+08:00",
+      "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/legacy-codex-explicit-base-control.log"
+    },
+    {
+      "name": "scope",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T23.json -Base 58962b338505fc9f69b6a9f1a50e2d55712efffc -Head 85cfc8f570edc66fa7b20195e75e3587ab9c8e3d",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "expectedPattern": "verify-task-scope: PASS",
+      "passed": true,
+      "started": "2026-10-24T07:06:58.037245+08:00",
+      "finished": "2026-10-24T07:06:58.7619258+08:00",
+      "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/scope.log"
+    },
+    {
+      "name": "commit-lint",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 4d0f1ab024f093b65d9839d090b124da721aa69f..85cfc8f570edc66fa7b20195e75e3587ab9c8e3d",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "expectedPattern": "commit-lint: PASS",
+      "passed": true,
+      "started": "2026-10-24T07:06:58.7620214+08:00",
+      "finished": "2026-10-24T07:06:59.3118433+08:00",
+      "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/commit-lint.log"
+    },
+    {
+      "name": "validate-docs",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T23.json",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "expectedPattern": "validate-docs: PASS",
+      "passed": true,
+      "started": "2026-10-24T07:06:59.3120615+08:00",
+      "finished": "2026-10-24T07:07:32.0272854+08:00",
+      "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/validate-docs.log"
+    }
+  ],
+  "serialSuite": {
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "passed": 12,
+    "junit": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2/ps7/governance-lite.junit.xml",
+    "report": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2/ps7/governance-lite-report.json"
+  },
+  "matrixVerification": {
+    "passed": 31,
+    "inputBindings": 18,
+    "command": {
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/check-matrix.ps1",
+      "exitCode": 0,
+      "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/matrix-check.log"
+    },
+    "skipped": 0,
+    "notRun": 0,
+    "report": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2/matrix-check.json",
+    "newMigrated": 0,
+    "evidenceBindings": 2,
+    "sourceBindings": 11,
+    "failed": 0
+  },
+  "reusedEvidence": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1.json",
+      "applicability": "复用其未变规则/架构、GOV-T24/T25等检查的通过子项，不沿用整体FAIL为新版本结论；相关文件在返工diff无变。"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/r1-fix/ps51/governance-lite-report.json",
+      "applicability": "本次脚本输入与送验相同，矩阵增量独立重算源输入及报告摘要均匹配；原12pass/0fail/0skip/0notRun。只复用兼容性，不替代本次PS7和真实现场探针。"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/r1-fix/red/governance-lite-report.json",
+      "applicability": "对照首轮本人复现及当前新断言，保留原失败和未执行计数；不重跑旧版完整夹具。"
+    }
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "reason": "无产品实现或CMake改动，不适用。",
+      "item": "C++/产品构建"
+    },
+    {
+      "reason": "无GUI改动，不适用。",
+      "item": "GUI测试"
+    },
+    {
+      "reason": "无计算实现改动，不适用。",
+      "item": "数值/性能测试"
+    },
+    {
+      "reason": "本次仅R1问题的增量独立复验，未使用DeepEvidence。",
+      "item": "全历史证据深查/历史夹具"
+    },
+    {
+      "reason": "引用本次r1-fix/ps51原报告及同输入绑定，不冒充本次执行。",
+      "item": "PowerShell 5.1重复执行"
+    }
+  ],
+  "limitations": "PASS仅覆盖GOV-T23本包及R1修复，不是WP-01放行、算法合规或全项目完成。validate-reuse仍为governance only，DEBT=16与UNRESOLVED=1399未关闭。reviewedCommit固定为85cf，新增证据后的工作区不改变验收对象。",
+  "newFiles": [
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\check-matrix.ps1",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\commands.json",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\commit-lint.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\initial-state.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\legacy-codex-explicit-base-control.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\legacy-codex-no-base.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\matrix-check.json",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\matrix-check.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\matrix-command.json",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\reviewed-files.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\scope.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\serial-mainline.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\validate-docs.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\governance-lite-report.json",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\governance-lite.junit.xml",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-base-required.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-detached-mainline-base-required.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-explicit-scope.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-forbidden-rejected.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-legacy-explicit-scope.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-legacy-mainline-base-required.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-main-rejected.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-mainline.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-outside-rejected.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-task-branch.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-task-implicit-scope.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2\\ps7\\serial-unknown-rejected.log",
+    "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\GOV-T23-20261024-r2.json"
+  ]
+}

@@ -44,6 +44,8 @@
 #include <sdurws/ird/diagnostics/DiagCodes.hpp>
 #include <sdurws/ird/diagnostics/Errors.hpp>
 
+#include "../src/ParamSchema.hpp"  // 同单元私有契约：不向公共接口暴露解析器。
+
 namespace {
 
 using namespace sdurws::ird::diagnostics;
@@ -482,6 +484,42 @@ TEST(DiagCodesRegistry, DtReg5_ParamSchemaValidation)
     // 显式抽查 §9.2 示例码的参数面）。
     const auto builtin = makeBuiltinRegistry();
     EXPECT_EQ(builtin->find("PRJ-LOCK-HELD")->paramSchema, std::string("[\"pid\",\"host\"]"));
+}
+
+/**
+ * @brief DT-REG-5 / F-968：任何拒绝路径都不得暴露已解析的局部参数。
+ *
+ * 复用同一输出槽交替执行成功与失败，验证调用方无需预清理；期望来自
+ * ParamSchema.hpp 的既有失败清空契约，不复制生产解析算法。
+ */
+TEST(DiagCodesRegistry, DtReg5_ParamSchemaFailureClearsNames_F968)
+{
+    std::vector<std::string> names;
+    std::string error;
+    for (const std::string schema : {
+             "", "pid", "[\"pid\",\"PID\"]", "[\"pid\",\"pid\"]", "[\"pid\",]",
+             "[\"pid\"]x", "[\"pid\",\"host", "[\"pid\"", "[\"pid\" x]",
+             "[\"pid\",1]", "[\"pid\",\"\\u0068ost\"]", "[\"pid\"]\n"}) {
+        SCOPED_TRACE(schema);
+        // 先填入一次合法结果，再拒绝；同时覆盖首项前、项间及收尾失败。
+        ASSERT_TRUE(sdurws::ird::diagnostics::detail::tryParseParamSchema(
+            "[\"pid\",\"host\"]", &names, &error));
+        EXPECT_EQ(names, (std::vector<std::string>{"pid", "host"}));
+        EXPECT_TRUE(error.empty());
+        EXPECT_FALSE(sdurws::ird::diagnostics::detail::tryParseParamSchema(
+            schema, &names, &error));
+        EXPECT_TRUE(names.empty()) << "失败输出不得保留局部参数";
+        EXPECT_FALSE(error.empty()) << "保留原首处违约原因";
+    }
+    // 失败后的下一次成功须清除旧错误并保留声明序，空模式也要提交空清单。
+    ASSERT_TRUE(sdurws::ird::diagnostics::detail::tryParseParamSchema(
+        " \t[\"host\", \"pid\"]\t ", &names, &error));
+    EXPECT_EQ(names, (std::vector<std::string>{"host", "pid"}));
+    EXPECT_TRUE(error.empty());
+    ASSERT_TRUE(sdurws::ird::diagnostics::detail::tryParseParamSchema(
+        "[]", &names, &error));
+    EXPECT_TRUE(names.empty());
+    EXPECT_TRUE(error.empty());
 }
 
 /** DT-REG-5：deprecate 后 tombstone——只读映射保留、supersededBy 导航、

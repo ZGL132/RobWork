@@ -1,0 +1,18 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+    "matches": true
+  }
+]

@@ -1,0 +1,2 @@
+verify-task-scope: GOV-T27 base=4f83917e91bc head=44d6fe8c448d changed=18 allowedRules=7 forbiddenRules=4
+verify-task-scope: PASS GOV-T27 —— 18 个路径全部在允许面内

@@ -1,0 +1,30 @@
+{
+  "scope": "actual frozen CheckFunctions + actual frozen dependency function definitions; isolated empty product baseline to reach exact pending-row final guard; not full validator run",
+  "expected": 3,
+  "executed": 3,
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "notRun": 0,
+  "helperSha256": "60DD850A9A4E7FE736C4952E5790B68CF7FF70749E04971C0933EF2A050180A3",
+  "tests": [
+    {
+      "name": "pending-positive",
+      "passed": true,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\n"
+    },
+    {
+      "name": "pending-final-rejected",
+      "passed": true,
+      "expected": "REUSE-MIGRATION : unresolved function independent.governance.final-row",
+      "output": "REUSE-MIGRATION : unresolved function independent.governance.final-row"
+    },
+    {
+      "name": "closed-rejected",
+      "passed": true,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : independent.governance.final-row"
+    }
+  ]
+}

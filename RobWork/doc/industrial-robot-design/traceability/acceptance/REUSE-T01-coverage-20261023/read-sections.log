@@ -1,0 +1,1329 @@
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp [30-96]
+30: double slotValue(const FeasibleCandidate& c, MetricId id) noexcept
+31: {
+32:     return *c.metricValues[static_cast<std::size_t>(id)];
+33: }
+34: 
+35: /// "aᵢ 不劣于 bᵢ（按方向 dᵢ，容差 tᵢ）"（§7.4 定义式——min/max 对称展开；
+36: /// closeWithin 的参考元＝bᵢ，卡 §7.4 字面）。
+37: bool notWorse(double a, double b, MetricDirection d, const core::Tolerance& t) noexcept
+38: {
+39:     if (d == MetricDirection::Minimize) {
+40:         // min 方向：a ≤ b 即不劣；近似相等（容差内）同样视为不劣——
+41:         // 零容差时 closeWithin 退化为 a == b（浮点全序，DOPT-5）。
+42:         return a <= b || core::closeWithin(a, b, t);
+43:     }
+44:     // max 方向：a ≥ b 即不劣（对称）。
+45:     return a >= b || core::closeWithin(a, b, t);
+46: }
+47: 
+48: /// "aᵢ 严格优于 bᵢ（按方向 dᵢ，容差 tᵢ）"——差异须**超出容差**的优
+49: /// （容差内的优不算严格优：保证"逐元素近似相等 ⇒ 互不支配"自洽）。
+50: bool strictlyBetter(double a, double b, MetricDirection d,
+51:                     const core::Tolerance& t) noexcept
+52: {
+53:     if (d == MetricDirection::Minimize) {
+54:         return a < b && !core::closeWithin(a, b, t);
+55:     }
+56:     return a > b && !core::closeWithin(a, b, t);
+57: }
+58: 
+59: }  // namespace
+60: 
+61: // =====================================================================
+62: // 支配判定（Pareto.hpp 契约——noexcept 纯函数）
+63: // =====================================================================
+64: 
+65: bool dominates(const FeasibleCandidate& a, const FeasibleCandidate& b,
+66:                const ObjectiveSet& objectives) noexcept
+67: {
+68:     // 第一步：∀i —— aᵢ 不劣于 bᵢ（任一目标劣即不支配——短路返回）。
+69:     for (const auto& entry : objectives.entries) {
+70:         // 方向经 metricDirectionOf 零分配取向（词表方向实现单点——
+71:         // 热路径友好；noexcept 函数内禁用会分配的 metricDefinitions()）。
+72:         const MetricDirection d = metricDirectionOf(entry.metricId);
+73:         if (!notWorse(slotValue(a, entry.metricId), slotValue(b, entry.metricId),
+74:                       d, entry.tolerance)) {
+75:             return false;
+76:         }
+77:     }
+78:     // 第二步：∃j —— aⱼ 严格优于 bⱼ（全不劣但无一严格优＝互不支配——
+79:     // 逐元素近似相等的候选对在此归为互不支配，§7.4 自洽性）。
+80:     for (const auto& entry : objectives.entries) {
+81:         const MetricDirection d = metricDirectionOf(entry.metricId);
+82:         if (strictlyBetter(slotValue(a, entry.metricId),
+83:                            slotValue(b, entry.metricId), d, entry.tolerance)) {
+84:             return true;
+85:         }
+86:     }
+87:     return false;
+88: }
+89: 
+90: // =====================================================================
+91: // buildFront（执行序见 Pareto.hpp——五步固定）
+92: // =====================================================================
+93: 
+94: ParetoFrontResult ParetoFrontBuilder::buildFront(
+95:     const std::vector<FeasibleCandidate>& candidates,
+96:     const ObjectiveSet& objectives) const
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp [39-94]
+39: GenerationBatch SeededLhsGenerator::generateNextBatch(const GenerationContext& ctx)
+40: {
+41:     // 取消位先行（§12.2 @cancellation——空批＋cancelled，不产出部分批；
+42:     // 生成批是不可分的确定性整体）。
+43:     if (ctx.cancellationRequested) {
+44:         GenerationBatch batch;
+45:         batch.cancelled = true;
+46:         return batch;
+47:     }
+48:     // 单批策略代序语义：第 0 代产出全部邻域/采样候选；>0 代已无候选
+49:     // （多代推进消费归 §8.5/WP-21-T03——本批不伪造"再来一代"的语义）。
+50:     if (ctx.generationIndex > 0U) {
+51:         GenerationBatch batch;
+52:         batch.exhausted = true;
+53:         return batch;
+54:     }
+55:     // 候选批逐字节委托 WP-20-T06 生成函数（单一实现点——splitmix64/层置换/
+56:     // 采样域收缩/基线恒首全部在其内，本类零算法复制零行为漂移）。
+57:     GenerationBatch batch;
+58:     batch.candidates = generateSeededLhsCandidates(ctx.config);
+59:     batch.exhausted = true;  // 全批一次产出——单批策略
+60:     return batch;
+61: }
+62: 
+63: // =====================================================================
+64: // 内置策略二：baseline-perturb 邻域扰动（§8.2 表第二行）
+65: // =====================================================================
+66: 
+67: void validateBaselinePerturbParams(const BaselinePerturbParams& params)
+68: {
+69:     // 检查序固定（确定性首错）；全部不静默修正（NFR-COR-03）。消息含实际
+70:     // 值与合法域（ERR-01 比较型定位纪律）。
+71:     // ① 有限性：NaN/Inf 无配置意义（浮点比较失去序语义）。
+72:     if (!std::isfinite(params.perturbRatio)) {
+73:         throw OptimizationError(
+74:             kOptInputInvalid,
+75:             "OPT-INPUT-INVALID: baseline-perturb perturbRatio 非有限（实际值 "
+76:                 + std::to_string(params.perturbRatio)
+77:                 + "）——扰动比例须为有限数");
+78:     }
+79:     // ② 下界：0＝无扰动（批退化为基线自身重复——无搜索语义），负值方向
+80:     //    语义颠倒；合法域自正数起。
+81:     if (params.perturbRatio <= 0.0) {
+82:         throw OptimizationError(
+83:             kOptInputInvalid,
+84:             "OPT-INPUT-INVALID: baseline-perturb perturbRatio="
+85:                 + std::to_string(params.perturbRatio)
+86:                 + "（合法域 (0, 0.04]——0 无扰动语义，负值非法）");
+87:     }
+88:     // ③ 上界：4× 默认封顶（0.04——REQUIREMENTS 附录 C《P-04 冻结数值表》
+89:     //    表①"工程策略可放宽上界 ±4%（4×默认封顶）"冻结档位；超档位配置
+90:     //    不静默接受）。
+91:     if (params.perturbRatio > kBaselinePerturbMaxRatio) {
+92:         throw OptimizationError(
+93:             kOptInputInvalid,
+94:             "OPT-INPUT-INVALID: baseline-perturb perturbRatio="
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp [63-140]
+63: PowerEnergySummary PowerEnergyCalculator::compute(const DynamicsSeries& series) const
+64: {
+65:     // ---- 第 1 步：按关节分组 Ok 行并单遍推进累加链（NFR-COR-03：非
+66:     //      Ok 行不进积分；关节集合升序——输出行序稳定）----
+67:     std::vector<std::uint32_t> jointIds;        ///< 出现的关节集合（升序——输出序）
+68:     std::vector<JointAccumulator> accs;         ///< 与 jointIds 平行的累加链
+69:     for (std::size_t k = 0; k < series.samples.size(); ++k) {
+70:         const DynamicsSample& r = series.samples[k];
+71:         if (r.numericState != SampleNumericState::Ok) {
+72:             // 非 Ok 行（NonFiniteInput/Output/Overflow）不进积分；但它是
+73:             // 该关节的"缺口证据"——其所在关节若已有累加链，须标记"上一
+74:             // Ok 行之后出现缺口"（缺口区间零贡献，公共头契约"缺口不插
+75:             // 值、贡献 0"——audit F-589 修复；尚无累加链的关节无须标记：
+76:             // 其首个 Ok 行只是积分下界，下界之前的区间本就不积分）。
+77:             const auto it = std::lower_bound(jointIds.begin(), jointIds.end(), r.jointIndex);
+78:             if (it != jointIds.end() && *it == r.jointIndex) {
+79:                 accs[static_cast<std::size_t>(it - jointIds.begin())].gapSincePrevOk = true;
+80:             }
+81:             continue;
+82:         }
+83:         const std::uint32_t j = r.jointIndex;
+84:         auto it = std::lower_bound(jointIds.begin(), jointIds.end(), j);
+85:         if (it == jointIds.end() || *it != j) {
+86:             it = jointIds.insert(it, j);
+87:             accs.insert(accs.begin() + (it - jointIds.begin()), JointAccumulator{});
+88:         }
+89:         JointAccumulator& a = accs[static_cast<std::size_t>(it - jointIds.begin())];
+90:         a.rows.push_back(k);
+91: 
+92:         // 功率（W）——评估器已按 P=τ_total·q̇ 产出（§7.5）；本计算器
+93:         // 直读不重乘（重乘需要 τ_total×q̇ 两次舍入一致——行内值即权威）。
+94:         const double p = r.mechanicalPower;
+95: 
+96:         // 时间加权分项积分（§7.5）：E⁺ 用 max(P,0)、E⁻ 用 min(P,0)
+97:         // 分别梯形——正负功拆分的数学形态（ crest 因子：同一区间 P 换
+98:         // 号时两侧各取其半段贡献）。缺口区间例外：上一 Ok 行与当前 Ok
+99:         // 行之间存在本关节非 Ok 行时，该区间零贡献（无数据不插值——
+100:         // 假设 P 线性过渡属高估；缺口时长仍保留在分母 T_cycle 中，
+101:         // 保守低估，完整循环统计以 Complete 序列为准）。
+102:         if (!a.havePrev) {
+103:             a.firstT = r.t;      // 积分下界（首有效行）
+104:             a.havePrev = true;
+105:         } else if (a.gapSincePrevOk) {
+106:             // 缺口区间——E⁺/E⁻ 均不加梯形项（零贡献），只推进梯形状态。
+107:         } else {
+108:             const double dt = r.t - a.lastT;  // s（相邻有效行时差——正常采样区间）
+109:             a.positiveJ += 0.5 * (std::max(a.prevP, 0.0) + std::max(p, 0.0)) * dt;
+110:             a.negativeJ += 0.5 * (std::min(a.prevP, 0.0) + std::min(p, 0.0)) * dt;
+111:         }
+112:         a.prevP = p;
+113:         a.lastT = r.t;
+114:         a.gapSincePrevOk = false;  // 缺口证据已消费（首个 Ok 行亦在此清除）
+115: 
+116:         // 功率幅值峰值（首个达到者保留——严格大于才替换，确定性口径；
+117:         // 首行无条件捕获：NaN 位模式经此显性传播到峰值输出，不静默）。
+118:         const double absP = std::abs(p);
+119:         if (!a.havePeak || absP > a.peakAbsW) {
+120:             a.havePeak = true;
+121:             a.peakAbsW = absP;
+122:             a.peakRow = k;
+123:         }
+124:     }
+125: 
+126:     // ---- 第 2 步：装配摘要（无效语义显式 NaN——不伪造 0，§4.6）----
+127:     PowerEnergySummary out;
+128:     out.joints.reserve(accs.size());
+129:     bool topLevelSet = false;   ///< 顶层字段就绪位（首个可积分关节定标——见下）
+130:     for (JointAccumulator& a : accs) {
+131:         PowerEnergySummary::JointPowerEnergy row;
+132:         row.jointIndex = jointIds[&a - accs.data()];
+133: 
+134:         // 时间参数可用性（逐关节判定——单序列单时间轴，正常路径各关
+135:         // 节一致；行级 Ok 标记差异时以"首个可积分关节"定标顶层字段）。
+136:         const bool timeOk = a.rows.size() >= 2 && a.firstT != a.lastT;
+137:         row.positiveEnergyJ = timeOk ? a.positiveJ
+138:                                      : std::numeric_limits<double>::quiet_NaN();
+139:         row.negativeEnergyJ = timeOk ? a.negativeJ
+140:                                      : std::numeric_limits<double>::quiet_NaN();
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp [127-216]
+127: ProbeVerdict probeReachability(double t,
+128:                                const rw::math::Vector3D<double>& direction,
+129:                                const IKinRuntimeView& view,
+130:                                const TcpRef& tcp,
+131:                                const EnvelopeQuery& query,
+132:                                const std::vector<JointInterval>& intervals,
+133:                                std::uint64_t& probeSerial,
+134:                                std::uint32_t& rayProbeCount,
+135:                                IkFacilityFailure* facilityOut)
+136: {
+137:     // 探针级取消检查（响应粒度第一层——每探针至少一次，§8.3 落值；
+138:     // 求解器内部的迭代级查询是第二层，经 cancellationProbe 透传生效）。
+139:     // 命中即返回且**不计数**——零 IK 调用，预算素材不虚增。
+140:     if (query.cancellationProbe && query.cancellationProbe()) {
+141:         return ProbeVerdict::Cancelled;
+142:     }
+143: 
+144:     // 初值集（确定性——本探针的序号派生种子；SeededRandom 下多初值
+145:     // 提升边界附近〔雅可比趋奇异〕的收敛稳健性）。
+146:     const std::vector<std::vector<double>> initialValues = makeInitialValues(
+147:         query.initialStrategy, query.initialValuesCount,
+148:         probeSeedFor(query.seed, probeSerial), intervals, query.referenceQ);
+149:     ++probeSerial;    // 全局序号推进（与本次 IK 调用一一对应）
+150:     ++rayProbeCount;  // 方向面计数同步（守恒式右端/左端同步推进）
+151: 
+152:     // IK 请求（位置存在性——KIN-P2/A02 起 taskSpace=PositionOnly：3 维
+153:     // 任务子空间，姿态误差不进目标函数，收敛判据只查位置残差；姿态容差
+154:     // 在该任务下不被消费，保持 IkRequest 默认合法值（1e-6 rad>0——请求
+155:     // 合法域载体；EnvelopeQuery 投影面刻意不含姿态容差字段——"不预建无
+156:     // 消费者条目"纪律，与旧 π 落值常量的裁剪同因）。旧"姿态无约束落值
+157:     // π"机制废除——kEnvelopePoseFreeTolerance 已随本迁移移除，π 方案下
+158:     // 姿态仍参与 6 维迭代会把位置可达探针点牵制出局〔审查 A02 同源〕。
+159:     // 身份面回填调用方绑定）。
+160:     IkRequest request;
+161:     request.targetInBase = rw::math::Transform3D<double>(
+162:         direction * t, rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
+163:     request.positionTolerance = query.positionTolerance;
+164:     request.taskSpace = IkTaskSpace::PositionOnly;
+165:     request.modelView = &view;
+166:     request.tcp = tcp;
+167:     request.initialValues = initialValues;
+168:     request.iterationLimit = query.iterationLimit;
+169:     request.intervals = intervals;
+170:     request.dedupThresholdPerAxis = query.dedupThresholdPerAxis;
+171:     request.collisionSession = nullptr;  // KIN-10 无碰撞要求（Query 注）——
+172:                                          // 求解器按"未启用"跳过硬过滤③
+173:     request.cancellationProbe = query.cancellationProbe;
+174:     request.referenceQ = query.referenceQ;
+175:     // 结果绑定（纯服务直调面——pointOid 保留值合法；身份 seed/referenceQ
+176:     // 已由调用方经 query.identity 回填一致性由组装面保证）。
+177:     request.requestIdentity = query.identity;
+178:     request.requestIdentity.seed = query.seed;
+179:     request.requestIdentity.referenceQ = query.referenceQ;
+180: 
+181:     const IkOutcome outcome = query.solver ? query.solver->solve(request)
+182:                                            : IkSolver{}.solve(request);
+183: 
+184:     // 判读（按序——cancelled/设施失败优先，非终局形态上调）。
+185:     if (outcome.cancelled) {
+186:         return ProbeVerdict::Cancelled;
+187:     }
+188:     if (outcome.facilityFailure.has_value()) {
+189:         // 素材转载（不加工——底层 stage/detail 逐字上交，诊断链溯源保留
+190:         // 求解器侧定位；Sampling.cpp 设施失败 reason 转载 detail 同款）。
+191:         if (facilityOut != nullptr) {
+192:             *facilityOut = *outcome.facilityFailure;
+193:         }
+194:         return ProbeVerdict::Facility;
+195:     }
+196:     switch (outcome.outcomeKind) {
+197:     case IkOutcomeKind::SolutionsFound:
+198:     case IkOutcomeKind::PartialCollision:
+199:         return ProbeVerdict::Reached;
+200:     case IkOutcomeKind::MultiInitNoConvergence:
+201:     case IkOutcomeKind::AllCandidatesFiltered:
+202:     case IkOutcomeKind::AnalyticBoundExceeded:
+203:         // 2/3＝搜索未果（近似根源 2——当"不可达侧"使用）；5＝解析界限
+204:         // 超界，理论上仅在 ‖t·d‖>Rup 时出现，而本算法恒在 [0,Rup] 内
+205:         // 探测——若出现（数值边界）同轨按"不可达侧"处置，注释如实。
+206:         return ProbeVerdict::NotFound;
+207:     }
+208:     return ProbeVerdict::NotFound;  // 恒不可达（switch 全枚举兜底——编译器告警面）
+209: }
+210: 
+211: }  // namespace
+212: 
+213: // =====================================================================
+214: // computeApproximateEnvelope——主流程（头注算法四步的落值）
+215: // =====================================================================
+216: 
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp [403-490]
+403: bool substituteText(Engine& engine, std::size_t fileIdx, std::string_view text,
+404:                     std::ptrdiff_t hostOffset, std::string* out)
+405: {
+406:     const ImportSourceSpan hostSpan = engine.spanOf(fileIdx, hostOffset);
+407:     const std::size_t n = text.size();
+408:     std::size_t i = 0;
+409:     while (i < n) {
+410:         if (text[i] != '$') {
+411:             out->push_back(text[i]);
+412:             ++i;
+413:             continue;
+414:         }
+415:         // '$' 起始：区分 ${引用}、$(ROS 替换参数)、字面 '$'。
+416:         if (i + 1 >= n) {
+417:             out->push_back('$');  // 尾随孤立 '$'——无替换语义，原样保留
+418:             break;
+419:         }
+420:         if (text[i + 1] == '{') {
+421:             // 找配对 '}'（计数嵌套——嵌套内容在标识符判别处被拒，计数只
+422:             // 为正确圈定边界）。
+423:             std::size_t depth = 1;
+424:             std::size_t j = i + 2;
+425:             while (j < n && depth > 0) {
+426:                 if (text[j] == '{') { ++depth; }
+427:                 else if (text[j] == '}') { --depth; }
+428:                 ++j;
+429:             }
+430:             if (depth != 0) {
+431:                 const std::string raw(text.substr(i));
+432:                 engine.pushUnresolvedDiag(
+433:                     "unsupported-construct", raw,
+434:                     "${ 替换未闭合——受控子集要求完整 ${标识符} 形态",
+435:                     "改为 ${参数名} 形态或在展开环境提供该参数", hostSpan);
+436:                 engine.fail(XacroExpandErrorCode::UndefinedSymbol,
+437:                             {{"item-kind", "unsupported-construct"},
+438:                              {"symbol", raw}},
+439:                             "未闭合的 ${ 替换——定位见诊断");
+440:                 return false;
+441:             }
+442:             // 圈定内容并去首尾空白（"${ name }" 与 "${name}" 同义——字面
+443:             // 空白不参与符号名）。
+444:             std::string_view inner = text.substr(i + 2, j - i - 3);
+445:             while (!inner.empty() && (inner.front() == ' ' || inner.front() == '\t'
+446:                                       || inner.front() == '\r' || inner.front() == '\n')) {
+447:                 inner.remove_prefix(1);
+448:             }
+449:             while (!inner.empty() && (inner.back() == ' ' || inner.back() == '\t'
+450:                                       || inner.back() == '\r' || inner.back() == '\n')) {
+451:                 inner.remove_suffix(1);
+452:             }
+453:             if (!isPlainIdentifier(inner)) {
+454:                 // 表达式/算式/函数调用——明确不求值（绝不执行任意代码；
+455:                 // ${a+b}/${foo()} 等一律定位失败，NFR-COR-03 不静默）。
+456:                 engine.pushUnresolvedDiag(
+457:                     "unsupported-expression", std::string(inner),
+458:                     "${} 内为表达式形态——受控子集只支持纯标识符引用，"
+459:                     "不做任何表达式求值",
+460:                     "改为纯标识符引用，或在展开环境预计算后以字面代入",
+461:                     hostSpan);
+462:                 engine.fail(XacroExpandErrorCode::UndefinedSymbol,
+463:                             {{"item-kind", "unsupported-expression"},
+464:                              {"symbol", std::string(inner.substr(0, 64))}},
+465:                             "${} 表达式形态被拒绝（绝不执行任意代码）——定位见诊断");
+466:                 return false;
+467:             }
+468:             const std::string* value = engine.resolveSymbol(std::string(inner));
+469:             if (value == nullptr) {
+470:                 // 未定义参数——行列定位诊断（MDL-19/AT-31 验收面）。
+471:                 engine.pushUnresolvedDiag(
+472:                     "undefined-param", std::string(inner),
+473:                     "引用了未定义参数——展开环境（substitutions）与文档属性中均无此名",
+474:                     "在展开环境提供该参数，或先以 xacro:property 定义", hostSpan);
+475:                 engine.fail(XacroExpandErrorCode::UndefinedSymbol,
+476:                             {{"item-kind", "undefined-param"},
+477:                              {"symbol", std::string(inner)}},
+478:                             "未定义参数 '" + std::string(inner) + "'——定位见诊断");
+479:                 return false;
+480:             }
+481:             out->append(*value);  // 替换值直接拼入——不二次扫描（防注入递归）
+482:             i = j;                // 越过整个 ${...}
+483:             continue;
+484:         }
+485:         if (text[i + 1] == '(') {
+486:             // ROS 替换参数（$(find pkg)/$(env ...) 等）——会触文件系统/
+487:             // 环境变量，显式拒绝（SA-14/绝不执行）。
+488:             std::size_t j = i + 2;
+489:             while (j < n && text[j] != ')') { ++j; }
+490:             const std::string raw(j < n ? std::string(text.substr(i, j - i + 1))
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp [236-318]
+236: FrameAssembler::Status FrameAssembler::feed(const std::uint8_t* data, std::size_t size,
+237:                                             std::vector<ChannelFrame>& out)
+238: {
+239:     // 协议错误闩：通道字节流一旦出现非法帧，后续字节的对齐已不可信——
+240:     // 恒失败（恢复手段＝任务失败＋通道重建，§6.5）。
+241:     if (m_failed) {
+242:         return Status::ProtocolError;
+243:     }
+244:     m_buffer.insert(m_buffer.end(), data, data + size);
+245: 
+246:     // 增量解析：每次尝试从消费位凑出一个完整帧，凑不出即止（等下次喂入）。
+247:     for (;;) {
+248:         const std::size_t available = m_buffer.size() - m_offset;
+249:         if (available < kFrameFixedHeaderSize) {
+250:             break;  // 连固定头都未凑齐
+251:         }
+252:         const std::uint8_t* base = m_buffer.data() + m_offset;
+253:         // 校验 1：magic 逐字节（错位/混入垃圾在此暴露）。
+254:         if (std::memcmp(base, kFrameMagic.data(), kFrameMagic.size()) != 0) {
+255:             m_failed = true;
+256:             return Status::ProtocolError;
+257:         }
+258:         // 校验 2：协议主版本（次版本兼容语义阶段 A 不存在——非 1 即拒，
+259:         // §6.5"消息版本"行）。
+260:         const std::uint16_t version = getU16(base + 7);
+261:         if (version != kChannelProtocolVersion) {
+262:             m_failed = true;
+263:             return Status::ProtocolError;
+264:         }
+265:         // 校验 3：载荷长度上限（防长度域被破坏后按它读穿/分配爆掉）。
+266:         const std::uint32_t payloadLen = getU32(base + 19);
+267:         if (payloadLen > kMaxFramePayload) {
+268:             m_failed = true;
+269:             return Status::ProtocolError;
+270:         }
+271:         const std::size_t frameSize =
+272:             kFrameFixedHeaderSize + kIdentityBlockSize + payloadLen;
+273:         if (available < frameSize) {
+274:             break;  // 帧体未凑齐——等下一块字节
+275:         }
+276:         // 校验 4：身份块（五元组随行承诺的帧级核对——ARCH §4.1）。
+277:         const std::uint8_t* idBytes = base + kFrameFixedHeaderSize;
+278:         std::optional<core::TaskIdentity> identity =
+279:             decodeIdentityBlock(idBytes, kIdentityBlockSize);
+280:         if (!identity.has_value() || !identity->isValid()) {
+281:             m_failed = true;
+282:             return Status::ProtocolError;
+283:         }
+284: 
+285:         // 全部校验通过——取帧并推进消费位（压缩策略：消费位过半即向首
+286:         // 搬移一次，均摊 O(1)，缓冲不无界增长）。
+287:         ChannelFrame frame;
+288:         frame.type = static_cast<ChannelMsgType>(base[9]);
+289:         frame.flags = base[10];
+290:         frame.seq = getU64(base + 11);
+291:         frame.identity = *identity;
+292:         frame.payload.assign(base + kFrameFixedHeaderSize + kIdentityBlockSize,
+293:                              base + frameSize);
+294:         m_offset += frameSize;
+295:         if (m_offset * 2 >= m_buffer.size()) {
+296:             m_buffer.erase(m_buffer.begin(),
+297:                            m_buffer.begin() + static_cast<std::ptrdiff_t>(m_offset));
+298:             m_offset = 0;
+299:         }
+300:         out.push_back(std::move(frame));
+301:     }
+302:     return Status::Ok;
+303: }
+304: 
+305: // =====================================================================
+306: // seq 序控（§6.5"乱序与重复"）
+307: // =====================================================================
+308: 
+309: FrameSequencer::FrameSequencer(Config config, ClockFn clock)
+310:     : m_config(config)
+311:     , m_clock(std::move(clock))
+312: {
+313:     // 窗口容量下限 1（0 会使任何越前帧都判溢出——无意义的退化为非法配置）。
+314:     if (m_config.windowCapacity == 0) {
+315:         m_config.windowCapacity = 1;
+316:     }
+317: }
+318: 
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp [160-255]
+160: class JsonParser {
+161: public:
+162:     explicit JsonParser(std::string_view text)
+163:         : p_(text.data()), end_(text.data() + text.size())
+164:     {
+165:     }
+166: 
+167:     /// 解析整个文档：一个顶层值＋输入必须恰好耗尽（尾随内容＝截断/拼接
+168:     /// 现场证据，拒绝）。
+169:     JsonValue parseDocument()
+170:     {
+171:         JsonValue v = parseValue(0);
+172:         if (p_ != end_) {
+173:             corrupt("trailing content after JSON document（截断或非 canonical 尾部）");
+174:         }
+175:         return v;
+176:     }
+177: 
+178: private:
+179:     const char* p_;     ///< 当前扫描位置（耗尽后 peek/next 即报截断）
+180:     const char* end_;   ///< 输入末尾（哨兵）
+181:     bool firstDigitWasZero_ = false;  ///< 当前数字字面量首数字是否为 '0'
+182: 
+183:     /// 输入是否已耗尽。
+184:     bool atEnd() const { return p_ == end_; }
+185: 
+186:     /// 读取当前字节（不前进）。耗尽即"截断"——canonical 文档不允许提前结束。
+187:     char peek()
+188:     {
+189:         if (atEnd()) { corrupt("truncated input（文档在结构中间结束）"); }
+190:         return *p_;
+191:     }
+192: 
+193:     /// 消费一个字节并返回。
+194:     char next()
+195:     {
+196:         const char c = peek();
+197:         ++p_;
+198:         return c;
+199:     }
+200: 
+201:     /// 期望当前字节为 expected，否则拒绝（结构层语法错误）。
+202:     void expect(char expected)
+203:     {
+204:         const char c = next();
+205:         if (c != expected) {
+206:             corrupt(std::string("syntax error: expected '") + expected + "' got '"
+207:                     + printable(c) + "'");
+208:         }
+209:     }
+210: 
+211:     /// 控制字符/引号的可打印呈现（错误消息防注入——不透传原始字节）。
+212:     static std::string printable(char c)
+213:     {
+214:         if (c >= 0x20 && c < 0x7F) { return std::string{c}; }
+215:         static constexpr char kHex[] = "0123456789abcdef";
+216:         const auto u = static_cast<unsigned char>(c);
+217:         std::string s = "0x";
+218:         s += kHex[(u >> 4) & 0xF];
+219:         s += kHex[u & 0xF];
+220:         return s;
+221:     }
+222: 
+223:     /// 值分发：对象/数组/字符串/整数；其余一律拒绝。
+224:     JsonValue parseValue(int depth)
+225:     {
+226:         // 深度上限检查在进入前做（每层 +1——防御在先，不依赖递归自然爆栈）。
+227:         if (depth > kMaxDepth) { corrupt("nesting depth exceeds limit（非法深嵌套）"); }
+228:         const char c = peek();
+229:         switch (c) {
+230:         case '{': return parseObject(depth);
+231:         case '[': return parseArray(depth);
+232:         case '"': {
+233:             JsonValue v;
+234:             v.kind = JsonValue::Kind::String;
+235:             v.str = parseString();
+236:             return v;
+237:         }
+238:         case '-':
+239:         case '0': case '1': case '2': case '3': case '4':
+240:         case '5': case '6': case '7': case '8': case '9': {
+241:             JsonValue v;
+242:             v.kind = JsonValue::Kind::Integer;
+243:             parseNumber(v);
+244:             return v;
+245:         }
+246:         default:
+247:             // true/false/null 与一切裸词在词法层拒绝——§4.4 契约无此类字段，
+248:             // 缺失即可选，出现即非 canonical（文件头规则 2）。
+249:             corrupt(std::string("unexpected character '") + printable(c)
+250:                     + "'（接受：对象/数组/字符串/整数）");
+251:         }
+252:     }
+253: 
+254:     /// 对象：'{' (string ':' value (',' string ':' value)*)? '}'；重复键拒绝。
+255:     JsonValue parseObject(int depth)
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp [33-130]
+33: #include <string>
+34: #include <type_traits>
+35: 
+36: #include <sdurws/ird/core/Digest.hpp>
+37: 
+38: namespace sdurws::ird::reporting {
+39: namespace {
+40: 
+41: // =====================================================================
+42: // 编码辅助——Writer（大端字节流写出）
+43: // =====================================================================
+44: 
+45: /// presence 字节的两个合法值（其余值在解码侧拒绝——严格编码）。
+46: constexpr std::uint8_t kPresenceAbsent = 0;
+47: constexpr std::uint8_t kPresencePresent = 1;
+48: 
+49: /// 大端字节流写出器（确定性：无缓冲策略差异——顺序 append）。
+50: class Writer {
+51: public:
+52:     /// 无符号整数大端写出（多字节字段统一大端——§4.4 规则 4）。
+53:     void u8(std::uint8_t v) { m_out.push_back(v); }
+54:     void u16(std::uint16_t v)
+55:     {
+56:         m_out.push_back(static_cast<std::uint8_t>(v >> 8));
+57:         m_out.push_back(static_cast<std::uint8_t>(v));
+58:     }
+59:     void u32(std::uint32_t v)
+60:     {
+61:         m_out.push_back(static_cast<std::uint8_t>(v >> 24));
+62:         m_out.push_back(static_cast<std::uint8_t>(v >> 16));
+63:         m_out.push_back(static_cast<std::uint8_t>(v >> 8));
+64:         m_out.push_back(static_cast<std::uint8_t>(v));
+65:     }
+66:     void u64(std::uint64_t v)
+67:     {
+68:         for (int shift = 56; shift >= 0; shift -= 8) {
+69:             m_out.push_back(static_cast<std::uint8_t>(v >> shift));
+70:         }
+71:     }
+72: 
+73:     /// 有符号 64 位（时间戳纳秒）——按二进制补码位模式大端写出。
+74:     void i64(std::int64_t v) { u64(static_cast<std::uint64_t>(v)); }
+75: 
+76:     /// double 以 IEEE754 位模式大端写出；NaN/±Inf 编码入口拒绝（§4.4 规则
+77:     /// 7——evidence D-06 同源：身份编码不承载非有限值）。
+78:     void f64(double v)
+79:     {
+80:         if (!std::isfinite(v)) {
+81:             throw ReportError(ReportErrorCode::DataInvalid,
+82:                               "ReportCodec: 非有限浮点值（NaN/±Inf）拒绝入编码");
+83:         }
+84:         std::uint64_t bits = 0;
+85:         static_assert(sizeof(bits) == sizeof(v), "double 必须为 64 位 IEEE754");
+86:         std::memcpy(&bits, &v, sizeof(bits));
+87:         u64(bits);
+88:     }
+89: 
+90:     /// 布尔以单字节 0/1 写出。
+91:     void boolean(bool v) { u8(v ? 1 : 0); }
+92: 
+93:     /// optional presence 字节（§4.4 规则 5——显式编码，无隐式缺席）。
+94:     void presence(bool present) { u8(present ? kPresencePresent : kPresenceAbsent); }
+95: 
+96:     /// 原始字节（Id128/Digest256 等定长数组——原样写入）。
+97:     void raw(const std::uint8_t* data, std::size_t n)
+98:     {
+99:         m_out.insert(m_out.end(), data, data + n);
+100:     }
+101: 
+102:     /// 字符串：u32 长度前缀＋UTF-8 字节；NUL 拒绝（§4.4 规则 6）。
+103:     void string(const std::string& s)
+104:     {
+105:         if (s.find('\0') != std::string::npos) {
+106:             throw ReportError(ReportErrorCode::DataInvalid,
+107:                               "ReportCodec: 字符串含 NUL 字节（UTF-8 禁 NUL）");
+108:         }
+109:         u32(static_cast<std::uint32_t>(s.size()));
+110:         raw(reinterpret_cast<const std::uint8_t*>(s.data()), s.size());
+111:     }
+112: 
+113:     /// 已注册单位 token：以冻结 symbol 字符串承载（解码侧经 find 还原——
+114:     /// 持久化 token 不用注册表下标，下标非稳定契约）。
+115:     void unitToken(core::UnitToken unit)
+116:     {
+117:         if (!unit.isValid()) {
+118:             throw ReportError(ReportErrorCode::DataInvalid,
+119:                               "ReportCodec: 未注册 UnitToken 拒绝入编码");
+120:         }
+121:         string(std::string(unit.symbol()));
+122:     }
+123: 
+124:     /// 取出完整字节流。
+125:     std::vector<std::uint8_t> take() { return std::move(m_out); }
+126: 
+127: private:
+128:     std::vector<std::uint8_t> m_out;   ///< 累积输出字节
+129: };
+130: 
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp [80-164]
+80:         while (!eof()) {
+81:             const char c = peek();
+82:             if (c == '\n') {
+83:                 ++pos_;
+84:                 ++line_;
+85:                 col_ = 1;
+86:             } else if (c == ' ' || c == '\t' || c == '\r') {
+87:                 advance();
+88:             } else {
+89:                 break;
+90:             }
+91:         }
+92:     }
+93: 
+94:     /// 吃掉期望的单字符；不符即 fail（结构标量的语法骨架）。
+95:     void expect(char c, const char* what)
+96:     {
+97:         if (eof() || peek() != c) {
+98:             fail(std::string{"期望 '"} + c + "'（" + what + "）");
+99:         }
+100:         advance();
+101:     }
+102: 
+103:     /// 统一错误出口：行列即时快照＋当前路径（TestKitError:DatasetInvalid）。
+104:     [[noreturn]] void fail(std::string reason) const
+105:     {
+106:         throw TestKitError(TestKitErrorKind::DatasetInvalid,
+107:                            "json-parse: line " + std::to_string(line_)
+108:                                + ", column " + std::to_string(col_) + ": " + reason
+109:                                + "（路径 " + path_ + "）");
+110:     }
+111: 
+112:     // ---- 值解析（depth 防栈溢出） ----
+113:     JsonValue parseValue(std::size_t depth)
+114:     {
+115:         if (depth > kMaxDepth) {
+116:             fail("嵌套超过 " + std::to_string(kMaxDepth) + " 层（拒绝深嵌套）");
+117:         }
+118:         skipWs();
+119:         if (eof()) {
+120:             fail("值位置意外到达文本末尾");
+121:         }
+122:         switch (peek()) {
+123:         case '{': return parseObject(depth);
+124:         case '[': return parseArray(depth);
+125:         case '"': {
+126:             JsonValue v;
+127:             v.kind = JsonValue::Kind::String;
+128:             v.text = parseString();
+129:             return v;
+130:         }
+131:         case 't': expectLiteral("true"); {
+132:             JsonValue v; v.kind = JsonValue::Kind::Bool; v.boolean = true; return v;
+133:         }
+134:         case 'f': expectLiteral("false"); {
+135:             JsonValue v; v.kind = JsonValue::Kind::Bool; v.boolean = false; return v;
+136:         }
+137:         case 'n': expectLiteral("null"); {
+138:             JsonValue v; v.kind = JsonValue::Kind::Null; return v;
+139:         }
+140:         default:
+141:             // 数字或非法字面（NaN/Infinity/注释等在此给出针对性消息）。
+142:             if (peek() == '-' || (peek() >= '0' && peek() <= '9')) {
+143:                 return parseNumber();
+144:             }
+145:             if (peek() == 'N') { fail("NaN 字面被拒绝（受限格式不收非有限数）"); }
+146:             if (peek() == 'I') { fail("Infinity 字面被拒绝"); }
+147:             if (peek() == '/') { fail("注释被拒绝（// 与 /* 均不收——受限格式无注释）"); }
+148:             fail(std::string{"非法值起始字符: '"} + peek() + "'");
+149:         }
+150:     }
+151: 
+152:     /// 字面量整体匹配（true/false/null/NaN 等逐字符——防止 "trueX" 之类越界吞并）。
+153:     void expectLiteral(const char* lit)
+154:     {
+155:         for (const char* p = lit; *p != '\0'; ++p) {
+156:             if (eof() || peek() != *p) {
+157:                 fail(std::string{"字面量不完整或不合法（期望 \""} + lit + "\"）");
+158:             }
+159:             advance();
+160:         }
+161:     }
+162: 
+163:     // ---- 对象：键序＝插入序；重复键拒绝（§4.1） ----
+164:     JsonValue parseObject(std::size_t depth)
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp [310-385]
+310: void TestProcessRunner::start(const ProcessSpec& spec, std::filesystem::path workingDir)
+311: {
+312:     // ---- 第 1 步：调用方契约检查（fail-fast——错误语义见头文件注释）----
+313:     if (impl_ != nullptr) {
+314:         throw TestKitError(TestKitErrorKind::Usage,
+315:                            "TestProcessRunner::start：实例已启动过，不可重复 start"
+316:                            "（同一实例一次生命周期；多进程用例请各用独立实例）");
+317:     }
+318:     if (spec.executable.empty()) {
+319:         throw TestKitError(TestKitErrorKind::Usage,
+320:                            "TestProcessRunner::start：ProcessSpec.executable 为空——"
+321:                            "无可执行文件的启动请求属调用方装配错误");
+322:     }
+323: 
+324:     // ---- 第 2 步：建立 Job Object 并启用"句柄关闭即杀树"----
+325:     HANDLE hJob = ::CreateJobObjectW(nullptr, nullptr);
+326:     if (hJob == nullptr) {
+327:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+328:                            "TestProcessRunner::start：CreateJobObjectW 失败（GetLastError=" +
+329:                                std::to_string(::GetLastError()) + "）");
+330:     }
+331:     JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobLimit{};
+332:     jobLimit.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+333:     if (!::SetInformationJobObject(hJob, JobObjectExtendedLimitInformation,
+334:                                    &jobLimit, sizeof(jobLimit))) {
+335:         const DWORD err = ::GetLastError();
+336:         ::CloseHandle(hJob);
+337:         throw TestKitError(TestKitErrorKind::EnvUnavailable,
+338:                            "TestProcessRunner::start：SetInformationJobObject 失败"
+339:                            "（GetLastError=" + std::to_string(err) +
+340:                            "）——无 KILL_ON_JOB_CLOSE 兜底不允许继续");
+341:     }
+342: 
+343:     // ---- 第 3 步：拼命令行与合并环境块（零继承句柄——事件同步走文件标记）----
+344:     // bInheritHandles=FALSE 的原因：§6.5 把跨进程同步判据限定为可观察文件，
+345:     // 子进程不需要继承任何句柄；不继承也杜绝了句柄泄漏进子进程的面。
+346:     std::wstring cmdLine = detail::quoteWindowsArg(spec.executable.wstring());
+347:     for (const std::string& rawArg : spec.args) {
+348:         cmdLine += L' ';
+349:         cmdLine += detail::quoteWindowsArg(utf8ToWide(rawArg));
+350:     }
+351:     std::wstring envBlock = buildEnvironmentBlock(spec.env);
+352: 
+353:     // workingDir 缺省语义（§6.5 签名注释"= TempDir"）：空路径→运行器持有
+354:     // 的临时目录；显式路径则校验存在——把拼写错误挡在启动前（Usage）而不是
+355:     // 让 CreateProcess 以晦涩的目录错误失败。局部经 unique_ptr 持有，启动
+356:     // 成功后才移交 Impl——启动失败路径上临时目录照常 RAII 清理。
+357:     std::unique_ptr<TempDir> ownedDir;
+358:     if (workingDir.empty()) {
+359:         ownedDir = std::make_unique<TempDir>("procrunner-wd");   // 构造即建立（§6.2）
+360:         workingDir = ownedDir->path();
+361:     } else if (!fs::exists(workingDir)) {
+362:         ::CloseHandle(hJob);
+363:         throw TestKitError(TestKitErrorKind::Usage,
+364:                            "TestProcessRunner::start：workingDir 不存在（" +
+365:                                workingDir.string() + "）——调用方须先建目录");
+366:     }
+367: 
+368:     // ---- 第 4 步：挂起态启动子进程 ----
+369:     STARTUPINFOW si{};
+370:     si.cb = sizeof(si);
+371:     PROCESS_INFORMATION pi{};
+372:     const BOOL created = ::CreateProcessW(
+373:         nullptr,                        // lpApplicationName 空：由命令行首段解析模块路径
+374:         cmdLine.data(),                 // 可写缓冲（CreateProcessW 会原位改写）
+375:         nullptr, nullptr,               // 安全属性：默认（句柄不继承，见上）
+376:         FALSE,                          // bInheritHandles：不继承
+377:         CREATE_SUSPENDED | CREATE_UNICODE_ENVIRONMENT,
+378:         envBlock.data(),                // 合并环境块（双 NUL 结尾）
+379:         workingDir.wstring().c_str(),   // 子进程当前工作目录
+380:         &si, &pi);
+381:     if (!created) {
+382:         const DWORD err = ::GetLastError();
+383:         ::CloseHandle(hJob);
+384:         // 可执行文件路径拼错也走这里（ERROR_FILE_NOT_FOUND）——归环境错误
+385:         // 而非 Usage：无法与"路径存在但被占用/被杀毒拦截"区分前不预判调用方。
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake [95-174]
+95: function(ird_read_flat path out_var)
+96:     file(READ "${path}" _raw)
+97:     string(REGEX REPLACE "#[^\n]*" "" _nocomment "${_raw}")
+98:     string(REGEX REPLACE "[\r\n\t]+" " " _flat "${_nocomment}")
+99:     string(REGEX REPLACE "  +" " " _flat "${_flat}")
+100:     set(${out_var} "${_flat}" PARENT_SCOPE)
+101: endfunction()
+102: 
+103: # 从压平文本中提取某命令的全部括号块（不含嵌套括号——仓库风格约束）
+104: function(ird_extract_blocks flat_text command out_var)
+105:     string(REGEX MATCHALL "${command}[ \t]*\\([^)]*\\)" _blocks "${flat_text}")
+106:     set(${out_var} "${_blocks}" PARENT_SCOPE)
+107: endfunction()
+108: 
+109: # 括号块 → 参数列表（去掉命令名与括号；CMake 列表以分号分隔，故空格→分号
+110: # 后才能用 list()/foreach 逐参处理。前提：参数内不含空格——仓库 CMake 风格
+111: # 中路径均无空格，见第 1 步"文本级解析确定性前提"）
+112: function(ird_block_args block out_var)
+113:     string(REGEX REPLACE "^[A-Za-z_][A-Za-z0-9_]*[ \t]*\\(" "" _inner "${block}")
+114:     string(REGEX REPLACE "\\)$" "" _inner "${_inner}")
+115:     string(STRIP "${_inner}" _inner)
+116:     string(REPLACE " " ";" _args "${_inner}")
+117:     set(${out_var} "${_args}" PARENT_SCOPE)
+118: endfunction()
+119: 
+120: set(IRD_TARGETS "")        # 全部显式目标名（不含变量名/ALIAS）
+121: foreach(_cl ${IRD_CMAKELISTS})
+122:     ird_read_flat("${_cl}" _flat)
+123:     ird_extract_blocks("${_flat}" "add_library" _blocks)
+124:     foreach(_b ${_blocks})
+125:         ird_block_args("${_b}" _args)
+126:         list(GET _args 0 _tgt)
+127:         # 变量名目标（含 ${...}）静态不可展开——跳过（见第 1 步注释）
+128:         if(_tgt MATCHES "\\$\\{")
+129:             continue()
+130:         endif()
+131:         # ALIAS / IMPORTED 不是可链接检查的独立目标
+132:         set(_is_alias FALSE)
+133:         foreach(_a ${_args})
+134:             if(_a STREQUAL "ALIAS" OR _a STREQUAL "IMPORTED")
+135:                 set(_is_alias TRUE)
+136:             endif()
+137:         endforeach()
+138:         if(NOT _is_alias)
+139:             list(APPEND IRD_TARGETS "${_tgt}")
+140:         endif()
+141:     endforeach()
+142: endforeach()
+143: 
+144: # 目标名 → 单元 与 目标名 → 形态（bare/lib、plugin、worker、test、contract_test）
+145: # 解析规则：sdurws_ird_<unit>[_<suffix>]；未知单元目标在边检查时报 SUB。
+146: # WP-22-T02 返工回填（2026-10-06）：_gui_test 后缀并入 test 形态——GUI 测试
+147: # 目标（sdurws_ird_<unit>_gui_test，ui/requirements/modeling 三单元登记的
+148: # 测试目标形态，DTB §5.1"ctest 全单元"口径与各卡 §3.2 目标表）此前三段
+149: # 后缀不匹配任何形态正则、unit 解析为空，其链接边（本单元自边＋testkit）
+150: # 被误判为"表外依赖边 ->ui/->testkit"——按 testkit.md §2.4 T-1 允许形态
+151: # （白名单文件头明文"引擎按此硬编码判定"）归入 test 形态统一判定。
+152: function(ird_classify_target name out_unit out_face)
+153:     set(_unit "")
+154:     set(_face "other")
+155:     if(name MATCHES "^sdurws_ird_([a-z]+)$")
+156:         set(_unit "${CMAKE_MATCH_1}")
+157:         set(_face "product")
+158:     elseif(name MATCHES "^sdurws_ird_([a-z]+)_(plugin|worker|app)$")
+159:         set(_unit "${CMAKE_MATCH_1}")
+160:         set(_face "${CMAKE_MATCH_2}")
+161:     # WP-01-T05：性能测试同样遵守 testkit §2.4 的测试目标规则。只扩展
+162:     # 明确登记的两种后缀；不使用 .*_test，避免任意工具名得到测试豁免。
+163:     elseif(name MATCHES "^sdurws_ird_([a-z]+)_(test|contract_test|gui_test|perf_test|largedata_perf_test)$")
+164:         set(_unit "${CMAKE_MATCH_1}")
+165:         set(_face "test")
+166:     endif()
+167:     set(${out_unit} "${_unit}" PARENT_SCOPE)
+168:     set(${out_face} "${_face}" PARENT_SCOPE)
+169: endfunction()
+170: 
+171: # 提取链接边：每条边记录 "目标|链接库"（规范化 RWS::ird::X → sdurws_ird_X）
+172: set(IRD_EDGES "")
+173: foreach(_cl ${IRD_CMAKELISTS})
+174:     ird_read_flat("${_cl}" _flat)
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt [45-135]
+45: #      acceptance 1 明文创建）：最小可注册实现＝assembly/ 自持描述符
+46: #      门面（pluginId/titleKey 两字段均有 ui.md §11.1/§3.5 登记出处），
+47: #      零业务计算逻辑（卡 §16.1"UI 线程只做投影、插值查表、命令提交"
+48: #      ——契约测试词表扫描钉住）。界面面（轨迹工作流页/曲线视图入口/
+49: #      动画衔接与 §14.5.1 命令族注册）随 WP-16-T12；
+50: #   3. 测试目标 sdurws_ird_trajectory_test 与
+51: #      sdurws_ird_trajectory_contract_test（自持 ird_add_gtest 宏：
+52: #      add_test＋<target>_report XML——core/io/kinematics/selection/
+53: #      dynamics 同款；ctest LABELS "ird"）；
+54: #   4. 配置期依赖红线守卫（R-1/R-3 的 trajectory 侧断言——卡 §3.2；全
+55: #      仓正式门禁归 ird_gates/WP-01-T01，本守卫不替代它）。
+56: # =====================================================================
+57: 
+58: # ---- gtest 接入（DTB §5.5 定稿，唯一机制；随本任务首个测试目标引入）----
+59: # gtest 经 vcpkg 安装（gtest:x64-windows，经典模式）；REQUIRED＝找不到即
+60: # 配置失败（失败即停，不静默跳过测试目标）。不消费框架的 USE_gtest/RW::
+61: # gtest（从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
+62: # 独立冒烟模式必须带 vcpkg toolchain 参数方可解析（CORE-T01 G-2 口径）。
+63: find_package(GTest CONFIG REQUIRED)
+64: 
+65: # ---- Qt6 接入（WP-16-T03——插件目标的 Qt 载体面，R-3 唯一例外面）----
+66: # 仅插件目标消费 Qt（卡 §3.2 二分结构"零 Qt 计算库＋Qt Widgets 插件"；
+67: # dynamics/selection/workflow 落位批同款先例）。组件＝Core/Gui/Widgets
+68: # （Widgets 是 WP-16-T12 轨迹工作流页/曲线视图的本体、Gui/Core 为 Qt 基
+69: # 面；不取 Test——本单元无 GUI 测试目标，GUI 手动验证通道随 WP-16-T12
+70: # ——卡 §17.4 明文本批不启动 GUI）。REQUIRED 同 gtest：找不到即配置
+71: # 失败（不静默跳过插件目标）。独立冒烟模式必须带 CMAKE_PREFIX_PATH 指向
+72: # Qt 安装（编排口径：Qt6 位于 D:/software/Qt/6.11.1/msvc2022_64）。计算
+73: # 库 sdurws_ird_trajectory 保持零 Qt——R-3/NFR-MNT-01：产品面（include/
+74: # ＋src/）源码零 Qt 包含、链接面零 Qt 目标（BuildRedLineTest 与配置期
+75: # 守卫双面钉住）。
+76: find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+77: 
+78: # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
+79: # T03 源码集＝src/DiagCodes.cpp（TRJ-* 12 码登记表——CodeDescriptor 描
+80: # 述符清单＋装配注册函数的唯一实现翻译单元；逐码落值依据见该文件逐码
+81: # 注释）。T04 批（WP-16-T04）按卡 §4.2 布局表增列四个实现翻译单元：
+82: #   src/TrjTypes.cpp   §6 数据模型 T04 面＋段结构守卫（validateTrajectory-
+83: #                      Segment——§6.2 不变量执行点；只读校验零 Q 对象
+84: #                      构造——冒烟模式可编译）
+85: #   src/PlanConfig.cpp §5.5 求解配置五件套（validate/encode/decode/digest/
+86: #                      ConfigEntry 组装——canonical magic IRDCFGTR1；纯
+87: #                      std＋core 头——冒烟模式可编译）
+88: #   src/Ptp.cpp        §7 PTP 规划（插值/构型选择三键/planPtpSegment——
+89: #                      TRJ-01 点到点路径）
+90: #   src/Sequence.cpp   §5.4 任务序列展开（I-REQ-7 校验/Kahn 拓扑/段链——
+91: #                      TRJ-01 有序作业序列）
+92: # 其余翻译单元（CartesianLine/Continuity/Planner/…）随 WP-16-T05~T10
+93: # 增列（本批不预建占位实现，NFR-MNT-04 不建无边界价值包装器）。
+94: #
+95: # Ptp.cpp/Sequence.cpp 为集成模式条件源（kinematics src/Collision.cpp
+96: # 同款 gating 先例——WP-15-T07）：两 TU 构造/析构 rw::math::Q 对象，而
+97: # Q 的虚析构符号（rw::math::Q::~Q）定义在框架库 sdurw_math 内（非
+98: # header-only）——冒烟模式无框架库可链，链接面必然未定义符号；冒烟
+99: # 口径＝"目标注册＋include 路径"（DTB §5.1），Q 构造型算法面的真实验证
+100: # 归集成模式（唯一交付口径）。注意与 TrjTypes.cpp 的差异：后者只做
+101: # const 引用遍历校验，不实例化任何 Q 构造/析构点，两模式均可编译链接。
+102: add_library(sdurws_ird_trajectory STATIC
+103:     src/DiagCodes.cpp
+104:     src/TrjTypes.cpp
+105:     src/PlanConfig.cpp
+106:     src/FailureLocate.cpp  # §14.4 失败段诊断定位（素材→DiagnosticEntry 组装
+107:                             #   ——WP-16-T09；纯值面零 Q 构造，两模式皆可
+108:                             #   编译——TrjTypes.cpp 同款非条件源）
+109:     src/Commands.cpp     # §15.11/§14.5.1 领域命令适配器（七命令词表查表＋零
+110:                          #   修订会话契约——WP-16-T10；纯 std 零 rw/io 符号
+111:                          #   面，双模式无条件编译——dynamics Commands.cpp
+112:                          #   先例；契约测试两模式皆可运行时调 handle）
+113:     src/Export.cpp)      # §15.13 标准轨迹导出（魔数行＋身份块＋逐时刻逐
+114:                          #   关节长表——WP-16-T10；payload 只做 const 分量
+115:                          #   级读取零 Q 构造/析构点，io ICsvWriter 通道双
+116:                          #   模式可达——TrjTypes.cpp"零 Q 构造面"同款先例）
+117: 
+118: if(TARGET sdurw_kinematics)
+119:     target_sources(sdurws_ird_trajectory PRIVATE
+120:         src/Ptp.cpp           # §7 PTP 规划（Q 构造面——集成条件，见上）
+121:         src/Sequence.cpp      # §5.4 序列展开（Q 构造面——集成条件，见上）
+122:         src/CartesianLine.cpp # §8 笛卡尔直线段＋IK ③端口逐采样连续性
+123:                               #   （Q 构造面——WP-16-T05；集成条件，见上）
+124:         src/Continuity.cpp    # §9 段边界几何连续＋C2 适用双路（Q 构造面
+125:                               #   ——WP-16-T05；集成条件，见上）
+126:         src/Planner.cpp       # §10 规划器适配＋避障重规划编排（消费
+127:                               #   sdurw_pathplanners 非模板符号 RRTPlanner/
+128:                               #   QConstraint 与 policy 会话——WP-16-T06；
+129:                               #   集成条件，见上；Planner.hpp 公共头对 rw/
+130:                               #   policy/runtime 仅前向声明，两模式皆可编译）
+131:         src/Smooth.cpp        # §11.4 简化/平滑＋§15.7 管线（五次 Hermite
+132:                               #   ＋λ 收缩重试——WP-16-T07 第一提交；Q 构造
+133:                               #   面——集成条件，见上）
+134:         src/Recheck.cpp        # §11.1 复检协议＋§15.6 管线（细分双上界/预算
+135:                                #   /PathSequence/三态结论——WP-16-T07 第二提
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp [30-115]
+30: #include <sdurws/ird/optimization/Types.hpp>
+31: #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+32: 
+33: #include <gtest/gtest.h>
+34: 
+35: #include <algorithm>
+36: #include <cmath>
+37: #include <cstdint>
+38: #include <numeric>
+39: #include <string>
+40: #include <vector>
+41: 
+42: using namespace sdurws::ird;
+43: using optimization::CandidateId;
+44: using optimization::defaultObjectives;
+45: using optimization::dominates;
+46: using optimization::FeasibleCandidate;
+47: using optimization::IParetoFrontBuilder;
+48: using optimization::makeObjectiveSet;
+49: using optimization::MetricId;
+50: using optimization::ObjectiveEntry;
+51: using optimization::ObjectiveSet;
+52: using optimization::ParetoFrontBuilder;
+53: using optimization::ParetoFrontEntry;
+54: using optimization::ParetoFrontResult;
+55: using optimization::kMetricCount;
+56: using optimization::kOptInputInvalid;
+57: using optimization::OptimizationError;
+58: using optimization::OptimizationStage;
+59: 
+60: namespace {
+61: 
+62: // =====================================================================
+63: // 构造辅助
+64: // =====================================================================
+65: 
+66: /// 指定种子的非零候选身份（内容寻址格式的测试构造——字节填种子，避免
+67: /// 保留值全零；种子即身份在断言中的可读标记）。
+68: CandidateId makeCid(unsigned char seed)
+69: {
+70:     CandidateId id;
+71:     id.bytes.fill(seed);
+72:     return id;
+73: }
+74: 
+75: /// 两目标（包络 min + 裕量 max）可行候选构造——本组测试的标准场景：
+76: /// 指标向量按 {Envelope, MinJointMargin} 两槽填值，其余槽全 nullopt
+77: /// （非激活槽自由——§7.4"八槽全量展示"语义的输入形态）。
+78: FeasibleCandidate makeCandidate(unsigned char seed, double envelope,
+79:                                 double margin, bool isBaseline = false)
+80: {
+81:     FeasibleCandidate c;
+82:     c.candidateId = makeCid(seed);
+83:     c.isBaseline = isBaseline;
+84:     c.metricValues.assign(kMetricCount, std::nullopt);
+85:     c.metricValues[static_cast<std::size_t>(MetricId::Envelope)] = envelope;
+86:     c.metricValues[static_cast<std::size_t>(MetricId::MinJointMargin)] = margin;
+87:     return c;
+88: }
+89: 
+90: /// 两目标（min 包络 / max 裕量）零容差目标集——标准场景 objectives。
+91: ObjectiveSet makeTwoObjectives()
+92: {
+93:     return makeObjectiveSet({{MetricId::Envelope, {}},
+94:                              {MetricId::MinJointMargin, {}}});
+95: }
+96: 
+97: /// 按 entries 序取身份（断言辅助）。
+98: std::vector<CandidateId> idsOf(const ParetoFrontResult& r)
+99: {
+100:     std::vector<CandidateId> ids;
+101:     ids.reserve(r.entries.size());
+102:     for (const auto& e : r.entries) {
+103:         ids.push_back(e.candidateId);
+104:     }
+105:     return ids;
+106: }
+107: 
+108: }  // namespace
+109: 
+110: // =====================================================================
+111: // 支配判定（§7.4 定义式——严格序/容差/max 方向）
+112: // =====================================================================
+113: 
+114: /// §7.4 严格序（零容差默认——DOPT-5/P-OPT-5 安全默认）：经典 min-min 场景
+115: /// 的支配/被支配/互不支配/相同向量互不支配四象限（解析期望）。
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp [1-130]
+1: /**
+2:  * @file   StatisticsTest.cpp
+3:  * @brief  WP-17-T04 用例组——输出序列与峰值/RMS/功率能量统计面（DynSeries/
+4:  *         DynEnvelope/DynPowerEnergy/DynStatsIntegration 四组）：峰值持续
+5:  *         时间窗与所在轨迹段黄金算例、时间加权 RMS 含驻留解析对照（禁样
+6:  *         本平均对照）、E⁺/E⁻ 分项与制动段符号、序列身份冻结与内容身份
+7:  *         确定性、类型化不混算（转动 N·m/移动 N）、Empty 与无效显式 NaN
+8:  *         不伪造、fail-fast 边界、RNEA→序列→统计端到端（任务契约
+9:  *         WP-17-T04 acceptance 逐条的执行证明面）。
+10:  *
+11:  * 设计依据：
+12:  *   - units/dynamics.md §4.4/§4.6（序列数据模型与纪律）、§7.2（峰值三要
+13:  *     素＋持续时间窗＝峰值样本连续等值 run——D-DYN-8 无阈值化）、§7.3
+14:  *     （RMS 时间加权含驻留——D-DYN-9 禁样本平均）、§7.5（功率/能量符号
+15:  *     约定）、§10.3/§10.4/§10.5（三计算器契约表）、§4.5（量纲——转动
+16:  *     N·m/移动 N 类型化）
+17:  *   - 需求 DYN-03（输出每轴转角/位移、转速、加速度、类型化广义力、机械
+18:  *     功率、峰值和 RMS 包络；峰值必须报告持续时间窗和所在轨迹段，RMS
+19:  *     基于完整任务循环〔含驻留〕）
+20:  *   - 决策 D-DYN-8/D-DYN-9（窗口无阈值化/时间加权）、D-DYN-4（类型化广
+21:  *     义力存储 SI double＋jointType 标签——统计逐关节不混算）
+22:  *
+23:  * 数值对照口径（附录 D C7"测试对照容差与产品容差分离"）：黄金期望值在
+24:  *   本文件逐用例**手工按公式算出**（梯形黄金＝对采样网格逐相邻样本对
+25:  *   展开——与卡 §7.3"公式固定、黄金算例对照解析积分"同口径），断言容差
+26:  *   为**相对 1e-12**（双精度同序求和的表示误差远低于此）；无任何容差进
+27:  *   入产品代码（产品侧零自设阈值——P-DYN-9 能量量纲运行容差缺位不得预
+28:  *   填，本文件是唯一对照面）。
+29:  */
+30: 
+31: #include <sdurws/ird/dynamics/DynTypes.hpp>
+32: #include <sdurws/ird/dynamics/Envelope.hpp>
+33: #include <sdurws/ird/dynamics/Errors.hpp>
+34: #include <sdurws/ird/dynamics/InverseDynamics.hpp>
+35: #include <sdurws/ird/dynamics/PowerEnergy.hpp>
+36: #include <sdurws/ird/dynamics/SeriesBuilder.hpp>
+37: #include <sdurws/ird/evidence/Evaluator.hpp>          // IEvaluationContext（端到端用例宿主面）
+38: #include <sdurws/ird/runtime/CanonicalModel.hpp>      // 混合链直构（测试夹具——含 CanonicalModelBuilder）
+39: #include <sdurws/ird/runtime/Description.hpp>
+40: #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
+41: 
+42: #include <gtest/gtest.h>
+43: 
+44: #include <cmath>
+45: #include <cstdint>
+46: #include <limits>
+47: #include <optional>
+48: #include <string>
+49: #include <vector>
+50: 
+51: #include "TwoLinkFixture.hpp"
+52: 
+53: using namespace sdurws::ird::dynamics::testfixture;
+54: 
+55: using sdurws::ird::core::ContentIdentity;
+56: using sdurws::ird::core::ObjectId;
+57: using sdurws::ird::dynamics::DynamicsEnvelopeCalculator;
+58: using sdurws::ird::dynamics::DynamicsSample;
+59: using sdurws::ird::dynamics::DynamicsSeries;
+60: using sdurws::ird::dynamics::DynamicsSeriesBuilder;
+61: using sdurws::ird::dynamics::DynamicsValidity;
+62: using sdurws::ird::dynamics::DynJointType;
+63: using sdurws::ird::dynamics::DynamicsError;
+64: using sdurws::ird::dynamics::InverseDynOutcome;
+65: using sdurws::ird::dynamics::InverseDynRequest;
+66: using sdurws::ird::dynamics::InverseDynSampleInput;
+67: using sdurws::ird::dynamics::InverseDynamicsEvaluator;
+68: using sdurws::ird::dynamics::OperatingConditionResult;
+69: using sdurws::ird::dynamics::PeakRecord;
+70: using sdurws::ird::dynamics::PowerEnergyCalculator;
+71: using sdurws::ird::dynamics::PowerEnergySummary;
+72: using sdurws::ird::dynamics::SampleNumericState;
+73: using sdurws::ird::dynamics::SeriesIdentity;
+74: 
+75: namespace {
+76: 
+77: // =====================================================================
+78: // 本地替身与助手（同 RneaTest.cpp 形态——替身只承载对话形状，不伪造
+79:  //  任何评估逻辑；全部断言针对真实产品代码）。
+80: // =====================================================================
+81: 
+82: /// 宿主上下文本地替身（evidence 卡口径——端到端用例的取消/进度宿主面）。
+83: class FakeContext final : public sdurws::ird::evidence::IEvaluationContext {
+84: public:
+85:     bool cancellationRequested() const override { return mCancelled; }
+86:     void reportProgress(std::uint8_t, std::string_view) override {}
+87:     std::optional<std::vector<std::uint8_t>> tryObjectBytes(
+88:         sdurws::ird::core::ObjectId, sdurws::ird::core::ContentVersion) const override
+89:     {
+90:         return std::nullopt;
+91:     }
+92:     bool mCancelled = false;  ///< 置 true＝模拟宿主取消请求
+93: };
+94: 
+95: /// 黄金对照相对容差（本文件声明——测试对照口径，附录 D C7 分离；双精度
+96: /// 同序求和表示误差远低于此）。
+97: constexpr double kGoldenRelTol = 1e-12;
+98: 
+99: /// 世界系重力幅值（单位 m/s²——解析式的 g；WorldPlacement 默认 (0,0,−9.81)）。
+100: constexpr double kG = 9.81;
+101: 
+102: /// 相对容差断言（期望为 0 时退化为绝对 1e-15——避免零除）。
+103: void expectNearRel(double actual, double expected, const char* what)
+104: {
+105:     const double tol = std::max(1e-15, kGoldenRelTol * std::abs(expected));
+106:     EXPECT_NEAR(actual, expected, tol) << what << "（实得 " << actual << "，期望 " << expected
+107:                                        << "）";
+108: }
+109: 
+110: /// 样本行构造助手（手工黄金序列用——分项字段按"统计器只消费 τ_total/
+111: /// 功率/速度/加速度"的事实填充自洽值：五分项恒等式在此恒成立，与构建
+112: /// 器/统计器"不校验恒等式"的分层一致，SeriesBuilder.hpp 文件头）。
+113: DynamicsSample rowAt(double t, std::uint32_t segment, std::uint32_t joint,
+114:                      DynJointType jointType, double q, double qd, double qdd,
+115:                      double tauTotal, double power, double energyJ = 0.0)
+116: {
+117:     DynamicsSample r;
+118:     r.t = t;                                  // s
+119:     r.segmentIndex = segment;                 // 所在轨迹段（0 基）
+120:     r.conditionId = idFrom<ObjectId>("golden-cond");   // 工况 id（黄金序列统一值）
+121:     r.jointIndex = joint;
+122:     r.jointObjectId = idFrom<ObjectId>("golden-joint");
+123:     r.jointType = jointType;                  // 转动 N·m／移动 N（类型化标签）
+124:     r.q = q;                                  // rad 或 m
+125:     r.qd = qd;                                // rad/s 或 m/s
+126:     r.qdd = qdd;                              // rad/s² 或 m/s²
+127:     r.tauGravity = 0.0;                       // 黄金行不做分项拆解（见助手注释）
+128:     r.tauInertia = 0.0;
+129:     r.tauCoriolisCentrifugal = 0.0;
+130:     r.tauFriction = 0.0;
+
+FILE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp [1-95]
+1: /**
+2:  * @file   XacroExpandTest.cpp
+3:  * @brief  Xacro 受控展开语义用例组（MdlXacroExpand）——契约
+4:  *         tasks/foundation/WP-13-T06.json acceptance 逐条具名自证：
+5:  *           ACC1 接口落位/受控子集（IXacroExpandService §9.4.9 签名、
+6:  *                属性/宏/include 声明式替换、绝不执行任意代码——表达式与
+7:  *                $(...) 显式拒绝、P-MDL-4 所有权口径：io 公共面零改动由
+8:  *                提交面承载，本组只证 modeling 侧语义引擎面）
+9:  *           ACC2 未定义宏/参数行列定位诊断（宏名/参数名＋源行列，MDL-19/
+10:  *                AT-31）＋io 护栏码透传（include 环 IO-FORMAT-XML-CYCLE
+11:  *                ——V-09；依赖缺失 IO-RES-MISSING；深度护栏 IO-SEC-BUDGET-
+12:  *                INCLUDE）＋无草稿无产物＋参数列表展示数据
+13:  *           ACC3 展开产物经 mapXacroExpanded 走 mapUrdf 同一映射（草稿
+14:  *                逐字段相等——§6.5"相同映射与安全边界"）＋原始 .xacro
+15:  *                digest 进草稿 externalRefs（Recorded 来源留痕）＋展开
+16:  *                失败不产生草稿（无产物面）
+17:  *           ACC5 确定性（同输入字节＋同 substitutions→同展开字节、同诊断
+18:  *                顺序——NFR-COR-02）＋可重入无共享可变状态（卡 §3.4）
+19:  *
+20:  * 设计依据：units/modeling.md §6.5/§9.4.9/§9.5/§3.4、units/io.md §6.2/
+21:  * §6.5/§10.5；需求 MDL-19、AT-31/V-09、NFR-COR-01/02/03。
+22:  *
+23:  * fixture 口径：全部 inline 字符串 Xacro（Xacro 黄金样例随 WP-13-T16
+24:  * 收口——契约 note ④）；依赖树/快照/字节表按 io 值类型手工构造（模拟
+25:  * io IResourceReader 产物——装配面归向导域侧，本单元不读文件）。带环树/
+26:  * 缺失叶树按 io 契约不应从真实 io 产出——此处为透传面的防御性注入样例
+27:  * （V-09 观测面：modeling 对带环输入给 IO-FORMAT-XML-CYCLE，无草稿）。
+28:  */
+29: 
+30: #include <sdurws/ird/modeling/XacroExpand.hpp>
+31: 
+32: #include <sdurws/ird/core/DiagData.hpp>             // DiagnosticRecord 字段断言
+33: #include <sdurws/ird/core/Digest.hpp>               // ContentDigester——展开产物真实摘要
+34: #include <sdurws/ird/io/IoDiagnostics.hpp>          // io::errorCodeToken——IO-* 码面
+35: #include <sdurws/ird/modeling/DiagCodes.hpp>        // MDL-IMPORT-XACRO-UNRESOLVED 常量
+36: #include <sdurws/ird/modeling/Import.hpp>           // ModelImportMapper/ValidatedSource/ImportOptions
+37: #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
+38: 
+39: #include <gtest/gtest.h>
+40: 
+41: #include <algorithm>
+42: #include <cstdint>
+43: #include <string>
+44: #include <vector>
+45: 
+46: using sdurws::ird::core::ContentDigester;
+47: using sdurws::ird::core::Digest256;
+48: using sdurws::ird::io::ResourceDependencyTree;
+49: using sdurws::ird::io::ResourceEdge;
+50: using sdurws::ird::io::ResourceEdgeKind;
+51: using sdurws::ird::io::ResourceNode;
+52: using sdurws::ird::io::ResourceSnapshot;
+53: using sdurws::ird::modeling::ExpandOutcome;
+54: using sdurws::ird::modeling::IXacroExpandService;
+55: using sdurws::ird::modeling::ImportOptions;
+56: using sdurws::ird::modeling::ImportOutcome;
+57: using sdurws::ird::modeling::ModelImportMapper;
+58: using sdurws::ird::modeling::ValidatedSource;
+59: using sdurws::ird::modeling::ValidatedXacroSource;
+60: using sdurws::ird::modeling::XacroExpandErrorCode;
+61: using sdurws::ird::modeling::XacroExpandService;
+62: using sdurws::ird::modeling::XacroParameterItem;
+63: using sdurws::ird::modeling::XacroSubstitutionMap;
+64: using sdurws::ird::modeling::kMdlImportXacroUnresolved;
+65: using sdurws::ird::modeling::kXacroMaxExpansionDepth;
+66: 
+67: namespace {
+68: 
+69: // =====================================================================
+70: // fixture 设施（io 产物模拟——ValidatedXacroSource 的装配面）
+71: // =====================================================================
+72: 
+73: /// 字节串助手（string→vector<uint8_t>——io 产物字节形态）。
+74: std::vector<std::uint8_t> asBytes(const std::string& text)
+75: {
+76:     return std::vector<std::uint8_t>(text.begin(), text.end());
+77: }
+78: 
+79: /// 真实摘要（core ContentDigester——SA-12 唯一算法；fixture 与实现同一
+80: /// 摘要路径，避免"占位摘要"弱化来源留痕断言）。
+81: Digest256 digestOf(const std::string& text)
+82: {
+83:     ContentDigester digester;
+84:     digester.update(text.data(), text.size());
+85:     return digester.finalize();
+86: }
+87: 
+88: /// 构造"存在"的依赖树节点（快照 digest 对字节真实计算——io §8.2 三元组
+89: /// 形态；mtime/size 为提示性占位）。
+90: ResourceNode existingNodeFor(const std::string& relPath, const std::string& content)
+91: {
+92:     ResourceNode node;
+93:     node.relPath = relPath;
+94:     node.exists = true;
+95:     ResourceSnapshot snapshot;

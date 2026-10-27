@@ -1,0 +1,54 @@
+Note: Google Test filter = WorkCellGeometryTest.*:WorkCellCompilerTest.PrismaticOffset*:CompilerTest.CompilesTenStage*
+[==========] Running 15 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkCellCompilerTest
+[ RUN      ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1
+[       OK ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1 (5 ms)
+[----------] 1 test from WorkCellCompilerTest (5 ms total)
+
+[----------] 13 tests from WorkCellGeometryTest
+[ RUN      ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1
+[       OK ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1 (0 ms)
+[ RUN      ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1
+[       OK ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1 (0 ms)
+[ RUN      ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2
+[       OK ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2 (0 ms)
+[ RUN      ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3
+[       OK ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3 (0 ms)
+[ RUN      ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4
+[       OK ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4 (0 ms)
+[ RUN      ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5
+[       OK ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7 (28 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshObjAttachedEndToEnd_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshObjAttachedEndToEnd_RT_GEO_7 (18 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshDigestMismatchSkipped_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshDigestMismatchSkipped_RT_GEO_7 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshUnsupportedFormatSkipped_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshUnsupportedFormatSkipped_RT_GEO_7 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30
+[       OK ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30 (7 ms)
+[ RUN      ] WorkCellGeometryTest.ConcurrentSameMeshCompiles_REUSE_T13
+[       OK ] WorkCellGeometryTest.ConcurrentSameMeshCompiles_REUSE_T13 (69 ms)
+[ RUN      ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellGeometryTest.cpp(1038): error: Value of: job.get()
+  Actual: false
+Expected: true
+加载器修改了调用线程locale或编译未按代理回退
+
+[  FAILED  ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13 (15 ms)
+[----------] 13 tests from WorkCellGeometryTest (142 ms total)
+
+[----------] 1 test from CompilerTest
+[ RUN      ] CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3
+[       OK ] CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3 (0 ms)
+[----------] 1 test from CompilerTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 15 tests from 3 test suites ran. (148 ms total)
+[  PASSED  ] 14 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13
+
+ 1 FAILED TEST

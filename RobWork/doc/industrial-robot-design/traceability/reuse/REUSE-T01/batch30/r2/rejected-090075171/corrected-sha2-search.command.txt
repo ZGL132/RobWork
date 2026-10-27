@@ -1,0 +1,1 @@
+rg -n -i 'sha.?256|sha.?2\b|openssl|bcrypt|cryptopp|crypto' RobWork/RobWork RobWork/RobWorkSim -g '!bin/**' -g '!libs/**' -g '!cmake/targets/**'

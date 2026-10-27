@@ -1,0 +1,4 @@
+run-flake-probe: ird_execution_boundary_audit repeat=1 loadJobs=0 out=C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b23-probe-green\one-real-test
+  run 1/1: PASS exit=0 0.1s failed=[]
+run-flake-probe: 汇总 C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b23-probe-green\one-real-test\summary.txt（failed runs=0/1）
+run-flake-probe: PASS —— 1/1 全绿（未复现；本结果只证明本次环境稳定，不证明无竞态）

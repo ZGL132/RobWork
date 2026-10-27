@@ -1,0 +1,42 @@
+[
+  {
+    "id": "runtime.jointStaticTransform",
+    "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::jointStaticTransform",
+    "startLine": 541,
+    "endLine": 553,
+    "hashMatches": true,
+    "sha256": "3290ac5bbbc1fac433ac36ef73223e4effdea03d0399410e313839d75507f590",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "id": "kinematics.MidSolveDegradedView",
+    "qualifiedSymbol": "::MidSolveDegradedView",
+    "startLine": 241,
+    "endLine": 264,
+    "hashMatches": true,
+    "sha256": "fc40f3bfb56e65951d04f50f51517e08eff36bb8f5afd8a3ecf8a2a16d4a2bfb",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "id": "ui.ObservedView",
+    "qualifiedSymbol": "(anonymous namespace)::KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
+    "startLine": 957,
+    "endLine": 971,
+    "hashMatches": true,
+    "sha256": "dc426020186569c97c501bcd3b1dabddd3f62e5bfacc13c74b8b6305a94c7002",
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "id": "runtime.WorkCellConstView.findDevice",
+    "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findDevice",
+    "startLine": 997,
+    "endLine": 1003,
+    "hashMatches": true,
+    "sha256": "86fa247a2b003a68f5fd67c54a293c61926414cc76c285d468b52db6a91a2967",
+    "decision": "pending",
+    "status": "pending"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "legacy-codex-no-base",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json -Head 4d0f1ab024f093b65d9839d090b124da721aa69f",
+    "expectedExitCode": 1,
+    "exitCode": 0,
+    "passed": false,
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/legacy-codex-no-base.log"
+  },
+  {
+    "name": "legacy-codex-explicit-base-control",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json -Base 58962b338505fc9f69b6a9f1a50e2d55712efffc -Head 4d0f1ab024f093b65d9839d090b124da721aa69f",
+    "expectedExitCode": 1,
+    "exitCode": 1,
+    "passed": true,
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/legacy-codex-explicit-base-control.log"
+  },
+  {
+    "name": "mainline-contract-no-base-control",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T23.json -Head 4d0f1ab024f093b65d9839d090b124da721aa69f",
+    "expectedExitCode": 1,
+    "exitCode": 1,
+    "passed": true,
+    "log": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/mainline-contract-no-base-control.log"
+  }
+]

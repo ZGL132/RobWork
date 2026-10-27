@@ -1,0 +1,87 @@
+Note: Google Test filter = KinIk.*
+[==========] Running 39 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 39 tests from KinIk
+[ RUN      ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2
+[       OK ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.FkFacilityFailureYieldsValueFormNotThrow_F746_3
+[       OK ] KinIk.FkFacilityFailureYieldsValueFormNotThrow_F746_3 (0 ms)
+[ RUN      ] KinIk.PositionOnlyTaskIndependentDimension_KIN_P2
+[       OK ] KinIk.PositionOnlyTaskIndependentDimension_KIN_P2 (2 ms)
+[ RUN      ] KinIk.TaskSpaceOutOfRangeFailsFast_KIN_P2
+[       OK ] KinIk.TaskSpaceOutOfRangeFailsFast_KIN_P2 (1 ms)
+[ RUN      ] KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1
+[       OK ] KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.MultiInitNoConvergenceCarriesSearchRecord_WP15T04_ACC2
+[       OK ] KinIk.MultiInitNoConvergenceCarriesSearchRecord_WP15T04_ACC2 (3 ms)
+[ RUN      ] KinIk.IllegalRequestFailsFast_WP15T04_ACC4
+[       OK ] KinIk.IllegalRequestFailsFast_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinIk.AnalyticBoundExceededMaterialValidatable_WP15T04_ACC4
+[       OK ] KinIk.AnalyticBoundExceededMaterialValidatable_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinIk.InitialValueStrategiesDeterministic_WP15T04_ACC2
+[       OK ] KinIk.InitialValueStrategiesDeterministic_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.SeededRandomFull64BitSeedSensitivity_A06_KIN_P5
+[       OK ] KinIk.SeededRandomFull64BitSeedSensitivity_A06_KIN_P5 (0 ms)
+[ RUN      ] KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2
+[       OK ] KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3
+[       OK ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1
+[       OK ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3
+[       OK ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1
+[       OK ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2
+[       OK ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2
+[       OK ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2
+[       OK ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1
+[       OK ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3
+[       OK ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3
+[       OK ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3
+[       OK ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.NamedTcpRealSolveAndReachBound_REQ01_A15
+[       OK ] KinIk.NamedTcpRealSolveAndReachBound_REQ01_A15 (0 ms)
+[ RUN      ] KinIk.ToolRollRangeScreensTwist_WP14T12
+[       OK ] KinIk.ToolRollRangeScreensTwist_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollRangeIteratesIntoRange_WP14T12
+[       OK ] KinIk.ToolRollRangeIteratesIntoRange_WP14T12 (0 ms)
+[ RUN      ] KinIk.PitchRowNonzeroYawConverges_WP14T12
+[       OK ] KinIk.PitchRowNonzeroYawConverges_WP14T12 (0 ms)
+[ RUN      ] KinIk.YawOnlyMaskSatisfiedAtGimbalTarget_WP14T12
+[       OK ] KinIk.YawOnlyMaskSatisfiedAtGimbalTarget_WP14T12 (0 ms)
+[ RUN      ] KinIk.TiltedToolTwistFreeDirection_WP14T12
+[       OK ] KinIk.TiltedToolTwistFreeDirection_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12
+[       OK ] KinIk.ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollOppositeAxisRejected_REQ09_WP14T12
+[       OK ] KinIk.ToolRollOppositeAxisRejected_REQ09_WP14T12 (4 ms)
+[ RUN      ] KinIk.ToolRollDirectionCorrectionRealFk_REQ09_WP14T12
+[       OK ] KinIk.ToolRollDirectionCorrectionRealFk_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollPeriodicIntervals_REQ09_WP14T12
+[       OK ] KinIk.ToolRollPeriodicIntervals_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.RotatedReferenceMaskConverges_REQ01_WP14T12
+[       OK ] KinIk.RotatedReferenceMaskConverges_REQ01_WP14T12 (0 ms)
+[ RUN      ] KinIk.GimbalPlus90PitchConverges_WP14T12
+[       OK ] KinIk.GimbalPlus90PitchConverges_WP14T12 (0 ms)
+[ RUN      ] KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51
+[       OK ] KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51 (0 ms)
+[ RUN      ] KinIk.FullPoseUpstreamLimitViolationFiltered_REUSE_T51
+[       OK ] KinIk.FullPoseUpstreamLimitViolationFiltered_REUSE_T51 (0 ms)
+[ RUN      ] KinIk.FullPoseUpstreamUnreachableNoFalseSuccess_REUSE_T51
+[       OK ] KinIk.FullPoseUpstreamUnreachableNoFalseSuccess_REUSE_T51 (1 ms)
+[ RUN      ] KinIk.FullPoseUpstreamDirectComparison_REUSE_T51
+[       OK ] KinIk.FullPoseUpstreamDirectComparison_REUSE_T51 (0 ms)
+[ RUN      ] KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51
+[       OK ] KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51 (0 ms)
+[----------] 39 tests from KinIk (23 ms total)
+
+[----------] Global test environment tear-down
+[==========] 39 tests from 1 test suite ran. (24 ms total)
+[  PASSED  ] 39 tests.

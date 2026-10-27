@@ -1,0 +1,43 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B27",
+  "contextRed": {
+    "executed": 16,
+    "passed": 8,
+    "failed": 8,
+    "skipped": 0
+  },
+  "contextGreen": {
+    "executed": 16,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0
+  },
+  "indexChecks": {
+    "executed": 16,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0
+  },
+  "originalSuite": {
+    "pwsh": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "powershell": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "independentAcceptance": "pending",
+  "notRun": [
+    "全T01其余功能",
+    "T02/算法替换",
+    "C++/GUI（本批无产品变更）",
+    "远程同步/CI"
+  ]
+}

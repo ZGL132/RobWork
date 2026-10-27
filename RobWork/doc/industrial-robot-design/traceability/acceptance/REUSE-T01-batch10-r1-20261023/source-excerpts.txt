@@ -1,0 +1,835 @@
+FUNCTION core.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp 18-23
+18: int main(int argc, char** argv)
+19: {
+20:     ::testing::InitGoogleTest(&argc, argv);
+21:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+22:     return RUN_ALL_TESTS();
+23: }
+FUNCTION core.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt 134-147
+134: macro(ird_add_gtest target)
+135:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+136:     add_custom_target(
+137:         ${target}_report
+138:         COMMAND ${CMAKE_COMMAND} -E make_directory
+139:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+140:         COMMAND $<TARGET_FILE:${target}>
+141:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+142:         DEPENDS ${target}
+143:         COMMENT "ird: run ${target} and write gtest XML report"
+144:     )
+145:     set_target_properties(${target}_report PROPERTIES
+146:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+147: endmacro()
+FUNCTION diagnostics.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt 257-269
+257: macro(ird_add_gtest target)
+258:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+259:     add_custom_target(
+260:         ${target}_report
+261:         COMMAND ${CMAKE_COMMAND} -E make_directory
+262:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+263:         COMMAND $<TARGET_FILE:${target}>
+264:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+265:         DEPENDS ${target}
+266:         COMMENT "ird: run ${target} and write gtest XML report")
+267:     set_target_properties(${target}_report PROPERTIES
+268:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+269: endmacro()
+FUNCTION drivetrain.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp 25-36
+25: int main(int argc, char** argv)
+26: {
+27:     ::testing::InitGoogleTest(&argc, argv);
+28:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+29:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+30:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+31:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+32:     // traceability/builds/wp18-t02/）；写盘失败只向 stderr 告警，不掩盖
+33:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+34:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+35:     return RUN_ALL_TESTS();
+36: }
+FUNCTION drivetrain.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp 45-71
+45: int main(int argc, char** argv)
+46: {
+47: #if defined(_MSC_VER) && defined(_DEBUG)
+48:     // CRT 断言通道重定向（仅 MSVC Debug 构建编译进——Release 零影响）：
+49:     // WARN/ERROR/ASSERT 三类报告全部路由到 stderr、不启用窗口模式
+50:     // （_CRTDBG_MODE_WNDW）。背景见文件头"F-795"段——容器断言红证据与
+51:     // 退出期既有堆断言噪声都经此无头化；放在 main 最前，保证其后任何
+52:     // 断言（含用例执行与进程收尾）都不弹窗。
+53:     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+54:     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+55:     _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+56:     _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+57:     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+58:     _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+59:     _set_error_mode(_OUT_TO_STDERR);
+60: #endif
+61: 
+62:     ::testing::InitGoogleTest(&argc, argv);
+63:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+64:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+65:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+66:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+67:     // traceability/builds/wp18-t02/）；写盘失败只向 stderr 告警，不掩盖
+68:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+69:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+70:     return RUN_ALL_TESTS();
+71: }
+FUNCTION drivetrain.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt 203-215
+203: macro(ird_add_gtest target)
+204:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+205:     add_custom_target(
+206:         ${target}_report
+207:         COMMAND ${CMAKE_COMMAND} -E make_directory
+208:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+209:         COMMAND $<TARGET_FILE:${target}>
+210:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+211:         DEPENDS ${target}
+212:         COMMENT "ird: run ${target} and write gtest XML report")
+213:     set_target_properties(${target}_report PROPERTIES
+214:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+215: endmacro()
+FUNCTION dynamics.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ContractTestMain.cpp 25-36
+25: int main(int argc, char** argv)
+26: {
+27:     ::testing::InitGoogleTest(&argc, argv);
+28:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+29:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+30:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+31:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+32:     // traceability/builds/wp17-t02/）；写盘失败只向 stderr 告警，不掩盖
+33:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+34:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+35:     return RUN_ALL_TESTS();
+36: }
+FUNCTION dynamics.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TestMainReport.cpp 27-38
+27: int main(int argc, char** argv)
+28: {
+29:     ::testing::InitGoogleTest(&argc, argv);
+30:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+31:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+32:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+33:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+34:     // traceability/builds/wp17-t02/）；写盘失败只向 stderr 告警，不掩盖
+35:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+36:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+37:     return RUN_ALL_TESTS();
+38: }
+FUNCTION dynamics.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt 482-494
+482: macro(ird_add_gtest target)
+483:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+484:     add_custom_target(
+485:         ${target}_report
+486:         COMMAND ${CMAKE_COMMAND} -E make_directory
+487:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+488:         COMMAND $<TARGET_FILE:${target}>
+489:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+490:         DEPENDS ${target}
+491:         COMMENT "ird: run ${target} and write gtest XML report")
+492:     set_target_properties(${target}_report PROPERTIES
+493:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+494: endmacro()
+FUNCTION evidence.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp 23-32
+23: int main(int argc, char** argv)
+24: {
+25:     ::testing::InitGoogleTest(&argc, argv);
+26:     // 监听器为静态存储期对象（gtest listeners 不接管所有权）；聚合报告
+27:     // 在 OnTestProgramEnd 写盘（--ird_report=<path> 指定，缺省＝工作目录
+28:     // 下 ird-test-report.json）；写盘失败只向 stderr 告警，不掩盖测试
+29:     // 结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+30:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+31:     return RUN_ALL_TESTS();
+32: }
+FUNCTION evidence.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt 131-143
+131: macro(ird_add_gtest target)
+132:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+133:     add_custom_target(
+134:         ${target}_report
+135:         COMMAND ${CMAKE_COMMAND} -E make_directory
+136:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+137:         COMMAND $<TARGET_FILE:${target}>
+138:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+139:         DEPENDS ${target}
+140:         COMMENT "ird: run ${target} and write gtest XML report")
+141:     set_target_properties(${target}_report PROPERTIES
+142:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+143: endmacro()
+FUNCTION execution.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp 35-53
+35: int main(int argc, char** argv)
+36: {
+37:     // 子进程模式拦截（先于 InitGoogleTest——gtest 不认识自有参数；PRJ-T15
+38:     // 同款时序）。命中即以子进程身份运行并退出（退出码＝子进程语义）。
+39:     {
+40:         exrcv::ChildArgs childArgs;
+41:         if (exrcv::tryParseChildArgs(argc, argv, childArgs)) {
+42:             return exrcv::runRecoveryParkChild(childArgs);
+43:         }
+44:     }
+45: 
+46:     ::testing::InitGoogleTest(&argc, argv);
+47:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+48:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+49:     // OnTestProgramEnd 写盘；写盘失败只向 stderr 告警，不掩盖测试结果
+50:     // （RecordListener 契约）。
+51:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+52:     return RUN_ALL_TESTS();
+53: }
+FUNCTION execution.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp 31-38
+31: int main(int argc, char** argv)
+32: {
+33:     ::testing::InitGoogleTest(&argc, argv);
+34:     // 静态存储期监听器（gtest listeners 不接管所有权——官方 recommended
+35:     // 做法；进程生命周期与测试程序一致）。
+36:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+37:     return RUN_ALL_TESTS();
+38: }
+FUNCTION execution.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt 459-471
+459: macro(ird_add_gtest target)
+460:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+461:     add_custom_target(
+462:         ${target}_report
+463:         COMMAND ${CMAKE_COMMAND} -E make_directory
+464:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+465:         COMMAND $<TARGET_FILE:${target}>
+466:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+467:         DEPENDS ${target}
+468:         COMMENT "ird: run ${target} and write gtest XML report")
+469:     set_target_properties(${target}_report PROPERTIES
+470:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+471: endmacro()
+FUNCTION io.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/contract_test/ContractTestMain.cpp 27-34
+27: int main(int argc, char** argv)
+28: {
+29:     ::testing::InitGoogleTest(&argc, argv);
+30:     // 同 test/TestMainReport.cpp 口径：静态存储期监听器＋OnTestProgramEnd
+31:     // 聚合写盘；写盘失败只告警不掩盖测试结果。
+32:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+33:     return RUN_ALL_TESTS();
+34: }
+FUNCTION io.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/TestMainReport.cpp 35-44
+35: int main(int argc, char** argv)
+36: {
+37:     ::testing::InitGoogleTest(&argc, argv);
+38:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+39:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+40:     // OnTestProgramEnd 写盘；写盘失败只向 stderr 告警，不掩盖测试结果
+41:     // （RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+42:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+43:     return RUN_ALL_TESTS();
+44: }
+FUNCTION io.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt 252-264
+252: macro(ird_add_gtest target)
+253:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+254:     add_custom_target(
+255:         ${target}_report
+256:         COMMAND ${CMAKE_COMMAND} -E make_directory
+257:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+258:         COMMAND $<TARGET_FILE:${target}>
+259:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+260:         DEPENDS ${target}
+261:         COMMENT "ird: run ${target} and write gtest XML report")
+262:     set_target_properties(${target}_report PROPERTIES
+263:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+264: endmacro()
+FUNCTION kinematics.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/contract_test/ContractTestMain.cpp 19-26
+19: int main(int argc, char** argv)
+20: {
+21:     ::testing::InitGoogleTest(&argc, argv);
+22:     // 监听器契约与 _test 目标入口同款（TestMainReport.cpp 注）——写盘
+23:     // 失败只告警不掩盖结果，退出码真实反映用例成败。
+24:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+25:     return RUN_ALL_TESTS();
+26: }
+FUNCTION kinematics.gui_test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/TestMainReport.cpp 34-47
+34: int main(int argc, char** argv)
+35: {
+36:     // QApplication（Widgets 级）：真实 QWidget（KinematicsPanelWidget——
+37:     // 表单/表格/按钮）的构造前提；平台插件由运行方环境提供
+38:     // （QT_QPA_PLATFORM=windows——offscreen 禁用，testkit §6.7）。
+39:     QApplication app(argc, argv);
+40: 
+41:     ::testing::InitGoogleTest(&argc, argv);
+42:     // 静态存储期监听器（ird-test-report.json 与 gtest XML 并存——testkit
+43:     // §7.2；--ird_report=<path> 指定报告路径，缺省工作目录；写盘失败只
+44:     // 告警不掩盖 gtest 退出码）。
+45:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+46:     return RUN_ALL_TESTS();
+47: }
+FUNCTION kinematics.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp 27-42
+27: int main(int argc, char** argv)
+28: {
+29:     // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+30:     // Qt 类型面（QKeySequence 等）的构造前提，不启动事件循环、不要求
+31:     // 窗口系统（modeling T15 先例同款口径）。
+32:     QCoreApplication app(argc, argv);
+33:     ::testing::InitGoogleTest(&argc, argv);
+34:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+35:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+36:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+37:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+38:     // traceability/builds/wp15-t12/）；写盘失败只向 stderr 告警，不掩盖
+39:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+40:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+41:     return RUN_ALL_TESTS();
+42: }
+FUNCTION kinematics.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt 498-510
+498: macro(ird_add_gtest target)
+499:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+500:     add_custom_target(
+501:         ${target}_report
+502:         COMMAND ${CMAKE_COMMAND} -E make_directory
+503:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+504:         COMMAND $<TARGET_FILE:${target}>
+505:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+506:         DEPENDS ${target}
+507:         COMMENT "ird: run ${target} and write gtest XML report")
+508:     set_target_properties(${target}_report PROPERTIES
+509:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+510: endmacro()
+FUNCTION modeling.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/ContractTestMain.cpp 19-26
+19: int main(int argc, char** argv)
+20: {
+21:     ::testing::InitGoogleTest(&argc, argv);
+22:     // 监听器契约与 _test 目标入口同款（TestMainReport.cpp 注）——写盘
+23:     // 失败只告警不掩盖结果，退出码真实反映用例成败。
+24:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+25:     return RUN_ALL_TESTS();
+26: }
+FUNCTION modeling.gui_test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/TestMainReport.cpp 27-39
+27: int main(int argc, char** argv)
+28: {
+29:     // QApplication（Widgets 级）：GUI 用例的运行期前提。平台插件路径由
+30:     // ctest 注册的 ENVIRONMENT（QT_QPA_PLATFORM_PLUGIN_PATH）或运行方
+31:     // 环境提供（ird_gui 串行口径——本 main 不覆盖运行方的环境选择）。
+32:     QApplication app(argc, argv);
+33: 
+34:     ::testing::InitGoogleTest(&argc, argv);
+35:     // 静态存储期监听器（ird-test-report.json 与 gtest XML 并存——testkit
+36:     // §7.2；--ird_report=<path> 指定报告路径，缺省工作目录）。
+37:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+38:     return RUN_ALL_TESTS();
+39: }
+FUNCTION modeling.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TestMainReport.cpp 31-46
+31: int main(int argc, char** argv)
+32: {
+33:     // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+34:     // Marshal 面需要事件系统，但窗口系统（Widgets GUI）本目标不消费
+35:     // （V-30 GUI 用例仅登记流程不执行——契约 acceptance 3）。
+36:     QCoreApplication app(argc, argv);
+37:     ::testing::InitGoogleTest(&argc, argv);
+38:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+39:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+40:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+41:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+42:     // traceability/builds/wp13-t02/）；写盘失败只向 stderr 告警，不掩盖
+43:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+44:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+45:     return RUN_ALL_TESTS();
+46: }
+FUNCTION modeling.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt 664-676
+664: macro(ird_add_gtest target)
+665:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+666:     add_custom_target(
+667:         ${target}_report
+668:         COMMAND ${CMAKE_COMMAND} -E make_directory
+669:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+670:         COMMAND $<TARGET_FILE:${target}>
+671:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+672:         DEPENDS ${target}
+673:         COMMENT "ird: run ${target} and write gtest XML report")
+674:     set_target_properties(${target}_report PROPERTIES
+675:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+676: endmacro()
+FUNCTION optimization.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp 27-38
+27: int main(int argc, char** argv)
+28: {
+29:     ::testing::InitGoogleTest(&argc, argv);
+30:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+31:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+32:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+33:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+34:     // traceability/builds/wp20-t02/）；写盘失败只向 stderr 告警，不掩盖
+35:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+36:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+37:     return RUN_ALL_TESTS();
+38: }
+FUNCTION optimization.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp 28-39
+28: int main(int argc, char** argv)
+29: {
+30:     ::testing::InitGoogleTest(&argc, argv);
+31:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+32:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+33:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+34:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+35:     // traceability/builds/wp20-t02/）；写盘失败只向 stderr 告警，不掩盖
+36:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+37:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+38:     return RUN_ALL_TESTS();
+39: }
+FUNCTION optimization.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt 458-470
+458: macro(ird_add_gtest target)
+459:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+460:     add_custom_target(
+461:         ${target}_report
+462:         COMMAND ${CMAKE_COMMAND} -E make_directory
+463:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+464:         COMMAND $<TARGET_FILE:${target}>
+465:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+466:         DEPENDS ${target}
+467:         COMMENT "ird: run ${target} and write gtest XML report")
+468:     set_target_properties(${target}_report PROPERTIES
+469:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+470: endmacro()
+FUNCTION policy.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp 23-32
+23: int main(int argc, char** argv)
+24: {
+25:     ::testing::InitGoogleTest(&argc, argv);
+26:     // 监听器为静态存储期对象（gtest listeners 不接管所有权）；聚合报告
+27:     // 在 OnTestProgramEnd 写盘（--ird_report=<path> 指定，缺省＝工作目录
+28:     // 下 ird-test-report.json）；写盘失败只向 stderr 告警，不掩盖测试
+29:     // 结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+30:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+31:     return RUN_ALL_TESTS();
+32: }
+FUNCTION policy.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt 316-328
+316: macro(ird_add_gtest target)
+317:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+318:     add_custom_target(
+319:         ${target}_report
+320:         COMMAND ${CMAKE_COMMAND} -E make_directory
+321:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+322:         COMMAND $<TARGET_FILE:${target}>
+323:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+324:         DEPENDS ${target}
+325:         COMMENT "ird: run ${target} and write gtest XML report")
+326:     set_target_properties(${target}_report PROPERTIES
+327:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+328: endmacro()
+FUNCTION project.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TestMainReport.cpp 32-41
+32: int main(int argc, char** argv)
+33: {
+34:     ::testing::InitGoogleTest(&argc, argv);
+35:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+36:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+37:     // OnTestProgramEnd 写盘；写盘失败只向 stderr 告警，不掩盖测试结果
+38:     // （RecordListener 契约）。
+39:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+40:     return RUN_ALL_TESTS();
+41: }
+FUNCTION project.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt 639-651
+639: macro(ird_add_gtest target)
+640:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+641:     add_custom_target(
+642:         ${target}_report
+643:         COMMAND ${CMAKE_COMMAND} -E make_directory
+644:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+645:         COMMAND $<TARGET_FILE:${target}>
+646:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+647:         DEPENDS ${target}
+648:         COMMENT "ird: run ${target} and write gtest XML report")
+649:     set_target_properties(${target}_report PROPERTIES
+650:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+651: endmacro()
+FUNCTION reporting.contract_test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp 35-42
+35: int main(int argc, char** argv)
+36: {
+37:     ::testing::InitGoogleTest(&argc, argv);
+38:     // 静态存储期监听器（gtest listeners 不接管所有权——官方 recommended
+39:     // 做法；进程生命周期与测试程序一致）。
+40:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+41:     return RUN_ALL_TESTS();
+42: }
+FUNCTION reporting.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp 38-45
+38: int main(int argc, char** argv)
+39: {
+40:     ::testing::InitGoogleTest(&argc, argv);
+41:     // 静态存储期监听器（gtest listeners 不接管所有权——官方 recommended
+42:     // 做法；进程生命周期与测试程序一致）。
+43:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+44:     return RUN_ALL_TESTS();
+45: }
+FUNCTION reporting.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt 409-421
+409: macro(ird_add_gtest target)
+410:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+411:     add_custom_target(
+412:         ${target}_report
+413:         COMMAND ${CMAKE_COMMAND} -E make_directory
+414:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+415:         COMMAND $<TARGET_FILE:${target}>
+416:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+417:         DEPENDS ${target}
+418:         COMMENT "ird: run ${target} and write gtest XML report")
+419:     set_target_properties(${target}_report PROPERTIES
+420:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+421: endmacro()
+FUNCTION requirements.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/ContractTestMain.cpp 19-26
+19: int main(int argc, char** argv)
+20: {
+21:     ::testing::InitGoogleTest(&argc, argv);
+22:     // 监听器契约与 _test 目标入口同款（TestMainReport.cpp 注）——写盘
+23:     // 失败只告警不掩盖结果，退出码真实反映用例成败。
+24:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+25:     return RUN_ALL_TESTS();
+26: }
+FUNCTION requirements.gui_test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/TestMainReport.cpp 25-37
+25: int main(int argc, char** argv)
+26: {
+27:     // QApplication（Widgets 级）：GUI 用例的运行期前提。平台插件路径由
+28:     // ctest 注册的 ENVIRONMENT（QT_QPA_PLATFORM_PLUGIN_PATH）或运行方
+29:     // 环境提供（ird_gui 串行口径——本 main 不覆盖运行方的环境选择）。
+30:     QApplication app(argc, argv);
+31: 
+32:     ::testing::InitGoogleTest(&argc, argv);
+33:     // 静态存储期监听器（ird-test-report.json 与 gtest XML 并存——testkit
+34:     // §7.2；--ird_report=<path> 指定报告路径，缺省工作目录）。
+35:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+36:     return RUN_ALL_TESTS();
+37: }
+FUNCTION requirements.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp 28-43
+28: int main(int argc, char** argv)
+29: {
+30:     // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+31:     // 呈现模型测试需要事件系统标记，但窗口系统（Widgets GUI）本目标不
+32:     // 消费（V-22 GUI 用例仅登记流程不执行——卡 §10.2"本次不启动"）。
+33:     QCoreApplication app(argc, argv);
+34:     ::testing::InitGoogleTest(&argc, argv);
+35:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+36:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+37:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+38:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+39:     // traceability/builds/wp14-t02/）；写盘失败只向 stderr 告警，不掩盖
+40:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+41:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+42:     return RUN_ALL_TESTS();
+43: }
+FUNCTION requirements.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt 473-485
+473: macro(ird_add_gtest target)
+474:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+475:     add_custom_target(
+476:         ${target}_report
+477:         COMMAND ${CMAKE_COMMAND} -E make_directory
+478:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+479:         COMMAND $<TARGET_FILE:${target}>
+480:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+481:         DEPENDS ${target}
+482:         COMMENT "ird: run ${target} and write gtest XML report")
+483:     set_target_properties(${target}_report PROPERTIES
+484:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+485: endmacro()
+FUNCTION runtime.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp 23-32
+23: int main(int argc, char** argv)
+24: {
+25:     ::testing::InitGoogleTest(&argc, argv);
+26:     // 监听器为静态存储期对象（gtest listeners 不接管所有权）；聚合报告
+27:     // 在 OnTestProgramEnd 写盘（--ird_report=<path> 指定，缺省＝工作目录
+28:     // 下 ird-test-report.json）；写盘失败只向 stderr 告警，不掩盖测试
+29:     // 结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+30:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+31:     return RUN_ALL_TESTS();
+32: }
+FUNCTION runtime.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt 352-364
+352: macro(ird_add_gtest target)
+353:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+354:     add_custom_target(
+355:         ${target}_report
+356:         COMMAND ${CMAKE_COMMAND} -E make_directory
+357:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+358:         COMMAND $<TARGET_FILE:${target}>
+359:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+360:         DEPENDS ${target}
+361:         COMMENT "ird: run ${target} and write gtest XML report")
+362:     set_target_properties(${target}_report PROPERTIES
+363:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+364: endmacro()
+FUNCTION selection.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp 25-36
+25: int main(int argc, char** argv)
+26: {
+27:     ::testing::InitGoogleTest(&argc, argv);
+28:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+29:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+30:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+31:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+32:     // traceability/builds/wp19-t02/）；写盘失败只向 stderr 告警，不掩盖
+33:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+34:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+35:     return RUN_ALL_TESTS();
+36: }
+FUNCTION selection.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp 27-38
+27: int main(int argc, char** argv)
+28: {
+29:     ::testing::InitGoogleTest(&argc, argv);
+30:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+31:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+32:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+33:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+34:     // traceability/builds/wp19-t02/）；写盘失败只向 stderr 告警，不掩盖
+35:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+36:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+37:     return RUN_ALL_TESTS();
+38: }
+FUNCTION selection.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt 441-453
+441: macro(ird_add_gtest target)
+442:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+443:     add_custom_target(
+444:         ${target}_report
+445:         COMMAND ${CMAKE_COMMAND} -E make_directory
+446:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+447:         COMMAND $<TARGET_FILE:${target}>
+448:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+449:         DEPENDS ${target}
+450:         COMMENT "ird: run ${target} and write gtest XML report")
+451:     set_target_properties(${target}_report PROPERTIES
+452:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+453: endmacro()
+FUNCTION testkit.test.TestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp 24-33
+24: int main(int argc, char** argv)
+25: {
+26:     // 第零步：记录参数（供需要 argv[0] 定位同目录设施的用例读取）。
+27:     g_irdTestArgv = argv;
+28:     // 第一步：安装报告监听（摘除自维护参数 --ird_report=，再交 gtest 解析）。
+29:     ::sdurws::ird::testkit::installTestRecordListener(argc, argv);
+30:     // 第二步：gtest 初始化与全量运行（OnTestProgramEnd 聚合写盘）。
+31:     ::testing::InitGoogleTest(&argc, argv);
+32:     return RUN_ALL_TESTS();
+33: }
+FUNCTION testkit.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt 165-177
+165: macro(ird_add_gtest target)
+166:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+167:     add_custom_target(
+168:         ${target}_report
+169:         COMMAND ${CMAKE_COMMAND} -E make_directory
+170:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+171:         COMMAND $<TARGET_FILE:${target}>
+172:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+173:         DEPENDS ${target}
+174:         COMMENT "ird: run ${target} and write gtest XML report")
+175:     set_target_properties(${target}_report PROPERTIES
+176:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+177: endmacro()
+FUNCTION testkit.TestRecordListener RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp 44-108
+44: class TestRecordListener : public ::testing::EmptyTestEventListener {
+45: public:
+46:     /**
+47:      * @brief 构造监听器。
+48:      *
+49:      * @param reportPath [in] 报告落盘路径（OnTestProgramEnd 写出）
+50:      */
+51:     explicit TestRecordListener(std::filesystem::path reportPath)
+52:         : reportPath_(std::move(reportPath))
+53:     {
+54:     }
+55: 
+56:     void OnTestStart(const ::testing::TestInfo& info) override
+57:     {
+58:         start_ = std::chrono::steady_clock::now();
+59:         // testId＝gtest 全名 "<suite>.<case>"（§7.2 字段表口径）。
+60:         const std::string testId
+61:             = std::string{info.test_suite_name()} + "." + info.name();
+62:         report::TestRecordStore::instance().beginRecord(testId,
+63:                                                 report::defaultEnvironment());
+64:     }
+65: 
+66:     void OnTestEnd(const ::testing::TestInfo& info) override
+67:     {
+68:         namespace chr = std::chrono;
+69:         const auto durationMs = static_cast<int>(
+70:             chr::duration_cast<chr::milliseconds>(chr::steady_clock::now() - start_)
+71:                 .count());
+72:         // gtest 计算值（夹具预置优先级更高——store.endRecord 内部裁决）。
+73:         const auto* result = info.result();
+74:         report::Outcome computed = report::Outcome::Passed;
+75:         std::string reason;
+76:         if (result != nullptr && result->Failed()) {
+77:             computed = report::Outcome::Failed;
+78:             reason = "failed: " + std::to_string(result->total_part_count())
+79:                 + " part(s)——详见 gtest 输出与 comparisons 字段";
+80:         } else if (result != nullptr && result->Skipped()) {
+81:             // 显式跳过（GTEST_SKIP）——§7.2：不计通过，理由登记，逐条消账。
+82:             computed = report::Outcome::Skipped;
+83:             reason = "skipped: 显式跳过（GTEST_SKIP；夹具级环境/数据失败见"
+84:                      " envUnavailable/datasetInvalid 专项记录）";
+85:         }
+86:         report::TestRecordStore::instance().endRecord(computed, reason, durationMs);
+87:     }
+88: 
+89:     void OnTestProgramEnd(const ::testing::UnitTest&) override
+90:     {
+91:         // 聚合写盘（§7.2"与 gtest XML 并存"）。写盘失败＝环境错误：向 stderr
+92:         // 告警但不改变 gtest 退出码——报告机制自身故障不得掩盖测试结果。
+93:         report::Report report;
+94:         for (auto& record : report::TestRecordStore::instance().takeAll()) {
+95:             report.add(std::move(record));
+96:         }
+97:         try {
+98:             report.writeFile(reportPath_);
+99:         } catch (const TestKitError& e) {
+100:             std::fprintf(stderr, "ird-test-report 写盘失败（%s）——CI 归档将缺失\n",
+101:                          e.what());
+102:         }
+103:     }
+104: 
+105: private:
+106:     std::filesystem::path reportPath_;                       ///< 报告落盘路径
+107:     std::chrono::steady_clock::time_point start_{};          ///< 用例起点（耗时统计）
+108: };
+FUNCTION testkit.installTestRecordListener RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp 120-142
+120: inline void installTestRecordListener(int& argc, char** argv)
+121: {
+122:     std::filesystem::path reportPath{"ird-test-report.json"};
+123:     // 摘除 --ird_report=<path>（自维护参数；gtest 不识别该形态）。
+124:     std::vector<char*> kept;
+125:     kept.reserve(static_cast<std::size_t>(argc));
+126:     for (int i = 0; i < argc; ++i) {
+127:         const std::string arg = argv[i] != nullptr ? argv[i] : "";
+128:         const std::string prefix = "--ird_report=";
+129:         if (arg.rfind(prefix, 0) == 0) {
+130:             reportPath = arg.substr(prefix.size());
+131:         } else {
+132:             kept.push_back(argv[i]);
+133:         }
+134:     }
+135:     int newArgc = 0;
+136:     for (char* a : kept) { argv[newArgc++] = a; }
+137:     for (int i = newArgc; i < argc; ++i) { argv[i] = nullptr; }
+138:     argc = newArgc;
+139:     // 静态存储期监听器（gtest listeners 不接管所有权）。
+140:     static TestRecordListener listener{reportPath};
+141:     ::testing::UnitTest::GetInstance()->listeners().Append(&listener);
+142: }
+FUNCTION trajectory.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ContractTestMain.cpp 26-37
+26: int main(int argc, char** argv)
+27: {
+28:     ::testing::InitGoogleTest(&argc, argv);
+29:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+30:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+31:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+32:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+33:     // traceability/builds/wp16-t03/）；写盘失败只向 stderr 告警，不掩盖
+34:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+35:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+36:     return RUN_ALL_TESTS();
+37: }
+FUNCTION trajectory.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TestMainReport.cpp 27-38
+27: int main(int argc, char** argv)
+28: {
+29:     ::testing::InitGoogleTest(&argc, argv);
+30:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+31:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+32:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+33:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+34:     // traceability/builds/wp16-t03/）；写盘失败只向 stderr 告警，不掩盖
+35:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+36:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+37:     return RUN_ALL_TESTS();
+38: }
+FUNCTION trajectory.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt 532-544
+532: macro(ird_add_gtest target)
+533:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+534:     add_custom_target(
+535:         ${target}_report
+536:         COMMAND ${CMAKE_COMMAND} -E make_directory
+537:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+538:         COMMAND $<TARGET_FILE:${target}>
+539:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+540:         DEPENDS ${target}
+541:         COMMENT "ird: run ${target} and write gtest XML report")
+542:     set_target_properties(${target}_report PROPERTIES
+543:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+544: endmacro()
+FUNCTION ui.contract_test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/TestMainReport.cpp 34-50
+34: int main(int argc, char** argv)
+35: {
+36:     // WP-24-T02 进程级崩溃契约子进程分派（--ird-wp24-t02-child <mode>；
+37:     // 拦截先于 Qt/GTest——LockContractTest 子进程拦截同款先例。防误触：
+38:     // 全 token 精确匹配＋模式白名单在 runCrashTestChild 内封闭）。
+39:     if (argc >= 3 && std::string(argv[1]) == "--ird-wp24-t02-child") {
+40:         return sdurws::ird::ui::studio::runCrashTestChild(argv[2]);
+41:     }
+42: 
+43:     // QCoreApplication：headless 契约测试形态（无需 GUI 平台插件——ui.md
+44:     // §3.1 该目标行的运行环境约定）。
+45:     QCoreApplication app(argc, argv);
+46: 
+47:     ::testing::InitGoogleTest(&argc, argv);
+48:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+49:     return RUN_ALL_TESTS();
+50: }
+FUNCTION ui.gui_test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/TestMainReport.cpp 33-45
+33: int main(int argc, char** argv)
+34: {
+35:     // QApplication（Widgets 级）：GUI 用例的运行期前提——五区 Dock/布局
+36:     // 记忆/首页控件全部需要 Widgets 事件循环与平台插件（§12.2 要求
+37:     // QT_QPA_PLATFORM=windows，由运行方环境提供；此处不设置/不覆盖）。
+38:     QApplication app(argc, argv);
+39: 
+40:     ::testing::InitGoogleTest(&argc, argv);
+41:     // 静态存储期监听器（ird-test-report.json 与 gtest XML 并存——testkit
+42:     // §7.2；--ird_report=<path> 指定报告路径，缺省工作目录）。
+43:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+44:     return RUN_ALL_TESTS();
+45: }
+FUNCTION ui.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp 36-49
+36: int main(int argc, char** argv)
+37: {
+38:     // QCoreApplication（非 QApplication）：模型测试形态的运行期标记——
+39:     // 无 Widgets 平台插件依赖，可在无显示环境的服务端/headless 运行
+40:     // （ui.md §12.2 第 7 条"仅使用 QCoreApplication 的模型测试不需要 GUI
+41:     // 平台插件"）。argc/argv 交由 Qt 持有（Qt 参数如 -platform 在此消费）。
+42:     QCoreApplication app(argc, argv);
+43: 
+44:     ::testing::InitGoogleTest(&argc, argv);
+45:     // 静态存储期监听器（gtest listeners 不接管所有权——官方 recommended
+46:     // 做法；进程生命周期与测试程序一致）。
+47:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+48:     return RUN_ALL_TESTS();
+49: }
+FUNCTION ui.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt 279-291
+279: macro(ird_add_gtest target)
+280:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+281:     add_custom_target(
+282:         ${target}_report
+283:         COMMAND ${CMAKE_COMMAND} -E make_directory
+284:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+285:         COMMAND $<TARGET_FILE:${target}>
+286:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+287:         DEPENDS ${target}
+288:         COMMENT "ird: run ${target} and write gtest XML report")
+289:     set_target_properties(${target}_report PROPERTIES
+290:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+291: endmacro()
+FUNCTION workflow.contract_test.ContractTestMain.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/ContractTestMain.cpp 19-26
+19: int main(int argc, char** argv)
+20: {
+21:     ::testing::InitGoogleTest(&argc, argv);
+22:     // 监听器契约与 _test 目标入口同款（TestMainReport.cpp 注）——写盘
+23:     // 失败只告警不掩盖结果，退出码真实反映用例成败。
+24:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+25:     return RUN_ALL_TESTS();
+26: }
+FUNCTION workflow.test.TestMainReport.main RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp 29-40
+29: int main(int argc, char** argv)
+30: {
+31:     ::testing::InitGoogleTest(&argc, argv);
+32:     // 监听器为静态存储期对象（gtest listeners 不接管所有权——官方
+33:     // recommended 做法；进程生命周期与测试程序一致）。聚合报告在
+34:     // OnTestProgramEnd 写盘（缺省＝进程工作目录下 ird-test-report.json，
+35:     // 可用 --ird_report=<path> 指定——留痕脚本据此把用例级明细写入
+36:     // traceability/builds/wp22-t02/）；写盘失败只向 stderr 告警，不掩盖
+37:     // 测试结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+38:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+39:     return RUN_ALL_TESTS();
+40: }
+FUNCTION workflow.CMake.ird_add_gtest RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt 374-386
+374: macro(ird_add_gtest target)
+375:     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+376:     add_custom_target(
+377:         ${target}_report
+378:         COMMAND ${CMAKE_COMMAND} -E make_directory
+379:                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+380:         COMMAND $<TARGET_FILE:${target}>
+381:                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+382:         DEPENDS ${target}
+383:         COMMENT "ird: run ${target} and write gtest XML report")
+384:     set_target_properties(${target}_report PROPERTIES
+385:         EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+386: endmacro()

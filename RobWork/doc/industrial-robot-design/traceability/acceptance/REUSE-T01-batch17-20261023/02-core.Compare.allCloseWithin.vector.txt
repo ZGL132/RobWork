@@ -1,0 +1,19 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp
+sdurws::ird::core::allCloseWithin
+35: bool allCloseWithin(const std::vector<double>& a, const std::vector<double>& b,
+36:                     Tolerance t)
+37: {
+38:     // 长度不等＝契约违约显性化（CoreError，core/compare/length 前缀）——
+39:     // 静默 false 会把形状错误伪装成数值不匹配。
+40:     if (a.size() != b.size()) {
+41:         throw CoreError("core/compare/length: 长度不等（" + std::to_string(a.size())
+42:                         + " vs " + std::to_string(b.size()) + "）");
+43:     }
+44:     // 逐元素应用 C4（防正负抵消——不以差值总和替代，§4.5 明文）。
+45:     for (std::size_t i = 0; i < a.size(); ++i) {
+46:         if (!closeWithin(a[i], b[i], t)) {
+47:             return false;
+48:         }
+49:     }
+50:     return true;
+51: }

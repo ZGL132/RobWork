@@ -25,8 +25,9 @@
 #
 # 用法：
 #   pwsh -File verify-task-scope.ps1 -TaskFile <契约路径> [-Base <sha>] [-Head <sha>] [-RepoRoot <仓库根>]
-#   -Base 缺省＝git merge-base redesign-main HEAD（任务分支基点；检出树无该分支时
-#   回退 origin/redesign-main）；-Head 缺省＝HEAD。
+#   -Base 仅在实际任务分支有非空提交范围时可缺省，取 git merge-base redesign-main
+#   <head>（本地分支不存在时只读回退 origin/redesign-main，不同步远程）。主线现场、
+#   主线契约或 merge-base 等于 head 时必须显式传 Base；-Head 缺省＝HEAD。
 #   典型用法：实施者提交前自检 `-Base <base SHA> -Head HEAD`；验收者在冻结 SHA 上
 #   复跑 `-Base <base> -Head <headSha>`（送验对象冻结后范围结论即为验收 4.1 证据）。
 #
@@ -78,6 +79,13 @@ function Resolve-Commit([string]$Rev, [string]$Label) {
 }
 $headSha = Resolve-Commit $Head 'head'
 if (-not $Base) {
+  # GOV-T23-R1-01：旧契约的 branch 仅用于溯源，不能代表当前检出分支。
+  # 主线串行任务必须显式给基点，避免旧 codex 契约绕过检查后与自身比较。
+  $currentBranch = (& git -C $repoTop rev-parse --abbrev-ref HEAD 2>$null)
+  if ($LASTEXITCODE -ne 0) { throw 'cannot determine current branch: pass -Base <sha> explicitly' }
+  if ($task.branch -eq 'redesign-main' -or $currentBranch -eq 'redesign-main') {
+    throw 'serial mainline task requires explicit -Base <start SHA>'
+  }
   # 缺省基点＝与 redesign-main 的分叉点。任务分支从 redesign-main 切出时，这恰好
   # 是该任务引入的全部提交；若分支被 rebase 过，以显式 -Base 为准。
   $baseRef = 'redesign-main'
@@ -87,6 +95,8 @@ if (-not $Base) {
   if (-not $probe) { throw "cannot determine base: pass -Base <sha> explicitly（找不到 redesign-main/origin/redesign-main）" }
   $baseSha = (& git -C $repoTop merge-base $baseRef $headSha 2>$null)
   if (-not $baseSha) { throw "cannot compute merge-base between $baseRef and $headSha" }
+  # detached 冻结现场或已在主线的旧任务同样可能算出 head 本身，不能将此解释为无改动。
+  if ($baseSha -eq $headSha) { throw 'scope with empty implicit range requires explicit -Base <start SHA>' }
 } else {
   $baseSha = Resolve-Commit $Base 'base'
 }

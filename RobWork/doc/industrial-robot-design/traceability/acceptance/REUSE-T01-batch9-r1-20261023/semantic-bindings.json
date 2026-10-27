@@ -1,0 +1,135 @@
+[
+  {
+    "id": "kinematics.IKinRuntimeView",
+    "start": 141,
+    "end": 154,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "kinematics.FrozenRuntimeView",
+    "start": 74,
+    "end": 91,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "kinematics.TestView",
+    "start": 337,
+    "end": 351,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "kinematics.MidSolveDegradedView",
+    "start": 241,
+    "end": 264,
+    "classOrFunctionBody": true,
+    "semanticBinding": "FAIL: qualified scope"
+  },
+  {
+    "id": "kinematics.RigView",
+    "start": 191,
+    "end": 202,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "runtime.WorkCellConstView.findFrame",
+    "start": 990,
+    "end": 995,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "runtime.WorkCellConstView.findDevice",
+    "start": 998,
+    "end": 1003,
+    "classOrFunctionBody": true,
+    "semanticBinding": "FAIL: missing const Ptr return signature line997"
+  },
+  {
+    "id": "runtime.WorkCellConstView.defaultState",
+    "start": 1011,
+    "end": 1015,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.workCell",
+    "start": 753,
+    "end": 756,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.makeState",
+    "start": 811,
+    "end": 816,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.tryDynamicWorkCell",
+    "start": 768,
+    "end": 784,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.workCellHandle",
+    "start": 758,
+    "end": 766,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "runtime.jointStaticTransform",
+    "start": 541,
+    "end": 553,
+    "classOrFunctionBody": true,
+    "semanticBinding": "FAIL: qualified scope"
+  },
+  {
+    "id": "ui.SnapshotViewAdapter",
+    "start": 61,
+    "end": 80,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "ui.KinSessionModelView",
+    "start": 108,
+    "end": 135,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "ui.KinEvaluationExecutor.attachSnapshot",
+    "start": 94,
+    "end": 111,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "ui.KinEvaluationExecutor.attachView",
+    "start": 113,
+    "end": 139,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "ui.FixtureView",
+    "start": 79,
+    "end": 118,
+    "classOrFunctionBody": true,
+    "semanticBinding": "PASS"
+  },
+  {
+    "id": "ui.ObservedView",
+    "start": 957,
+    "end": 971,
+    "classOrFunctionBody": true,
+    "semanticBinding": "FAIL: qualified scope"
+  }
+]

@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B14-rework-r2",
+  "result": "PASS",
+  "verdict": "PASS，仅B14-P2-01返工复验",
+  "scope": "仅核验B14-P2-01语义登记修正、原B14-r1 FAIL归档保真及相关task/docs/reuse门禁；不授整批B14或全T01 PASS，不授T02准入或生产迁移批准",
+  "reviewedCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+  "reviewedParentCommit": "85e561539a4038e37231dcfcb506109a5a188151",
+  "comparisonBase": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+  "repo": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\repo",
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371",
+  "createdAt": "2026-10-22T17:21:55.5666930Z",
+  "counts": {
+    "hashChecks": 7,
+    "hashFailures": 0,
+    "archiveFiles": 44,
+    "archiveRawMatches": 40,
+    "archiveNewlineOnly": 4,
+    "archiveContentMismatches": 0,
+    "gatePassed": 4,
+    "gateSkipped": 0,
+    "gateFailed": 0,
+    "semanticBlockingFindings": 0
+  },
+  "findings": [
+    {
+      "id": "B14-P2-01",
+      "priority": 2,
+      "status": "CLOSED",
+      "functionId": "project.Codec.anonymous.requirePathField",
+      "resolution": "修正后的登记准确描述解码后UTF-8路径：允许中文与空格，非空、最多4096字节，拒绝C0(<0x20)与DEL(0x7F)。磁盘JSON的ASCII载体限制未错误施加到解码后路径。io解析/存在性/安全权威边界保留。",
+      "evidence": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:299-399",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:773-794",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1418",
+        "RobWork/doc/industrial-robot-design/reuse/functions/project.json:2388",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-rework.json",
+        "facts.json",
+        "hash-checks.json"
+      ],
+      "reproducedProductDefect": false
+    }
+  ],
+  "checks": [
+    {
+      "name": "validate-task",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    {
+      "name": "validate-docs",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "docs.log"
+    },
+    {
+      "name": "validate-reuse",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "reuse.log"
+    },
+    {
+      "name": "scoped git diff --check",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "scoped-diff-check.log",
+      "scope": "HEAD^..HEAD changed files, excluding original archived logs listed in diff-check-exclusions.log"
+    }
+  ],
+  "facts": {
+    "reviewedCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+    "comparisonBase": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+    "descriptionMatches": true,
+    "onlyExpectedMatrixChange": true,
+    "rowPending": true,
+    "hashChecks": 7,
+    "hashFailures": 0,
+    "reworkSourceMatches": true,
+    "archiveFiles": 44,
+    "archiveRawMatches": 40,
+    "archiveNewlineOnly": 4,
+    "archiveMismatches": 0,
+    "originalFailPreserved": true,
+    "scopedDiffCheckExit": 0,
+    "sourceDiffEmpty": true,
+    "clean": true
+  },
+  "originalAcceptance": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch14-r1-20261023/acceptance.json",
+    "result": "FAIL",
+    "reviewedCommit": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+    "originalFindingStatus": "OPEN",
+    "preserved": true,
+    "comparison": "40 raw SHA256 matches; 4 CRLF/LF only; no content mismatch"
+  },
+  "boundaries": {
+    "matrixChange": "与原B14冻结SHA相比，project.json仅该条differences改变；decision/status仍pending",
+    "productChanged": false,
+    "sourceDiff": "原B14 SHA..当前SHA产品/上游/vcpkg差异为空",
+    "clean": true,
+    "fullStagePass": false,
+    "remoteVerified": false
+  },
+  "notRun": [
+    "C++构建",
+    "GUI测试",
+    "数值/性能测试",
+    "DeepEvidence",
+    "B14全量关系复审",
+    "其他批次验收",
+    "远程交付核验"
+  ],
+  "limitations": [
+    "validate-docs输出NOT AUDITED evidence；未执行DeepEvidence。",
+    "validate-reuse仅治理检查通过，closedFiles=0，不代表算法合规或迁移授权。",
+    "原始归档日志未清洗，scoped diff --check排除项精确保存在diff-check-exclusions.log。",
+    "仅在Temp独立clone验收；未修改父现场、提交、推送或合入。"
+  ],
+  "toolHashes": [
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "rawSha256": "4161db742d876d18b1d477c5ccd83bcc1598403f05cafd013a11527c8497ec89"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "rawSha256": "e9a46c913f6ed8afc84cb04caffb119411bf77aa967eade090fe7f16d2cf0462"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "rawSha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "rawSha256": "25f27251fafa9cb40146243afc4916ea82b93cdf8708b6fa050c4b37d77f0e57"
+    },
+    {
+      "path": "check-rework.ps1",
+      "rawSha256": "46d8100238e5906d1c3e5315806b8f6ede3ca3079a6f31ba968db03745836d4b"
+    },
+    {
+      "path": "write-acceptance.ps1",
+      "rawSha256": "4ded79f1439731fde3cd471188d6a343ec1cd3ecaa5e327ef4cab8ed62e03534"
+    }
+  ]
+}

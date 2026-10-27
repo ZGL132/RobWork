@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="31" failures="0" disabled="0" errors="0" time="0.041" timestamp="2026-10-24T11:53:41.769" name="AllTests">
+  <testsuite name="TrjContinuity" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.769">
+    <testcase name="CartesianIkContinuityApplicabilityDualPath_WP16T05_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\CartesianLineContinuityTest.cpp" line="791" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.769" classname="TrjContinuity" />
+    <testcase name="BoundaryContinuousApproachToRetract_WP16T05_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\CartesianLineContinuityTest.cpp" line="826" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.770" classname="TrjContinuity" />
+    <testcase name="BoundaryBrokenYieldsComparativeMaterial_WP16T05_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\CartesianLineContinuityTest.cpp" line="859" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.770" classname="TrjContinuity" />
+    <testcase name="JointBoundaryNotApplicable_WP16T05_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\CartesianLineContinuityTest.cpp" line="909" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.770" classname="TrjContinuity" />
+    <testcase name="CheckRejectsContractViolations_WP16T05_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\CartesianLineContinuityTest.cpp" line="946" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.770" classname="TrjContinuity" />
+  </testsuite>
+  <testsuite name="TimeParamGoldenTest" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-24T11:53:41.770">
+    <testcase name="TwoPointRestToRestProfile" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="145" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.770" classname="TimeParamGoldenTest" />
+    <testcase name="C2KnotMatchCentralDifference" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="213" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.771" classname="TimeParamGoldenTest" />
+    <testcase name="DwellConstantZeroDerivatives" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="288" status="run" result="completed" time="0.001" timestamp="2026-10-24T11:53:41.771" classname="TimeParamGoldenTest" />
+    <testcase name="InteriorKnotsInterpolating" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="677" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.772" classname="TimeParamGoldenTest" />
+  </testsuite>
+  <testsuite name="TimeParamLimitTest" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.011" timestamp="2026-10-24T11:53:41.772">
+    <testcase name="VelocityScalingConverges" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="356" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.772" classname="TimeParamLimitTest" />
+    <testcase name="AccelerationScalingConverges" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="390" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.773" classname="TimeParamLimitTest" />
+    <testcase name="ToleranceEdgeRelative1e9" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="437" status="run" result="completed" time="0.01" timestamp="2026-10-24T11:53:41.773" classname="TimeParamLimitTest" />
+  </testsuite>
+  <testsuite name="TimeParamFailureTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.783">
+    <testcase name="UndefinedLimitNoFabricatedCycleTime" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="525" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.784" classname="TimeParamFailureTest" />
+  </testsuite>
+  <testsuite name="TimeParamSyncTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-24T11:53:41.784">
+    <testcase name="MultiJointSimultaneousArrival" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="573" status="run" result="completed" time="0.001" timestamp="2026-10-24T11:53:41.784" classname="TimeParamSyncTest" />
+  </testsuite>
+  <testsuite name="TimeParamSamplingTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.785">
+    <testcase name="EventAlignedKnotsAndPeakConsistency" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="617" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.785" classname="TimeParamSamplingTest" />
+  </testsuite>
+  <testsuite name="TimeParamCancelTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.785">
+    <testcase name="CanceledZeroMaterial" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="712" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.785" classname="TimeParamCancelTest" />
+  </testsuite>
+  <testsuite name="TimeParamDeterminismTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-24T11:53:41.785">
+    <testcase name="RepeatedCallsEquivalentValues" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="738" status="run" result="completed" time="0.002" timestamp="2026-10-24T11:53:41.785" classname="TimeParamDeterminismTest" />
+  </testsuite>
+  <testsuite name="TimeParamCurveTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.788">
+    <testcase name="OutOfRangeFailsFast" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="773" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.788" classname="TimeParamCurveTest" />
+  </testsuite>
+  <testsuite name="TimeParamPreconditionTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.788">
+    <testcase name="FailFastFamily" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="836" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.788" classname="TimeParamPreconditionTest" />
+  </testsuite>
+  <testsuite name="TimeParamScaleFactorTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.788">
+    <testcase name="HalvedScaleDoublesDuration" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1040" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.788" classname="TimeParamScaleFactorTest" />
+  </testsuite>
+  <testsuite name="TimeParamSepticTest" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.019" timestamp="2026-10-24T11:53:41.789">
+    <testcase name="RestToRestGoldenProfileJerkLimited" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1142" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.789" classname="TimeParamSepticTest" />
+    <testcase name="JerkScalingConvergesWithInteriorKnots" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1209" status="run" result="completed" time="0.017" timestamp="2026-10-24T11:53:41.789" classname="TimeParamSepticTest" />
+    <testcase name="C3KnotContinuityWithDwell" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1247" status="run" result="completed" time="0.001" timestamp="2026-10-24T11:53:41.807" classname="TimeParamSepticTest" />
+    <testcase name="UndefinedJerkLimitMaterial" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1295" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.808" classname="TimeParamSepticTest" />
+    <testcase name="QuinticRejectsFiniteJerkLimit" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1330" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.808" classname="TimeParamSepticTest" />
+    <testcase name="QuinticJerkStatisticsObservationOnly" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1362" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.808" classname="TimeParamSepticTest" />
+  </testsuite>
+  <testsuite name="TimeParamUpstreamCheck" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-24T11:53:41.809">
+    <testcase name="QuinticRestToRestUpstreamCrossCheck" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1492" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.809" classname="TimeParamUpstreamCheck" />
+    <testcase name="SepticRestToRestUpstreamCrossCheck" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1522" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.809" classname="TimeParamUpstreamCheck" />
+    <testcase name="InteriorKnotNonZeroTangentUpstreamCrossCheck" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1557" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.810" classname="TimeParamUpstreamCheck" />
+  </testsuite>
+  <testsuite name="TimeParamDegenerate" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:53:41.810">
+    <testcase name="ZeroTravelSegmentConstant" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1618" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.810" classname="TimeParamDegenerate" />
+    <testcase name="HugeLimitsReachShortDurationFloor" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp" line="1648" status="run" result="completed" time="0." timestamp="2026-10-24T11:53:41.810" classname="TimeParamDegenerate" />
+  </testsuite>
+</testsuites>

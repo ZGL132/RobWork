@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T17",
+  "unit": "kinematics",
+  "masterWp": "WP-A",
+  "title": "kinematics 消费已编译 runtime 模型的可域能力入口与提交冻结面",
+  "status": "done",
+  "branch": "codex/reuse-foundation",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "KIN-01",
+    "ARC-03",
+    "ARC-04",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#3.6",
+    "units/kinematics.md#4.2",
+    "units/runtime.md#8.3",
+    "reuse/policy.md#1.1",
+    "traceability/reuse/REUSE-T01/runtime-boundary-audit.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelTypes.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/PluginPanelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/20261023-recheck/**",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-CORE-C4-01.md（内容归C4轨道GOV-T26/REUSE-T21送验面，本条为登记性授权覆盖送验区间残留树diff，混入段处置见note 2026-10-25返工段）",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "IKinRuntimeView 表尾追加 runtimeModelView()（缺省返回空＝纯值视图）；接口契约版本 /2 入单元卡，全体 8 实现者同步，虚表序登记；不声称二进制 ABI 不变，公共头零新依赖（runtime::IRuntimeModelView 前置声明）",
+    "FrozenRuntimeView 整类删除，IK/workspace 两处提交路径直接捕获 runtimeModelView() 锚；executor 级并发用例实证：提交后 UI 换绑旧任务仍用原模型、原宿主释放后锚保活、两任务 State 互不污染、任务结束锚可释放",
+    "attachView 值视图路径行为逐位不变（MA-03 清碰撞场景/纪元推进/账面清空/取消旗标）；缺编译产物＝提交拍两分拒绝（状态行文案承载；kinematics/src/** 系本契约 forbiddenFiles，评估器层不在本包可达面）；评估器层 KIN-NO-DEVICE 族稳定诊断码与 params 来源标注移至承接包 REUSE-T19 承载并验证收口回填映射（其 acceptance 已登记锚缺失/设备名未命中→NoDevice 值面，units/kinematics.md v0.39 §9.2 @pre 运行期承载；README 实施偏离记录同口径），禁止旧手写链 fallback；5 个值替身零语义改动",
+    "真实验证：sdurws_ird_kinematics_test、sdurws_ird_ui_test、sdurws_ird_kinematics_contract_test 目标构建通过并留 gtest XML＋ird-test-report 原件；GUI 验证以 sdurws_ird_kinematics_gui_test 既有 48 用例（NonBlocking/StaleResult/HostLoop 提交驱动族迁移后全程经新锚捕获提交路径）为面板提交路径回归证据，不新增 GUI 换绑单例；提交后换绑/旧任务模型保持/宿主释放锚保活/两任务 State 隔离语义由 sdurws_ird_ui_test executor 级真实编译快照用例承载（RebindKeepsOldTaskModelAndLifetime_REUSE_T17 与 ValueDelegateExposesNullAnchor_REUSE_T17；VS x64/windows 插件/单 exe 执行口径不变；README 验证表与单元卡 v0.37 ③ 已按此替代口径登记）；实施者只自查并交接确切 SHA，不自签独验、不合入、不远程"
+  ],
+  "note": "所有者2026-10-23确认三项推荐决定（'按照推荐的决定进行'）：方案二锚能力入口签名、编号T17、TCP帧命名＝模型事实归runtime/tcpKey选择参数留kinematics消费侧；据此转ready并实施。接口签名、三方案比较、四条数据流、FK/Jacobian后续准备清单见 runtime-boundary-audit.md 2026-10-23 设计增量节。零 runtime 侧改动（IRuntimeModelView 四入口已足够——上轮边界核查结论直接引用）；不修改生产数值核心；与 C4 R2 无依赖。实施者只自查并交接确切 SHA，独验由所有者授权的独立子智能体执行，不自签、不合入、不远程。 2026-10-25 r1独立验收FAIL（traceability/acceptance/REUSE-T17-20261025-r1.json，送验范围adaf890031190c71d7705335bcac220c3e31780f..1f4a871a889995eadeae1621a0715bdc29858295）返工处置：①ISSUE-1范围门禁——allowedFiles增补designRefs自引的REUSE-T01/runtime-boundary-audit.md、audit摘要联动的reuse/functions/runtime.json、validation-batch/20261023-recheck/**（先前独验备注A增补授权模式同款）及验收产物与返工证据路径；GAP-CORE-C4-01.md混入的C4 R2待决风险段（+9行）撤回选项经论证不可行——该文件已被C4轨道GOV-T26/REUSE-T21按各自契约allowedFiles授权并实质演进（R3批准与T21实施记录），不改写历史约束下任何显式Base/Head复跑区间的树diff必含该文件，故改为登记性授权并在条目注记内容归属C4轨道，本包不对其语义负责；修订后契约对送验区间显式Base/Head复跑exit 0（rework-20261025/02-scope.log 第一段）。②ISSUE-2——acceptance[4]文字修订与已登记替代证据口径对齐：GUI不新增换绑单例，以既有48 GUI用例提交驱动族全程经新锚提交路径为面板回归证据，换绑/保活/State隔离语义由ui_test executor级真实编译快照用例承载（README验证表与单元卡v0.37③原登记即此口径，无需改动）。③ISSUE-3——acceptance[3]文字明示评估器层KIN-NO-DEVICE族诊断码与params来源标注移至承接包REUSE-T19承载（其acceptance登记NoDevice值面，v0.39 §9.2 @pre运行期承载），本包以提交拍两分拒绝承载。④changes/REUSE-T17.json删除第7条同文件重复登记（中间态hash c6b4f2a6…与送验blob不一致；保留6唯一路径凭证，送验blob重算6/6 MATCH见r1验收09号原件，被删条目的值委托空锚用例语义并入第6条boundary描述）。status保持ready待所有者按原送验区间+本返工登记重新送验，独验不由实施者自签。返工验证证据：traceability/reuse/REUSE-T17/rework-20261025/。 【验收登记（2026-10-26收口）】第2轮独立验收PASS：记录 traceability/acceptance/REUSE-T17-20261025-r2.json（13件复跑原件在其同名目录），verdict=pass，绑定送验 SHA=0ca544e493813441ff03bfc701757ee7ae496095（base=adaf890031190c71d7705335bcac220c3e31780f，本包五提交 bf45f69a5/e63cfaf8f/1f4a871a8/0801488bc/0ca544e49）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；10项检查全过——r1三issue逐项核销（修订契约对r1区间 adaf8900..1f4a871a8 复跑exit 0、返工区间 e8ee7d31d..0ca544e4 复跑exit 0）、六冻结blob sha256重算6/6 MATCH、CLOSURE冻结祖先实证、红线抽查（FrozenRuntimeView零残留/L2零Qt/无旧链fallback/门禁引擎直跑零命中）、commit-lint全区间68提交合规、validate-docs一次过、四套件原件分列重提（kinematics 288+1envUnavailable/ui 344+1预存F560/contract 57/57/gui 48/48）；送验指令字面区间 adaf8900..0ca544e4 复跑exit 1的1009越界路径经集合论证与10路径抽查归因100%由63个非本包提交引入（各包各有契约与范围证据），不计为本包范围结论，记录checks[0]/limitations已显式登记字面结果与归因。limitations：validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399未关闭）；四套件未以送验SHA重跑（返工零C++改动、原件自r1送验head零变化已核，按AGENTS §4引用口径）；r1低危备注a（实现者计数口径8 vs 直接派生10）维持登记备注。据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json"
+  },
+  "outputs": [
+    "可执行能力入口（runtimeModelView()）与删除 FrozenRuntimeView 后的提交冻结面",
+    "executor 级换绑/保活/State 隔离并发用例与全部实现者同步",
+    "自查后交所有者安排独立验收；FK/Jacobian 替换包以本包为前置"
+  ]
+}

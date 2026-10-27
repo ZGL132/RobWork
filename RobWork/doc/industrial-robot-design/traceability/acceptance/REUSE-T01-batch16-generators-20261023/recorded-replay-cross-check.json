@@ -1,0 +1,176 @@
+[
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.0.0/generate/make_dt_mapping_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/ev-slice-fixture/1.0.0/generate/make_ev_slice_fixture.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-coverage/1.0.0/generate/make_kin_coverage_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/generate/make_kin_fk_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-ik-dedup/1.0.0/generate/make_kin_ik_dedup_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-search-outcomes/1.0.0/generate/make_kin_search_outcomes_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/generate/make_dh_equivalence.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/1.0.0/generate/make_not_expressible.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/1.0.0/generate/make_template_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-adopt-golden/1.0.0/generate/make_opt_adopt_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-lhs-golden/1.0.0/generate/make_opt_lhs_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/generate/make_pol_policy_fixture.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-partial-pose/1.0.0/generate/make_partial_pose_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-payload-events/1.0.0/generate/make_payload_events_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-region-sampling/1.0.0/generate/make_region_sampling_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-transport-task/1.0.0/generate/make_transport_task_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0/generate/make_namemap.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-backfill-golden/1.0.0/generate/make_sel_backfill_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-catalog-golden/1.0.0/generate/make_sel_catalog_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-combo-golden/1.0.0/generate/make_sel_combo_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/generate/make_sel_linear_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.0.0/generate/make_sel_screening_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/generate/make_trj_at06_golden.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  },
+  {
+    "script": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.0.0/generate/make_wf_gate_advice_fixture.mjs",
+    "exitMatches": true,
+    "artifactPathsMatch": true,
+    "consistencyOutcomesMatch": true
+  }
+]

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "trajectory.smoothQuinticHermiteReuse",
+  "target": "sdurws_ird_trajectory",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "sha256": "dfd0533dc6fd6477183df5b070105bf89fccd72d8811ae4dfcf48858f298af04"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/SmoothTest.cpp",
+      "sha256": "87f045c75848a89fda647238ce3f8219bc2088a32b255b193079152d4b7fe81c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Polynomial.hpp",
+      "sha256": "cc1e51fad738ddc12a15d3081a7e99c0da3471c98883b7526300836005a7f4d9"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/PolynomialND.hpp",
+      "sha256": "cfd670ab590704502ee7d6e53a06c887a4436a31baa2d07f3904e48bb1bc672a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    }
+  ],
+  "normal": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-trajectory-poly/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe\" --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test.xml",
+      "sha256": "e9a5889a00417d50765dc8db6546cd05bf662326b1e9e19dc22f1278c7d3c2f7"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-run.log",
+      "sha256": "0a45ca28bcfe4b97e4d6e514ed0580c0ee6684b712c38c14a881cb54e11a205f"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-trajectory-poly/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe\" --gtest_filter=SmoothRecheckTest.SmoothAnalyticGoldenCase_WP16T07_NFRCOR01 --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/smooth/gtest.xml",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/smooth/gtest.xml",
+      "sha256": "67385780cd3855d046bf08a18df8efb3ca88ba21d5cb129416047df3fc2f16b2"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/smooth/run.log",
+      "sha256": "cadb634bf0af654065ce7d5f4cad728ae66972760bff1c72ba9f90290b89af65"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "originalSha256": "dfd0533dc6fd6477183df5b070105bf89fccd72d8811ae4dfcf48858f298af04",
+      "description": "sampleAt将h101基误取h100（上游基表返回值扰动——丢弃正确消费）。真实重建产品库并重跑全套用例：解析黄金/容差门控/上游对照/下游局部重规划断言失败；随后恢复源码并核验SHA一致、复跑全绿"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/disconnected/Smooth.mutated.cpp",
+      "sha256": "7db67e8bdd681861b12727d29994e8d6088d51f5c9b876e8990b886b245a4f47"
+    }
+  },
+  "oracle": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-trajectory-poly/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe\" --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test.xml",
+      "sha256": "e9a5889a00417d50765dc8db6546cd05bf662326b1e9e19dc22f1278c7d3c2f7"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-run.log",
+      "sha256": "0a45ca28bcfe4b97e4d6e514ed0580c0ee6684b712c38c14a881cb54e11a205f"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "SmoothRecheckTest.SmoothAnalyticGoldenCase_WP16T07_NFRCOR01",
+      "SmoothRecheckTest.SmoothCollinearIsNoChange_WP16T07_ACC1"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-trajectory-poly/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe\" --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test.xml",
+      "sha256": "e9a5889a00417d50765dc8db6546cd05bf662326b1e9e19dc22f1278c7d3c2f7"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/normal/trajectory-test-run.log",
+      "sha256": "0a45ca28bcfe4b97e4d6e514ed0580c0ee6684b712c38c14a881cb54e11a205f"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "SmoothRecheckTest.SmoothUpstreamPolynomialCrossCheck_REUSE_T09"
+    ]
+  },
+  "note": "正常/oracle/上游对照来自同一最终完整执行，原件只保存一次；真实断开另编另跑。独验未执行。"
+}

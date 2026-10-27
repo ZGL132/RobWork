@@ -6,9 +6,9 @@
  *         θ̈_motor＝C⁺·q̈_joint——§7.1 公式组冻结口径，交叉耦合逐元素
  *         保留）、虚功/功率一致性逐元素精确对照、反射惯量与惯量比（R1
  *         对角式＋R2 完整矩阵/窗口投影）、效率方向折算与降级、电机工作
- *         点统计（峰值/RMS/负载率/四象限/能量分项）、R2 数值核（单侧
- *         Jacobi SVD 奇异值/Gauss-Jordan 求逆）与 R2 耦合模型工厂、
- *         矩阵内容身份核对原语。
+ *         点统计（峰值/RMS/负载率/四象限/能量分项）、R2 数值核（奇异值
+ *         与方阵求逆复用上游 rw::math::LinearAlgebra，上游线性代数复用）与
+ *         R2 耦合模型工厂、矩阵内容身份核对原语。
  *
  * 设计依据：
  *   - units/drivetrain.md §6.2（R1 映射定义表——逐样本逐轴全列公式）、
@@ -28,9 +28,9 @@
  *   - 任务契约 tasks/foundation/WP-18-T05.json（acceptance 1/2/3）
  *
  * 确定性（NFR-COR-02）：全部计算为封闭代数运算（无随机、无隐藏状态、
- *   无时钟/随机源）；R2 数值核为**确定性迭代**——单侧 Jacobi SVD 固定
- *   列对扫描序（p 升序×q 降序嵌套）＋相对收敛阈＋固定轮数上限，
- *   Gauss-Jordan 求逆取**首个**最大主元（并列不摇摆）；同一输入必得位
+ *   无时钟/随机源）；R2 数值核的分解与求逆复用上游
+ *   rw::math::LinearAlgebra::svd（Eigen SVD——同输入同结果）与
+ *   ::inverse（Eigen LU），自写迭代核已删（上游线性代数复用）；同一输入必得位
  *   等输出。映射本身不存在算法截断误差（卡 §6.2"映射误差"行）——黄金
  *   算例对照容差仅为浮点求值路径差异留（附录 D 第 9 项标量相对 1×10⁻⁹）。
  *
@@ -40,6 +40,8 @@
 #include <sdurws/ird/drivetrain/MappingCore.hpp>
 
 #include <sdurws/ird/drivetrain/DiagCodes.hpp>
+
+#include <rw/math/LinearAlgebra.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -145,7 +147,8 @@ double diagonalConditionNumber(const std::vector<TransmissionRatio>& ratios)
 }
 
 // =====================================================================
-// R2 数值核（WP-18-T05——确定性优先的通用方阵算法；零第三方库，纯 std）
+// R2 数值核（WP-18-T05 建立原自写核；上游线性代数复用 起分解与求逆复用上游
+// rw::math::LinearAlgebra，本单元只保留业务阈值与薄适配）
 // =====================================================================
 
 /// 耦合矩阵"数值奇异"判定分界：σmin ≤ σmax×1×10⁻¹²（⇔ κ ≥ 1×10¹²）视为
@@ -157,197 +160,108 @@ double diagonalConditionNumber(const std::vector<TransmissionRatio>& ratios)
 /// 单点承载（本常量即唯一书写点），裁决变更时三处同步。
 inline constexpr double kDtSingularSigmaRatio = 1e-12;
 
-/// 单侧 Jacobi（Hestenes）SVD 相对收敛阈：|γ| ≤ 1e-16·√(α·β)（γ＝列对
-/// 内积、α/β＝列范数平方）视为已正交。机器精度层（再转只引入噪音）——
-/// 与 modeling/runtime 同族设计默认（确定性优先：同输入同轮数同结果）。
-inline constexpr double kDtJacobiOrthogonalRelative = 1e-16;
-
-/// 单侧 Jacobi 扫描轮数上限（固定轮数保证确定性终止——即使病态矩阵迭代
-/// 缓慢也在有限步内给出判档精度奇异值；与 modeling 同族设计默认 60）。
-inline constexpr std::size_t kDtJacobiMaxSweeps = 60;
-
 /**
- * @brief 计算方阵的奇异值降序序列（单侧 Jacobi/Hestenes SVD——确定性）。
+ * @brief 计算方阵的奇异值降序序列（复用上游 rw::math::LinearAlgebra::svd
+ *        ——上游线性代数复用；原自写单侧 Jacobi/Hestenes 核已删除）。
  *
- * 算法（逐步）：
- *   第 1 步：工作副本 W←A（不修改输入——纯函数纪律）。
- *   第 2 步：逐轮固定扫描序（p∈[0,n) 升序外层、q∈(p,n) 升序内层——
- *           不依赖运行期状态，保证同输入同旋转序列）对列对 (p,q) 做
- *           Jacobi 旋转：α＝‖W:,p‖²、β＝‖W:q‖²、γ＝W:,:p·W:,:q；
- *           |γ| ≤ 阈值（相对正交判据，α·β 任一为 0 时跳过——零列无需
- *           旋转）则已正交跳过；否则 ζ＝(β−α)/(2γ)、
- *           t＝sign(ζ)/(|ζ|+√(1+ζ²))（数值稳定正切）、c＝1/√(1+t²)、
- *           s＝c·t，对两列做旋转组合。
- *   第 3 步：任一轮内无旋转执行（全部列对已正交）→ 提前收敛终止；
- *           或达到 kDtJacobiMaxSweeps 轮硬终止（病态矩阵此时已收敛到
- *           判档精度——奇异/病态分界在 1e±12 量级，60 轮远超需要）。
- *   第 4 步：奇异值＝正交化后各列的欧氏范数（Hestenes 定理——W＝UΣVᵀ，
- *           列正交化后 WᵀW 对角，对角元＝σᵢ²）；按降序选择排序（并列
- *           不交换——稳定确定序）。
+ * 适配（仅容器/尺度，不含任何新数值算法）：
+ *   1. 量纲缩放：分解内部统计量涉及矩阵元素平方，1e-200 级合法传动比会
+ *      平方下溢为 0、1e200 级有限传动比会平方上溢为 Inf；先除以
+ *      max|a_ij| 再分解、奇异值整体乘回 scale，不改变条件数
+ *      κ＝σmax/σmin 与奇异/病态判定（kDtSingularSigmaRatio、
+ *      kWellConditionedLimit 均为比值判据）。缩放经验与 modeling 包
+ *      （CouplingMath::couplingSingularValues）同族，业务阈值各自单元
+ *      单点承载，不复制其封装。
+ *   2. 容器：行主序 RowMatrix → Eigen::MatrixXd 逐元素复制；分解、收敛
+ *      与排序能力全部归属上游（Eigen SVD，奇异值降序输出），
+ *      本单元不实现旋转迭代。U/V 仅为上游接口要求的输出参数，不消费。
  *
- * @param a [in] 输入方阵（rows==cols 且 wellFormed——调用方保证）
- * @return 奇异值降序序列（n 个；σᵢ ≥ 0，无量纲——C 元素无量纲）
+ * @param a [in] 输入方阵（rows==cols 且 wellFormed——调用方保证；
+ *        生产入口先拒非有限值）
+ * @return 奇异值降序序列（n 个；σᵢ ≥ 0，无量纲——C 元素无量纲；
+ *         零矩阵返回全零，非有限最大元返回全 Inf 的防御性序列）
+ * @throws std::bad_alloc 工作矩阵分配失败；不吞错，无旧算法回退。
  *
  * 线程安全：可重入纯函数（无共享状态）。
  */
-std::vector<double> singularValuesJacobi(const RowMatrix& a)
+std::vector<double> singularValues(const RowMatrix& a)
 {
     const std::size_t n = a.rows;
-    std::vector<double> w = a.data; // 工作副本（列将逐步正交化）
-    auto entry = [n, &w](std::size_t r, std::size_t c) -> double& {
-        return w[r * n + c];
-    };
-
-    for (std::size_t sweep = 0; sweep < kDtJacobiMaxSweeps; ++sweep) {
-        bool rotated = false; // 本轮是否执行过旋转（提前收敛判据）
-        for (std::size_t p = 0; p + 1 < n; ++p) {
-            for (std::size_t q = p + 1; q < n; ++q) {
-                // 列对 (p,q) 的内积与范数平方（按行序累加——固定求和序）。
-                double alpha = 0.0;
-                double beta = 0.0;
-                double gamma = 0.0;
-                for (std::size_t i = 0; i < n; ++i) {
-                    const double wp = entry(i, p);
-                    const double wq = entry(i, q);
-                    alpha += wp * wp;
-                    beta += wq * wq;
-                    gamma += wp * wq;
-                }
-                // 已正交（含零列）跳过：相对判据 |γ| ≤ 1e-16·√(α·β)——
-                // 零列（α·β＝0）不参与旋转（旋转无意义且除零）。
-                if (alpha == 0.0 || beta == 0.0
-                    || std::fabs(gamma) <= kDtJacobiOrthogonalRelative
-                                             * std::sqrt(alpha * beta)) {
-                    continue;
-                }
-                // 数值稳定 Jacobi 旋转角（Golub & Van Loan 标准形态）。
-                const double zeta = (beta - alpha) / (2.0 * gamma);
-                const double t = (zeta >= 0.0 ? 1.0 : -1.0)
-                                     / (std::fabs(zeta) + std::sqrt(1.0 + zeta * zeta));
-                const double c = 1.0 / std::sqrt(1.0 + t * t);
-                const double s = c * t;
-                // 对两列做旋转（逐行——固定行序）。
-                for (std::size_t i = 0; i < n; ++i) {
-                    const double wp = entry(i, p);
-                    const double wq = entry(i, q);
-                    entry(i, p) = c * wp - s * wq;
-                    entry(i, q) = s * wp + c * wq;
-                }
-                rotated = true;
-            }
-        }
-        if (!rotated) {
-            break; // 全部列对已正交——提前收敛（确定性终止点）
+    double scale = 0.0;
+    for (const double value : a.data) {
+        scale = std::max(scale, std::fabs(value));
+    }
+    if (!(scale > 0.0)) {
+        return std::vector<double>(n, 0.0); // 零矩阵：全部奇异值为 0
+    }
+    if (!std::isfinite(scale)) {
+        return std::vector<double>(n, std::numeric_limits<double>::infinity());
+    }
+    const auto dim = static_cast<Eigen::Index>(n);
+    Eigen::MatrixXd m(dim, dim);
+    for (std::size_t r = 0; r < n; ++r) {
+        for (std::size_t c = 0; c < n; ++c) {
+            m(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c))
+                = a(r, c) / scale;
         }
     }
-
-    // 奇异值＝各列欧氏范数；降序选择排序（并列不交换——稳定确定序，
-    // NFR-COR-02：同输入必得同序列）。
-    std::vector<double> sigma(n, 0.0);
-    for (std::size_t c = 0; c < n; ++c) {
-        double norm = 0.0;
-        for (std::size_t r = 0; r < n; ++r) {
-            norm += w[r * n + c] * w[r * n + c];
-        }
-        sigma[c] = std::sqrt(norm);
-    }
+    Eigen::MatrixXd u;
+    Eigen::MatrixXd v;
+    Eigen::VectorXd sigma;
+    rw::math::LinearAlgebra::svd(m, u, sigma, v);
+    std::vector<double> out(n, 0.0);
     for (std::size_t i = 0; i < n; ++i) {
-        std::size_t maxIdx = i;
-        for (std::size_t j = i + 1; j < n; ++j) {
-            if (sigma[j] > sigma[maxIdx]) {
-                maxIdx = j; // 严格大于——并列保持原序（稳定）
-            }
-        }
-        if (maxIdx != i) {
-            std::swap(sigma[i], sigma[maxIdx]);
-        }
+        out[i] = sigma(static_cast<Eigen::Index>(i)) * scale;
     }
-    return sigma;
+    return out;
 }
 
 /**
- * @brief 求方阵逆（Gauss-Jordan 消元＋部分主元——确定性）。
+ * @brief 求方阵逆（复用上游 rw::math::LinearAlgebra::inverse——上游线性代数复用；
+ *        原自写 Gauss-Jordan 消元核已删除）。
  *
- * 主元选择：每列在未消元行中取**绝对值最大者，并列取最小行号**（首个
- * 最大——不摇摆，NFR-COR-02）。调用前提：矩阵已过 §7.2 全表检查（方阵/
- * 有限/非奇异/良态）——奇异/病态矩阵由映射入口校验先行阻止（§7.3 伪逆
- * 使用边界：本函数只服务已批准公式的计算表示，不得把非法矩阵变成"可
- * 计算"），函数内零主元仍按防御抛 DT-MATRIX-SINGULAR。
+ * 调用前提：矩阵已过 §7.2 全表检查（方阵/有限/非奇异/良态）——奇异/
+ * 病态矩阵由映射入口校验先行阻止（§7.3 伪逆使用边界：本函数只服务已批
+ * 准公式 θ̈_motor＝C⁺·q̈_joint 的计算表示，方阵良态下 C⁺≡C⁻¹；不得把
+ * 非法矩阵变成"可计算"，也不用伪逆/截断奇异值放行）。上游 Eigen 逆对
+ * 奇异输入无异常语义，故防御面保留为：结果非有限即 fail-fast 抛
+ * DT-MATRIX-SINGULAR（正常流不可达——到达即实现缺陷或极端舍入）。
  *
  * @param a [in] 输入方阵（rows==cols 且 wellFormed）
  * @return 逆矩阵（同维度）
- * @throws std::invalid_argument 遇数值零主元（防御面——正常流不可达）
+ * @throws std::invalid_argument 逆结果含非有限值（防御面——正常流不可达）
  *
  * 线程安全：可重入纯函数。
  */
 RowMatrix invertSquareMatrix(const RowMatrix& a)
 {
     const std::size_t n = a.rows;
-    // 增广矩阵 [A | I]（2n 列——行主序连续承载）。
-    std::vector<double> aug(n * 2 * n, 0.0);
+    const auto dim = static_cast<Eigen::Index>(n);
+    Eigen::MatrixXd m(dim, dim);
     for (std::size_t r = 0; r < n; ++r) {
         for (std::size_t c = 0; c < n; ++c) {
-            aug[r * 2 * n + c] = a(r, c);
-        }
-        aug[r * 2 * n + n + r] = 1.0;
-    }
-    auto augAt = [n, &aug](std::size_t r, std::size_t c) -> double& {
-        return aug[r * 2 * n + c];
-    };
-
-    for (std::size_t col = 0; col < n; ++col) {
-        // 部分主元：未消元行中 |aug(r,col)| 最大者（并列取最小行号）。
-        std::size_t pivotRow = col;
-        double pivotMag = std::fabs(augAt(col, col));
-        for (std::size_t r = col + 1; r < n; ++r) {
-            const double mag = std::fabs(augAt(r, col));
-            if (mag > pivotMag) {
-                pivotMag = mag;
-                pivotRow = r;
-            }
-        }
-        if (pivotMag == 0.0) {
-            // 防御面：调用前提已由 §7.2 校验排除奇异——到达此处＝实现
-            // 缺陷或极端舍入，fail-fast 暴露而非产出垃圾逆（AGENTS §3）。
-            throwContract(kDtMatrixSingular,
-                          "求逆遇零主元（列 " + std::to_string(col)
-                              + "）——矩阵未过 §7.2 校验或实现缺陷");
-        }
-        if (pivotRow != col) {
-            for (std::size_t c = 0; c < 2 * n; ++c) {
-                std::swap(augAt(col, c), augAt(pivotRow, c));
-            }
-        }
-        // 归一化主元行（主元变 1）。
-        const double pivot = augAt(col, col);
-        for (std::size_t c = 0; c < 2 * n; ++c) {
-            augAt(col, c) /= pivot;
-        }
-        // 消去其余行（Gauss-Jordan——消元后左半＝单位阵，右半＝逆）。
-        for (std::size_t r = 0; r < n; ++r) {
-            if (r == col) {
-                continue;
-            }
-            const double factor = augAt(r, col);
-            if (factor == 0.0) {
-                continue;
-            }
-            for (std::size_t c = 0; c < 2 * n; ++c) {
-                augAt(r, c) -= factor * augAt(col, c);
-            }
+            m(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c))
+                = a(r, c);
         }
     }
-
-    RowMatrix inv;
-    inv.rows = n;
-    inv.cols = n;
-    inv.data.assign(n * n, 0.0);
+    const Eigen::MatrixXd inv = rw::math::LinearAlgebra::inverse(m);
+    if (!inv.allFinite()) {
+        // 防御面：调用前提已由 §7.2 校验排除奇异——到达此处＝实现缺陷
+        // 或极端舍入，fail-fast 暴露而非产出垃圾逆（AGENTS §3）。
+        throwContract(kDtMatrixSingular,
+                      "求逆结果非有限——矩阵未过 §7.2 校验或实现缺陷");
+    }
+    RowMatrix out;
+    out.rows = n;
+    out.cols = n;
+    out.data.assign(n * n, 0.0);
     for (std::size_t r = 0; r < n; ++r) {
         for (std::size_t c = 0; c < n; ++c) {
-            inv.data[r * n + c] = augAt(r, n + c);
+            out.data[r * n + c]
+                = inv(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c));
         }
     }
-    return inv;
+    return out;
 }
 
 /// 矩阵-向量积（行主序：result[r]＝Σ_c M(r,c)·v[c]——固定列升序求和）。
@@ -762,10 +676,11 @@ CouplingValidationResult DriveTrainMappingCore::validateCoupledWindow(
 
     // ---- §7.2 行 2：奇异矩阵（σmin ≤ σmax×1×10⁻¹² ⇔ κ ≥ 1×10¹² 视为
     // det≈0——双精度有效秩为零；**不得以伪逆放行**，§7.3 伪逆使用边界）。
-    // 奇异值经单侧 Jacobi SVD（确定性——文件头注），比较型诊断携带
-    // σmin/σmax 比值（与 modeling I-MDL-11 重算复核同族设计默认——
-    // P-DT-2 留痕，映射侧为 runtime 编译校验后的第二道防线）。
-    const std::vector<double> sigma = singularValuesJacobi(win.C);
+    // 奇异值经上游 rw::math::LinearAlgebra::svd（上游线性代数复用——自写 Jacobi
+    // 已删），比较型诊断携带 σmin/σmax 比值（与 modeling I-MDL-11 重算
+    // 复核同族设计默认——P-DT-2 留痕，映射侧为 runtime 编译校验后的
+    // 第二道防线）。
+    const std::vector<double> sigma = singularValues(win.C);
     const double sigmaMax = sigma.front(); // 降序首元＝σmax
     const double sigmaMin = sigma.back();  // 降序末元＝σmin
     if (sigmaMax == 0.0 || sigmaMin <= sigmaMax * kDtSingularSigmaRatio) {
@@ -1167,7 +1082,8 @@ ReflectedInertiaResult DriveTrainMappingCore::evaluate(
     }
 
     // ---- R2 前置：窗口逆矩阵 C⁻¹（校验通过⟹可逆良态——§7.3 使用前提；
-    // Gauss-Jordan 部分主元，确定性——文件头注）。
+    // 上游 LinearAlgebra::inverse＝Eigen LU（部分主元）封闭代数路径——
+    // 同输入必得位等输出，确定性口径见文件头注）。
     RowMatrix cinv;
     if (w > 0) {
         cinv = invertSquareMatrix(model.window->C);

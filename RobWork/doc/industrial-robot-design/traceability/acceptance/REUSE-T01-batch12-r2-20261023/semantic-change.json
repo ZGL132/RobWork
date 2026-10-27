@@ -1,0 +1,7 @@
+[
+  {
+    "functionId": "workflow.CloseSupervisor.running",
+    "old": "getter组running/storeClosedObserved/abandonDiagObserved/gaveUp，原子acquire只读历史位，不产生第二状态权威",
+    "new": "getter组running/storeClosedObserved/abandonDiagObserved/gaveUp：running为当前运行态，start置true、stop/自然退出清false；其余三个保留历史观测事实，原子acquire只读，不产生第二状态权威"
+  }
+]

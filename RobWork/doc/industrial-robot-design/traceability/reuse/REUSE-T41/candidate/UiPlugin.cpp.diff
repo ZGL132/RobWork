@@ -1,0 +1,186 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp
+index 9c97f9a10..9ccf33f23 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp
+@@ -101,6 +101,9 @@
+ #include <rwlibs/opengl/RenderGeometry.hpp> // 选中几何复用权威网格/局部变换，原材质零修改。
+ #include <QColor>
+ 
++#include <sdurws/ird/execution/EventBus.hpp>  // execution::DomainEventBusImpl（F-967 生产装配——core IDomainEventBus
++                                              // 的 execution 侧实现：§10.4 专用投递线程/RAII 退订/drain on close；
++                                              // core::ReferenceEventBus 非生产组件，2026-10-25 起本插件不再装配）
+ #include <sdurws/ird/project/CommandService.hpp> // project::CommandResult/CommandStatus（apply 网关提交面——T03b-2）
+ #include <sdurws/ird/project/QueryPort.hpp>      // project::IProjectQueryPort/RevisionView（UI-T29 闭包数据源）
+ #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
+@@ -241,14 +244,19 @@ bool isAssembledRequirementCommand(const std::string& id)
+  * @brief 修订事件值桥——只转发载荷，禁止在事务发布栈内查询存储。
+  *
+  * PM-04/AT-21：project提交时仍持writer锁，直接回查修订会重入非递归锁。
+- * 宿主回调负责复制载荷并排入UI队列，提交返回后才完整读取；本桥不持域
+- * 或store裸指针。插件拥有本桥，订阅期不超过插件生命周期；非线程安全，
+- * 沿当前宿主UI线程提交和订阅纪律使用。
++ * 宿主回调负责复制值载荷（含适配器快照经互斥读取——F-967）并排入UI队列，
++ * 提交返回后才完整读取；本桥不持域或store裸指针。F-967 起生产总线＝
++ * execution::DomainEventBusImpl：onEvent 在总线专用投递线程被串行调用
++ * （单投递线程＝本桥的隐式串行化），桥内只做值拷贝与队列转投，不触碰
++ * 任何 Qt UI 对象与存储状态；适配器快照读取经宿主 snapshotEventStoreAdapter()
++ * 与 UI 线程打开拍互斥（shared_ptr 非原子，裸读即数据竞争）。
+  */
+ class DomainRevisionEventBridge final : public core::IDomainEventSink {
+ public:
+     /** @brief 绑定只排队、不查询的宿主回调。
+      * @param forward [in] 借用值载荷的回调；可空表示不消费，不得保存参数引用。
++     * @note 回调线程＝总线投递线程（execution §6.2）；forward 体内同样只许
++     *       值拷贝＋队列转投，禁止同步回查存储或触碰 UI 对象。
+      */
+     explicit DomainRevisionEventBridge(
+         std::function<void(const core::RevisionCommittedPayload&)> forward)
+@@ -743,10 +751,17 @@ void IrdWorkbenchHostPlugin::initialize()
+     m_nameResolver = std::make_shared<app::NullUiNameResolver>();
+     m_bridge = std::make_shared<app::ProjectDiagnosticsBridge>(
+         m_diag.catalog, m_diag.factory, m_diag.pipeline);
+-    // 域事件总线（WP-24-T03b 收口）：修订提交事件面——store 打开请求挂接
+-    // ＋宿主订阅转达域模块（撤销/重做等非 apply 路径的会话同步由此达成，
+-    // 不引入第二套事件机制——core 事件总线是唯一机制）。
+-    m_eventBus = std::make_shared<core::ReferenceEventBus>();
++    // 域事件总线（WP-24-T03b 收口／F-967 生产装配收口）：修订提交事件面
++    // ——store 打开请求挂接＋宿主订阅转达域模块（撤销/重做等非 apply 路径
++    // 的会话同步由此达成，不引入第二套事件机制——core 事件总线是唯一机制）。
++    // 生产实例＝execution::DomainEventBusImpl（units/execution.md §10.4）：
++    // publish 线程安全即返（只入队不回调——store 提交持写锁期间发布零阻塞，
++    // 无 store锁→回调 的同线程重入路径）、专用投递线程串行分发、RAII 订阅
++    // 句柄、析构 drain on close。core::ReferenceEventBus 是测试语义钉子
++    // （Events.hpp"非生产组件、不进产品链接面"），2026-10-25 前被本插件
++    // 越界装配（F-967），现换回架构明文归属的 execution 实现；UI 线程
++    // marshaling 由宿主 sink 内经 Qt 队列转投承担（execution §13 交接行）。
++    m_eventBus = std::make_shared<execution::DomainEventBusImpl>();
+     // 打开工厂＝捕获包装（UI-T17）包住对端翻译适配器：包装只透传并捕获
+     // 成功绑定集（草稿写半区端口来源），对端翻译语义零改动。
+     // T03b-2：成功打开回调同步保存强类型适配器（apply 网关取命令端口）。
+@@ -755,7 +770,13 @@ void IrdWorkbenchHostPlugin::initialize()
+         std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge, m_eventBus.get()),
+         [this](std::shared_ptr<app::StorePortAdapter> adapter) {
+             std::shared_ptr<app::StorePortAdapter> kept = adapter;
+-            m_lastStoreAdapter = std::move(adapter);
++            {
++                // F-967：写侧与事件投递线程的快照读互斥（m_eventAdapterMutex）——
++                // 本回调在 UI 线程（打开协议同线程），投递线程经
++                // snapshotEventStoreAdapter() 取锁读；纯 UI 线程读不经锁不受影响。
++                std::lock_guard<std::mutex> guard(m_eventAdapterMutex);
++                m_lastStoreAdapter = std::move(adapter);
++            }
+             // 域命令处理器装配期注册（UI-T39——§5.3.5"L5 装配期一次性注册"
+             // 的宿主半区）：打开成功的存储上下文上注册 requirements 两处理
+             // 器（apply-requirement-set/apply-requirement-import——无状态，
+@@ -823,8 +844,13 @@ void IrdWorkbenchHostPlugin::initialize()
+             m_revisionSink = std::make_unique<DomainRevisionEventBridge>(
+                 [this](const core::RevisionCommittedPayload& event) {
+                     const auto payload=event;
+-                    const auto source=m_lastStoreAdapter;
+-                    QTimer::singleShot(0,this,[this,payload,source] {
++                    // F-967：本回调在 execution 总线投递线程执行——适配器快照
++                    // 经互斥读取（与 UI 线程打开拍写入互斥），再以值捕获随队列
++                    // 进 UI 线程比对；投递线程零裸读宿主非原子状态。
++                    const auto source=snapshotEventStoreAdapter();
++                    // 显式 QueuedConnection 转投 UI 线程（宿主为上下文：宿主
++                    // 销毁时未投递的排队体自动丢弃——迟到事件不再触碰新会话）。
++                    QMetaObject::invokeMethod(this,[this,payload,source] {
+                         const auto adapter=m_lastStoreAdapter;
+                         // 同路径重新打开也是不同会话；迟到事件不得读取或改变新项目。
+                         if(!adapter||adapter!=source||adapter->isClosed()||!m_domains){return;}
+@@ -840,7 +866,7 @@ void IrdWorkbenchHostPlugin::initialize()
+                             if(m_hostStatusBar){m_hostStatusBar->showMessage(QStringLiteral(
+                                 "建模修订同步失败，原工作集已保留；请重新打开项目，详情见日志"),8000);}
+                         }
+-                    });
++                    }, Qt::QueuedConnection);
+                 });
+             m_revisionSubscription = m_eventBus->subscribe(*m_revisionSink);
+ 
+@@ -864,9 +890,12 @@ void IrdWorkbenchHostPlugin::initialize()
+                     // 本订阅不能同步回查HEAD，否则同线程再次取writer互斥锁会失败。
+                     // 只复制值事件，待命令返回后由UI队列重读权威；QObject上下文
+                     // 保证宿主销毁时取消，项目身份与关闭守卫阻止迟到事件污染新项目。
++                    // F-967：onEvent 在 execution 总线投递线程执行——适配器快照
++                    // 经宿主互斥访问器读取（与 UI 线程打开拍写入互斥），再以值
++                    // 捕获随显式 QueuedConnection 队列进 UI 线程比对。
+                     const auto payload = event.asRevisionCommitted();
+-                    const auto source = m_host->m_lastStoreAdapter;
+-                    QTimer::singleShot(0, m_host, [host = m_host, payload, source] {
++                    const auto source = m_host->snapshotEventStoreAdapter();
++                    QMetaObject::invokeMethod(m_host, [host = m_host, payload, source] {
+                         const auto adapter = host->m_lastStoreAdapter;
+                         if (adapter && adapter == source && !adapter->isClosed()
+                             && adapter->projectStore().projectId() == payload.project) {
+@@ -913,7 +942,7 @@ void IrdWorkbenchHostPlugin::initialize()
+                                 }
+                             }
+                         }
+-                    });
++                    }, Qt::QueuedConnection);
+                 }
+ 
+             private:
+@@ -1524,6 +1553,19 @@ IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
+     if (m_diskExecutor) {
+         m_diskExecutor->stop();
+     }
++    // 事件总线兜底收口（F-967——析构可能不经 aboutToQuit，:1515 注同款
++    // 幂等兜底）：先退订（RAII 句柄置空；aboutToQuit 已收口时为空操作），
++    // 再 waitForIdle 等在投回调归零——成员逆序销毁 sink 前，投递线程不再
++    // 触碰它们（execution 退订不等在投帧，waitForIdle 是唯一确定性静止点）。
++    // 随后成员销毁序：句柄（已空）→sink→总线（drain join，空订阅表零回调）
++    // →快照互斥（声明序保证晚于总线析构）。
++    m_revisionSubscription.reset();
++    m_requirementsRevisionSubscription.reset();
++    if (m_eventBus) {
++        // waitForIdle 为 execution 具体类型观测面——装配者向下转型（同
++        // connectAppQuitDrain 注：唯一写入点＝make_shared<DomainEventBusImpl>）。
++        static_cast<execution::DomainEventBusImpl*>(m_eventBus.get())->waitForIdle();
++    }
+     // 呈现管道兜底收口（UI-T46）：桥先毁（观察者弱持有自动退订）→编译
+     // 端口最后毁。正常关闭路径已随 teardown 收口，此处兜底。
+     // UI-T77（F-569）注释更正：成员声明序上 m_compilePort 在
+@@ -2242,6 +2284,16 @@ void IrdWorkbenchHostPlugin::refreshHostMenuActions()
+     }
+ }
+ 
++std::shared_ptr<app::StorePortAdapter>
++IrdWorkbenchHostPlugin::snapshotEventStoreAdapter() const
++{
++    // F-967：事件投递线程的适配器快照读——与 UI 线程打开拍写入共用
++    // m_eventAdapterMutex（hpp 成员注：声明序保证晚于总线 drain 析构）。
++    // 返回 shared_ptr 值拷贝＝快照所有权随队列转移，投递线程不持锁回调。
++    std::lock_guard<std::mutex> guard(m_eventAdapterMutex);
++    return m_lastStoreAdapter;
++}
++
+ void IrdWorkbenchHostPlugin::connectAppQuitDrain()
+ {
+     // 宿主退出时的有界落盘收口：插件不拥有应用生命周期（进程退出归宿主
+@@ -2260,6 +2312,25 @@ void IrdWorkbenchHostPlugin::connectAppQuitDrain()
+                              if (m_diskExecutor) {
+                                  m_diskExecutor->stop();
+                              }
++                             // 事件总线退出收口（F-967——§10.4 订阅生命周期）：
++                             // 先停发布源（上方 shutdown/stop），再退订（RAII
++                             // 句柄置空——execution 退订在帧边界生效），最后
++                             // waitForIdle 等队列清空且在投回调归零。投递线程
++                             // 不能托付进程退出：归零后残余队列帧面对空订阅表
++                             // 零回调，线程停在条件等待上，进程退出或总线成员
++                             // 析构（drain join）都安全。总线本体保留到成员
++                             // 析构——store 适配器仍持总线裸指针（非 owning），
++                             // 此处提前 reset 会留悬垂发布指针。
++                             m_revisionSubscription.reset();
++                             m_requirementsRevisionSubscription.reset();
++                             if (m_eventBus) {
++                                 // waitForIdle 是 execution 具体类型的观测面（core
++                                 // 接口只有 publish/subscribe）——本类是装配者，总线
++                                 // 实例仅由 :764 make_shared<DomainEventBusImpl> 写入，
++                                 // 向下转型安全（头文件保持接口类型，消费面零耦合）。
++                                 static_cast<execution::DomainEventBusImpl*>(
++                                     m_eventBus.get())->waitForIdle();
++                             }
+                          });
+     }
+ }

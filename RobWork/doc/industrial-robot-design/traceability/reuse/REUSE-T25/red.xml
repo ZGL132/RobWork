@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.067" timestamp="2026-10-24T13:06:41.425" name="AllTests">
+  <testsuite name="TxEngineTest" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.063" timestamp="2026-10-24T13:06:41.426">
+    <testcase name="F963_SdkWriteErrors_StableCategoryAndUnchangedBytes" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp" line="845" status="run" result="completed" time="0.032" timestamp="2026-10-24T13:06:41.426" classname="TxEngineTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397&#x0A;Expected equality of these values:&#x0A;  e.code()&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;  code&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-0-e84acf1a2e93e375 osError=112&#x0A;Google Test trace:&#x0A;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 112&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397
+Expected equality of these values:
+  e.code()
+    Which is: 4-byte object <07-00 00-00>
+  code
+    Which is: 4-byte object <08-00 00-00>
+稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-0-e84acf1a2e93e375 osError=112
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 112
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397&#x0A;Expected equality of these values:&#x0A;  e.code()&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;  code&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-1-4ba442f396bfdc76 osError=1295&#x0A;Google Test trace:&#x0A;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 1295&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397
+Expected equality of these values:
+  e.code()
+    Which is: 4-byte object <07-00 00-00>
+  code
+    Which is: 4-byte object <08-00 00-00>
+稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-1-4ba442f396bfdc76 osError=1295
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 1295
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397&#x0A;Expected equality of these values:&#x0A;  e.code()&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;  code&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-3-fd300daf8b0fc055 osError=70&#x0A;Google Test trace:&#x0A;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 70&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397
+Expected equality of these values:
+  e.code()
+    Which is: 4-byte object <08-00 00-00>
+  code
+    Which is: 4-byte object <07-00 00-00>
+稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-3-fd300daf8b0fc055 osError=70
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 70
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397&#x0A;Expected equality of these values:&#x0A;  e.code()&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;  code&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-4-ea4079e3f6c5ce1a osError=395&#x0A;Google Test trace:&#x0A;D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 395&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397
+Expected equality of these values:
+  e.code()
+    Which is: 4-byte object <08-00 00-00>
+  code
+    Which is: 4-byte object <07-00 00-00>
+稳定码不符: project/tx-engine: create-staging-dir path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case1\proj.rwdesign\.staging\tx-4-ea4079e3f6c5ce1a osError=395
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(857): 395
+]]></failure>
+    </testcase>
+    <testcase name="F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp" line="906" status="run" result="completed" time="0.03" timestamp="2026-10-24T13:06:41.459" classname="TxEngineTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397&#x0A;Expected equality of these values:&#x0A;  e.code()&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;  code&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;稳定码不符: project/tx-engine: stage-write path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case2\proj.rwdesign\.staging\tx-0-40297a68a0661893\objects\obj-5510bac5714dad1bb42e3acb5f9101ff\ba9beabcf1a45da385bb760161c72da15ae20dce551dde5220cba28d3cd3c952 osError=112&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp:397
+Expected equality of these values:
+  e.code()
+    Which is: 4-byte object <07-00 00-00>
+  code
+    Which is: 4-byte object <08-00 00-00>
+稳定码不符: project/tx-engine: stage-write path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\32388\case2\proj.rwdesign\.staging\tx-0-40297a68a0661893\objects\obj-5510bac5714dad1bb42e3acb5f9101ff\ba9beabcf1a45da385bb760161c72da15ae20dce551dde5220cba28d3cd3c952 osError=112
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

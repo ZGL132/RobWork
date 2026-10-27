@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T33",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+      "sha256": "515b941198602601f5ad341b1901ded32086a6bd9aeec798631c28a42c2addc2",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-ROT"
+      ],
+      "boundary": "rpyview反解唯一实现换上游RPY反向换序；万向锁roll=0约定保留；插件STATIC链接面$<LINK_ONLY>实证。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+      "sha256": "d20522e50446e3227865dedff16ff881194b5a94b31d72564fde6248e94e0655",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-ROT"
+      ],
+      "boundary": "删除逐字同款rotationToRpy副本（G1），消费rpyview唯一实现；呈现层零业务判定不变。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+      "sha256": "0d49064f439164f740673ca05e54eab7945f19c81d86de91b4a830927621de0b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "既有gtest供给；新增RPY往返/上游位级对照/万向锁/近奇异带oracle。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md"
+    }
+  ]
+}

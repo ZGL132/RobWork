@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="6" failures="2" disabled="0" errors="0" time="0.007" timestamp="2026-10-23T06:34:19.924" name="AllTests">
+  <testsuite name="ReuseDigestAudit" tests="6" failures="2" disabled="0" skipped="0" errors="0" time="0.007" timestamp="2026-10-23T06:34:19.924">
+    <testcase name="CngKnownVectors_CORE_T02" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-23T06:34:19.924" classname="ReuseDigestAudit" />
+    <testcase name="PaddingAndChunkBoundaries_CORE_T02" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp" line="49" status="run" result="completed" time="0.007" timestamp="2026-10-23T06:34:19.924" classname="ReuseDigestAudit" />
+    <testcase name="CngDuplicateAndProductCopy_CORE_T02" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp" line="70" status="run" result="completed" time="0." timestamp="2026-10-23T06:34:19.931" classname="ReuseDigestAudit" />
+    <testcase name="CanonicalTypesAndRejection_CORE_T02" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp" line="91" status="run" result="completed" time="0." timestamp="2026-10-23T06:34:19.932" classname="ReuseDigestAudit" />
+    <testcase name="ContentVersionPublicFnv_CORE_T02" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp" line="105" status="run" result="completed" time="0." timestamp="2026-10-23T06:34:19.932" classname="ReuseDigestAudit">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp:108&#x0A;Expected equality of these values:&#x0A;  static_cast&lt;std::size_t&gt;(0xd84cf67ff3e90eeeULL)&#x0A;    Which is: 15586103439835860718&#x0A;  std::hash&lt;ContentVersion&gt;{}(value)&#x0A;    Which is: 3981071475404768780&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp:108
+Expected equality of these values:
+  static_cast<std::size_t>(0xd84cf67ff3e90eeeULL)
+    Which is: 15586103439835860718
+  std::hash<ContentVersion>{}(value)
+    Which is: 3981071475404768780
+]]></failure>
+    </testcase>
+    <testcase name="ContentIdentityPublicFnv_CORE_T02" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp" line="110" status="run" result="completed" time="0." timestamp="2026-10-23T06:34:19.932" classname="ReuseDigestAudit">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp:113&#x0A;Expected equality of these values:&#x0A;  static_cast&lt;std::size_t&gt;(0xd84cf67ff3e90eeeULL)&#x0A;    Which is: 15586103439835860718&#x0A;  std::hash&lt;ContentIdentity&gt;{}(value)&#x0A;    Which is: 3981071475404768780&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp:113
+Expected equality of these values:
+  static_cast<std::size_t>(0xd84cf67ff3e90eeeULL)
+    Which is: 15586103439835860718
+  std::hash<ContentIdentity>{}(value)
+    Which is: 3981071475404768780
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

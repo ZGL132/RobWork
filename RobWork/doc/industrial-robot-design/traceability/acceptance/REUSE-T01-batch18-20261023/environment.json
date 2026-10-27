@@ -1,0 +1,233 @@
+[
+  {
+    "Key": "QT_QPA_PLATFORM",
+    "Value": "windows",
+    "PSPath": "Microsoft.PowerShell.Core\\Environment::QT_QPA_PLATFORM",
+    "PSDrive": {
+      "CurrentLocation": "",
+      "Name": "Env",
+      "Provider": "Microsoft.PowerShell.Core\\Environment",
+      "Root": "",
+      "Description": "Drive that contains a view of the environment variables for the process",
+      "MaximumSize": null,
+      "Credential": "System.Management.Automation.PSCredential",
+      "DisplayRoot": null,
+      "VolumeSeparatedByColon": true
+    },
+    "PSProvider": {
+      "ImplementingType": "Microsoft.PowerShell.Commands.EnvironmentProvider",
+      "HelpFile": "System.Management.Automation.dll-Help.xml",
+      "Name": "Environment",
+      "PSSnapIn": "Microsoft.PowerShell.Core",
+      "ModuleName": "Microsoft.PowerShell.Core",
+      "Module": null,
+      "Description": "",
+      "Capabilities": 16,
+      "Home": "",
+      "Drives": "Env",
+      "VolumeSeparatedByColon": true,
+      "ItemSeparator": "\\",
+      "AltItemSeparator": "/"
+    },
+    "PSIsContainer": false,
+    "Name": "QT_QPA_PLATFORM"
+  },
+  {
+    "Key": "VCToolsInstallDir",
+    "Value": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\",
+    "PSPath": "Microsoft.PowerShell.Core\\Environment::VCToolsInstallDir",
+    "PSDrive": {
+      "CurrentLocation": "",
+      "Name": "Env",
+      "Provider": "Microsoft.PowerShell.Core\\Environment",
+      "Root": "",
+      "Description": "Drive that contains a view of the environment variables for the process",
+      "MaximumSize": null,
+      "Credential": "System.Management.Automation.PSCredential",
+      "DisplayRoot": null,
+      "VolumeSeparatedByColon": true
+    },
+    "PSProvider": {
+      "ImplementingType": "Microsoft.PowerShell.Commands.EnvironmentProvider",
+      "HelpFile": "System.Management.Automation.dll-Help.xml",
+      "Name": "Environment",
+      "PSSnapIn": "Microsoft.PowerShell.Core",
+      "ModuleName": "Microsoft.PowerShell.Core",
+      "Module": null,
+      "Description": "",
+      "Capabilities": 16,
+      "Home": "",
+      "Drives": "Env",
+      "VolumeSeparatedByColon": true,
+      "ItemSeparator": "\\",
+      "AltItemSeparator": "/"
+    },
+    "PSIsContainer": false,
+    "Name": "VCToolsInstallDir"
+  },
+  {
+    "Key": "VCToolsRedistDir",
+    "Value": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.42.34433\\",
+    "PSPath": "Microsoft.PowerShell.Core\\Environment::VCToolsRedistDir",
+    "PSDrive": {
+      "CurrentLocation": "",
+      "Name": "Env",
+      "Provider": "Microsoft.PowerShell.Core\\Environment",
+      "Root": "",
+      "Description": "Drive that contains a view of the environment variables for the process",
+      "MaximumSize": null,
+      "Credential": "System.Management.Automation.PSCredential",
+      "DisplayRoot": null,
+      "VolumeSeparatedByColon": true
+    },
+    "PSProvider": {
+      "ImplementingType": "Microsoft.PowerShell.Commands.EnvironmentProvider",
+      "HelpFile": "System.Management.Automation.dll-Help.xml",
+      "Name": "Environment",
+      "PSSnapIn": "Microsoft.PowerShell.Core",
+      "ModuleName": "Microsoft.PowerShell.Core",
+      "Module": null,
+      "Description": "",
+      "Capabilities": 16,
+      "Home": "",
+      "Drives": "Env",
+      "VolumeSeparatedByColon": true,
+      "ItemSeparator": "\\",
+      "AltItemSeparator": "/"
+    },
+    "PSIsContainer": false,
+    "Name": "VCToolsRedistDir"
+  },
+  {
+    "Key": "VCToolsVersion",
+    "Value": "14.42.34433",
+    "PSPath": "Microsoft.PowerShell.Core\\Environment::VCToolsVersion",
+    "PSDrive": {
+      "CurrentLocation": "",
+      "Name": "Env",
+      "Provider": "Microsoft.PowerShell.Core\\Environment",
+      "Root": "",
+      "Description": "Drive that contains a view of the environment variables for the process",
+      "MaximumSize": null,
+      "Credential": "System.Management.Automation.PSCredential",
+      "DisplayRoot": null,
+      "VolumeSeparatedByColon": true
+    },
+    "PSProvider": {
+      "ImplementingType": "Microsoft.PowerShell.Commands.EnvironmentProvider",
+      "HelpFile": "System.Management.Automation.dll-Help.xml",
+      "Name": "Environment",
+      "PSSnapIn": "Microsoft.PowerShell.Core",
+      "ModuleName": "Microsoft.PowerShell.Core",
+      "Module": null,
+      "Description": "",
+      "Capabilities": 16,
+      "Home": "",
+      "Drives": "Env",
+      "VolumeSeparatedByColon": true,
+      "ItemSeparator": "\\",
+      "AltItemSeparator": "/"
+    },
+    "PSIsContainer": false,
+    "Name": "VCToolsVersion"
+  },
+  {
+    "Key": "VSCMD_ARG_app_plat",
+    "Value": "Desktop",
+    "PSPath": "Microsoft.PowerShell.Core\\Environment::VSCMD_ARG_app_plat",
+    "PSDrive": {
+      "CurrentLocation": "",
+      "Name": "Env",
+      "Provider": "Microsoft.PowerShell.Core\\Environment",
+      "Root": "",
+      "Description": "Drive that contains a view of the environment variables for the process",
+      "MaximumSize": null,
+      "Credential": "System.Management.Automation.PSCredential",
+      "DisplayRoot": null,
+      "VolumeSeparatedByColon": true
+    },
+    "PSProvider": {
+      "ImplementingType": "Microsoft.PowerShell.Commands.EnvironmentProvider",
+      "HelpFile": "System.Management.Automation.dll-Help.xml",
+      "Name": "Environment",
+      "PSSnapIn": "Microsoft.PowerShell.Core",
+      "ModuleName": "Microsoft.PowerShell.Core",
+      "Module": null,
+      "Description": "",
+      "Capabilities": 16,
+      "Home": "",
+      "Drives": "Env",
+      "VolumeSeparatedByColon": true,
+      "ItemSeparator": "\\",
+      "AltItemSeparator": "/"
+    },
+    "PSIsContainer": false,
+    "Name": "VSCMD_ARG_app_plat"
+  },
+  {
+    "Key": "VSCMD_ARG_HOST_ARCH",
+    "Value": "x64",
+    "PSPath": "Microsoft.PowerShell.Core\\Environment::VSCMD_ARG_HOST_ARCH",
+    "PSDrive": {
+      "CurrentLocation": "",
+      "Name": "Env",
+      "Provider": "Microsoft.PowerShell.Core\\Environment",
+      "Root": "",
+      "Description": "Drive that contains a view of the environment variables for the process",
+      "MaximumSize": null,
+      "Credential": "System.Management.Automation.PSCredential",
+      "DisplayRoot": null,
+      "VolumeSeparatedByColon": true
+    },
+    "PSProvider": {
+      "ImplementingType": "Microsoft.PowerShell.Commands.EnvironmentProvider",
+      "HelpFile": "System.Management.Automation.dll-Help.xml",
+      "Name": "Environment",
+      "PSSnapIn": "Microsoft.PowerShell.Core",
+      "ModuleName": "Microsoft.PowerShell.Core",
+      "Module": null,
+      "Description": "",
+      "Capabilities": 16,
+      "Home": "",
+      "Drives": "Env",
+      "VolumeSeparatedByColon": true,
+      "ItemSeparator": "\\",
+      "AltItemSeparator": "/"
+    },
+    "PSIsContainer": false,
+    "Name": "VSCMD_ARG_HOST_ARCH"
+  },
+  {
+    "Key": "VSCMD_ARG_TGT_ARCH",
+    "Value": "x64",
+    "PSPath": "Microsoft.PowerShell.Core\\Environment::VSCMD_ARG_TGT_ARCH",
+    "PSDrive": {
+      "CurrentLocation": "",
+      "Name": "Env",
+      "Provider": "Microsoft.PowerShell.Core\\Environment",
+      "Root": "",
+      "Description": "Drive that contains a view of the environment variables for the process",
+      "MaximumSize": null,
+      "Credential": "System.Management.Automation.PSCredential",
+      "DisplayRoot": null,
+      "VolumeSeparatedByColon": true
+    },
+    "PSProvider": {
+      "ImplementingType": "Microsoft.PowerShell.Commands.EnvironmentProvider",
+      "HelpFile": "System.Management.Automation.dll-Help.xml",
+      "Name": "Environment",
+      "PSSnapIn": "Microsoft.PowerShell.Core",
+      "ModuleName": "Microsoft.PowerShell.Core",
+      "Module": null,
+      "Description": "",
+      "Capabilities": 16,
+      "Home": "",
+      "Drives": "Env",
+      "VolumeSeparatedByColon": true,
+      "ItemSeparator": "\\",
+      "AltItemSeparator": "/"
+    },
+    "PSIsContainer": false,
+    "Name": "VSCMD_ARG_TGT_ARCH"
+  }
+]

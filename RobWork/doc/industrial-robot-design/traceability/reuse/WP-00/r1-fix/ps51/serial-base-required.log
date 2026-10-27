@@ -1,0 +1,14 @@
+powershell.exe : serial mainline task requires explicit -Base <start SHA>
+At D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:19 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (serial mainline...ase <start SHA>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-b5a74bd4c0944f48b9d0346f15b120fc\RobWork\scripts\industrialrobot\veri
+fy-task-scope.ps1:87 char:5
++     throw 'serial mainline task requires explicit -Base <start SHA>'
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (serial mainline...ase <start SHA>:String) [], RuntimeException
+    + FullyQualifiedErrorId : serial mainline task requires explicit -Base <start SHA>
+ 

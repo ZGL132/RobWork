@@ -1,0 +1,50 @@
+[
+  {
+    "pass": true,
+    "accepted": true,
+    "name": "multiple-assertions-one-failing-case",
+    "message": ""
+  },
+  {
+    "pass": true,
+    "accepted": true,
+    "name": "one-failing-case",
+    "message": ""
+  },
+  {
+    "pass": true,
+    "accepted": false,
+    "name": "wrong-failure-count",
+    "message": "REUSE-POSITIVE : disconnected : XML counts/assertions inconsistent"
+  },
+  {
+    "pass": true,
+    "accepted": false,
+    "name": "empty-case-list",
+    "message": "REUSE-POSITIVE : disconnected : XML counts/assertions inconsistent"
+  },
+  {
+    "pass": true,
+    "accepted": false,
+    "name": "failing-normal",
+    "message": "REUSE-POSITIVE : normal : failing baseline/oracle/comparison"
+  },
+  {
+    "pass": true,
+    "accepted": false,
+    "name": "skipped-normal",
+    "message": "REUSE-POSITIVE : normal : XML counts/assertions inconsistent"
+  },
+  {
+    "pass": true,
+    "accepted": false,
+    "name": "error-node",
+    "message": "REUSE-POSITIVE : disconnected : XML counts/assertions inconsistent"
+  },
+  {
+    "pass": true,
+    "accepted": false,
+    "name": "disconnect-has-no-failure",
+    "message": "REUSE-POSITIVE : disconnect must fail a real assertion"
+  }
+]

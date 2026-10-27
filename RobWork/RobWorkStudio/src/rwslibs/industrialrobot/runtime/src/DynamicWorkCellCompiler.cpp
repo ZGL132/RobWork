@@ -268,6 +268,16 @@ DynamicWorkCellCompileOutcome compileDynamicWorkCell(
         // 对应连杆帧下。RigidDevice 的 RigidLink 经承载帧向上回溯首个关节
         // 定位 jointIdx（基线 RigidDevice.cpp 实测）——承载帧挂在连杆帧
         // （关节子帧）之下正是该回溯成立的结构前提。
+        // ★ 复合刚体裁决（REUSE-T30 定向核）：S6 的 Fixed 关节编译为
+        // FixedFrame（不入设备活动关节集，WorkCellCompiler 同名分支），
+        // 固定段下游连杆体的回溯会越过该 FixedFrame 命中"最近上游活动
+        // 关节"——即同一活动关节可驱动多体（body→关节多对一）。该语义
+        // 与基线一致且物理正确：RigidLink 构造本就以 findParentFrom<Joint>
+        // 取最近关节；速度积 getSubPart(0, _jointIdx+1)（RigidDevice.cpp
+        // getVelocity）只含回溯关节及其上游速度——固定关节无自由度、零
+        // 速度贡献，同段各体角速度相同、线速度满足刚体速度场，即"固定段
+        // 两侧连杆构成同一复合刚体"（惯性仍逐体承载、不合并）。逐体回溯
+        // 的多重集事实由 DynamicWorkCellCompilerTest 钉住（见 4c 注）。
         std::vector<std::pair<rwsim::dynamics::BodyInfo, rw::models::Object::Ptr>>
             deviceLinkBodies;  // RigidDevice 构造输入（链序＝确定序）
         for (std::size_t i = 1; i < chain.links.size(); ++i) {
@@ -433,6 +443,10 @@ DynamicWorkCellCompileOutcome compileDynamicWorkCell(
         // 名集合＝WC 设备关节名集合（逐关节名交叉、经映射——§8.5 行 3）。
         // 该校验能捕获"承载帧挂错子树→RigidLink 关节定位漂移"的内部缺陷
         // （RigidLink 构造期按同款遍历定位 jointIdx，两面对不上即定位失真）。
+        // 集合语义＝存在性校验（REUSE-T30 裁决）：含 Fixed 关节段时同一
+        // 活动关节可被多个连杆体回溯命中（复合刚体——3c 注），std::set 对
+        // 多对一同构不敏感；两侧集合一致仍是本行要保证的事实，逐体回溯
+        // 计数/刚体速度场由测试断言（REUSE-T30），编译期不扩大拒绝面。
         std::set<std::string> jointsViaBodies;
         for (const rwsim::dynamics::Body::Ptr& body : rigidDevice->getLinks()) {
             // getBodyFrame() 返回裸 Frame*（基线 RW_USE_PTR 未定义形态——

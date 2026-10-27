@@ -1,0 +1,37 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\parent-probe\ird-core\sdurws_ird_core.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b30-accept-20261023-064215/clone/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\parent-probe\ird-core\Release\sdurws_ird_core.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\parent-probe\ird-testkit\sdurws_ird_testkit.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b30-accept-20261023-064215/clone/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\parent-probe\ird-testkit\Release\sdurws_ird_testkit.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\ird_digest_audit.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b30-accept-20261023-064215/clone/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/CMakeLists.txt
+  DigestSuitabilityTest.cpp
+  TestMainReport.cpp
+  DigestTest.cpp
+  正在生成代码...
+  ird_digest_audit.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\Release\ird_digest_audit.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\build\Release\gtest.dll done

@@ -1,0 +1,75 @@
+{
+  "addedCount": 39,
+  "core": 7,
+  "testkit": 32,
+  "uniqueBindings": 17,
+  "searchReplay": [
+    {
+      "exitCode": 0,
+      "sameOutput": true
+    },
+    {
+      "exitCode": 0,
+      "sameOutput": true
+    },
+    {
+      "exitCode": 0,
+      "sameOutput": true
+    },
+    {
+      "exitCode": 0,
+      "sameOutput": true
+    },
+    {
+      "exitCode": 0,
+      "sameOutput": true
+    }
+  ],
+  "installedCandidatesMatch": true,
+  "checks": {
+    "all39DefinitionsBound": true,
+    "all39OwnFileInputsBound": true,
+    "allInputAndAuditEvidenceHashesMatch": true,
+    "originalArtifactHashesMatch": true,
+    "noProductOrUpstreamChange": true
+  }
+}
+core.Compare.closeWithin | 18-33 | C4定向reference及非有限拒绝；极值中间溢出已真实误接受，见probe-r17/core-red，T05保持owner公式修数值边界，非新比较平台
+core.Compare.allCloseWithin.vector | 35-51 | 逐元素复用closeWithin；形状错CoreError，不以求和抵消；Q仅条件编译供给
+core.Compare.allCloseWithin.Q | 54-66 | 逐元素复用closeWithin；形状错CoreError，不以求和抵消；Q仅条件编译供给
+core.Compare.runtimeAbsoluteTolerance | 69-85 | C7量纲默认单点机械转写；未声明nullopt，不让上游precision重定义需求
+core.Tolerance.make | 57-72 | 合法非负有限工厂，公开聚合字段可绕工厂，调用契约需清楚
+core.Tolerance.operator== | 74-77 | 二分量精确值相等，不作容差比较
+core.Tolerance.operator!= | 78-78 | 只委托精确==反转，不写另一比较逻辑
+testkit.Dataset.failField | 24-28 | 统一TestKitError DatasetInvalid机器详情，非用户诊断文案权威
+testkit.Dataset.requireStringArray | 47-64 | JSON类型/个数/元素类型检查；minCount0缺失或非数组均返回空，勿称严格同必填
+testkit.Dataset.requireBool | 67-74 | 须布尔而非字符串，类型保真依赖JsonLite
+testkit.Dataset.allCharsIn | 77-82 | std::all_of字符白名单，非自写正则引擎
+testkit.Dataset.readFileBytes | 85-95 | std::ifstream/ostringstream整文件读，打开失败EnvUnavailable，后续read错误检查待核
+testkit.Dataset.sha256HexOf | 98-111 | 真实core ContentDigester；手写hex可查Boost hex_lower，不能称SHA核心已成熟复用
+testkit.Dataset.toToken | 116-126 | 五类枚举词表/未知unknown，归测试schema
+testkit.Dataset.datasetKindFromToken | 128-136 | 五token逆映射/未知nullopt，非通用枚举框架
+testkit.Dataset.parseSemanticVersion | 138-171 | 仅M.m.p数字/分隔/尾随校验，std::stoi溢出错误转译待核
+testkit.Dataset.DatasetManifest.operator== | 173-195 | 逐字段深比较，包括来源/producer/edge/history；不新建序列化绕比较
+testkit.Dataset.GoldenDataset.load | 197-486 | 解析/schema/单位/独立性/来源/完整性；inputs/expected覆盖有核，generatorCommitted覆盖仅注释未额外核，整数转换和路径边界待证
+testkit.Dataset.GoldenDataset.resolveInput | 488-496 | 只许manifest inputs membership后join，不等价规范化真实沙箱
+testkit.Dataset.GoldenDataset.resolveExpected | 498-506 | 只许manifest expected membership后join，不验证相对路径全安全
+testkit.Dataset.requireString.prefix | 31-39 | 必填字符串类型守卫；plain委托prefix空前缀，不复制解析器
+testkit.Dataset.requireString.plain | 41-44 | 必填字符串类型守卫；plain委托prefix空前缀，不复制解析器
+testkit.Dataset.ReferenceSource.operator== | 67-72 | 只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行
+testkit.Dataset.Producer.operator== | 85-91 | 只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行
+testkit.Dataset.Producer.operator!= | 92-92 | 只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行
+testkit.Dataset.IntegrityEntry.operator== | 109-112 | 只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行
+testkit.Dataset.HistoryEntry.operator== | 123-127 | 只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行
+testkit.Dataset.HistoryEntry.operator!= | 128-128 | 只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行
+testkit.Dataset.DatasetManifest.operator!= | 163-163 | 只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行
+testkit.Dataset.GoldenDataset.manifest | 179-179 | 不可变快照const引用访问，生命周期由GoldenDataset实例持有
+testkit.Dataset.GoldenDataset.toleranceProfileRef | 187-190 | 返回已加载manifest中的id/version对，不自动加载或验证profile
+testkit.SetCheck.MatchPair.operator== | 58-61 | expected/actual索引对精确比较/委托，非数值集合判断
+testkit.SetCheck.MatchPair.operator!= | 62-62 | expected/actual索引对精确比较/委托，非数值集合判断
+testkit.SetCheck.SetMatchTraits.identity | 91-91 | 缺省nullopt表示无身份，只是traits注入契约
+testkit.SetCheck.SetMatchTraits.numerics | 93-93 | 缺省空字段，不构成数值相容边，消费方需特化
+testkit.SetCheck.compatible | 99-116 | 字段数/名同序且非空，全部经现有profile.resolve+core C4；无需第二容差公式
+testkit.SetCheck.tryAugmentAt | 121-151 | 自持Kuhn递归增广和回滚；既有Boost checked Edmonds候选2项实跑通过，供给/见证/内存性能与业务语义须核
+testkit.SetCheck.checkSetEquivalent | 162-392 | 重复/身份优先后数值最大匹配，交错圈歧义与详情；不得用普通set或排序误替，不因测试工具而豁免成熟算法复用
+testkit.SetCheck.checkStableOrder | 394-435 | 独立逐位身份/数值与首错位；长度不同和更早错位优先级待核，不能以集合等价替代

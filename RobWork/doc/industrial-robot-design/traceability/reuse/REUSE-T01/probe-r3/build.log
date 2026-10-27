@@ -1,0 +1,6 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-probe-export\ird-core\Release\sdurws_ird_core.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-probe-export\ird-testkit\Release\sdurws_ird_testkit.lib
+  UpstreamSuitabilityTest.cpp
+  ird_reuse_audit_probe.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-probe-export\Release\ird_reuse_audit_probe.exe

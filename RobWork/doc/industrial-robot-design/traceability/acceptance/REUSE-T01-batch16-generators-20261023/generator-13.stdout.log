@@ -1,0 +1,1 @@
+opt-lhs-golden: batch=13 dims=4 seed=424242 -> inputs/expected 已写出

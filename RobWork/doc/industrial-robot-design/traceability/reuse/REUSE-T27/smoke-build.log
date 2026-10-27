@@ -1,0 +1,13 @@
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\runtime\Release\sdurws_ird_runtime.lib
+  CommandHandlers.cpp
+  Import.cpp
+  Parts.cpp
+  PropertyEstimation.cpp
+  RobotDesign.cpp
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\modeling\Release\sdurws_ird_modeling.lib

@@ -1,0 +1,5 @@
+1343:BCryptCreateHash(
+1356:BCryptHashData(
+1366:BCryptFinishHash(
+1402:BCryptDuplicateHash(
+1419:BCryptHash(

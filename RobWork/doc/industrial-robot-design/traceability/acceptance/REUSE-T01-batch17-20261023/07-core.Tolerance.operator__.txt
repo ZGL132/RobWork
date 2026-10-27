@@ -1,0 +1,3 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp
+sdurws::ird::core::Tolerance::operator!=
+78:     bool operator!=(const Tolerance& o) const noexcept { return !(*this == o); }

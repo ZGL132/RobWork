@@ -1,0 +1,197 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B19-governance-script-pending-format",
+  "result": "PASS",
+  "verdict": "PASS，仅B19治理脚本pending格式补强",
+  "scope": "仅验收execution治理脚本待审格式及相关拒绝规则；不验收19脚本实际功能，不授全T01/T02/T06，不构成迁移关闭/算法合规/模型授权。",
+  "reviewedCommit": "d52fd06aafcb025a7d494d59c6d44bc9c16f3643",
+  "comparisonBase": "eddb82a8e29f91660b048a69f4ec90c3d0a0e63a",
+  "createdAt": "2026-10-23T03:07:04.3401766+08:00",
+  "repo": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\\repo",
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\\evidence",
+  "independence": "仅在Temp独立冻结副本与随机夹具操作；共享现场只读，无实施、提交、推送、主线合入或再委派。随机夹具内部临时提交只用于冻结读取，随夹具清理。",
+  "delivery": {
+    "localFrozenCommit": "d52fd06aafcb025a7d494d59c6d44bc9c16f3643",
+    "remoteDelivered": false,
+    "remoteReportedCommit": "eddb82a8e29f91660b048a69f4ec90c3d0a0e63a",
+    "source": "主会话报告：三次push及直连超时、代理无监听，本地领先1；验收者未重复网络操作。",
+    "status": "本地局部验收，不代表远程已交付"
+  },
+  "grants": {
+    "wholeT01": false,
+    "T02Admission": false,
+    "T06Pass": false,
+    "migrationClosure": false,
+    "modelPermission": false
+  },
+  "facts": {
+    "changedFiles": 340,
+    "outOfScope": 0,
+    "allowedFilesAdded": 335,
+    "allowedFilesRemoved": 0,
+    "newWildcards": 0,
+    "productFrameworkVcpkgChanges": 0,
+    "realScriptExecutionRows": 0,
+    "originalEvidenceChecksPassed": 19,
+    "originalEvidenceChecksFailed": 0
+  },
+  "originalEvidence": {
+    "ps7": {
+      "executed": 152,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "expected": 152,
+      "passed": 152
+    },
+    "ps51": {
+      "executed": 152,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "expected": 152,
+      "passed": 152
+    },
+    "red": {
+      "executed": 8,
+      "failed": 8,
+      "skipped": 0,
+      "notRun": 0,
+      "expected": 8,
+      "passed": 0
+    },
+    "intermediateGreen": {
+      "executed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "expected": 8,
+      "passed": 8
+    },
+    "method": "逐例JSON/JUnit/日志/driver行及输入原始字节摘要复核；未重跑完整152驱动或原8项红跑。中间helper摘要与最终helper不同，不替代最终证据。"
+  },
+  "freshFocusedRuns": [
+    {
+      "shell": "ps7",
+      "expected": 20,
+      "executed": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "reports": "focused-ps7/reuse-test-report.json",
+      "xml": "focused-ps7/reuse-governance.junit.xml",
+      "helperSha256": "60DD850A9A4E7FE736C4952E5790B68CF7FF70749E04971C0933EF2A050180A3",
+      "validatorSha256": "367CA6304B47481B8136A21021BD4EDE4604296E468D68D90BA1277B2B0713BF",
+      "driverSha256": "8FB2DBFDAA51C419AA7085953DE85B0F2D15A7879672DF867C9DE45D22AFEC3E"
+    },
+    {
+      "shell": "ps51",
+      "expected": 20,
+      "executed": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "reports": "focused-ps51/reuse-test-report.json",
+      "xml": "focused-ps51/reuse-governance.junit.xml",
+      "helperSha256": "60DD850A9A4E7FE736C4952E5790B68CF7FF70749E04971C0933EF2A050180A3",
+      "validatorSha256": "367CA6304B47481B8136A21021BD4EDE4604296E468D68D90BA1277B2B0713BF",
+      "driverSha256": "DF960AA7D9904D01006E92EB0E7367B438F8602FCB5EB4E4F4DDA8E5F0B81602"
+    }
+  ],
+  "directFrozenFunctionRuns": [
+    {
+      "shell": "ps7",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "scope": "actual frozen CheckFunctions + actual frozen dependency function definitions; isolated empty product baseline to reach exact pending-row final guard; not full validator run",
+      "report": "helper-row-ps7.json"
+    },
+    {
+      "shell": "ps51",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "scope": "actual frozen CheckFunctions + actual frozen dependency function definitions; isolated empty product baseline to reach exact pending-row final guard; not full validator run",
+      "report": "helper-row-ps51.json"
+    }
+  ],
+  "checks": [
+    {
+      "name": "verify-task",
+      "result": "PASS",
+      "exitCode": 0,
+      "log": "verify-task.log"
+    },
+    {
+      "name": "scope",
+      "result": "PASS",
+      "exitCode": 0,
+      "log": "scope.log"
+    },
+    {
+      "name": "commit-lint",
+      "result": "PASS",
+      "exitCode": 0,
+      "log": "commit-lint.log"
+    },
+    {
+      "name": "original-evidence-audit",
+      "result": "PASS",
+      "exitCode": 0,
+      "log": "original-evidence-audit.log"
+    },
+    {
+      "name": "frozen-source-diff",
+      "result": "PASS",
+      "exitCode": 0,
+      "log": "frozen-source-diff.log"
+    },
+    {
+      "name": "helper-row-ps7",
+      "result": "PASS",
+      "exitCode": 0,
+      "log": "helper-row-ps7.log"
+    },
+    {
+      "name": "helper-row-ps51",
+      "result": "PASS",
+      "exitCode": 0,
+      "log": "helper-row-ps51.log"
+    }
+  ],
+  "newFindings": [],
+  "limitations": [
+    "execution.command仅检查包含entry；实际解释执行与dot-source调用链需后续逐功能语义验收。",
+    "治理脚本只允许foundation-governance/owner/NONE、直属ps1、入口和来源全文inputs、空targets、pending/proposal。",
+    "最终模式仍拒绝未关闭功能；当前没有19个治理脚本的实际execution功能行。",
+    "validate-docs为普通文档门禁，输出NOT AUDITED evidence；未运行DeepEvidence、全152自测或无关C++/GUI构建测试。",
+    "原始两条15-missing-approval.log的REUSE-PATH尾空格被core.whitespace=cr-at-eol diff --check报告；作为真实历史输出保留，未改写。",
+    "validate-reuse.ps1与旧helper的Git blob为BOM/LF；报告原始输入摘要对应Windows BOM/CRLF，已重建相符；helper与最终完整driver的原始摘要直接匹配冻结内容。",
+    "自制PS5.1聚焦驱动首轮因输出丢失BOM而解析失败，未启动测试；日志保留，按原脚本BOM重建后20项真实重跑通过。",
+    "首次Temp完整检出受Windows长路径限制，配置该Temp仓库core.longpaths=true后重新完整检出；冻结已跟踪源码git diff为空。"
+  ],
+  "artifacts": [
+    "original-evidence-audit.json",
+    "original-evidence-audit.log",
+    "hash-variants.log",
+    "task-scope-additions.json",
+    "focused-driver.ps1",
+    "focused-driver-ps51.ps1",
+    "focused-ps7-driver.log",
+    "focused-ps51-driver.log",
+    "focused-ps51-no-bom-attempt.log",
+    "verify-task.log",
+    "scope.log",
+    "commit-lint.log",
+    "diff-check.log",
+    "frozen-source-diff.log"
+  ]
+}

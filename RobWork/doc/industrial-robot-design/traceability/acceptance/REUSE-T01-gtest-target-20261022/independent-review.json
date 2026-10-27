@@ -1,0 +1,487 @@
+{
+  "frozenSha": "7af7e86a18e34384677c2599a4f8812ad262908f",
+  "baseSha": "ee9cc79bd68ec27b8b2f95901dddd78d6c57d5d2",
+  "trackedStatus": "",
+  "rawFrozenScriptSha256": {
+    "validatorSha256": "1CF30F2D07419BA21B8B7DA7C43331A190A3DC0E0B37C1CDE6110DD98E46A77F",
+    "helperSha256": "25F27251FAFA9CB40146243AFC4916EA82B93CDF8708B6FA050C4B37D77F0E57",
+    "driverSha256": "4683B7C58A97B48A0794EC821C4AAEE30033AAE67508866B2E7BAA5F8244EA42"
+  },
+  "archiveHistory": [
+    {
+      "attempt": "r1-ps7",
+      "expected": 142,
+      "executed": 30,
+      "passed": 7,
+      "failed": 23,
+      "skipped": 0,
+      "notRun": 112,
+      "complete": false,
+      "driverFailure": "Exception calling \"ReadAllText\" with \"1\" argument(s): \"Could not find a part of the path 'C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-reuse-0439029eeb7f45c5821f74238819d121\\RobWork\\RobWork\\gtest\\test-main.cpp'.\"",
+      "failedNames": [
+        "01-clean",
+        "07-inventory-omission",
+        "08-forged-blob",
+        "09-inventory-duplicate",
+        "10-inventory-unit",
+        "11-new-source",
+        "12-stale-change-hash",
+        "13-core-even-business",
+        "14-cpp-not-governance",
+        "15-missing-approval",
+        "16-unknown-capability",
+        "17-path-traversal",
+        "18-missing-task-proof",
+        "19-task-scope",
+        "20-forbidden-scope",
+        "21-stage-not-approved",
+        "22-final-debt-rejected",
+        "23-governance-not-algorithm-approval",
+        "24-upstream-readonly",
+        "26-deletion-undeclared",
+        "27-forged-debt-closure",
+        "28-arbitrary-task-ready",
+        "29-planned-not-executable"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r1-ps51",
+      "expected": 142,
+      "executed": 30,
+      "passed": 7,
+      "failed": 23,
+      "skipped": 0,
+      "notRun": 112,
+      "complete": false,
+      "driverFailure": "Exception calling \"ReadAllText\" with \"1\" argument(s): \"Could not find a part of the path 'C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-reuse-6a568186172642e8b5c5784d44b04c85\\RobWork\\RobWork\\gtest\\test-main.cpp'.\"",
+      "failedNames": [
+        "01-clean",
+        "07-inventory-omission",
+        "08-forged-blob",
+        "09-inventory-duplicate",
+        "10-inventory-unit",
+        "11-new-source",
+        "12-stale-change-hash",
+        "13-core-even-business",
+        "14-cpp-not-governance",
+        "15-missing-approval",
+        "16-unknown-capability",
+        "17-path-traversal",
+        "18-missing-task-proof",
+        "19-task-scope",
+        "20-forbidden-scope",
+        "21-stage-not-approved",
+        "22-final-debt-rejected",
+        "23-governance-not-algorithm-approval",
+        "24-upstream-readonly",
+        "26-deletion-undeclared",
+        "27-forged-debt-closure",
+        "28-arbitrary-task-ready",
+        "29-planned-not-executable"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r2-ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 139,
+      "failed": 3,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target",
+        "closure-new-file-no-independent-record",
+        "closure-new-file-omitted-final"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r2-ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 139,
+      "failed": 3,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target",
+        "closure-new-file-no-independent-record",
+        "closure-new-file-omitted-final"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r3-ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 141,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r3-ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 141,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [
+        "upstream-gtest-build-target"
+      ],
+      "r4FrozenScriptHashesMatch": null
+    },
+    {
+      "attempt": "r4-ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [],
+      "r4FrozenScriptHashesMatch": true
+    },
+    {
+      "attempt": "r4-ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "failedNames": [],
+      "r4FrozenScriptHashesMatch": true
+    }
+  ],
+  "independentRuns": [
+    {
+      "engine": "ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "scriptHashesMatch": true
+    },
+    {
+      "engine": "ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "scriptHashesMatch": true
+    }
+  ],
+  "selectedActualTests": [
+    {
+      "engine": "ps7",
+      "name": "01-clean",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "22-final-debt-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : unresolved function core.ContentDigester.compressBlock\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "upstream-gtest-build-target",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "upstream-arbitrary-test-build-path-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "function-final-restricted-pending-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : unresolved function core.ContentDigester.compressBlock\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "closure-new-file-no-independent-record",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION : new/current file lacks independent closure",
+      "output": "REUSE-MIGRATION : new/current file lacks independent closure: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "closure-new-file-omitted-final",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION : new/current file lacks independent closure",
+      "output": "REUSE-MIGRATION : new/current file lacks independent closure: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RotationAdapterProbe.cpp\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "31-frozen-head",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "32-frozen-head-ignores-dirty-tree",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps7",
+      "name": "33-frozen-head-repeatable",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "01-clean",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "22-final-debt-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : unresolved function core.ContentDigester.compressBlock\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "upstream-gtest-build-target",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "upstream-arbitrary-test-build-path-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "function-final-restricted-pending-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : unresolved function core.ContentDigester.compressBlock\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "closure-new-file-no-independent-record",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION : new/current file lacks independent closure",
+      "output": "REUSE-MIGRATION : new/current file lacks independent closure: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "closure-new-file-omitted-final",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION : new/current file lacks independent closure",
+      "output": "REUSE-MIGRATION : new/current file lacks independent closure: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RotationAdapterProbe.cpp\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "31-frozen-head",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "32-frozen-head-ignores-dirty-tree",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "engine": "ps51",
+      "name": "33-frozen-head-repeatable",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    }
+  ],
+  "additionalScopeProbes": [
+    {
+      "name": "rw-real-gtest-root",
+      "targetFile": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "expected": "PASS",
+      "exitCode": 0,
+      "passed": true,
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "sim-real-gtest-root",
+      "targetFile": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+      "expected": "PASS",
+      "exitCode": 0,
+      "passed": true,
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=200 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "rw-nested-gtest-rejected",
+      "targetFile": "RobWork/RobWork/gtest/fake/CMakeLists.txt",
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "name": "sim-nested-gtest-rejected",
+      "targetFile": "RobWork/RobWorkSim/gtest/fake/CMakeLists.txt",
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "name": "gtest-suffix-dir-rejected",
+      "targetFile": "RobWork/RobWork/gtest2/CMakeLists.txt",
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "name": "studio-gtest-root-rejected",
+      "targetFile": "RobWork/RobWorkStudio/gtest/CMakeLists.txt",
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "name": "cmake-suffix-rejected",
+      "targetFile": "RobWork/RobWork/gtest/CMakeLists.txt.fake",
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "name": "real-root-forged-target-rejected",
+      "targetFile": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-UPSTREAM-TARGET : NoSuchTargetScopeAudit: build registration missing/stale\r\n"
+    }
+  ],
+  "allowedPathTruthTable": [
+    {
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "allowed": true
+    },
+    {
+      "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+      "allowed": true
+    },
+    {
+      "path": "RobWork/RobWork/gtest/fake/CMakeLists.txt",
+      "allowed": false
+    },
+    {
+      "path": "RobWork/RobWorkSim/gtest/fake/CMakeLists.txt",
+      "allowed": false
+    },
+    {
+      "path": "RobWork/RobWorkStudio/gtest/CMakeLists.txt",
+      "allowed": false
+    },
+    {
+      "path": "RobWork/RobWork/gtest2/CMakeLists.txt",
+      "allowed": false
+    },
+    {
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt.fake",
+      "allowed": false
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "allowed": true
+    }
+  ],
+  "isolationReview": {
+    "helperCallsOnlyTwoClosureCases": true,
+    "putJsonTracksOriginalBytes": true,
+    "finallyRestoresOriginalBytes": true,
+    "cleanAndDebtCasesKeepRealMatrices": true,
+    "bothGtestRootsSparseCheckedOut": true,
+    "sharedReuseHelperUnchanged": true
+  },
+  "protectedScopeUnchanged": [
+    "RobWork/RobWorkStudio/src",
+    "RobWork/RobWork/src",
+    "RobWork/RobWork/gtest",
+    "RobWork/RobWorkSim/src",
+    "RobWork/RobWorkSim/gtest",
+    "vcpkg",
+    "RobWork/doc/industrial-robot-design/reuse/inventory.json"
+  ],
+  "relationCounts": {
+    "total": 200,
+    "pending": 197,
+    "proposal": 3,
+    "closedFiles": 0
+  }
+}

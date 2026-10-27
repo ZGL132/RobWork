@@ -1,0 +1,3474 @@
+[
+  {
+    "functionId": "core.TestMainReport.main",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 18,
+        "endLine": 23,
+        "sha256": "82585c0df15b3c5fe9c0bc4795b66a8ddb28ff577d1c5065d33631f2349671ad"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失",
+    "designRefs": [
+      "AGENTS.md §4 验证留痕",
+      "units/testkit.md §7.2/§7.3"
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ]
+  },
+  {
+    "functionId": "core.CMake.ird_add_gtest",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 134,
+        "endLine": 147,
+        "sha256": "9ae62d347e4530bffa97b527b7d45f410c5617040d327c36fd19d7b45aa90086"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "ownerUnit": "diagnostics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 257,
+        "endLine": 269,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_diagnostics_test",
+      "sdurws_ird_diagnostics_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+        "sha256": "cb63d58112306ea143e1b2832f757eb3e81eb841aed144a6aad58e9beabe188c"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "ownerUnit": "drivetrain",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 25,
+        "endLine": 36,
+        "sha256": "62ce597ca2c6e8724e57a637fb1768c96246355ee5761ff00ae4aa76a3e7699e"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_drivetrain_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+        "sha256": "ade3cf448495966736cfabd9d20823e1fd269c86d8810bfb60445115d584533a"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "ownerUnit": "drivetrain",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 45,
+        "endLine": 71,
+        "sha256": "90ceb0e006d795ebc5b6b16e6739906233c94ebf535fa12aa943f3d29f6d7a7b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_drivetrain_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。MSVC Debug CRT重定向仍保留，但不是监听器所有权修复。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+        "sha256": "ade3cf448495966736cfabd9d20823e1fd269c86d8810bfb60445115d584533a"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "ownerUnit": "drivetrain",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 203,
+        "endLine": 215,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_drivetrain_test",
+      "sdurws_ird_drivetrain_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+        "sha256": "ade3cf448495966736cfabd9d20823e1fd269c86d8810bfb60445115d584533a"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 25,
+        "endLine": 36,
+        "sha256": "9b8277d8ab73650d4e605f479cc337881f0b5f278f07e6a616a5cdc7ecde76e2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "dynamics.test.TestMainReport.main",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 27,
+        "endLine": 38,
+        "sha256": "9b8277d8ab73650d4e605f479cc337881f0b5f278f07e6a616a5cdc7ecde76e2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 482,
+        "endLine": 494,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test",
+      "sdurws_ird_dynamics_contract_test",
+      "sdurws_ird_dynamics_app",
+      "sdurws_ird_dynamics_gui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "evidence.TestMainReport.main",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 23,
+        "endLine": 32,
+        "sha256": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence_test",
+      "sdurws_ird_evidence_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失",
+    "designRefs": [
+      "AGENTS.md §4 验证留痕",
+      "units/testkit.md §7.2/§7.3"
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ]
+  },
+  {
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 131,
+        "endLine": 143,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence_test",
+      "sdurws_ird_evidence_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "ownerUnit": "execution",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 35,
+        "endLine": 53,
+        "sha256": "571f31f4cef7733409c542225e473d3c554e207da56190c18052c2e378d127ea"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_execution_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。子进程分派先于GTest/Qt，不能抹平。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+        "sha256": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "execution.test.TestMainReport.main",
+    "ownerUnit": "execution",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 31,
+        "endLine": 38,
+        "sha256": "0ae3e8a12b10812a4ae063fd39d8684d3dfb11f9b445da8babcc20fa116e0d02"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_execution_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+        "sha256": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "execution.CMake.ird_add_gtest",
+    "ownerUnit": "execution",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 459,
+        "endLine": 471,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_execution_worker",
+      "sdurws_ird_execution_test",
+      "sdurws_ird_execution_contract_test",
+      "sdurws_ird_execution_perf_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+        "sha256": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "ownerUnit": "io",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 27,
+        "endLine": 34,
+        "sha256": "05e1f03564177dec955b07a7c44eaef866b14f737e76467b99241d6ee369347b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_io_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+        "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "io.test.TestMainReport.main",
+    "ownerUnit": "io",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 35,
+        "endLine": 44,
+        "sha256": "dd7a6054bf8ee27818f5699698149c8b48bc821c0b8f1b0a0344c2e2f78a15d4"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_io_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+        "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "io.CMake.ird_add_gtest",
+    "ownerUnit": "io",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 252,
+        "endLine": 264,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_io_test",
+      "sdurws_ird_io_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+        "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 19,
+        "endLine": 26,
+        "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 34,
+        "endLine": 47,
+        "sha256": "1e59b2759d01897a5da8747ec64b693f8d0c78fcdecd96c74d87c8f6852e5654"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_gui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "kinematics.test.TestMainReport.main",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 27,
+        "endLine": 42,
+        "sha256": "30936784424d631b7174cf9de62ac9b1d300a9f42807e8c9c6f710a5c9f7c549"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 498,
+        "endLine": 510,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_app",
+      "sdurws_ird_kinematics_test",
+      "sdurws_ird_kinematics_gui_test",
+      "sdurws_ird_kinematics_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 19,
+        "endLine": 26,
+        "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 27,
+        "endLine": 39,
+        "sha256": "46e884280c66e32d7deeb3bfc175c1bdd8f80ababc9f64fce9b52935443fda4f"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_gui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "modeling.test.TestMainReport.main",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 31,
+        "endLine": 46,
+        "sha256": "7d929fa8917d56a15cbad60a2e461b73bda561b6cd3eae35f859bc3336ebf9f3"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 664,
+        "endLine": 676,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_demo6r",
+      "sdurws_ird_modeling_app",
+      "sdurws_ird_modeling_test",
+      "sdurws_ird_modeling_gui_test",
+      "sdurws_ird_modeling_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 27,
+        "endLine": 38,
+        "sha256": "0d6f51a008cf019d24c9749d6e069b290f80492b9be1e611e0bd2cd3d6d915c3"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "optimization.test.TestMainReport.main",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 28,
+        "endLine": 39,
+        "sha256": "0d6f51a008cf019d24c9749d6e069b290f80492b9be1e611e0bd2cd3d6d915c3"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 458,
+        "endLine": 470,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization_test",
+      "sdurws_ird_optimization_contract_test",
+      "sdurws_ird_optimization_perf_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "policy.test.TestMainReport.main",
+    "ownerUnit": "policy",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 23,
+        "endLine": 32,
+        "sha256": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_policy_test",
+      "sdurws_ird_policy_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "policy.CMake.ird_add_gtest",
+    "ownerUnit": "policy",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 316,
+        "endLine": 328,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_policy_test",
+      "sdurws_ird_policy_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "project.test.TestMainReport.main",
+    "ownerUnit": "project",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 32,
+        "endLine": 41,
+        "sha256": "8b3833f525ebb52914bb373b3f4eef04a54672fc638b9035806659bf8cc7d6a6"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_project_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+        "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "project.CMake.ird_add_gtest",
+    "ownerUnit": "project",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 639,
+        "endLine": 651,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_project_test",
+      "sdurws_ird_project_contract_test",
+      "sdurws_ird_project_openbench_worker",
+      "sdurws_ird_project_perf_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+        "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "ownerUnit": "reporting",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 35,
+        "endLine": 42,
+        "sha256": "0ae3e8a12b10812a4ae063fd39d8684d3dfb11f9b445da8babcc20fa116e0d02"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_reporting_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+        "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "reporting.test.TestMainReport.main",
+    "ownerUnit": "reporting",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 38,
+        "endLine": 45,
+        "sha256": "0ae3e8a12b10812a4ae063fd39d8684d3dfb11f9b445da8babcc20fa116e0d02"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_reporting_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+        "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "ownerUnit": "reporting",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 409,
+        "endLine": 421,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_reporting_test",
+      "sdurws_ird_reporting_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+        "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 19,
+        "endLine": 26,
+        "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 25,
+        "endLine": 37,
+        "sha256": "46e884280c66e32d7deeb3bfc175c1bdd8f80ababc9f64fce9b52935443fda4f"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_gui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "requirements.test.TestMainReport.main",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 28,
+        "endLine": 43,
+        "sha256": "09e891ac1a87e705fdcaaee85cd35290672018b9ff8752103d62e98a7e147060"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 473,
+        "endLine": 485,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_app",
+      "sdurws_ird_requirements_test",
+      "sdurws_ird_requirements_contract_test",
+      "sdurws_ird_requirements_gui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "runtime.test.TestMainReport.main",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 23,
+        "endLine": 32,
+        "sha256": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 352,
+        "endLine": 364,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "ownerUnit": "selection",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 25,
+        "endLine": 36,
+        "sha256": "d99619008e2779c279bd9e9b910117b32ae119c400feebc9f5b114cd621e89c6"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "selection.test.TestMainReport.main",
+    "ownerUnit": "selection",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 27,
+        "endLine": 38,
+        "sha256": "d99619008e2779c279bd9e9b910117b32ae119c400feebc9f5b114cd621e89c6"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "selection.CMake.ird_add_gtest",
+    "ownerUnit": "selection",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 441,
+        "endLine": 453,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection_test",
+      "sdurws_ird_selection_contract_test",
+      "sdurws_ird_selection_app"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "testkit.test.TestMain.main",
+    "ownerUnit": "testkit",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 24,
+        "endLine": 33,
+        "sha256": "9f050581ddefa51fae05b5f1fee80d5f77f3fca12a854831747f0afbdf61d5d1"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_testkit_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。保存argv供ProcessRunnerTest定位，安装先于GTest。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "sha256": "64fa97398fd7dc6869e099c130e004069cc63c6456c3ad3ed9cd332270d97fb0"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "ownerUnit": "testkit",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 165,
+        "endLine": 177,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_testkit_test",
+      "sdurws_ird_testdata_lint",
+      "sdurws_ird_testkit_prochelper"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "sha256": "64fa97398fd7dc6869e099c130e004069cc63c6456c3ad3ed9cd332270d97fb0"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "testkit.TestRecordListener",
+    "ownerUnit": "testkit",
+    "requirements": [
+      "TK-T10"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp",
+        "symbol": "TestRecordListener",
+        "qualifiedSymbol": "sdurws::ird::testkit::TestRecordListener",
+        "startLine": 44,
+        "endLine": 108,
+        "sha256": "6bf2fb80e7d9df8c9f28dc9ddf9aa2580f23a4729316d4c17d2e68703f932978"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_testkit_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest事件→原报告store的header-only薄适配；不重新实现GTest或以reporting代替测试报告",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "sha256": "64fa97398fd7dc6869e099c130e004069cc63c6456c3ad3ed9cd332270d97fb0"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "testkit.installTestRecordListener",
+    "ownerUnit": "testkit",
+    "requirements": [
+      "TK-T10"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp",
+        "symbol": "installTestRecordListener",
+        "qualifiedSymbol": "sdurws::ird::testkit::installTestRecordListener",
+        "startLine": 120,
+        "endLine": 142,
+        "sha256": "a1934b155b4cf34b2f134bf1101c546c6d7cbe96bd8df84acb48528119a87c1a"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_testkit_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "Append公开契约接管并delete，但当前传静态对象；需T05最小所有权修正及消费者注释同步，不改输出/参数契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "sha256": "64fa97398fd7dc6869e099c130e004069cc63c6456c3ad3ed9cd332270d97fb0"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "ownerUnit": "trajectory",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 26,
+        "endLine": 37,
+        "sha256": "c85779d8e87be94a2d427882081bd239bf9e9825ce3af7078204f332319b4125"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_trajectory_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "trajectory.test.TestMainReport.main",
+    "ownerUnit": "trajectory",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 27,
+        "endLine": 38,
+        "sha256": "c85779d8e87be94a2d427882081bd239bf9e9825ce3af7078204f332319b4125"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_trajectory_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "ownerUnit": "trajectory",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 532,
+        "endLine": 544,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_trajectory_test",
+      "sdurws_ird_trajectory_contract_test",
+      "sdurws_ird_trajectory_app"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "ownerUnit": "ui",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 34,
+        "endLine": 50,
+        "sha256": "e68eb844e59b708bfcde5f7471a00b8292041eca7e03fd7b4ec240215c5d37ec"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。子进程分派先于GTest/Qt，不能抹平。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "ownerUnit": "ui",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 33,
+        "endLine": 45,
+        "sha256": "d26c4503ad11f8171c38f86c3580c43438b38bbf979f5288626cf7fab540b3f3"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_gui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "ui.test.TestMainReport.main",
+    "ownerUnit": "ui",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 36,
+        "endLine": 49,
+        "sha256": "eb48d3cb26026b31160a1e3ce91802290977a17137e0167d5514918d96a59e58"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "ui.CMake.ird_add_gtest",
+    "ownerUnit": "ui",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 279,
+        "endLine": 291,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_test",
+      "sdurws_ird_ui_contract_test",
+      "sdurws_ird_ui_perf_test",
+      "sdurws_ird_ui_largedata_perf_test",
+      "sdurws_ird_ui_gui_test",
+      "sdurws_ird_ui_app",
+      "sdurws_ird_studio"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "ownerUnit": "workflow",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/ContractTestMain.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 19,
+        "endLine": 26,
+        "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_workflow_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+        "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "workflow.test.TestMainReport.main",
+    "ownerUnit": "workflow",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 29,
+        "endLine": 40,
+        "sha256": "f6ad051f12bb1798474fe9d8b3d37d2caabd6c38bc8d0825a72c71fc7852dd0b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_workflow_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+        "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "ownerUnit": "workflow",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+        "symbol": "ird_add_gtest",
+        "qualifiedSymbol": "ird_add_gtest",
+        "startLine": 374,
+        "endLine": 386,
+        "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_workflow_test",
+      "sdurws_ird_workflow_contract_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+      "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+    },
+    "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+        "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+        "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+        "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+        "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+        "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+      }
+    ],
+    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  }
+]

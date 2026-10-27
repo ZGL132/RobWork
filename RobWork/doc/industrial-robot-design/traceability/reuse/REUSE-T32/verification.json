@@ -1,0 +1,101 @@
+{
+  "taskId": "REUSE-T32",
+  "base": "c65ffc4fc495da0b01b2060ff3049eb127091d72",
+  "implementation": "local working tree bound by exact inputs; final commit supplied at handoff",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+      "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+      "sha256": "80e856884de50fb1103e66b7d939451cdf9919b720f6c19ec9fbdc4780440d76"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+      "sha256": "ecfd0ecfc0d59874308281da7ebfc2c32a1eb6bf11888197905c9943ed1e5832"
+    }
+  ],
+  "toolchain": "VS2022 x64 / C++17 / Release; microbenchmark MSVC /O2 /MD /DNDEBUG; existing vcpkg and Qt",
+  "results": {
+    "final": {
+      "tests": 193,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0
+    },
+    "contract": {
+      "tests": 69,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0
+    },
+    "disconnectedL1": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0
+    },
+    "disconnectedL2": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0
+    },
+    "disconnectedCll": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "disabled": 0,
+      "skipped": 0
+    },
+    "rechecks": "disconnected-*-recheck: all passed, exit 0"
+  },
+  "builds": [
+    {
+      "command": "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test",
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final-build.log",
+        "sha256": "9fe36216ed2a49fffa23fceb778d7e1082d028996efb07a64eff4c441620b05e"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "cmake --build build/govt24-smoke --config Release --target sdurws_ird_trajectory",
+      "log": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/smoke-build.log",
+        "sha256": "0bc120c0987a9cdd0edfe7d6ed734ed356b504ce802011cc8a7c031d3e046f8b"
+      },
+      "exitCode": 0
+    }
+  ],
+  "architecture": {
+    "command": "cmake -DIRD_ROOT=<repo>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/architecture-gates.log",
+      "sha256": "fa594dd1b297db71cbc670b3df70556dd0feb41614a6e73c7df9d98380ad344c"
+    },
+    "result": "PASS: R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 zero findings"
+  },
+  "performance": {
+    "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-performance.cmd",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/performance.log",
+      "sha256": "6fd5f0a72a58f09fc1bb4f926b639d68791e417828f1c9a64f6b55059f15397b"
+    },
+    "summary": "pathL1(50n) +24~41% relative (+40ns/op absolute), maxStep/L2 noise-band; L1 fold-order relative delta 1.9e-15; owner acceptance NOT claimed, referred to independent acceptance"
+  },
+  "counts": "PASS/FAIL/SKIP/NOT RUN 分列：195/0/0（final）；69/0/0（contract）；3 组断开红例 2/1/2 failed 均 exit 1＋恢复复测全绿；NOT RUN＝上游原测试目标、1e6 上限护栏、真实Q PTP 极值、独立验收（README 表逐项）。"
+}

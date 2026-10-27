@@ -1,0 +1,7 @@
+verify-task: RepoRoot=C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork
+REUSE-FRESHNESS : RobWork/scripts/industrialrobot/commit-lint.ps1 : region/symbol
+Exception: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-task.ps1:126
+Line |
+ 126 |  … if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | H1-H6 task reuse contract failed

@@ -1,0 +1,497 @@
+[
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "expectNearRel",
+        "qualifiedSymbol": "(global anonymous namespace)::expectNearRel",
+        "startLine": 103,
+        "endLine": 108,
+        "sha256": "fc5d00fd505bcb1d705377e65657812bfcc6440d1a4f94751dde59cfb6923b42"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "max(1e-15,1e-12*abs(expected))测试容差，非core C4的absolute+relative；保留独立测试口径，不能机械替换",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.rowAt",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "rowAt",
+        "qualifiedSymbol": "(global anonymous namespace)::rowAt",
+        "startLine": 113,
+        "endLine": 139,
+        "sha256": "b3800c72aa96663e738d373ba193b038246138f097421a77e4170759d5da8e1f"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "统计DTO输入：五分项零但tauTotal由调用方给，注释恒等式不准确；统计器不查分项，不能冒充RNEA物理自洽输出",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makeIdentity",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "makeIdentity",
+        "qualifiedSymbol": "(global anonymous namespace)::makeIdentity",
+        "startLine": 143,
+        "endLine": 159,
+        "sha256": "3977a4423f4565b3babc7cc84a7a17079e736079adc9115a12c004f6638e7e63"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "复用TwoLinkFixture digestOf/idFrom；dynConfigDigest为测试字符串，不声称真实配置摘要",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "prismAxialForce",
+        "qualifiedSymbol": "(global anonymous namespace)::prismAxialForce",
+        "startLine": 192,
+        "endLine": 192,
+        "sha256": "6c362b2210f99d32ce01d2f57debd13235c1c6d361d71d8d2984693a78da0097"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "测试独立解析(m1+m2)g，单位N，移动静止/回转水平限定；不替代上游生产RNE",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "revTorque",
+        "qualifiedSymbol": "(global anonymous namespace)::revTorque",
+        "startLine": 194,
+        "endLine": 197,
+        "sha256": "0b6fbec3da6fd95594e146da2844d1a1c1ffdc6bdeace83b26a78847e13c2802"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "测试独立解析(Iself+m*r²)*alpha，单位N·m，轴平行重力；不覆盖任意刚体动力学",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "makePrismRevModel",
+        "qualifiedSymbol": "(global anonymous namespace)::makePrismRevModel",
+        "startLine": 201,
+        "endLine": 293,
+        "sha256": "7c2f873a8e9f0a679b292effbc6476ec54af86bdb658c9e64e8ebcad9da95e6b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "真实CanonicalModelBuilder直构两关节/三连杆与值类型惯量，仅测试供数；不创建上游WorkCell或授业务模型构造权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.cancellationRequested",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "cancellationRequested",
+        "qualifiedSymbol": "(global anonymous namespace)::FakeContext::cancellationRequested",
+        "startLine": 85,
+        "endLine": 85,
+        "sha256": "f4b9c4f82420e27285d19eb20fc072205551feb730af036bf53e9194a9c0b9f1"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "只返可控bool，不含调度器",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
+        "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.reportProgress",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "reportProgress",
+        "qualifiedSymbol": "(global anonymous namespace)::FakeContext::reportProgress",
+        "startLine": 86,
+        "endLine": 86,
+        "sha256": "46436c2625dfb6c1b5304831abd70ffc2db055018ba6d2c71f06c44b2a4149c9"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "no-op，仅此测试宿主，不证明进度集成",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
+        "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.tryObjectBytes",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "symbol": "tryObjectBytes",
+        "qualifiedSymbol": "(global anonymous namespace)::FakeContext::tryObjectBytes",
+        "startLine": 87,
+        "endLine": 91,
+        "sha256": "cb679788050fa489b8bf24514f93a6ed86d786c9f490eafe0f4c777f01ba3a87"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "固定nullopt，无真实资源加载",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
+        "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  }
+]

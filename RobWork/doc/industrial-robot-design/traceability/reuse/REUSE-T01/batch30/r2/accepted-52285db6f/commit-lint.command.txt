@@ -1,0 +1,1 @@
+pwsh -NoProfile -File RobWork\scripts\industrialrobot\commit-lint.ps1 -Range 933dc6016..52285db6f0d276742531ecb7e7bcf73db283e563

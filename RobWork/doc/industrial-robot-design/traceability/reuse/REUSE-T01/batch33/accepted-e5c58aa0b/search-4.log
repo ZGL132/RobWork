@@ -1,0 +1,23 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\EntryDetail.hpp:33:inline std::string codeLower(std::string_view code)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\EntryDetail.hpp:46:inline std::string taskScopeId(const core::TaskIdentity& task)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\EntryDetail.hpp:69:inline DedupKey deriveDedupKey(const core::DiagnosticRecord& record, const DiagContext& context)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\EntryDetail.hpp:77:        key.scopeId = taskScopeId(*context.task);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\Factory.cpp:143:    if (!detail::tryParseParamSchema(descriptor->paramSchema, &schemaNames, &schemaError)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\Factory.cpp:184:    entry.dedupKey = detail::deriveDedupKey(record, context);   // §6.4（口径见 detail 头注）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\DiagCodes.cpp:144: *        由 detail::tryParseParamSchema 产出，内容与历史实现一致）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\DiagCodes.cpp:150:std::string validateParamSchema(const std::string& schema)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\DiagCodes.cpp:154:    if (!detail::tryParseParamSchema(schema, &names, &error)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\DiagCodes.cpp:638:    if (const std::string schemaProblem = validateParamSchema(descriptor.paramSchema);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\Catalog.cpp:482:        const std::string lower = detail::codeLower(entry.record.code);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\Catalog.cpp:553:        line += detail::codeLower(entry.record.code);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\Confirmable.cpp:152:std::string codeLowerOf(std::string_view code)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\Confirmable.cpp:456:    record.confirmTextKey = "diag." + codeLowerOf(code) + ".confirm";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\ParamSchema.cpp:55:bool tryParseParamSchema(const std::string& schema, std::vector<std::string>* names,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\ParamSchema.hpp:12: *     （DiagCodes.cpp validateParamSchema）与本任务的工厂校验共用同一文法
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src\ParamSchema.hpp:44:bool tryParseParamSchema(const std::string& schema, std::vector<std::string>* names,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test\CatalogFactoryTest.cpp:81:std::string codeLower(std::string_view code)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test\CatalogFactoryTest.cpp:230:    travel.titleKey = "diag." + codeLower(travel.code) + ".title";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test\CatalogFactoryTest.cpp:231:    travel.detailKey = "diag." + codeLower(travel.code) + ".detail";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test\CatalogFactoryTest.cpp:349:    legacyDescriptor.titleKey = "diag." + codeLower(legacyDescriptor.code) + ".title";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test\CatalogFactoryTest.cpp:350:    legacyDescriptor.detailKey = "diag." + codeLower(legacyDescriptor.code) + ".detail";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test\CatalogHostTraceStubTest.cpp:213:    /// 五元组规范文本（桩内拼接——与 EntryDetail 私有 taskScopeId 同形但独立，

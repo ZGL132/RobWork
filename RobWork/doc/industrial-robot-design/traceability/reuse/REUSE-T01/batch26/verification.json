@@ -1,0 +1,87 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B26",
+  "frozenCandidateParent": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+  "changedBehavior": [
+    "UTF-8 BOM restored for Windows PowerShell 5.1 parser compatibility",
+    "schemaVersion and note compared case-sensitively; mismatch remains unresolved without modifying worktree/index"
+  ],
+  "tests": {
+    "red": {
+      "pwsh": {
+        "executed": 8,
+        "passed": 6,
+        "failed": 2,
+        "skipped": 0
+      },
+      "powershell": {
+        "executed": 8,
+        "passed": 6,
+        "failed": 2,
+        "skipped": 0
+      }
+    },
+    "green": {
+      "pwsh": {
+        "executed": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0
+      },
+      "powershell": {
+        "executed": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "pipelineRegression": {
+      "pwsh": {
+        "exitCode": 0,
+        "boundaries": 3
+      },
+      "powershell": {
+        "exitCode": 0,
+        "boundaries": 3
+      }
+    }
+  },
+  "notRun": [
+    "全量REUSE-T01其余功能审计",
+    "T02/runtime适配及算法替换",
+    "远程CI/同步"
+  ],
+  "scope": "No product C++/RobWork/RWSim/vcpkg changes; local governance scripts and audit evidence only",
+  "governanceChecks": [
+    {
+      "name": "validate-task",
+      "exitCode": 0,
+      "log": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/validate-task.log",
+      "logSha256": "10f025a63112695964d8b364fa6c4a772eca3b49c3199e086032a756405a1bf1"
+    },
+    {
+      "name": "validate-reuse",
+      "exitCode": 0,
+      "log": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/validate-reuse.log",
+      "logSha256": "fbed32fbd731b2683bd62a69345af04d7d1bb2be85931a21a955123093430b89"
+    },
+    {
+      "name": "validate-docs",
+      "exitCode": 0,
+      "log": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/validate-docs.log",
+      "logSha256": "e6df76052099f1071a253a836da1330f37c58c457586982b911f311bc1766e23"
+    },
+    {
+      "name": "pipeline-ps7",
+      "exitCode": 0,
+      "log": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/pipeline-ps7.log",
+      "logSha256": "e542dc3d5089228eb812c1fc570cdfff747cf0107309d4a845cfe345bd344ba7"
+    },
+    {
+      "name": "pipeline-ps51",
+      "exitCode": 0,
+      "log": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/pipeline-ps51.log",
+      "logSha256": "e542dc3d5089228eb812c1fc570cdfff747cf0107309d4a845cfe345bd344ba7"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+K K1: Feasible  mass=24  reasons=[]  coverage=[Feasible/pass;inertia-ratio-policy-unsettled]
+K K2: Rejected  mass=17  reasons=[SpeedInsufficient,SpeedInsufficient,InputSpeedExceeded,InputSpeedExceeded]  coverage=[Rejected/speed-insufficient]
+K K3: Rejected  mass=19.4  reasons=[SpeedInsufficient]  coverage=[Rejected/speed-insufficient]
+K K4: Rejected  mass=18.2  reasons=[SpeedInsufficient,InputSpeedExceeded,ComboIncompatible]  coverage=[Rejected/speed-insufficient]

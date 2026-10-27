@@ -1,0 +1,57 @@
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-powershell.log:15: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-powershell.log:15: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-powershell/b1-lf-invalid.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-powershell/b1-lf-invalid.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-powershell/b1-lf-invalid.log:13: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/b1-crlf-invalid.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/b1-crlf-invalid.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/b1-crlf-invalid.log:13: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/b1-lf-invalid.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/b1-lf-invalid.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/b1-lf-invalid.log:13: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-changed-design.log:1: trailing whitespace.
++WARNING: validate-context-pack: STALE source: RobWork/doc/industrial-robot-design/context/README.md (pack 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-missing-AGENTS.md.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-missing-AGENTS.md.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-missing-LITE-T01.json.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-missing-LITE-T01.json.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-missing-README.md.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-missing-README.md.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-selected-no-dir.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-selected-no-dir.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-selected-no-dir.log:13: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-state-copy.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/context-state-copy.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/deep-rejects-invalid-index.log:25: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/deep-rejects-invalid-index.log:30: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/green-r2-powershell/deep-rejects-invalid-index.log:30: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/red-powershell.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/red-powershell.log:14: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/red-powershell/b1-lf-valid.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/red-powershell/b1-lf-valid.log:19: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/red-powershell/b1-lf-valid.log:19: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/stderr-width-probe.log:5: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/stderr-width-probe.log:5: new blank line at EOF.

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "ird-independent-probes/1",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6",
+  "runtime": "7.6.5",
+  "validatorSha256": "179A2B287CDA2491E5F780463A735083CF2AA0888B76A01639383DCF38DD7B4A",
+  "helperSha256": "C17D5E62E7F4D153F6D37C0162CC4D2DFF2604452EB389F1F06D7CCD7A6B5D4A",
+  "driverSha256": "251332EDB7F863EABC824AD6300B2C965CFBE5479FEB5A87A78D85617C025867",
+  "passed": 10,
+  "failed": 0,
+  "skipped": 0,
+  "notRun": 0,
+  "tests": [
+    {
+      "name": "真实CommandPalette完整文件无上游grant",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp",
+      "sourceSha256": "6c25e5f3792f37055b1c14ed4da48acbe686fff2c2773597b63f80430b599598",
+      "expected": "allow",
+      "actual": "allow",
+      "passed": true,
+      "diagnostic": ""
+    },
+    {
+      "name": "首轮真实Qt片段188-189无grant",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp",
+      "sourceSha256": "2f9e208b16626f4821554599d2424ccdc4910e08d460741f40aac4d508cf016a",
+      "expected": "allow",
+      "actual": "allow",
+      "passed": true,
+      "diagnostic": ""
+    },
+    {
+      "name": "首轮真实Qt片段仅query无需State写",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp",
+      "sourceSha256": "2f9e208b16626f4821554599d2424ccdc4910e08d460741f40aac4d508cf016a",
+      "expected": "allow",
+      "actual": "allow",
+      "passed": true,
+      "diagnostic": ""
+    },
+    {
+      "name": "真实setQ共享State写无grant仍拒绝",
+      "path": "probe.cpp",
+      "sourceSha256": "c43af872264624996c5a7da4362b04339fb2f88bb82042925ab7f46697c3d76b",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "diagnostic": "REUSE-AD : probe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "StateData共享State写query仍拒绝",
+      "path": "probe.cpp",
+      "sourceSha256": "de216ec6236f20ef3ff97c0bcf3e0e0ee79f29fc8143466ff15b4a142f55ed61",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "diagnostic": "REUSE-AD : probe.cpp : operation write-state (IRD-GATE-AD)"
+    },
+    {
+      "name": "StateData明确写权限允许",
+      "path": "probe.cpp",
+      "sourceSha256": "de216ec6236f20ef3ff97c0bcf3e0e0ee79f29fc8143466ff15b4a142f55ed61",
+      "expected": "allow",
+      "actual": "allow",
+      "passed": true,
+      "diagnostic": ""
+    },
+    {
+      "name": "StateData限定成员写query拒绝",
+      "path": "probe.cpp",
+      "sourceSha256": "507ccf5ef87e9dab0b04e3ee7fcc090993473c61c4ac823ea504ec446d233d8b",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "diagnostic": "REUSE-AD : probe.cpp : operation write-state (IRD-GATE-AD)"
+    },
+    {
+      "name": "相机同名setTransform无grant",
+      "path": "probe.cpp",
+      "sourceSha256": "24dcbd9591cc8327308701b07d42cdfa5a264d3956b8df7e90cf8c0eff93fa2b",
+      "expected": "allow",
+      "actual": "allow",
+      "passed": true,
+      "diagnostic": ""
+    },
+    {
+      "name": "文案类型名不产生权限",
+      "path": "probe.cpp",
+      "sourceSha256": "37ca2008acb09c008030d79f390444664c0ce1a1ad95309464f1fdd1de3a9274",
+      "expected": "allow",
+      "actual": "allow",
+      "passed": true,
+      "diagnostic": ""
+    },
+    {
+      "name": "真实BOM追踪文件两种读取全文摘要一致",
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "tracked": true,
+      "hasUtf8Bom": true,
+      "workingFirstCodePoint": 35,
+      "frozenFirstCodePoint": 35,
+      "workingHash": "050709d142f038ad3fa7af8fac3adba7ec647f2ca8700b079d3ddfa8afce4857",
+      "frozenHash": "050709d142f038ad3fa7af8fac3adba7ec647f2ca8700b079d3ddfa8afce4857",
+      "normalizedTextEqual": true,
+      "passed": true
+    }
+  ]
+}

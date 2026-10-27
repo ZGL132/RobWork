@@ -28,6 +28,8 @@
 
 #include <sdurws/ird/selection/DiagCodes.hpp>  // SEL-BACKFILL-* 码常量（唯一书写点）
 
+#include <rw/math/LinearAlgebra.hpp>  // 对称特征值直接复用（MATH-EIGEN——REUSE-T43；经 sdurw_math 链接边）
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -63,46 +65,37 @@ bool isInertiaFinite(const BackfillInertiaTensor& t) noexcept
 }
 
 /**
- * @brief 3×3 对称矩阵三特征值（解析闭式——数值稳定的主值法）。
+ * @brief 3×3 对称矩阵三特征值（REUSE-T43 起直接复用上游）。
  *
- * 数学依据：对称三阶矩阵的特征多项式为三次式，经移位 q=trace/3 后化为
- * 退化三次 t³−pt−r=0，三角解 t_k＝2√(p/3)·cos(φ−2πk/3)。本实现采用
- * Wikipedia "Eigenvalue algorithm#3×3 symmetric matrices" 的标准封闭式
- * （与 robotics 文献常用形式一致）；r 经 clamp(−1,1) 限幅抵抗舍入漂移。
+ * 上游入口：rw::math::LinearAlgebra::eigenDecompositionSymmetric<double>
+ * （MATH-EIGEN@sdurw_math，Eigen SelfAdjointEigenSolver）——特征值按
+ * 升序返回（Eigen 契约），与产品升序契约（λ[0] ≤ λ[1] ≤ λ[2]）一致。
+ * 本函数保留为字段换序薄适配：把六分量对称存储展开为 3×3 完整矩阵并
+ * 收窄为三个特征值，调用方（断言②③）与返回语义不变。
  *
- * 精度口径：断言②③的容差语义（附录 D 第 6/7 项——相对 1×10⁻¹²）下
- * 解析式精度充分（黄金用例以解析可验证的各向同性/对角阵钉扎）。
+ * 精度口径：Eigen QR 迭代与原解析闭式同为对称特征值求解，非逐位相同；
+ * 断言②（严格>0）与断言③（相对 1×10⁻¹²——附录 D 第 6/7 项）均为容差
+ * 语义，远宽于求解器间 ulp 级差异；黄金用例为解析可验证的各向同性/
+ * 对角/平面退化阵，容差对照双实现（sel-golden 附录 D 第 9 项）钉扎。
+ * 上游对照与解析 oracle 证据见 traceability/reuse/REUSE-T43。
  *
  * @param m [in] 行主序对称矩阵 {m00,m01,m02, m11,m12, m22}（六分量——
  *          对称性由存储形态保证）
  * @return 三特征值（升序 λ[0] ≤ λ[1] ≤ λ[2]）
+ * @throw std::bad_alloc（Eigen 求解器堆分配失败——fail-fast，不吞错；
+ *        原 noexcept 随堆使用移除，调用方链路无 noexcept 约束）
  */
 std::array<double, 3> symmetricEigenvalues3x3(
-    double m00, double m01, double m02, double m11, double m12, double m22) noexcept
+    double m00, double m01, double m02, double m11, double m12, double m22)
 {
-    // 移位量 q＝迹的三分之一（把谱心移到原点，退化三次式系数变小）。
-    const double q = (m00 + m11 + m22) / 3.0;
-    // p1＝非对角元平方和；p2＝对角偏移平方和＋2·p1（＝‖A−qE‖_F²/2 的等价形）。
-    const double p1 = m01 * m01 + m02 * m02 + m12 * m12;
-    const double p2 = (m00 - q) * (m00 - q) + (m11 - q) * (m11 - q)
-                    + (m22 - q) * (m22 - q) + 2.0 * p1;
-    // p＝0 ⇔ A 为纯量阵 qE（三特征值全等）——避免除零分支。
-    if (p2 <= 0.0) {
-        return {q, q, q};
-    }
-    const double p = std::sqrt(p2 / 6.0);
-    // B＝(A−qE)/p；r＝det(B)/2（∈[−1,1]——限幅抵抗浮点舍入越界）。
-    const double b00 = (m00 - q) / p, b01 = m01 / p, b02 = m02 / p;
-    const double b11 = (m11 - q) / p, b12 = m12 / p;
-    const double b22 = (m22 - q) / p;
-    double r = (b00 * b11 * b22 + 2.0 * b01 * b02 * b12
-                - b01 * b01 * b22 - b02 * b02 * b11 - b12 * b12 * b00) / 2.0;
-    r = std::clamp(r, -1.0, 1.0);
-    const double phi = std::acos(r) / 3.0;
-    const double l1 = q + 2.0 * p * std::cos(phi);            // 最大特征值
-    const double l3 = q + 2.0 * p * std::cos(phi + 2.0943951023931953); // +2π/3——最小
-    const double l2 = 3.0 * q - l1 - l3;                      // 迹守恒求中间值
-    return {l3, l2, l1};  // 升序返回（l3 ≤ l2 ≤ l1——三角解的性质）
+    // 六分量对称存储 → 3×3 完整矩阵（对称元镜像填充——声明序协议面）。
+    Eigen::MatrixXd m(3, 3);
+    m << m00, m01, m02,
+         m01, m11, m12,
+         m02, m12, m22;
+    // 上游直接调用（升序特征值——Eigen SelfAdjointEigenSolver 契约）。
+    const auto de = rw::math::LinearAlgebra::eigenDecompositionSymmetric<double>(m);
+    return {de.second[0], de.second[1], de.second[2]};
 }
 
 // =====================================================================

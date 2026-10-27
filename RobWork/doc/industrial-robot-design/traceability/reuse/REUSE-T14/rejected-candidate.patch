@@ -1,0 +1,92 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp
+index ae3833c40..912054c93 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp
+@@ -18,9 +18,7 @@ namespace sdurws::ird::core {
+ bool closeWithin(double value, double reference, Tolerance t) noexcept
+ {
+     // 非有限输入 → false（不抛、不静默通过——NFR-COR-03；noexcept 契约）。
+-    const bool inputsFinite = value == value && reference == reference
+-                           && value - value == 0 && reference - reference == 0;
+-    if (!inputsFinite) {
++    if (!std::isfinite(value) || !std::isfinite(reference)) {
+         return false;
+     }
+     // C4 公式：|value−reference| ≤ relative·|reference| + absolute。
+@@ -29,6 +27,18 @@ bool closeWithin(double value, double reference, Tolerance t) noexcept
+     const double diff = value - reference;
+     const double limit = t.relative * (reference < 0 ? -reference : reference)
+                        + t.absolute;
++    // GAP-CORE-C4-01：只有两边同时溢出才失去原判据的排序信息。
++    // 有限 value/reference 的差至多为 2*DBL_MAX，因此共同除以二即可使
++    // 左边可表示。scalbn 是标准的二进制缩放，不放大容差、不改变 C4。
++    // 此时 value/reference 都远离次正规区；右边再溢出则必定覆盖左边。
++    // 正常路径及只有一边溢出的既有 IEEE 舍入行为保留，不承诺精确实数算术。
++    if (std::isinf(diff) && std::isinf(limit)) {
++        const double scaledDiff = std::fabs(std::scalbn(value, -1)
++                                         - std::scalbn(reference, -1));
++        const double scaledLimit = t.relative * std::scalbn(std::fabs(reference), -1)
++                                 + std::scalbn(t.absolute, -1);
++        return scaledDiff <= scaledLimit;
++    }
+     return (diff <= limit) && (-diff <= limit);
+ }
+ 
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp
+index d3dc2ac79..8832331c5 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp
+@@ -60,6 +60,37 @@ TEST(CompareFormula, NonFiniteInputsFalse_UT_UNIT)
+     EXPECT_FALSE(closeWithin(qnan, qnan, t));     // NaN 对 NaN 也是 false（非有限）
+ }
+ 
++/** GAP-CORE-C4-01：有限极值不能因两边同时溢出为 Inf 而静默通过。 */
++TEST(CompareFormula, FiniteOverflowBoundary_UT_UNIT)
++{
++    const double m = std::numeric_limits<double>::max();
++    const double belowTwo = std::nextafter(2.0, 0.0);
++    // 正反方向、阈值两侧和绝对项均保持原 C4，不引入新的 epsilon。
++    for (double sign : {-1.0, 1.0}) {
++        EXPECT_FALSE(closeWithin(sign * m, -sign * m, Tolerance::make(1.5, 0.0)));
++        EXPECT_FALSE(closeWithin(sign * m, -sign * m, Tolerance::make(belowTwo, 0.0)));
++        EXPECT_TRUE(closeWithin(sign * m, -sign * m, Tolerance::make(2.0, 0.0)));
++        EXPECT_FALSE(closeWithin(sign * m, -sign * m, Tolerance::make(0.5, m)));
++        EXPECT_TRUE(closeWithin(sign * m, -sign * m, Tolerance::make(1.0, m)));
++    }
++    // 单侧溢出及相等/零参考：只改变溢出判据，正常路径的边界不变。
++    EXPECT_FALSE(closeWithin(m, -m, Tolerance::make(0.0, m)));
++    EXPECT_TRUE(closeWithin(m, m, Tolerance::make(m, m)));
++    EXPECT_TRUE(closeWithin(m, 0.0, Tolerance::make(0.0, m)));
++    EXPECT_FALSE(allCloseWithin(std::vector<double>{m}, std::vector<double>{-m},
++                               Tolerance::make(1.5, 0.0)));
++}
++
++/** C4 原有次正规及零边界：本包不扩展为任意精度比较或改变正常舍入。 */
++TEST(CompareFormula, SubnormalAndSignedZeroRegression_UT_UNIT)
++{
++    const double tiny = std::numeric_limits<double>::denorm_min();
++    EXPECT_TRUE(closeWithin(-0.0, 0.0, Tolerance::make(0.0, 0.0)));
++    EXPECT_TRUE(closeWithin(tiny, 0.0, Tolerance::make(0.0, tiny)));
++    EXPECT_FALSE(closeWithin(tiny, -tiny, Tolerance::make(0.0, tiny)));
++    EXPECT_TRUE(closeWithin(tiny, -tiny, Tolerance::make(2.0, 0.0)));
++}
++
+ /** 正负抵消反例：逐元素判定不被差值总和替代（C4 明文——UT 核心反例）。 */
+ TEST(AllCloseWithin, ElementWiseNotSummed_UT_UNIT)
+ {
+@@ -147,5 +178,15 @@ TEST(AllCloseWithinQ, QOverloadSemantics_UT_UNIT)
+     const rw::math::Q len3(3, 1.0, 1.0, 1.0);
+     EXPECT_THROW(allCloseWithin(len3, ref, t), CoreError);
+ }
++
++/** 真实 rw::math::Q 必须消费同一修正，不允许下游另补极值判据。 */
++TEST(AllCloseWithinQ, FiniteOverflowBoundary_UT_UNIT)
++{
++    const double m = std::numeric_limits<double>::max();
++    EXPECT_FALSE(allCloseWithin(rw::math::Q(1, m), rw::math::Q(1, -m),
++                               Tolerance::make(1.5, 0.0)));
++    EXPECT_TRUE(allCloseWithin(rw::math::Q(1, m), rw::math::Q(1, -m),
++                              Tolerance::make(2.0, 0.0)));
++}
+ #endif
+ }  // namespace

@@ -1,0 +1,33 @@
+== GOV-T25 manifest/scopeInputs/XML independent recheck vs handoff-input-check.txt claims ==
+REUSE-T07: n=3 same=3 mismatch=[]
+REUSE-T09: n=4 same=4 mismatch=[]
+REUSE-T12: n=4 same=4 mismatch=[]
+REUSE-T13: n=7 same=7 mismatch=[]
+REUSE-T15: n=5 same=4 mismatch=[ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt]
+REUSE-T16: n=5 same=5 mismatch=[]
+-- scopeInputs diffs orig->inspected-tree --
+T15 (091e53353->e98cf3deb, claim only core/CMakeLists.txt):
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+T16 (091e53353->e98cf3deb, claim none):
+(empty=none)
+-- T15 core/CMakeLists last-touch commit (attribution) --
+19f394a593f67d19e6a6c6a0bc754c165581ad06 10-24 12:06 [governance] REUSE-T21 以成熟定宽原语修正C4同时溢出误判
+-- XML originals: tests/failures/errors --
+REUSE-T13/runtime.xml: tests="305" failures="0" errors="0" 
+REUSE-T13/smoke.xml: tests="195" failures="0" errors="0" 
+REUSE-T13/modeling.xml: tests="474" failures="0" errors="0" 
+REUSE-T13/upstream.xml: tests="9" failures="1" errors="0" 
+REUSE-T13/disconnected.xml: tests="32" failures="13" errors="0" 
+REUSE-T15/core.xml: tests="69" failures="0" errors="0" 
+REUSE-T15/runtime.xml: tests="305" failures="0" errors="0" 
+REUSE-T15/execution.xml: tests="27" failures="0" errors="0" 
+REUSE-T15/project.xml: tests="282" failures="0" errors="0" 
+REUSE-T15/smoke.xml: tests="67" failures="0" errors="0" 
+REUSE-T16/diagnostics-final.xml: tests="122" failures="0" errors="0" 
+REUSE-T16/contract-final.xml: tests="26" failures="0" errors="0" 
+REUSE-T16/smoke.xml: tests="122" failures="0" errors="0" 
+REUSE-T16/diagnostics-r1.xml: tests="122" failures="1" errors="0" 
+-- corrected: commits touching core/CMakeLists.txt within 091e53353..9276f19b26 (whose tree is e98cf3deb) --
+df0b35fc2b32068dcfe3745d1b29a81c58d17f77 10-24 08:21 [governance] WP-01/GOV-T24：修复主线IRD-GATE-LIB三变量阻断与冒烟RobWork导出包供给
+-- GOV-T24 reviewedCommit for reference --
+df0b35fc2b32068dcfe3745d1b29a81c58d17f77 (= GOV-T24 acceptance record reviewedCommit)

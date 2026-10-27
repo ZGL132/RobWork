@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "UI-T86",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T86.json",
+  "files": [
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+      "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/UI-T86/README.md",
+      "boundary": "UI-T86（F-973 诊断返工）：FixtureView 补 runtimeModelView() 锚覆盖（REUSE-T18 在案模式——testfixture::compileRealSnapshot 懒编译真实快照，T18 TestView 同款懒构造纪律；T17 契约值替身AnchorlessValueView 保持无锚不混同）——修复 T18 换核后 ui 12 项真实数值链用例夹具未同步迁移的锚缺失失败（fk.ok()=false→NoDevice→批量 not-run）；产品 FK/IK 与其余单元零触碰"
+    },
+    {
+      "mode": "governance",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+      "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/UI-T86/README.md",
+      "boundary": "UI-T86：sdurws_ird_ui_test 集成门控块内增 IRD_HAVE_RUNTIME_COMPILE=1 编译定义（kinematics_test:515 先例同款机制——夹具真实编译锚的编译期开关；本守卫块整体冒烟树不注册，冒烟面零影响）；宏体/门禁/链接面零改动"
+    }
+  ]
+}

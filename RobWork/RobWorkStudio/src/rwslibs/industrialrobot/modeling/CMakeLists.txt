@@ -376,6 +376,17 @@ target_link_libraries(sdurws_ird_modeling PUBLIC
 # （pugixml::pugixml 不匹配 ^sdurws_ird_/Qt/GTest 模式——配置期守卫不受影响）。
 target_link_libraries(sdurws_ird_modeling PRIVATE pugixml::pugixml)
 
+# REUSE-T07：耦合数值核直接调用上游 SVD，不借 core 的传递依赖隐藏归属。
+# 集成模式复用现有目标；独立冒烟消费同一上游导出包，绝不源码复制/备用算法。
+if(NOT TARGET sdurw_math)
+    if(NOT TARGET RW::sdurw_math)
+        find_package(RobWork CONFIG REQUIRED)
+    endif()
+    # 导出目标仅加同名别名，保持两模式的可静态核查链接面，不包装构建基础。
+    add_library(sdurw_math ALIAS RW::sdurw_math)
+endif()
+target_link_libraries(sdurws_ird_modeling PRIVATE sdurw_math)
+
 # 别名（集成模式）：供其余单元以 RWS::ird::modeling 消费；冒烟模式无别名
 # （与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -530,6 +541,7 @@ add_executable(sdurws_ird_modeling_test
     test/BuildRedLineTest.cpp
     test/RobotDesignTest.cpp
     test/PartsTest.cpp
+    test/CouplingReuseTest.cpp  # REUSE-T07：真实生产消费、独立 oracle 与上游对照
     test/CodecTest.cpp
     test/PropertyEstimationTest.cpp
     test/ImportTest.cpp
@@ -630,6 +642,10 @@ endif()
 # 契约测试 T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——
 # reporting 同款）。
 target_link_libraries(sdurws_ird_modeling_test PRIVATE sdurws_ird_modeling sdurws_ird_modeling_plugin sdurws_ird_testkit GTest::gtest)
+target_link_libraries(sdurws_ird_modeling_test PRIVATE sdurw_math)
+# 直接编译上游既有线性代数用例；复用 GTest/testkit 入口，不复制测试源码。
+target_sources(sdurws_ird_modeling_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../RobWork/gtest/math/LinearAlgebraTest.cpp)
 
 # 插件私有头解析（测试消费 plugin/*.hpp 呈现模型头——同单元 PRIVATE 面；
 # 插件目标自身的 include 已 PRIVATE 自持，测试目标另行声明同路径）。

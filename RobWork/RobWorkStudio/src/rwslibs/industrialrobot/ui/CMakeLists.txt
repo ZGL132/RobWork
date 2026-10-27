@@ -431,6 +431,15 @@ if(TARGET sdurws)
         # 两连杆黄金模型——执行器用例的真实计算面供数；测试面私有 include，
         # 产品目标零消费）。
         ${CMAKE_CURRENT_SOURCE_DIR}/../kinematics/test)
+    # UI-T86（F-973 诊断返工）——IRD_HAVE_RUNTIME_COMPILE＝夹具真实编译锚的
+    # 编译期开关（kinematics_test 先例同款机制）：本块源集内
+    # KinEvaluationChannelTest.cpp 的 FixtureView 经 KinFkFixture 的
+    # compileRealSnapshot 走 RuntimeSnapshotFactory 真实编译（REUSE-T18 起
+    # 产品 FK/IK 只经锚消费已编译 WorkCell）。仅集成树定义——本守卫块整体
+    # 冒烟树不注册，冒烟面零影响；ui_test 链接面经 modeling_plugin PUBLIC
+    # 六边已到达 runtime 编译器实现 TU（Snapshot.cpp 系仅集成模式编译）。
+    target_compile_definitions(sdurws_ird_ui_test PRIVATE
+        IRD_HAVE_RUNTIME_COMPILE=1)
     # 传递链接面（contract_test 同款测试面边）：modeling_plugin 的 PUBLIC
     # 六边携带 modeling/runtime/policy（include 目录＋符号——被测 TU 与
     # 测试 TU 的消费面）；sdurws＝框架库（rws/RobWorkStudio.hpp——挂接
@@ -980,6 +989,12 @@ if(TARGET sdurws)
     #     create*PluginAssembly/registerWithHostRegistrar 激活路径，域私
     #     有头零触碰；selection 注册被宿主权威拒绝〔P-SEL-3 待裁决——
     #     InvalidDescriptor 如实透传，§11.3 隔离承载〕）；
+    #   - sdurws_ird_execution＝WP-18/F-967 事件总线装配边（ird_gates_
+    #     whitelist IRD_TARGET_LEVEL_EDGES 2026-10-25 同批登记——宿主装配
+    #     层构造 execution::DomainEventBusImpl 注入 core::IDomainEventBus
+    #     端口〔§10.4/§13 交接：UI 线程 marshaling 归宿主 sink〕；消费面仅
+    #     公共头 EventBus.hpp——R-2 公共面；ui 产品库 sdurws_ird_ui 零
+    #     execution 红线 O-31/C-3/4/5 不动，仅本 MODULE 装配目标链接面）；
     #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类；DTB §4.6
     #     框架基线白名单 "sdurw" 前缀族）；
     #   - Qt 三件套＝plugin 分类面（Qt 链接合法——ird_gates R-3 仅查
@@ -987,6 +1002,7 @@ if(TARGET sdurws)
     target_link_libraries(sdurws_ird_ui_plugin PRIVATE
         sdurws_ird_ui
         sdurws_ird_project
+        sdurws_ird_execution
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
         sdurws_ird_kinematics_plugin

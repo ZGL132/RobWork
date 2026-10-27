@@ -1,0 +1,4 @@
+run-flake-probe: ird_execution_boundary_audit repeat=1 loadJobs=0 out=C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\process-after-zero
+  run 1/1: FAIL exit=0 0s failed=[<xml-no-tests>]
+run-flake-probe: 汇总 C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\process-after-zero\summary.txt（failed runs=1/1）
+run-flake-probe: FAIL —— 失败用例已在 summary.txt 点名（原始 stdout/stderr/XML 均在 C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\process-after-zero）

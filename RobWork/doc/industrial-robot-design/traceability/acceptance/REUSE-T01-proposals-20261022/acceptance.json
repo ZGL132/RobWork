@@ -1,0 +1,59 @@
+{
+  "task": "REUSE-T01 IK/FD draft proposals governance acceptance",
+  "reviewedCommit": "8a7174945a8f280f674a40ec46a512b5b5f1b414",
+  "verdict": "PASS",
+  "scope": [
+    "reuse/extensions/GAP-IK-01.md",
+    "reuse/extensions/GAP-FD-BUILD-01.md",
+    "reuse/extensions/proposal-search.json",
+    "reuse/extensions/required-proposals.md",
+    "functions/kinematics constrainedDampedLeastSquaresStep proposal binding",
+    "functions/dynamics evalAcceleration and validate.rk4Stages proposal bindings"
+  ],
+  "findings": [],
+  "checks": {
+    "odeEnvironmentNotAbsence": true,
+    "allExitCodesMatch": true,
+    "proposalBindings": 3,
+    "upstreamBindings": 18,
+    "runtimeOwnershipWorkerBoundariesPreserved": true,
+    "draftNotApproved": true,
+    "allThreeDecisionStatusProposal": true,
+    "noProductFrameworkOrVcpkgMutationInScopedChange": true,
+    "allHitMultisetsMatch": true,
+    "proposalHashesMatch": true,
+    "sevenSearchCommandsReplayed": true,
+    "allCurrentAndBaselineHashesMatch": true
+  },
+  "gates": {
+    "docs": 0,
+    "task": 0,
+    "reuse": 0,
+    "scopedDiff": 0,
+    "wholeCommitDiff": 2
+  },
+  "matrix": {
+    "pending": 118,
+    "proposal": 3,
+    "functions": 121,
+    "closedFiles": 0
+  },
+  "evidenceAssessment": [
+    "ParallelIKSolver Target EAA masking/public APIs/private update methods and QP fixed6D/private search declarations agree with draft; original solve can return in-bounds candidates after iteration exhaustion",
+    "sdurw_invkin, sdurwsim, sdurwsim_ode and sdurwsim_ode-gtest are actual declared targets; ODE test source registration has existing ODESimpleTest extension omission, appropriately retained as future build/asset limitation rather than proven executable availability",
+    "ODE Force mode consumes targets through ODEJoint::setForce; reset zeroes joint velocity, so nonzero initial state remains an explicit validation requirement",
+    "archived probe-r2/r3 assertions and XML support narrow IK limitations; tests were inspected, not rerun",
+    "absolute local CMakeCache search matches recorded OFF/NOTFOUND values; this is environment evidence outside Git, not upstream absence or a pinned dependency version"
+  ],
+  "limitations": [
+    "PASS仅限具体草案及其治理追溯，无所有者实施批准，不得据此修改框架/vcpkg/生产算法",
+    "不构成REUSE-T01全功能退出、T02准入或T03-B/T04-B依赖放行",
+    "Euler任务映射/自由滚转数学、ABI旧行为、真实统计/取消/性能仍待批准后的完整设计与实测",
+    "ODE版本/port/triplet/精度/二进制来源及原gtest可执行性仍未完成供给确认；新渠道或上游patch必须另批",
+    "本轮无生产改动；C++/GUI/API适用性实验、ODE运行、性能及远程CI未执行；docs DeepEvidence未执行",
+    "复用已有独立克隆，fetch后detached冻结SHA，现场干净；父树未改，无提交推送合入"
+  ],
+  "reportDirectory": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-proposals-0d54b4cc49664244b7adb8b0550c6e9e",
+  "inspectionCheckout": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\\repo",
+  "wholeCommitDiffNote": "整提交diff-check exit2仅来自同批归档的历史日志/源码摘录尾空格及空行；本次所审两提案、检索、入口、3条功能绑定scope diff-check exit0。未改写历史原始证据。全量输出见diff.log。"
+}

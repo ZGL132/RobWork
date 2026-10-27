@@ -1,0 +1,21 @@
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui_test
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+build-exit=0

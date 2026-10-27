@@ -1,0 +1,1553 @@
+{
+  "schemaVersion": "ird-independent-coverage-review/2",
+  "reviewDate": "2026-10-23",
+  "reviewedCommit": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+  "baselineInventoryCommit": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "result": "NOT PASS",
+  "resultScope": "全20单元/基础构建/测试/脚本的T01全功能覆盖退出条件；不重验全部已登记关系，不含B15",
+  "conclusion": "系统清点与实际行为审读确认，548关系尚未达到全功能审计。20组风险优先遗漏中18个文件路径不在原16样本锚列表，另有已引用文件内未覆盖行为；不能以旧16逐项补齐代替全项目覆盖。",
+  "criteria": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+      "field": "acceptance[0]",
+      "text": "全部20单元及基础构建/测试/脚本按真实功能登记；待审发现不能冒充审计完成"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/reuse/audit-contract.md",
+      "section": "2",
+      "text": "全部20单元及既有adapter；计算核心、测试辅助、黄金生成器、inline/template/macro、可执行脚本、页面代码及CMake。简单样板仅按明确语义规则成组。"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/reuse/audit-contract.md",
+      "section": "4",
+      "text": "一个可辨识语义功能与一个能力关系，精确区段/调用链/结果消费者；inputs摘要不等于功能审计"
+    }
+  ],
+  "metrics": {
+    "frozenCommit": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+    "baselineFiles": 1401,
+    "relations": 548,
+    "distinctFunctions": 547,
+    "distinctSourcePaths": 138,
+    "sourceReferencedBaseline": 138,
+    "noFunctionSourceBaseline": 1263,
+    "inputOnly": 22,
+    "mjsTotal": 29,
+    "mjsNoSources": 29,
+    "unreferencedByExtension": {
+      ".txt": 1,
+      ".cmake": 2,
+      ".hpp": 443,
+      ".cpp": 786,
+      ".html": 1,
+      ".mjs": 29,
+      ".ps1": 1
+    },
+    "currentCodeFilesBeyondBaseline": 19,
+    "missingBaseline": [],
+    "decisionCounts": {
+      "pending": 545,
+      "proposal": 3
+    }
+  },
+  "unitCandidateCounts": [
+    {
+      "unit": "core",
+      "baseline": 30,
+      "sourceReferenced": 4,
+      "noFunctionSource": 26,
+      "unreferencedProduction": 16,
+      "unreferencedTest": 10,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 24,
+      "declarationDtoHeaderCandidates": 2,
+      "inputOnly": 1,
+      "relations": 4
+    },
+    {
+      "unit": "diagnostics",
+      "baseline": 38,
+      "sourceReferenced": 3,
+      "noFunctionSource": 35,
+      "unreferencedProduction": 20,
+      "unreferencedTest": 15,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 32,
+      "declarationDtoHeaderCandidates": 3,
+      "inputOnly": 0,
+      "relations": 4
+    },
+    {
+      "unit": "drivetrain",
+      "baseline": 22,
+      "sourceReferenced": 5,
+      "noFunctionSource": 17,
+      "unreferencedProduction": 9,
+      "unreferencedTest": 8,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 14,
+      "declarationDtoHeaderCandidates": 3,
+      "inputOnly": 0,
+      "relations": 13
+    },
+    {
+      "unit": "dynamics",
+      "baseline": 61,
+      "sourceReferenced": 8,
+      "noFunctionSource": 53,
+      "unreferencedProduction": 32,
+      "unreferencedTest": 21,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 38,
+      "declarationDtoHeaderCandidates": 15,
+      "inputOnly": 1,
+      "relations": 12
+    },
+    {
+      "unit": "evidence",
+      "baseline": 37,
+      "sourceReferenced": 7,
+      "noFunctionSource": 30,
+      "unreferencedProduction": 14,
+      "unreferencedTest": 16,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 30,
+      "declarationDtoHeaderCandidates": 0,
+      "inputOnly": 0,
+      "relations": 27
+    },
+    {
+      "unit": "execution",
+      "baseline": 60,
+      "sourceReferenced": 6,
+      "noFunctionSource": 54,
+      "unreferencedProduction": 34,
+      "unreferencedTest": 20,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 47,
+      "declarationDtoHeaderCandidates": 7,
+      "inputOnly": 3,
+      "relations": 41
+    },
+    {
+      "unit": "foundation-governance",
+      "baseline": 33,
+      "sourceReferenced": 0,
+      "noFunctionSource": 33,
+      "unreferencedProduction": 30,
+      "unreferencedTest": 0,
+      "unreferencedBuild": 3,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 32,
+      "declarationDtoHeaderCandidates": 0,
+      "inputOnly": 0,
+      "relations": 0
+    },
+    {
+      "unit": "io",
+      "baseline": 37,
+      "sourceReferenced": 5,
+      "noFunctionSource": 32,
+      "unreferencedProduction": 22,
+      "unreferencedTest": 10,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 26,
+      "declarationDtoHeaderCandidates": 6,
+      "inputOnly": 0,
+      "relations": 15
+    },
+    {
+      "unit": "kinematics",
+      "baseline": 104,
+      "sourceReferenced": 14,
+      "noFunctionSource": 90,
+      "unreferencedProduction": 62,
+      "unreferencedTest": 28,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 77,
+      "declarationDtoHeaderCandidates": 13,
+      "inputOnly": 1,
+      "relations": 37
+    },
+    {
+      "unit": "modeling",
+      "baseline": 138,
+      "sourceReferenced": 13,
+      "noFunctionSource": 125,
+      "unreferencedProduction": 86,
+      "unreferencedTest": 39,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 107,
+      "declarationDtoHeaderCandidates": 18,
+      "inputOnly": 3,
+      "relations": 48
+    },
+    {
+      "unit": "optimization",
+      "baseline": 76,
+      "sourceReferenced": 7,
+      "noFunctionSource": 69,
+      "unreferencedProduction": 39,
+      "unreferencedTest": 30,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 55,
+      "declarationDtoHeaderCandidates": 14,
+      "inputOnly": 2,
+      "relations": 20
+    },
+    {
+      "unit": "policy",
+      "baseline": 43,
+      "sourceReferenced": 5,
+      "noFunctionSource": 38,
+      "unreferencedProduction": 21,
+      "unreferencedTest": 17,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 34,
+      "declarationDtoHeaderCandidates": 4,
+      "inputOnly": 0,
+      "relations": 10
+    },
+    {
+      "unit": "project",
+      "baseline": 87,
+      "sourceReferenced": 4,
+      "noFunctionSource": 83,
+      "unreferencedProduction": 51,
+      "unreferencedTest": 32,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 65,
+      "declarationDtoHeaderCandidates": 18,
+      "inputOnly": 3,
+      "relations": 72
+    },
+    {
+      "unit": "reporting",
+      "baseline": 66,
+      "sourceReferenced": 5,
+      "noFunctionSource": 61,
+      "unreferencedProduction": 29,
+      "unreferencedTest": 32,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 57,
+      "declarationDtoHeaderCandidates": 4,
+      "inputOnly": 3,
+      "relations": 68
+    },
+    {
+      "unit": "requirements",
+      "baseline": 92,
+      "sourceReferenced": 8,
+      "noFunctionSource": 84,
+      "unreferencedProduction": 63,
+      "unreferencedTest": 21,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 74,
+      "declarationDtoHeaderCandidates": 10,
+      "inputOnly": 0,
+      "relations": 15
+    },
+    {
+      "unit": "runtime",
+      "baseline": 57,
+      "sourceReferenced": 8,
+      "noFunctionSource": 49,
+      "unreferencedProduction": 27,
+      "unreferencedTest": 22,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 38,
+      "declarationDtoHeaderCandidates": 11,
+      "inputOnly": 0,
+      "relations": 39
+    },
+    {
+      "unit": "selection",
+      "baseline": 71,
+      "sourceReferenced": 6,
+      "noFunctionSource": 65,
+      "unreferencedProduction": 32,
+      "unreferencedTest": 33,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 57,
+      "declarationDtoHeaderCandidates": 8,
+      "inputOnly": 0,
+      "relations": 19
+    },
+    {
+      "unit": "testkit",
+      "baseline": 46,
+      "sourceReferenced": 6,
+      "noFunctionSource": 40,
+      "unreferencedProduction": 25,
+      "unreferencedTest": 15,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 36,
+      "declarationDtoHeaderCandidates": 4,
+      "inputOnly": 2,
+      "relations": 44
+    },
+    {
+      "unit": "trajectory",
+      "baseline": 81,
+      "sourceReferenced": 9,
+      "noFunctionSource": 72,
+      "unreferencedProduction": 44,
+      "unreferencedTest": 28,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 59,
+      "declarationDtoHeaderCandidates": 13,
+      "inputOnly": 1,
+      "relations": 37
+    },
+    {
+      "unit": "ui",
+      "baseline": 162,
+      "sourceReferenced": 9,
+      "noFunctionSource": 153,
+      "unreferencedProduction": 112,
+      "unreferencedTest": 41,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 122,
+      "declarationDtoHeaderCandidates": 31,
+      "inputOnly": 0,
+      "relations": 13
+    },
+    {
+      "unit": "workflow",
+      "baseline": 60,
+      "sourceReferenced": 6,
+      "noFunctionSource": 54,
+      "unreferencedProduction": 26,
+      "unreferencedTest": 28,
+      "unreferencedBuild": 0,
+      "unreferencedOther": 0,
+      "candidateImplementationOrScript": 50,
+      "declarationDtoHeaderCandidates": 4,
+      "inputOnly": 2,
+      "relations": 10
+    }
+  ],
+  "gaps": [
+    {
+      "id": "FCOV-01",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "事务提交与崩溃恢复",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit",
+        "startLine": 287,
+        "endLine": 797,
+        "fileSha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c",
+        "sectionSha256": "35aabcc8d00c06d9285cf7ba6954a02fc528df462bdd65bb2d6d3696019a6670"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "校验计划后发布不可变对象、切换HEAD并发送事件；恢复扫描区分闭包内损坏与闭包外残留。仅ObjectStore发布/读取两条不能覆盖事务编排。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-01.frozen.txt"
+    },
+    {
+      "id": "FCOV-02",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "命令槽、确认放行与编译/提交",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::CommandServiceImpl::submit",
+        "startLine": 169,
+        "endLine": 221,
+        "fileSha256": "9cbe83b9272fd24c40b950efc192dae99d229a663cf825f8ad42936ffae40054",
+        "sectionSha256": "0b4fd5b8104be7f2d89951ff1a84ce05d62e5214a494ed07b1fc11074a7ec006"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "互斥执行槽和在途票据，S1形式校验、S2基线，executePlan执行确认/编译/事务并归类失败。Codec登记不覆盖该状态与写权威行为。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-02.frozen.txt"
+    },
+    {
+      "id": "FCOV-03",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "权威分支历史查询",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchHistory",
+        "startLine": 347,
+        "endLine": 394,
+        "fileSha256": "40cdd36f115de51730f22cf249ff6bd936cde2f1b00543e653636f1dc719cde9",
+        "sectionSha256": "e3b54e863655e0253cb14db62c6a958c682108270fe6e5eb77de1b6278453940"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "在writer锁内取权威tip，锁外沿不可变parent链组装RevisionView，悬挂parent拒绝；不是纯字段访问器。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-03.frozen.txt"
+    },
+    {
+      "id": "FCOV-04",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "归档会话终局与幂等发布",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::finalize",
+        "startLine": 853,
+        "endLine": 1065,
+        "fileSha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f",
+        "sectionSha256": "9d364b4a1c6b6a5ae7074f1d7ebc11a8156243440180db58b64bc721d763979c"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "复核五元组/写权威，重算manifest摘要，互斥仲裁finalize与abandon，幂等/冲突与文件核验。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-04.frozen.txt"
+    },
+    {
+      "id": "FCOV-05",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "Windows持久性/可见性原语",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough",
+        "startLine": 226,
+        "endLine": 294,
+        "fileSha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520",
+        "sectionSha256": "d656394b7d99482f4bf972bf1ed0602734b57ae490618c564c76b59c9f8bea7f"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "RAII句柄、分块写、flush和close失败路径决定是否允许发布；publishNew/replaceExisting承载不同原子语义，不等于普通文件工具。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-05.frozen.txt"
+    },
+    {
+      "id": "FCOV-06",
+      "priority": "coverage-blocker",
+      "unit": "policy",
+      "title": "策略解析/阈值及规则归一化",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::runParsePipeline",
+        "startLine": 489,
+        "endLine": 844,
+        "fileSha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6",
+        "sectionSha256": "dbda61a854efa29ed909e9ad05ae64ff86057dbe59bfd5f2ebc58483bac9a7f8"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "schema拒绝、角色词表/对象解析、阈值合法性、默认供给、规则规范化与冲突判定；已有ByteReader/Writer条目不是此语义。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-06.frozen.txt"
+    },
+    {
+      "id": "FCOV-07",
+      "priority": "coverage-blocker",
+      "unit": "policy",
+      "title": "关节限位与近限位判定",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+        "qualifiedSymbol": "sdurws::ird::policy::JointLimitEvaluator::evaluate",
+        "startLine": 266,
+        "endLine": 589,
+        "fileSha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511",
+        "sectionSha256": "ef37bb0c84d69e35170756839e0f7c230963aa0fb93803b99760658651e3ba3c"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "有限性/名称检查、规范排序、有限/连续关节分支，有符号margin与比例、Should/Must和不适用记录；直接影响可行性判定。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-07.frozen.txt"
+    },
+    {
+      "id": "FCOV-08",
+      "priority": "coverage-blocker",
+      "unit": "policy",
+      "title": "碰撞作用域展开与必检保护",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::expandRulesAndCheckConflicts",
+        "startLine": 508,
+        "endLine": 560,
+        "fileSha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2",
+        "sectionSha256": "40dabbf6f886bc8547c718d204c7d156d3d325830e1561d0de6f6c14bcc49420"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "将role/group/object规则展开成对象对，拒绝必检与排除交集；同文件会话构造还决定域/相邻过滤/必检优先，不由CollisionQuery::evaluate已登记区段覆盖。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-08.frozen.txt"
+    },
+    {
+      "id": "FCOV-09",
+      "priority": "coverage-blocker",
+      "unit": "execution",
+      "title": "worker真实进程入口及隔离生命周期",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp",
+        "qualifiedSymbol": "::wWinMain",
+        "startLine": 613,
+        "endLine": 783,
+        "fileSha256": "85e7a6d8e1b842312193f41997ba8cd8e007eeadc2b57e3e60aa0a623a7826a9",
+        "sectionSha256": "e4502d98f541aa7c3403b9cd35495d3a134313451e65bb6d89105ba69c6fe8ad"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "命令读/心跳线程、Hello握手、分帧派发、物化摘要重算、临时目录及线程收尾；当前runScript为替身评估器，也需审进程/文件边界，不能误称已机器人计算迁移。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-09.frozen.txt"
+    },
+    {
+      "id": "FCOV-10",
+      "priority": "coverage-blocker",
+      "unit": "execution",
+      "title": "结果归档接纳事务与失权重试",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp",
+        "qualifiedSymbol": "sdurws::ird::execution::ResultAdmission::runArchiveTransaction",
+        "startLine": 581,
+        "endLine": 811,
+        "fileSha256": "dd87b143feaa3910bfdf2e65f08a4c4c5cd6ffb56d71aa0e738f4729bece553b",
+        "sectionSha256": "4a671c2a7dfe197e6ac203a4868fd953ea5f2e86a9b6d867df9cb4e5a2e38337"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "复用预留会话、begin失权重取并重绑写面、有限退避、writeBatch/finalize与失败阶段记账；ChannelProtocol编解码不覆盖归档状态。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-10.frozen.txt"
+    },
+    {
+      "id": "FCOV-11",
+      "priority": "coverage-blocker",
+      "unit": "execution",
+      "title": "取消/超时进程树强杀序列",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Controller.cpp",
+        "qualifiedSymbol": "sdurws::ird::execution::TaskController::forceKillSequence",
+        "startLine": 686,
+        "endLine": 729,
+        "fileSha256": "c68d6077f09b5b062b504b49ebfc37abf81109474d423b7edb3d65a7dd798bef",
+        "sectionSha256": "fe418aafe34f69e605e65a1c97678fd98edb99bfbde7d7c59dd23118eb8e57aa"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "一次终止保护、运行超时/心跳失联区分、因果诊断顺序与Canceling到Failed转换；同文件poll/requestCancel等未由scheduler submit审计替代。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-11.frozen.txt"
+    },
+    {
+      "id": "FCOV-12",
+      "priority": "coverage-blocker",
+      "unit": "diagnostics",
+      "title": "一次性确认令牌与绑定四元组复核",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Confirmable.cpp",
+        "qualifiedSymbol": "sdurws::ird::diagnostics::ConfirmableService::submitConfirmation",
+        "startLine": 498,
+        "endLine": 547,
+        "fileSha256": "43c8672fc1a2ffb449f4e474f03cba542e8abfe81aa4c40a118aa1f9fd14f8c8",
+        "sectionSha256": "6b87a8be1c522f735b81503a9ab8caecdf88cd69fd38adb19c361c96f06e88b4"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "互斥状态迁移、惰性过期、callbackToken一次性检查、binding重验和失效/确认凭据写入，是身份/放行边界，不是文案DTO。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-12.frozen.txt"
+    },
+    {
+      "id": "FCOV-13",
+      "priority": "coverage-blocker",
+      "unit": "diagnostics",
+      "title": "日志脱敏与失败时封闭降级",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Redaction.cpp",
+        "qualifiedSymbol": "sdurws::ird::diagnostics::RedactionService::redact",
+        "startLine": 580,
+        "endLine": 595,
+        "fileSha256": "bbbe7c163e54f07e06adf494a0a313875f10cda7515caf242f227a38b9f3d69b",
+        "sectionSha256": "57cadf5030a2c3066b9409dc676c8d15e4872eb691de2b42889134d0e992e6f0"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "实际执行规则链、累计统计，任何内部失败返回降级文本而非原文；同文件路径清理/UTF8截断/凭据规则需要语义审查，LoggingPipeline登记不能涵盖。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-13.frozen.txt"
+    },
+    {
+      "id": "FCOV-14",
+      "priority": "coverage-blocker",
+      "unit": "testkit",
+      "title": "黄金数据装载与完整性依据",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::load",
+        "startLine": 197,
+        "endLine": 486,
+        "fileSha256": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+        "sectionSha256": "faf2ac946a8a838984fd94e031b1d8fabee3db0d0e35c998e6e685178a77fdbd"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "manifest/schema/版本/单位/容差/edgeCases与完整性清单校验，逐文件size和SHA256检查；决定黄金对照是否可信，不能靠JsonLite骨架审计代替。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-14.frozen.txt"
+    },
+    {
+      "id": "FCOV-15",
+      "priority": "coverage-blocker",
+      "unit": "testkit",
+      "title": "头内集合等价与最大二分匹配",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "qualifiedSymbol": "sdurws::ird::testkit::checkSetEquivalent<T>",
+        "startLine": 163,
+        "endLine": 392,
+        "fileSha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+        "sectionSha256": "d2f24168670e91c511f9f379492a77f7c650fa4944a1257a47bdb4a9d6722699"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "身份重复、身份匹配/逐字段容差、Kuhn增广路径数值一一匹配及稳定序检查；真实模板算法，不能作为简单DTO或三行断言样板跳过。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-15.frozen.txt"
+    },
+    {
+      "id": "FCOV-16",
+      "priority": "coverage-blocker",
+      "unit": "core",
+      "title": "公共容差公式及头内合法性工厂",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "qualifiedSymbol": "sdurws::ird::core::closeWithin",
+        "startLine": 18,
+        "endLine": 33,
+        "fileSha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6",
+        "sectionSha256": "9fc6cecb00e82baaea9de8fa59113eb2692c2606ef5223122ff01bd2ed834be4"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "C4非有限拒绝/相对绝对阈值与逐元素比较；关联Compare.hpp::Tolerance::make内联合法性判定和C7默认转写，决定大量测试/生产数值结论。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-16.frozen.txt"
+    },
+    {
+      "id": "FCOV-17",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "构建依赖/权限门禁的实际解析与规则消费",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+        "qualifiedSymbol": "ird_classify_target",
+        "startLine": 152,
+        "endLine": 169,
+        "fileSha256": "235757fbd10f785b4e23aeaf732d4795afe2c5b796091d2a197d6e7e9e09f476",
+        "sectionSha256": "2e81bc42a12453932efb4237aa69a44647980bdb230dc67789c4e2e1e587a26a"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "目标形态分类后，顶层IRD_EDGES扫描应用自边/测试/工具/白名单和Qt规则。20个ird_add_gtest只登记测试注册宏，不覆盖这些门禁或主CMake接线。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-17.frozen.txt"
+    },
+    {
+      "id": "FCOV-18",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "独立FK黄金生成器",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs",
+        "qualifiedSymbol": "<ES module>::closedFormFk",
+        "startLine": 53,
+        "endLine": 69,
+        "fileSha256": "7cd0b216c7e42843d71ed93792f073da83d08a647071d53552951f777a60caab",
+        "sectionSha256": "2ec9ec3d0cfe91c5528bd8c3d25f8157350b28ba7355d521d01b7b5eb3f93f1c"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "自行累计平面3R姿态/关节原点/轴，写expected/fk.json；需审适用域/offset/单位/独立性及实际消费，不因生成脚本或独立oracle身份而豁免。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-18.frozen.txt"
+    },
+    {
+      "id": "FCOV-19",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "独立动力学及功率积分黄金生成器",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+        "qualifiedSymbol": "<ES module>::rneaReference",
+        "startLine": 77,
+        "endLine": 103,
+        "fileSha256": "e49d9e85fc41f568673aa1d2c9885dd21555646d169faa903b78acdd3b5f4cef",
+        "sectionSha256": "b65fc96b5bfae78664437854a0c8d62453962771cfb768167bef4060624c6495"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "闭式二连杆质量/重力/科氏/惯性/摩擦分项；同模块trapezoid/mapCase计算功率能量、包络与身份，必须明确参考实现独立性及适用域。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-19.frozen.txt"
+    },
+    {
+      "id": "FCOV-20",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "碰撞接触边界黄金生成器",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs",
+        "qualifiedSymbol": "<ES module>::handDerived",
+        "startLine": 41,
+        "endLine": 60,
+        "fileSha256": "55c80e787e88ae08c4e18e0e648786d9b6f3add22676f302aa64bc3163e39026",
+        "sectionSha256": "9ac8b0d564f32a61e9f38347657e028fb31d7fb0665550299e81146138e37c83"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "手算轴对齐盒距离/接触/碰撞，含直立/倒挂与独立自检，决定测试oracle边界；只审RobWork生产碰撞适配不能覆盖脚本。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-20.frozen.txt"
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "PARTIAL-01",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+      "qualifiedSymbol": "sdurws::ird::project::objstore::ObjectStore::scanObjects",
+      "startLine": 441,
+      "endLine": 591,
+      "meaning": "双向引用/磁盘扫描和可选摘要校验；同文件两项已审区段不覆盖",
+      "fileSha256": "5e3f14bfc665c94236e05fbcbd18a635fab3b3b7fffd08f66f91ba78afd87723",
+      "fileReferenceCount": 2,
+      "intersectingDeclaredSources": [],
+      "allDeclaredSources": [
+        {
+          "functionId": "project.ObjectStore.publishObject",
+          "capabilityId": "UTIL-FILE",
+          "startLine": 179,
+          "endLine": 322,
+          "symbol": "sdurws::ird::project::objstore::ObjectStore::publishObject",
+          "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+        },
+        {
+          "functionId": "project.ObjectStore.readVerified",
+          "capabilityId": "UTIL-FILE",
+          "startLine": 328,
+          "endLine": 389,
+          "symbol": "sdurws::ird::project::objstore::ObjectStore::readVerified",
+          "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+        }
+      ],
+      "evidence": "PARTIAL-01.frozen.txt"
+    },
+    {
+      "id": "PARTIAL-02",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp",
+      "qualifiedSymbol": "sdurws::ird::execution::WorkerSupervisor::handleHandshake",
+      "startLine": 999,
+      "endLine": 1053,
+      "meaning": "协议/manifest拒绝、进程终结及握手后派发；spawnNewWorker区段不覆盖",
+      "fileSha256": "6e7bc35fa5dc1732986d5f05e4e8d1628fdfa885b14533153725fcd18f9d1720",
+      "fileReferenceCount": 1,
+      "intersectingDeclaredSources": [],
+      "allDeclaredSources": [
+        {
+          "functionId": "execution.WorkerSupervisor.spawnNewWorker",
+          "capabilityId": "UTIL-THREAD",
+          "startLine": 264,
+          "endLine": 344,
+          "symbol": "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker",
+          "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+        }
+      ],
+      "evidence": "PARTIAL-02.frozen.txt"
+    },
+    {
+      "id": "PARTIAL-03",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp",
+      "qualifiedSymbol": "sdurws::ird::execution::TaskScheduler::dispatchOne",
+      "startLine": 538,
+      "endLine": 645,
+      "meaning": "并发预算/优先级/FIFO/单项目额度/内联派发；submit区段不覆盖",
+      "fileSha256": "b5833ea2f23f3776d36582b7a04ea7fd772fb120be8ec6f1bf5ee0f5f56f2a2b",
+      "fileReferenceCount": 1,
+      "intersectingDeclaredSources": [],
+      "allDeclaredSources": [
+        {
+          "functionId": "execution.TaskScheduler.submit",
+          "capabilityId": "UTIL-THREAD",
+          "startLine": 163,
+          "endLine": 237,
+          "symbol": "sdurws::ird::execution::TaskScheduler::submit",
+          "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+        }
+      ],
+      "evidence": "PARTIAL-03.frozen.txt"
+    },
+    {
+      "id": "TEST-01",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "qualifiedSymbol": "(global anonymous namespace)::makeCandidate",
+      "startLine": 78,
+      "endLine": 88,
+      "meaning": "构造含基线标记与缺失指标的测试候选；fixture helper应按样板/真实行为分组，不能只审main",
+      "fileSha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80",
+      "fileReferenceCount": 0,
+      "intersectingDeclaredSources": [],
+      "allDeclaredSources": [],
+      "evidence": "TEST-01.frozen.txt"
+    },
+    {
+      "id": "INLINE-01",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
+      "startLine": 57,
+      "endLine": 72,
+      "meaning": "头内有限性与非负合法性工厂，超出纯DTO字段",
+      "fileSha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d",
+      "fileReferenceCount": 0,
+      "intersectingDeclaredSources": [],
+      "allDeclaredSources": [],
+      "evidence": "INLINE-01.frozen.txt"
+    },
+    {
+      "id": "RECOVERY-01",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::scanForRecovery",
+      "startLine": 871,
+      "endLine": 1142,
+      "meaning": "区分staging残留、HEAD闭包损坏与闭包外对象，非ObjectStore读取",
+      "fileSha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c",
+      "fileReferenceCount": 0,
+      "intersectingDeclaredSources": [],
+      "allDeclaredSources": [],
+      "evidence": "RECOVERY-01.frozen.txt"
+    },
+    {
+      "id": "CORE-TEMPLATE-01",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "qualifiedSymbol": "sdurws::ird::testkit::detail::tryAugmentAt<EdgeFn>",
+      "startLine": 122,
+      "endLine": 151,
+      "meaning": "递归增广路径/回滚；非简单容差包装",
+      "fileSha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "fileReferenceCount": 0,
+      "intersectingDeclaredSources": [],
+      "allDeclaredSources": [],
+      "evidence": "CORE-TEMPLATE-01.frozen.txt"
+    }
+  ],
+  "groupableExamples": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Evaluation.hpp",
+      "symbol": "EvaluationMode/TaskOutcome/EngineeringStatus/TaskState",
+      "classification": "枚举声明可按冻结词表成组；toToken实现仍须单独审"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/Contexts.hpp",
+      "symbol": "IPolicyNameContext/IPolicyCallContext/IPolicyBytesSource",
+      "classification": "纯虚接口声明可按所有权/注入合同成组，不等于适配器实现已审"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+      "symbol": "ComparativeValue::operator== / ComparativeFields::operator==",
+      "classification": "简单值转发相等比较可成组，但DiagnosticRecord::make校验不可据此整文件豁免"
+    }
+  ],
+  "old16Crosswalk": [
+    {
+      "id": "COV-01",
+      "title": "已有上游 RRT 适配及避障生产链未纳入逐功能矩阵",
+      "anchorCount": 4,
+      "currentlyReferencedAnchorCount": 4,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "line": 161,
+          "symbol": "PolicySessionQConstraint::doInCollision",
+          "currentlyCoveringRows": [
+            "trajectory.Planner.doInCollision"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "line": 360,
+          "symbol": "sampleStraightPath",
+          "currentlyCoveringRows": [
+            "trajectory.Planner.sampleStraightPath"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "line": 828,
+          "symbol": "makePathPlannerAdapter",
+          "currentlyCoveringRows": [
+            "trajectory.Planner.makePathPlannerAdapter"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "line": 837,
+          "symbol": "planPtpWithObstacleAvoidance",
+          "currentlyCoveringRows": [
+            "trajectory.Planner.planPtpWithObstacleAvoidance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-02",
+      "title": "Pareto 支配判定、容差 helper 与分层排序未登记",
+      "anchorCount": 4,
+      "currentlyReferencedAnchorCount": 4,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "line": 37,
+          "symbol": "notWorse",
+          "currentlyCoveringRows": [
+            "optimization.Pareto.notWorse"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "line": 50,
+          "symbol": "strictlyBetter",
+          "currentlyCoveringRows": [
+            "optimization.Pareto.strictlyBetter"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "line": 65,
+          "symbol": "dominates",
+          "currentlyCoveringRows": [
+            "optimization.Pareto.dominates"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "line": 94,
+          "symbol": "ParetoFrontBuilder::buildFront",
+          "currentlyCoveringRows": [
+            "optimization.Pareto.ParetoFrontBuilder.buildFront"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-03",
+      "title": "候选生成接口和邻域扰动链未由 LHS 随机 helper 条目覆盖",
+      "anchorCount": 3,
+      "currentlyReferencedAnchorCount": 3,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "line": 39,
+          "symbol": "SeededLhsGenerator::generateNextBatch",
+          "currentlyCoveringRows": [
+            "optimization.Generator.SeededLhsGenerator.generateNextBatch"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "line": 110,
+          "symbol": "BaselinePerturbGenerator::generateNextBatch",
+          "currentlyCoveringRows": [
+            "optimization.Generator.BaselinePerturbGenerator.generateNextBatch"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "line": 248,
+          "symbol": "generateWithBuiltInStrategy",
+          "currentlyCoveringRows": [
+            "optimization.Generator.generateWithBuiltInStrategy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-04",
+      "title": "功率能量梯形积分与无效区间归约未登记",
+      "anchorCount": 1,
+      "currentlyReferencedAnchorCount": 1,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp",
+          "line": 63,
+          "symbol": "PowerEnergyCalculator::compute",
+          "currentlyCoveringRows": [
+            "dynamics.PowerEnergy.PowerEnergyCalculator.compute"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-05",
+      "title": "可达包络探针与近似搜索编排未登记",
+      "anchorCount": 2,
+      "currentlyReferencedAnchorCount": 2,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "line": 127,
+          "symbol": "probeReachability",
+          "currentlyCoveringRows": [
+            "kinematics.Envelope.probeReachability"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "line": 217,
+          "symbol": "computeApproximateEnvelope",
+          "currentlyCoveringRows": [
+            "kinematics.Envelope.computeApproximateEnvelope"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-06",
+      "title": "Xacro 受控展开及隐藏输出转义未登记",
+      "anchorCount": 4,
+      "currentlyReferencedAnchorCount": 4,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "line": 172,
+          "symbol": "escapeXmlText",
+          "currentlyCoveringRows": [
+            "modeling.XacroExpand.escapeXmlText"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "line": 191,
+          "symbol": "escapeXmlAttribute",
+          "currentlyCoveringRows": [
+            "modeling.XacroExpand.escapeXmlAttribute"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "line": 403,
+          "symbol": "substituteText",
+          "currentlyCoveringRows": [
+            "modeling.XacroExpand.substituteText"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "line": 933,
+          "symbol": "XacroExpandService::expand",
+          "currentlyCoveringRows": [
+            "modeling.XacroExpand.XacroExpandService.expand"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-07",
+      "title": "Worker 通道字节原语、增量帧与消息重组链未登记",
+      "anchorCount": 5,
+      "currentlyReferencedAnchorCount": 5,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+          "line": 28,
+          "symbol": "putU32",
+          "currentlyCoveringRows": [
+            "execution.ChannelProtocol.putU16"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+          "line": 236,
+          "symbol": "FrameAssembler::feed",
+          "currentlyCoveringRows": [
+            "execution.ChannelProtocol.FrameAssembler.feed"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+          "line": 319,
+          "symbol": "FrameSequencer::accept",
+          "currentlyCoveringRows": [
+            "execution.ChannelProtocol.FrameSequencer.accept"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+          "line": 432,
+          "symbol": "fragmentMessage",
+          "currentlyCoveringRows": [
+            "execution.ChannelProtocol.fragmentMessage"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+          "line": 470,
+          "symbol": "MessageReassembler::accept",
+          "currentlyCoveringRows": [
+            "execution.ChannelProtocol.MessageReassembler.accept"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-08",
+      "title": "项目 canonical JSON 引擎及实体编码未登记",
+      "anchorCount": 4,
+      "currentlyReferencedAnchorCount": 3,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+          "line": 160,
+          "symbol": "JsonParser",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+          "line": 224,
+          "symbol": "JsonParser::parseValue",
+          "currentlyCoveringRows": [
+            "project.Codec.JsonParser.parseValue"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+          "line": 299,
+          "symbol": "JsonParser::parseString",
+          "currentlyCoveringRows": [
+            "project.Codec.JsonParser.parseString"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+          "line": 914,
+          "symbol": "codec::dump(ProjectStaticIdentity)",
+          "currentlyCoveringRows": [
+            "project.Codec.dump.ProjectStaticIdentity"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-09",
+      "title": "报告二进制 Writer/Reader 与摘要链未登记",
+      "anchorCount": 4,
+      "currentlyReferencedAnchorCount": 3,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+          "line": 50,
+          "symbol": "Writer",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+          "line": 78,
+          "symbol": "Writer::f64",
+          "currentlyCoveringRows": [
+            "reporting.ReportCodec.Writer.f64"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+          "line": 1255,
+          "symbol": "ReportCodec::parseData",
+          "currentlyCoveringRows": [
+            "reporting.ReportCodec.public.ReportCodec.parseData"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+          "line": 1327,
+          "symbol": "ReportCodec::parseFull",
+          "currentlyCoveringRows": [
+            "reporting.ReportCodec.public.ReportCodec.parseFull"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-10",
+      "title": "已有登记文件仍遗漏值分派与护栏 helper",
+      "anchorCount": 3,
+      "currentlyReferencedAnchorCount": 3,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+          "line": 78,
+          "symbol": "Parser::skipWs",
+          "currentlyCoveringRows": [
+            "testkit.JsonLite.skipWs"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+          "line": 113,
+          "symbol": "Parser::parseValue",
+          "currentlyCoveringRows": [
+            "testkit.JsonLite.parseValue"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+          "line": 153,
+          "symbol": "Parser::expectLiteral",
+          "currentlyCoveringRows": [
+            "testkit.JsonLite.expectLiteral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-11",
+      "title": "断言辅助和真实进程运行设施未登记",
+      "anchorCount": 5,
+      "currentlyReferencedAnchorCount": 5,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+          "line": 44,
+          "symbol": "checkCloseWithin",
+          "currentlyCoveringRows": [
+            "testkit.Check.checkCloseWithin"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+          "line": 60,
+          "symbol": "checkAllCloseWithin",
+          "currentlyCoveringRows": [
+            "testkit.Check.checkAllCloseWithin"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+          "line": 65,
+          "symbol": "detail::quoteWindowsArg",
+          "currentlyCoveringRows": [
+            "testkit.ProcessRunner.quoteWindowsArg"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+          "line": 199,
+          "symbol": "buildEnvironmentBlock",
+          "currentlyCoveringRows": [
+            "testkit.ProcessRunner.buildEnvironmentBlock"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+          "line": 310,
+          "symbol": "TestProcessRunner::start",
+          "currentlyCoveringRows": [
+            "testkit.ProcessRunner.TestProcessRunner.start"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COV-12",
+      "title": "测试夹具、解析期望与追溯辅助未按功能覆盖",
+      "anchorCount": 5,
+      "currentlyReferencedAnchorCount": 0,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "line": 78,
+          "symbol": "makeCandidate",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "line": 103,
+          "symbol": "expectNearRel",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "line": 113,
+          "symbol": "rowAt",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "line": 81,
+          "symbol": "digestOf",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "line": 90,
+          "symbol": "existingNodeFor",
+          "currentlyCoveringRows": []
+        }
+      ]
+    },
+    {
+      "id": "COV-13",
+      "title": "固定库存中的黄金生成脚本功能未登记",
+      "anchorCount": 4,
+      "currentlyReferencedAnchorCount": 0,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+          "line": 63,
+          "symbol": "trapezoid",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+          "line": 77,
+          "symbol": "rneaReference",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+          "line": 358,
+          "symbol": "dominates",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+          "line": 392,
+          "symbol": "buildFront",
+          "currentlyCoveringRows": []
+        }
+      ]
+    },
+    {
+      "id": "COV-14",
+      "title": "CMake 目标接线及门禁解析功能未登记",
+      "anchorCount": 5,
+      "currentlyReferencedAnchorCount": 0,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+          "line": 95,
+          "symbol": "ird_read_flat",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+          "line": 104,
+          "symbol": "ird_extract_blocks",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+          "line": 152,
+          "symbol": "ird_classify_target",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "line": 32,
+          "symbol": "find_package(GTest CONFIG REQUIRED)",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "line": 118,
+          "symbol": "if(TARGET sdurw_kinematics)",
+          "currentlyCoveringRows": []
+        }
+      ]
+    },
+    {
+      "id": "COV-15",
+      "title": "宿主预览已登记锚点/网格但未审实际渲染接线与清理",
+      "anchorCount": 2,
+      "currentlyReferencedAnchorCount": 0,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "line": 360,
+          "symbol": "HostView3DPreviewBackend::draw",
+          "currentlyCoveringRows": []
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "line": 506,
+          "symbol": "HostView3DPreviewBackend::clear",
+          "currentlyCoveringRows": []
+        }
+      ]
+    },
+    {
+      "id": "COV-16",
+      "title": "业务关闭监督生产链也需明确分类",
+      "anchorCount": 2,
+      "currentlyReferencedAnchorCount": 2,
+      "anchors": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+          "line": 55,
+          "symbol": "StoreCloseSupervisor::start",
+          "currentlyCoveringRows": [
+            "workflow.CloseSupervisor.StoreCloseSupervisor.start"
+          ]
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+          "line": 95,
+          "symbol": "StoreCloseSupervisor::superviseLoop",
+          "currentlyCoveringRows": [
+            "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop"
+          ]
+        }
+      ]
+    }
+  ],
+  "governanceScriptCount": 19,
+  "verification": {
+    "cloneExit": 0,
+    "checkoutExit": 0,
+    "gateExitCodes": {
+      "task": 0,
+      "reuse": 0,
+      "docs": 0
+    },
+    "gateCounts": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    "inventoryScanExit": 0,
+    "captureEvidenceExit": 0,
+    "notRun": [
+      "C++/GUI/探测重跑",
+      "生成器执行",
+      "脚本正负例",
+      "DeepEvidence",
+      "全量函数语义穷尽检查",
+      "远程交付核验"
+    ]
+  },
+  "limitations": [
+    "这是完整文件元数据清点＋风险优先语义抽查，不是1401文件全部函数的穷尽审计，也没有以正则替代C++/Qt/CMake/PowerShell/JS的完整语法/控制流分析。",
+    "无sources只是候选入口，不自动证明漏审；报告20项通过实际行为审读及全部sources/auditedSections反查证实。138个已引用文件也不自动表示完整：仅被声明区段覆盖，其他函数仍可能遗漏。",
+    "implementation/declaration分类是去注释、扩展名、函数体/template特征的启发式分流，有误报/漏报；188个声明/DTO候选不是188个可免审文件。原inventory role沿用不改，部分perf_test/gui_test或生成器的role并不等于实际运行身份。",
+    "scope外现行19治理脚本不是宣称19个新文件：它们是不在固定1401库存里的当前可执行文件。逐一列索引供补全范围，不修改库存。当前CheckFunctions只接受产品前缀sources，因此脚本的登记/已有独验关联方式须明确，不能伪造产品路径或目标。",
+    "本次不逐条重验548关系的语义正确性/上游适用性，不撤销既有局部PASS。pending/proposal及closedFiles=0不是本次NOT PASS的直接理由；T01审计可包含明确阻塞提案，T06迁移结项另议。",
+    "29mjs全部做了文件/具名function/顶层代码索引，3个高风险数值oracle实读列入缺口；其余26个没有逐个证明全部语义，不将索引等同审计完成。独立oracle可以保留独立参考路线，不能为复用把期望值改为调用同一被测生产实现。",
+    "未构建/执行产品、GUI、探测、生成器或脚本负例；只运行文档/治理门禁和本TEMP只读清点脚本。DeepEvidence NOT RUN。未同步远程，也不需要拉取。",
+    "未提交B15排除；同冻结之外的后续修补不能回填本次结论。T02准入未授予。"
+  ],
+  "repositoryModified": false,
+  "subagentsCreated": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "fullT01Pass": false,
+  "T02Admission": false,
+  "evidenceRoot": "C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-full-coverage-4128bd11",
+  "evidenceFiles": [
+    "inventory-analysis.json",
+    "candidate-files.tsv",
+    "unit-counts.tsv",
+    "source-reference-index.json",
+    "coverage-gaps.json",
+    "supplemental-gaps.json",
+    "mjs-function-index.json",
+    "governance-script-index.json",
+    "old16-crosswalk.json",
+    "definition-boundary-checks.json",
+    "task.log",
+    "reuse.log",
+    "docs.log",
+    "scan-coverage.mjs",
+    "capture-evidence.mjs",
+    "FCOV-01.frozen.txt",
+    "FCOV-02.frozen.txt",
+    "FCOV-03.frozen.txt",
+    "FCOV-04.frozen.txt",
+    "FCOV-05.frozen.txt",
+    "FCOV-06.frozen.txt",
+    "FCOV-07.frozen.txt",
+    "FCOV-08.frozen.txt",
+    "FCOV-09.frozen.txt",
+    "FCOV-10.frozen.txt",
+    "FCOV-11.frozen.txt",
+    "FCOV-12.frozen.txt",
+    "FCOV-13.frozen.txt",
+    "FCOV-14.frozen.txt",
+    "FCOV-15.frozen.txt",
+    "FCOV-16.frozen.txt",
+    "FCOV-17.frozen.txt",
+    "FCOV-18.frozen.txt",
+    "FCOV-19.frozen.txt",
+    "FCOV-20.frozen.txt",
+    "PARTIAL-01.frozen.txt",
+    "PARTIAL-02.frozen.txt",
+    "PARTIAL-03.frozen.txt",
+    "TEST-01.frozen.txt",
+    "INLINE-01.frozen.txt",
+    "RECOVERY-01.frozen.txt",
+    "CORE-TEMPLATE-01.frozen.txt"
+  ]
+}

@@ -1,0 +1,28 @@
+Note: Google Test filter = DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52:DynRnea.QuasiStaticEnergyBalancePotentialDelta_REUSE_T52:DynGolden.*
+[==========] Running 8 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from DynRnea
+[ RUN      ] DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52
+[       OK ] DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52 (0 ms)
+[ RUN      ] DynRnea.QuasiStaticEnergyBalancePotentialDelta_REUSE_T52
+[       OK ] DynRnea.QuasiStaticEnergyBalancePotentialDelta_REUSE_T52 (8 ms)
+[----------] 2 tests from DynRnea (8 ms total)
+
+[----------] 6 tests from DynGolden
+[ RUN      ] DynGolden.DatasetRegistrationFace_WP17T10_ACC2
+[       OK ] DynGolden.DatasetRegistrationFace_WP17T10_ACC2 (1 ms)
+[ RUN      ] DynGolden.StaticGroundAnalyticGolden_WP17T10_ACC2
+[       OK ] DynGolden.StaticGroundAnalyticGolden_WP17T10_ACC2 (3 ms)
+[ RUN      ] DynGolden.StaticInvertedGoldenAt37_WP17T10_ACC2
+[       OK ] DynGolden.StaticInvertedGoldenAt37_WP17T10_ACC2 (3 ms)
+[ RUN      ] DynGolden.MotionDwellFullCycleGolden_WP17T10_ACC1
+[       OK ] DynGolden.MotionDwellFullCycleGolden_WP17T10_ACC1 (3 ms)
+[ RUN      ] DynGolden.EnvelopeMergeGolden_WP17T10_ACC1
+[       OK ] DynGolden.EnvelopeMergeGolden_WP17T10_ACC1 (3 ms)
+[ RUN      ] DynGolden.ConditionIdDerivationMatchesGenerator_WP17T10_ACC2
+[       OK ] DynGolden.ConditionIdDerivationMatchesGenerator_WP17T10_ACC2 (2 ms)
+[----------] 6 tests from DynGolden (17 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 2 test suites ran. (26 ms total)
+[  PASSED  ] 8 tests.

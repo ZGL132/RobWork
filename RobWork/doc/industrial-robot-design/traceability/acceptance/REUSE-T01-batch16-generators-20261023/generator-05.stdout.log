@@ -1,0 +1,4 @@
+# integrity 段（回填 manifest.json——含本脚本自身）:
+  {"path": "inputs/fk-cases.json", "sha256": "fbe6356a4aadc1ae47e9ed98f9c16445ce800a72c01c8dbfcaed3c40cec34adc", "sizeBytes": 4906},
+  {"path": "expected/fk-expected.json", "sha256": "fbcdca622dbf79be13c1f9634145fc80aad774b7afba5846711eb94a65fc67fc", "sizeBytes": 7711},
+  {"path": "generate/make_kin_fk_golden.mjs", "sha256": "e2c98204a21de0e99b401d7e4a2ceb3ed5eec956007bdfd3321e812ba2b1e473", "sizeBytes": 13651},

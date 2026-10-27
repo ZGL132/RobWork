@@ -1,0 +1,4 @@
+red-report.json: lf=7db02465046b crlf=4edac04917c3 utf16=9f3bd51a4539 -> NO-MATCH
+red.xml: lf=305951a5f563 crlf=6de12f8caca9 utf16=41c507994b81 -> NO-MATCH
+green-report.json: lf=556e3ba7c84a crlf=58a5ba05a4e6 utf16=d9eb319bef92 -> LF-MATCH
+green.xml: lf=cd9ead2ea485 crlf=a4ea61fe125f utf16=21ff95c54348 -> LF-MATCH

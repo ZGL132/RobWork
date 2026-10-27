@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "modeling.rpyToEaa",
+  "target": "sdurws_ird_modeling",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+      "sha256": "2d81267428a41d56e6cce9d321f63c40321d24b708b489a7aa5b0f771a1e9512"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+      "sha256": "273a8f1dcd3f791af2817e4187e2f28ba723fb8cc06053450ca03c8bee1a4f6e"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+      "sha256": "9666bc8628fefc5644423c7cbd4f7924066194c4a033aecffa414ca05bde840a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TemplateTest.cpp",
+      "sha256": "d2fb1285c8c981bd54c14650eda7d752d95c73be06f31617987413491d51cf99"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+      "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/Probe.cpp",
+      "sha256": "aa582b896c5e0e77f8b4dc6b855f60d61a9fbf72c6a860aeee2af214a4332aa9"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/CMakeLists.txt",
+      "sha256": "068bd33635cf3192592cb841ffd896b2f9092abf1ae726326099df6a99903796"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+      "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+      "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+      "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+      "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+      "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+      "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15"
+    }
+  ],
+  "normal": {
+    "command": "sdurws_ird_modeling_test.exe --gtest_output=xml:.cache/t11/modeling-final.xml --ird_report=.cache/t11/ird-test-report-final.json",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/modeling-final.log",
+      "sha256": "3b87eec6843a542ae655a5830592dc9c124e71e2c8bc627067edb3b4647ead90"
+    },
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/modeling-final.xml",
+      "sha256": "02b1e16a760ebd23f22465c787b24c306b1ee38c414d8d199977f2d52eb96209"
+    },
+    "exitCode": 0
+  },
+  "oracle": {
+    "command": "rpy_current.exe --gtest_output=xml:.cache/t11/probe-current-final.xml",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe-current-final.log",
+      "sha256": "54b599d6c12f8a9692b78080f7e90970d8078066b01570af510bad4a7f9a7a13"
+    },
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe-current-final.xml",
+      "sha256": "feca0acd0490db8274225a2346637c72a2f7dc25a031b340490af3d386231a82"
+    },
+    "exitCode": 0
+  },
+  "upstreamComparison": {
+    "command": "rpy_current.exe --gtest_output=xml:.cache/t11/probe-current-final.xml",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe-current-final.log",
+      "sha256": "54b599d6c12f8a9692b78080f7e90970d8078066b01570af510bad4a7f9a7a13"
+    },
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe-current-final.xml",
+      "sha256": "feca0acd0490db8274225a2346637c72a2f7dc25a031b340490af3d386231a82"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "Disconnect.ps1: rebuild real modeling targets; run OriginEditField + EulerCompilesAndCodecRoundTrips",
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/disconnected.log",
+      "sha256": "713b3e221df29834e7e8d9912004e83f0326526d38341b029cb8f506d899c73a"
+    },
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/disconnected.xml",
+      "sha256": "5a451ad25fed5b2f49cbc41de707e5a7e9b39581ea663c32b8f8341eb4c47762"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+      "originalSha256": "2d81267428a41d56e6cce9d321f63c40321d24b708b489a7aa5b0f771a1e9512",
+      "description": "调用真实上游RPY后丢弃结果返回I；重编产品库和原测试，两个实际业务断言失败；恢复后刷新源时间戳真实重编通过"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/disconnected-RpyMath.hpp",
+      "sha256": "b03bc7d5ab39002023d4c3ed1a1a723380c3c8884e998433768e0bf41ce26d10"
+    }
+  },
+  "note": "普通/独立oracle/上游对照共用报告不代表多次运行；恢复重编2通过。独验未完成，不关闭债务。"
+}

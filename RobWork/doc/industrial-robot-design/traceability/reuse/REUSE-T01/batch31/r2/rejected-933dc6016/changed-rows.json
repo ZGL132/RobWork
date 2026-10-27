@@ -1,0 +1,946 @@
+[
+  {
+    "functionId": "core.convert",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "symbol": "double convert(",
+        "qualifiedSymbol": "sdurws::ird::core::convert",
+        "startLine": 134,
+        "endLine": 152,
+        "sha256": "2e895d8acd7caa6a1bbc6ada8fa5ebb6b0ec809980482bd7b154d1c55cffbb28"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "UTIL-UNITS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  },
+  {
+    "functionId": "core.Compare.closeWithin",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "bool closeWithin(",
+        "qualifiedSymbol": "sdurws::ird::core::closeWithin",
+        "startLine": 18,
+        "endLine": 33,
+        "sha256": "9fc6cecb00e82baaea9de8fa59113eb2692c2606ef5223122ff01bd2ed834be4"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  },
+  {
+    "functionId": "core.Compare.allCloseWithin.vector",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "bool allCloseWithin(const std::vector",
+        "qualifiedSymbol": "sdurws::ird::core::allCloseWithin(const std::vector<double>&, const std::vector<double>&, Tolerance)",
+        "startLine": 35,
+        "endLine": 51,
+        "sha256": "031cee042adba57b99a0b3ff79666fb4c89e8d2a3e4c89e5aa94e066c1f738c0"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  },
+  {
+    "functionId": "core.Compare.allCloseWithin.Q",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "bool allCloseWithin(const rw::math::Q&",
+        "qualifiedSymbol": "sdurws::ird::core::allCloseWithin(const rw::math::Q&, const rw::math::Q&, Tolerance)",
+        "startLine": 54,
+        "endLine": 66,
+        "sha256": "12fc8e06989b20838bd6926dce52176fef7a7432b526f3fef7ae11d512823826"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  },
+  {
+    "functionId": "core.Compare.runtimeAbsoluteTolerance",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "std::optional<double> runtimeAbsoluteTolerance(",
+        "qualifiedSymbol": "sdurws::ird::core::runtimeAbsoluteTolerance",
+        "startLine": 69,
+        "endLine": 85,
+        "sha256": "9608cac2c49bf41e713358750e88efaef289976d46a8f2197fb6fc8faf38d861"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  },
+  {
+    "functionId": "core.Tolerance.make",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "symbol": "static Tolerance make(",
+        "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
+        "startLine": 57,
+        "endLine": 72,
+        "sha256": "25a6c19d307bda7f46cce6c18947fd36dafeb9a01b7c29ddba4098b5a33aeae6"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  },
+  {
+    "functionId": "core.Tolerance.operator==",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "symbol": "bool operator==(",
+        "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator==",
+        "startLine": 74,
+        "endLine": 77,
+        "sha256": "51b49f4d7161c3cc473f6bd8e95f58ac2176e1a4cd4f41e9a6e336710edccb34"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  },
+  {
+    "functionId": "core.Tolerance.operator!=",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-COR-03",
+      "KIN-12",
+      "DYN-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "symbol": "bool operator!=(",
+        "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator!=",
+        "startLine": 78,
+        "endLine": 78,
+        "sha256": "859765a3e3a5e206a96b1080f11eabfaeb0daec333e5aa4d0b9fbfd8a68720b7"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "batch31/search.json",
+      "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
+    },
+    "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+        "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+        "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+        "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+        "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/units/core.md",
+        "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+        "sha256": "01c11c46934e90a0095acbbe3b1605f3e32d3180e01d4c78a0ceee90bc3d7938"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+        "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+        "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+        "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
+        "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+        "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+        "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+        "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+      }
+    ],
+    "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "round": 0,
+    "label": "baseline",
+    "output": "16 0.0300901 0 0\n32 0.0607813 0 0\n",
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\foundation\\fnv-baseline-release.exe perf",
+    "exitCode": 0
+  },
+  {
+    "round": 0,
+    "label": "candidate",
+    "output": "16 0.305869 0 0\n32 0.546175 0 0\n",
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\foundation\\fnv-release.exe perf",
+    "exitCode": 0
+  },
+  {
+    "round": 1,
+    "label": "baseline",
+    "output": "16 0.0256652 0 0\n32 0.0582038 0 0\n",
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\foundation\\fnv-baseline-release.exe perf",
+    "exitCode": 0
+  },
+  {
+    "round": 1,
+    "label": "candidate",
+    "output": "16 0.295877 0 0\n32 0.572548 0 0\n",
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\foundation\\fnv-release.exe perf",
+    "exitCode": 0
+  },
+  {
+    "round": 2,
+    "label": "baseline",
+    "output": "16 0.0293092 0 0\n32 0.0608006 0 0\n",
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\foundation\\fnv-baseline-release.exe perf",
+    "exitCode": 0
+  },
+  {
+    "round": 2,
+    "label": "candidate",
+    "output": "16 0.300815 0 0\n32 0.549645 0 0\n",
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\foundation\\fnv-release.exe perf",
+    "exitCode": 0
+  }
+]

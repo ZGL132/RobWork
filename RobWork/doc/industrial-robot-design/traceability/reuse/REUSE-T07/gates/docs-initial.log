@@ -1,0 +1,4 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp', LF will be replaced by CRLF the next time Git touches it
+REUSE-POSITIVE : disconnected : XML counts/assertions inconsistent
+Write-Error: H1-H6 reuse governance failed

@@ -1,0 +1,127 @@
+{
+  "taskId": "REUSE-T13",
+  "baseCommit": "a045120547704d4a40752728632334f56e0b9f5c",
+  "reviewedCommit": "f378f01c5199032e08c2cce7ba0251a2f783d505",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T04:24:06.0524251+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T13 单次验收子智能体（工作流内独立会话）",
+    "authorization": "所有者2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；根 AGENTS.md 子智能体禁令按该授权豁免，实施者不得自签。",
+    "constraints": "未参与实施（实施由另一串行会话完成）；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建 git 工作树、未远程操作、未重配构建树；构建仅对既有 build 树做受影响目标增量构建。所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件；验收对象绑定送验 head f378f01c。"
+  },
+  "scope": "独立复验 a0451205..f378f01c 送验实现（单一实施提交，经 658e0feb2 随批合入 redesign-main；reviewHead 系按标题命中唯一实施提交推导）：verify-task-scope 显式 Base/Head、105 路径允许面、禁区（上游/vcpkg/门禁目录/白名单/closures.json/policy）零触碰硬核验、manifest 7 文件 sha256 机器核对、契约四条 acceptance 逐条映射实测（数值项真实重跑、断开注入/冒烟/modeling 原件引用）、三联门禁（validate-reuse/validate-task/validate-docs）+ 架构引擎直跑、H1-H6 与架构红线抽查、提交链核查。",
+  "counts": {
+    "failed": 0,
+    "passed": 18,
+    "notRun": 3,
+    "skipped": 0,
+    "unit": "18 项验收检查；集成/性能测试计数另列（integrationTest、perfEvidence），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 仅既有未跟踪验收产物目录（T10/T12 及本包）；分支 redesign-main；HEAD=e8ee7d31d（其后仅治理登记提交，runtime 产品源码自 f378f01c 起零变化，唯一差异 TestMainReport.cpp 为纯注释修改，见命令 3）；送验范围 a0451205..f378f01c 恰 1 个非合并提交（父=基线）。",
+    "①范围：verify-task-scope 显式 -Base a04512054770 -Head f378f01c5199 exit 0，changed=105 全部在允许面（allowedRules=16 forbiddenRules=3），日志 02-scope.log；105 文件中无 RobWork/RobWork/src/**、无 RobWorkSim/src/**、无 vcpkg/**。",
+    "禁区零触碰硬核验（对 a0451205..f378f01c git diff 全部退出 0 零差异）：RobWork/RobWork/src + RobWorkSim/src + vcpkg（上游零修改）；industrialrobot/cmake/ 门禁目录与 ird_gates_whitelist.cmake；runtime/include/（公开头零变化→公开API/名称/受控视图/任务私有State 契约面不变）；reuse/closures.json（CLOSURE 冻结）；reuse/policy.md + audit-contract.md（治理规则未自行放宽）。",
+    "H6 逐文件凭证机器核对：changes/REUSE-T13.json 登记的 7 个产品文件 sha256 与 f378f01c 树 git blob 计算值逐一吻合（7c1eac96…/a357b6e3…/ff6730fb…/043d7bb5…/f9474ce8…/a8227a88…/43b0994c…）；validate-reuse 对 catalog 每个 capability 的 upstream path/sha256/symbols/target/targetSha256 强校验且本次 PASS（UPSTREAM-HASH 抽查吻合：Transform3D.hpp=04846877…即 LF blob；Model3D.hpp=573aa1cf…为脚本 Digest 规范口径——去BOM+CRLF→LF+尾部规整单换行，blob 无尾换行所致，非凭证错误）。",
+    "②-1数值项真实执行：增量构建 sdurws_ird_runtime_test exit 0（无源文件重编译，exe 与送验源一致，03-build-runtime-test.log）；真实运行 runtime 全套件 exit 0：306 tests＝305 passed/0 failed/1 skipped/0 notRun（XML tests=306 failures=0 errors=0；04-int-runtime-test.xml/log + 04-int-runtime-ird-report.json decisive=true）。4 个 T13 新用例全 OK：PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1（9轴含近极×正负offset±0.25×Ground/Wall安装×旋转origin×q∈{0,±0.125}，独立解析oracle p=T_origin·axis·(offset+q_rw)+原生PrismaticJoint同构型对照+bounds 期望 [−1−offset, 2−offset]）、RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1（独立Rodrigues oracle，rad）、ConcurrentSameMeshCompiles_REUSE_T13（8路×8次同摘要并发）、LoaderRestoresThreadLocale_REUSE_T13（加载成功/异常后locale/模式恢复+临时目录零遗留）；容差 kFkTolerance=1e-9（WorkCellCompilerTest.cpp:68），无 1e-6 借用。",
+    "②-1语义审读：Prismatic 走上游 getTransform(zeroOffset)（沿局部Z按m平移）烘焙 setFixedTransform，与子连杆 R_alignᵀ 补偿配对后链上平移＝origin·R_align·T_z(offset+q_rw)·R_alignᵀ（m 沿权威轴）；Revolute/Continuous 共轭恒等式 R_align·Rz(offset+q_rw)·R_alignᵀ（rad）；bounds 平移 −offset 单位随量纲（WorkCellCompiler.cpp:650-685,715-726）；q_auth=offset+q_rw 全链成立，修正旧 jointStaticTransform 把 m 当 rad 的存量缺陷（suitability.md 表第1行）。",
+    "②-2契约项2：公开头零 diff＋CompilerImpl 仅 implementationVersion /1.0→/1.1（走既有 CacheKey/Snapshot 身份公式，CompilerTest 断言旧键判 Incompatible reason=compiler-changed，contractVersion 仍1）；runtime 唯一模型 owner（CanonicalModel→compileWorkCell→WorkCell/Frame/Device 单链，权限 grants 全部 origin=runtime-owner、无跨单元扩展）；units/runtime.md REUSE-T13 段如实登记语义边界（借持 Joint Frame 基底滚转自由度、OBJ 内部存储 Plain→Indexed 不冻结内部类型、非 Windows mesh 并发未验证）；不改变上游/vcpkg/业务算法（禁区零 diff）。",
+    "②-3证据原件核对：traceability/reuse/REUSE-T13/ 原件 XML 头计数与 README 表逐项吻合——runtime.xml 305/0（15:07:07）、smoke.xml 195/0、modeling.xml 474/0、disconnected.xml 32 tests/13 failures（预期注入，exit 1）、offset-red.xml 2 tests/1 failure（红测如实）、upstream.xml 9 tests/1 failure（Model3D.constructor mask 期望差异待归因，未改上游未粉饰）；中间失败原件（semantic/semantic-r2/expanded-first/expanded-runtime-first）如实保留并在 README 解释，未混列为产品故障。",
+    "②-3生产消费证明：verify-production.py 为真实变异实验——对生产 WorkCellCompiler.cpp 注入8处断开（getTransform(0.0)/toGeometryData→null/STLFile→null/弃载体/弃makeLookAt/弃span/弃findFrame/扰动默认State）→重建→13条断言失败覆盖 FkEquivalence/T13三用例/视图查询/网格端到端等消费者→还原源码重建→305 通过（final-runs.json exitCode 1→0），证明生产上游结果被实际消费；disconnected.log 失败均为断言失败非崩溃。",
+    "②-3性能项：实施原件 4×200 次实跑（runs.json：baseline 3.724/3.274s，candidate 3.486/3.707s，区间重叠、不宣称改善/退化）；本验独立复跑同场景 2×200：2.171s/2.242s（09-perf-candidate-acc-r1/r2），低于实施 baseline 区间下限 3.274s，无退化信号；tests=2 failures=0。与 README「含断言/IO/报告的场景时间不能当内核微基准」限定一致。",
+    "②-4契约项4：tasks/REUSE-T13.json status=ready（未自关 done/closed）；验收目录无实施者自签的 T13 记录（本 r1 为首份）；README/单元文档/commit 正文均明示「独立验收 NOT RUN、不自签、不关闭独验债务」；实施提交为单一非合并提交、未自行合入（658e0feb2 为协调会话随批合入 merge，非实施提交）；f378f01c 不在 origin/redesign-main（其尖端 7881e718c，2026-10-22）——未远程推送。",
+    "③validate-reuse：exit 0，PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）；REUSE-AD-PENDING 恰 10 条（policy/reporting/runtime Snapshot/trajectory/ui 既有待授权限，README 2026-10-23 复核段登记的分支既有状态，非本包引入）；实施时继承的 drivetrain/CMakeLists.txt REUSE-COVERAGE 阻断经 6fb26b31d 合入已清除（06-validate-reuse.log）。",
+    "③validate-task：exit 0 PASS (1 tasks)（07-validate-task.log）；validate-docs：exit 0 PASS（20 units, 12 trace entries, 404 task files；07b-validate-docs.log）。实施时三者因继承缺口 FAIL 的历史与现态均如实记录，不存在粉饰。",
+    "③架构引擎直跑：cmake -P ird_gates.cmake exit 0，R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中，17 行自测记录（10 fail_* 按预期检出＋7 pass_* 无误报），08-gate-engine.log。",
+    "③L2零Qt：RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01 实测 OK（本验 306 套件内）；本包 diff 无任何 Qt 头；门禁引擎 GRAPH/LIB 零命中。",
+    "③H1-H6与平行实现回流：H1/H2——删除自持 Rodrigues/EAA(kPoleCosTolerance/rotationFromCustomEaa 于本文件)、近极 snap、逐三角复制、死 helper meshDigestTag/jointStaticTransform，改直接消费上游 Transform3D::makeLookAt（sdurw_math）、Model3D::toGeometryData（sdurw_geometry）、PrismaticJoint/RevoluteJoint/STLFile/LoaderOBJ（真实API调用+独立oracle验证，非转发假复用）；当前 HEAD 的 WorkCellCompiler.cpp 与 f378f01c 零差异，无回流；catalog 4 个新 capability（RUNTIME-WC-MODEL/AXIS-ALIGN/MESH-LOAD/GEOMETRY-CARRIER）均含 search 命令+基线+上游 path/sha256/symbols/target（RUNTIME-AXIS-ALIGN 抽查绑定 Transform3D.hpp makeLookAt/sdurw_math）；functions/runtime.json 逐功能矩阵条目（axisAlignmentRotation 抽查：ownerUnit/需求绑定/source符号行号sha256/target/usageRole=owner/capabilityId/decision=adapter/status=migrated）与 production/*.json 逐功能证据在库；H3 沿用上游类型与构建规范；H5 有界能力包（契约 note 所有者批准 WorkCellCompiler 剩余功能纳入）。",
+    "③PASS/FAIL/SKIP/NOT RUN 分列：README 汇总表与各 XML/ird-report 计数一致（见检查8-10）；唯一 skip 为 ContractSuite.ChildProcessWorker_RT_ID_1 设计内父用例派生占位（ContractSuiteTest.cpp:277-282 GTEST_SKIP，父用例 CrossProcessIdentityStable_RT_ID_1 真实派生子进程执行该 worker 且 PASS）；实施 305 口径＝显式排除该占位（runs.json --gtest_filter=-…），本验 306 口径＝全量含 skip，两口径均如实披露未混列。",
+    "④提交链：commit-lint -Range a0451205..f378f01c exit 0 PASS（1 个提交合规，05-commit-lint.log）；标题「[governance] REUSE-T13修正移动偏置并收口S6复用」前缀合规、一包一组（单提交含代码+测试+文档+凭证+证据，105 文件全部在 allowedFiles）；正文数字与证据逐一吻合（runtime 305/冒烟195/modeling 474/红测1F/断开13F/上游1F/性能区间重叠/门禁零命中/继承FAIL如实），validate-task.ps1 变更仅为分支正则句法对齐（新增 codex/<topic>，与根 AGENTS §6.2 一致，branch-contract-results.json 9 项正负例：codex与wp/doc接受、main/穿越/空主题拒绝），不放宽门禁。"
+  ],
+  "integrationTest": {
+    "runtime": {
+      "tests": 306,
+      "passed": 305,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "skippedCase": "ContractSuite.ChildProcessWorker_RT_ID_1（设计内 worker 占位：仅父用例 CrossProcessIdentityStable_RT_ID_1 派生子进程时执行，该父用例本次 PASS——ContractSuiteTest.cpp:277-282）",
+      "exitCode": 0,
+      "xml": "04-int-runtime-test.xml",
+      "irdReport": "04-int-runtime-ird-report.json",
+      "note": "实施时口径为 305/0/0（runs.json 显式排除占位）；本验为全量 306 口径，两者均为如实分列"
+    }
+  },
+  "perfEvidence": {
+    "implementerOriginals": "runs.json + perf-baseline1/2 + perf-candidate1/2（各2×200次：baseline 3.724/3.274s，candidate 3.486/3.707s，区间重叠）",
+    "acceptanceRerun": "09-perf-candidate-acc-r1/r2（2×200次：2.171s/2.242s，tests=2 failures=0，低于实施 baseline 区间下限 3.274s，无退化信号）",
+    "limitation": "含断言/IO/报告的场景时间，非内核微基准；不据小样本宣称稳定改善/退化（与 README/suitability 口径一致）"
+  },
+  "reuseEvidence": {
+    "reviewedOnly": true,
+    "finalRuntime": "runtime.xml tests=305 failures=0（实施时口径）",
+    "smoke": "smoke.xml tests=195 failures=0（独立 .cache/smoke 冒烟树）",
+    "crossPeerModeling": "modeling.xml tests=474 failures=0（同输入 modeling 对端回归）",
+    "redTest": "offset-red.xml tests=2 failures=1（旧实现反例，如实留痕）",
+    "disconnectInjection": "disconnected.xml tests=32 failures=13（8处生产断开注入，预期失败；verify-production.py + disconnected-source.txt + restore-build.log 闭环）",
+    "upstreamDirect": "upstream.xml tests=9 failures=1（Model3D.constructor mask 期望/默认值差异待归因；上游未改、未粉饰）",
+    "catalogMatrix": "catalog.json 4 新 capability + functions/runtime.json 逐功能矩阵 + changes/REUSE-T13.json 7 文件 sha256 + permissions.json 4 精确授权（全部机器核对通过）"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T13.json -Base a045120547704d4a40752728632334f56e0b9f5c -Head f378f01c5199032e08c2cce7ba0251a2f783d505", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "build-runtime-test", "command": "cmake --build build --config Release --target sdurws_ird_runtime_test", "exitCode": 0, "passed": true, "log": "03-build-runtime-test.log" },
+    { "name": "int-runtime-test", "command": "sdurws_ird_runtime_test.exe --gtest_output=xml:04-int-runtime-test.xml --ird_report=04-int-runtime-ird-report.json（PATH 前置 build/RobWork(bin|libs)/Release + RobWorkStudio(bin|libs)/Release + vcpkg installed/x64-windows/bin）", "exitCode": 0, "passed": true, "log": "04-int-runtime-test.log", "xml": "04-int-runtime-test.xml" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range a045120547704d4a40752728632334f56e0b9f5c..f378f01c5199032e08c2cce7ba0251a2f783d505", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -Command \"& RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T13.json; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "06-validate-reuse.log" },
+    { "name": "validate-task", "command": "pwsh -NoProfile -Command \"& RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T13.json; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-task.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"& RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T13.json; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07b-validate-docs.log" },
+    { "name": "gate-engine", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=%TEMP%/t13-acc-gates-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "08-gate-engine.log" },
+    { "name": "perf-acceptance-rerun", "command": "sdurws_ird_runtime_test.exe --gtest_filter='WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ:WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7' --gtest_repeat=200 --gtest_output=xml:09-perf-candidate-acc-r{1,2}.xml --ird_report=…-report.json（2 轮）", "exitCode": 0, "passed": true, "log": "09-perf-candidate-acc-r1.log; 09-perf-candidate-acc-r2.log", "xml": "09-perf-candidate-acc-r1.xml; 09-perf-candidate-acc-r2.xml" }
+  ],
+  "executionNotes": [
+    "构建/测试均在本机既有主 build 树（build/CMakeCache.txt RWS_BUILD_INDUSTRIALROBOT=ON，VS2022 x64）增量执行，未重配；runtime 源自 f378f01c 至 HEAD 仅 TestMainReport.cpp 纯注释修改（F-958 监听器所有权注释，代码行为零变化），故主树测试 exe 对送验 runtime 源有效。",
+    "首次主套件运行以 POSIX 绝对路径传 --gtest_output/--ird_report，MSYS 路径转换未生效，gtest XML 落盘到误建的 C:\\d\\… 目录（ird_report 监听器仅向 cwd 写默认 ird-test-report.json）；确认仅含本人 3 个运行副产物后整树删除恢复原状，随即以验收目录为 cwd、相对路径重跑一次并以其为正式证据（04-int-runtime-*）。两轮测试本体均完整通过，未以首轮代替。",
+    "同名遗留：验收目录内 ird-test-report.json 为 CrossProcessIdentityStable_RT_ID_1 派生子进程（无 --ird_report 参数、继承 cwd）运行侧默认写盘副产物，随目录留痕说明。",
+    "catalog 上游 sha256 抽查时 Model3D.hpp 与裸 sha256 不符，经查为 validate-reuse Digest 规范口径（去BOM+CRLF→LF+尾部 TrimEnd 后补单换行——该文件 blob 无尾换行）所致，与门禁 UPSTREAM-HASH 校验一致，非凭证错误。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "断开注入实验重跑",
+      "reason": "原件（disconnected.xml/log/source.txt + verify-production.py + final-runs.json）输入适用：runtime 产品源码自 f378f01c 零变化，实验为一次性生产文件变异闭环且已含还原重建正例；按送验指令「已有且输入/工具链/范围仍适用的原始证据直接引用」引用，不重跑。"
+    },
+    {
+      "item": "独立冒烟 195 / 对端 modeling 474 重跑",
+      "reason": "实施方隔离 .cache/smoke 与集成树原件，适用输入（同一最终产品实现路径）未变；本验已独立重跑受影响 runtime 全套件（306 项），按增量口径引用原件不重跑无关夹具。"
+    },
+    {
+      "item": "上游 Model3D.constructor mask 差异归因",
+      "reason": "suitability.md 明示待归因项（夹具/默认值差异），本验核对原件确认上游未改、断言未放宽、未冒称上游全绿；归因不在本包授权范围，作为遗留限制登记，不构成本包阻断。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖 REUSE-T13 送验范围（a0451205..f378f01c）：移动偏置米制语义修复、轴对齐/OBJ 转换的复用收口与实现版本 /1.1。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399、closedFiles=1、AD-PENDING=10 未关闭），不构成算法替换（migration §11）或普通 IK/RNE 放行——模型真值独立验收由本记录（r1 pass）成立后，按迁移计划推进；一般轴内部关节帧滚转表示可变与 OBJ Indexed 内部存储已按 runtime.md 登记为消费契约边界，下游借持 Joint Frame 基底或强转 Plain 的消费者如存在依赖，须按登记边界适配而非本包回改。drivetrain/T09 遗留与上游 mask 差异归因仍归协调会话/后续任务。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/03-build-runtime-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/04-int-runtime-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/04-int-runtime-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/04-int-runtime-ird-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/06-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/07-validate-task.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/07b-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/08-gate-engine.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/09-perf-candidate-acc-r1.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/09-perf-candidate-acc-r1.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/09-perf-candidate-acc-r1-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/09-perf-candidate-acc-r2.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/09-perf-candidate-acc-r2.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/09-perf-candidate-acc-r2-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/10-src-diff.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/11-test-diff.txt"
+  ]
+}

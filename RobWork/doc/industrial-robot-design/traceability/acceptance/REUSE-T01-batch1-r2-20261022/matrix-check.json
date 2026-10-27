@@ -1,0 +1,218 @@
+[
+  {
+    "functionId": "drivetrain.singularValuesJacobi",
+    "capabilityId": "MATH-SVD",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::singularValuesJacobi",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "drivetrain.invertSquareMatrix",
+    "capabilityId": "MATH-SVD",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::invertSquareMatrix",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "dynamics.buildRneaChain",
+    "capabilityId": "DYN-RNE",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::buildRneaChain",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "dynamics.computeGeometry",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::computeGeometry",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "dynamics.rneaTorques",
+    "capabilityId": "DYN-RNE",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::rneaTorques",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "dynamics.solveLinearSystem",
+    "capabilityId": "DYN-FD",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::solveLinearSystem",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "kinematics.FkEvaluator.evaluate",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::kinematics::FkEvaluator::evaluate",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "kinematics.FkEvaluator.evaluate",
+    "capabilityId": "MATH-SVD",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::kinematics::FkEvaluator::evaluate",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "kinematics.IkSolver.solve",
+    "capabilityId": "KIN-IK",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::kinematics::IkSolver::solve",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "kinematics.nearestToolRollTarget",
+    "capabilityId": "KIN-IK",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::nearestToolRollTarget",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "modeling.symmetricEigenvalues3x3",
+    "capabilityId": "MATH-EIGEN",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "modeling.accumulateRotatedInertia",
+    "capabilityId": "MATH-INERTIA",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::accumulateRotatedInertia",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "modeling.accumulateParallelAxis",
+    "capabilityId": "MATH-INERTIA",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::accumulateParallelAxis",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "modeling.couplingSingularValues",
+    "capabilityId": "MATH-SVD",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::modeling::couplingmath::couplingSingularValues",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "modeling.rpyToRotation",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::modeling::rpymath::rpyToRotation",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "modeling.rpyToEaa",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::modeling::rpymath::rpyToEaa",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "runtime.multiplyRotation",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::multiplyRotation",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "runtime.rotateVector",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::rotateVector",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "runtime.rotationFromCustomEaa",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::runtime::rotationFromCustomEaa",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "runtime.composeWorldBaseTcp",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::runtime::composeWorldBaseTcp",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "runtime.singularValuesOneSidedJacobi",
+    "capabilityId": "MATH-SVD",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::singularValuesOneSidedJacobi",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "runtime.compileWorkCell",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::runtime::compileWorkCell",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "runtime.rotateTransposed",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::rotateTransposed",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  },
+  {
+    "functionId": "trajectory.interpolateJointLinear",
+    "capabilityId": "TRAJ-LINEAR",
+    "decision": "pending",
+    "status": "pending",
+    "qualifiedSymbol": "sdurws::ird::trajectory::interpolateJointLinear",
+    "regionHashMatches": true,
+    "inputsMatch": true
+  }
+]

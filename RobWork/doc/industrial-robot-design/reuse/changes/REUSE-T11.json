@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T11",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T11.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+      "sha256": "2d81267428a41d56e6cce9d321f63c40321d24b708b489a7aa5b0f771a1e9512",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-ROT"
+      ],
+      "boundary": "两处私有兼容入口仅换序并直接复用RPY/EAA",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/modeling-final.xml"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+      "sha256": "9666bc8628fefc5644423c7cbd4f7924066194c4a033aecffa414ca05bde840a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "既有业务验收中仅表示往返阈值按所有者批准1e-6；其余断言未变",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/modeling-final.xml"
+    }
+  ]
+}

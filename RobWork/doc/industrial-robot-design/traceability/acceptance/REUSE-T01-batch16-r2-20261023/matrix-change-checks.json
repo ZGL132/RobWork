@@ -1,0 +1,740 @@
+[
+  {
+    "functionId": "dynamics.buildRneaChain",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.computeGeometry",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.rneaTorques",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.solveLinearSystem",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.evalAcceleration",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.DynamicsEnvelopeCalculator.computeRms",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.test.TestMainReport.main",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.rowAt",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makeIdentity",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.cancellationRequested",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.reportProgress",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.tryObjectBytes",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.conditionIdHex",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.trapezoid",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.rneaReference",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.statValue",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mapCase",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mergeEnvelopeReference",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.aabb",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.splitmixNext",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.unitFrom",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.sha256Hex",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.patchCanonicalBytes",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.candidateIdHex",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.computeMetrics",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.generateBatch",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.statusOf",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.closeWithin",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominates",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.bindObjectives",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.buildFront",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominanceMatrix",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "foundation-governance.make_import_expectations.fixtureGeneration",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.symmetricEigenvalues3x3",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.accumulateRotatedInertia",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.accumulateParallelAxis",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.couplingSingularValues",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rpyToRotation",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rpyToEaa",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotVec",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotMul",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.transformMul",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotZ",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotX",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.axisAngleRotation",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotateTranspose",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotateTransposeFrame",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotationAngleBetween",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.dhCoreTransform",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.dhStaticSegment",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.dhRebuildStep",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.solveLinearSystem",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.numericJacobian",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.lmSolve",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rankAndFreeColumns",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotateInertia",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.zeroConfigFK",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.rotationToRpy",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.makeLinkPlaceholderCylinder",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.test.TestMainReport.main",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.LineIndex.LineIndex",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.LineIndex.lineColumn",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.flushDiags",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.escapeXmlText",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.escapeXmlAttribute",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.isPlainIdentifier",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.SourceFile.SourceFile",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.Engine.fail",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.Engine.spanOf",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.Engine.resolveSymbol",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.substituteText",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.emitChildren",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.emitElement",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.detectIncludeCycle",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpand.XacroExpandService.expand",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asBytes",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.digestOf",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.existingNodeFor",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.missingNode",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.includeEdge",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeXacroSource",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asText",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.findDiag",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "optimization.generateSeededLhsCandidates",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.nextU64",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.nextUnit",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.makeLayerPermutation",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.generateStageDJointCandidates",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.test.TestMainReport.main",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Pareto.slotValue",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Pareto.notWorse",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Pareto.strictlyBetter",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Pareto.dominates",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Generator.validateBaselinePerturbParams",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Generator.builtInStrategyIds",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": false
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCid",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCandidate",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeTwoObjectives",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  },
+  {
+    "functionId": "optimization.ParetoTest.idsOf",
+    "onlyExpectedChange": true,
+    "sourcesUnchanged": true,
+    "changed": true
+  }
+]

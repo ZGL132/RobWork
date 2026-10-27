@@ -1,0 +1,1051 @@
+[
+  {
+    "functionId": "kinematics.IKinRuntimeView",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "ARC-03",
+      "KIN-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+        "symbol": "IKinRuntimeView",
+        "qualifiedSymbol": "sdurws::ird::kinematics::IKinRuntimeView",
+        "startLine": 141,
+        "endLine": 154,
+        "sha256": "7fd78d844eb5ddddfc6af9a5442155ffcd0f76552c3ec2f1bfa2d9937a269d37"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "仅model/worldToBase；缺编译产物消费面，先复用IRuntimeModelView，ABI/消费者必须同步",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "kinematics.FrozenRuntimeView",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "CON-06",
+      "KIN-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+        "symbol": "FrozenRuntimeView",
+        "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::FrozenRuntimeView",
+        "startLine": 74,
+        "endLine": 91,
+        "sha256": "5f174e300d8fccdd44a3282bfc17e29c459d8907949e52f69d2ea13193cf0d48"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "只复制规范模型值和世界变换；IK/workspace后台改为快照锚的最薄冻结，不允许业务重建WC",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "kinematics.TestView",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "KIN-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "symbol": "TestView",
+        "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::TestView",
+        "startLine": 337,
+        "endLine": 351,
+        "sha256": "20b94b08c915a7304dc453e4216d9d93b7057232b91fb2f5e3546ca55ad115bc"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "kinematics.MidSolveDegradedView",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "KIN-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+        "symbol": "MidSolveDegradedView",
+        "qualifiedSymbol": "(anonymous namespace)::MidSolveDegradedView",
+        "startLine": 241,
+        "endLine": 264,
+        "sha256": "fc40f3bfb56e65951d04f50f51517e08eff36bb8f5afd8a3ecf8a2a16d4a2bfb"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "kinematics.RigView",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "KIN-05"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
+        "symbol": "RigView",
+        "qualifiedSymbol": "(anonymous namespace)::RigView",
+        "startLine": 191,
+        "endLine": 202,
+        "sha256": "51789a09bedb821c0ff650c0d3c6bac6cb9137b8b009a334bc0c33318c323265"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.WorkCellConstView.findFrame",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "symbol": "WorkCellConstView::findFrame",
+        "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findFrame",
+        "startLine": 990,
+        "endLine": 995,
+        "sha256": "a8fc24e9bb60b40294fa464bb7b968e951e8279500e55a450d8cb72ab441bce7"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "现有上游只读转发；名称仅经runtime映射，State每次值拷贝。非重复核心，权限/消费者仍需生产回归",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.WorkCellConstView.findDevice",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "symbol": "WorkCellConstView::findDevice",
+        "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findDevice",
+        "startLine": 998,
+        "endLine": 1003,
+        "sha256": "a5b3c3534662a5d27bc8c7f5fcc8b2dbc6b48c92ea079564f58613869ea75556"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "现有上游只读转发；名称仅经runtime映射，State每次值拷贝。非重复核心，权限/消费者仍需生产回归",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.WorkCellConstView.defaultState",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "symbol": "WorkCellConstView::defaultState",
+        "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::defaultState",
+        "startLine": 1011,
+        "endLine": 1015,
+        "sha256": "3a7405f0f2ad0a0b1e8aa8dfe91c44956f51e8072e477e733ff283d959fc9344"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "现有上游只读转发；名称仅经runtime映射，State每次值拷贝。非重复核心，权限/消费者仍需生产回归",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.RuntimeSnapshot.workCell",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "RuntimeSnapshot::workCell",
+        "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::workCell",
+        "startLine": 753,
+        "endLine": 756,
+        "sha256": "6c7afba055f17ca08111a72eb0ff75517f46f350c93d70ec61019a976a9684eb"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.RuntimeSnapshot.makeState",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "RuntimeSnapshot::makeState",
+        "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::makeState",
+        "startLine": 811,
+        "endLine": 816,
+        "sha256": "76031e32eca8f9be150bc952049632c034fd9fa4a4ed94cac8bc82f7c2e01422"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.RuntimeSnapshot.tryDynamicWorkCell",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "RuntimeSnapshot::tryDynamicWorkCell",
+        "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::tryDynamicWorkCell",
+        "startLine": 768,
+        "endLine": 784,
+        "sha256": "1d7153ea98b5600ff9b8ae5e8683ef0da67fb85156499451087ca016321ab422"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.RuntimeSnapshot.workCellHandle",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "symbol": "RuntimeSnapshot::workCellHandle",
+        "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::workCellHandle",
+        "startLine": 758,
+        "endLine": 766,
+        "sha256": "527e41a9afd59e8df2568707f1a455318b3363d54f56b62ae4737d517652117e"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "runtime.jointStaticTransform",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "ARC-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "symbol": "jointStaticTransform",
+        "qualifiedSymbol": "sdurws::ird::runtime::jointStaticTransform",
+        "startLine": 541,
+        "endLine": 553,
+        "sha256": "3290ac5bbbc1fac433ac36ef73223e4effdea03d0399410e313839d75507f590"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "旋转偏置映射可用；移动偏置误送旋转已由真实编译器反例证实，T02由runtime修复，不在业务层加第二补偿",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "ui.SnapshotViewAdapter",
+    "ownerUnit": "ui",
+    "requirements": [
+      "ARC-03",
+      "CON-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+        "symbol": "SnapshotViewAdapter",
+        "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SnapshotViewAdapter",
+        "startLine": 61,
+        "endLine": 80,
+        "sha256": "d080d388547310b858c5bfdf6017d3de2f56c577e924a77550a826fabdec64f6"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "持shared_ptr<const RuntimeSnapshot>保活，现两转发；未来仅补真实编译视图消费，不重建WC",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "ui.KinSessionModelView",
+    "ownerUnit": "ui",
+    "requirements": [
+      "CON-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+        "symbol": "KinSessionModelView",
+        "qualifiedSymbol": "sdurws::ird::ui::KinSessionModelView",
+        "startLine": 108,
+        "endLine": 135,
+        "sha256": "0c494ea6d5da2ec4e3f19e3a5e9302971bc4931ee37fa4fac3d20c6e20130a3b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "可换绑委托仅UI会话；后台必须捕获旧快照，不能跨线程读正在rebind的委托",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "ui.KinEvaluationExecutor.attachSnapshot",
+    "ownerUnit": "ui",
+    "requirements": [
+      "CON-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+        "symbol": "KinEvaluationExecutor::attachSnapshot",
+        "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachSnapshot",
+        "startLine": 94,
+        "endLine": 111,
+        "sha256": "7ee13cb1f92be65a94a134b04b25cecd74492c8a0104e46d6dbbba37bfb0f423"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "完整快照与数值视图入口分开；换绑清旧碰撞场景/账面，保留epoch和任务旧快照生命周期",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "ui.KinEvaluationExecutor.attachView",
+    "ownerUnit": "ui",
+    "requirements": [
+      "CON-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+        "symbol": "KinEvaluationExecutor::attachView",
+        "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachView",
+        "startLine": 113,
+        "endLine": 139,
+        "sha256": "062c9562039423014d223ba8b83d1069999ece782c48bfaee98d2c6b49eb73c6"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "完整快照与数值视图入口分开；换绑清旧碰撞场景/账面，保留epoch和任务旧快照生命周期",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "ui.FixtureView",
+    "ownerUnit": "ui",
+    "requirements": [
+      "CON-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+        "symbol": "FixtureView",
+        "qualifiedSymbol": "(anonymous namespace)::FixtureView",
+        "startLine": 79,
+        "endLine": 118,
+        "sha256": "6a5ef46d1fd5e9c0276662292105f5c413deb368397db153891b0b1b3cbb9a53"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  },
+  {
+    "functionId": "ui.ObservedView",
+    "ownerUnit": "ui",
+    "requirements": [
+      "KIN-07",
+      "CON-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+        "symbol": "ObservedView",
+        "qualifiedSymbol": "KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
+        "startLine": 957,
+        "endLine": 971,
+        "sha256": "dc426020186569c97c501bcd3b1dabddd3f62e5bfacc13c74b8b6305a94c7002"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_ui_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "KIN-FK",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+      "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+    },
+    "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+        "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+        "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+        "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+        "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+      }
+    ],
+    "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+  }
+]

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-26T05:09:12.278" name="AllTests">
+  <testsuite name="CollisionSessionNameRules" tests="2" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-26T05:09:12.278">
+    <testcase name="RegexPrefixedNamesExcludeRuleMatchesLiteral_F961" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp" line="1171" status="run" result="completed" time="0." timestamp="2026-10-26T05:09:12.278" classname="CollisionSessionNameRules">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1207&#x0A;Value of: rules.front().match(&quot;REGEXarm.link_1&quot;, &quot;REGEXarm.link_2&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1207
+Value of: rules.front().match("REGEXarm.link_1", "REGEXarm.link_2")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1208&#x0A;Value of: rules.front().match(&quot;REGEXarm.link_2&quot;, &quot;REGEXarm.link_1&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1208
+Value of: rules.front().match("REGEXarm.link_2", "REGEXarm.link_1")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1209&#x0A;Value of: rules.front().matchOne(&quot;REGEXarm.link_1&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1209
+Value of: rules.front().matchOne("REGEXarm.link_1")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1215&#x0A;Expected equality of these values:&#x0A;  rules.front().getPatterns().first&#x0A;    Which is: &quot;REGEXarm.link_1&quot;&#x0A;  &quot;REGEXREGEXarm\\.link_1&quot;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1215
+Expected equality of these values:
+  rules.front().getPatterns().first
+    Which is: "REGEXarm.link_1"
+  "REGEXREGEXarm\\.link_1"
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1216&#x0A;Expected equality of these values:&#x0A;  rules.front().getPatterns().second&#x0A;    Which is: &quot;REGEXarm.link_2&quot;&#x0A;  &quot;REGEXREGEXarm\\.link_2&quot;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp:1216
+Expected equality of these values:
+  rules.front().getPatterns().second
+    Which is: "REGEXarm.link_2"
+  "REGEXREGEXarm\\.link_2"
+]]></failure>
+    </testcase>
+    <testcase name="PlainDottedNamesPassThroughLiterally_F961" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionSessionTest.cpp" line="1226" status="run" result="completed" time="0." timestamp="2026-10-26T05:09:12.279" classname="CollisionSessionNameRules" />
+  </testsuite>
+</testsuites>

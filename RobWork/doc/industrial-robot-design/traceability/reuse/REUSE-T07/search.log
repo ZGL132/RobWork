@@ -1,0 +1,59 @@
+COMMAND: rg -n svd|pseudoInverse RobWork/RobWork/src/rw/math/LinearAlgebra.hpp RobWork/RobWork/src/rw/math/LinearAlgebra.cpp RobWork/RobWork/gtest/math/LinearAlgebraTest.cpp
+EXIT: 0
+RobWork/RobWork/src/rw/math/LinearAlgebra.hpp:65:        static void svd (const Eigen::Matrix<double,-1,-1>& M, Eigen::Matrix<double,-1,-1>& U, Eigen::Matrix<double,-1,1>& sigma,
+RobWork/RobWork/src/rw/math/LinearAlgebra.hpp:85:        static Eigen::Matrix<double,-1,-1> pseudoInverse (const Eigen::Matrix<double,-1,-1>& am, double precision = 1e-6);
+RobWork/RobWork/gtest/math/LinearAlgebraTest.cpp:37:    minv = LinearAlgebra::pseudoInverse(r.e());
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:26:Eigen::MatrixXd LinearAlgebra::pseudoInverse (const Eigen::MatrixXd& am, double precision)
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:29:        // RW_THROW("pseudoInverse require rows >= to cols!");
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:31:        Eigen::JacobiSVD< Eigen::MatrixXd > svd =
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:34:                           svd.singularValues ().array ().abs ().maxCoeff ();
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:35:        return (svd.matrixV () *
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:36:                Eigen::MatrixXd ((svd.singularValues ().array ().abs () > tolerance)
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:37:                                     .select (svd.singularValues ().array ().inverse (), 0))
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:39:                svd.matrixU ().adjoint ())
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:43:        Eigen::JacobiSVD< Eigen::MatrixXd > svd =
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:46:                           svd.singularValues ().array ().abs ().maxCoeff ();
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:47:        return svd.matrixV () *
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:48:               Eigen::MatrixXd ((svd.singularValues ().array ().abs () > tolerance)
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:49:                                    .select (svd.singularValues ().array ().inverse (), 0))
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:51:               svd.matrixU ().adjoint ();
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:55:void LinearAlgebra::svd (const Eigen::MatrixXd& M, Eigen::MatrixXd& U, Eigen::VectorXd& sigma,
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:58:    const Eigen::JacobiSVD< Eigen::MatrixXd > svd =
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:60:    U     = svd.matrixU ();
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:61:    sigma = svd.singularValues ();
+RobWork/RobWork/src/rw/math/LinearAlgebra.cpp:62:    V     = svd.matrixV ();
+
+COMMAND: rg -n couplingSingularValues|checkCouplingMatrix|assertDrivetrainCoupling RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ReadinessTest.cpp
+EXIT: 0
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ReadinessTest.cpp:610:// 同一判定面（assertDrivetrainCoupling——NFR-MNT-04）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:756:// WP-13-T18——传动耦合矩阵建模（MDL-21/R2）：checkCouplingMatrix 数值校验
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:766:using sdurws::ird::modeling::checkCouplingMatrix;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:768:using sdurws::ird::modeling::couplingmath::couplingSingularValues;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:812:    const auto actual2 = couplingSingularValues({1.0, 2.0, 3.0, 4.0}, 2);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:817:    const auto actual3 = couplingSingularValues({1.0, 0.0, 0.0,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:825:    const auto actual6 = couplingSingularValues({
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:835:    const auto tiny = couplingSingularValues({1e-200, 0.0, 0.0, 3e-200}, 2);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:843: * checkCouplingMatrix 全档位（WP-13-T18 acceptance 1——I-MDL-11 重算复核；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:854:    const CouplingMatrixCheck ok = checkCouplingMatrix(makeWristCoupling(), 6);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:863:    const CouplingMatrixCheck square = checkCouplingMatrix(notSquare, 6);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:870:    const CouplingMatrixCheck finite = checkCouplingMatrix(notFinite, 6);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:878:    const CouplingMatrixCheck win = checkCouplingMatrix(mismatch, 6);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:886:    const CouplingMatrixCheck range = checkCouplingMatrix(outOfRange, 6);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:897:    const CouplingMatrixCheck sing = checkCouplingMatrix(singular, 6);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:908:    const CouplingMatrixCheck cond = checkCouplingMatrix(ill, 6);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp:917:    EXPECT_EQ(checkCouplingMatrix(lying, 6).violationKind, "ill-conditioned");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\Readiness.cpp:275:            suite.assertDrivetrainCoupling(ws, ctx.couplingStage,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\CouplingMath.hpp:8: * checkCouplingMatrix 仍负责结构/有限性/窗口校验及稳定诊断，不把业务
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\CouplingMath.hpp:60:inline std::vector<double> couplingSingularValues(const std::vector<double>& c,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\CouplingMath.hpp:104: * @param singularValues [in] 降序奇异值序列（couplingSingularValues 产出；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\Parts.cpp:196:        // 合法性以重算为准——重算复核（SVD）由 checkCouplingMatrix 承载
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\Parts.cpp:216:CouplingMatrixCheck checkCouplingMatrix(const CouplingDesign& coupling,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\Parts.cpp:286:        couplingmath::couplingSingularValues(coupling.c, n);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\Parts.cpp:1053:    // ---- ④ 数值校验（checkCouplingMatrix——I-MDL-11 重算复核；三处
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\Parts.cpp:1060:        checkCouplingMatrix(*coupling, ws.design.joints.size());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\CommandHandlers.cpp:524:void AssertionSuite::assertDrivetrainCoupling(const ModelingWorkingSet& candidate,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\CommandHandlers.cpp:554:    // ---- I-MDL-11（R2 数值校验）：checkCouplingMatrix 重算复核（单一
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\CommandHandlers.cpp:558:        checkCouplingMatrix(coupling, candidate.design.joints.size());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\CommandHandlers.cpp:1216:    m_suite.assertDrivetrainCoupling(dec.candidate, m_services.couplingStage, blockers);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src\DiagCodes.cpp:701:    // R2 下耦合矩阵数值非法（I-MDL-11 重算复核——checkCouplingMatrix
+

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T38",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T38.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+      "sha256": "2409586d026238df2ec5e989650fd5fd63699abd7bdbfa6f0b4fa98567b9c307",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "WP-15批次B/T38：新增io单元私有共享头（src/，不入公共头根——R-2）收编Json/Csv双通道副本——inline kUtf8Dfa表/kUtf8Reject/utf8Step/strictUtf8Check/mapSystemError单实现；表体与删除前两副本逐字节一致（sha治理口径38d42d66…）；非上游符号、非新依赖/新框架",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/dfa-table-merged-equal.txt"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+      "sha256": "8c8e734fb42b5609e752c0a3b734d0802862e4a0e6249d0544a3c851325705dd",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "WP-15批次B/T38：删除自持第二份DFA表/strictUtf8Check/mapSystemError改引共享头（原Json.cpp:107-109暂不合流预留由本批收口）；JSON仅UTF-8/UTF-16 BOM入口拒差异语义保持在parseBytes；parser主体保留",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/postfix-sdurws_ird_io_test.log"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+      "sha256": "d79d3b8d075c672cf243c1766ac7cfe0128c09d7eea19127748b3743fcd5457f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "WP-15批次B/T38：删除自持DFA表/kUtf8Reject与mapSystemError副本改引共享头；nextUtf8/nextUtf16ToUtf8函数体零改动（流式推进保持原内联转移式，仅DFA表/kUtf8Reject引用换共享头inline表——utf8Step当前仅strictUtf8Check使用，独立验收勘误后如实更正）；UTF-16LE/BE/回灌顺序/-2拒绝语义不变",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/postfix-sdurws_ird_io_test.log"
+    }
+  ]
+}

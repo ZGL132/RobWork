@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T20",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "sha256": "e88068e50b2abc688e9afdbbc2f10a85f770bd9a6f392c1bdedf4eb251e95b34",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "本轮仅阶段2相容边增加单次断言私有标准map解析缓存，仍由profile.resolve与core C4决定相容性；保留公开签名/身份/歧义/详情/护栏，不跨调用缓存、不新增数学核心；匹配来源为唯一Boost接缝，原Kuhn已删。性能已获当前范围接受，第三方schema按方案一保留债务，独验NOT RUN，见README§9。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/SetCheckMatch.cpp",
+      "sha256": "aa6f68c15d14de990d49f693351d7ea033f3ae8d4378c4841252f429903f64a6",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "既有Boost.Graph薄适配仅改公开matching初始化策略：greedy_matching＋Edmonds增广＋原最大性验证器，保留matching_size和索引转表；Boost 1.92来自既有vcpkg而非RobWork，零新核心/依赖/上游修改；真实mate返回值扰动已使生产断言失败，性能已获当前范围接受，schema表达债务保留，独验NOT RUN。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+      "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b",
+      "mode": "governance",
+      "capabilities": [
+        
+      ],
+      "boundary": "find_package(Boost CONFIG REQUIRED)＋src/SetCheckMatch.cpp 源登记＋target_link_libraries PRIVATE Boost::headers（接口目标零运行库/DLL）；其余段零变化；第三方词表 IRD_THIRDPARTY_ALLOWED_TARGETS 增列与 DTB §4.5 登记册行随治理批。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+      "sha256": "9c63b560d8b7dc73c9ef6b0cae0517d67297275bbe0b89521127fbb38c0a820e",
+      "mode": "business",
+      "capabilities": [
+        
+      ],
+      "boundary": "保留独立穷举/网格/F-594与确定性oracle；本轮增加两例验证单次缓存不跨档案/调用污染、边谓词短路和真正缺档错误。未放宽容差；首版错误测试预期和纠正后原件保留。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+      "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064",
+      "mode": "governance",
+      "capabilities": [
+        
+      ],
+      "boundary": "IRD_THIRDPARTY_ALLOWED_TARGETS 增列 Boost::headers（SetCheck 阶段 2 最大匹配内核，header-only 接口目标零运行库/DLL；units/testkit.md §3.1 依赖契约修订与 DTB §4.5 登记册行同批；ird_gates 实跑 IRD-GATE-LIB 恰 1 项命中后的登记，Eigen3 先例，非放宽门禁）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
+    }
+  ]
+}

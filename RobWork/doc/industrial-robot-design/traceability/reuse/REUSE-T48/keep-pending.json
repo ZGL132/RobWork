@@ -1,0 +1,22 @@
+[
+ "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+ "ui.HostView3DGateway.currentTcpPose",
+ "ui.SampleGridRender.draw",
+ "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+ "ui.HostView3DPreviewBackend.draw",
+ "ui.HostView3DPreviewBackend.clear",
+ "ui.PreviewColorScope.constructor",
+ "ui.PreviewColorScope.destructor",
+ "ui.anonymous.applyCellColor",
+ "ui.anonymous.tintColor",
+ "ui.StationMarkerRender.draw",
+ "ui.RegionOutlineRender.draw",
+ "ui.HostView3DGateway.HostView3DGateway",
+ "ui.HostView3DGateway.handleViewDoubleClick",
+ "ui.HostView3DGateway.applyPresentation",
+ "ui.HostView3DGateway.releasePresentation",
+ "ui.HostView3DGateway.onSceneCleared",
+ "ui.HostView3DGateway.applyPreview",
+ "ui.HostView3DGateway.removePreview",
+ "ui.audit-b32.eventBus.productionWiring"
+]

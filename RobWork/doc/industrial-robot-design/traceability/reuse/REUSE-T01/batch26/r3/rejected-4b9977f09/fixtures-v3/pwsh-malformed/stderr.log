@@ -1,0 +1,6 @@
+ConvertFrom-Json: C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r2-acceptance-20261023\repo\RobWork\scripts\industrialrobot\merge-findings-union.ps1:122
+Line |
+ 122 |  … (($theirsLines -join "`n") -replace "^\uFEFF", "") | ConvertFrom-Json
+     |                                                         ~~~~~~~~~~~~~~~~
+     | Conversion from JSON failed with error: Invalid character after parsing property name. Expected ':' but got: }.
+     | Path 'findings', line 16, position 0.

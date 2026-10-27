@@ -1,0 +1,538 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+416: if(TARGET sdurws)
+417:     target_sources(sdurws_ird_ui_test PRIVATE
+418:         test/HostCompilePipelineTest.cpp
+419:         test/KinEvaluationChannelTest.cpp  # UI-T64——覆盖评估执行器（受理/切片/账面/迟到判定）
+420:         test/KinHostServicesAssemblyTest.cpp  # ★ KIN-P4——宿主服务装配（网关转译/导出写出/配置持久化——同源直编 TU 的具名自证面；project/io 符号面集成树专属）
+421:         test/View3DPreviewMarkerPositionTest.cpp  # UI-T77——预览协议 position 追加纪律（F-555；rw 头依赖面——冒烟树无框架目标不编）
+422:         test/SampleHighlightTest.cpp  # FIX-T2——F-495 样本级定位：高亮键解析四路径/契约等值含新字段/诚实降级（rw 头依赖面同上——自基础源列表移入本守卫，修基线冒烟 C1083）
+423:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostCompilePort.cpp
+424:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp
+425:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/QtTextBillboard.cpp  # UI-T77——被测 TU 的同源依赖（F-556 承载件）
+426:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinEvaluationChannel.cpp  # UI-T64——被测 TU 同源编入（HostCompilePort 先例形态）
+427:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinHostServicesAssembly.cpp)  # ★ KIN-P4——宿主服务装配 TU 同源编入（网关/写出/持久化用例的被测面）
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+777: if(TARGET sdurws)
+778:     target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE IRD_UI_HAS_PRODUCT_HOST=1)
+779:     target_sources(sdurws_ird_ui_gui_test PRIVATE
+780:         gui_test/HostDraftConflictGuiTest.cpp
+781:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostDraftConflict.cpp # PM-04：与正式插件同源的真实冲突窗口，不新增链接边。
+782:         gui_test/HostEngineeringPolicyGuiTest.cpp
+783:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostEngineeringPolicy.cpp
+784:         gui_test/HostView3DGatewayGuiTest.cpp
+785:         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostView3DGateway.cpp)
+786:     target_include_directories(sdurws_ird_ui_gui_test PRIVATE
+787:         ${CMAKE_CURRENT_SOURCE_DIR})
+788:     target_link_libraries(sdurws_ird_ui_gui_test PRIVATE
+789:         sdurws_ird_modeling_plugin  # A-23：测试仅复用已装配插件传递的project/policy，不新增产品库边。
+790:         sdurw_kinematics
+791:         sdurw_math)
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+918: if(TARGET sdurws)
+919:     add_library(sdurws_ird_ui_plugin MODULE
+920:         plugin/UiPlugin.cpp
+921:         plugin/HostEngineeringPolicy.cpp
+922:         studio/CrashCapture.cpp  # WP-24-T02——崩溃捕获设施（UiPlugin 快照源接线消费——同单元共享 TU 随宿主装配面编入）
+923:         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
+924:         plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（ASM-STUDIO 批起本目标与 studio 两同源目标均编入——studio 三条 unit 级边已随该批增登）
+925:         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
+926:         plugin/HostDraftConflict.cpp  # PM-04/08：旧稿保存门控及显式冲突三选项，使用既有控制器。
+927:         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
+928:         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
+929:         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（十段链适配＋快照缓存＋探针＋名称上下文）
+930:         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（映射真值/挂接对象/构造源）
+931:         plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件——呈现适配器骨架标签依赖）
+932:         plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（F-490① 上游批装配半区）
+933:         plugin/KinHostServicesAssembly.cpp  # ★ KIN-P4——面板服务缝宿主装配（网关/补丁/写出/持久化/Home——审查 §4 降级服务接通面）
+934:         app/PortAdapters.cpp
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+1045: if(TARGET sdurws)
+1046:     add_executable(sdurws_ird_studio WIN32
+1047:         studio/StudioMain.cpp
+1048:         studio/CrashCapture.cpp  # WP-24-T02——OS 级崩溃捕获装配（零 Qt——捕获路径纪律；同单元私有装配面 TU）
+1049:         plugin/UiPlugin.cpp
+1050:         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
+1051:         plugin/HostEngineeringPolicy.cpp  # A-23：正式宿主与动态插件同源，避免只验证插件。
+1052:         plugin/ExtraDomainAssembly.cpp  # ASM-STUDIO——三新域承接（studio→三域 unit 级边本批增登后编入；与插件目标同源，IRD_UI_PLUGIN_EXTRA_DOMAINS 定义区分段生效）
+1053:         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
+1054:         plugin/HostDraftConflict.cpp  # PM-04：正式studio与插件使用同一冲突窗口和保存门控。
+1055:         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）
+1056:         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（与插件目标同源）
+1057:         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（与插件目标同源）
+1058:         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（与插件目标同源）
+1059:         plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件，与插件目标同源）
+1060:         plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（与插件目标同源）
+1061:         plugin/KinHostServicesAssembly.cpp  # ★ KIN-P4——面板服务缝宿主装配（与插件目标同源）
+1062:         app/PortAdapters.cpp
+
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp
+824: bool WorkCellScene::removeDrawable (const std::string& name)
+825: {
+826:     FindDrawableVisitor visitor (name, false);
+827:     SceneNode::Ptr root = _worldNode.cast< SceneNode > ();
+828:     _scene->traverse (root, visitor.functor, StaticFilter (false).functor);
+829:     if (visitor._dnode.isNull ())
+830:         return true;
+831:     if (GroupNode* const gn = visitor._pnode->asGroupNode ()) {
+832:         const NodeFrameMap::const_iterator itF = _nodeFrameMap.find (gn);
+833:         if (itF != _nodeFrameMap.end ()) {
+834:             std::map< const Frame*, std::vector< DrawableNode::Ptr > >::iterator itD =
+835:                 _frameDrawableMap.find (itF->second);
+836:             if (itD != _frameDrawableMap.end ()) {
+837:                 std::vector< DrawableNode::Ptr >& drawables = itD->second;
+838:                 for (std::vector< DrawableNode::Ptr >::iterator itDrawables = drawables.begin ();
+839:                      itDrawables != drawables.end ();
+840:                      itDrawables++) {
+841:                     if ((*itDrawables)->getName () == name) {
+842:                         drawables.erase (itDrawables);
+843:                         break;
+844:                     }
+845:                 }
+846:             }
+847:         }
+848:     }
+849: 
+850:     return _scene->removeDrawable (name);
+851: }
+
+RobWork/RobWork/src/rw/graphics/DrawableNode.hpp
+198:          * @brief gets the transformation of the drawable object
+199:          * @return transform of the drawable object
+200:          */
+201:         virtual const rw::math::Transform3D<>& getTransform () const = 0;
+202: 
+203:         /**
+204:          * @brief Sets the transformation of the drawable object
+205:          * @param t3d [in] transform of drawable object
+206:          */
+207:         virtual void setTransform (const rw::math::Transform3D<>& t3d) = 0;
+
+RobWork/RobWork/src/rwlibs/opengl/RenderFrame.cpp
+24: void renderWire (float width, float size)
+25: {
+26:     glLineWidth (width);
+27:     glBegin (GL_LINES);
+28:     glColor3f (1.0, 0.0, 0.0);
+29:     glVertex3d (0, 0, 0);
+30:     glVertex3d (size, 0, 0);
+31:     glColor3f (0.0, 1.0, 0.0);
+32:     glVertex3d (0, 0, 0);
+33:     glVertex3d (0, size, 0);
+34:     glColor3f (0.0, 0.0, 1.0);
+35:     glVertex3d (0, 0, 0);
+36:     glVertex3d (0, 0, size);
+37:     glEnd ();
+38: }
+39: 
+40: void renderSolid (float alpha, float width, float size, GLUquadricObj* quad)
+41: {
+42:     const float REL_WIDTH = 0.05f;
+43:     const float lenHead   = size * 3 * REL_WIDTH;    // the arrow head
+44:     const float widthHead = size * 2 * REL_WIDTH;
+45:     const float lenBody   = size - lenHead;    // the arrow body
+46:     const float widthBody = width * size * REL_WIDTH;
+47: 
+48:     // Nice frame
+49:     // Draw z-axis
+50:     glColor4f (0.0f, 0.0f, 1.0f, alpha);                          // Blue color
+51:     gluCylinder (quad, widthBody, widthBody, lenBody, 32, 32);    // Draw Our Cylinder
+52:     glTranslatef (0.0f, 0.0f, lenBody);                           // Center The Cone
+53:     gluCylinder (quad, widthHead, 0.0f, lenHead, 32, 32);         // A Cone
+54: 
+55:     // Draw x-axis
+56:     glColor4f (1.0f, 0.0f, 0.0f, alpha);                          // Red color
+57:     glTranslatef (0.0f, 0.0f, -lenBody);                          // Center The Cylinder
+58:     glRotatef (90.0f, 0.0f, 1.0f, 0.0f);                          // Rotate around y-ax
+59:     gluCylinder (quad, widthBody, widthBody, lenBody, 32, 32);    // Draw Our Cylinder
+60:     glTranslatef (0.0f, 0.0f, lenBody);                           // Center The Cone
+61:     gluCylinder (quad, widthHead, 0.0f, lenHead, 32, 32);         // A Cone
+62: 
+63:     // Draw y-axis
+64:     glColor4f (0.0f, 1.0f, 0.0f, alpha);                          // Green color
+65:     glTranslatef (0.0f, 0.0f, -lenBody);                          // Center The Cylinder
+66:     glRotatef (90.0f, -1.0f, 0.0f, 0.0f);                         // Rotate around y-axis
+67:     gluCylinder (quad, widthBody, widthBody, lenBody, 32, 32);    // Draw Our Cylinder
+68:     glTranslatef (0.0f, 0.0f, lenBody);                           // Center The Cone
+69:     gluCylinder (quad, widthHead, 0.0f, lenHead, 32, 32);         // A Cone
+70: }
+71: 
+72: void initializeColors (float* r, float* g, float* b)
+73: {
+74:     r[0] = 1.0;
+75:     r[1] = 0.0;
+76:     r[2] = 0.0;
+77:     r[3] = 1.0;
+78:     g[0] = 0.0;
+79:     g[1] = 1.0;
+80:     g[2] = 0.0;
+81:     g[3] = 1.0;
+82:     b[0] = 0.0;
+83:     b[1] = 0.0;
+84:     b[2] = 1.0;
+85:     b[3] = 1.0;
+86: }
+87: }    // namespace
+88: 
+89: RenderFrame::RenderFrame (float size) : _size (size), _quadratic (NULL)
+90: {
+91:     initializeColors (_red, _green, _blue);
+92: }
+93: 
+94: RenderFrame::~RenderFrame ()
+95: {
+96:     if (_quadratic != NULL)
+97:         gluDeleteQuadric (_quadratic);
+98: }
+99: 
+100: void RenderFrame::draw (const DrawableNode::RenderInfo& info, DrawableNode::DrawType type,
+101:                         double alpha) const
+102: {
+103:     if (_quadratic == NULL)
+104:         _quadratic = gluNewQuadric ();
+105:     const float width = 0.3f;
+106:     _green[3]         = (float) alpha;
+107:     _red[3]           = (float) alpha;
+108:     _blue[3]          = (float) alpha;
+109:     switch (type) {
+110:         case DrawableNode::SOLID:
+111:         case DrawableNode::OUTLINE:    // Draw nice frame
+112:             glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+113:             renderSolid (1.0f, 0.3f, _size, _quadratic);
+114:             break;
+115:         case DrawableNode::WIRE: renderWire (width, _size); break;
+116:     }
+117: }
+
+RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp
+28: void drawVector3D (const Vector3D<>& vec)
+29: {
+30:     glVertex3f (static_cast< float > (vec (0)),
+31:                 static_cast< float > (vec (1)),
+32:                 static_cast< float > (vec (2)));
+33: }
+34: 
+35: void drawLines (const std::vector< Line >& lines)
+36: {
+37:     glBegin (GL_LINES);
+38:     // Draw all faces.
+39:     for (const Line& line : lines) {
+40:         // TODO: better to use glVertex3fv
+41:         drawVector3D (line.p1 ());
+42:         drawVector3D (line.p2 ());
+43:     }
+44:     glEnd ();
+45: }
+46: }    // namespace
+47: 
+48: RenderLines::RenderLines () : _r (1), _g (0), _b (0), _alpha (1), _thickness (1)
+49: 
+50: {
+51:     //_displayListId = glGenLists(1);
+52:     // rerender();
+53: }
+54: 
+55: RenderLines::RenderLines (const std::vector< Line >& lines) :
+56:     _lines (lines), _r (1), _g (0), _b (0), _alpha (1), _thickness (1)
+57: {
+58:     //_displayListId = glGenLists(1);
+59:     // rerender();
+60: }
+61: 
+62: RenderLines::~RenderLines ()
+63: {
+64:     // glDeleteLists(_displayListId, 1);
+65: }
+66: 
+67: void RenderLines::draw (const DrawableNode::RenderInfo& info, DrawableNode::DrawType type,
+68:                         double alpha) const
+69: {
+70:     // the draw type has no effect on Rendering of lines
+71:     glPushAttrib (GL_CURRENT_BIT | GL_LINE_BIT);
+72: 
+73:     glColor4f (_r, _g, _b, _alpha);
+74:     glLineWidth (_thickness);
+75:     // glCallList(_displayListId);
+76:     drawLines (_lines);
+77:     glPopAttrib ();
+78: }
+79: 
+
+RobWork/RobWork/src/rwlibs/opengl/RenderText.cpp
+155: 
+156: #ifdef RW_HAVE_GLUT
+157: #define HELVETICA_18 GLUT_BITMAP_HELVETICA_18
+158: #define HELVETICA_12 GLUT_BITMAP_HELVETICA_12
+159: #define HELVETICA_10 GLUT_BITMAP_HELVETICA_10
+160: namespace {
+161: void drawText (Vector3D<> pos, std::string text, void* font)
+162: {
+163:     glRasterPos3f (pos[0], pos[1], pos[2]);
+164:     glColor4f (0, 0, 0, 1.0);
+165:     glutBitmapString (font, (unsigned char*) text.c_str ());
+166: }
+167: }    // namespace
+168: void RenderText::findTextDimensions ()
+169: {
+170:     _haveGlut  = true;
+171:     _textWidth = glutBitmapLength (_font, (unsigned char*) _text.c_str ());
+172:     _textHight = glutBitmapHeight (_font);
+173: }
+174: #endif
+175: #ifndef RW_HAVE_GLUT
+176: #define HELVETICA_18 NULL
+177: #define HELVETICA_12 NULL
+178: #define HELVETICA_10 NULL
+179: namespace {
+180: void drawText (Vector3D<> pos, std::string text, void* font)
+181: {}
+182: }    // namespace
+183: void RenderText::findTextDimensions ()
+184: {
+185:     _haveGlut = false;
+186: }
+187: #endif
+188: 
+189: RenderText::RenderText (std::string text, Frame::Ptr frame) : _frame (frame), _font (HELVETICA_12)
+190: {
+191:     _text = " " + text + " ";
+192:     findTextDimensions ();
+193: }
+194: 
+195: void RenderText::draw (const DrawableNode::RenderInfo& info, DrawableNode::DrawType type,
+196:                        double alpha) const
+197: {
+198:     if (_haveGlut && !info._cam.isNull ()) {
+199:         SceneCamera::Ptr cam = info._cam;
+200:         Transform3D<> wTf    = _frame->wTf (*(info._state));
+201:         Transform3D<> wTc    = cam->getTransform ();
+202:         Transform3D<> fTc    = inverse (wTf) * wTc;
+203: 
+204:         Vector3D<> pos (0, 0, 0);                // Initialize label position in frame
+205:         moveCloserToCam (fTc, pos, 0.5, cam);    // Move the label closer to the camera to avoid,
+206:                                                  // the 3D model to obscure the label
+207:         drawText (pos, _text, _font);    // Draw the text
+208: 
+209:         // Get the corners for the label box
+210:         std::vector< rw::math::Vector3D<> > corners = getLabelCorners (fTc, pos, 1, 1, 0, 0);
+211: 
+212:         // Render the label bounding box
+213:         renderSquare (corners[0],
+214:                       corners[1],
+215:                       corners[2],
+216:                       corners[3],
+217:                       {255, 255, 255, float (alpha)},
+218:                       {0.5, 0.5, 0.5, float (alpha)});
+219:     }
+220: }
+221: 
+222: std::vector< rw::math::Vector3D<> > RenderText::getLabelCorners (Transform3D<> fTc, Vector3D<> pos,
+223:                                                                  double scale_x, double scale_y,
+224:                                                                  int move_x, int move_y) const
+225: {
+226:     Vector3D<> posCam;
+227:     double ppm    = pixelPerMeter (fTc, pos, posCam);
+228:     double width  = scale_x * _textWidth / ppm;
+229:     double height = scale_y * _textHight / ppm;
+230:     double posX   = move_x / ppm;
+231:     double posY   = (move_y - 5 * scale_y) / ppm;
+232: 
+233:     double offset = -0.00001;
+234:     if (Vector3D<> (fTc.P () - pos).norm2 () < 0.01) {
+235:         offset = 0;
+236:     }
+237:     Vector3D<> pos1 = fTc * (posCam + Vector3D<> (posX, posY, offset));
+238:     Vector3D<> pos2 = fTc * (posCam + Vector3D<> (width + posX, posY, offset));
+239:     Vector3D<> pos3 = fTc * (posCam + Vector3D<> (width + posX, height + posY, offset));
+240:     Vector3D<> pos4 = fTc * (posCam + Vector3D<> (posX, height + posY, offset));
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp
+4724: void IrdWorkbenchHostPlugin::assembleView3DGateway()
+4725: {
+4726:     // 宿主三维网关装配（UI-T45——方案 spec 三桥一源的宿主半区；SA-02：
+4727:     // 全部经 RWStudioView3D 公开 API 消费，事件注入＝过滤器外挂）。
+4728:     if (m_view3dGateway != nullptr || m_domains == nullptr
+4729:         || m_selection == nullptr || m_nameMapPort == nullptr) {
+4730:         return;  // 已装配/依赖缺席（幂等静默——装配序保证）
+4731:     }
+4732:     rws::RobWorkStudio* studio = getRobWorkStudio();
+4733:     const rws::RWStudioView3D::Ptr view =
+4734:         studio != nullptr ? studio->getView() : nullptr;
+4735:     if (view == nullptr) {
+4736:         // 降级基线（spec §4）：视图不可得＝网关不装配——上行拾取/TCP 源
+4737:         // /呈现出口三面缺席（选择服务既有 outlet 保持显式形态），不虚构
+4738:         // 三维能力（UX-11/ERR-01）。
+4739:         if (m_diag.pipeline) {
+4740:             m_diag.pipeline->logDev(kPluginDevChannel,
+4741:                                     "view3d gateway: RWStudioView3D 不可得——三桥不接（降级基线）");
+4742:         }
+4743:         return;
+4744:     }
+4745: 
+4746:     HostView3DGateway::Deps deps;
+4747:     /** @brief UI线程最近真实拾取的值锚；函数闭包共享持有，场景Ptr防地址复用。
+4748:      * 只缓存交互结果，不作名称或修订真值；每次消费仍查询现有权威端口。
+4749:      */
+4750:     struct RequirementsPickedAnchor {
+4751:         rw::models::WorkCell::Ptr scene;
+4752:         std::optional<core::ObjectId> objectId;
+4753:         std::string projectId;
+4754:         std::string revisionId;
+4755:     };
+4756:     const auto pickedAnchor = std::make_shared<RequirementsPickedAnchor>();
+4757:     // 上行仍使用框架真实raycast；把反解结果固定到发起时项目/修订/场景。
+4758:     // 此缓存与业务选中分离，用户回到需求工位后仍可确认刚拾取的夹具Frame。
+4759:     deps.pickFrame = [this, view, studio, pickedAnchor](int x, int y) {
+4760:         *pickedAnchor = RequirementsPickedAnchor{}; // 空白/失败拾取立即使旧结果失效。
+4761:         auto* frame = view->pickFrame(x, y);
+4762:         const auto adapter = m_lastStoreAdapter;
+4763:         if (frame && studio && adapter && !adapter->isClosed() && m_nameMapPort) {
+4764:             pickedAnchor->objectId = m_nameMapPort->resolveObjectIdFromRuntimeName(frame->getName());
+4765:             if (pickedAnchor->objectId) {
+4766:                 pickedAnchor->scene = studio->getWorkCell();
+4767:                 pickedAnchor->projectId = adapter->projectStore().projectId().toCanonical();
+4768:                 pickedAnchor->revisionId = adapter->projectStore().query().head().id.toCanonical();
+4769:             }
+4770:         }
+4771:         return frame;
+4772:     };
+4773:     // TCP 帧缝（设备名→JointDevice 末端帧——WorkCell 现查，非 owning）。
+4774:     deps.resolveTcpFrame = [studio](const std::string& deviceName)
+4775:         -> const rw::kinematics::Frame* {
+4776:         if (studio == nullptr) {
+4777:             return nullptr;
+4778:         }
+4779:         const rw::models::WorkCell::Ptr workcell = studio->getWorkCell();
+4780:         if (workcell.isNull()) {
+4781:             return nullptr;
+4782:         }
+4783:         const auto device =
+4784:             workcell->findDevice<rw::models::JointDevice>(deviceName);
+4785:         return device != nullptr ? device->getEnd() : nullptr;
+4786:     };
+4787:     // 会话态缝（宿主当前 State——只读借用，KIN-06 零修订）。
+4788:     deps.currentState = [studio]() -> const rw::kinematics::State* {
+4789:         return studio != nullptr ? &studio->getState() : nullptr;
+4790:     };
+4791:     // 汇聚端口（与 SelectionService 同一名称映射实例——"真映射注入点
+4792:     // 单一"纪律：WP-24-T08 替换成员实例即两消费面同步升级）。
+4793:     deps.selection = m_selection.get();
+4794:     deps.nameMap = m_nameMapPort.get();
+4795:     // 域分发缝（未命中本域＝域内诚实 false；需求域缺席＝失败隔离形态）。
+4796:     deps.dispatchToModeling = [this](const core::ObjectId& oid) {
+4797:         return m_domains != nullptr
+4798:                && m_domains->modeling.reportView3DPick(oid);
+4799:     };
+4800:     deps.dispatchToRequirements = [this](const core::ObjectId& oid) {
+4801:         return m_domains != nullptr && m_domains->requirements.has_value()
+4802:                && m_domains->requirements->reportView3DPick(oid);
+4803:     };
+4804:     // 会话预览渲染后端（UI-T33——场景原语绑定；装配序在网关构造前——
+4805:     // Deps 冻结面）。studio 非 owning——后端存活期随插件（成员持有）。
+4806:     m_view3dPreviewBackend = std::make_unique<HostView3DPreviewBackend>(studio);
+4807:     deps.previewBackend.draw = [this](const ui::View3DPreviewUpdate& update) {
+4808:         return m_view3dPreviewBackend != nullptr
+4809:                    ? m_view3dPreviewBackend->draw(update) : false;
+4810:     };
+4811:     deps.previewBackend.clear = [this]() {
+4812:         if (m_view3dPreviewBackend != nullptr) { m_view3dPreviewBackend->clear(); }
+4813:     };
+4814: 
+4815:     m_view3dGateway = std::make_unique<HostView3DGateway>(std::move(deps));
+4816: 
+4817:     // 需求域三维缝绑定（UI-T33——capture-tcp/pick-feature 解除降级；
+4818:     // 全部缝对网关/宿主现取零缓存）。需求域缺席＝失败隔离形态零绑定。
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp
+154:             return true;
+155:         };
+156:         // 预览后端替身（UI-T33——previewDraw 空＝后端缺位的降级形态；
+157:         // 非空＝记录绘制并按返回值编排——测试以字段操控编排分支）。
+158:         if (previewDraw) {
+159:             deps.previewBackend.draw = [this](const ui::View3DPreviewUpdate& u) {
+160:                 lastDrawn = u;
+161:                 return previewDraw(u);
+162:             };
+163:             deps.previewBackend.clear = [this]() { ++previewClears; };
+164:         }
+165:         return std::make_unique<HostView3DGateway>(std::move(deps));
+166:     }
+167: 
+168:     // ---- 预览后端替身字段（UI-T33 用例——操控编排分支的记录面）--------
+169:     std::function<bool(const ui::View3DPreviewUpdate&)> previewDraw;  ///< 空＝后端缺位
+170:     std::optional<ui::View3DPreviewUpdate> lastDrawn;                 ///< 最近一次绘制值
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp
+474: TEST(HostView3DGateway, PreviewOutlet_DrawFailureKeepsOld_UI_T33)
+475: {
+476:     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"},
+477:                   std::vector<std::string>{"UI-T33-ACC2"});
+478:     GatewayHarness fx;
+479:     bool drawOk = true;
+480:     fx.previewDraw = [&drawOk](const ui::View3DPreviewUpdate&) { return drawOk; };
+481:     auto gateway = fx.make();  // 替身字段前置后构造（Deps 冻结面）
+482: 
+483:     ui::View3DPreviewUpdate first;
+484:     first.frameMarkers.push_back(ui::View3DFrameMarker{"首组", "World"});
+485:     ASSERT_TRUE(gateway->applyPreview(first));
+486: 
+487:     drawOk = false;  // 第二次绘制失败
+488:     ui::View3DPreviewUpdate second;
+489:     second.frameMarkers.push_back(ui::View3DFrameMarker{"次组", "World"});
+490:     EXPECT_FALSE(gateway->applyPreview(second));
+491:     EXPECT_TRUE(gateway->previewAttached())
+492:         << "失败后挂接态被清除（保持原状失守）";
+493:     ASSERT_FALSE(gateway->currentPreview().frameMarkers.empty());
+494:     EXPECT_EQ(gateway->currentPreview().frameMarkers.front().label, "首组")
+495:         << "失败后观测值被覆盖（保留旧呈现失守）";
+496: }
+497: 
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.cpp
+376: bool HostWorkCellPresentationObject::apply() const
+377: {
+378:     // 宿主单入口（框架公开 API——TreeView 与三维场景从同一载体刷新；
+379:     // INV-B4 一致性的宿主半区）。WorkCell 即编译链产物本体（对象同一性
+380:     // ——hostPresentationWorkCell 出口，零复制）。
+381:     if (m_studio == nullptr || m_view == nullptr) {
+382:         return false;  // 装配缺位（诚实失败——网关保留旧呈现）
+383:     }
+384:     const rw::models::WorkCell::Ptr workcell = m_view->hostPresentationWorkCell();
+385:     if (workcell.isNull()) {
+386:         return false;  // 快照无 WC（结构性不可达——hasWorkCell 恒 true）防御面
+387:     }
+388:     m_studio->setWorkCell(workcell);
+389:     // ---- 发布模型几何呈现分组校准（UI-T78——WP-10-T05 阶段 B 渲染面）：
+390:     // setWorkCell 触发框架 updateSceneGraph 后，RT-T15 编译图元 drawable
+391:     // 已按 Geometry 缺省分组（CollisionObject）落景——产品主相机缺省绘制
+392:     // 掩码不含该组（ShowCollisionModels=false 既有值），不校准则发布模型
+393:     // 几何整体不可见。此处把模型 drawable 校准为 Physical 组（缺省可见＋
+394:     // 渲染分组显隐菜单管辖——契约头 kPublishedModelRenderGroup 注释）。
+395:     // 校准在骨架呈现之前：先模型几何、后骨架辅助层——挂接叙事的层次序。
+396:     // 场景缺位（headless 装配降级）＝与骨架同款诚实降级（WC 已装入、
+397:     // 呈现缺位——不虚构）。
+398:     // ---- 发布模型骨架三维呈现（UI-T77——F-550）：宿主单入口装入后把
+399:     // 帧树/设备链呈现进三维（此前三维仅网格＝发布后模型不可见）。挂在
+400:     // 发布 WC 的场景节点上——setWorkCell 换 WC 时随旧节点树整体收口
+401:     // （见 applyPublishedModelSkeleton 类注生命周期），本对象 remove()
+402:     // 的空动作语义不受影响。
+403:     // 两半区生命周期同款纪律：drawable 全挂发布 WC 的场景节点（模型图元
+404:     // 由框架 updateSceneGraph 建、骨架由 addFrameAxis/addRender 建），
+405:     // setWorkcell 换 WC（新实例＝对象身份不同）即旧节点树整体销毁重建
+406:     // ——发布/重编译/项目切换三拍零残留、零清理名单（UI-T78 渲染面
+407:     // 具名用例在 ui_test 钉扎：重编译产物 WC 新实例＋清单确定性）。
+408:     rw::graphics::WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
+409:     if (!scene.isNull()) {
+410:         calibratePublishedModelRenderGroups(*scene, *workcell);
+411:         applyPublishedModelSkeleton(*scene, *workcell);
+412:     }  // 场景缺位（headless 装配降级）＝WC 已装入、呈现缺位——诚实降级
+413:     return true;
+414: }
+415: 
+416: void HostWorkCellPresentationObject::remove() const
+417: {
+418:     // 空动作（语义见类注——宿主 WorkCell 清空归项目关闭编排；网关侧的
+419:     // 残留收口经 onSceneCleared 已在位）。
+420: }

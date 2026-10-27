@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T10",
+  "unit": "runtime",
+  "masterWp": "WP-A",
+  "title": "撤销EAA补丁并按原库实测登记局部转换容差",
+  "status": "done",
+  "branch": "reuse-t01",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-11",
+    "MDL-22",
+    "NFR-COR-01",
+    "ARC-03"
+  ],
+  "designRefs": [
+    "reuse/extensions/GAP-EAA-01.md",
+    "reuse/policy.md",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "git diff b12e8503cc1c2a1acc040f506842a02e126b9515 --exit-code -- RobWork/RobWork/src/rw/math/EAA.cpp RobWork/RobWork/gtest/math/EAATest.cpp",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t10-withdrawal-governance"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWork/src/rw/math/EAA.cpp",
+    "RobWork/RobWork/gtest/math/EAATest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/PATCHES.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-eaa-small-angle-precision.patch",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T10.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T10.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T10/**",
+    "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/upstream-patches.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261026-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "EAA.cpp和EAATest.cpp与冻结上游基线blob完全相同；取消0004及其专用许可通路，无当前有效EAA上游补丁",
+    "所有者撤销/阈值指令及原FAIL历史可追溯；按REQUIREMENTS附录D第13项局部放宽，不改变FK/动力学/矩阵合法性/预设错误语义",
+    "原上游EAA/RPY/Quaternion回归、原库独立误差网格、受影响业务回归与治理正负夹具真实执行，passed/failed/skipped分列",
+    "完整回滚及局部容差登记独立验收；不自签迁移关闭，不合入或同步远程；drivetrain代码及其矩阵留给独立会话"
+  ],
+  "note": "最新所有者决议撤销上游EAA补丁并适当放宽转换阈值；本契约转为撤销/原库测量范围，旧实施可从e453006追溯。ready是本撤销包可执行，不是原补丁已验收或生产迁移完成。禁止触碰drivetrain代码及其矩阵。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T10-20261026-r1.json（复跑原件在其同名目录），verdict=pass（15项检查13 pass/2 fail/notRun=0/skipped=0；两项FAIL经逐项归因均非T10实施内容——verify-task-scope对多任务合并冻结范围exit 1的126项越界全为同链T09/T11/T12实施与治理文档，T10契约文件全部命中allowedFiles零越界、RobWork/RobWorkSim与vcpkg禁触面零触碰；commit-lint 3/18为范围冻结前合入链历史瑕疵，禁改历史仅登记备查——不构成T10缺陷）；测试计数另列互不相加：原库独立误差网格2/0/0真实复跑且逐位复现登记值（3156样本，matrix→vector 1.0734242583231835e-09、vector→matrix 9.9999899999983327e-07<1e-6、roundTrip 9.4406087628578315e-07）、上游EAA/RPY/Quaternion回归12/0/0、治理正负夹具152/0/0，modeling/runtime大套件按增量口径引用范围内原件与已提交T11独验（记录notRun段说明）。绑定送验 SHA=b0997f8d8f568edf7ec48b403f3f454b09cc1aaa（base=54f0beda6fa6142c707b154d4d0d6ad5d5743169，冻结范围54f0beda6..b0997f8d8）；授权口径＝所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。核对全过：EAA.cpp/EAATest.cpp对冻结上游基线b12e8503零差异（三点blob一致）、0004补丁与upstream-patches.json条目同批撤销且无当前有效EAA上游补丁、GAP-EAA-01与REQUIREMENTS附录D第13项的撤销决议及1e-6局部容差登记可追溯且原补丁独验FAIL原件保留、closures.json无T10条目未自签迁移关闭、drivetrain代码及其矩阵留给独立会话边界成立、validate-docs -TaskFile 三合一exit 0；limitations：误差网格为固定网格非全输入证明，T10不关闭迁移债务、不构成migration §11算法替换或REUSE-T02放行。旧中断产物REUSE-T10-20261025-r1经核查不并入本记录，保持未跟踪原样。（2026-10-26 治理批处置：部分中断产物已清理——该目录因 20261026 验收记录引用其 07-modeling/runtime-test-report.json 作后续树佐证，按「被引用则归档不删」整目录改移至本任务 traceability/reuse/REUSE-T10/interrupted-acceptance-20261025-r1/，内容原样未改。）据此登记 done。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "outputs": [
+    "原上游恢复与0004撤销",
+    "原库分入口误差证据及所有者授权容差登记",
+    "保留原补丁独验FAIL，产品旋转迁移另包验收"
+  ],
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T10.json"
+  }
+}

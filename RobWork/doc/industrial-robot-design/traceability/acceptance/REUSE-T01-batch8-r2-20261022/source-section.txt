@@ -1,0 +1,26 @@
+    bool readHex4(std::uint32_t* out, IoError* err)
+    {
+        std::uint32_t v = 0;
+        for (int i = 0; i < 4; ++i) {
+            if (m_cur.eof()) {
+                err->detail = "truncated \\u escape";
+                return false;
+            }
+            const char h = m_cur.peek();
+            m_cur.advance();
+            v <<= 4;
+            if (h >= '0' && h <= '9') {
+                v |= static_cast<std::uint32_t>(h - '0');
+            } else if (h >= 'a' && h <= 'f') {
+                v |= static_cast<std::uint32_t>(h - 'a' + 10);
+            } else if (h >= 'A' && h <= 'F') {
+                v |= static_cast<std::uint32_t>(h - 'A' + 10);
+            } else {
+                err->detail = "non-hex digit in \\u escape";
+                return false;
+            }
+        }
+        *out = v;
+        return true;
+    }
+

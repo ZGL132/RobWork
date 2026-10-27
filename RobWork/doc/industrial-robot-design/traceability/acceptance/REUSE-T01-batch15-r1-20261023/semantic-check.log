@@ -1,0 +1,2 @@
+DEFINITION MANIFEST 24 PASS; SEARCH 5 PASS; CATALOG REFERENCES 7 PASS; TARGET MATCH 19 OF 24
+MISSING [('ui.QtTextBillboard.QtTextBillboard', ['sdurws_ird_ui_test']), ('ui.QtTextBillboard.rasterizeAndUpload', ['sdurws_ird_ui_test']), ('ui.QtTextBillboard.drawBillboard', ['sdurws_ird_ui_test']), ('ui.QtTextBillboardRender.QtTextBillboardRender', ['sdurws_ird_ui_test']), ('ui.QtTextBillboardRender.draw', ['sdurws_ird_ui_test'])]

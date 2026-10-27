@@ -1,0 +1,166 @@
+[
+  {
+    "functionId": "foundation-governance.commit-lint.root-and-encoding",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "symbol": "[Console]::OutputEncoding",
+      "startLine": 18,
+      "endLine": 29,
+      "sha256": "d4f08d3f708091be7e585c2d0851df7cd2fd61a113365963f9cb735d3a17ade9",
+      "semanticGroup": "root-and-encoding",
+      "qualifiedSymbol": "PowerShell::commit-lint.ps1::root-and-encoding"
+    }
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.Test-CommitMessage",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "symbol": "Test-CommitMessage",
+      "startLine": 36,
+      "endLine": 57,
+      "sha256": "cf5c6abfa89561cf03878d5e5675610e99873b5d570922cf9611fc9feff6f844",
+      "qualifiedSymbol": "PowerShell::commit-lint.ps1::Test-CommitMessage"
+    }
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.input-and-range",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "symbol": "$commits = @()",
+      "startLine": 60,
+      "endLine": 77,
+      "sha256": "d4e69cbefccd340cc23d85628bd4ccab6becfd3ce50bb793656a9d42c83d8039",
+      "semanticGroup": "input-and-range",
+      "qualifiedSymbol": "PowerShell::commit-lint.ps1::input-and-range"
+    }
+  },
+  {
+    "functionId": "foundation-governance.commit-lint.aggregate-exit",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "symbol": "$failed = 0",
+      "startLine": 80,
+      "endLine": 95,
+      "sha256": "60e486ea7d49048ee8ba4723e169e6b88d599d6e18a97f15de834095cf2cf151",
+      "semanticGroup": "aggregate-exit",
+      "qualifiedSymbol": "PowerShell::commit-lint.ps1::aggregate-exit"
+    }
+  },
+  {
+    "functionId": "foundation-governance.validate-task.root",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "symbol": "$TaskFile",
+      "startLine": 19,
+      "endLine": 29,
+      "sha256": "91c1cbe7d2384451edc827ce1af76b32ea5e4289012e474046ee03875b5f9f77",
+      "semanticGroup": "root",
+      "qualifiedSymbol": "PowerShell::validate-task.ps1::root"
+    }
+  },
+  {
+    "functionId": "foundation-governance.validate-task.Test-AnchorExists",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "symbol": "Test-AnchorExists",
+      "startLine": 33,
+      "endLine": 42,
+      "sha256": "42fe55bf6ef9114310c1f57ede2271f997c6c603b75d0e4c63293c70adb57275",
+      "qualifiedSymbol": "PowerShell::validate-task.ps1::Test-AnchorExists"
+    }
+  },
+  {
+    "functionId": "foundation-governance.validate-task.Test-AnchorRequired",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "symbol": "Test-AnchorRequired",
+      "startLine": 46,
+      "endLine": 52,
+      "sha256": "6f9a46e85f970d33a73040ba72fab8e6ab19e9398889be5201336f01e4e6dc61",
+      "qualifiedSymbol": "PowerShell::validate-task.ps1::Test-AnchorRequired"
+    }
+  },
+  {
+    "functionId": "foundation-governance.validate-task.index-and-contract",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "symbol": "$allTaskIds = @{}",
+      "startLine": 55,
+      "endLine": 121,
+      "sha256": "af8521878ef2757d580b3a04232ae2b824bdbb3a6feb5d7568da5e48523738cc",
+      "semanticGroup": "index-and-contract",
+      "qualifiedSymbol": "PowerShell::validate-task.ps1::index-and-contract"
+    }
+  },
+  {
+    "functionId": "foundation-governance.validate-task.reuse-gate",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "symbol": "validate-reuse.ps1",
+      "startLine": 123,
+      "endLine": 129,
+      "sha256": "622874cfef5542d29243f176890bf00e7118d8b4fe415cddff15cf2f03f9dffd",
+      "semanticGroup": "reuse-gate",
+      "qualifiedSymbol": "PowerShell::validate-task.ps1::reuse-gate"
+    }
+  },
+  {
+    "functionId": "foundation-governance.verify-task.preflight-and-dryrun",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+      "symbol": "validate-task.ps1",
+      "startLine": 18,
+      "endLine": 39,
+      "sha256": "f88c22078f1534c6cbe1fac5efdd84361aab1713b9bf58c7a47345079f356bfc",
+      "semanticGroup": "preflight-and-dryrun",
+      "qualifiedSymbol": "PowerShell::verify-task.ps1::preflight-and-dryrun"
+    }
+  },
+  {
+    "functionId": "foundation-governance.verify-task.execute-and-count",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+      "symbol": "foreach ($cmd in @($t.verify))",
+      "startLine": 47,
+      "endLine": 69,
+      "sha256": "710fdb57856f8270c396f782b271c16caf65700c7ac12aa39f5f66bf110f01c1",
+      "semanticGroup": "execute-and-count",
+      "qualifiedSymbol": "PowerShell::verify-task.ps1::execute-and-count"
+    }
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.environment",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+      "symbol": "$ErrorActionPreference",
+      "startLine": 4,
+      "endLine": 10,
+      "sha256": "ed1cba4b060fb677bdaf8ae69dc9bb1eab94ab2d6173da1279efaee38264655b",
+      "semanticGroup": "environment",
+      "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::environment"
+    }
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.Invoke-Probe",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+      "symbol": "Invoke-Probe",
+      "startLine": 13,
+      "endLine": 25,
+      "sha256": "2553e61d94090da6d66876ef80de1609ce27c24089eaf52e62b1b8a39f2f73b8",
+      "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::Invoke-Probe"
+    }
+  },
+  {
+    "functionId": "foundation-governance.test-governance-lite.fixtures-and-report",
+    "source": {
+      "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+      "symbol": "try {",
+      "startLine": 27,
+      "endLine": 76,
+      "sha256": "989ea8604c6aecaef49826b4f5094690171a2ed5d78ff050207e68809ea537c8",
+      "semanticGroup": "fixtures-and-report",
+      "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::fixtures-and-report"
+    }
+  }
+]

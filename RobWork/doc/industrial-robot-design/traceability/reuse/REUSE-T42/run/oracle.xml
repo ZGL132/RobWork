@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-25T22:45:28.773" name="AllTests">
+  <testsuite name="ReqTemplateArray" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-25T22:45:28.774">
+    <testcase name="MirrorGoldenNormalY_WP14T07_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\TemplateArrayTest.cpp" line="335" status="run" result="completed" time="0." timestamp="2026-10-25T22:45:28.774" classname="ReqTemplateArray" />
+    <testcase name="MirrorGoldenNormalZ_WP14T07_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\TemplateArrayTest.cpp" line="383" status="run" result="completed" time="0." timestamp="2026-10-25T22:45:28.774" classname="ReqTemplateArray" />
+  </testsuite>
+</testsuites>

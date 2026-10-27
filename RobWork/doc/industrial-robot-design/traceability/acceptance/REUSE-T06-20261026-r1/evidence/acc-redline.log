@@ -1,0 +1,24 @@
+### ③ 红线批量（范围 56bc28140..6dc43acc1）
+
+-- ③1 forbidden 面（上游框架/vcpkg/Studio src）diff 路径计数（预期0）:
+0
+
+-- ③2 CLOSURE/closures 冻结面 diff 计数（预期0）:
+0
+
+-- ③3 functions 矩阵与 inventory 冻结面 diff 计数（预期0）:
+0
+
+-- ③4 permissions.json diff 计数（预期0）:
+0
+
+-- ③5 送验区间提交与分支:
+4
+* redesign-main
+-- main 是否含送验 head（预期不含）:
+main 不含 head ✓
+-- main 自基线以来是否被本批触碰：main 顶端
+49a9e819c Merge branch codex/remove-urdf-optimization-seed
+
+-- ③6 送验区间 18 文件是否全部在 T06 契约 allowedFiles 面（机器核对）:
+18

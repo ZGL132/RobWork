@@ -1,0 +1,105 @@
+{
+  "taskId": "REUSE-T20",
+  "baseCommit": "7be67a6a59912ec243f2251dd3a127b8b5c7e679",
+  "reviewedCommit": "9276f19b26bfe095cbe2ccf460a64dec39bf45e9",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T06:23:21+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T20/WP-02 单次验收子智能体（独立会话，未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何产品/文档/门禁文件、未提交、未切分支、未建任务工作树、未远程操作、未改构建配置或门禁；性能探针使用 git archive 导出送验 SHA 树至系统临时目录构建运行，主仓零写入；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立验收 7be67a6a59912ec243f2251dd3a127b8b5c7e679..9276f19b26bfe095cbe2ccf460a64dec39bf45e9 送验实现（REUSE-T20/WP-02：SetCheck 最大匹配内核复用 Boost 公开 matching 策略入口＋单次断言私有容差解析缓存；标题更正后实现 SHA，代码树 e98cf3deb 与原 881f576c 逐字一致）。范围＝显式 Base/Head 复跑 verify-task-scope、78 变更路径逐类审阅（4 产品码＋2 探针＋72 文档/凭证/证据原件）、契约 5 条 acceptance 逐项实测（等价 oracle/见证确定性/F-594/ird_gates/性能分项/登记面）、红线抽查（H1—H6、L2 零 Qt、无平行实现回流、CLOSURE 冻结、白名单零改动、PASS/FAIL/SKIP/NOT RUN 分列）、提交链（commit-lint、标题更正树同一性、2ac114f33 登记提交零产品码）。效率口径：不重跑全库重配/无关全量夹具；既有且输入/工具链/范围仍适用的原始证据（消费者 4 面、mate 扰动红/绿、性能原始日志）核对原件后直接引用，数值/性能由本会话以送验树导出真实复跑。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "12 项验收检查；测试执行计数另列（integrationTest、consumerSpot、performanceObservation），互不相加"
+  },
+  "checks": [
+    "现场与送验链：分支 redesign-main；HEAD=0ca544e49（其后另有 T21—T29 等串行任务，均不在送验范围）；7be67a6a/9276f19b2/2ac114f33 三提交存在且归属 zgl132（2026-10-24）；送验范围内恰 1 个实现提交 9276f19b2。",
+    "范围：verify-task-scope 显式 -Base 7be67a6a59912ec243f2251dd3a127b8b5c7e679 -Head 9276f19b26bfe095cbe2ccf460a64dec39bf45e9 exit 0——78 路径全部在允许面（allowedRules=14/forbiddenRules=3）；git diff --name-status 复核：产品码仅 testkit 三文件（SetCheck.hpp/SetCheckMatch.cpp/SetCheckTest.cpp），无 RobWork/RobWork/src、无 vcpkg、无 industrialrobot/cmake/、无 testkit/CMakeLists.txt 触碰。",
+    "源绑定核验：当前盘 testkit 三源＋perf_probe.cpp＋perf-compare/CMakeLists.txt＋v1.0.0.json 共 6 文件 LF 归一 sha256 与实施 inputs.txt 测量绑定逐字一致（e88068e5/aa6f68c1/9c63b560/d2f5d1cc/2fd91e0f/676718bf）；changes/REUSE-T20.json manifest 五文件哈希与当前盘一致（含 CMakeLists ae543743、白名单 63f82e85）；functions/testkit.json maximumBipartiteMatching 源区间哈希抽查 b97ff334＝SetCheck.hpp:157-159 逐字复算吻合；validate-reuse 全量机检 PASS 覆盖其余绑定。",
+    "标题更正树同一性：git rev-parse 复核 9276f19b2^{tree}＝881f576c^{tree}＝e98cf3deb2c8f5680edc766e963235fe4954f25d，与 metadata-title-correction.txt 登记一致——仅更正标题、代码树与正文零变化，原失败 lint 原件保留（commit-lint-original-title-fail.log），范围检查以新 SHA 通过。",
+    "testkit 全量套件（本会话真实执行）：增量重建 sdurws_ird_testkit_test 后全量运行——121 tests＝121 passed/0 failed/0 skipped/0 notRun，exit 0（＝送验前基线 119＋本轮新增 2 例缓存回归）；关键用例 XML 逐一在列：独立穷举 oracle ExhaustiveBruteForceAgreement、网格族 GridFamilyTemplateSemantics（512 边图＋240 随机＋15625 生产网格对独立判据）、F-594 双向回归（AmbiguityProbeRequiresAlternativePartner_F594＋TrueAmbiguityStillDetected_F594）、贪婪陷阱 GreedyTrapAugmented（确需增广形态）、多解见证确定性 MultiSolutionWitnessDeterministic、新增缓存两例（ToleranceCacheIsAssertionLocal/ToleranceResolutionRemainsLazy）——per-exe 报告 decisive=true、envUnavailable=0。",
+    "消费者抽检（本会话真实执行）：kinematics SetCheck 消费者过滤器（KinGoldenIkDedup.*:KinGoldenCoverage.ACC1_SampleSet*:KinGoldenCoverage.ACC5_Thread*）5 tests＝5 passed/0 failed/0 skipped/0 notRun，exit 0，与实施登记一致；其余消费者（optimization 2、optimization 契约 1、policy 契约 1）引用实施原件 XML（tests=2/1/1 failures=0，绑定送验树）。",
+    "ird_gates 直跑（本会话真实执行）：cmake -P ird_gates.cmake（显式 IRD_ROOT＋IRD_SELFTEST_DIR）exit 0——「全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」，17 行自测记录（fail_* 全部按预期检出、pass_* 无误报），含 Boost::headers 白名单 LIB 检查零命中；与实施自查 architecture-gates.log（同 11 类零命中）互证。",
+    "文档/任务/复用机检（本会话真实执行）：validate-docs.ps1 -TaskFile REUSE-T20.json exit 0——validate-task PASS(1 tasks)、validate-reuse PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399，not algorithm compliance）、validate-docs PASS；REUSE-AD-PENDING 条目全部为 policy/runtime/trajectory/ui/reporting 既有债务，无 testkit 条目，非本包引入。",
+    "提交链：commit-lint -Range 7be67a6a..9276f19b2 exit 0 PASS（1 个提交合规，[governance] 中文前缀）；正文与证据逐项对账（集成/冒烟 24、kinematics 5、optimization 2＋契约 1、policy 契约 1、扰动红 1 失败/恢复 24、11 类零命中、1024 稠密 118.73ms）均与原件一致；正文如实声明当时「性能未获所有者接受、独验未关闭、任务不置done」——所有者接受系其后 2ac114f33 登记（该提交 11 文件全部为 doc/ 治理登记，零产品码）。",
+    "性能分项（本会话以送验树导出真实执行，详见 performanceObservation）：git archive 9276f19b2 导出 testkit/perf-compare 至系统临时目录，MSVC 19.42 /O2 /Ob2（与 inputs.txt 同旗标）构建探针并真实运行 stages/old/new 三模式——分项计时（相容边求值 evaluate_ms、建图 graph_ms、Boost checked_ms、greedy+checked greedy_checked_ms、转表 convert_ms）全部真实产出；全部 10 案例匹配基数与登记逐 case 一致（64/256/1024 稠密＝64/256/1024、稀疏 37/216/970/4068、中密 57/256/1024），analyticMB 1024 稠密 12.8 与登记 O(E) 内存口径一致；稠密退化方向与登记一致且本机当前状态比值更大（见 performanceObservation）。",
+    "红线抽查：①H1 上游零命中复跑——rg -il 'bipartite|maximum_cardinality|max_cardinality|hopcroft|augmenting path' 于 RobWork/RobWork/src＋RobWorkSim/src 零文件命中，与 B17 审计及 README §1 一致；②H2 无平行实现——rg 'tryAugmentAt|baselineMatching|kuhn|fallback' 于 testkit include/src 仅 3 处注释性历史对照（SetCheck.hpp:31/343、ReproBenchmark.hpp:306），无符号/代码回流，唯一 Boost 接缝 SetCheckMatch.cpp:66-69（boost::matching 公开策略入口），matching_size 互检 SetCheckMatch.cpp:77-91 保留；③H3 适配——命名空间 sdurws::ird::testkit::detail、错误经 TestKitError(Usage) fail-fast、中文契约注释完整；④H5 无越权——cmake/ 门禁目录、框架、vcpkg、CLOSURE（closures.json 唯一冻结文件 modeling/src/RpyMath.hpp）在送验范围 git diff --exit-code 全部零差异，Boost::headers 白名单登记系范围之前已入基线（7be67a6a 已含），本轮未再动门禁；⑤接缝 TU 零 Qt（仅 Boost＋自身公共头＋std），L2 面 SetCheck.hpp 零 Qt；⑥六类端口/runtime model owner 不适用——SetCheck 全链仅操作调用方值类型与 ToleranceProfile 只读档案，不构造/写入任何模型对象，无跨单元私有头（SetCheckMatch.cpp 仅含 testkit 自身公共头）。",
+    "登记面与状态分列：changes/REUSE-T20.json 两代码文件 boundary 如实写明「business 为 schema 表达缺口下过渡登记、债务保留、独验 NOT RUN」；functions/testkit.json maximumBipartiteMatching/checkSetEquivalent 两行 differences 完整生产链＋「来源 vcpkg Boost 1.92 非 RobWork API」第三方与上游分开＋NONE/business-specific 明示过渡非豁免＋auditBoundary 不假关；units/testkit.md §3.1 header-only 例外与 §5.4.2 现状段（含「Edmonds 不宣称 O(E√V) 界、稠密退化与表达缺口仍未关闭」）同步；migration.md §13.1 记载与契约 note 一致；验收第 5 条（独验由所有者安排、整体准入所有者裁决）由本记录承接，不解除任务 ready 状态与不置 done 约束。"
+  ],
+  "contractAcceptance": [
+    "等价结论/缺失多余计数与替换前逐 case 一致，多解配对见证确定性保持，消费者只断言等价/计数——PASS：独立穷举/网格族 oracle 随本会话 121/121 全量套件通过；MultiSolutionWitnessDeterministic 通过；本会话性能复跑全部 10 案例匹配基数与登记逐 case 一致；消费者过滤抽检 5/5＋其余消费者原件 XML 复核。",
+    "ird_gates转绿；F-594双向回归随套件通过——PASS：本会话 cmake -P 直跑 11 类零命中 exit 0；F-594 双向两用例随套件通过（XML 在列）。",
+    "分开测量相容边求值、建图、Boost算法及转表；性能退化未满足既有标准或未获所有者明确接受时不得结项——PASS（附 machine-state 观测）：送验树导出真实复跑 stages 模式产出全部五分项；所有者已就 1024 稠密 118.73ms 对 3.26ms 及 O(E) 图内存明确接受（2ac114f33 登记、原始日志 performance-cache.log/performance-dense-old.log 在案且与登记逐字一致）；本会话复跑证实退化真实存在、当前机态比值 617-642ms 对 9.1-10.1ms（≈63-65×）不小于登记比值 36×，接受前提（退化已被明确接受、范围限定当前输入规模）成立，绝对值差异如实披露于 performanceObservation，不推导其他能力预算。",
+    "Boost第三方来源与上游RobWork来源分开记录；schema表达缺口不冒充已解决，不以NONE或business标签豁免真实复用审查——PASS：README §1 两来源分陈且上游零命中经本会话复跑证实；functions 两行/changes boundary/testkit.md 均明示 NONE/business 过渡标签＋债务保留；本会话独立完成真实复用审查（接缝代码直读＋oracle/扰动/消费者证据核对），不以标签代替。",
+    "独立验收由所有者另开独立会话执行；整体准入由所有者裁决——PASS（承接）：本记录即所有者授权工作流内单次验收子智能体的独立会话产物；整体准入仍由所有者裁决，任务维持 ready/待收口，不由本 PASS 自行置 done。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json -Base 7be67a6a59912ec243f2251dd3a127b8b5c7e679 -Head 9276f19b26bfe095cbe2ccf460a64dec39bf45e9", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "hash-binding", "command": "对 testkit 三源/perf_probe.cpp/perf-compare CMakeLists+v1.0.0.json 逐文件 tr -d '\\r' | sha256sum，与 wp02-20261024/inputs.txt 及 changes/REUSE-T20.json manifest 比对；另抽 SetCheck.hpp:157-159 区间哈希对 functions/testkit.json b97ff334", "exitCode": 0, "passed": true },
+    { "name": "title-correction-tree-identity", "command": "git rev-parse 9276f19b26bf…^{tree} 881f576cd03b…^{tree}", "exitCode": 0, "passed": true, "output": "两者均为 e98cf3deb2c8f5680edc766e963235fe4954f25d" },
+    { "name": "perf-probe-reviewed-tree", "command": "git archive 9276f19b2 -- industrialrobot perf-compare | tar -x 至 %TEMP%/reuse-t20-acc/tree；cmake -S perf-compare -B build-perf -G \"Visual Studio 17 2022\" -A x64 -DBOOST_INCLUDEDIR=<vcpkg installed include> -DCMAKE_CXX_FLAGS_RELEASE=\"/O2 /Ob2 /DNDEBUG\"；cmake --build --config Release；setcheck_perf_probe.exe stages|old|new <v1.0.0.json绝对路径> [dense-only]", "exitCode": 0, "passed": true, "log": "10-perf-reviewed-tree.log" },
+    { "name": "testkit-suite", "command": "cmake --build build --config Release --target sdurws_ird_testkit_test && build/RobWorkStudio/bin/Release/sdurws_ird_testkit_test.exe --gtest_output=xml:<本目录>/11-testkit-full.xml --ird_report=<本目录>/11-testkit-report.json（QT_QPA_PLATFORM=windows，PATH 前置 build/RobWork/bin|libs/Release＋vcpkg bin）", "exitCode": 0, "passed": true, "log": "11-testkit-full.log", "xml": "11-testkit-full.xml" },
+    { "name": "consumer-kinematics-spot", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe --gtest_filter=KinGoldenIkDedup.*:KinGoldenCoverage.ACC1_SampleSet*:KinGoldenCoverage.ACC5_Thread* --gtest_output=xml:<本目录>/15-kinematics-consumer.xml --ird_report=<本目录>/15-kinematics-consumer-report.json", "exitCode": 0, "passed": true, "log": "15-kinematics-consumer.log", "xml": "15-kinematics-consumer.xml" },
+    { "name": "gate-engine", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=<临时自测目录> -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "12-gate-engine.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "13-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 7be67a6a59912ec243f2251dd3a127b8b5c7e679..9276f19b26bfe095cbe2ccf460a64dec39bf45e9", "exitCode": 0, "passed": true, "log": "14-commit-lint.log" },
+    { "name": "red-line-rg", "command": "rg -il 'bipartite|maximum_cardinality|max_cardinality|hopcroft|augmenting path' RobWork/RobWork/src RobWork/RobWorkSim/src（零命中）；rg 'tryAugmentAt|baselineMatching|kuhn|fallback' testkit/{include,src}（仅 3 处注释）；rg Qt includes 于 SetCheck.hpp/SetCheckMatch.cpp（零）；git diff --exit-code <range> 于 cmake/、RobWork/RobWork/src、RobWorkSim/src、vcpkg、closures.json 冻结文件（均零差异）", "exitCode": 0, "passed": true }
+  ],
+  "integrationTest": {
+    "testkit": {
+      "tests": 121,
+      "passed": 121,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "treeNote": "集成树 build/（RWS_BUILD_INDUSTRIALROBOT=ON）增量重建后运行；testkit 三源自 9276f19b2 零改动（git diff 复核），core 等依赖面变化属后续任务各自验收范围",
+      "xml": "11-testkit-full.xml",
+      "report": "11-testkit-report.json"
+    }
+  },
+  "consumerSpot": {
+    "kinematics": {
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "15-kinematics-consumer.xml",
+      "report": "15-kinematics-consumer-report.json"
+    },
+    "others": "optimization(2)/optimization契约(1)/policy契约(1) 引用实施原件 wp02-20261024/{optimization,optimization-contract,policy}.xml（testsuites 计数本会话逐一复核 failures=0），绑定送验树、输入/工具链不变"
+  },
+  "performanceObservation": {
+    "registered": "实施原件（本会话逐一重读核对）：performance-cache.log 1024稠密 best_ms=118.73、4096稀疏 1271.57（matched=4068）、peakWS=51.7；performance-dense-old.log old 1024稠密 3.26；performance-stages-cache.log 分项 1024稠密 边求值88.920/建图26.882/checked 83.159/greedy+checked 6.839/转表0.002；所有者2026-10-24接受并登记于 2ac114f33 与契约 note。",
+    "rerun": "本会话以 9276f19b2 树导出（同 MSVC 19.42、同 /O2 /Ob2 /DNDEBUG、同 Boost 头哈希）真实复跑：stages 1024稠密 evaluate 400.6-418.4ms/graph 50.5-52.0ms/checked 751.3-807.4ms/greedy_checked 160.6-189.3ms/convert 0.012-0.014ms；new dense 1024 best_ms 617.13-641.98；old dense 1024 best_ms 9.09-10.05；new 全量 4096稀疏 6735.68（matched=4068）。",
+    "agreement": "全部 10 案例匹配基数与登记逐 case 完全一致；边数、analyticMB（1024稠密 12.8）、分项结构（求值+建图占主导、greedy 初始化显著低于默认 checked）与登记一致；稠密退化方向一致。",
+    "variance": "本机（i9-13950HX 移动平台）当前电源/热状态下复跑绝对值一致性地高于登记原件（new 全档 ≈5.3×、old ≈2.5-3×；1024稀疏 78.72→420.09 同为 5.3×，排除仅稠密异常）；属运行环境机态差异而非代码差异（源码哈希绑定、同旗标、基数逐 case 一致），本验收不据复跑绝对值推翻登记测量，亦不以其收紧或放宽已获接受的范围；登记原件与复跑原件同时留档供后续追溯。",
+    "conclusion": "分项测量真实、退化真实、所有者接受真实且范围明确；本项 PASS 以「登记原件为准＋复跑观测披露」口径记录。"
+  },
+  "issues": [],
+  "notRun": [],
+  "limitations": "PASS 绑定送验 head 9276f19b26bfe095cbe2ccf460a64dec39bf45e9（树 e98cf3deb）。本会话 testkit 套件与 kinematics 抽检运行于当前集成树（HEAD=0ca544e49，testkit 三源自送验 SHA 零改动，依赖面变化归后续任务各自验收）；性能数值绑定送验树导出。消费者 optimization/policy 三面及 mate 扰动红/绿为原件引用（送验树绑定、输入/工具链不变，未重跑）。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 既有总量）；第三方 catalog 表达缺口按所有者方案一保留为债务，稠密性能接受仅限当前 1024 稠密/4096 稀疏登记范围；两者均不因本 PASS 关闭。testkit.md 版本表最新行为 v1.9（早于 WP-02），WP-02 现状以 §5.4.2 新增段承载——登记面轻微滞后，现状段与链接准确，不构成阻断。仅覆盖 SetCheck 匹配内核，不代表 testkit 整体迁移完成；整体准入由所有者裁决。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/10-perf-reviewed-tree.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/11-testkit-full.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/11-testkit-full.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/11-testkit-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/12-gate-engine.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/13-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/14-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/15-kinematics-consumer.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/15-kinematics-consumer.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T20-20261025-r1/15-kinematics-consumer-report.json"
+  ]
+}

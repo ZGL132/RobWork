@@ -55,8 +55,12 @@ bool isValidParamName(std::string_view name)
 bool tryParseParamSchema(const std::string& schema, std::vector<std::string>* names,
                          std::string* error)
 {
-    // 输出槽先归位（失败/成功两条路径都得到确定状态——调用方无需预清理）。
-    names->clear();
+    // F-968：先借用输出槽的容量收集局部结果，输出本身立即置空；
+    // 不额外分配/复制旧清单。数组尾部也校验成功后才提交，失败仍走原
+    // 首处违约错误轨，局部清单自动销毁，不泄漏已接受的前缀。
+    std::vector<std::string> parsedNames;
+    names->swap(parsedNames);
+    parsedNames.clear();
     error->clear();
 
     // ①空模式：paramSchema 为必填字段（"非空且参数名合法"——无参数也须显式
@@ -107,13 +111,13 @@ bool tryParseParamSchema(const std::string& schema, std::vector<std::string>* na
                          + std::string{name};
                 return false;
             }
-            for (const auto& prior : *names) {
+            for (const auto& prior : parsedNames) {
                 if (prior == name) {
                     *error = "paramSchema 参数名重复: " + std::string{name};
                     return false;
                 }
             }
-            names->emplace_back(name);
+            parsedNames.emplace_back(name);
             ++i;   // 跳过闭引号
             skipWs();
             if (i < schema.size() && schema[i] == ',') {
@@ -133,6 +137,7 @@ bool tryParseParamSchema(const std::string& schema, std::vector<std::string>* na
         *error = "paramSchema 数组结束后存在多余字符";
         return false;
     }
+    names->swap(parsedNames);   // 仅转移清单所有权，不复制参数或引入第二解析器。
     return true;   // 合法——names＝声明序参数名清单，error 空
 }
 
