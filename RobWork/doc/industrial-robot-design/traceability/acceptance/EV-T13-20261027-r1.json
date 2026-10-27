@@ -1,0 +1,70 @@
+{
+  "taskId": "EV-T13",
+  "baseCommit": "4c5e4301f62977f62f33f344c93f678d50d85efe",
+  "reviewedCommit": "4afdc201a40c7357bfb5286dc8575b39d0743dc1",
+  "branch": "codex/core-review-fixes",
+  "verdict": "pass",
+  "createdAt": "2026-10-27T00:00:00.000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "所有者另开的独立验收会话（ZCode，无子智能体；同会话此前完成 CORE-T12/TK-T13 独验）",
+    "authorization": "所有者批准按本轮评审确认问题 E01～E10 修改，并指示本会话独立验收",
+    "constraints": "未参与实施；除本验收产物目录、任务状态收口与记录指针更新外未修改任何文件；未远程同步、未改写历史、未触碰 main、未关闭 REUSE-T47；受影响目标增量重建后真实重跑。"
+  },
+  "scope": "独立复验 4c5e4301f..4afdc201a（单实施提交，109 路径）：E01/E04 证据适用性与多实例完整性（itemId+subject+规范 caseScope 实例区分、全部实例核对、重复/未知状态拒绝、条件项 NA 须已登记适用条件）、E02 数据不足缺失明细（搜索未果/输入就绪/零样本/降级/无必验工况）、E03 证明通用字段、E05/E06 配置摘要真实字节计算与快照解码内容冻结不变量（非规范 bool 拒绝、集合数上限）、E07/E08 词表/状态值与包络-清单-Profile/任务三元组交叉绑定、E09 切片 v2 计算身份（form=2 投影排除 snapshotId；v1 解码与旧字节身份保持）、E10 缓存/检查点显式评估键与有效身份/模式防御（execution 接线）；治理凭证与单元卡事实同步。",
+  "counts": {
+    "failed": 0,
+    "passed": 371,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "本会话实际重跑去重 gtest 用例：evidence 245＋evidence contract 14＋execution 接纳/检查点/缓存 49（终态，较实施批中间记录 48 多 1 个后续新增 EV_T13 准入用例）＋错键拒绝唯一用例 1（execution2 的 3 项中 2 项与前行重叠）＋CacheJudge 契约 3＋optimization 检查点/暂停/恢复 7＋同版本恢复性能基准 1＋独立冒烟 37＋冒烟契约 14；ird_gates/validate-docs/verify-task-scope/commit-lint 另列 checks"
+  },
+  "checks": [
+    "现场：工作树干净、HEAD=4afdc201a＝送验 Head＝实施提交；整改记录/命令清单（commands.ps1.txt）/原始红绿与中间失败记录（raw/ 30 项红、29+3 绿、208 项基线 51 失败订正）逐一在案且申报一致。",
+    "正式回归真实重跑：evidence 完整 245/245、契约 14/14（ird-test-report decisive）；契约含旧 v1 黄金原文零修改与独立字节变换 v2 核对（SliceFixtureContractTest 扩展）；ReviewR1_* 37 项反例回归覆盖 E01～E10 全部确认问题。",
+    "对端消费者：execution 接纳/检查点/缓存 49/49、错键拒绝 3 项（2 重叠）、CacheJudge 契约 3/3、optimization 检查点/暂停/恢复 7/7 全绿；RunRegistryAdmissionTest 新增 EV_T13 用例与 CheckpointCoordinatorTest.RequestedEvaluatorMismatchRejected 经真实 ProjectStore/检查点路径验证。",
+    "恢复性能基准独立复现：同版本检查点恢复 24.8s（实施批 25.1s），恢复段 Restored→续跑 Completed，resumedBatchesSkipped=1244 审计相符，metrics=80800 与完整参照 maxRelDiff=0.000e+00 bitwise=true、工作汇总增量与参照一致——逐位相等断言实测成立，标准/容差未改。",
+    "v1/v2 兼容语义核对：codec 版本字节 1/2 分域，parse 接受两版并重验冻结不变量（键词形/契约非零/快照身份有效/条目校验/字典序）；identityDigest v1=full、v2=form=2 投影（删 snapshotId）；baseline 投影 v1 含快照锚、v2 不含；旧字节解码后身份重算自洽；新旧缓存保守隔离、不自动迁移。snapshotId 仍为 full 交换/追溯载体。",
+    "E10 判定防御核对：CacheHitQuery/ResumeQuery/CheckpointRestoreRequest 显式携带 requestEvaluatorKey 并贯穿 restore/listCompatible→judgeCheckpointCompatibility；缺失/非法身份、零契约版本、Preview 手工摘要均拒绝；模式仅 Quick/Verified 不升降级；兼容仅判定不调度。",
+    "解码健壮性：非规范 bool/presence 字节拒绝（不归一化）；集合数量按编码剩余字节设上限（82/38/20/18/96/2 每项最小字节）防短报文巨额预分配；条目数超剩余长度拒绝；materialized 与 refs-only 共用同一内容不变量（SnapshotCodec::validate 在 builder 与 validateForMode 边界复用）。",
+    "红线与复用合规：ird_gates R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（本会话重跑）；摘要唯一复用 core::ContentDigester、不引入新库、字节原语族按 REUSE-T43 决策保留（Boost.Endian 另批）；evidence 不新建业务求值器，真实条件求值/必验实例集合仍归域；project 磁盘/修订 owner 零修改；optimization 仅测试/基准夹具更新。",
+    "范围与提交：verify-task-scope 显式 -Base 4c5e4301f -Head 4afdc201a exit 0（changed=109 全部在 41 条允许面，3 条禁止面零触碰）；commit-lint 单提交 PASS。",
+    "治理门禁：validate-docs -TaskFile EV-T13.json exit 0（validate-task PASS；validate-reuse PASS governance only changed=224 DEBT=16 UNRESOLVED=1399；validate-docs PASS 434 task files）；REUSE-T47 保持未关闭，前序 core/testkit/project 成果未回退。",
+    "公共结构变化处置：InputSlice.codecVersion、Gap.manifestIndex、CacheHitQuery/ResumeQuery/CheckpointRestoreRequest.requestEvaluatorKey 布局变化，相关消费者（execution/optimization）均以源码增量重建并通过；未宣称二进制 ABI 不变，聚合前字段顺序保留。"
+  ],
+  "issues": [],
+  "notRun": [
+    "全库 DeepEvidence、无关单元完整测试、GUI、远程同步：按增量范围不触发（与实施批口径一致）",
+    "Currentness 调用方违反来源前置的真实接线、comparison 空身份实际消费、证明对象闭包/非Completed证明留存及 Must 与证明冲突：维持原审查边界，不转为本包修复",
+    "F-056/F-061/F-067 与 CR-05 同值生产接线：保持既有登记，本包未证明亦未关闭",
+    "低层字节原语合并（Boost.Endian 落地）：按记录避免无关字节与依赖变化，另批实施"
+  ],
+  "commands": [
+    { "name": "evidence-full", "command": "sdurws_ird_evidence_test.exe（增量重建后全量）", "exitCode": 0, "passed": true, "log": "integration/evidence.log", "evidence": "integration/evidence.xml＋ird-test-report（245/245 decisive）" },
+    { "name": "evidence-contract", "command": "sdurws_ird_evidence_contract_test.exe（全量）", "exitCode": 0, "passed": true, "log": "integration/evidence-contract.log", "evidence": "14/14 decisive（v1 黄金零修改＋v2 字节变换）" },
+    { "name": "execution", "command": "sdurws_ird_execution_test.exe（commands.ps1.txt 同过滤两轮）", "exitCode": 0, "passed": true, "log": "integration/execution1.log＋execution2.log", "evidence": "49/49＋3/3（2 重叠）decisive" },
+    { "name": "execution-contract", "command": "sdurws_ird_execution_contract_test.exe --gtest_filter=*CacheJudge*.*", "exitCode": 0, "passed": true, "log": "integration/execution-contract.log", "evidence": "3/3 decisive" },
+    { "name": "optimization", "command": "sdurws_ird_optimization_test.exe --gtest_filter=OptJointRun.*Checkpoint*:*Resume*:PauseAtBatchBoundary*", "exitCode": 0, "passed": true, "log": "integration/optimization3.log", "evidence": "7/7 decisive" },
+    { "name": "perf", "command": "sdurws_ird_optimization_perf_test.exe --gtest_filter=OptRunTimeBenchmark.SameVersionCheckpointRecovery_WP23T08_B07", "exitCode": 0, "passed": true, "log": "integration/perf.log", "evidence": "24.8s PASS；metrics=80800 maxRelDiff=0 bitwise=true（integration/perf.xml＋ird-test-report）" },
+    { "name": "smoke", "command": "build/core-smoke/evidence/Release 两目标（ReviewR1_* 全量契约）", "exitCode": 0, "passed": true, "log": "smoke/smoke.log＋smoke-contract.log", "evidence": "37/37＋14/14 decisive" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/evidence-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "全部检查零命中" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile …/EV-T13.json", "exitCode": 0, "passed": true, "log": "validate-docs.log", "evidence": "validate-task/validate-reuse/validate-docs 三段 PASS" },
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile …/EV-T13.json -Base 4c5e4301f… -Head 4afdc201a…", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "109 路径全部允许面" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 4c5e4301f….4afdc201a…", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "4afdc201a PASS" }
+  ],
+  "executionNotes": [
+    "本验收为重跑型：六个集成目标与冒烟两目标增量重建（逐目标 -m:1）后执行；构建缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 确认；gtest XML/ird-report 以相对路径写出（规避 Git Bash 对 xml: 前缀绝对路径的转换问题）。",
+    "execution1 计 49 项＝实施批中间记录 48 项＋其后新增的 EV_T13 准入用例（终态 HEAD 计数），与 execution2 重叠说明一致；非验证结果差异。",
+    "受控失败/跳过：本包最终态零跳过零失败；实施批中间失败记录（red 30、green1 剩 3、existing1 基线 51）作为定位证据保留，未以最终绿掩盖。"
+  ],
+  "limitations": "PASS 仅覆盖 EV-T13 送验范围（4c5e4301f..4afdc201a）。不关闭 REUSE-T47（字节原语族职责审计另行独验）；不解除 F-056/F-061/F-067 及 Currentness/comparison/证明留存等未决疑点（维持原审查边界）；不证明 CR-05 同值生产接线（runtime 侧仍须各自落实）；validate-reuse 为 governance only。v1 历史结果的合法性与既有归档不在本包重验面；新 v2 缓存与旧缓存保守隔离的存储/淘汰语义归 execution/project 既有契约。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/EV-T13-20261027-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/EV-T13-20261027-r1/integration/*.log|xml|ird-test-report.json（evidence/evidence-contract/execution1/execution2/execution-contract/optimization3/perf 共 7 组）",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/EV-T13-20261027-r1/smoke/*.log|xml|ird-test-report.json（smoke/smoke-contract 共 2 组）",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/EV-T13-20261027-r1/ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/EV-T13-20261027-r1/validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/EV-T13-20261027-r1/scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/EV-T13-20261027-r1/commit-lint.log"
+  ]
+}

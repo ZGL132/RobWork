@@ -1,0 +1,134 @@
+Note: Google Test filter = ReviewR1_*.*
+[==========] Running 37 tests from 18 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ReviewR1_Controls
+[ RUN      ] ReviewR1_Controls.ValidFeasibleAndIncomplete
+[       OK ] ReviewR1_Controls.ValidFeasibleAndIncomplete (0 ms)
+[----------] 1 test from ReviewR1_Controls (0 ms total)
+
+[----------] 4 tests from ReviewR1_Identity
+[ RUN      ] ReviewR1_Identity.UnrelatedRevisionKeepsSlice
+[       OK ] ReviewR1_Identity.UnrelatedRevisionKeepsSlice (0 ms)
+[ RUN      ] ReviewR1_Identity.BudgetChangeKeepsBaseline
+[       OK ] ReviewR1_Identity.BudgetChangeKeepsBaseline (0 ms)
+[ RUN      ] ReviewR1_Identity.ForgedSnapshotIsRejectedAtSliceBoundary
+[       OK ] ReviewR1_Identity.ForgedSnapshotIsRejectedAtSliceBoundary (0 ms)
+[ RUN      ] ReviewR1_Identity.ForeignPolicyRejected
+[       OK ] ReviewR1_Identity.ForeignPolicyRejected (0 ms)
+[----------] 4 tests from ReviewR1_Identity (0 ms total)
+
+[----------] 1 test from ReviewR1_Dependency
+[ RUN      ] ReviewR1_Dependency.UnknownEnumsRejected
+[       OK ] ReviewR1_Dependency.UnknownEnumsRejected (0 ms)
+[----------] 1 test from ReviewR1_Dependency (0 ms total)
+
+[----------] 1 test from ReviewR1_Profile
+[ RUN      ] ReviewR1_Profile.DuplicateAndCrossDomainRejected
+[       OK ] ReviewR1_Profile.DuplicateAndCrossDomainRejected (0 ms)
+[----------] 1 test from ReviewR1_Profile (0 ms total)
+
+[----------] 7 tests from ReviewR1_Verdict
+[ RUN      ] ReviewR1_Verdict.UnconditionalRequiredCannotBeNA
+[       OK ] ReviewR1_Verdict.UnconditionalRequiredCannotBeNA (0 ms)
+[ RUN      ] ReviewR1_Verdict.SatisfiedWithoutArtifactCannotPass
+[       OK ] ReviewR1_Verdict.SatisfiedWithoutArtifactCannotPass (0 ms)
+[ RUN      ] ReviewR1_Verdict.ForeignManifestSnapshotCannotPass
+[       OK ] ReviewR1_Verdict.ForeignManifestSnapshotCannotPass (0 ms)
+[ RUN      ] ReviewR1_Verdict.DuplicateEvidenceOrderIndependent
+[       OK ] ReviewR1_Verdict.DuplicateEvidenceOrderIndependent (0 ms)
+[ RUN      ] ReviewR1_Verdict.SearchInsufficientCanBeEnveloped
+[       OK ] ReviewR1_Verdict.SearchInsufficientCanBeEnveloped (0 ms)
+[ RUN      ] ReviewR1_Verdict.ProofCannotBypassMissingPolicyIdentity
+[       OK ] ReviewR1_Verdict.ProofCannotBypassMissingPolicyIdentity (0 ms)
+[ RUN      ] ReviewR1_Verdict.InvalidReadinessGetsMissingDetail
+[       OK ] ReviewR1_Verdict.InvalidReadinessGetsMissingDetail (0 ms)
+[----------] 7 tests from ReviewR1_Verdict (0 ms total)
+
+[----------] 2 tests from ReviewR1_Envelope
+[ RUN      ] ReviewR1_Envelope.ProfileMismatchRejectedByStrongBoundary
+[       OK ] ReviewR1_Envelope.ProfileMismatchRejectedByStrongBoundary (0 ms)
+[ RUN      ] ReviewR1_Envelope.TaskRevisionMismatchRejectedByStrongBoundary
+[       OK ] ReviewR1_Envelope.TaskRevisionMismatchRejectedByStrongBoundary (0 ms)
+[----------] 2 tests from ReviewR1_Envelope (0 ms total)
+
+[----------] 5 tests from ReviewR1_Codec
+[ RUN      ] ReviewR1_Codec.IndependentInvalidSnapshotVectorRejected
+[       OK ] ReviewR1_Codec.IndependentInvalidSnapshotVectorRejected (0 ms)
+[ RUN      ] ReviewR1_Codec.InvalidSliceEntryRejected
+[       OK ] ReviewR1_Codec.InvalidSliceEntryRejected (0 ms)
+[ RUN      ] ReviewR1_Codec.F64IndependentByteVector
+[       OK ] ReviewR1_Codec.F64IndependentByteVector (0 ms)
+[ RUN      ] ReviewR1_Codec.MaterializedSnapshotCannotBypassInvariantChecks
+[       OK ] ReviewR1_Codec.MaterializedSnapshotCannotBypassInvariantChecks (0 ms)
+[ RUN      ] ReviewR1_Codec.UnknownVersionAndUnsortedSliceRejected
+[       OK ] ReviewR1_Codec.UnknownVersionAndUnsortedSliceRejected (0 ms)
+[----------] 5 tests from ReviewR1_Codec (0 ms total)
+
+[----------] 3 tests from ReviewR1_Compatibility
+[ RUN      ] ReviewR1_Compatibility.MissingIdentitiesCannotFullHit
+[       OK ] ReviewR1_Compatibility.MissingIdentitiesCannotFullHit (0 ms)
+[ RUN      ] ReviewR1_Compatibility.PreviewCannotFullHit
+[       OK ] ReviewR1_Compatibility.PreviewCannotFullHit (0 ms)
+[ RUN      ] ReviewR1_Compatibility.CheckpointKeyMustMatchRequestedEvaluator
+[       OK ] ReviewR1_Compatibility.CheckpointKeyMustMatchRequestedEvaluator (0 ms)
+[----------] 3 tests from ReviewR1_Compatibility (0 ms total)
+
+[----------] 2 tests from ReviewR1_AdditionalProfile
+[ RUN      ] ReviewR1_AdditionalProfile.DuplicateSingleDomainRejected
+[       OK ] ReviewR1_AdditionalProfile.DuplicateSingleDomainRejected (0 ms)
+[ RUN      ] ReviewR1_AdditionalProfile.RequiredListRejectsSuggestedClass
+[       OK ] ReviewR1_AdditionalProfile.RequiredListRejectsSuggestedClass (0 ms)
+[----------] 2 tests from ReviewR1_AdditionalProfile (0 ms total)
+
+[----------] 2 tests from ReviewR1_AdditionalProof
+[ RUN      ] ReviewR1_AdditionalProof.EmptyPreconditionsRejected
+[       OK ] ReviewR1_AdditionalProof.EmptyPreconditionsRejected (0 ms)
+[ RUN      ] ReviewR1_AdditionalProof.EmptyClaimAndSubjectRejected
+[       OK ] ReviewR1_AdditionalProof.EmptyClaimAndSubjectRejected (0 ms)
+[----------] 2 tests from ReviewR1_AdditionalProof (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalSnapshot
+[ RUN      ] ReviewR1_AdditionalSnapshot.ConfigIdentityComputedFromBytes
+[       OK ] ReviewR1_AdditionalSnapshot.ConfigIdentityComputedFromBytes (0 ms)
+[----------] 1 test from ReviewR1_AdditionalSnapshot (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalSlice
+[ RUN      ] ReviewR1_AdditionalSlice.ConfigurationMustBelongToSnapshot
+[       OK ] ReviewR1_AdditionalSlice.ConfigurationMustBelongToSnapshot (0 ms)
+[----------] 1 test from ReviewR1_AdditionalSlice (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalEnvelope
+[ RUN      ] ReviewR1_AdditionalEnvelope.UnknownModeRejected
+[       OK ] ReviewR1_AdditionalEnvelope.UnknownModeRejected (0 ms)
+[----------] 1 test from ReviewR1_AdditionalEnvelope (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalEvaluator
+[ RUN      ] ReviewR1_AdditionalEvaluator.UnknownSupportedModeRejected
+[       OK ] ReviewR1_AdditionalEvaluator.UnknownSupportedModeRejected (0 ms)
+[----------] 1 test from ReviewR1_AdditionalEvaluator (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalVerdict
+[ RUN      ] ReviewR1_AdditionalVerdict.EmptyDomainResultsAreNotComplete
+[       OK ] ReviewR1_AdditionalVerdict.EmptyDomainResultsAreNotComplete (0 ms)
+[----------] 1 test from ReviewR1_AdditionalVerdict (0 ms total)
+
+[----------] 2 tests from ReviewR1_ReviewChain
+[ RUN      ] ReviewR1_ReviewChain.MissingProofPreconditionsCannotQualifyAsFormalReview
+[       OK ] ReviewR1_ReviewChain.MissingProofPreconditionsCannotQualifyAsFormalReview (0 ms)
+[ RUN      ] ReviewR1_ReviewChain.InvalidIndependentSnapshotBytesCannotProduceFrozenSlice
+[       OK ] ReviewR1_ReviewChain.InvalidIndependentSnapshotBytesCannotProduceFrozenSlice (0 ms)
+[----------] 2 tests from ReviewR1_ReviewChain (0 ms total)
+
+[----------] 1 test from ReviewR1_Slice
+[ RUN      ] ReviewR1_Slice.InactiveConfigurationDoesNotRequireSnapshotReference
+[       OK ] ReviewR1_Slice.InactiveConfigurationDoesNotRequireSnapshotReference (0 ms)
+[----------] 1 test from ReviewR1_Slice (0 ms total)
+
+[----------] 1 test from ReviewR1_Evidence
+[ RUN      ] ReviewR1_Evidence.EveryMissingInstanceIsListed
+[       OK ] ReviewR1_Evidence.EveryMissingInstanceIsListed (0 ms)
+[----------] 1 test from ReviewR1_Evidence (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 37 tests from 18 test suites ran. (1 ms total)
+[  PASSED  ] 37 tests.

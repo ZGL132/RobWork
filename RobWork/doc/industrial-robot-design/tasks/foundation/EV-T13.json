@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "evidence首轮评审整改：证据门禁、输入身份与兼容消费边界",
-  "status": "ready",
+  "status": "done",
   "branch": "codex/core-review-fixes",
   "dependsOn": [],
   "requirements": [

@@ -65,3 +65,7 @@ core 的 ContentDigester 仍是唯一摘要供给；前序 core 修复未改。t
 EV-T13 保持 ready、实施待所有者另会话独验；REUSE-T47、历史验收与治理批准零改动。独验须核对本包起始 SHA 至实施提交的显式范围、真实公共入口、v1/v2字节、接纳归档与恢复对端以及门禁原始输出，不能只复用本轮自查判定。全库 DeepEvidence、无关单元完整测试及远程同步均 NOT RUN。
 
 在所列版本、范围和已执行验证内，未发现其他问题。
+
+## 独立验收（2026-10-27）
+
+所有者另开独立会话验收 **PASS**，登记于 [acceptance/EV-T13-20261027-r1.json](../acceptance/EV-T13-20261027-r1.json)（证据同目录），范围显式 `-Base 4c5e4301f -Head 4afdc201a`（109 路径允许面）。独立会话受影响目标增量重建后真实重跑：evidence 245／契约 14／execution 接纳检查点缓存 49（终态）＋错键 3（2 重叠）＋CacheJudge 契约 3／optimization 检查点恢复 7／同版本恢复性能基准 1（24.8s，metrics=80800 与完整参照 maxRelDiff=0 bitwise=true）／独立冒烟 37＋14 全部 decisive 零失败；ird_gates 零命中、validate-docs 三段 PASS、commit-lint PASS。v1/v2 身份分域、显式评估键贯穿、非规范字节拒绝与实例级清单核对经源码 diff 与真实子进程/对端测试核对。REUSE-T47 与 F-056/F-061/F-067 保持原状，关口归所有者。

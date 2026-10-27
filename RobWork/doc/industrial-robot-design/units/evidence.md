@@ -2,7 +2,7 @@
 
 > 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
-> EV-T13（2026-10-27，实施待独验）：修复首轮审查 E01～E10。当前接口补充见本节与 §4.2/§5.1；完整红绿灯、迁移/回滚及边界见 [实施记录](../traceability/evidence-review-r1/README.md)。REUSE-T47 仍是既有职责审计，不据此关闭或代替本轮独验。
+> EV-T13（2026-10-27，独立验收 PASS，[验收记录](../traceability/acceptance/EV-T13-20261027-r1.json)）：修复首轮审查 E01～E10。当前接口补充见本节与 §4.2/§5.1；完整红绿灯、迁移/回滚及边界见 [实施记录](../traceability/evidence-review-r1/README.md)。REUSE-T47 仍是既有职责审计，不据此关闭或代替。
 
 SA-19 重申本单元是 L2 承重墙：零 Qt、无调度/项目写入副作用；业务保留 EvaluationOutput 的 evidence/proof/searchRecord/verdictInputs/payload/结构化 diagnostics 与 provenance，统一经 aggregateVerdict / ResultEnvelope::make，不另造结果包络或归并语义。
 
