@@ -414,7 +414,7 @@
       "search": {
         "command": "rg -n \"initPhysics|step|load\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-        "conclusion": "已读公共接口；适配等价性仍须REUSE-T01验证"
+        "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09，A3 按 REUSE-T31 提案执行）：PhysicsEngine 公共接口（initPhysics/step/load）经 sdurwsim_ode 实体后端真实消费在案；生产消费与四段证据见 traceability/reuse/REUSE-T53/（normal 119＋oracle 解析基准/确定性/负载共源＋upstreamComparison 同 XML 绑定写明＋disconnected 力通道去除真失败复验）"
       },
       "boundary": "真实场景、后端、初态/力/步长/确定性",
       "upstream": [
@@ -439,6 +439,14 @@
       },
       "usages": [
         {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "construct"
+          ]
+        },
+        {
           "consumerUnit": "dynamics",
           "usageRole": "adapter",
           "permissionRef": "ARCH:3.6",
@@ -448,19 +456,24 @@
         }
       ],
       "limits": {
-        "semantics": "真实场景、后端、初态/力/步长/确定性",
-        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
-        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+        "semantics": "真实场景、后端、初态/力/步长/确定性；REUSE-T53 消费边界薄适配（GAP-FD-BUILD-01 提案，A3 裁决）——FD 检查经 runtime::buildFdEngineSession 受控会话驱动 ODESimulator（sdurwsim_ode）；上游适配差异六项（力控仅转动→移动关节 fail-fast／关节摩擦死代码→声明三元组逐子步补偿／初速不回种→伺服播种／基座帧身份→载体挂链＋重名前缀／零几何 FixedBody→占位球／读回钳制差异→限速承载）逐项在 changes/REUSE-T53.json 登记，零上游改动",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话；引擎会话物化归 runtime 公共工厂（模型构造权归 runtime），会话 RAII exitPhysics，业务侧只持 move-only 受控句柄（拷贝类型层禁止）",
+        "determinism": "REUSE-T53 实测：DynForward.DeterministicRepeat_NFR_COR_02 同输入双跑逐位一致（traceability/reuse/REUSE-T53/production/oracle.xml 在案）；引擎固定步进 ode-fixed 词表、无随机源依赖"
       },
       "ownerUnit": "dynamics",
       "examples": [],
       "docs": [],
       "operations": [
-        "query"
+        "query",
+        "construct"
       ],
       "review": {
-        "status": "candidate",
-        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        "status": "verified",
+        "version": "011f45ab8cb8fd2970be892933c87d48fae09186",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/suitability.md",
+          "sha256": "9a934d52d7070e7ad36f015595e69cecd75437bcfd8fbb74c8be6538c55bc54a"
+        }
       },
       "tests": [
         {
@@ -475,7 +488,7 @@
       ],
       "resourceSearch": {
         "command": "rg -n \"initPhysics|step|load\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
+        "conclusion": "已核对所列资源（PhysicsEngineTest 绑定在案）；REUSE-T01 首批公共API探测与 REUSE-T31 定向供给探测（GAP-FD-BUILD-01）见 traceability/reuse/对应目录；verified 升档依据＝traceability/reuse/REUSE-T53/suitability.md"
       }
     },
     {

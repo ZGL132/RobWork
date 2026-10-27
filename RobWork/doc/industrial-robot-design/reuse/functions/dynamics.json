@@ -978,6 +978,142 @@
         "sha256": "e9f8da94cbc194bfd57889cdf4f99a4ca7ffd2cb2a657014d89b83e27a4583d5",
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp"
       }
+    },
+    {
+      "functionId": "dynamics.fd.evaluate.core",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01",
+        "DYN-05"
+      ],
+      "sources": [
+        {
+          "endLine": 801,
+          "symbol": "ForwardDynamicsValidator::validate",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+          "sha256": "f6951c8475aaa0a374511c77524bb38af881a882d43d3031fce5802e2d66ccff",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "DYN-FD",
+      "decision": "adapter",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09，A3 按 REUSE-T31 提案）：ODE 引擎会话真实消费路径在案（buildFdEngineSession/setForceTargets/step），旧自持核符号断开由边界契约测试两向钉扎；本区段语义与职责见 differences",
+        "command": "rg -n \"buildFdEngineSession|setForceTargets|session\\.step|ForwardDynamicsValidator|solveLinearSystem|callRneaSample\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp"
+      },
+      "differences": "WP-09 换核（全文件解决批，changes/REUSE-T53.json 凭证同源）：旧自持核删除全清单（callRneaSample M 提取消费／solveLinearSystem 部分主元消元／RK4 四阶段／massFlat 等重复状态／kSingularPivotRelative）；正向仿真改 runtime::buildFdEngineSession 受控会话（τ_ref 采样保持＋变体重建会话＋逐子步发散检测）；公共输入/结果/单位/错误语义保留（四态判定/诊断码面/F-581 游标）；法兰组合合成与 RNE composeFlangeVariant 同式镜像（T52 镜像先例，合并归后续卫生批）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "f6951c8475aaa0a374511c77524bb38af881a882d43d3031fce5802e2d66ccff",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp"
+      },
+      "production": {
+        "upstream": "step",
+        "consumer": "ForwardDynamicsValidator::validate",
+        "target": "sdurws_ird_dynamics",
+        "entry": "ForwardDynamicsValidator::validate"
+      },
+      "evidence": {
+        "sha256": "f9a96188b1c53ab85b609baff4e69276c04b968c789b57efd6c07838c0b36cae",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/production-fd-evaluate.json"
+      }
+    },
+    {
+      "functionId": "dynamics.fd.test.suite",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01",
+        "DYN-05"
+      ],
+      "sources": [
+        {
+          "endLine": 740,
+          "symbol": "DynForward",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/ForwardDynamicsTest.cpp",
+          "sha256": "ddb6bff4946bbbaee602082796e28ae2acd04c7793d6a8bd310e529957fd0556",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::DynForward"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09，A3 按 REUSE-T31 提案）：13 用例 ODE 域适配（断言零放松——解析界按引擎实测钉扎）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"TEST\\(DynForward|AnalyticStraight|DeterministicRepeat|PayloadEventSameSource|buildFdEngineSession\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/ForwardDynamicsTest.cpp"
+      },
+      "differences": "测试面（REUSE-T53 换核批同款形态，13 用例全数承载于 production 四象限证据）：解析基准（伸直构型匀加速解析界）、确定性（同输入双跑逐位）、负载事件共源重建＝oracle 组；发散/奇异物性/FailFast/长度失配＝负例面；NotRun/NotApplicable/Cancelled＝四态判定面；断言零放松（changes/REUSE-T53.json 凭证同源）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "ddb6bff4946bbbaee602082796e28ae2acd04c7793d6a8bd310e529957fd0556",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/ForwardDynamicsTest.cpp"
+      }
+    },
+    {
+      "functionId": "dynamics.fd.test.fixture",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01",
+        "DYN-05"
+      ],
+      "sources": [
+        {
+          "endLine": 328,
+          "symbol": "makeTwoLinkModel",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+          "sha256": "12fd35dfc75c30024c40ca2ddcd11d6b9f7697617ce191b25321dd44309260f7",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::makeTwoLinkModel"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09）：makeTwoLinkModel 增 provideBasePhysics 缺省参数（FD 引擎会话物性门控——RNE 既有用例缺省 false 零数值影响）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"makeTwoLinkModel|provideBasePhysics|CanonicalModel\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp"
+      },
+      "differences": "测试夹具（两连杆权威模型构造）：FD 引擎会话物性门控要求全连杆齐备→provideBasePhysics 缺省参数增列；RNE 递推不消费基座物性，缺省 false 既有 RNE 用例模型形态零变化零数值影响（changes/REUSE-T53.json 凭证同源）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "12fd35dfc75c30024c40ca2ddcd11d6b9f7697617ce191b25321dd44309260f7",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp"
+      }
     }
   ]
 }

@@ -9094,6 +9094,96 @@
       "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd",
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
     }
+  },
+  {
+    "functionId": "runtime.fd.session.contract",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "DYN-01",
+      "DYN-05"
+    ],
+    "sources": [
+      {
+        "symbol": "FdEngineSession",
+        "qualifiedSymbol": "sdurws::ird::runtime::FdEngineSession",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp",
+        "startLine": 1,
+        "sha256": "de57acd48234314f3ad27b8fcd40e58f8f04b73a43d6553bd2f93e383f8d7517",
+        "endLine": 223
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "business-specific",
+    "status": "migrated",
+    "search": {
+      "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09，A3 按 REUSE-T31 提案）：ODE 引擎会话公共契约（move-only 受控句柄/FdFlangeOverride 值面/适配差异登记）在案；本区段语义与职责见 differences",
+      "command": "rg -n \"FdEngineSession|FdFlangeOverride|buildFdEngineSession|initPhysics|step\\(\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp"
+    },
+    "differences": "FD 受控引擎会话公共契约头（GAP-FD-BUILD-01 §2 runtime 承接面——业务只提交 SI 广义力/步长，不接触引擎实现类；T52 RNE 契约头行同款形态）：会话 API＋FdFlangeOverride 值面＋适配差异与所有权/生命周期契约注释；move-only（拷贝即共享引擎实例——类型层禁止）；上游无对应物（runtime 侧产品职责），nonOverlap＝会话编排契约为产品语义非上游 API",
+    "inputs": [
+      {
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
+      }
+    ],
+    "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+    "nonOverlapEvidence": {
+      "sha256": "de57acd48234314f3ad27b8fcd40e58f8f04b73a43d6553bd2f93e383f8d7517",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp"
+    }
+  },
+  {
+    "functionId": "runtime.fd.session.factory",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "DYN-01",
+      "DYN-05"
+    ],
+    "sources": [
+      {
+        "symbol": "buildFdEngineSession",
+        "qualifiedSymbol": "sdurws::ird::runtime::buildFdEngineSession",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp",
+        "startLine": 1,
+        "sha256": "16ab18d0fb14247411422b1b670d6531f62e75cdc30f131d8e70ad9b351b5ee6",
+        "endLine": 561
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "DYN-FD",
+    "decision": "adapter",
+    "status": "migrated",
+    "search": {
+      "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09，A3 按 REUSE-T31 提案）：PhysicsEngine 公共接口（initPhysics/step/load）经 ODESimulator/sdurwsim_ode 真实构造与推进在案；本区段语义与职责见 differences",
+      "command": "rg -n \"initPhysics|step\\(|load\\(|ODESimulator|setGravity|setMotorForceTargets\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp"
+    },
+    "differences": "引擎会话工厂实现（runtime 唯一模型 owner 构造面——2026-10-26 构造面上收裁决同墙复利）：会话私有载体复用 buildRneConsumptionDevice（H1，其公共头预留 WP-09）＋WorkCell(tree) 载体 StateStructure＋ODESimulator（sdurwsim_ode，H1 直接 API）装配；上游适配差异六项为消费边界适配零上游改动（力控仅转动→移动关节 fail-fast／关节摩擦死代码→声明三元组逐子步补偿／初速度不传→Velocity 伺服单子步播种／设备基座帧身份＋父体回溯沿帧链→载体体挂链帧＋重名前缀设备／零几何 FixedBody 越界→基座占位球／设备读回钳制→1e300 限速承载读回不钳制）；RNE 载体 BodyInfo 关节帧表达 vs ODE 体承载帧解释→FD 会话按规范值直写（适配差异 6）；gravityBase 经 R_world_base 投影世界系显式设值（旧 request.gravityBase 治理语义保留）；会话 RAII exitPhysics；断开实验＝step 内驱动输入通道去除→dynamics 解析基准真实失败",
+    "inputs": [
+      {
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
+      }
+    ],
+    "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+    "production": {
+      "target": "sdurws_ird_runtime",
+      "upstream": "initPhysics",
+      "consumer": "buildFdEngineSession",
+      "entry": "buildFdEngineSession"
+    },
+    "evidence": {
+      "sha256": "429ca5286e12d0c7838a92ecb7478784f170e44452f747cce75b9402693e95c3",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/production/production-runtime-fd-session.json"
+    }
   }
   ]
 }

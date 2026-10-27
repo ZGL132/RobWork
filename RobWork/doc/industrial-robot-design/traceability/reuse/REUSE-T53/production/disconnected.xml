@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.065" timestamp="2026-10-27T08:07:20.523" name="AllTests">
+  <testsuite name="DynForward" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.065" timestamp="2026-10-27T08:07:20.523">
+    <testcase name="AnalyticStraightConfigurationPassed_DYN05" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp" line="282" status="run" result="completed" time="0.065" timestamp="2026-10-27T08:07:20.523" classname="DynForward">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp:244&#x0A;Expected equality of these values:&#x0A;  o.state&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;  DynamicsValidity::ForwardCheckState::Passed&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp:244
+Expected equality of these values:
+  o.state
+    Which is: 4-byte object <02-00 00-00>
+  DynamicsValidity::ForwardCheckState::Passed
+    Which is: 4-byte object <01-00 00-00>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp:303&#x0A;Expected: (o.maxErrQ) &lt; (2.5e-4), actual: 0.062402579852143703 vs 0.00025&#x0A;max|e_q| 解析上界（ODE 一阶离散 α·t_end·h）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp:303
+Expected: (o.maxErrQ) < (2.5e-4), actual: 0.062402579852143703 vs 0.00025
+max|e_q| 解析上界（ODE 一阶离散 α·t_end·h）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp:304&#x0A;Expected: (o.maxErrQd) &lt; (1e-5), actual: 0.24999719785612151 vs 1e-05&#x0A;max|e_qd| 实测上界（rad/s——播种收敛残差＋上游 CFM=1e-3 关节软化底噪，2026-10-26 实测 4.7e-6）；&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp:304
+Expected: (o.maxErrQd) < (1e-5), actual: 0.24999719785612151 vs 1e-05
+max|e_qd| 实测上界（rad/s——播种收敛残差＋上游 CFM=1e-3 关节软化底噪，2026-10-26 实测 4.7e-6）；
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

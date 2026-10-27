@@ -1,0 +1,33 @@
+Note: Google Test filter = DynForward.AnalyticStraightConfigurationPassed_DYN05
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DynForward
+[ RUN      ] DynForward.AnalyticStraightConfigurationPassed_DYN05
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000001945F521710
+set motor 0 ird-rne/joint1 id: 000001945F5219F0
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp(244): error: Expected equality of these values:
+  o.state
+    Which is: 4-byte object <02-00 00-00>
+  DynamicsValidity::ForwardCheckState::Passed
+    Which is: 4-byte object <01-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp(303): error: Expected: (o.maxErrQ) < (2.5e-4), actual: 0.062402579852143703 vs 0.00025
+max|e_q| 瑙ｆ瀽涓婄晫锛圤DE 涓€闃剁鏁?伪路t_end路h锛?
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\ForwardDynamicsTest.cpp(304): error: Expected: (o.maxErrQd) < (1e-5), actual: 0.24999719785612151 vs 1e-05
+max|e_qd| 瀹炴祴涓婄晫锛坮ad/s鈥斺€旀挱绉嶆敹鏁涙畫宸紜涓婃父 CFM=1e-3 鍏宠妭杞寲搴曞櫔锛?026-10-26 瀹炴祴 4.7e-6锛夛紱
+
+[  FAILED  ] DynForward.AnalyticStraightConfigurationPassed_DYN05 (66 ms)
+[----------] 1 test from DynForward (66 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (66 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DynForward.AnalyticStraightConfigurationPassed_DYN05
+
+ 1 FAILED TEST

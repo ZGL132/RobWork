@@ -666,6 +666,61 @@
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
         "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
       }
+    },
+    {
+      "id": "REUSE-T53-FdEngineSession.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp",
+        "sha256": "16ab18d0fb14247411422b1b670d6531f62e75cdc30f131d8e70ad9b351b5ee6"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model",
+        "write-state"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1 既有 runtime 模型 owner（REUSE-T52 工厂授权同墙复利）：FD 引擎会话工厂——工厂调用期独占构造 StateStructure/WorkCell 载体与 ODESimulator（sdurwsim_ode）物理引擎（initPhysics/step/load），法兰组合替代承载 tool/负载，重力投影与摩擦补偿/力提交为受控写路径；载体所有权随 FdEngineSession 值移交调用方（task-private 消费，RAII exitPhysics）；上游适配差异六项零上游改动（changes/REUSE-T53.json 登记）；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
+    },
+    {
+      "id": "REUSE-T53-FdEngineSession.hpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp",
+        "sha256": "de57acd48234314f3ad27b8fcd40e58f8f04b73a43d6553bd2f93e383f8d7517"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1 runtime 模型 owner：FD 引擎会话公共契约头（move-only 受控句柄值面——零构造/零写入操作，所有权/生命周期语义见头注释；实现构造归同名 src 授权；REUSE-T52 契约头授权同款形态）。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      }
     }
   ]
 }
