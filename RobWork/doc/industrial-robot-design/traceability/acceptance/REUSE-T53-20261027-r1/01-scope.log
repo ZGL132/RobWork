@@ -1,0 +1,6 @@
+command: powershell -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T53.json -Base 1a25dd054109824c60609171a4e80397d95d5e22 -Head cb778a75a30a4d5df44ce5770cad043e66243e12
+exitCode: 0
+---
+verify-task-scope: REUSE-T53 base=1a25dd054109 head=cb778a75a30a changed=44 allowedRules=34 forbiddenRules=4
+verify-task-scope: PASS REUSE-T53 —— 44 个路径全部在允许面内
+exitCode2: 0
