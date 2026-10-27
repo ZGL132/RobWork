@@ -1,0 +1,261 @@
+Note: Google Test filter = *ReviewR*:*ReviewF*:Set*:StableOrder*:AssertMacrosBehavior.*:Json*:Dataset*:ToleranceProfile*:PerfBenchmark.*:ReproBenchmark.*
+[==========] Running 54 tests from 23 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07
+[       OK ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07 (4 ms)
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 3 tests from JsonRoundtrip (4 ms total)
+
+[----------] 1 test from JsonAccess
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 1 test from JsonAccess (0 ms total)
+
+[----------] 2 tests from JsonRejections
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 2 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+[       OK ] JsonErrorLocation.LineColumnPrecision_UT_JSON (0 ms)
+[----------] 1 test from JsonErrorLocation (0 ms total)
+
+[----------] 1 test from JsonUnicode
+[ RUN      ] JsonUnicode.EscapesToUtf8_UT_JSON
+[       OK ] JsonUnicode.EscapesToUtf8_UT_JSON (0 ms)
+[----------] 1 test from JsonUnicode (0 ms total)
+
+[----------] 1 test from JsonBoundary
+[ RUN      ] JsonBoundary.DumpOutputReparseable_UT_JSON
+[       OK ] JsonBoundary.DumpOutputReparseable_UT_JSON (0 ms)
+[----------] 1 test from JsonBoundary (0 ms total)
+
+[----------] 2 tests from DatasetManifest
+[ RUN      ] DatasetManifest.FullFieldLoad_UT_MAN
+[       OK ] DatasetManifest.FullFieldLoad_UT_MAN (25 ms)
+[ RUN      ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015
+[       OK ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015 (10 ms)
+[----------] 2 tests from DatasetManifest (35 ms total)
+
+[----------] 2 tests from DatasetIntegrity
+[ RUN      ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017
+[       OK ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017 (11 ms)
+[ RUN      ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT
+[       OK ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT (38 ms)
+[----------] 2 tests from DatasetIntegrity (50 ms total)
+
+[----------] 2 tests from DatasetRejections
+[ RUN      ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018
+[       OK ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018 (27 ms)
+[ RUN      ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN
+[       OK ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN (91 ms)
+[----------] 2 tests from DatasetRejections (119 ms total)
+
+[----------] 1 test from DatasetLint
+[ RUN      ] DatasetLint.DatasetIdDirMismatch_UT_MAN
+[       OK ] DatasetLint.DatasetIdDirMismatch_UT_MAN (21 ms)
+[----------] 1 test from DatasetLint (21 ms total)
+
+[----------] 5 tests from ToleranceProfileLoad
+[ RUN      ] ToleranceProfileLoad.SampleProfileResolveThreeStates_UT_TOL
+[       OK ] ToleranceProfileLoad.SampleProfileResolveThreeStates_UT_TOL (0 ms)
+[ RUN      ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05
+[       OK ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05 (5 ms)
+[ RUN      ] ToleranceProfileLoad.DeclaredExceedingAllowedMaxRejected_UT_TOL
+[       OK ] ToleranceProfileLoad.DeclaredExceedingAllowedMaxRejected_UT_TOL (10 ms)
+[ RUN      ] ToleranceProfileLoad.FixedRequiresAllowedMax_UT_TOL
+[       OK ] ToleranceProfileLoad.FixedRequiresAllowedMax_UT_TOL (16 ms)
+[ RUN      ] ToleranceProfileLoad.SourceWhitelistAndKindMismatch_UT_TOL
+[       OK ] ToleranceProfileLoad.SourceWhitelistAndKindMismatch_UT_TOL (35 ms)
+[----------] 5 tests from ToleranceProfileLoad (68 ms total)
+
+[----------] 1 test from ToleranceProfileC7
+[ RUN      ] ToleranceProfileC7.CrossCheckWithCore_UT_TOL
+[       OK ] ToleranceProfileC7.CrossCheckWithCore_UT_TOL (0 ms)
+[----------] 1 test from ToleranceProfileC7 (0 ms total)
+
+[----------] 2 tests from AssertMacrosBehavior
+[ RUN      ] AssertMacrosBehavior.MacroExpansionWorks_UT_CMP
+[       OK ] AssertMacrosBehavior.MacroExpansionWorks_UT_CMP (0 ms)
+[ RUN      ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02
+[       OK ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02 (0 ms)
+[----------] 2 tests from AssertMacrosBehavior (0 ms total)
+
+[----------] 3 tests from SetEquivalent
+[ RUN      ] SetEquivalent.OrderIndependentEquivalent_UT_SET
+[       OK ] SetEquivalent.OrderIndependentEquivalent_UT_SET (0 ms)
+[ RUN      ] SetEquivalent.IdentityValueMismatchLocated_UT_SET
+[       OK ] SetEquivalent.IdentityValueMismatchLocated_UT_SET (0 ms)
+[ RUN      ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01
+[       OK ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01 (0 ms)
+[----------] 3 tests from SetEquivalent (0 ms total)
+
+[----------] 2 tests from StableOrder
+[ RUN      ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11
+[       OK ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11 (0 ms)
+[ RUN      ] StableOrder.SameOrderAndFirstDivergence_UT_ORD
+[       OK ] StableOrder.SameOrderAndFirstDivergence_UT_ORD (0 ms)
+[----------] 2 tests from StableOrder (0 ms total)
+
+[----------] 2 tests from SetDuplicates
+[ RUN      ] SetDuplicates.ActualDuplicateIdentity_UT_SET
+[       OK ] SetDuplicates.ActualDuplicateIdentity_UT_SET (0 ms)
+[ RUN      ] SetDuplicates.ExpectedDuplicateThrows_UT_SET
+[       OK ] SetDuplicates.ExpectedDuplicateThrows_UT_SET (0 ms)
+[----------] 2 tests from SetDuplicates (0 ms total)
+
+[----------] 8 tests from SetNumeric
+[ RUN      ] SetNumeric.NumericOnlyMatching_UT_SET
+[       OK ] SetNumeric.NumericOnlyMatching_UT_SET (0 ms)
+[ RUN      ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET
+[       OK ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET (0 ms)
+[ RUN      ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594
+[       OK ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594 (0 ms)
+[ RUN      ] SetNumeric.TrueAmbiguityStillDetected_F594
+[       OK ] SetNumeric.TrueAmbiguityStillDetected_F594 (0 ms)
+[ RUN      ] SetNumeric.GreedyTrapAugmented_UT_SET
+[       OK ] SetNumeric.GreedyTrapAugmented_UT_SET (0 ms)
+[ RUN      ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET
+[       OK ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET (0 ms)
+[ RUN      ] SetNumeric.ToleranceCacheIsAssertionLocal_UT_SET
+[       OK ] SetNumeric.ToleranceCacheIsAssertionLocal_UT_SET (0 ms)
+[ RUN      ] SetNumeric.ToleranceResolutionRemainsLazy_UT_SET
+[       OK ] SetNumeric.ToleranceResolutionRemainsLazy_UT_SET (0 ms)
+[----------] 8 tests from SetNumeric (0 ms total)
+
+[----------] 1 test from SetGuard
+[ RUN      ] SetGuard.ScaleLimitThrows_UT_SET
+[       OK ] SetGuard.ScaleLimitThrows_UT_SET (1 ms)
+[----------] 1 test from SetGuard (1 ms total)
+
+[----------] 2 tests from SetMatchCore
+[ RUN      ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET
+[       OK ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET (2 ms)
+[ RUN      ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET
+[       OK ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET (113 ms)
+[----------] 2 tests from SetMatchCore (116 ms total)
+
+[----------] 5 tests from ReproBenchmark
+[ RUN      ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1
+[       OK ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1 (1 ms)
+[ RUN      ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp(205): error: Expected equality of these values:
+  v.missingExpected
+    Which is: 1
+  2U
+    Which is: 2
+rerun
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp(206): error: Expected equality of these values:
+  v.extraActual
+    Which is: 1
+  2U
+    Which is: 2
+rerun
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp(205): error: Expected equality of these values:
+  v.missingExpected
+    Which is: 1
+  2U
+    Which is: 2
+threads-4
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp(206): error: Expected equality of these values:
+  v.extraActual
+    Which is: 1
+  2U
+    Which is: 2
+threads-4
+
+[  FAILED  ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2 (1 ms)
+[ RUN      ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3
+[       OK ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3 (1 ms)
+[ RUN      ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1 (0 ms)
+[ RUN      ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1 (12 ms)
+[----------] 5 tests from ReproBenchmark (16 ms total)
+
+[----------] 5 tests from PerfBenchmark
+[ RUN      ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12
+[       OK ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12 (0 ms)
+[ RUN      ] PerfBenchmark.P95LinearInterpolationKnownVectors_WP23T02_ACC1
+[       OK ] PerfBenchmark.P95LinearInterpolationKnownVectors_WP23T02_ACC1 (0 ms)
+[ RUN      ] PerfBenchmark.WarmupExcludedAndInvalidSamplesTraced_WP23T02_ACC1
+[       OK ] PerfBenchmark.WarmupExcludedAndInvalidSamplesTraced_WP23T02_ACC1 (63 ms)
+[ RUN      ] PerfBenchmark.SessionReportJsonRoundtrip_WP23T02_ACC1
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=1): meta: injected failure
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=2): meta: injected failure
+[       OK ] PerfBenchmark.SessionReportJsonRoundtrip_WP23T02_ACC1 (0 ms)
+[ RUN      ] PerfBenchmark.SessionReportFileWriteRoundtrip_WP23T02_ACC1
+[       OK ] PerfBenchmark.SessionReportFileWriteRoundtrip_WP23T02_ACC1 (20 ms)
+[----------] 5 tests from PerfBenchmark (84 ms total)
+
+[----------] 1 test from ProcessRunnerStart
+[ RUN      ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08
+[       OK ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08 (19 ms)
+[----------] 1 test from ProcessRunnerStart (19 ms total)
+
+[----------] 1 test from TestdataLint
+[ RUN      ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/90184-lint-contract-c4bc9d95f6de8b42\data\requirements-ids.json）
+lint-ok: pol-collision-analytic/1.0.0
+lint: 扫描 1 个数据集版本，违规 0
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/90184-lint-contract-c4bc9d95f6de8b42\data\requirements-ids.json）
+lint-fail: pol-collision-analytic/1.0.0: dataset-invalid: dataset-invalid: 档案文件不存在: C:\Users\zgl18\AppData\Local\Temp\ird-test/90184-lint-contract-c4bc9d95f6de8b42\data\tolerance\pol-analytic\v1.0.0.json
+lint: 扫描 1 个数据集版本，违规 1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(297): error: Expected equality of these values:
+  result.kind
+    Which is: 4-byte object <01-00 00-00>
+  ProcessExitKind::Exited
+    Which is: 4-byte object <00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(302): error: Expected equality of these values:
+  run()
+    Which is: 0
+  1
+
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/90184-lint-contract-c4bc9d95f6de8b42\data\requirements-ids.json）
+lint-fail: pol-collision-analytic/1.0.0: coveredAt ID 不在字典: AT-999
+lint: 扫描 1 个数据集版本，违规 1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(297): error: Expected equality of these values:
+  result.kind
+    Which is: 4-byte object <01-00 00-00>
+  ProcessExitKind::Exited
+    Which is: 4-byte object <00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(312): error: Expected equality of these values:
+  run()
+    Which is: 0
+  1
+
+lint-fail: dataset-invalid: lint 字典 schemaVersion/ids 非法
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(297): error: Expected equality of these values:
+  result.kind
+    Which is: 4-byte object <01-00 00-00>
+  ProcessExitKind::Exited
+    Which is: 4-byte object <00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(314): error: Expected equality of these values:
+  run()
+    Which is: 0
+  1
+
+[  FAILED  ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09 (205 ms)
+[----------] 1 test from TestdataLint (205 ms total)
+
+[----------] Global test environment tear-down
+[==========] 54 tests from 23 test suites ran. (745 ms total)
+[  PASSED  ] 52 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2
+[  FAILED  ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09
+
+ 2 FAILED TESTS

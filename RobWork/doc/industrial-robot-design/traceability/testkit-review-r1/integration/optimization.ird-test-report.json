@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1",
+      "requirementIds": [
+        "OPT-01",
+        "OPT-02",
+        "OPT-06",
+        "NFR-COR-01",
+        "NFR-COR-02"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": {
+        "id": "opt-lhs-golden",
+        "version": "1.0.0"
+      },
+      "toleranceProfile": "opt-golden@1.0.0",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "opt-lhs-golden",
+          "version": "1.0.0"
+        },
+        "toleranceProfile": "opt-golden@1.0.0",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 3
+    },
+    {
+      "testId": "OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1",
+      "requirementIds": [
+        "OPT-03",
+        "OPT-04",
+        "OPT-06",
+        "OPT-07",
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": {
+        "id": "opt-pareto-golden",
+        "version": "1.0.0"
+      },
+      "toleranceProfile": "opt-golden@1.0.0",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "opt-pareto-golden",
+          "version": "1.0.0"
+        },
+        "toleranceProfile": "opt-golden@1.0.0",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 3
+    }
+  ]
+}

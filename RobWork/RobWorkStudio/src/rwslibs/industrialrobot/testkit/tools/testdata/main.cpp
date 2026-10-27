@@ -9,7 +9,7 @@
  *
  * 用法（仓库根）：
  *   sdurws_ird_testdata_lint [--root <testdata 目录>] [--dict <requirements-ids.json>]
- * 缺省：root＝SDURWS_IRD_TESTDATA_DIR 环境变量/编译默认；dict＝<root>/../requirements-ids.json
+ * 缺省：root＝SDURWS_IRD_TESTDATA_DIR 环境变量/编译默认；dict＝<root>/requirements-ids.json
  *
  * 退出码：0＝全部通过；1＝存在违规（逐条输出）；2＝环境错误（目录缺失等）。
  */
@@ -17,6 +17,7 @@
 #include <sdurws/ird/testkit/Dataset.hpp>
 #include <sdurws/ird/testkit/JsonLite.hpp>
 #include <sdurws/ird/testkit/TestPaths.hpp>
+#include <sdurws/ird/testkit/ToleranceProfile.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -45,16 +46,25 @@ std::set<std::string> loadIdDict(const fs::path& dictPath)
     std::ostringstream ss;
     ss << in.rdbuf();
     const JsonValue root = parseJson(ss.str());
+    const auto* schema = root.find("schemaVersion");
+    const auto* entries = root.find("ids");
+    if (!root.isObject() || schema == nullptr || !schema->isString()
+        || schema->text != "ird-requirements-ids/1"
+        || entries == nullptr || !entries->isArray()) {
+        throw TestKitError(TestKitErrorKind::DatasetInvalid, "lint 字典 schemaVersion/ids 非法");
+    }
     std::set<std::string> ids;
-    for (const auto& id : root.find("ids")->items) {
-        ids.insert(id.text);
+    for (const auto& id : entries->items) {
+        if (!id.isString() || id.text.empty() || !ids.insert(id.text).second) {
+            throw TestKitError(TestKitErrorKind::DatasetInvalid, "lint 字典 ID 非字符串、空或重复");
+        }
     }
     return ids;
 }
 
 }  // namespace
 
-int main(int argc, char** argv)
+int main(int argc, char** argv) try
 {
     std::string rootArg;
     std::string dictArg;
@@ -81,9 +91,9 @@ int main(int argc, char** argv)
         return 2;
     }
 
-    // 字典缺省路径＝<root>/../requirements-ids.json（testdata 根平铺）。
+    // 字典属于 testdata 根，默认与显式路径必须消费同一文件（F-016）。
     const fs::path dictPath = dictArg.empty()
-        ? root.parent_path() / "requirements-ids.json" : fs::path{dictArg};
+        ? root / "requirements-ids.json" : fs::path{dictArg};
     const auto dict = loadIdDict(dictPath);
     std::cout << "lint: 字典 " << dict.size() << " 个需求 ID（" << dictPath.string() << "）\n";
 
@@ -100,11 +110,22 @@ int main(int argc, char** argv)
             const auto failuresBefore = failures;
             try {
                 const GoldenDataset ds = GoldenDataset::load({dirName, version});
+                // 引用必须真正装载：只检查 manifest 中的档案名不能证明容差可用。
+                const auto& manifest = ds.manifest();
+                (void)ToleranceProfile::load(root / "tolerance" / manifest.toleranceProfileId
+                                             / ("v" + manifest.toleranceProfileVersion + ".json"));
                 // lint：coveredRequirements 逐项对字典校验（TK-MAN 反例"需求 ID 不在字典"）。
                 for (const auto& req : ds.manifest().coveredRequirements) {
                     if (dict.count(req) == 0) {
                         std::cerr << "lint-fail: " << dirName << "/" << version
                                   << ": coveredRequirements ID 不在字典: " << req << "\n";
+                        ++failures;
+                    }
+                }
+                for (const auto& at : manifest.coveredAt) {
+                    if (dict.count(at) == 0) {
+                        std::cerr << "lint-fail: " << dirName << "/" << version
+                                  << ": coveredAt ID 不在字典: " << at << "\n";
                         ++failures;
                     }
                 }
@@ -122,4 +143,12 @@ int main(int argc, char** argv)
 
     std::cout << "lint: 扫描 " << scanned << " 个数据集版本，违规 " << failures << "\n";
     return failures == 0 ? 0 : 1;
+}
+catch (const TestKitError& e) {
+    std::cerr << "lint-fail: " << e.what() << "\n";
+    return e.kind() == TestKitErrorKind::EnvUnavailable ? 2 : 1;
+}
+catch (const fs::filesystem_error& e) {
+    std::cerr << "lint-env: " << e.what() << "\n";
+    return 2;
 }

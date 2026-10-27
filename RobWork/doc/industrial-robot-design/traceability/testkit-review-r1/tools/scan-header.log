@@ -1,0 +1,3 @@
+ird-install-scan: FAIL（2 处命中——分发红线违规）
+  HIT  C:\Users\zgl18\AppData\Local\Temp\ird-testkit-tools-li7di_so\header\include\sdurws\ird\testkit  [命中: (^|/)include/sdurws/ird/testkit(/|$)]
+  HIT  C:\Users\zgl18\AppData\Local\Temp\ird-testkit-tools-li7di_so\header\include\sdurws\ird\testkit\Fixture.hpp  [命中: (^|/)include/sdurws/ird/testkit(/|$)]

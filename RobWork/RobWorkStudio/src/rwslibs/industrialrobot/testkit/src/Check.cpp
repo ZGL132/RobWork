@@ -67,7 +67,7 @@ CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
     CheckResult result;
 
     // 长度不匹配：失败并列出缺失/额外索引（§4.3.3 表——非异常，测试失败级）。
-    // 缺失侧值以 NaN 占位（机器可读——非有限即显式缺失语义）。
+    // 保留旧数值占位以兼容数值视图；独立 present 标记区分缺失与实际 NaN。
     const std::size_t common = std::min(actualSi.size(), referenceSi.size());
     for (std::size_t i = 0; i < common; ++i) {
         // 逐元素 C4（防正负抵消——不以差值总和替代）。
@@ -91,6 +91,8 @@ CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
                                          actualLonger ? 0.0 : longer[i], tolerance);
             d.actual = actualLonger ? longer[i] : std::nan("");
             d.expected = actualLonger ? std::nan("") : longer[i];
+            d.actualPresent = actualLonger;
+            d.expectedPresent = !actualLonger;
             result.failures.push_back(d);
             result.passed = false;
         }

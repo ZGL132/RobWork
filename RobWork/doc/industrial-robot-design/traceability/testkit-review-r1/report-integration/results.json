@@ -1,0 +1,156 @@
+[
+  {
+    "name": "Passes",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.Passes",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Passes.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Passes.json"
+    ],
+    "actualExit": 0,
+    "expected": "passed",
+    "status": "PASS",
+    "summary": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  {
+    "name": "Fails",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.Fails",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Fails.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Fails.json"
+    ],
+    "actualExit": 1,
+    "expected": "failed",
+    "status": "PASS",
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  {
+    "name": "Skips",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.Skips",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Skips.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Skips.json"
+    ],
+    "actualExit": 0,
+    "expected": "skipped",
+    "status": "PASS",
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  {
+    "name": "NonFiniteDetails_ReviewR03",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.NonFiniteDetails_ReviewR03",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\NonFiniteDetails_ReviewR03.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\NonFiniteDetails_ReviewR03.json"
+    ],
+    "actualExit": 1,
+    "expected": "failed",
+    "status": "PASS",
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  {
+    "name": "MissingActual_ReviewR03",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.MissingActual_ReviewR03",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingActual_ReviewR03.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingActual_ReviewR03.json"
+    ],
+    "actualExit": 1,
+    "expected": "failed",
+    "status": "PASS",
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  {
+    "name": "MissingExpected_ReviewR03",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.MissingExpected_ReviewR03",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingExpected_ReviewR03.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingExpected_ReviewR03.json"
+    ],
+    "actualExit": 1,
+    "expected": "failed",
+    "status": "PASS",
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  {
+    "name": "ExactSeed_ReviewR06",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.ExactSeed_ReviewR06",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\ExactSeed_ReviewR06.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\ExactSeed_ReviewR06.json"
+    ],
+    "actualExit": 0,
+    "expected": "passed",
+    "status": "PASS",
+    "summary": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  }
+]

@@ -185,7 +185,10 @@ inline std::string reproReportToJson(const ReproCaseReport& r)
     o.members.push_back({"caseId", jsonStr(r.caseId)});
     o.members.push_back({"domain", jsonStr(r.domain)});
     o.members.push_back({"inputProvenance", jsonStr(r.inputProvenance)});
-    o.members.push_back({"seed", jsonNum(static_cast<double>(r.repro.seed))});
+    JsonValue seed;
+    seed.kind = JsonValue::Kind::Number;
+    seed.number.setUnsigned(r.repro.seed);
+    o.members.push_back({"seed", std::move(seed)});
     o.members.push_back({"threadCount", jsonNum(static_cast<double>(r.repro.threadCount))});
     o.members.push_back({"softwareVersion", jsonStr(r.repro.softwareVersion)});
     o.members.push_back({"gitCommit", jsonStr(r.repro.gitCommit)});

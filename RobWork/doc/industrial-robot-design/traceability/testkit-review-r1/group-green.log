@@ -1,0 +1,67 @@
+Note: Google Test filter = *ReviewR*:*ReviewF*
+[==========] Running 11 tests from 11 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07
+[       OK ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07 (3 ms)
+[----------] 1 test from JsonRoundtrip (3 ms total)
+
+[----------] 1 test from DatasetManifest
+[ RUN      ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015
+[       OK ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015 (19 ms)
+[----------] 1 test from DatasetManifest (19 ms total)
+
+[----------] 1 test from DatasetIntegrity
+[ RUN      ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017
+[       OK ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017 (11 ms)
+[----------] 1 test from DatasetIntegrity (11 ms total)
+
+[----------] 1 test from DatasetRejections
+[ RUN      ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018
+[       OK ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018 (39 ms)
+[----------] 1 test from DatasetRejections (39 ms total)
+
+[----------] 1 test from ToleranceProfileLoad
+[ RUN      ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05
+[       OK ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05 (4 ms)
+[----------] 1 test from ToleranceProfileLoad (4 ms total)
+
+[----------] 1 test from AssertMacrosBehavior
+[ RUN      ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02
+[       OK ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02 (0 ms)
+[----------] 1 test from AssertMacrosBehavior (0 ms total)
+
+[----------] 1 test from SetEquivalent
+[ RUN      ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01
+[       OK ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01 (0 ms)
+[----------] 1 test from SetEquivalent (0 ms total)
+
+[----------] 1 test from StableOrder
+[ RUN      ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11
+[       OK ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11 (0 ms)
+[----------] 1 test from StableOrder (0 ms total)
+
+[----------] 1 test from PerfBenchmark
+[ RUN      ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12
+[       OK ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12 (0 ms)
+[----------] 1 test from PerfBenchmark (0 ms total)
+
+[----------] 1 test from ProcessRunnerStart
+[ RUN      ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08
+[       OK ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08 (45 ms)
+[----------] 1 test from ProcessRunnerStart (45 ms total)
+
+[----------] 1 test from TestdataLint
+[ RUN      ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09
+unknown file: error: C++ exception with description "copy: ϵͳ�Ҳ���ָ�����ļ���: "C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/../testdata\golden\kin-fk-planar-2r", "C:\Users\zgl18\AppData\Local\Temp\ird-test/80400-lint-contract-239d4540c1aebcbc\data\golden\kin-fk-planar-2r"" thrown in the test body.
+
+[  FAILED  ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09 (2 ms)
+[----------] 1 test from TestdataLint (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 11 tests from 11 test suites ran. (125 ms total)
+[  PASSED  ] 10 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09
+
+ 1 FAILED TEST

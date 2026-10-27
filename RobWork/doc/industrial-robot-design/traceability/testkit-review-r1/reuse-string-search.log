@@ -1,0 +1,8 @@
+RobWork/RobWork/src/rw/core\StringUtil.hpp:144:        static std::pair< bool, double > toDouble (const std::string& str);
+RobWork/RobWork/src/rw/core\StringUtil.hpp:150:        static std::pair< bool, int > toInt (const std::string& str);
+RobWork/RobWork/src/rw/core\StringUtil.hpp:175:        toDoubles (const std::vector< std::string >& words);
+RobWork/RobWork/src/rw/core\StringUtil.hpp:182:        toInts (const std::vector< std::string >& words);
+RobWork/RobWork/src/rw/core\StringUtil.cpp:230:std::pair< bool, double > StringUtil::toDouble (const std::string& str)
+RobWork/RobWork/src/rw/core\StringUtil.cpp:235:std::pair< bool, int > StringUtil::toInt (const std::string& str)
+RobWork/RobWork/src/rw/core\StringUtil.cpp:256:StringUtil::toDoubles (const std::vector< std::string >& words)
+RobWork/RobWork/src/rw/core\StringUtil.cpp:261:std::pair< bool, std::vector< int > > StringUtil::toInts (const std::vector< std::string >& words)

@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <limits>
 
 namespace fs = std::filesystem;
 namespace {
@@ -141,6 +142,24 @@ TEST(TestRecordJson, MachineReadableFieldTable_UT_RPT)
     ASSERT_NE(artifacts, nullptr);
     EXPECT_EQ(artifacts->items.size(), 1u);
     EXPECT_EQ(artifacts->items[0].find("kind")->text, "tempdir-scene");
+}
+
+/** R03：非有限值与长度缺失是两种失败原因，报告必须保持合法 JSON 且可区分。 */
+TEST(TestRecordJson, NonFiniteAndMissingValuesStayMachineReadable_ReviewR03)
+{
+    rpt::TestRecord record;
+    const auto tol = sdurws::ird::core::Tolerance::make(0, 0);
+    record.comparisons = checkCloseWithin("nonfinite", std::numeric_limits<double>::infinity(),
+                                          0, tol, "1").failures;
+    const auto missing = checkAllCloseWithin("missing", {1.0}, {}, tol, "1");
+    record.comparisons.insert(record.comparisons.end(), missing.failures.begin(), missing.failures.end());
+    const auto parsed = parseJson(record.toJsonText());
+    const auto& comparisons = parsed.find("comparisons")->items;
+    ASSERT_EQ(comparisons.size(), 2u);
+    EXPECT_EQ(comparisons[0].find("actual")->text, "+Inf");
+    EXPECT_TRUE(comparisons[1].find("expected")->isNull());
+    EXPECT_TRUE(comparisons[1].find("actual")->isNumber());
+    EXPECT_TRUE(comparisons[1].find("diff")->isNull());
 }
 
 /** 写出往返（§7.2 落盘形态）：writeFile → JsonLite 重新解析——schema/

@@ -65,7 +65,7 @@ testkit 的产品语义只有一条：**让各业务单元能独立编写可追�
 | C++ 标准 | 基线 RobWork `CMAKE_CXX_STANDARD 11`；industrialrobot 目标显式 C++17（core.md D-01） | testkit 同口径：显式 `cxx_std_17`；`std::filesystem`、`std::optional`、`std::variant`、`std::string_view` 允许；不使用 C++20 特性；不引入第三方运行库（header-only 编译期使用例外：`Boost::headers`——SetCheck 阶段 2 最大匹配内核，`src/SetCheckMatch.cpp` 单 TU 收敛、零运行库/DLL，经 REUSE-T20 登记批准） |
 | Qt | Qt 6.11.1（msvc2022_64） | **`sdurws_ird_testkit` 库零 Qt**（与 L2 同纪律）：测试断言与数据设施不需要 Qt；未来 GUI 测试辅助（若有）单列 `sdurws_ird_testkit_qt` 独立目标，禁止传递进入生产计算库（§3.5） |
 | 测试框架 | 捆绑 googletest（§1.2） | 沿用；断言宏在消费方翻译单元展开（testkit 库本体不链接 gtest，§3.3） |
-| JSON | vcpkg installed 目录实测无独立 JSON 库（xercesc/zlib 有，nlohmann 无） | testkit 自带**受限 JSON 解析器**（测试侧自用工具，决策 D-02；边界论证见 §4.1） |
+| JSON | 早期未供给记录已由 Boost.JSON 同渠道批准更新；本单元尚未实施成熟供给迁移 | 当前保留既有受限接缝，TK-T13仅修复授权的数字表示/失败报告边界；迁移仍按 §4.1 和既有提案另行实施与独验 |
 | RobWork 数学 | `rw::math`（`sdurw_math` 目标） | testkit 经 core 间接依赖（core 公共头传递）；不直接包含 Eigen |
 
 ---
@@ -230,7 +230,9 @@ industrialrobot/tools/testdata/ # 清单 lint / 完整性校验工具（TK-T03 �
 
 ### 4.1 JsonLite：测试侧受限 JSON（D-02）
 
-**范围**：对象/数组/字符串（UTF-8，标准转义）/数字（IEEE double 可精确解析区间）/`true`/`false`/`null`。**拒绝**：重复键、`NaN`/`Infinity` 字面、尾随内容、注释、BOM。错误消息含行/列。
+**范围**：对象/数组/字符串（UTF-8，标准转义）/数字（连续量 IEEE double；非负整数 token 精确保留完整 uint64）/`true`/`false`/`null`。**拒绝**：重复键、`NaN`/`Infinity` 字面、尾随内容、注释、BOM。错误消息含行/列。TK-T13 经所有者明确批准保留 seed 为 JSON 整数；整数域的浮点记法仅兼容 `[0,2^53)` 内整数，大数须使用整数 token，避免舍入后冒充精确种子。普通连续量的 double 读取/赋值写法保留；精确整数用 `JsonNumber::setUnsigned/tryUnsigned`。该载荷与 CompareDetail 新增缺失标志涉及布局变化，相关测试消费者须重编，不声明旧二进制兼容。
+
+`dumpJson` 拒绝非有限 number。经同次批准，报告比较详情的 NaN/±Inf 分别为字符串 `"NaN"`、`"+Inf"`、`"-Inf"`；长度缺失侧及其 diff 为 `null`，正常有限值仍为 number。真实 NaN 与缺失分别保留，判定结果仍以实际断言与 outcome 为准。归档消费者须接受这些明确类型，并继续交叉检查 XML 与进程退出码，不能将格式可读视为成功。
 
 **复用边界（REUSE-T01 审计补正）**：testkit 不得反向依赖 io 产品单元（T-2），测试 JSON 与产品 profile 的区别也不豁免底层解析/Unicode/序列化工具的复用审查。既有自持解析器是待迁移事实，不是因测试侧或未安装独立 JSON 包而获准的新核心。已审上游默认 DOM 工厂为 XML；同渠道已安装 Boost.PropertyTree 的公开 JSON DOM 丢失标量类型及空容器区别，并接受重复键/BOM，不能直接代替本节契约。具体源区段、候选和实测见 `reuse/functions/testkit.json` 与 `traceability/reuse/REUSE-T01/probe-r8/`；该限制不证明所有成熟候选均不可用。后续优先评估同一 vcpkg 渠道的成熟公开 API，保持本节值模型、拒绝规则、错误定位和报告语义，只做实际必要的 profile 薄适配；供给或新实现仍须 H1/H6 批准，禁止另建通用 DOM/解析平台。单位、身份及比较权威仍在 core/io，当前接口与数据格式不因本次审计改变。
 
@@ -752,7 +754,7 @@ public:
 - **超时后回收**：Windows Job Object 绑子进程树，TerminateJobObject 兜底；TempDir 失败保留（§6.2）；
 - **同步纪律**：正确性判据**只**来自可观察事件（事件文件/日志标记），禁止固定 sleep 后断言（有界轮询是 EventWatch 的实现细节，不是判据）；
 - **真实崩溃 vs 文件系统故障的覆盖分工**：文件系统故障（§6.4）验证**逻辑鲁棒性**（错误路径、事务回滚）；真实进程崩溃（kill/访问违例触发）验证**进程隔离与恢复**（NFR-REL-02/03、AT-11）——两者不互相替代；
-- **交付节奏**：阶段 A 仅交付 §6.4 进程内原语；TestProcessRunner 实现挂接 project/execution 契约测试的实际需要（AT-11/13 载体，§10.2），当前不建目标、不写空测试（任务约束§八）。
+- **交付现状**：早期阶段 A 仅交付 §6.4；TestProcessRunner 已随 TK-T11 实现并由 project/execution 进程契约消费。其非零退出归 `Crashed`，该形态 `exitCode=0` 不表示子进程成功；具体 CLI 返回码另用原生进程驱动核对。
 
 ### 6.6 时钟与执行控制的测试适配
 
@@ -1005,6 +1007,8 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | v1.7 | 2026-10-23 | REUSE-T20 SetCheck 阶段 2 最大匹配内核复用落位登记：①§3.1 依赖契约修订——"不引入 Boost 等第三方运行库"→"不引入第三方运行库；header-only 编译期使用例外：Boost::headers（SetCheck 匹配内核，src/SetCheckMatch.cpp 单 TU 收敛、零运行库/DLL，经 REUSE-T20 登记批准）"；②§5.4.2 实现取舍注同步——最大匹配核心＝Boost.Graph checked_edmonds_maximum_cardinality_matching 薄适配＋matching_size 计数互检，经 detail::maximumBipartiteMatching 内部接缝承接（src/SetCheckMatch.cpp，Boost 头收敛于该 TU），Kuhn 自写递归删除、无 fallback/双实现；§5.4.2 命名为复杂度期望非算法强制，两算法同为最大基数匹配＝语义等价，多解配对见证确定性保持（构造序＋无随机源）；③ird_gates IRD_THIRDPARTY_ALLOWED_TARGETS 增列 Boost::headers＋DTB §4.5 登记册行同批登记；④候选证据＝REUSE-T01 审计 B17＋probe-r17/candidates 两项公开 API 探测（可运行证明），本批补齐生产接入；实施与回归证据 traceability/reuse/REUSE-T05/setcheck-max-matching/ |
 
 ---
+
+2026-10-27 第一轮评审整改（TK-T13）恢复上述既有契约：有身份元素不进入数值回退；首错位不被长度掩盖；有限宏只求值一次；档案强制核对 schema 并保存已校验量纲；parameters 可选、整数字段转换前检查、完整性包含 generate 来源；lint 装载档案并核对需求及 AT；安装扫描包含测试头；分位数拒绝非有限 q。未改附录 D 容差、Boost 匹配核心、core 比较或摘要。JSON 转换显式使用 C 数值 locale，保留下溢与负零。R03/R06 格式已获所有者批准，表示见 §4.1；实施证据见 [整改记录](../traceability/testkit-review-r1/README.md)，本说明不构成独立验收。
 
 ## 附录 A：完整示例（均为**设计示例**，非已执行的验证结果）
 

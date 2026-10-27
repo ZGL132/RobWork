@@ -1,0 +1,27 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:6: *   - units/core.md §4.2（类型表与规范文本）、§5.2（接口签名：ContentDigester
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:22: * 线程安全：ContentDigester 实例非线程安全（每线程各持实例，§4.2 原文）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:114:class ContentDigester {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:117:    ContentDigester() = default;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp:3: * @brief  容差与比较——Tolerance（附录 D C4 公式）＋allCloseWithin＋C7 转写。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp:7: *     修改只能随需求变更）、§4.4（rw::math 聚合不包装——allCloseWithin 消费 Q）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp:12: * 核心公式（附录 D C4）：closeWithin ⇔ |value−reference| ≤ relative·|reference| + absolute。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp:14: * ——NFR-COR-03）。allCloseWithin 逐元素应用（防正负抵消——不以差值总和替代）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp:91:bool closeWithin(double value, double reference, Tolerance t) noexcept;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp:99:bool allCloseWithin(const std::vector<double>& a, const std::vector<double>& b,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp:107:bool allCloseWithin(const rw::math::Q& a, const rw::math::Q& b, Tolerance t);
+3:#include <rw/core/BoostXMLParser.hpp>
+10:rw::core::Ptr< DOMParser > DOMParser::make ()
+12:    return rw::core::ownedPtr (new BoostXMLParser ());
+15:rw::core::Ptr< DOMParser > DOMParser::Factory::getDOMParser (const std::string& format)
+18:    DOMParser::Factory ep;
+28:        return rw::core::ownedPtr (new BoostXMLParser ());
+33:bool DOMParser::Factory::hasDOMParser (const std::string& format)
+40:    DOMParser::Factory ep;
+50:std::vector< std::string > DOMParser::Factory::getSupportedFormats() {
+RobWork/RobWork/src/rw/math/Q.hpp:302:         * @brief Compares \b this and \b q2 for equality.
+RobWork/RobWork/src/rw/math/Q.hpp:304:         * \b this and \b q2 are considered equal if and only if they have equal
+RobWork/RobWork/src/rw/math/Q.hpp:307:         * @return True if this equals q2, false otherwise.
+RobWork/RobWork/src/rw/math/Q.hpp:312:         * @brief Inequality operator
+RobWork/RobWork/src/rw/math/LinearAlgebra.hpp:185:         * is equal to \f$ +1 \f$
+RobWork/RobWorkSim/src/rwsim/util\CircleModel.hpp:61:         * @brief tests if two circles are "equal" which is within some epsilon of
+RobWork/RobWorkSim/src/rwsim/util\LinePolar.hpp:50:        // A supporting point on the line (equal to rho * normal).

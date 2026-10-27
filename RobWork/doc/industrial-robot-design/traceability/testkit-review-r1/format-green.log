@@ -1,0 +1,26 @@
+Note: Google Test filter = *ReviewR03*:*ReviewR06*
+[==========] Running 4 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.UnsignedIntegerTextIsExact_ReviewR06
+[       OK ] JsonRoundtrip.UnsignedIntegerTextIsExact_ReviewR06 (0 ms)
+[----------] 1 test from JsonRoundtrip (0 ms total)
+
+[----------] 1 test from JsonRejections
+[ RUN      ] JsonRejections.DumpRejectsNonFiniteNumbers_ReviewR03
+[       OK ] JsonRejections.DumpRejectsNonFiniteNumbers_ReviewR03 (0 ms)
+[----------] 1 test from JsonRejections (0 ms total)
+
+[----------] 1 test from ReproRecordReview
+[ RUN      ] ReproRecordReview.ExactSeedRoundtrip_ReviewR06
+[       OK ] ReproRecordReview.ExactSeedRoundtrip_ReviewR06 (0 ms)
+[----------] 1 test from ReproRecordReview (0 ms total)
+
+[----------] 1 test from TestRecordJson
+[ RUN      ] TestRecordJson.NonFiniteAndMissingValuesStayMachineReadable_ReviewR03
+[       OK ] TestRecordJson.NonFiniteAndMissingValuesStayMachineReadable_ReviewR03 (0 ms)
+[----------] 1 test from TestRecordJson (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 4 test suites ran. (0 ms total)
+[  PASSED  ] 4 tests.

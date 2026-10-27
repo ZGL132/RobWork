@@ -1,0 +1,3 @@
+ird-install-scan: FAIL（2 处命中——分发红线违规）
+  HIT  C:\Users\zgl18\AppData\Local\Temp\ird-testkit-tools-li7di_so\dataset\share\testdata  [命中: (^|/)testdata(/|$)]
+  HIT  C:\Users\zgl18\AppData\Local\Temp\ird-testkit-tools-li7di_so\dataset\share\testdata\input.json  [命中: (^|/)testdata(/|$)]

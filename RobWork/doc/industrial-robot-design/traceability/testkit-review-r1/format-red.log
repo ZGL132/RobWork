@@ -1,0 +1,79 @@
+Note: Google Test filter = *ReviewR03:*ReviewR06
+[==========] Running 4 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.UnsignedIntegerTextIsExact_ReviewR06
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(59): error: Expected equality of these values:
+  dumpJson(parseJson(text), false)
+    Which is: "9007199254740992"
+  text
+    Which is: "9007199254740993"
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(59): error: Expected equality of these values:
+  dumpJson(parseJson(text), false)
+    Which is: "9223372036854775808"
+  text
+    Which is: "9223372036854775807"
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(59): error: Expected equality of these values:
+  dumpJson(parseJson(text), false)
+    Which is: "18446744073709551616"
+  text
+    Which is: "18446744073709551615"
+
+[  FAILED  ] JsonRoundtrip.UnsignedIntegerTextIsExact_ReviewR06 (0 ms)
+[----------] 1 test from JsonRoundtrip (0 ms total)
+
+[----------] 1 test from JsonRejections
+[ RUN      ] JsonRejections.DumpRejectsNonFiniteNumbers_ReviewR03
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(72): error: Expected: dumpJson(v, false) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(73): error: Expected: dumpJson(v, true) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(72): error: Expected: dumpJson(v, false) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(73): error: Expected: dumpJson(v, true) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(72): error: Expected: dumpJson(v, false) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp(73): error: Expected: dumpJson(v, true) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+
+[  FAILED  ] JsonRejections.DumpRejectsNonFiniteNumbers_ReviewR03 (0 ms)
+[----------] 1 test from JsonRejections (0 ms total)
+
+[----------] 1 test from ReproRecordReview
+[ RUN      ] ReproRecordReview.ExactSeedRoundtrip_ReviewR06
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp(50): error: Expected: (record.toJson().find("9007199254740993")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp(51): error: Expected equality of these values:
+  sdurws::ird::testkit::ReproRecord::fromJson(record.toJson()).seed
+    Which is: 9007199254740992
+  record.seed
+    Which is: 9007199254740993
+
+[  FAILED  ] ReproRecordReview.ExactSeedRoundtrip_ReviewR06 (0 ms)
+[----------] 1 test from ReproRecordReview (0 ms total)
+
+[----------] 1 test from TestRecordJson
+[ RUN      ] TestRecordJson.NonFiniteAndMissingValuesStayMachineReadable_ReviewR03
+unknown file: error: C++ exception with description "dataset-invalid: json-parse: line 1, column 428: 非法值起始字符: 'i'（路径 $.comparisons[0].actual）" thrown in the test body.
+
+[  FAILED  ] TestRecordJson.NonFiniteAndMissingValuesStayMachineReadable_ReviewR03 (0 ms)
+[----------] 1 test from TestRecordJson (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 4 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] JsonRoundtrip.UnsignedIntegerTextIsExact_ReviewR06
+[  FAILED  ] JsonRejections.DumpRejectsNonFiniteNumbers_ReviewR03
+[  FAILED  ] ReproRecordReview.ExactSeedRoundtrip_ReviewR06
+[  FAILED  ] TestRecordJson.NonFiniteAndMissingValuesStayMachineReadable_ReviewR03
+
+ 4 FAILED TESTS

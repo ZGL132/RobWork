@@ -1,0 +1,135 @@
+Note: Google Test filter = *ReviewR01:*ReviewR02:*ReviewR05:*ReviewR11
+[==========] Running 4 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ToleranceProfileLoad
+[ RUN      ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp(103): error: Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp(103): error: Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"schemaVersion": "ird-tolerance-profile/999",
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp(103): error: Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"schemaVersion": 1,
+
+[  FAILED  ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05 (30 ms)
+[----------] 1 test from ToleranceProfileLoad (30 ms total)
+
+[----------] 1 test from AssertMacrosBehavior
+[ RUN      ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src/gtest.cc(1090): error: Expected: 1 non-fatal failure
+  Actual: 0 failures
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp(139): error: Expected equality of these values:
+  calls
+    Which is: 2
+  1
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp(143): error: Failed
+computed: 非有限值（NaN/±Inf）——NFR-COR-03
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp(144): error: Expected equality of these values:
+  calls
+    Which is: 2
+  1
+
+[  FAILED  ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02 (0 ms)
+[----------] 1 test from AssertMacrosBehavior (0 ms total)
+
+[----------] 1 test from SetEquivalent
+[ RUN      ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(100): error: Value of: r.equivalent
+  Actual: true
+Expected: false
+b
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(101): error: Value of: r.matched.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(102): error: Expected equality of these values:
+  r.missingExpected
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(103): error: Expected equality of these values:
+  r.extraActual
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(106): error: Value of: reverse.equivalent
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(107): error: Value of: reverse.matched.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(100): error: Value of: r.equivalent
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(101): error: Value of: r.matched.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(102): error: Expected equality of these values:
+  r.missingExpected
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(103): error: Expected equality of these values:
+  r.extraActual
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(106): error: Value of: reverse.equivalent
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(107): error: Value of: reverse.matched.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(102): error: Expected equality of these values:
+  r.missingExpected
+    Which is: { 0, 0 }
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(103): error: Expected equality of these values:
+  r.extraActual
+    Which is: { 0, 0 }
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+
+[  FAILED  ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01 (0 ms)
+[----------] 1 test from SetEquivalent (0 ms total)
+
+[----------] 1 test from StableOrder
+[ RUN      ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp(122): error: Expected equality of these values:
+  r.firstDivergence
+    Which is: 1
+  first
+    Which is: 0
+
+[  FAILED  ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11 (0 ms)
+[----------] 1 test from StableOrder (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 4 test suites ran. (30 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05
+[  FAILED  ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02
+[  FAILED  ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01
+[  FAILED  ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11
+
+ 4 FAILED TESTS

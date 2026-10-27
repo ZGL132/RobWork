@@ -199,11 +199,9 @@ TEST(ReproBenchmark, ValueShiftDetectedAsSetViolation_WP23T09_ACC2)
     ASSERT_EQ(r.verdicts.size(), 2U);
     for (const ReproLegVerdict& v : r.verdicts) {
         EXPECT_FALSE(v.setEquivalent) << v.legId;
-        // 第 7 号元素身份配对值超容差：两侧均不配对。缺失/多余各计 2＝
-        // SetCheck 既有记账语义（§5.4.2）：阶段 1 身份失配各列一次＋阶段 2
-        // 剩余池数值复配失败再各列一次——夹具如实转写，不改记账规则。
-        EXPECT_EQ(v.missingExpected, 2U) << v.legId;
-        EXPECT_EQ(v.extraActual, 2U) << v.legId;
+        // R01：第 7 号元素有身份但值超差，不进入无身份数值池；两侧各计一次。
+        EXPECT_EQ(v.missingExpected, 1U) << v.legId;
+        EXPECT_EQ(v.extraActual, 1U) << v.legId;
     }
     ASSERT_FALSE(r.violations.empty());
     EXPECT_NE(r.violations.front().find("集合不等价"), std::string::npos)
@@ -239,7 +237,9 @@ TEST(ReproBenchmark, SwapDetectedAsOrderViolation_WP23T09_ACC3)
 /** 报告 JSON 回读：字段齐全、判定与测量组一致（协议 §4.8 留痕面）。 */
 TEST(ReproBenchmark, ReportJsonRoundtrip_WP23T09_ACC1)
 {
-    const ReproCaseSpec spec = makeSpec(Inject::None);
+    ReproCaseSpec spec = makeSpec(Inject::None);
+    // TK-T13/R06：经过真实三腿执行及报告入口验证完整 uint64，不只测试 DOM。
+    spec.repro.seed = 18446744073709551615ULL;
     const ReproCaseReport r = runReproCase<FakeCandidate>(
         spec, reproProfile(), SetMatchTraits<FakeCandidate>{},
         FakeGenerator{50, spec.repro.seed, Inject::None, 0});
@@ -257,7 +257,8 @@ TEST(ReproBenchmark, ReportJsonRoundtrip_WP23T09_ACC1)
     ASSERT_TRUE(verdicts != nullptr && verdicts->isArray());
     EXPECT_EQ(verdicts->items.size(), 2U);
     ASSERT_TRUE(seed != nullptr && seed->isNumber());
-    EXPECT_DOUBLE_EQ(seed->number, 20260909.0);
+    ASSERT_TRUE(seed->number.tryUnsigned().has_value());
+    EXPECT_EQ(*seed->number.tryUnsigned(), spec.repro.seed);
 }
 
 /** 报告文件写出：TempDir 落盘成功且文件可回读解析（拖挂通道真实可用）。 */

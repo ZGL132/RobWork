@@ -211,7 +211,7 @@ SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
         return r;
     }
 
-    // ---- 阶段 1：稳定身份匹配（O(n)；值超容差→identity-value-mismatch） ----
+    // ---- 阶段 1：稳定身份精确匹配（当前查找为 O(n²)；值超容差即失配） ----
     std::vector<bool> expectedMatched(expected.size(), false);
     std::vector<bool> actualMatched(actual.size(), false);
     {
@@ -228,7 +228,7 @@ SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
             for (const auto& [key, idx] : actualIds) {
                 if (key == *id && !actualMatched[idx]) { found = idx; break; }
             }
-            if (found == actual.size()) { continue; }   // 数值阶段再试
+            if (found == actual.size()) { continue; }   // 已有身份不得回退到数值匹配
             // 身份相等：数值字段须逐项满足容差，否则 identity-value-mismatch。
             const auto ef = traits.numerics(expected[ei]);
             const auto af = traits.numerics(actual[found]);
@@ -252,21 +252,26 @@ SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
                 // identity-value-mismatch：期望/实际两侧均不计配对（等价已不可能）。
                 expectedMatched[ei] = false;
                 actualMatched[found] = false;
-                r.missingExpected.push_back(ei);
-                r.extraActual.push_back(found);
                 r.equivalent = false;
             }
         }
     }
 
-    // ---- 阶段 2：数值一一匹配（剩余元素；最大匹配） ----
+    // ---- 阶段 2：仅无身份元素参与数值最大匹配（§5.4.2）。
+    // 已有身份却未配对的元素各登记一次，避免数值相同掩盖对象身份差异。
     std::vector<std::size_t> expectedFreeIdx;
     std::vector<std::size_t> actualFreeIdx;
     for (std::size_t i = 0; i < expected.size(); ++i) {
-        if (!expectedMatched[i]) { expectedFreeIdx.push_back(i); }
+        if (!expectedMatched[i]) {
+            if (identityOf(expected[i]).has_value()) { r.missingExpected.push_back(i); }
+            else { expectedFreeIdx.push_back(i); }
+        }
     }
     for (std::size_t i = 0; i < actual.size(); ++i) {
-        if (!actualMatched[i]) { actualFreeIdx.push_back(i); }
+        if (!actualMatched[i]) {
+            if (identityOf(actual[i]).has_value()) { r.extraActual.push_back(i); }
+            else { actualFreeIdx.push_back(i); }
+        }
     }
 
     const std::size_t nL = expectedFreeIdx.size();
@@ -376,10 +381,13 @@ SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
     // mismatchedPairs 补齐：数值未匹配的最近对详情（missing×extra 数值距离和
     // 最近——§5.4.2"最近对详情"；无相容边的 missing/extra 不配对详情）。
     for (const auto ei : r.missingExpected) {
+        // 身份失配已有确定语义；最近数值对详情仅用于无身份元素。
+        if (identityOf(expected[ei]).has_value()) { continue; }
         double best = -1.0;
         std::size_t bestIdx = 0;
         bool found = false;
         for (const auto ai : r.extraActual) {
+            if (identityOf(actual[ai]).has_value()) { continue; }
             const auto ef = traits.numerics(expected[ei]);
             const auto af = traits.numerics(actual[ai]);
             if (ef.empty() || ef.size() != af.size()) { continue; }
@@ -437,7 +445,7 @@ OrderCheckResult checkStableOrder(const std::vector<T>& expectedOrder,
             }
         }
         if (!posOk) {
-            if (r.details.empty() && r.sameOrder) { r.firstDivergence = i; }
+            if (r.details.empty()) { r.firstDivergence = i; }
             r.sameOrder = false;
             r.details.push_back(CompareDetail{
                 std::string{"order["} + std::to_string(i) + "]", i, true,

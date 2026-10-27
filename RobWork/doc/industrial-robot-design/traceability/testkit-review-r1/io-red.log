@@ -1,0 +1,27 @@
+Note: Google Test filter = *ReviewR07:*ReviewR08
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07
+unknown file: error: C++ exception with description "dataset-invalid: json-parse: line 1, column 4: 数字解析不完整（内部错误形态）（路径 $）" thrown in the test body.
+
+[  FAILED  ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07 (7 ms)
+[----------] 1 test from JsonRoundtrip (7 ms total)
+
+[----------] 1 test from ProcessRunnerStart
+[ RUN      ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(273): error: Expected: (text.find("IRD_REVIEW_ENV_CASE=override")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+IRD_REVIEW_ENV_CASE=parent
+
+
+[  FAILED  ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08 (46 ms)
+[----------] 1 test from ProcessRunnerStart (46 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (53 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07
+[  FAILED  ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08
+
+ 2 FAILED TESTS

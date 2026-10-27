@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "TK-T13",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/TK-T13.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+      "sha256": "9a0f12bfbc87e6b2952ea35d7c598d1dfd55910378c09fb36955df80756cb306",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "sha256": "987ff6cc129d76a98ce05b7c0c2ca96d9042709ff661a19d044fbdde66537250",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+      "sha256": "eab4e866baf226e607407da543cc36692468d06512d6355137f6cf922e2acdcd",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "sha256": "ebaafbd5f17b40d396a828a5f553d9e12908a5c8521e76dadce6dbcfccd90846",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "sha256": "f2771c0f1fd10dfb07bb14b97122fe35e3576ad02e46c3b6a630af6bb1dbd4d6",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "sha256": "c0292fa425591d05a2913486d3971c2d23f97e2775edd675311742ae8cb555ec",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "sha256": "86e1ac8ad992b5e6c170bafae19891ff82c6a79ab6ec748a479461fce65e5909",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "sha256": "9a4af21debd84f2663c71614379e33232884761e9c1d2c56e7faf0db9caf6ad5",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "sha256": "6079ef497be0ef3395c061c1bfb52f6a909650148fed127dbdfb1a07c09259af",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "sha256": "aa62399a45455bbb9fe5c718561cebb0b67ca5f31aad49a310bdcffb1a7008e8",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "sha256": "d692066a27efb0d2820c2aa4719515c732b29170f99f256956d4353430ec8ea3",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "sha256": "236045793247a4278d8cda05323a3c2e24cfbd044c69fc139827e3d624f35feb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Report.cpp",
+      "sha256": "5638c81f733d51bbd6bf41f5f60c9e1b3e5178949f29a0776c6bfe539c75c121",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "sha256": "bcfd7d3447abc63986b1db9b3fe9da35e916656a66934c7ea2b6916c32c4a141",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "sha256": "269dd68232577782b2fdea23a8ca97412220781b2dc88c522ee12b7dddc2538a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "sha256": "b56e13fe6d575325c03f48db8a70de0d5fc8a9fd90486e45bcd13b9b8f73bc08",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "sha256": "f2c87c09d2c857af6ce372418c9b84f2fd84ccce9c5bb7194a863e27917a3ed8",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "sha256": "a1549ce3d5e3a5454591d1c3e65f91de8691c33cc62f5d3aaa0325ff624e05e9",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/PerfBenchmarkTest.cpp",
+      "sha256": "e00e048b134020ab6e519370d8503eaf270909730851b61dcd02eb0a66620d5b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "sha256": "c619d11e914cd40eca92bbf571dec8ca12cf39695eef5a46c6bcaddb2f9e4a8a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "sha256": "908585f5fbf26958595fd6e9478d29f7d1bfb433bbc6e4bc52833397061c3364",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "sha256": "589e63da5a342e94fd330ef15540d6f9d2f7ec3f8045158d0876e6d329df1bc2",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+      "sha256": "a46a4b6461e584630e6abedbfaded87f9636e308358588dcea54e908b38d7791",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "sha256": "4957adad9caf2beca130ff962cc4a4ff7447984bfa0ca8fcde705e365e32c8ca",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/install-scan/ird-install-scan.ps1",
+      "sha256": "f2b7c66ba697fcdcd149c066d9ca65119055f19c25756ffc98e2b2ba42f9db46",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/lsnchild/main.cpp",
+      "sha256": "ce4894ea68cd98e7e0dc273d5d06737939dcb00641e709908b2bd38d6b21560c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp",
+      "sha256": "2a4f9930a70b5dcc0027624120b7c933ff32cefb86448065eab7ce53e5f8a057",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "TK-T13：修复现有测试基础契约，复用core/GoogleTest/Boost与系统原语；不新增算法平台、依赖或权限。逐功能边界、格式批准和回归见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/README.md"
+    }
+  ]
+}
