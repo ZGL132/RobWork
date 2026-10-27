@@ -1,0 +1,583 @@
+[==========] Running 110 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 95 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(254): error: Value of: setRequirementClipboard("pose-position-x\t250\ntolerance-position\tbad")
+  Actual: false
+Expected: true
+WindowsÂâ™Ë¥¥ÊùøÂÜôÂÖ•ÂøÖÈ°ªÁúüÂÆûÂèØËØª
+
+[  FAILED  ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12 (3565 ms)
+[ RUN      ] RequirementsSessionGuiTest.ParameterTsvTemplateFollowsFilterAndUnits_UX05_WP14T12
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(306): error: Expected equality of these values:
+  columns.size()
+    Which is: 1
+  2
+
+[  FAILED  ] RequirementsSessionGuiTest.ParameterTsvTemplateFollowsFilterAndUnits_UX05_WP14T12 (577 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(349): error: Value of: setRequirementClipboard("box-center-x\t0.25\nbox-size-z\t0.75")
+  Actual: false
+Expected: true
+WindowsÂâ™Ë¥¥ÊùøÂÜôÂÖ•ÂøÖÈ°ªÁúüÂÆûÂèØËØª
+
+[  FAILED  ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (3880 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingCompleteAtomic_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingCompleteAtomic_REQ03_WP14T12 (55 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingBuildsPlanEntry_A18_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingBuildsPlanEntry_A18_WP14T12 (70 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingModesCancelAndReject_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingModesCancelAndReject_REQ03_WP14T12 (103 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12 (242 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingBaselineAndOptionalClear_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingBaselineAndOptionalClear_REQ03_WP14T12 (106 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(586): error: Value of: setRequirementClipboard("cycle-time\t4")
+  Actual: false
+Expected: true
+WindowsÂâ™Ë¥¥ÊùøÂÜôÂÖ•ÂøÖÈ°ªÁúüÂÆûÂèØËØª
+
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12 (3477 ms)
+[ RUN      ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(609): error: Value of: setRequirementClipboard("pose-position-x\t0.25")
+  Actual: false
+Expected: true
+WindowsÂâ™Ë¥¥ÊùøÂÜôÂÖ•ÂøÖÈ°ªÁúüÂÆûÂèØËØª
+
+[  FAILED  ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12 (3503 ms)
+[ RUN      ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (≤Ÿ◊˜≥…π¶ÕÍ≥…°£)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(644): error: Value of: setRequirementClipboard("pose-position-x\t0.25")
+  Actual: false
+Expected: true
+WindowsÂâ™Ë¥¥ÊùøÂÜôÂÖ•ÂøÖÈ°ªÁúüÂÆûÂèØËØª
+
+[  FAILED  ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12 (3516 ms)
+[ RUN      ] RequirementsSessionGuiTest.SessionDataPlane_FourSetsIntoPanel_UI_T29
+[       OK ] RequirementsSessionGuiTest.SessionDataPlane_FourSetsIntoPanel_UI_T29 (50 ms)
+[ RUN      ] RequirementsSessionGuiTest.LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71
+[       OK ] RequirementsSessionGuiTest.LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71 (67 ms)
+[ RUN      ] RequirementsSessionGuiTest.DraftHintAndTreeTitle_DualTreeRoleLabels_F499
+[       OK ] RequirementsSessionGuiTest.DraftHintAndTreeTitle_DualTreeRoleLabels_F499 (15 ms)
+[ RUN      ] RequirementsSessionGuiTest.PostEditComposition_HostActionThenRefresh_UI_T29
+[       OK ] RequirementsSessionGuiTest.PostEditComposition_HostActionThenRefresh_UI_T29 (20 ms)
+[ RUN      ] RequirementsSessionGuiTest.GateTruthSource_BlockingDoubleState_UI_T29
+[       OK ] RequirementsSessionGuiTest.GateTruthSource_BlockingDoubleState_UI_T29 (10 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleAdd_ThreeCollections_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleAdd_ThreeCollections_UI_T30 (169 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleDuplicate_CopyFieldsAndSelect_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleDuplicate_CopyFieldsAndSelect_UI_T30 (93 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleRemoveAnchorFallbackAndUndo_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleRemoveAnchorFallbackAndUndo_UI_T30 (94 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleButtons_DisabledWithoutSession_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleButtons_DisabledWithoutSession_UI_T30 (30 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionFieldEditing_FourStates_UI_T31
+[       OK ] RequirementsSessionGuiTest.RegionFieldEditing_FourStates_UI_T31 (107 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionCycleTime_SetFromUnset_UI_T31
+[       OK ] RequirementsSessionGuiTest.ConditionCycleTime_SetFromUnset_UI_T31 (76 ms)
+[ RUN      ] RequirementsSessionGuiTest.FieldEditing_ReadOnlyGate_UI_T31
+[       OK ] RequirementsSessionGuiTest.FieldEditing_ReadOnlyGate_UI_T31 (168 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationPositionEditing_ThreeAxis_UI_T47
+[       OK ] RequirementsSessionGuiTest.StationPositionEditing_ThreeAxis_UI_T47 (98 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_TemplateMirrorArray_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_TemplateMirrorArray_UI_T32 (69 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_CreateArray_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_CreateArray_UI_T32 (86 ms)
+[ RUN      ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12 (890 ms)
+[ RUN      ] RequirementsSessionGuiTest.GenerationProvenanceAndConflict_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.GenerationProvenanceAndConflict_AT24_WP14T12 (122 ms)
+[ RUN      ] RequirementsSessionGuiTest.MixedDraftValidRegionPreview_REQ06_WP14T12
+[       OK ] RequirementsSessionGuiTest.MixedDraftValidRegionPreview_REQ06_WP14T12 (49 ms)
+[ RUN      ] RequirementsSessionGuiTest.SequenceEditingRejectsInvalidTopology_REQ02_WP14T12
+[       OK ] RequirementsSessionGuiTest.SequenceEditingRejectsInvalidTopology_REQ02_WP14T12 (452 ms)
+[ RUN      ] RequirementsSessionGuiTest.DisplayUnitSwitchZeroDraftWrite_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.DisplayUnitSwitchZeroDraftWrite_UX05_WP14T12 (62 ms)
+[ RUN      ] RequirementsSessionGuiTest.DetachAtomicUndo_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.DetachAtomicUndo_AT24_WP14T12 (143 ms)
+[ RUN      ] RequirementsSessionGuiTest.MirrorFrameAndNormalProduction_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.MirrorFrameAndNormalProduction_AT24_WP14T12 (257 ms)
+[ RUN      ] RequirementsSessionGuiTest.ArrayInvalidAndCancelProduction_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.ArrayInvalidAndCancelProduction_AT24_WP14T12 (192 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_ExportCopy_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_ExportCopy_UI_T32 (37 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_ImportCsvPartial_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_ImportCsvPartial_UI_T32 (57 ms)
+[ RUN      ] RequirementsSessionGuiTest.CsvProductionMappingAndUnits_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.CsvProductionMappingAndUnits_AT02_WP14T12 (209 ms)
+[ RUN      ] RequirementsSessionGuiTest.CsvAllErrorDetails_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.CsvAllErrorDetails_AT02_WP14T12 (148 ms)
+[ RUN      ] RequirementsSessionGuiTest.CsvMappingValidationCancel_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.CsvMappingValidationCancel_AT02_WP14T12 (181 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_JsonAndDegrades_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_JsonAndDegrades_UI_T32 (50 ms)
+[ RUN      ] RequirementsSessionGuiTest.ValidationFilters_HeaderAndRevisionNote_UI_T34
+[       OK ] RequirementsSessionGuiTest.ValidationFilters_HeaderAndRevisionNote_UI_T34 (29 ms)
+[ RUN      ] RequirementsSessionGuiTest.FacadeSessionBaseRevisionRoundtrip_UI_T35
+[       OK ] RequirementsSessionGuiTest.FacadeSessionBaseRevisionRoundtrip_UI_T35 (20 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionConditionRows_BusinessColumns_UI_T36
+[       OK ] RequirementsSessionGuiTest.RegionConditionRows_BusinessColumns_UI_T36 (21 ms)
+[ RUN      ] RequirementsSessionGuiTest.TreeHierarchy_GroupsAndTabLinkage_UI_T36
+[       OK ] RequirementsSessionGuiTest.TreeHierarchy_GroupsAndTabLinkage_UI_T36 (61 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleButton_NoVerticalClipping_UI_T36
+[       OK ] RequirementsSessionGuiTest.LifecycleButton_NoVerticalClipping_UI_T36 (392 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationCards_ModernControls_UI_T37
+[       OK ] RequirementsSessionGuiTest.StationCards_ModernControls_UI_T37 (216 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionCompositeAndLiveCount_UI_T37
+[       OK ] RequirementsSessionGuiTest.RegionCompositeAndLiveCount_UI_T37 (109 ms)
+[ RUN      ] RequirementsSessionGuiTest.SourceRowsReadOnly_UI_T37
+[       OK ] RequirementsSessionGuiTest.SourceRowsReadOnly_UI_T37 (61 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionTagAndWizard_UI_T37
+[       OK ] RequirementsSessionGuiTest.ConditionTagAndWizard_UI_T37 (62 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionSingleTableDetailCard_UI_T37R4
+[       OK ] RequirementsSessionGuiTest.ConditionSingleTableDetailCard_UI_T37R4 (24 ms)
+[ RUN      ] RequirementsSessionGuiTest.EmptyStateFoldImportBreadcrumb_UI_T37R5
+[       OK ] RequirementsSessionGuiTest.EmptyStateFoldImportBreadcrumb_UI_T37R5 (201 ms)
+[ RUN      ] RequirementsSessionGuiTest.ImportDropdownAndUndoTrim_UI_T37R5
+[       OK ] RequirementsSessionGuiTest.ImportDropdownAndUndoTrim_UI_T37R5 (28 ms)
+[ RUN      ] RequirementsSessionGuiTest.ValidationBoardAndSemanticLayers_UI_T37
+[       OK ] RequirementsSessionGuiTest.ValidationBoardAndSemanticLayers_UI_T37 (20 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSelectionLinkage_UI_T37R
+[       OK ] RequirementsSessionGuiTest.RegionSelectionLinkage_UI_T37R (192 ms)
+[ RUN      ] RequirementsSessionGuiTest.ProjectUndoCommandIdAndGate_UI_T39
+[       OK ] RequirementsSessionGuiTest.ProjectUndoCommandIdAndGate_UI_T39 (24 ms)
+[ RUN      ] RequirementsSessionGuiTest.DraftUndoRerunsReadinessChain_UI_T39
+[       OK ] RequirementsSessionGuiTest.DraftUndoRerunsReadinessChain_UI_T39 (56 ms)
+[ RUN      ] RequirementsSessionGuiTest.SessionDetachedResetsPanel_UI_T39
+[       OK ] RequirementsSessionGuiTest.SessionDetachedResetsPanel_UI_T39 (58 ms)
+[ RUN      ] RequirementsSessionGuiTest.WritableSwitchRefreshesAll_UI_T39
+[       OK ] RequirementsSessionGuiTest.WritableSwitchRefreshesAll_UI_T39 (129 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReadOnlyStagedBeforePanelCreate_L_R12
+[       OK ] RequirementsSessionGuiTest.ReadOnlyStagedBeforePanelCreate_L_R12 (72 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionUsesSingleSamplingCard_UI_T39
+[       OK ] RequirementsSessionGuiTest.RegionUsesSingleSamplingCard_UI_T39 (57 ms)
+[ RUN      ] RequirementsSessionGuiTest.MirrorRequiresStationAnchor_UI_T39
+[       OK ] RequirementsSessionGuiTest.MirrorRequiresStationAnchor_UI_T39 (43 ms)
+[ RUN      ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12 (546 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12 (119 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12 (235 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12 (250 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationQueuedValueKeepsAnchor_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationQueuedValueKeepsAnchor_AT02_WP14T12 (104 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionFiveRules_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionFiveRules_AT23_WP14T12 (865 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationTextEditing_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationTextEditing_AT02_WP14T12 (161 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionStructureAtomicApply_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionStructureAtomicApply_AT02_WP14T12 (103 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionStructureRejectCancelReadOnly_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionStructureRejectCancelReadOnly_AT02_WP14T12 (78 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionQueuedEditKeepsOriginalAnchor_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionQueuedEditKeepsOriginalAnchor_AT02_WP14T12 (86 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionReferencesAndFourStates_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionReferencesAndFourStates_AT02_WP14T12 (143 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23
+[       OK ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23 (186 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedStationReferencesAtomicAndStale_REQ01_AT23
+[       OK ] RequirementsSessionGuiTest.NamedStationReferencesAtomicAndStale_REQ01_AT23 (415 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedReferenceMissingPreservedAndUnavailableRejected_REQ09_AT23
+[       OK ] RequirementsSessionGuiTest.NamedReferenceMissingPreservedAndUnavailableRejected_REQ09_AT23 (398 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedGeometryAndMultiTcpKeepIdentity_REQ09_AT23
+[       OK ] RequirementsSessionGuiTest.NamedGeometryAndMultiTcpKeepIdentity_REQ09_AT23 (236 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02
+[       OK ] RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02 (103 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02
+[       OK ] RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02 (104 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedInlineReferencesMissingUnavailableCancelReadOnly_REQ04_AT02
+[       OK ] RequirementsSessionGuiTest.NamedInlineReferencesMissingUnavailableCancelReadOnly_REQ04_AT02 (138 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23 (52 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23 (181 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23 (50 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetInvalidRigidOutputZeroWrite_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetInvalidRigidOutputZeroWrite_REQ08_AT23 (22 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetSessionAndQueuedBaselineGuard_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetSessionAndQueuedBaselineGuard_REQ08_AT23 (21 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMenuAndShortcutShareGate_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMenuAndShortcutShareGate_REQ08_AT23 (200 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationSegmentsEditAndWorkLock_REQ02_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationSegmentsEditAndWorkLock_REQ02_WP14T12 (310 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationReferencedDeleteGuards_REQ01_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationReferencedDeleteGuards_REQ01_WP14T12 (213 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDuplicateNameRejectKeepsOriginal_REQ01_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDuplicateNameRejectKeepsOriginal_REQ01_WP14T12 (121 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSpacingSamplingNormalizedPlan_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSpacingSamplingNormalizedPlan_REQ03_WP14T12 (112 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionOrientationSamplingCounts_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionOrientationSamplingCounts_REQ03_WP14T12 (80 ms)
+[ RUN      ] RequirementsSessionGuiTest.CsvFormulaLiteralAndQuotedFields_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.CsvFormulaLiteralAndQuotedFields_AT02_WP14T12 (37 ms)
+[ RUN      ] RequirementsSessionGuiTest.JsonImportVersionAndUnknownKeyReject_REQ12_WP14T12
+[       OK ] RequirementsSessionGuiTest.JsonImportVersionAndUnknownKeyReject_REQ12_WP14T12 (54 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSizeEditSyncsDerivedPlan_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSizeEditSyncsDerivedPlan_REQ03_WP14T12 (94 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionConfirmWithoutChangeBuildsMissingPlan_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionConfirmWithoutChangeBuildsMissingPlan_REQ03_WP14T12 (102 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchResizeSyncsPlan_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionBatchResizeSyncsPlan_UX05_WP14T12 (94 ms)
+[----------] 95 tests from RequirementsSessionGuiTest (31039 ms total)
+
+[----------] 3 tests from RequirementRevisionSync
+[ RUN      ] RequirementRevisionSync.SelfAppliedEventSkips_UI_T35
+[       OK ] RequirementRevisionSync.SelfAppliedEventSkips_UI_T35 (0 ms)
+[ RUN      ] RequirementRevisionSync.ZeroEditRewiresFromHead_UI_T35
+[       OK ] RequirementRevisionSync.ZeroEditRewiresFromHead_UI_T35 (0 ms)
+[ RUN      ] RequirementRevisionSync.DirtyDraftStaysStale_UI_T35
+[       OK ] RequirementRevisionSync.DirtyDraftStaysStale_UI_T35 (0 ms)
+[----------] 3 tests from RequirementRevisionSync (0 ms total)
+
+[----------] 12 tests from RequirementsView3DFlow
+[ RUN      ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33
+[       OK ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33 (15 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12
+[       OK ] RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12 (123 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12
+[       OK ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12 (23 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12 (86 ms)
+[ RUN      ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33
+[       OK ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33 (49 ms)
+[ RUN      ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12 (319 ms)
+[ RUN      ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12 (176 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52 (34 ms)
+[ RUN      ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77
+[       OK ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77 (24 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77 (20 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2 (17 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2 (17 ms)
+[----------] 12 tests from RequirementsView3DFlow (909 ms total)
+
+[----------] Global test environment tear-down
+[==========] 110 tests from 3 test suites ran. (31949 ms total)
+[  PASSED  ] 104 tests.
+[  FAILED  ] 6 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.ParameterTsvTemplateFollowsFilterAndUnits_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12
+
+ 6 FAILED TESTS

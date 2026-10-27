@@ -963,8 +963,8 @@
           "symbol": "AnchorRuntimeView",
           "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::AnchorRuntimeView",
           "startLine": 1,
-          "endLine": 2355,
-          "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
+          "endLine": 2362,
+          "sha256": "605bce8d72eeb1f998d16eff4c9a74fb45144626a9fdbbd3a0e2e03948a49eff"
         }
       ],
       "targets": [
@@ -1006,7 +1006,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
-        "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
+        "sha256": "605bce8d72eeb1f998d16eff4c9a74fb45144626a9fdbbd3a0e2e03948a49eff"
       },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },

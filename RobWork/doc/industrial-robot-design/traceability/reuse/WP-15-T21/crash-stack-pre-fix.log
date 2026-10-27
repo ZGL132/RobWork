@@ -1,0 +1,37 @@
+DEBUGGING pid=90952 exe=D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\RelWithDebInfo\sdurws_ird_studio.exe
+CREATE_PROCESS base=0x7FF6D1A00000
+
+=== FIRST-CHANCE ACCESS VIOLATION @0x7FF6D1C36D6D (READ target=0x0) thread=94704 ===
+RIP=0x7FF6D1C36D6D RSP=0xC6310D120 RBP=0xC6310D779 RAX=0x7FF6D2ED5B98 RCX=0x0 RDX=0xC6310D650
+  (StackWalk64 停止 ret=0 err=0 walked=0)
+  --- 原始栈扫描 (RSP 起 6KB) ---
+  [rsp+0x028] 0x7FF6D2141398 urws::ird::kinematics::KinematicsPanelWidget::refreshVisualization+0xA8  [D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:1936]
+  [rsp+0x088] 0x7FFF58BA91A8 lCreateEnvironment+0x3F8
+  [rsp+0x0E8] 0x7FFF58ACC4B7 lAllocateHeap+0x6867
+  [rsp+0x128] 0x7FFF58ABD200 lFreeHeap+0x620
+  [rsp+0x1B8] 0x7FFF58ABD200 lFreeHeap+0x620
+  [rsp+0x218] 0x7FFF55E52D7B ee_base+0x1B
+  [rsp+0x248] 0x7FFDD5E57160 mage::operator QVariant+0x920
+  [rsp+0x2A8] 0x7FFF55E52D7B ee_base+0x1B
+  [rsp+0x2D8] 0x7FFED7FDB3A7 _plugin_query_metadata_v2+0x19707
+  [rsp+0x308] 0x7FFDD5E8E595 ixmap::~QPixmap+0x45
+  [rsp+0x338] 0x7FF6D2143104 urws::ird::kinematics::KinematicsPanelWidget::refreshWsProjectionCanvas+0x924  [D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:1893]
+  [rsp+0x368] 0x7FFDD625D5B1 ccessibleEvent::accessibleInterface+0x51
+  [rsp+0x398] 0x7FFE259703CB ccessibleWidget::isValid+0x2B
+  [rsp+0x3B0] 0x7FFDD6508368 aintDevice::`vftable'+0x0
+  [rsp+0x3C8] 0x7FFF587FB6A4 WinEventHookInstalled+0x24
+  [rsp+0x428] 0x7FFE259703CB ccessibleWidget::isValid+0x2B
+  [rsp+0x458] 0x7FFED804160C _plugin_query_metadata_v2+0x7F96C
+  [rsp+0x488] 0x7FFDD6260854 ccessible::updateAccessibility+0xE4
+  [rsp+0x4B8] 0x7FFE257299D4 idget::setEnabled+0x84
+  [rsp+0x4D8] 0x7FFE259703CB ccessibleWidget::isValid+0x2B
+  [rsp+0x4E0] 0x7FFDD64ECB80 ccessibleEvent::`vftable'+0x0
+  [rsp+0x508] 0x7FFED804160C _plugin_query_metadata_v2+0x7F96C
+  [rsp+0x518] 0x7FF6D214274D urws::ird::kinematics::KinematicsPanelWidget::refreshWsParamVisibility+0x1FD  [D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:1531]
+  [rsp+0x5C8] 0x7FF6D213D78D urws::ird::kinematics::KinematicsPanelWidget::refreshAll+0xE0D  [D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:723]
+  [rsp+0x648] 0x7FFE25AC6D4F ndoView::tr+0x1E5F
+  [rsp+0x658] 0x7FFDCB70A5A9 bject::doSetObjectName+0x149
+  [rsp+0x678] 0x7FFE256DBC7E oxLayout::addWidget+0xCE
+  [rsp+0x6B8] 0x7FF6D2128F1A urws::ird::kinematics::KinematicsPanelWidget::KinematicsPanelWidget+0x72A  [D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:191]
+  [rsp+0x6E8] 0x7FF6D20ECBF2 urws::ird::kinematics::KinPanelServices::KinPanelServices+0x192
+  [rsp+0x728] 0x7FF6D2EC9AF8 tring'+0x0
