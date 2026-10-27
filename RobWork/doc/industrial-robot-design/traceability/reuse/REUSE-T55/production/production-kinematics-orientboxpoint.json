@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "kinematics.orientBoxPoint",
+  "target": "sdurws_ird_kinematics",
+  "bindings": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+      "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+      "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+      "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+      "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+      "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+      "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+      "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "sha256": "12f83eaba63b990c7818a41b9ca7fb194efca13ed5b3cdc9137bd9eba9423a25"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "sha256": "3497fe78c3d6b7b523409144ce2163849c13bdd9c4b19d13e7dc6199181390ae"
+    }
+  ],
+  "normal": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe --gtest_filter=KinRegionCoverage.* --gtest_output=xml:<production/kinematics-normal.xml>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-normal.xml",
+      "sha256": "c16c98caca0a17c320fe0c4992cb3a3d3b7a374ac0a6ee2159a25e19e65baace"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-normal.log",
+      "sha256": "bc1e0e8aca59fb2ebf0f604ca616460556fde7bb0cdc0cdf9784715773e84be8"
+    },
+    "exitCode": 0
+  },
+  "oracle": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe --gtest_filter=KinRegionCoverage.FullPlanIdentityAndInvalidRotation*:KinRegionCoverage.OrientedGridRandomAndPose* --gtest_output=xml:<production/kinematics-oracle.xml>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-oracle.xml",
+      "sha256": "05e23e3602d485ef700cda185f18f584855599b66b7252c72534b737fbd7aa5a"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-oracle.log",
+      "sha256": "1feece5bd766cef5a8eddd7741aa33743203e5e2f7db0adc1bf9897e33f269b0"
+    },
+    "exitCode": 0,
+    "note": "A-21 三类拒绝（NaN/非正交/左手）与全计划身份恒等＋旋转盒独立展开 oracle（1e-14）——换核后判定面/合成面直核"
+  },
+  "disconnected": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe --gtest_filter=KinRegionCoverage.OrientedGridRandomAndPose_REQ03_A21 --gtest_output=xml:<production/kinematics-disconnect.xml>（变异副本下）",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-disconnect.xml",
+      "sha256": "e5983a920025390a743352dae999509f0f278a33c3cf0ee998942ee1bcde11cc"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-disconnect.log",
+      "sha256": "840542a17f30ff7bbebb718260a93d75f94570503451d0c9254afb4c26018bac"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "originalSha256": "12f83eaba63b990c7818a41b9ca7fb194efca13ed5b3cdc9137bd9eba9423a25",
+      "description": "orientBoxPoint 委托体 center+r*d → return p（断开红例：上游委托被短路）"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/mutated-Sampling.cpp",
+      "sha256": "78550d33812b44ac58663d5039089b2c1ebb277cbdb06ad7e18e853acb1dbfc0"
+    },
+    "note": "断开变异下 OrientedGridRandomAndPose_REQ03_A21 真实红（exit 1），恢复原字节后转绿（run/disconnect-kinematics-recheck.log）"
+  },
+  "upstreamComparison": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe --gtest_filter=KinRegionCoverage.* --gtest_output=xml:<production/kinematics-normal.xml>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-normal.xml",
+      "sha256": "c16c98caca0a17c320fe0c4992cb3a3d3b7a374ac0a6ee2159a25e19e65baace"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-normal.log",
+      "sha256": "bc1e0e8aca59fb2ebf0f604ca616460556fde7bb0cdc0cdf9784715773e84be8"
+    },
+    "exitCode": 0,
+    "note": "独立判定面/合成面探针＝traceability/reuse/REUSE-T55/run/probe-swap.log（P6 判定映射 561 例一致、P8 黄金合成 4186 例数值恒等）；本象限绑定 normal XML——产品测试经真实上游符号路径执行（REUSE-T53 同 XML 绑定先例）"
+  }
+}

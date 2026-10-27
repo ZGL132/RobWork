@@ -1,0 +1,16 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T55",
+ "unit": "modeling",
+ "description": "business-specific 判定的 nonOverlap 证据（REUSE-T55 阶段〇 FAIL 保留行＋T32 反例保留行；探针/反例证据见批目录）。",
+ "entries": [
+  {
+   "functionId": "modeling.axisAngleRotation",
+   "conclusion": "阶段〇独立解析对照结论＝FAIL（所有者 2026-10-27 确认，README §2/§4）：上游 EAA(axis,angle).toRotation3D() 经 EAA::axis()（EAA.hpp:219-226）在 θ<1e-6 返回零轴，θ∈(0,1e-6) 开区间换核丢失全部非对角一阶项（θ=1e-8 误差≈1e-8，超 DH/FK 逐元素 1e-9 容差一个数量级以上）；REQUIREMENTS.md:784 附录 D 第 13 项 1e-6＝「固定，仅表示转换」、:786 明文不改变第 4/5 项 FK/编译链/DH 容差且业务链实质语义差异必须保留缺口；本函数消费点（DhConvert.cpp :841/:843/:1716/:1789 现行号）全部为 DH/FK 数值契约面，REUSE-T11 接受与 REUSE-T29 适配批准均不覆盖（README §2 三重负面裁决）。零角守卫仅覆盖 θ=0 单点不构成解决手段。处置＝保留自持 Rodrigues 逐元素实现（与测试 oracle refAxisAngle 同式——确定性同规），函数体一行未动，矩阵行 business-specific＋函数注缺口登记防再评估/防误换"
+  },
+  {
+   "functionId": "modeling.rotationAngleBetween",
+   "conclusion": "定案＝保留 2·atan2 半角公式（计划 v3 中3 三段式）：业务分支＝s=‖vee(Rrel−Rrelᵀ)‖/2、c=(tr−1)/2、atan2(s,c)——近 0 精确（acos 小角病态不用）；拒绝候选数值证据＝migration.md:270 REUSE-T32 实测反例（EAA acos 分支边界 4.4e-11/1.6e-10 超 C7 容差 40~160 倍，直接引用不再重复调查）；可复用通用子功能＝无适用等价候选（T32 反例即等价候选的否决数值证据）。矩阵行登记否决结论防再评估；函数体内手工转置注的原失真冒烟表述随批订正（算法零变化）"
+  }
+ ]
+}

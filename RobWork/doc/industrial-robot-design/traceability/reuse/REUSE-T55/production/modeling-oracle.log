@@ -1,0 +1,17 @@
+Note: Google Test filter = MdlGoldenDhEquivalence*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from MdlGoldenDhEquivalence
+[ RUN      ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3 (1 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3 (12 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3 (14 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3 (1 ms)
+[----------] 4 tests from MdlGoldenDhEquivalence (30 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (30 ms total)
+[  PASSED  ] 4 tests.

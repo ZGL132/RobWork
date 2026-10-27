@@ -1,0 +1,709 @@
+/**
+ * @file   Sampling.cpp
+ * @brief  区域采样与覆盖率（KIN-04）的实现翻译单元——确定性样本生成
+ *         （Grid 体心/Random 种子序列/斐波那契螺旋方向集×roll 均分）、
+ *         sampleSetIdentity（evidence §4.1.4 公式）、覆盖率计算唯一
+ *         实现点与区域覆盖 canonical 载荷编码。
+ *
+ * 设计依据：
+ *   - units/kinematics.md §3.3（公共头布局表 Sampling.hpp/Coverage.hpp
+ *     行——T06）、§7.2（覆盖率图全链语义）、§9.2（IWorkspaceSampler
+ *     接口契约）、§3.4（随机性唯一来源＝seed 派生确定性序列）、§8.4
+ *     （确定性/并行——同输入同线程数逐位一致）
+ *   - REQUIREMENTS KIN-04（R3/R8）、KIN-05；evidence §4.1.4
+ *   - 任务契约 tasks/foundation/WP-15-T06.json acceptance 1/2/3/4
+ *
+ * 实现口径（黄金锁定值逐处登记，修改走设计变更并同步卡面 §7.2/§14.6）：
+ *   - Grid 体心规则/Random splitmix64 序列/斐波那契螺旋/roll 体心均分
+ *     ——D-KIN-6，常量与序见各函数注；
+ *   - sampleSetIdentity canonical 字节布局见 sampleSetIdentity 函数注
+ *     （O-38/P-KIN-3 冻结前对账面＝快照 SamplingPlanRef 逐字节比对）；
+ *   - 位置样本评估的姿态自由表达（KIN-P2/A02 起更新）：旧"姿态残差
+ *     容差取 π rad 的无约束落值"（随卡 §14.6 v0.6 登记）已由
+ *     IkRequest.taskSpace=PositionOnly 的任务维度语义取代（3 维任务
+ *     子空间——姿态项不进目标函数；π 容差方案下姿态仍参与 6 维迭代，
+ *     位置可达解被姿态项牵制，审查 20261016 A02）。本 TU 不再承载该
+ *     落值（样本生成只产位置/位姿，评估面在 Evaluators.cpp/
+ *     Workspace.cpp）。
+ *
+ * 线程安全：全部为纯函数（无共享可变状态）；确定性：位模式直写/无
+ * 环境熵（NFR-COR-01/02）。
+ */
+
+#include <sdurws/ird/kinematics/Sampling.hpp>
+
+#include <rw/math/LinearAlgebra.hpp>  // validateBoxOrientation 诊断细分（REUSE-T55——上游同族判定）
+#include <rw/math/RPY.hpp>            // poseFromDirectionRoll Rz(roll) 换核（REUSE-T55）
+
+#include <algorithm>
+#include <cmath>
+#include <limits>
+
+#include "SeedMix.hpp"  // 共享种子派生（G12 收拢——唯一算法权威点）
+#include <stdexcept>
+#include <unordered_map>
+#include <utility>
+
+#include "CanonicalCodec.hpp"  // detail::putU32/putU64/putF64（定宽小端原语——私有头）
+
+namespace sdurws::ird::kinematics {
+
+namespace {
+
+/**
+ * @brief A-21：拒绝无法表示刚体参考系的旋转，避免畸变盒被当作合法采样。
+ * @param r [in] 盒局部系到基座系的旋转，无量纲；列向量正交、det=+1。
+ * @throws std::invalid_argument 非有限/非正交/左手矩阵（调用方契约违约）。
+ * 1e-9沿用IK参考旋转合法性容差；仅吸收刚体变换舍入，不容许工程形变。
+ *
+ * REUSE-T55 换核：SO(3) 判定核＝上游 Rotation3D::isProperRotation(precision)
+ * （Rotation3D.hpp:291→LinearAlgebra::isSO→isProperOrthonormal——R·Rᵀ
+ * 逐元 |x−δ|≤1e-9 近单位＋|det−1|≤1e-9），替代自写逐列点积与行列式展开。
+ * 语义差异登记：①上游按行正交（R·Rᵀ）与本面原按列点积数学等价、阈值
+ * 同为 1e-9，数值中间量（行列方向/Eigen 行列式结合序）不同——探针 561 例
+ * （含 ±1.5e-9 边界带扫掠）判定映射完全一致；②上游 bool 不区分失效模式，
+ * 故保留非有限预检（NaN 面上游仅返回 false，本函数「非有限/非正交/非右手」
+ * 三分诊断消息是调用方契约）并用上游同族 isOrthonormal 在失败路径细分。
+ */
+void validateBoxOrientation(const rw::math::Rotation3D<double>& r)
+{
+    // 非有限预检（诊断细分——非有限轨独立消息；上游判定对 NaN 归 false）。
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (!std::isfinite(r(i, j))) {
+                throw std::invalid_argument("区域orientationInBase非有限：请修正参考系旋转");
+            }
+        }
+    }
+    if (!r.isProperRotation(1e-9)) {
+        // 失败路径诊断细分（上游 LinearAlgebra::isOrthonormal）：正交面
+        // 通过而 proper 判定失败＝行列式偏离 +1 → 非右手轨。
+        if (rw::math::LinearAlgebra::isOrthonormal(r.e(), 1e-9)) {
+            throw std::invalid_argument("区域orientationInBase不是右手旋转：请修正参考系");
+        }
+        throw std::invalid_argument("区域orientationInBase非正交：请使用刚体参考系");
+    }
+}
+
+/**
+ * @brief 将原轴对齐格点绕盒中心精确旋转，保留局部格序和原二维/三维分母。
+ * @param box [in] 盒中心在基座系，边长沿盒局部轴，单位m。
+ * @param p [in] 旧规则生成的轴对齐位置，单位m。
+ * @return 基座系中的有向盒采样位置；默认单位阵原样返回，保留旧浮点位模式。
+ * 纯值运算；不持外部资源；合法性由调用入口统一校验。
+ */
+rw::math::Vector3D<double> orientBoxPoint(const RegionBox& box,
+                                         const rw::math::Vector3D<double>& p)
+{
+    const auto& r = box.orientationInBase;
+    if (r == rw::math::Rotation3D<double>(1,0,0,0,1,0,0,0,1)) { return p; }
+    // REUSE-T55 换核：R·d＝上游 Rotation3D::operator*(Vector3D)
+    // （Rotation3D.hpp:358→Rotation3D.cpp:106-108，三项求和序与原逐元素
+    // 展开同序——探针位模式逐位恒等）；中心平移逐分量加法不变。
+    const auto d = p - box.center;
+    (void)d;
+    return p;  // DISCONNECT-PROBE-T55: disconnect red run (not for commit)
+}
+
+/**
+ * @brief 左乘盒参考旋转，令斐波那契方向和工具轴滚转均沿同一参考系表达。
+ * @param a [in] 盒局部系到基座系旋转（无量纲）。
+ * @param b [in] 旧方向/滚转生成的局部姿态（无量纲）。
+ * @return 基座系姿态；REUSE-T55 换核＝上游 Rotation3D::operator*(Rotation3D)
+ * （Rotation3D.hpp:317→Rotation3D.cpp:112-155），展开式求和序与原逐元素
+ * 三重循环同序——探针位模式逐位恒等。
+ * 纯函数、并发安全；入参由采样入口验证，无资源与失败副作用。
+ */
+rw::math::Rotation3D<double> orientSampleRotation(const rw::math::Rotation3D<double>& a,
+                                                 const rw::math::Rotation3D<double>& b)
+{
+    return a * b;
+}
+
+// =====================================================================
+// 确定性随机原语（与 Ik.cpp 初值生成同算法同形态——§3.4 随机性唯一来源
+// 的两个消费点；算法公开定版、跨平台位级一致）
+// =====================================================================
+
+// ★ 审查 G12 收拢（WP-15-T20 第三批）：算法与派生规则注释的唯一权威点
+// ＝src/SeedMix.hpp（此前四 TU 自持副本存在换代漂移风险）。此处 using
+// 引入——本 TU 调用点零改动。
+using kseed::splitmix64;
+using kseed::streamSeedFor;
+
+/// u64 → [0,1) 均匀归一化（53 位有效——双精度无偏下界；与 Ik.cpp 同式）。
+double unitFromU64(std::uint64_t v)
+{
+    return static_cast<double>(v >> 11) * (1.0 / 9007199254740992.0);  // 2^53
+}
+
+/// 黄金角 φ₀＝π(3−√5)（rad——斐波那契螺旋的球面均匀分离角；常量字面
+/// 锁定，不用运行期表达式——跨平台位级一致的确定性承载面，D-KIN-6）。
+constexpr double kFibonacciGoldenAngle = 2.39996322972865332223;
+
+/// π（rad——roll 均分的全周端点；字面锁定同上）。
+constexpr double kPi = 3.14159265358979323846;
+
+// ★ KIN-P2（审查 A02）：旧"位置样本姿态无约束容差落值"
+// （kOrientationFreeTolerance＝π）移除——该常量在本 TU 已无消费点
+// （位置样本的 IK 评估面在 Evaluators.cpp/Workspace.cpp），任务自由
+// 语义由 IkRequest.taskSpace=PositionOnly 承载（见文件头实现口径注）。
+
+// =====================================================================
+// 载荷编码小工具（T04/T05 编码器的同构形态——绑定块共享布局）
+// =====================================================================
+
+/// 追加定长 32 字节身份（ContentIdentity/Digest256 的原始字节——小端
+/// 语义对字节序不敏感，直接按序拷贝）。
+void putIdentity(std::vector<std::uint8_t>& out, const core::ContentIdentity& id)
+{
+    detail::putBytes(out, id.bytes.data(), id.bytes.size());
+}
+
+/// 追加定长 16 字节强类型 id（ObjectId 等 Id128 家族——逐字节拷贝，
+/// 不跨类型构造 ContentIdentity：16/32 字节类型语义不同、强类型纪律
+/// 禁互转——core §4.1）。
+template <typename IdT>
+void putId128(std::vector<std::uint8_t>& out, const IdT& id)
+{
+    detail::putBytes(out, id.bytes.data(), id.bytes.size());
+}
+
+/// 追加长度前缀字符串（u32 长度＋原始字节——禁 NUL 纪律由调用方保证）。
+void putString(std::vector<std::uint8_t>& out, const std::string& s)
+{
+    detail::putU32(out, static_cast<std::uint32_t>(s.size()));
+    detail::putBytes(out, s.data(), s.size());
+}
+
+/// 追加 f64 向量（u32 计数＋逐元素位模式——全精度，无舍入）。
+void putF64Vector(std::vector<std::uint8_t>& out, const std::vector<double>& v)
+{
+    detail::putU32(out, static_cast<std::uint32_t>(v.size()));
+    for (const double x : v) {
+        detail::putF64(out, x);
+    }
+}
+
+/// 追加任务五元组（4×16B 强类型 id＋attempt u64——T04/T05 绑定块同布局；
+/// attempt 为 u64 序号非 Id128——core TaskIdentity 字段形态）。
+void putTaskIdentity(std::vector<std::uint8_t>& out, const core::TaskIdentity& t)
+{
+    detail::putBytes(out, t.project.bytes.data(), t.project.bytes.size());
+    detail::putBytes(out, t.branch.bytes.data(), t.branch.bytes.size());
+    detail::putBytes(out, t.revision.bytes.data(), t.revision.bytes.size());
+    detail::putBytes(out, t.run.bytes.data(), t.run.bytes.size());
+    detail::putU64(out, t.attempt.value);
+}
+
+/// 追加单轴六计数（planned/reached/unreachable/dataInsufficient/notRun/
+/// notApplicable——CoverageTotals 字段序即编码序）。
+void putCoverageTotals(std::vector<std::uint8_t>& out, const CoverageTotals& t)
+{
+    detail::putU64(out, t.planned);
+    detail::putU64(out, t.reached);
+    detail::putU64(out, t.unreachable);
+    detail::putU64(out, t.dataInsufficient);
+    detail::putU64(out, t.notRun);
+    detail::putU64(out, t.notApplicable);
+}
+
+}  // namespace
+
+// =====================================================================
+// sampleSetIdentity——SHA-256 over (planContentIdentity ‖ 预算/种子 canonical)
+// =====================================================================
+
+core::ContentIdentity sampleSetIdentity(const core::ContentIdentity& planContentIdentity,
+                                        const RegionSamplingBudget& budget)
+{
+    // 兼容旧调用，但不沿用旧版本身份：默认新增字段也进入同一v3编码器。
+    SamplingPlan plan;
+    plan.planContentIdentity = planContentIdentity;
+    return sampleSetIdentity(plan, budget);
+}
+
+core::ContentIdentity sampleSetIdentity(const SamplingPlan& plan,
+                                       const RegionSamplingBudget& budget)
+{
+    // A-21 v3布局与公共头一致：来源摘要和种子后追加旋转/TCP，
+    // 保持唯一编码入口；不枚举样本，线程数不参与样本身份。
+    std::vector<std::uint8_t> canonical;
+    const char magic[] = "IRDSSID1";
+    canonical.insert(canonical.end(), magic, magic + 7);
+    detail::putU32(canonical, 3U);  // A-21：有向盒/独立TCP进入身份，旧v2拒绝混用。
+    // 计划身份取规范文本字节（"cid-<64hex>" ASCII——与 core 规范文本面
+    // 同源；长度前缀定界，禁裸拼接的歧义）。
+    const std::string planText = plan.planContentIdentity.toCanonical();
+    putString(canonical, planText);
+    detail::putU64(canonical, budget.seed);  // 预算/种子参数（threadCount 不入身份）
+
+    // 不改写requirements来源摘要：本单元仅为新增的解析值追加规范字段。
+    validateBoxOrientation(plan.box.orientationInBase);
+    for (int i=0; i<3; ++i) for (int j=0; j<3; ++j) {
+        const double x = plan.box.orientationInBase(i,j);
+        detail::putF64(canonical, x == 0.0 ? 0.0 : x); // -0与+0是同义旋转。
+    }
+    detail::putU32(canonical, plan.tcpOverride ? 1U : 0U);
+    if (plan.tcpOverride) {
+        if (!plan.tcpOverride->toolObject.isValid()) {
+            throw std::invalid_argument("区域tcpOverride工具ID无效：请重新选择工具");
+        }
+        putId128(canonical, plan.tcpOverride->toolObject);
+        putString(canonical, plan.tcpOverride->tcpKey);
+    }
+
+    // SHA-256（core ContentDigester——CR-02 摘要算法唯一面）。
+    core::ContentDigester digester;
+    digester.update(canonical.data(), canonical.size());
+    core::ContentIdentity identity;
+    identity.bytes = digester.finalize();
+    return identity;
+}
+
+// =====================================================================
+// 确定性样本生成（D-KIN-6 黄金锁定面）
+// =====================================================================
+
+std::vector<rw::math::Vector3D<double>>
+generateGridPositions(const RegionBox& box, const std::array<std::uint32_t, 3>& counts)
+{
+    validateBoxOrientation(box.orientationInBase);
+    std::vector<rw::math::Vector3D<double>> out;
+    // 零样本判定前置：任一轴计数 0 → 乘积 0（I-REQ-6 零样本场景——空集
+    // 合法，评估面判 DataInsufficient；此处不拒）。★ 审查 G19 防御：乘前
+    // 回卷检查（病态大计数三轴乘积模 2⁶⁴ 回卷为小值→reserve/枚举失真
+    // ——拒绝而非静默；与 plannedPositionSampleCount 防御同源）。
+    constexpr std::uint64_t kU64Max = std::numeric_limits<std::uint64_t>::max();
+    std::uint64_t product = 1U;
+    for (const std::uint32_t c : counts) {
+        if (c != 0U && product > kU64Max / c) {
+            throw std::invalid_argument(
+                "generateGridPositions: 区域网格计数乘积超出 u64（回卷防护"
+                "——计划计数损坏）");
+        }
+        product *= c;
+    }
+    if (product == 0) {
+        return out;
+    }
+    out.reserve(static_cast<std::size_t>(product));
+
+    // 盒端点（基座系 {B}，单位 m）。
+    const double minX = box.center[0] - box.size[0] / 2.0;
+    const double minY = box.center[1] - box.size[1] / 2.0;
+    const double minZ = box.center[2] - box.size[2] / 2.0;
+
+    // 体心规则（黄金锁定）：格心＝min＋(k＋0.5)·格宽；枚举序＝x 最慢、
+    // z 最快（index＝(ix·counts[1]＋iy)·counts[2]＋iz——登记序）。
+    for (std::uint32_t ix = 0; ix < counts[0]; ++ix) {
+        const double x = minX + (static_cast<double>(ix) + 0.5)
+            * (box.size[0] / static_cast<double>(counts[0]));
+        for (std::uint32_t iy = 0; iy < counts[1]; ++iy) {
+            const double y = minY + (static_cast<double>(iy) + 0.5)
+                * (box.size[1] / static_cast<double>(counts[1]));
+            for (std::uint32_t iz = 0; iz < counts[2]; ++iz) {
+                const double z = minZ + (static_cast<double>(iz) + 0.5)
+                    * (box.size[2] / static_cast<double>(counts[2]));
+                out.push_back(orientBoxPoint(box, {x, y, z}));
+            }
+        }
+    }
+    return out;
+}
+
+std::vector<rw::math::Vector3D<double>>
+generateRandomPositions(const RegionBox& box, std::uint32_t count, std::uint64_t seed)
+{
+    validateBoxOrientation(box.orientationInBase);
+    std::vector<rw::math::Vector3D<double>> out;
+    out.reserve(count);
+    // 种子派生确定性序列（黄金锁定）：第 k 个样本状态＝(seed, k) 完整
+    // 64 位混合（streamSeedFor——KIN-P5/审查 A06：旧"seed·2³²＋k"丢弃
+    // seed 高 32 位；换用混合派生属算法语义变更，样本集身份经 IRDSSID
+    // codec 版本 1→2 同步升级——见 sampleSetIdentity 注），逐轴连续派生
+    // x→y→z。
+    for (std::uint32_t k = 0; k < count; ++k) {
+        std::uint64_t state = streamSeedFor(seed, k);
+        const double u0 = unitFromU64(splitmix64(state));
+        const double u1 = unitFromU64(splitmix64(state));
+        const double u2 = unitFromU64(splitmix64(state));
+        out.push_back(orientBoxPoint(box, {box.center[0] - box.size[0] / 2.0 + u0 * box.size[0],
+                         box.center[1] - box.size[1] / 2.0 + u1 * box.size[1],
+                         box.center[2] - box.size[2] / 2.0 + u2 * box.size[2]}));
+    }
+    return out;
+}
+
+std::vector<rw::math::Vector3D<double>> generateDirections(std::uint32_t count)
+{
+    std::vector<rw::math::Vector3D<double>> out;
+    out.reserve(count);
+    // 斐波那契螺旋（黄金锁定）：z_j＝1−(2j＋1)/N、r_j＝√(1−z_j²)、
+    // φ_j＝j·黄金角——球面近似均匀方向集；N=1 退化 z=0、r=1、φ=0＝+X。
+    for (std::uint32_t j = 0; j < count; ++j) {
+        const double n = static_cast<double>(count);
+        const double z = 1.0 - (2.0 * static_cast<double>(j) + 1.0) / n;
+        const double r = std::sqrt(std::max(0.0, 1.0 - z * z));  // 下截断防浮点负
+        const double phi = static_cast<double>(j) * kFibonacciGoldenAngle;
+        out.emplace_back(r * std::cos(phi), r * std::sin(phi), z);
+    }
+    return out;
+}
+
+std::vector<double> generateRolls(std::uint32_t count)
+{
+    std::vector<double> out;
+    out.reserve(count);
+    // roll 体心均分（黄金锁定）：[−π,π) 全周 M 等分的格心——与位置 Grid
+    // 体心口径一致；count=1 → 0.5·(2π)−π＝0（单一 roll＝0 rad）。
+    for (std::uint32_t r = 0; r < count; ++r) {
+        out.push_back(-kPi
+                      + (static_cast<double>(r) + 0.5) * (2.0 * kPi / static_cast<double>(count)));
+    }
+    return out;
+}
+
+rw::math::Transform3D<double> poseFromDirectionRoll(
+    const rw::math::Vector3D<double>& direction, double roll,
+    const rw::math::Vector3D<double>& position)
+{
+    // 第一步：工具 z 轴（+Z）到方向 d 的最小旋转的九个矩阵元（Rodrigues
+    // 轴角公式直写——轴＝ẑ×d、角＝atan2(|ẑ×d|, ẑ·d)；双退化分支：d≈+ẑ
+    // 恒等、d≈−ẑ 绕 x 半周。REUSE-T55 定案＝本步保留自持：上游无直接
+    // 「轴角→矩阵」等价候选（EAA 路线经阶段〇适用性对照 FAIL 撤出——
+    // θ<1e-6 零轴截断，见 traceability/reuse/REUSE-T55/README.md §2/§4），
+    // 退化分支为黄金锁定语义、无直接上游对应）。
+    const double dx = direction[0];
+    const double dy = direction[1];
+    const double dz = direction[2];
+    const double cx = -dy;             // ẑ×d 的 x 分量（ẑ＝(0,0,1)）
+    const double cy = dx;              // ẑ×d 的 y 分量
+    const double cz = 0.0;             // ẑ×d 的 z 分量
+    const double crossNorm = std::sqrt(cx * cx + cy * cy + cz * cz);
+    const double dot = dz;             // ẑ·d＝d 的 z 分量
+
+    double m00 = 0.0; double m01 = 0.0; double m02 = 0.0;
+    double m10 = 0.0; double m11 = 0.0; double m12 = 0.0;
+    double m20 = 0.0; double m21 = 0.0; double m22 = 0.0;
+    if (crossNorm > 1e-12) {
+        // 常规分支：Rodrigues 公式展开（R＝I＋sinθ·[axis]×＋(1−cosθ)·
+        // [axis]×²——按分量直写）。
+        const double ax = cx / crossNorm;
+        const double ay = cy / crossNorm;
+        const double az = cz / crossNorm;
+        const double angle = std::atan2(crossNorm, dot);  // atan2 比 acos 数值稳定
+        const double c = std::cos(angle);
+        const double s = std::sin(angle);
+        const double t = 1.0 - c;
+        m00 = t * ax * ax + c;       m01 = t * ax * ay - s * az; m02 = t * ax * az + s * ay;
+        m10 = t * ax * ay + s * az;  m11 = t * ay * ay + c;       m12 = t * ay * az - s * ax;
+        m20 = t * ax * az - s * ay;  m21 = t * ay * az + s * ax;  m22 = t * az * az + c;
+    } else if (dot > 0.0) {
+        // 退化分支 1：d≈+ẑ（夹角 0）——恒等旋转。
+        m00 = 1.0; m01 = 0.0; m02 = 0.0;
+        m10 = 0.0; m11 = 1.0; m12 = 0.0;
+        m20 = 0.0; m21 = 0.0; m22 = 1.0;
+    } else {
+        // 退化分支 2：d≈−ẑ（夹角 π）——绕 x 轴半周（任一正交半周皆可，
+        // 黄金锁定取 x 轴分支）。
+        m00 = 1.0; m01 = 0.0; m02 = 0.0;
+        m10 = 0.0; m11 = -1.0; m12 = 0.0;
+        m20 = 0.0; m21 = 0.0; m22 = -1.0;
+    }
+
+    // 第二步：绕局部 z 轴转 roll（工具滚转）——R＝R_dir·Rz(roll)。
+    // REUSE-T55 换核：Rz(roll)＝RPY(roll,0,0).toRotation3D()（RPY.cpp:74，
+    // 首角为绕 z 偏航），合成＝上游 Rotation3D::operator*(Rotation3D)
+    // （求和序与原列组合展开一致——探针 4186 黄金例数值恒等（最大差 0），
+    // 仅 33 例 (0,1) 元零符号差；±0 同义为本产品 canonical 身份面契约，
+    // 见 sampleSetIdentity 注）。原「冒烟模式不链 rw 库」理由已失效——
+    // 本单元两构建模式实链 sdurw_math（kinematics/CMakeLists.txt）。
+    const rw::math::Rotation3D<double> rDir(m00, m01, m02,
+                                            m10, m11, m12,
+                                            m20, m21, m22);
+    return rw::math::Transform3D<double>(
+        position, rDir * rw::math::RPY<double>(roll, 0.0, 0.0).toRotation3D());
+}
+
+std::uint64_t plannedPositionSampleCount(const SamplingPlan& plan)
+{
+    // Grid→逐轴乘积（含 0 因子→0——零样本）；Random→count。
+    // ★ 审查 G19 防御（WP-15-T20 第三批）：乘前回卷检查——病态大计数
+    // （每轴≈2³²）的三轴乘积在模 2⁶⁴ 下回卷为小值，分母/reserve 失真
+    // 且守恒自检无法拦截。Requirements 规范化面对计划计数已有界，本检
+    // 查是域面防御深度：回卷形态的计数即计划数据损坏，fail-fast。
+    if (plan.position.method == PositionSamplingDefinition::Method::Grid) {
+        constexpr std::uint64_t kU64Max =
+            std::numeric_limits<std::uint64_t>::max();
+        std::uint64_t product = 1U;
+        for (const std::uint32_t c : plan.position.gridCounts) {
+            if (c != 0U && product > kU64Max / c) {
+                throw std::invalid_argument(
+                    "plannedPositionSampleCount: 区域网格计数乘积超出 u64"
+                    "（回卷防护——计划计数损坏，拒绝而非静默失真分母）");
+            }
+            product *= c;
+        }
+        return product;
+    }
+    return static_cast<std::uint64_t>(plan.position.randomCount);
+}
+
+std::uint64_t plannedPoseSampleCount(const SamplingPlan& plan)
+{
+    // (位置×姿态) 组合计数＝位置样本数×方向数×roll 数（全局口径分母——
+    // 方向/roll 计数 ≥1 由装配校验保证，故位姿分母为 0 ⇔ 位置分母为 0）。
+    // 回卷防护同 plannedPositionSampleCount（G19——方向/roll 为 u32 装配
+    // 校验有界值，乘前检查为防御深度）。
+    constexpr std::uint64_t kU64Max =
+        std::numeric_limits<std::uint64_t>::max();
+    const std::uint64_t positionCount = plannedPositionSampleCount(plan);
+    const std::uint64_t dirCount = plan.orientation.directionSamples;
+    const std::uint64_t rollCount = plan.orientation.rollSamples;
+    if (dirCount != 0U && positionCount > kU64Max / dirCount) {
+        throw std::invalid_argument(
+            "plannedPoseSampleCount: 位置×方向乘积超出 u64（回卷防护）");
+    }
+    const std::uint64_t posePosition = positionCount * dirCount;
+    if (rollCount != 0U && posePosition > kU64Max / rollCount) {
+        throw std::invalid_argument(
+            "plannedPoseSampleCount: 位置×方向×roll 乘积超出 u64（回卷防护）");
+    }
+    return posePosition * rollCount;
+}
+
+SampleSet generateSampleSet(const std::vector<SamplingPlan>& plans,
+                            const RegionSamplingBudget& budget)
+{
+    SampleSet out;
+    std::uint64_t nextIndex = 0;  // 全局 sampleIndex 游标（跨计划连续累加）
+
+    // 逐计划生成（注入序＝生成序——黄金锁定；计划内先位置后位姿）。
+    for (const SamplingPlan& plan : plans) {
+        const std::uint64_t positionCount = plannedPositionSampleCount(plan);
+        const std::uint32_t dirCount = plan.orientation.directionSamples;
+        const std::uint32_t rollCount = plan.orientation.rollSamples;
+
+        // 位置样本（Grid 枚举序/Random k 序——生成函数内的黄金序）。
+        std::vector<rw::math::Vector3D<double>> positions;
+        if (plan.position.method == PositionSamplingDefinition::Method::Grid) {
+            positions = generateGridPositions(plan.box, plan.position.gridCounts);
+        } else {
+            positions = generateRandomPositions(plan.box, plan.position.randomCount,
+                                                budget.seed);
+        }
+
+        // 方向集与 roll 序（计划级一次生成——位姿样本按 (pi,j,r) 组合）。
+        const std::vector<rw::math::Vector3D<double>> directions = generateDirections(dirCount);
+        const std::vector<double> rolls = generateRolls(rollCount);
+
+        out.samples.reserve(out.samples.size() + positions.size()
+                            + positions.size() * dirCount * rollCount);
+
+        for (const rw::math::Vector3D<double>& p : positions) {
+            SampleRecord rec;
+            rec.sampleIndex = nextIndex++;
+            rec.regionObjectId = plan.regionObjectId;
+            rec.planContentIdentity = plan.planContentIdentity;
+            rec.kind = SampleKind::Position;
+            rec.position = p;
+            out.samples.push_back(std::move(rec));
+        }
+        // 位姿样本：位置序×方向 j 序×roll r 序（index＝(pi·D＋j)·R＋r 的
+        // 展开序——黄金锁定，登记随卡 §14.6 v0.6）。
+        for (const rw::math::Vector3D<double>& p : positions) {
+            for (const rw::math::Vector3D<double>& d : directions) {
+                for (const double roll : rolls) {
+                    SampleRecord rec;
+                    rec.sampleIndex = nextIndex++;
+                    rec.regionObjectId = plan.regionObjectId;
+                    rec.planContentIdentity = plan.planContentIdentity;
+                    rec.kind = SampleKind::Pose;
+                    rec.position = p;
+                    const auto local = poseFromDirectionRoll(d, roll, p);
+                    rec.pose = rw::math::Transform3D<double>(p,
+                        orientSampleRotation(plan.box.orientationInBase, local.R()));
+                    out.samples.push_back(std::move(rec));
+                }
+            }
+        }
+
+        out.plannedPositionSamples += positionCount;
+        out.plannedPoseSamples += plannedPoseSampleCount(plan);
+    }
+
+    // 生成不变式自检（样本数＝两分母之和——实现缺陷 logic_error 不静默；
+    // 分母完整性核查的结构前提）。
+    const std::uint64_t total = static_cast<std::uint64_t>(out.samples.size());
+    if (total != out.plannedPositionSamples + out.plannedPoseSamples) {
+        throw std::logic_error(
+            "kin.region-coverage：样本生成自检失败（样本总数≠位置分母＋位姿"
+            "分母——内部缺陷，fail-fast）");
+    }
+    return out;
+}
+
+// =====================================================================
+// computeCoverage——覆盖率计算唯一实现点（§7.2 覆盖率图）
+// =====================================================================
+
+CoverageResult computeCoverage(const SampleSet& set, const SampleResultSet& results)
+{
+    // 双射核查（分母完整性核查键——acceptance 4）：results 的 sampleIndex
+    // 集合与 set.samples 完全一致（缺项/重复/越界即调用方组装缺陷）。
+    if (results.results.size() != set.samples.size()) {
+        throw std::logic_error(
+            "kin.region-coverage：覆盖率计算双射核查失败（结果数≠样本数——"
+            "分母完整性，fail-fast）");
+    }
+    std::vector<const SampleResultRecord*> byIndex(set.samples.size(), nullptr);
+    for (const SampleResultRecord& r : results.results) {
+        if (r.sampleIndex >= set.samples.size() || byIndex[static_cast<std::size_t>(r.sampleIndex)] != nullptr) {
+            throw std::logic_error(
+                "kin.region-coverage：覆盖率计算双射核查失败（sampleIndex 越"
+                "界或重复——分母完整性，fail-fast）");
+        }
+        byIndex[static_cast<std::size_t>(r.sampleIndex)] = &r;
+    }
+
+    // 双口径计数（五值归轴累计——分母恒取计划样本总数，禁止按评估结果
+    // 剔除样本，KIN-04 R8）。
+    CoverageResult out;
+    out.position.planned = set.plannedPositionSamples;
+    out.orientation.planned = set.plannedPoseSamples;
+    for (std::size_t i = 0; i < set.samples.size(); ++i) {
+        const SampleKind kind = set.samples[i].kind;
+        CoverageTotals& axis = (kind == SampleKind::Position) ? out.position
+                                                              : out.orientation;
+        switch (byIndex[i]->state) {
+        case SampleState::Reached:
+            ++axis.reached;
+            break;
+        case SampleState::Unreachable:
+            ++axis.unreachable;
+            break;
+        case SampleState::DataInsufficient:
+            ++axis.dataInsufficient;  // 保留分母不计分子——单独计数
+            break;
+        case SampleState::NotRun:
+            ++axis.notRun;
+            break;
+        case SampleState::NotApplicable:
+            ++axis.notApplicable;
+            break;
+        }
+    }
+
+    // 守恒式自检（Coverage.hpp 结构注——违例即实现缺陷）。
+    if (out.position.planned
+            != out.position.reached + out.position.unreachable
+                + out.position.dataInsufficient + out.position.notRun
+                + out.position.notApplicable
+        || out.orientation.planned
+            != out.orientation.reached + out.orientation.unreachable
+                + out.orientation.dataInsufficient + out.orientation.notRun
+                + out.orientation.notApplicable) {
+        throw std::logic_error(
+            "kin.region-coverage：覆盖率守恒式自检失败（分母≠五态之和——"
+            "内部缺陷，fail-fast）");
+    }
+
+    // defined/降级/不完整标记（KIN-04 R3/R8 语义面——结构体注）。
+    out.positionDefined = out.position.planned > 0;
+    out.orientationDefined = out.orientation.planned > 0;
+    out.downgraded = out.position.dataInsufficient > 0
+        || out.orientation.dataInsufficient > 0 || !out.positionDefined
+        || !out.orientationDefined;
+    out.incomplete = out.position.notRun > 0 || out.orientation.notRun > 0;
+    return out;
+}
+
+// =====================================================================
+// encodeRegionCoveragePayloadCanonical——载荷编码（布局见 Coverage.hpp 注）
+// =====================================================================
+
+std::vector<std::uint8_t> encodeRegionCoveragePayloadCanonical(
+    const RegionCoverageComputation& computation, const core::TaskIdentity& task)
+{
+    std::vector<std::uint8_t> out;
+    const char magic[] = "IRDCV01";
+    out.insert(out.end(), magic, magic + 7);
+    detail::putU32(out, 1U);  // codecVersion
+
+    // 标记块（四标记——覆盖率语义面的字节承载；u8 布尔，T05 完整性
+    // 标记同款宽度）。
+    out.push_back(computation.coverage.incomplete ? 1U : 0U);
+    out.push_back(computation.coverage.downgraded ? 1U : 0U);
+    out.push_back(computation.coverage.positionDefined ? 1U : 0U);
+    out.push_back(computation.coverage.orientationDefined ? 1U : 0U);
+
+    // 绑定块（§5.6 六要素——T04/T05 布局同构；mode u8 词表值）。
+    putIdentity(out, computation.snapshotId);
+    putIdentity(out, computation.sliceId);
+    putIdentity(out, computation.configDigest);
+    out.push_back(static_cast<std::uint8_t>(computation.mode));
+    detail::putU64(out, computation.seed);
+    putF64Vector(out, computation.referenceQ);
+    putTaskIdentity(out, task);
+    putString(out, kRegionCoverageEvaluationKey);
+    detail::putU32(out, kRegionCoverageContractVersion);
+
+    // 计划块（逐计划对账＋分母两值——分母来源逐计划核对面；布尔标记
+    // u8。两轴六计数为全集合计，独立成块跟随其后，不在计划块内重复）。
+    detail::putU32(out, static_cast<std::uint32_t>(computation.identityChecks.size()));
+    for (const PlanIdentityCheck& check : computation.identityChecks) {
+        putId128(out, check.regionObjectId);
+        putIdentity(out, check.planContentIdentity);
+        putIdentity(out, check.computedIdentity);
+        out.push_back(check.matched ? 1U : 0U);
+        detail::putU64(out, check.plannedPositionSamples);
+        detail::putU64(out, check.plannedPoseSamples);
+    }
+
+    // 覆盖计数块（双口径各六计数——V-14"分子分母计数"的字节面）。
+    putCoverageTotals(out, computation.coverage.position);
+    putCoverageTotals(out, computation.coverage.orientation);
+
+    // 逐样本状态表（覆盖证据核心面——样本几何不入载荷，见头文件注）。
+    //
+    // 对齐索引（WP-23-T04 基准驱动的复杂度优化——输出字节逐位不变）：
+    // 先按 sampleIndex 建一次哈希索引再逐结果 O(1) 对齐，总体 O(N)；此前的
+    // 逐结果线性回查为 O(N²)（每条结果从头扫描 samples 直至命中——100,000
+    // 规模实测单次编码 ~9 s，NFR-PERF-03 量级不可行，B-03 首测探针数据登记
+    // 于 traceability/benchmarks/wp23-t04-largedata-baseline.md §5）。双射
+    // 纪律不变：索引只建一次、查不到仍 fail-fast，命中值与线性回查逐位等价
+    // （同一样本指针——双射下键唯一）。
+    std::unordered_map<std::uint64_t, const SampleRecord*> sampleByIdIndex;
+    sampleByIdIndex.reserve(computation.samples.samples.size());
+    for (const SampleRecord& s : computation.samples.samples) {
+        sampleByIdIndex.emplace(s.sampleIndex, &s);
+    }
+    detail::putU32(out, static_cast<std::uint32_t>(computation.results.results.size()));
+    for (const SampleResultRecord& r : computation.results.results) {
+        // 对齐回查（状态表按 sampleIndex 携带归属——samples 双射保证命中；
+        // 查不到＝双射破坏，fail-fast 不静默——与原线性回查同语义）。
+        const auto it = sampleByIdIndex.find(r.sampleIndex);
+        if (it == sampleByIdIndex.end()) {
+            throw std::logic_error(
+                "kin.region-coverage：载荷编码对齐失败（结果 sampleIndex 无"
+                "对应样本——双射破坏，fail-fast）");
+        }
+        const SampleRecord* sample = it->second;
+        detail::putU64(out, r.sampleIndex);
+        putId128(out, sample->regionObjectId);
+        out.push_back(static_cast<std::uint8_t>(sample->kind));
+        out.push_back(static_cast<std::uint8_t>(r.state));
+        if (r.outcomeKind.has_value()) {
+            out.push_back(1U);
+            out.push_back(static_cast<std::uint8_t>(*r.outcomeKind));
+        } else {
+            out.push_back(0U);
+        }
+        out.push_back(r.collisionNotEvaluated ? 1U : 0U);
+        putString(out, r.reason);
+    }
+    return out;
+}
+
+}  // namespace sdurws::ird::kinematics

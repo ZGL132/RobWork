@@ -1,0 +1,26 @@
+# REUSE-T55 swap-equivalence probe - baseline 220189b2f standin cores vs rw::math direct API
+PROBE P1.rotVec stv r*v cases=256 bitEqual=true valueEqual=true maxAbsDiff=0.000e+00
+PROBE P1.rotVec stv r*v note: operator*(Rotation3D,Vector3D)
+PROBE P2.rotMul stv ra*rb cases=256 bitEqual=true valueEqual=true maxAbsDiff=0.000e+00
+PROBE P2.rotMul stv ra*rb note: Rotation3D::operator*(Rotation3D)
+PROBE P3.transformMul stv ta*tb cases=256 bitEqual=true valueEqual=true maxAbsDiff=0.000e+00
+PROBE P3.transformMul stv ta*tb note: Transform3D::operator*
+PROBE P4.rotateTranspose stv inverse(r)*v cases=256 bitEqual=true valueEqual=true maxAbsDiff=0.000e+00
+PROBE P4.rotateTranspose stv inverse(r)*v note: free inverse=exact transpose
+PROBE P5.rotateTransposeFrame stv inverse(r)*rb cases=256 bitEqual=true valueEqual=true maxAbsDiff=0.000e+00
+PROBE P6.validateVerdict cases=561 disagree=0 verdict-maps-identical
+PROBE P6b dual-invalid col0-nonorthogonal+nan-later-col nan=(1,2) hand=nonorthogonal new=nonfinite  <-- PRECEDENCE-FLIP
+PROBE P6b dual-invalid col0-nonorthogonal+nan-later-col nan=(2,1) hand=nonorthogonal new=nonfinite  <-- PRECEDENCE-FLIP
+PROBE P6b dual-invalid col0-nonorthogonal+nan-same-col nan=(0,1) hand=nonorthogonal new=nonfinite  <-- PRECEDENCE-FLIP
+PROBE P6b dual-invalid col0-nonorthogonal+nan-diag-last nan=(2,2) hand=nonorthogonal new=nonfinite  <-- PRECEDENCE-FLIP
+PROBE P6b lefthand clean hand=lefthand new=lefthand 
+PROBE P6b.validatePrecedence dual-cases=4 precedence-flips=4 登记语义差异（双重无效下类别优先级：非正交先抛→非有限先抛）
+PROBE P7.rotZ hand stv RPY(a,0,0) cases=84 bitEqual=false valueEqual=true maxAbsDiff=0.000e+00 zeroSignOnly=(2,0)
+PROBE P7.rotZ hand stv RPY(a,0,0) note: bitDiffCases=84
+PROBE P7.rotX hand stv RPY(0,0,a) cases=84 bitEqual=false valueEqual=true maxAbsDiff=0.000e+00 zeroSignOnly=(2,0)
+PROBE P7.rotX hand stv RPY(0,0,a) note: bitDiffCases=84
+PROBE P8.poseFromDirectionRoll.compose stv R_dir*RPY(roll,0,0) cases=4186 bitEqual=false valueEqual=true maxAbsDiff=0.000e+00 zeroSignOnly=(0,1)
+PROBE P8.poseFromDirectionRoll.compose stv R_dir*RPY(roll,0,0) note: bitDiffCases=33 d=(1.0000,0.0000,0.0000) d=(1.0000,0.0000,0.0000) d=(0.8660,0.0000,0.5000) d=(0.8660,0.0000,0.5000) d=(0.4841,0.0000,0.8750)
+PROBE P9.orientBoxPoint.fullExpr assoc-stv candidate cases=768 bitDiffCases=243 valueDiffCases=243 maxAbsDiff=4.441e-16 maxUlp=160 COMBINATION-ORDER-ULP-DIFF(登记语义差异)
+PROBE P9 note: 中心加法结合序差异＝((c+t0)+t1)+t2 vs c+((t0+t1)+t2)，ULP 级、附录 D 容差内；候选注释与登记随批订正
+# probe done failures=0

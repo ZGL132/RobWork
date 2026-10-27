@@ -1,0 +1,1116 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp
+index f13afa1..377aff5 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp
+@@ -32,6 +32,9 @@
+ 
+ #include <sdurws/ird/kinematics/Sampling.hpp>
+ 
++#include <rw/math/LinearAlgebra.hpp>  // validateBoxOrientation 诊断细分（REUSE-T55——上游同族判定）
++#include <rw/math/RPY.hpp>            // poseFromDirectionRoll Rz(roll) 换核（REUSE-T55）
++
+ #include <algorithm>
+ #include <cmath>
+ #include <limits>
+@@ -52,28 +55,38 @@
+  * @param r [in] 盒局部系到基座系的旋转，无量纲；列向量正交、det=+1。
+  * @throws std::invalid_argument 非有限/非正交/左手矩阵（调用方契约违约）。
+  * 1e-9沿用IK参考旋转合法性容差；仅吸收刚体变换舍入，不容许工程形变。
++ *
++ * REUSE-T55 换核：SO(3) 判定核＝上游 Rotation3D::isProperRotation(precision)
++ * （Rotation3D.hpp:291→LinearAlgebra::isSO→isProperOrthonormal——R·Rᵀ
++ * 逐元 |x−δ|≤1e-9 近单位＋|det−1|≤1e-9），替代自写逐列点积与行列式展开。
++ * 语义差异登记：①上游按行正交（R·Rᵀ）与本面原按列点积数学等价、阈值
++ * 同为 1e-9，数值中间量（行列方向/Eigen 行列式结合序）不同——探针 561 例
++ * （含 ±1.5e-9 边界带扫掠）判定映射完全一致；②上游 bool 不区分失效模式，
++ * 故保留非有限预检（NaN 面上游仅返回 false，本函数「非有限/非正交/非右手」
++ * 三分诊断消息是调用方契约）并用上游同族 isOrthonormal 在失败路径细分；
++ * ③双重无效输入的类别优先级变化（探针 P6b 4/4 实测翻转）：基线在列序扫描
++ * 中顺带查第 i 列有限性，非有限元位于后位列而前列已违规时「非正交」先抛，
++ * 新核全元素预检前置使「非有限」恒先抛——异常类型同为 std::invalid_argument，
++ * 测试面（仅钉类型）不受影响。
+  */
+ void validateBoxOrientation(const rw::math::Rotation3D<double>& r)
+ {
++    // 非有限预检（诊断细分——非有限轨独立消息；上游判定对 NaN 归 false；
++    // 双重无效下类别优先级变化见函数注③——非有限恒先抛）。
+     for (int i = 0; i < 3; ++i) {
+         for (int j = 0; j < 3; ++j) {
+-            double dot = 0;
+-            for (int k = 0; k < 3; ++k) {
+-                if (!std::isfinite(r(k, i))) {
+-                    throw std::invalid_argument("区域orientationInBase非有限：请修正参考系旋转");
+-                }
+-                dot += r(k, i) * r(k, j);
+-            }
+-            if (std::fabs(dot - (i == j ? 1.0 : 0.0)) > 1e-9) {
+-                throw std::invalid_argument("区域orientationInBase非正交：请使用刚体参考系");
++            if (!std::isfinite(r(i, j))) {
++                throw std::invalid_argument("区域orientationInBase非有限：请修正参考系旋转");
+             }
+         }
+     }
+-    const double det = r(0,0)*(r(1,1)*r(2,2)-r(1,2)*r(2,1))
+-        - r(0,1)*(r(1,0)*r(2,2)-r(1,2)*r(2,0))
+-        + r(0,2)*(r(1,0)*r(2,1)-r(1,1)*r(2,0));
+-    if (std::fabs(det - 1.0) > 1e-9) {
+-        throw std::invalid_argument("区域orientationInBase不是右手旋转：请修正参考系");
++    if (!r.isProperRotation(1e-9)) {
++        // 失败路径诊断细分（上游 LinearAlgebra::isOrthonormal）：正交面
++        // 通过而 proper 判定失败＝行列式偏离 +1 → 非右手轨。
++        if (rw::math::LinearAlgebra::isOrthonormal(r.e(), 1e-9)) {
++            throw std::invalid_argument("区域orientationInBase不是右手旋转：请修正参考系");
++        }
++        throw std::invalid_argument("区域orientationInBase非正交：请使用刚体参考系");
+     }
+ }
+ 
+@@ -89,27 +102,28 @@
+ {
+     const auto& r = box.orientationInBase;
+     if (r == rw::math::Rotation3D<double>(1,0,0,0,1,0,0,0,1)) { return p; }
++    // REUSE-T55 换核：R·d＝上游 Rotation3D::operator*(Vector3D)
++    // （Rotation3D.hpp:358→Rotation3D.cpp:106-108，三项求和序与原逐元素
++    // 展开同序——探针位模式逐位恒等）；中心平移仍为逐分量加法但结合序
++    // 变为 c+((t0+t1)+t2)（原 ((c+t0)+t1)+t2）——ULP 级语义差异，探针 P9
++    // 768 例中 243 例位差（maxAbsDiff 4.441e-16、maxUlp 160，附录 D 容差内）。
+     const auto d = p - box.center;
+-    return {box.center[0] + r(0,0)*d[0] + r(0,1)*d[1] + r(0,2)*d[2],
+-            box.center[1] + r(1,0)*d[0] + r(1,1)*d[1] + r(1,2)*d[2],
+-            box.center[2] + r(2,0)*d[0] + r(2,1)*d[1] + r(2,2)*d[2]};
++    return box.center + r * d;
+ }
+ 
+ /**
+  * @brief 左乘盒参考旋转，令斐波那契方向和工具轴滚转均沿同一参考系表达。
+  * @param a [in] 盒局部系到基座系旋转（无量纲）。
+  * @param b [in] 旧方向/滚转生成的局部姿态（无量纲）。
+- * @return 基座系姿态；显式三阶乘积避免独立模式引用框架外联乘法符号。
++ * @return 基座系姿态；REUSE-T55 换核＝上游 Rotation3D::operator*(Rotation3D)
++ * （Rotation3D.hpp:317→Rotation3D.cpp:112-155），展开式求和序与原逐元素
++ * 三重循环同序——探针位模式逐位恒等。
+  * 纯函数、并发安全；入参由采样入口验证，无资源与失败副作用。
+  */
+ rw::math::Rotation3D<double> orientSampleRotation(const rw::math::Rotation3D<double>& a,
+                                                  const rw::math::Rotation3D<double>& b)
+ {
+-    rw::math::Rotation3D<double> result(1,0,0,0,1,0,0,0,1);
+-    for (int i=0; i<3; ++i) for (int j=0; j<3; ++j) {
+-        result(i,j)=a(i,0)*b(0,j)+a(i,1)*b(1,j)+a(i,2)*b(2,j);
+-    }
+-    return result;
++    return a * b;
+ }
+ 
+ // =====================================================================
+@@ -362,9 +376,10 @@
+ {
+     // 第一步：工具 z 轴（+Z）到方向 d 的最小旋转的九个矩阵元（Rodrigues
+     // 轴角公式直写——轴＝ẑ×d、角＝atan2(|ẑ×d|, ẑ·d)；双退化分支：d≈+ẑ
+-    // 恒等、d≈−ẑ 绕 x 半周。与产品 Fk 路径无共享代码的独立小实现，仅
+-    // 姿态组装用；rw 旋转类型的外联符号（默认构造/operator*）全程规避
+-    // ——冒烟模式不链 rw 库，Ik.hpp identityTransform3D 同款纪律）。
++    // 恒等、d≈−ẑ 绕 x 半周。REUSE-T55 定案＝本步保留自持：上游无直接
++    // 「轴角→矩阵」等价候选（EAA 路线经阶段〇适用性对照 FAIL 撤出——
++    // θ<1e-6 零轴截断，见 traceability/reuse/REUSE-T55/README.md §2/§4），
++    // 退化分支为黄金锁定语义、无直接上游对应）。
+     const double dx = direction[0];
+     const double dy = direction[1];
+     const double dz = direction[2];
+@@ -404,17 +419,17 @@
+     }
+ 
+     // 第二步：绕局部 z 轴转 roll（工具滚转）——R＝R_dir·Rz(roll)。
+-    // 手写三阶矩阵积：rw 的 Rotation3D::operator*（multiply）是外联符号，
+-    // 冒烟模式（不链 rw 库）不可解析。列组合展开：R·Rz 的第 0 列＝cr·
+-    // R_dir 列 0＋sr·R_dir 列 1、第 1 列＝cr·R_dir 列 1−sr·R_dir 列 0、
+-    // 第 2 列＝R_dir 列 2（Rz 右乘只混前两列）。
+-    const double cr = std::cos(roll);
+-    const double sr = std::sin(roll);
+-    const rw::math::Rotation3D<double> rRoll(
+-        m00 * cr + m01 * sr, m01 * cr - m00 * sr, m02,
+-        m10 * cr + m11 * sr, m11 * cr - m10 * sr, m12,
+-        m20 * cr + m21 * sr, m21 * cr - m20 * sr, m22);
+-    return rw::math::Transform3D<double>(position, rRoll);
++    // REUSE-T55 换核：Rz(roll)＝RPY(roll,0,0).toRotation3D()（RPY.cpp:74，
++    // 首角为绕 z 偏航），合成＝上游 Rotation3D::operator*(Rotation3D)
++    // （求和序与原列组合展开一致——探针 4186 黄金例数值恒等（最大差 0），
++    // 仅 33 例 (0,1) 元零符号差；±0 同义为本产品 canonical 身份面契约，
++    // 见 sampleSetIdentity 注）。原「冒烟模式不链 rw 库」理由已失效——
++    // 本单元两构建模式实链 sdurw_math（kinematics/CMakeLists.txt）。
++    const rw::math::Rotation3D<double> rDir(m00, m01, m02,
++                                            m10, m11, m12,
++                                            m20, m21, m22);
++    return rw::math::Transform3D<double>(
++        position, rDir * rw::math::RPY<double>(roll, 0.0, 0.0).toRotation3D());
+ }
+ 
+ std::uint64_t plannedPositionSampleCount(const SamplingPlan& plan)
+diff --git a/RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json b/RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json
+index 9597767..0f95f1f 100644
+--- a/RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json
++++ b/RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json
+@@ -97,9 +97,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+           "symbol": "orientBoxPoint",
+           "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientBoxPoint",
+-          "startLine": 87,
+-          "endLine": 96,
+-          "sha256": "60e011e53950c6eacac20e7299052c5b7894d50584876961345a3c2000d9a669"
++          "startLine": 100,
++          "endLine": 112,
++          "sha256": "5623b0816dfa72dd14f226c22e861fa3ee3fe7134d4c6469fcd42b08448032f2"
+         }
+       ],
+       "targets": [
+@@ -108,20 +108,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"orientBoxPoint|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
++      "differences": "REUSE-T55 换核：R·d＝上游 Rotation3D::operator*(Vector3D)（Rotation3D.hpp:358→Rotation3D.cpp:106-108，三项求和序与原逐元素展开同序——R·d 部分探针位模式逐位恒等；全表达式语义差异登记＝中心加法结合序 c+((t0+t1)+t2) vs 原 ((c+t0)+t1)+t2——探针 P9 768 例中 243 例 ULP 级位差（maxAbsDiff 4.441e-16、maxUlp 160，附录 D 容差内）；单位阵快路径（原样返回保旧浮点位模式）保留。 catalog Rotation3D.hpp operator* 符号行增量按编排3 待 T44 独验裁决后另批补登（production.upstream 暂以能力级在册符号 operator* 绑定——校验按能力级符号平表）。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+           "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "orientBoxPoint",
++        "upstream": "operator*",
++        "consumer": "orientBoxPoint",
++        "target": "sdurws_ird_kinematics"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-kinematics-orientboxpoint.json",
++        "sha256": "2efe659dd5f7bf8038a4d47ff1759cd47ccc7b58666423381a6f1c13070eba8f"
++      }
+     },
+     {
+       "functionId": "kinematics.orientSampleRotation",
+@@ -134,9 +144,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+           "symbol": "orientSampleRotation",
+           "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientSampleRotation",
+-          "startLine": 105,
+-          "endLine": 113,
+-          "sha256": "a6f296f0f196345632be4b57f230a4e51f2da8faa39e3c3c29d004fcb26b2bdf"
++          "startLine": 123,
++          "endLine": 127,
++          "sha256": "289e6c46baf3e1adf8695b22a8389cd818330e84cce6d0066f7bbf467e8e840f"
+         }
+       ],
+       "targets": [
+@@ -145,20 +155,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"orientSampleRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
++      "differences": "REUSE-T55 换核：上游 Rotation3D::operator*(Rotation3D)（Rotation3D.hpp:317→Rotation3D.cpp:112-155，求和序与原逐元素三重循环同序——探针位模式逐位恒等）。 catalog Rotation3D.hpp operator* 符号行增量按编排3 待 T44 独验裁决后另批补登（production.upstream 暂以能力级在册符号 operator* 绑定——校验按能力级符号平表）。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+           "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "orientSampleRotation",
++        "upstream": "operator*",
++        "consumer": "orientSampleRotation",
++        "target": "sdurws_ird_kinematics"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-kinematics-orientamplerotation.json",
++        "sha256": "f158965e59b1bb85c129f254c8f370c945aa327130c819770e1097345776c5ea"
++      }
+     },
+     {
+       "functionId": "kinematics.poseFromDirectionRoll",
+@@ -171,9 +191,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+           "symbol": "poseFromDirectionRoll",
+           "qualifiedSymbol": "sdurws::ird::kinematics::poseFromDirectionRoll",
+-          "startLine": 359,
+-          "endLine": 418,
+-          "sha256": "83eba6da69459484a2282c07444cf0fb416b17c587f8120d4a1006a56f66ce40"
++          "startLine": 373,
++          "endLine": 433,
++          "sha256": "9a097930b1e015fd2f1b1e39984c70577be067243a6b4305acfa5edc3214abf2"
+         }
+       ],
+       "targets": [
+@@ -182,20 +202,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"poseFromDirectionRoll|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
++      "differences": "REUSE-T55 定案（中3 逐项评估）：①第一段 Rodrigues 轴角→矩阵保留自持——上游无直接等价候选（EAA 路线经阶段〇适用性对照 FAIL 撤出：θ<1e-6 零轴截断），±ẑ 双退化分支为黄金锁定语义、无直接上游对应；②第二段滚转组合换上游——Rz(roll)＝RPY(roll,0,0).toRotation3D()（RPY.cpp:74）＋Rotation3D::operator*，黄金方向/roll 集 4186 例数值恒等最大差 0（33 例 (0,1) 元零符号差——±0 同义为 canonical 身份面契约）。原失真冒烟注释随批订正（两构建模式实链 sdurw_math）。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+           "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "poseFromDirectionRoll",
++        "upstream": "toRotation3D",
++        "consumer": "poseFromDirectionRoll",
++        "target": "sdurws_ird_kinematics"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-kinematics-posefromdirectionroll.json",
++        "sha256": "435384691355cc671b74e9dcee24ff8cdf6b8b96b76d1fa4067d1f4c85dd767c"
++      }
+     },
+     {
+       "functionId": "kinematics.validateBoxOrientation",
+@@ -208,9 +238,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+           "symbol": "validateBoxOrientation",
+           "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::validateBoxOrientation",
+-          "startLine": 56,
+-          "endLine": 78,
+-          "sha256": "38377ca04a86950a492fdf1bf380f070d0c9164122edba7ecb43a9c76285c3e8"
++          "startLine": 72,
++          "endLine": 91,
++          "sha256": "600b3b290e981b6f96b7bc75549a8a5cd47a9e61b11091170558f1c7c00e64ed"
+         }
+       ],
+       "targets": [
+@@ -219,20 +249,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"validateBoxOrientation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
++      "differences": "REUSE-T55 换核：SO(3) 判定核＝上游 isProperRotation(1e-9)（Rotation3D.hpp:291→LinearAlgebra::isSO→isProperOrthonormal：R·Rᵀ 逐元 |x−δ|≤precision＋|det−1|≤precision）。语义差异登记：①行正交（R·Rᵀ）替代原列点积——数学等价、阈值同 1e-9，数值中间量（行列方向/Eigen 行列式结合序）不同——探针 561 例（含 ±1.5e-9 边界带 300 例扫掠）判定映射完全一致；②上游 bool 不区分失效模式→保留非有限预检＋失败路径上游同族 LinearAlgebra::isOrthonormal 细分，非有限/非正交/非右手三分诊断消息集合不变，但双重无效输入的类别优先级变化（探针 P6b 4/4 翻转：基线列序扫描非正交先抛→新核全元素预检非有限恒先抛；异常类型同为 std::invalid_argument，测试面仅钉类型不受影响）。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+           "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "validateBoxOrientation",
++        "upstream": "isProperRotation",
++        "consumer": "validateBoxOrientation",
++        "target": "sdurws_ird_kinematics"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-kinematics-validateboxorientation.json",
++        "sha256": "bdee2cbaa1a742f6ffd96ce081112db51d95a7a29597da563c25f76737828cca"
++      }
+     },
+     {
+       "functionId": "kinematics.generateRandomPositions",
+@@ -245,8 +285,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+           "symbol": "generateRandomPositions",
+           "qualifiedSymbol": "sdurws::ird::kinematics::generateRandomPositions",
+-          "startLine": 308,
+-          "endLine": 328,
++          "startLine": 322,
++          "endLine": 342,
+           "sha256": "199821dbedf3c4d19e0b608734a6986df3d87b1a7e345b7520b499f63516ed1f"
+         }
+       ],
+@@ -282,8 +322,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+           "symbol": "generateGridPositions",
+           "qualifiedSymbol": "sdurws::ird::kinematics::generateGridPositions",
+-          "startLine": 261,
+-          "endLine": 305,
++          "startLine": 275,
++          "endLine": 319,
+           "sha256": "8566c06f93c2fca8dc68f43b151a1f1807405aaa8f6f31cb9c60aac47cd10a7a"
+         }
+       ],
+@@ -319,8 +359,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+           "symbol": "generateDirections",
+           "qualifiedSymbol": "sdurws::ird::kinematics::generateDirections",
+-          "startLine": 330,
+-          "endLine": 344,
++          "startLine": 344,
++          "endLine": 358,
+           "sha256": "416314cae75131fd0fe48d4a509f4a1f0402c9812fa7784b1d7718bdff7788d1"
+         }
+       ],
+@@ -2702,4 +2742,4 @@
+       }
+     }
+   ]
+-}
+\ No newline at end of file
++}
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp
+index 5db3e1af4..9f6cfcd7a 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp
+@@ -28,8 +28,11 @@
+  *     与工程阈值严格分属两类（AGENTS §2.5 确定性来源注记义务）。
+  *   - 线性代数为自持实现（高斯消元＋部分主元）：不引第三方依赖（AGENTS
+  *     §3 第三方纪律），规模 4n≤28（R1 链长上限——七轴模板）内精度充足；
+- *     旋转矩阵一律逐元素构造（rw::math 模板头 header-only 纪律——不调用
+- *     Rotation3D::identity()/EAA 构造等框架外联符号，冒烟两模式语义一致）。
++ *     旋转合成/乘法核已换上游 rw::math 直接 API（REUSE-T55 阶段一——
++ *     operator* 两型/inverse/RPY 构造，位模式探针在案）；两建模构建模式
++ *     同链 sdurw_math（modeling/CMakeLists.txt）；axisAngleRotation 经
++ *     阶段〇适用性对照 FAIL 保留自持（traceability/reuse/REUSE-T55/
++ *     README.md §2/§4）。
+  *
+  * 线程安全：无共享可变状态（全部状态在栈上）——并发只读可重入。
+  */
+@@ -38,6 +41,8 @@
+ 
+ #include <sdurws/ird/modeling/DiagCodes.hpp>  // MDL-DH-* 三码常量（产码唯一书写点）
+ 
++#include <rw/math/RPY.hpp>  // rotZ/rotX 换核（REUSE-T55——RPY 表示转换直接 API）
++
+ #include <algorithm>
+ #include <cmath>
+ #include <cstddef>
+@@ -147,10 +152,12 @@
+ constexpr double kBranchToleranceM = 1e-12;
+ 
+ // =====================================================================
+-// 基础数学辅助（逐元素构造——零框架外联符号，冒烟两模式语义一致）
++// 基础数学辅助（REUSE-T55 阶段一换核：旋转合成/乘法替身核改调上游
++// rw::math 直接 API——位模式探针在案；identityRotation/identityTransform
++// 为字面值构造保留、axisAngleRotation 阶段〇 FAIL 保留自持，见各函数注）
+ // =====================================================================
+ 
+-/// 单位阵旋转（逐元素——不用 Rotation3D::identity() 外联符号）。
++/// 单位阵旋转（字面值构造——不用 Rotation3D::identity()）。
+ rw::math::Rotation3D<double> identityRotation()
+ {
+     return rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+@@ -158,73 +165,61 @@
+                                         0.0, 0.0, 1.0);
+ }
+ 
+-/// 恒等变换（逐元素——同 runtime Description detail::identityTransform3D 纪律）。
++/// 恒等变换（字面值构造——同 runtime Description detail::identityTransform3D 纪律）。
+ rw::math::Transform3D<double> identityTransform()
+ {
+     return rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+                                          identityRotation());
+ }
+ 
+-/// R·v（旋转乘向量——逐元素三循环；R·v 运算符同为外联符号面，冒烟纪律）。
+-rw::math::Vector3D<double> rotVec(const rw::math::Rotation3D<double>& r,
+-                                 const rw::math::Vector3D<double>& v)
+-{
+-    return rw::math::Vector3D<double>(
+-        r(0, 0) * v[0] + r(0, 1) * v[1] + r(0, 2) * v[2],
+-        r(1, 0) * v[0] + r(1, 1) * v[1] + r(1, 2) * v[2],
+-        r(2, 0) * v[0] + r(2, 1) * v[1] + r(2, 2) * v[2]);
+-}
+-
+-/// R·R（旋转乘旋转——逐元素三重循环：rw 的 Rotation3D::operator* 内经
+-/// multiply() 外联符号，冒烟模式不可链接——本单元全部矩阵合成一律走
+-/// 逐元素算术，两模式数学一致（BaseWorldTransform 同款纪律））。
++/// R·R（旋转乘旋转——REUSE-T55 换核：上游 Rotation3D::operator*(Rotation3D)
++/// （Rotation3D.hpp:317→Rotation3D.cpp:112-155），展开式三项求和序与原
++/// 逐元素 k 递增循环同序——探针 256 例位模式逐位恒等、最大差 0）。
+ rw::math::Rotation3D<double> rotMul(const rw::math::Rotation3D<double>& ra,
+                                     const rw::math::Rotation3D<double>& rb)
+ {
+-    rw::math::Rotation3D<double> out;
+-    for (std::size_t i = 0; i < 3; ++i) {
+-        for (std::size_t j = 0; j < 3; ++j) {
+-            double s = 0.0;
+-            for (std::size_t k = 0; k < 3; ++k) { s += ra(i, k) * rb(k, j); }
+-            out(i, j) = s;
+-        }
+-    }
+-    return out;
++    return ra * rb;
+ }
+ 
+-/// T·T（变换乘变换——R 部逐元素乘、平移＝Ra·pb＋pa；冒烟纪律同上）。
++/// T·T（变换乘变换——REUSE-T55 换核：上游 Transform3D::operator*
++/// （Transform3D.hpp:333，R·R 与 d＋R·d 同式；加法交换不改变 IEEE754
++/// 结果）——探针 256 例位模式逐位恒等、最大差 0）。
+ rw::math::Transform3D<double> transformMul(const rw::math::Transform3D<double>& ta,
+                                            const rw::math::Transform3D<double>& tb)
+ {
+-    const rw::math::Rotation3D<double> r = rotMul(ta.R(), tb.R());
+-    const rw::math::Vector3D<double> pb = tb.P();
+-    const rw::math::Vector3D<double> p = rotVec(ta.R(), pb) + ta.P();
+-    return rw::math::Transform3D<double>(p, r);
++    return ta * tb;
+ }
+ 
+-/// Rot_z(ψ)——绕 z 轴旋转 ψ rad（逐元素右手系）。
++/// Rot_z(ψ)——绕 z 轴旋转 ψ rad（右手系）。REUSE-T55 定案：上游无同名
++/// 自由函数（rg 零命中——仅无同名符号事实，非能力缺失证据）；等价候选
++/// ＝RPY(ψ,0,0).toRotation3D()（RPY.cpp:74，首角为绕 z 偏航）：换核探针
++/// 84 角例数值恒等（最大差 0），位模式仅 (2,0) 元 +0→−0 零符号差——
++/// ±0 同义是产品 canonical 身份面既登记契约（Sampling.cpp sampleSetIdentity
++/// 「-0与+0是同义旋转」＋RegionCoverageTest 负零恒等用例），FK/DH 判定
++/// 均为附录 D 容差口径，零符号不入数值面。
+ rw::math::Rotation3D<double> rotZ(double psi)
+ {
+-    const double c = std::cos(psi);
+-    const double s = std::sin(psi);
+-    return rw::math::Rotation3D<double>(c, -s, 0.0,
+-                                        s, c, 0.0,
+-                                        0.0, 0.0, 1.0);
++    return rw::math::RPY<double>(psi, 0.0, 0.0).toRotation3D();
+ }
+ 
+-/// Rot_x(α)——绕 x 轴旋转 α rad（逐元素右手系）。
++/// Rot_x(α)——绕 x 轴旋转 α rad（右手系）。REUSE-T55 定案同 rotZ：换核
++/// 候选＝RPY(0,0,α).toRotation3D()（末角为绕 x 横滚）——探针 P7 同口径
++///（数值恒等、仅 (2,0) 元零符号差）。
+ rw::math::Rotation3D<double> rotX(double alpha)
+ {
+-    const double c = std::cos(alpha);
+-    const double s = std::sin(alpha);
+-    return rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+-                                        0.0, c, -s,
+-                                        0.0, s, c);
++    return rw::math::RPY<double>(0.0, 0.0, alpha).toRotation3D();
+ }
+ 
+ /// Rodrigues 轴角旋转（axis 须为单位向量、angle 单位 rad）——逐元素公式
+-/// R = I + sinθ·[k]× ＋ (1−cosθ)·[k]×²。自持实现：rw 轴角构造为外联符号
+-/// （冒烟纪律），本函数只用标量算术（确定性同规——FK 对照两侧共用）。
++/// R = I + sinθ·[k]× ＋ (1−cosθ)·[k]×²。★ REUSE-T55 阶段〇结论＝FAIL：
++/// 本函数保留自持实现、禁换上游 EAA(axis,angle).toRotation3D()——上游
++/// EAA::axis()（EAA.hpp:219-226）θ<1e-6 返回零轴，θ∈(0,1e-6) 换核丢失
++/// 全部非对角一阶项（θ=1e-8 误差≈1e-8，超 DH/FK 1e-9 容差至一个数量级
++/// 以上）；需求附录 D 第 13 项 1e-6 语义＝「固定，仅表示转换」，明文不
++/// 改变 FK/编译链/DH 容差、业务链实质语义差异必须保留缺口
++/// （REQUIREMENTS.md:784/:786）；本处消费面（:841/:843/:1716/:1789）全部
++/// 为 DH/FK 数值契约面。详见 traceability/reuse/REUSE-T55/README.md
++/// §2/§4（零角守卫仅覆盖 θ=0 单点，不解决开区间——防再评估/防误换）。
+ rw::math::Rotation3D<double> axisAngleRotation(const rw::math::Vector3D<double>& axis,
+                                                double angle)
+ {
+@@ -372,8 +367,10 @@
+ double rotationAngleBetween(const rw::math::Rotation3D<double>& ra,
+                             const rw::math::Rotation3D<double>& rb)
+ {
+-    // Rrel = RAᵀ·RB（转置手工逐元素——Rotation3D::inverse 为外联符号面，
+-    // 冒烟纪律；正交阵逆＝转置）。
++    // Rrel = RAᵀ·RB（转置逐元素直写——本函数整体保留定案（REUSE-T55：
++    // migration.md:270 T32 实测反例否决 EAA acos 候选——边界 4.4e-11/
++    // 1.6e-10 超 C7 容差 40~160 倍），2·atan2 半角式与手工转置均不动；
++    // 正交阵逆＝转置）。
+     rw::math::Rotation3D<double> rat;
+     for (std::size_t i = 0; i < 3; ++i) {
+         for (std::size_t j = 0; j < 3; ++j) {
+@@ -884,29 +881,23 @@
+     return k == 0U || k == 3U;
+ }
+ 
+-/// Rᵀ·v（转置乘向量——Rotation3D::inverse 的逐元素替身，冒烟纪律）。
++/// Rᵀ·v（转置乘向量——REUSE-T55 换核：上游自由函数
++/// inverse(const Rotation3D&)（Rotation3D.hpp:542-557）为逐元素精确转置，
++/// 乘法同 operator*(Rotation3D,Vector3D) 求和序——探针 256 例位模式
++/// 逐位恒等、最大差 0）。
+ rw::math::Vector3D<double> rotateTranspose(const rw::math::Rotation3D<double>& r,
+                                            const rw::math::Vector3D<double>& v)
+ {
+-    return rw::math::Vector3D<double>(
+-        r(0, 0) * v[0] + r(1, 0) * v[1] + r(2, 0) * v[2],
+-        r(0, 1) * v[0] + r(1, 1) * v[1] + r(2, 1) * v[2],
+-        r(0, 2) * v[0] + r(1, 2) * v[1] + r(2, 2) * v[2]);
++    return rw::math::inverse(r) * v;
+ }
+ 
+-/// Rᵀ·Rb（转置乘旋转——逐元素三重循环，固定 k 序——确定性；冒烟纪律）。
++/// Rᵀ·Rb（转置乘旋转——REUSE-T55 换核：inverse(r) 精确转置＋上游
++/// Rotation3D::operator*(Rotation3D)（求和序与原固定 k 递增序一致）——
++/// 探针位模式逐位恒等、最大差 0）。
+ rw::math::Rotation3D<double> rotateTransposeFrame(const rw::math::Rotation3D<double>& r,
+                                                   const rw::math::Rotation3D<double>& rb)
+ {
+-    rw::math::Rotation3D<double> out;
+-    for (std::size_t i = 0; i < 3; ++i) {
+-        for (std::size_t j = 0; j < 3; ++j) {
+-            double s = 0.0;
+-            for (std::size_t k = 0; k < 3; ++k) { s += r(k, i) * rb(k, j); }
+-            out(i, j) = s;
+-        }
+-    }
+-    return out;
++    return rw::math::inverse(r) * rb;
+ }
+ 
+ /// 对参数向量做角度规范化（输出面——θ/α wrap 到 (−π,π]）。
+diff --git a/RobWork/doc/industrial-robot-design/reuse/functions/modeling.json b/RobWork/doc/industrial-robot-design/reuse/functions/modeling.json
+index 5d83e3344..2e2e17c07 100644
+--- a/RobWork/doc/industrial-robot-design/reuse/functions/modeling.json
++++ b/RobWork/doc/industrial-robot-design/reuse/functions/modeling.json
+@@ -540,11 +540,11 @@
+       "sources": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+-          "symbol": "rotVec",
+-          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotVec",
+-          "startLine": 169,
+-          "endLine": 176,
+-          "sha256": "260ec79da63465428730a2ed45e5d0024c8a4980dea8a7b8b4c136973f05536b"
++          "symbol": "transformMul",
++          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::transformMul",
++          "startLine": 187,
++          "endLine": 191,
++          "sha256": "c48ee71e613fe9a1fda43eb31fcc37c7d1ad5d4cfcebbb037ba95f744f6341ab"
+         }
+       ],
+       "targets": [
+@@ -553,20 +553,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"rotVec|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 换核：替身核（逐元素三行 R·v）删除——唯一消费点 transformMul 换上游 Transform3D::operator*（Transform3D.hpp:333，内部经 Rotation3D::operator*(Vector3D)（Rotation3D.hpp:358→Rotation3D.cpp:106-108）承载 R·v），三项求和序与原替身一致——探针 256 例位模式逐位恒等、最大差 0；本行改绑消费点 transformMul。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "transformMul",
++        "upstream": "operator*",
++        "consumer": "transformMul",
++        "target": "sdurws_ird_modeling"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-modeling-rotvec.json",
++        "sha256": "a7fe1bc74dfd0d47ea734185138972caea71a40efec120970670c6648428ac4c"
++      }
+     },
+     {
+       "functionId": "modeling.rotMul",
+@@ -579,9 +589,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "rotMul",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotMul",
+-          "startLine": 181,
+-          "endLine": 193,
+-          "sha256": "3f4112172f7ba37c2cf4c441f0428c5c8d9240d007fb45ef76c84ce5c15c0b8d"
++          "startLine": 178,
++          "endLine": 182,
++          "sha256": "780d822d1d527a875bb24bf80e3d44d06cbf8961753a484d0f4c2efa3a608691"
+         }
+       ],
+       "targets": [
+@@ -590,20 +600,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"rotMul|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 换核：上游 Rotation3D::operator*(Rotation3D)（Rotation3D.hpp:317→Rotation3D.cpp:112-155）——展开式三项求和序与原 k 递增循环同序，探针 256 例位模式逐位恒等、最大差 0。 catalog Rotation3D.hpp operator* 符号行增量按编排3 待 T44 独验裁决后另批补登（production.upstream 暂以能力级在册符号 operator* 绑定——校验按能力级符号平表）。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "rotMul",
++        "upstream": "operator*",
++        "consumer": "rotMul",
++        "target": "sdurws_ird_modeling"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-modeling-rotmul.json",
++        "sha256": "3c1ab75cc0287a01b41e415910ff8187e705c9944a8d2333be2d7c1bc4ba164a"
++      }
+     },
+     {
+       "functionId": "modeling.transformMul",
+@@ -616,9 +636,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "transformMul",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::transformMul",
+-          "startLine": 196,
+-          "endLine": 203,
+-          "sha256": "ebb72c65a05976ff5967fa3e7d5b06bd62de78635da4b7d163907a1e1fd90e26"
++          "startLine": 187,
++          "endLine": 191,
++          "sha256": "c48ee71e613fe9a1fda43eb31fcc37c7d1ad5d4cfcebbb037ba95f744f6341ab"
+         }
+       ],
+       "targets": [
+@@ -627,20 +647,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"transformMul|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 换核：上游 Transform3D::operator*（Transform3D.hpp:333，R·R 与 d＋R·d 同式）——加法交换不改变 IEEE754 结果，探针 256 例位模式逐位恒等、最大差 0；rotVec 替身核随批删除（消费点并入本函数）。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "transformMul",
++        "upstream": "operator*",
++        "consumer": "transformMul",
++        "target": "sdurws_ird_modeling"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-modeling-transformmul.json",
++        "sha256": "8410e2737afc1f1f10f40fbea0380fd13f13fdf69ef359e1e05ae9537d4f5e31"
++      }
+     },
+     {
+       "functionId": "modeling.rotZ",
+@@ -653,9 +683,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "rotZ",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotZ",
+-          "startLine": 206,
+-          "endLine": 213,
+-          "sha256": "1011fffbf0bfc5904c6197a5311ae462179a78182bdf99165a99aae9ab4e7537"
++          "startLine": 200,
++          "endLine": 203,
++          "sha256": "78d174c8a902ec579bfb2e1e22de3e75abf6fe03ce2d9925cfccf1e573d007b6"
+         }
+       ],
+       "targets": [
+@@ -664,20 +694,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"rotZ|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 定案（中3 逐项评估）：上游无同名自由函数（rg 零命中＝无同名符号事实，非能力缺失证据）；换核 RPY(ψ,0,0).toRotation3D()（RPY.cpp:74 首角＝绕 z 偏航）。探针 84 角例（0/±1e-8/±1e-6/±π/6～2π/黄金角/64 随机）数值恒等最大差 0；位模式仅 (2,0) 元 +0→−0 零符号差——±0 同义为产品 canonical 身份面既登记契约（Sampling.cpp sampleSetIdentity 注＋RegionCoverageTest 负零恒等用例），FK/DH 判定均附录 D 容差口径；EAA 路线阶段〇 FAIL 撤出。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "rotZ",
++        "upstream": "toRotation3D",
++        "consumer": "rotZ",
++        "target": "sdurws_ird_modeling"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-modeling-rotz.json",
++        "sha256": "c2b78c49db65edd172cedb1595d2fbbde1fc561dadaaed298896fb071eb3d565"
++      }
+     },
+     {
+       "functionId": "modeling.rotX",
+@@ -690,9 +730,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "rotX",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotX",
+-          "startLine": 216,
+-          "endLine": 223,
+-          "sha256": "a6479cf20423d54e01fbb415214d50f4312345636071e35ebb2e70a826659916"
++          "startLine": 208,
++          "endLine": 211,
++          "sha256": "020a98bbe358984c6854eee34d923c729be99d5778e20b521ed166a895355fce"
+         }
+       ],
+       "targets": [
+@@ -701,20 +741,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"rotX|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 定案（中3 逐项评估）：上游无同名自由函数（rg 零命中＝无同名符号事实）；换核 RPY(0,0,α).toRotation3D()（RPY.cpp:74 末角＝绕 x 横滚）。探针同 rotZ 口径（84 角例数值恒等最大差 0、仅 (2,0) 元零符号差）；EAA 路线阶段〇 FAIL 撤出。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "rotX",
++        "upstream": "toRotation3D",
++        "consumer": "rotX",
++        "target": "sdurws_ird_modeling"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-modeling-rotx.json",
++        "sha256": "e1c8d1b80c8ddbb6b4ce900ee852d50136c674e88cb8d0499ef7b75351cdb5bf"
++      }
+     },
+     {
+       "functionId": "modeling.axisAngleRotation",
+@@ -727,8 +777,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "axisAngleRotation",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::axisAngleRotation",
+-          "startLine": 228,
+-          "endLine": 241,
++          "startLine": 223,
++          "endLine": 236,
+           "sha256": "a85ed8bb72e4ea83ffd4b2e23cef322d24930b08b7f424dbaac06a1952f4793a"
+         }
+       ],
+@@ -738,20 +788,24 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "business-specific",
++      "status": "migrated",
+       "search": {
+         "command": "rg -n \"axisAngleRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 阶段〇结论＝FAIL：保留自持 Rodrigues 实现、禁换上游 EAA(axis,angle).toRotation3D()——上游 EAA::axis()（EAA.hpp:219-226）θ<1e-6 返回零轴，θ∈(0,1e-6) 换核丢失全部非对角一阶项（θ=1e-8 误差≈1e-8，超 DH/FK 1e-9 容差）；REQUIREMENTS.md:784 第13项 1e-6＝固定仅表示转换，:786 明文不改变 FK/编译链/DH 容差且业务链实质差异必须保留缺口；消费点 :841/:843/:1716/:1789 全为 DH/FK 数值契约。函数体一行未动（防再评估/防误换）；详见 traceability/reuse/REUSE-T55/README.md §2/§4",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "nonOverlapEvidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/nonoverlap-mathrot.json",
++        "sha256": "45d7f7a4838d508866aa04c2b825d8461b0e8993f5dd36a722d8dea560ffcddd"
++      }
+     },
+     {
+       "functionId": "modeling.rotateTranspose",
+@@ -765,8 +819,8 @@
+           "symbol": "rotateTranspose",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTranspose",
+           "startLine": 888,
+-          "endLine": 895,
+-          "sha256": "573a6ea9dd10a6a1b4878218f974bf4d10b0261a6158652b6d41f648efaeeb5d"
++          "endLine": 892,
++          "sha256": "12d8cdb2291c9fc0be143d1fe4f2ddb80bbbc70c0c11ed5930e06180b494c37f"
+         }
+       ],
+       "targets": [
+@@ -775,20 +829,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"rotateTranspose|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 换核：上游自由函数 inverse(const Rotation3D&)（Rotation3D.hpp:542-557＝逐元素精确转置）＋operator*(Vector3D) 求和序同原展开——探针 256 例位模式逐位恒等、最大差 0。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "rotateTranspose",
++        "upstream": "inverse",
++        "consumer": "rotateTranspose",
++        "target": "sdurws_ird_modeling"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-modeling-rotatetranspose.json",
++        "sha256": "1cad51f04353fe3ebf0e37c12b4b2472effab392c0199cf34f842cc4114e2bfb"
++      }
+     },
+     {
+       "functionId": "modeling.rotateTransposeFrame",
+@@ -801,9 +865,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "rotateTransposeFrame",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTransposeFrame",
+-          "startLine": 898,
+-          "endLine": 910,
+-          "sha256": "2b03a4f585df0172b11d2be654f5a367bf20143f50facf555598875d225495e1"
++          "startLine": 897,
++          "endLine": 901,
++          "sha256": "0deac16ae0184e91bc941184ed53783d97304f3f8cef74ce1c36267b3d281fb5"
+         }
+       ],
+       "targets": [
+@@ -812,20 +876,30 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "adapter",
++      "status": "migrated",
+       "search": {
+-        "command": "rg -n \"rotateTransposeFrame|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
++        "command": "rg -n \"operator\\*|toRotation3D|isProperRotation|inverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot RobWork/RobWork/src/rw/math",
++        "conclusion": "REUSE-T55 阶段一换核落地：上游直接 API 消费经位模式探针与四象限 production 证据核验；EAA 路线经阶段〇 FAIL 撤出（traceability/reuse/REUSE-T55/）"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 换核：inverse(r) 精确转置＋上游 Rotation3D::operator*(Rotation3D)（求和序与原固定 k 递增序一致）——探针 256 例位模式逐位恒等、最大差 0。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "production": {
++        "entry": "rotateTransposeFrame",
++        "upstream": "inverse",
++        "consumer": "rotateTransposeFrame",
++        "target": "sdurws_ird_modeling"
++      },
++      "evidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/production-modeling-rotatetransposeframe.json",
++        "sha256": "eb627e9b8873adf5f3e21514a6cc9466fc07d6cb1dafde47fc39ff97b06f4f48"
++      }
+     },
+     {
+       "functionId": "modeling.rotationAngleBetween",
+@@ -838,9 +912,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "rotationAngleBetween",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationAngleBetween",
+-          "startLine": 372,
+-          "endLine": 390,
+-          "sha256": "6da87b8ce90e5b8acd9b69b96a23f5ac3dbb7a473eb175f8395505471867e2a9"
++          "startLine": 367,
++          "endLine": 387,
++          "sha256": "3cc7151db38ca3f5ae9d67292f858aef3c2556e80035f46e3e5bdbf20a886cdb"
+         }
+       ],
+       "targets": [
+@@ -849,20 +923,24 @@
+       "usageRole": "adapter",
+       "permissionRef": "ARCH:3.6.1",
+       "capabilityId": "MATH-ROT",
+-      "decision": "pending",
+-      "status": "pending",
++      "decision": "business-specific",
++      "status": "migrated",
+       "search": {
+         "command": "rg -n \"rotationAngleBetween|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+       },
+-      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
++      "differences": "REUSE-T55 定案＝保留（中3 三段式）：业务分支＝2·atan2 半角式（近 0/近 π 精确）＋函数内手工转置；拒绝候选数值证据＝migration.md:270 T32 实测反例（EAA acos 分支边界 4.4e-11/1.6e-10 超 C7 容差 40~160 倍，直接引用不再重复调查）；可复用通用子功能＝无适用等价候选（T32 反例即否决数值证据）。原转置注失真冒烟表述随批订正（算法不动）。",
+       "inputs": [
+         {
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+         }
+       ],
+-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
++      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
++      "nonOverlapEvidence": {
++        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/nonoverlap-mathrot.json",
++        "sha256": "45d7f7a4838d508866aa04c2b825d8461b0e8993f5dd36a722d8dea560ffcddd"
++      }
+     },
+     {
+       "functionId": "modeling.dhCoreTransform",
+@@ -875,8 +953,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "dhCoreTransform",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhCoreTransform",
+-          "startLine": 260,
+-          "endLine": 264,
++          "startLine": 255,
++          "endLine": 259,
+           "sha256": "22f301776c472452b90974678161712761d2263e00ba53c02abf32aaceb58346"
+         }
+       ],
+@@ -912,8 +990,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "dhStaticSegment",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhStaticSegment",
+-          "startLine": 273,
+-          "endLine": 277,
++          "startLine": 268,
++          "endLine": 272,
+           "sha256": "40a50af819fbcaf100b6548b49ed917315801d3ba0e793349fd6d7dc60f16f4a"
+         }
+       ],
+@@ -949,8 +1027,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "dhRebuildStep",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhRebuildStep",
+-          "startLine": 300,
+-          "endLine": 317,
++          "startLine": 295,
++          "endLine": 312,
+           "sha256": "d61c037fee4826aa9eff9cf8e46b1f8564e2e6b818cb9adbb52928e98e8aa65c"
+         }
+       ],
+@@ -986,8 +1064,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "solveLinearSystem",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::solveLinearSystem",
+-          "startLine": 504,
+-          "endLine": 543,
++          "startLine": 501,
++          "endLine": 540,
+           "sha256": "acc613e41483a0d83ee98d1bcb461c148ac71bc09c669965283ab94e23dcd657"
+         }
+       ],
+@@ -1023,8 +1101,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "numericJacobian",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::numericJacobian",
+-          "startLine": 553,
+-          "endLine": 584,
++          "startLine": 550,
++          "endLine": 581,
+           "sha256": "04a69f6837a314b7cf4f80df4056162261ba6b16a86bdcd3fbce3319b9e070b5"
+         }
+       ],
+@@ -1060,8 +1138,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "lmSolve",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::lmSolve",
+-          "startLine": 607,
+-          "endLine": 723,
++          "startLine": 604,
++          "endLine": 720,
+           "sha256": "d55ec9434b5b4471aab56a7ef31f4807e7187f3f2fc693894202b5ec3722c190"
+         }
+       ],
+@@ -1097,8 +1175,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "rankAndFreeColumns",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rankAndFreeColumns",
+-          "startLine": 735,
+-          "endLine": 778,
++          "startLine": 732,
++          "endLine": 775,
+           "sha256": "9ebea29e7d49e4ad918732daa8842838128a9596edadc1300a648d9c4a5a08e9"
+         }
+       ],
+@@ -1171,8 +1249,8 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+           "symbol": "zeroConfigFK",
+           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::zeroConfigFK",
+-          "startLine": 1780,
+-          "endLine": 1799,
++          "startLine": 1771,
++          "endLine": 1790,
+           "sha256": "0bddab268c3e4daf679960f242da542ef475fedb35e9b158a7a8335cdf6a7b8b"
+         }
+       ],
