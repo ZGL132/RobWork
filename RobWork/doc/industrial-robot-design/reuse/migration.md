@@ -247,6 +247,8 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 ### 13.1 执行现场、授权与续接入口
 
+**波次 2 后续规划入口（2026-10-27）**：基于 `92b595d2947c925bfcd46a86290717c4716c5ccf` 的完整收口任务见 [§13.5](#135-波次-2-之后的完整复用收口规划2026-10-27)。该规划不改变以下历史状态，不自动批准缺口、性能退化或权限扩面。
+
 所有者已批准本节计划并要求先实施 WP-00。唯一实施现场为 `D:\10_Source_Repos\21_robot\RobWork`、分支 `redesign-main`；参考起点 `58962b338505fc9f69b6a9f1a50e2d55712efffc`，核查时工作区干净。新会话核对实际 HEAD/状态，承接新增提交，不能重置到参考起点。取消 A/B 并行开发；旧工作树和历史证据保留，不再按旧 HEAD 调度。禁止远程同步、框架/vcpkg 修改和自动派子智能体。
 
 **当前续接**：WP-00 / [GOV-T23](../tasks/GOV-T23.json) 已完成，R2 独验 PASS 绑定 `85cfc8f570edc66fa7b20195e75e3587ab9c8e3d`，见 [独验记录](../traceability/acceptance/GOV-T23-20261024-r2.json)；首轮 FAIL 和返工证据保留于 [本包原始记录](../traceability/reuse/WP-00/README.md)。WP-01 / [GOV-T24](../tasks/GOV-T24.json) 已完成：IRD-GATE-LIB 三变量阻断经 kinematics 条件分支合法接线消除（门禁代码/词表零改动），冒烟 RobWork 导出包供给断链修复（core 首单元前置绑定 Threads/synchronization＋冒烟配置参数 VCPKG_OVERRIDE_FIND_PACKAGE_NAME/RobWork_DIR）并实现 T07 引入 find_package(RobWork) 以来首次全树独立冒烟配置；独立验收 PASS（所有者明确指令的单次验收子智能体，10/10 项）绑定 `df0b35fc2b32068dcfe3745d1b29a81c58d17f77`，见 [独验记录](../traceability/acceptance/GOV-T24-20261024-r1.json)，实施与复现原始证据见 [govt24-wp01-20261024](../traceability/reuse/REUSE-T19/govt24-wp01-20261024/README.md)。遗留：冒烟 kinematics test/contract exe 因 T19 遗留缺口（Fk.cpp 两模式编译而 runtime WorkCellConstView 实现集成专属）NOT RUN（LNK2019 原件在案），归 T19 语义/后续包处置。当前 WP-02 / [REUSE-T20](../tasks/REUSE-T20.json) 已实施并于 2026-10-26 补登记独验收口 done（[REUSE-T20-20261025-r1](../traceability/acceptance/REUSE-T20-20261025-r1.json) verdict=pass 入库，登记 `eedcb17e2`）：起点`7be67a6a59912ec243f2251dd3a127b8b5c7e679`，纠正标题后实现SHA=`9276f19b26bfe095cbe2ccf460a64dec39bf45e9`（代码树/正文不变，commit-lint和显式范围检查PASS）。所有者已接受1024稠密118.73ms对旧3.26ms及O(E)图内存，并选择第三方schema方案一保留表达债务；不假关整体合规。原始数值/消费者/生产返回值扰动与批准见[原记录§9](../traceability/reuse/REUSE-T05/setcheck-max-matching/README.md#9-wp-02-串行收口2026-10-24)。必要独验由所有者另开会话、人工或所有者明确指令的单次验收子智能体完成（GOV-T23/T24 先例同型），实施者不得自签，不解除常规禁令。
@@ -358,3 +360,91 @@ T11 EAA 上游补丁保持撤销，局部旋转转换 1e-6 不推广到其他功
 - 每包交付：确切版本、复用来源/数据流、删冗余清单及保留理由、原始验证与独验链接、稳定接口/限制、阻断消费者。回滚本包完整增量和相关消费者，不覆盖他人、不改历史、不恢复隐藏平行核心、不操作远程。
 
 WP-00 只验入口可定位、旧安排不冲突、近期契约范围明确和新规则定向结果；不构建产品，不把 WP-01 既知 IRD-GATE-LIB/供给失败改为通过。本节长期作为唯一人工调度入口，任务/功能/证据事实各从原来源引用。
+
+### 13.5 波次 2 之后的完整复用收口规划（2026-10-27）
+
+**目标与效力**：以 `redesign-main` 的 `92b595d2947c925bfcd46a86290717c4716c5ccf` 为本轮规划核对点，将剩余生产迁移、必要保留、语义独验和逐文件结项全部完成，最终通过 `-RequireMigrationComplete`。本节是所有者要求的后续工作规划，不是缺口方案、性能退化、权限扩面或冻结行重开的批准，也不改变现有任务状态。§13.1～§13.3 的历史终态及原始证据保留；后续顺序从本节领取。只在主工作树串行实施，不创建工作树、不派发子智能体、不操作远程；独验由所有者另开的独立会话或人工完成。
+
+#### 13.5.1 核对点与真正完成条件
+
+本次对当前 `functions/*.json` 机器聚合得到 **2267 行＝migrated 1667＋closed 2＋audited 3＋pending 595**，catalog 为 40 项（verified 18、candidate 22）。T06 的 2231/594 及 A348/B124/C122 是历史快照，不覆盖后续新增、删除和迁移；不能拿历史分类直接批量改状态。当前 pending 分布如下，数字只作为本次规划核对点，不另建滚动台账：
+
+| 当前数据来源（functions 文件名） | pending 行数 | 后续任务覆盖 |
+| --- | ---: | --- |
+| core | 126 | 摘要族、业务值/单位权威、事件契约、测试入口 |
+| diagnostics | 35 | 稳定码/文案权威与诊断边界 |
+| dynamics | 2 | 统计/插值保留判断；FD 补审另见下文 |
+| execution | 64 | 字节原语、总线/worker 权威、线程和测试入口 |
+| foundation-governance | 125 | 其中 106 行为 governance-script；其余为黄金/oracle 等保留面 |
+| io | 2 | 测试入口 |
+| kinematics | 16 | Sampling/种子身份、FK/IK/包络、测试入口 |
+| modeling | 48 | DH/LM/零位 FK、数学、惯量、XML 及测试入口 |
+| policy | 37 | 字节原语、共享策略权威及测试入口 |
+| project | 27 | 不可变修订/写协议权威 |
+| reporting | 64 | ReportCodec 借用权限与字节族 |
+| requirements | 1 | RequirementsPanelWidget.cpp::targetEditRotation |
+| runtime | 28 | 基座数学、SVD、快照访问器与字节原语 |
+| trajectory | 1 | PTP 候选 3 的真实缺口 |
+| ui | 19 | 宿主呈现权限、生产路径和 FK 消费 |
+
+没有 pending 的单元仍须消费其有效独验和关闭记录；上表不豁免其存量 migrated 行，也不把 functions 行数当功能质量指标。最终完成同时满足：
+
+1. 20 个产品单元及治理/工具/测试/构建的实际功能均有判断；通用核心优先直接 API/薄适配，业务专属与独立 oracle 有逐功能非重叠证据。真实缺口不能改名为 business-specific；未获批准、未实施或仅留候选不算完成。
+2. 适用旧核心及失效结构、缓存、转换、依赖和 fallback 已随能力包删除；仍存在的仅位置/约束 DLS、modeling LM、runtime SVD 等逐项处理，不能沿用“核心已全部删除”的笼统表述。接口、模型 owner、单位/坐标、误差与确定性契约保持或经批准迁移。
+3. 准确性、架构、简洁性、运行效果四维通过；实际退化有本路径的明确接受或经优化达标。必需生产/GUI 路径和消费者真实执行；FAIL/SKIP/NOT RUN 不计 PASS。
+4. 完整冻结能力包取得独验 PASS，所有功能最终为 closed；固定 inventory 基点不改，全部 1401 条基线文件及当前新增产品文件有合法 closures。原有 acceptance 范围不足就补审，不能以任务 done 或 governance-only PASS 代替。
+5. 最终冻结 SHA 上 `validate-reuse.ps1 -Head <冻结SHA> -RequireMigrationComplete` 真实 exit 0，相关文档/范围/新增提交检查通过。任何仍影响上述条件的 blocked/proposal 都阻止“彻底完成”；不承诺在未裁决缺口下自动结项。远程交付因当前禁令单列为未执行，不纳入本地完成声明。
+
+#### 13.5.2 阶段 A：先清准入与裁决，形成能落地的整包
+
+下列 RC 编号仅为本节计划别名，不预占 REUSE/GOV 任务 ID、不新增状态字段。临近实施时查重并复用/细化真实契约；每包写入实际起始 SHA、精确 allowedFiles、消费者、回滚边界及验证命令。一个共享文件由当前串行批次一次整合。
+
+| 计划任务 | 具体动作与文件边界 | 退出条件与后继 |
+| --- | --- | --- |
+| RC-00 证据与登记纠偏 | 消费 `92b595d29` 已修正的 `REUSE-T55/stage0-report.md` 来源与候选留存结论，不重做已关闭的指针错误和建议级备注问题；如需核身份，用内容摘要/真实来源，不再用 handover 大小或 artifact 昵称。源码/依赖/配置/输入未受影响的注释修订可引用原证据并写明字节/语义判断。核对 `golden-assets.ps1` 无 UTF-8 BOM 的事实，按真实 PS5.1 解析结果在精确治理修正中补 BOM（剥 BOM 后内容须相同），只验该分支正负例及 PS5.1/7 加载；不顺手重建黄金资产。同步 T04/T05 的历史 note 时只消费已有独验范围，不重写历史记录。 | 依据来源明确，已修正的脚本问题不再误归为实施失败；任何新增脚本修复有真实日志。RC-00 不触碰候选生产文件，也不凭修正登记宣称独验完成。 |
+| RC-01 既有八契约与 FD 补审 | 所有者安排独立会话验 T42～T48/T50，共八契约；先收 T42（放行阶段二）和 T44（放行既定 catalog 增量），其他按各自依赖消费。同批可引用有效证据，不重复未变测试。另对 T53 走交接所述补审路径②：原独验范围 `1a25dd054..cb778a75a` 不含 `011f45ab8` 的实施 diff，补审必须包含该实施提交及实际 runtime/dynamics 消费链；逐行审查权限、力/摩擦/初速/关节类型限制、数值 oracle 和生产证据，而非仅重查摘要。GOV-T21 所有者接收、T07/T09 登记门禁及 F-966 按各自原记录明确结论；只检查新增提交，不改写历史 commit-lint 失败。 | 精确送验 SHA、实际 acceptance 覆盖和登记结论明确；失败只返工受影响包。T04 父任务须待 RNE/FD 全范围均被有效验收后归位，不以补救证据 pass 外推实施本体。 |
+| RC-02 同文件前置裁决 | 以 `DhConvert.cpp`/`Sampling.cpp` 的全行绑定为联合范围：逐项定案 DH 3 行、LM/差分/消元/秩判定 4 行、zeroConfigFK、EAA 小角面及黄金采样 3 行。zeroConfigFK 先实核接口形态、编译前后阶段、owner、消费者与使用/写入权限：可走既有 runtime 受控 FK 才适配；若为编译前纯值推导，须具体证明职责与非重叠；现有公共头无零位入口不等于批准新接口。“认定 C”只表示后续包归属，不能当已解决。LM 等通用数值核心和轴角精度缺口若无适用 API，须最小提案及明确批准后实施，禁止改业务标签过覆盖墙。 | 形成每行保留/删除/适配/缺口及其责任归属，明确真正可解决的整文件包。任一真实缺口仍 pending 时，T55 保持候选留存；不能仅凭 zeroConfigFK 认定就应用 patch。 |
+| RC-03 性能与语义裁决 | 直接消费 T55 的 `run/bench-{pre-swap,post-swap}.log`、探针、checksums 与同代码噪声证据。仓内首测为 +25.6%/+80%/+22.8%；本次交接补充分析为 dhToExplicit +19.1%、rotated-box grid +78.1%、sample-set +12.2%，须注明统计口径/原件，不能混成一次新实测。建议先验证热点调用/转换成本，研究把不变转换移出循环或减少适配层调用；out-of-line/DLL 与向量化损失仍是待核机理，不照假设直接改码。只消费合法上游运算，不用手写矩阵快路径恢复平行核。重测仅在新候选或裁决证据不足时做同机同编译面 2～3 轮，保留确定性与数值边界。P6b 无效输入优先级和 P9 结合序 ULP 差异也须按业务契约判定。 | 所有者对保留当前候选退化、批准有界优化目标或继续 blocked 明确表态；未接受前不自行制定“±5% 即 PASS”或用校验和一致代替数值/性能验收。RC-02/03 都满足才准入 RC-05。 |
+
+#### 13.5.3 阶段 B：完成生产数学与实际缺口
+
+阶段 A 可以完成不依赖裁决的核对；生产实施严格按下表依赖串行，受阻只跳过相关能力。下面所有“批准后”都是前置条件，本规划不代为批准。
+
+| 计划任务 | 精确入口与实施目标 | 完成判据 |
+| --- | --- | --- |
+| RC-04 关键缺口先解决 | RC-02 识别的 LM、EAA/DH 精度缺口先继续核查具体上游入口，直接 API/薄适配不成立才提交最小上游扩展提案。援引 T55 阶段〇，不重复尝试已否的 EAA 小角转换；不得恢复 T11 撤销补丁或把表示转换 1e-6 容差推广到 FK/DH。批准后才按 SA-02 登记 `industrialrobot/patches/PATCHES.md` 及 patch；框架/vcpkg 默认继续只读。另将 GAP-IK-01 仅位置/部分姿态任务、PTP 候选3、GAP-PRJ-DIAG-BOUNDARY-01 各自形成可裁决范围，获批后独立实施，不捆绑扩权。 | 最小扩展的必要性、范围/内容摘要、批准、兼容及数值/性能检查齐全；所有消费者迁移后才删 LM/DLS/差分/旧插值核心。Euler/EAA 掩码、自由滚转、真实取消/统计、奇异/不可达/限位、诊断 subject 语义均保留独立反例。否决方案仍影响最终完成时，如实保持未完成。 |
+| RC-05 WP3＋WP4 整文件生产批 | 依赖 RC-02/03 及相关 RC-04 解阻。先对 `REUSE-T55/stage1-candidate.patch` 做只读适用检查，再按新基点调整；不要连同旧矩阵摘要原样重放。范围为 `modeling/src/DhConvert.cpp`、`kinematics/src/Sampling.cpp`、`modeling/src/CanonicalBridge.cpp` 及实际测试/构建/矩阵消费者；逐项处理 8 处换核、rotZ/rotX/poseFromDirectionRoll/rotationAngleBetween 保留判断、DH/零位链和黄金采样身份，订正三处失真注释。Import.cpp 惯量旋转、Template.cpp 占位圆柱候选沿 T33 A/D 消费，须先由所有者对 UI-T53 冻结行重开验收；不能借本批自动解冻 RpyMath/文件。 | 各改动文件完整功能 resolved，有实际删除和必要保留清单；独立 FK/DH/坐标 oracle、P1～P9 适用探针、黄金字节/种子身份、真实断开与受影响消费者通过，性能获明确接受。相关独验 PASS 后才关闭 T55/对应债务。 |
+| RC-06 其余数学与视图 | T42 独验通过后处理 `requirements/plugin/RequirementsPanelWidget.cpp::targetEditRotation`，先审查约 4165 行面板的同文件覆盖范围并验证真实 Widgets 路径；T44 裁决后另增 catalog 的 Rotation3D 符号提交，不 rebase。`runtime/src/BaseWorldTransform.cpp` 5 行复用 T29 候选和其未接受性能；`runtime/src/DescriptionValidator.cpp::singularValuesOneSidedJacobi` 消费 T34 的 SVD 否决/性能证据，重新提出可接受方案，不因 T34 done 就视为核心已删。`runtime/src/Snapshot.cpp` 四访问器按实际受控视图/任务私有 State 转发定案。 | 基座数学/SVD 不恢复隐藏 fallback；微小角、退化秩、FK/编译一致性及实际消费者达标。T29 性能裁决与 T34 本地保留核心的最终处置明确，owner/状态隔离不变；面板交互不能只用模型测试代替。 |
+
+#### 13.5.4 阶段 C：清通用原语、权限与业务保留面
+
+| 计划任务 | 范围与顺序 | 完成判据 |
+| --- | --- | --- |
+| RC-07 字节原语能力批 | 以现行 functions 反查 execution/runtime/policy 的 60 条 pending，连同 reporting 的 64 行；再核 T43 决策清单中的 selection/evidence/drivetrain 已保留复制面，判断通用 load/store 与协议 owner 的真实边界。Boost.Endian/JSON 的 vcpkg 渠道已批，不重复申请渠道；逐单元仍先在旧实现捕获字节基线，逐位探针后换核，最后断开红转绿。ReportCodec 的 State 借用先由 RC-09 解阻。各域保留自己的格式/版本/错误语义，不造跨域 codec 或第二套字节库。 | 大小端、定宽/浮点位模式、长度/截断/溢出、旧版本与 digest 身份一致；三件套和实际 CMake 供给/消费者检查齐全。渠道批准不当语义等价证明，既有 business-specific 记录也不能掩盖通用重复原语。 |
+| RC-08 摘要与 XML/工具 | `core` 摘要 23 行按 GAP-DIGEST-01 未批准状态先取得具体方案批准，再替换自持 SHA-256；沿既有 contentVersion/digest API 保持身份，不在调用方另写摘要。`modeling/src/XacroExpand.cpp` 18 行及其 9 条测试 helper 分清受限文法/展开策略与通用 XML 原语，复用适用上游入口；种子流隔离、固定 N 方向集等沿 T36/GOV-T27 的反例保持真实语义。公共测试入口/ird_add_gtest 按 T32 定案只共享必要产品 CMake include，不搬运上游未导出的宏。 | SHA 标准向量、边界/增量输入、黄金与 F-965 相关反例及实际消费者通过；XML 转义/定位/include 环/受限文法不变。无法替代的通用核心转入具体提案，产品文法和测试独立性逐行证实后保留，不再以 NONE 自动结项。 |
+| RC-09 权限与真实生产 UI | 逐文件审查 reporting 的借用 grant、ui 的 19 行 HOST-SCENE/LINES/FRAME/KIN-FK 和 F-975；只提交实际类别/操作/生命周期的最小权限方案，沿 ARCH §3.6 精确审查，不批准目录豁免、不借宿主例外移交模型真值。针对 F-974 先定位真实启动故障，修复后补 T41 仍未执行的生产事件投递/关停路径及受影响面板/预览路径；F-560 若阻断必需验收则定向修复。 | 相关权限获批且测试有权执行；真实 Widgets 入口、布局、修订事件双 sink、关停、预览生命周期通过。Windows 使用 VS x64 开发环境、QT_QPA_PLATFORM=windows、绝对路径一次一个 executable，禁用 offscreen；插件失败先停进程并检查继承 QT_*/QML_*。F-974 未解除时不得宣称 GUI 端到端通过。 |
+| RC-10 业务与治理语义结项 | 对上表剩余业务值、单位、诊断、事务、策略、worker/总线、独立 oracle 等逐行消费既有检索/非重叠证据；通用子功能分流 RC-04～09。foundation-governance 的 106 行脚本目前被 `reuse-contract.ps1` 限为 pending/proposal，即使业务保留判断正确也无法 closed：先提出并独立验收与既有 closures/acceptance 一致的脚本结项格式/校验，再收这 106 行。保持 entry/helper 全文绑定、真实执行和独立批准，不能用空 targets、虚构 CMake 目标或全目录白名单跳过。 | 准确表达“应保留”与“尚未审计”，不批量按 A 类改状态。脚本规则的正例和针对伪造 acceptance/过期绑定/遗漏 helper/未独验/未覆盖范围的负例真实执行；新增规则未独验前不据其关闭债务。黄金 oracle 保持独立，不把测试改成调用被测实现。 |
+
+#### 13.5.5 阶段 D：独验、关闭和唯一最终验收
+
+**RC-11 能力包逐批独验与 closures**：每个完整能力包代码/测试稳定后，一次更新实际受影响的 functions/catalog/permissions/changes 和必要设计；在本地主线提交实施，再由所有者安排独立会话核冻结 SHA 与 acceptance。按照 `audit-contract.md` §7.1 将已验且边界未变的 migrated 功能推进 closed，登记 `closures.json` 的 baselineBlob/currentSha256/functionKeys/migrationCommit/acceptance；新增文件用 absent、删除文件用 deleted/replaces 的真实记录。已有有效独验可复用，但须核其源码/输入/依赖/配置和验收范围，不因 HEAD 不同全重跑，也不因任务 done 批量套用 PASS。闭包校验依赖的绑定顺序须使用当前协议，不修改历史验收来适配现树。
+
+RC-11 随各能力包执行，不堆到最后一次刷新全部历史报告。T01 的审计完成、T02/T03 的父任务 done、T06 的统计验收与 T04/T05 父任务归位，都不能替代 2267 行及后续新增行的语义关闭。逐包完成后，只从现有 functions/closures 自动计算余量；余量无法归到既有任务时，回到本节对应能力开精确子契约，不建立第二份状态台账。
+
+**RC-12 最终冻结验收**：所有上述前置满足后才冻结送验 SHA。检查全部基线/新增/删除文件覆盖、所有功能 closed、真实生产消费、无不明 pending/proposal/未验例外、旧核心无回流和父任务实际 scope；运行最终模式并由独立会话作最终语义验收。最终模式仍 FAIL 时按首个真实失败归属返工，不能关闭开关、删 inventory、移动基点或把 governance-only 输出改称迁移完成。只补实际失效证据及相关消费者，既有有效证据不重测。
+
+各实施包的命令在精确契约中填入实际任务和冻结版本；在 `pwsh -NoProfile` 会话中按下列顺序执行。`$taskFiles` 为本包真实任务 JSON 的 PowerShell 数组；`$scopeTaskFile` 为覆盖待检范围的单个正式契约（不是 changes 凭证），`$batchBase/$reviewHead` 为其真实 SHA。多契约按各自范围分别做 scope 检查；该脚本不支持任务数组，不能把主线与自身比较。
+
+```powershell
+# 只在实际影响构建/数值/接口时使用相应目标；GUI 另按根规则逐 executable 执行。
+# 文档/任务入口已包含一次全量复用检查，不重复运行被包含命令。
+& ./RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile $taskFiles
+& ./RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile $scopeTaskFile -Base $batchBase -Head $reviewHead
+& ./RobWork/scripts/industrialrobot/commit-lint.ps1 -Range "$batchBase..$reviewHead"
+# 以下为 RC-12 最终交付检查，普通批次不用反复运行必然未完成的最终模式。
+& ./RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head $reviewHead -RequireMigrationComplete
+```
+
+构建沿根 AGENTS §4 和各契约真实命令：先确认集成 cache 的 RWS_BUILD_INDUSTRIALROBOT=ON，再构建受影响目标/ird_gates；公共接口、依赖、CMake 和核心数值增加必要独立冒烟及相关对端回归。T19 的 kinematics 冒烟 LNK2019 缺口须在实际受影响模式解决，不能用“集成绿”代替其契约。证据包含构建日志、gtest XML、per-exe ird-test-report.json 或脚本真实报告，分列 passed/skipped/failed/NOT RUN。每包是可回滚的本地提交组，不暂存他人 trace-matrix 或未跟踪材料。
+
+**立即下一任务**：先执行 RC-00/RC-02 的只读核对并准备最小裁决材料，由所有者安排 RC-01 独验；RC-03 的性能建议供所有者作具体裁决。只有同文件所有未决行有合法解决路径且退化获处理后，才把 RC-05 转为生产实施任务。若关键提案被否且仍需保留平行核心，明确报告“复用重构尚未彻底完成”，不再以候选留存或登记任务 done 结束总目标。
