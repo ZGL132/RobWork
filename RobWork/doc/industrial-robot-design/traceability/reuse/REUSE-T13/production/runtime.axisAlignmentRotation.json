@@ -8,7 +8,8 @@
       "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046"
     },
     {
-      $15ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
     },
     {
       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",

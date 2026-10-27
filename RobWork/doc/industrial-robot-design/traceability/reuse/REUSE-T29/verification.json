@@ -23,7 +23,8 @@
       "sha256": "9495a85f35e4d90ba98858a3ce918dc4921441b47e3c1c70d2a7fdea6e55792a"
     },
     {
-      $15ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
     },
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/BaseWorldTransform.hpp",
