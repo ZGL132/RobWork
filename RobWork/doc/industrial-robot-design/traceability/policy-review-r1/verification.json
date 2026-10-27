@@ -353,5 +353,21 @@
       "log": "raw/validate-docs-4.log",
       "reason": "既有生产证据冻结绑定旧runtime CMake摘要，历史报告不改写；未决功能审计不冒称通过"
     }
+  ],
+  "implementationCommit": "a167f4d4d9435b565a1dea3217b8fa7935333451",
+  "postCommitChecks": [
+    {
+      "id": "commit-lint",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range fd198f54c0b66bc61dd64b29a04e2b1675f42dbc..a167f4d4d9435b565a1dea3217b8fa7935333451",
+      "exitCode": 0,
+      "log": "raw/commit-lint.log"
+    },
+    {
+      "id": "verify-task-scope",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T13.json -Base fd198f54c0b66bc61dd64b29a04e2b1675f42dbc -Head a167f4d4d9435b565a1dea3217b8fa7935333451",
+      "exitCode": 0,
+      "changed": 108,
+      "log": "raw/verify-task-scope.log"
+    }
   ]
 }
