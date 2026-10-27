@@ -76,7 +76,7 @@
     "完整project套件各一次、定向真实进程与归档消费者、独立构建及性能/门禁保留真实结果，不以FAIL冒充PASS",
     "保留core/Win32/Boost.JSON供给、格式和公共签名；旧pending/诊断提案不自行裁决，独验不自签"
   ],
-  "note": "所有者明确指定本C盘工作树和分支，覆盖旧redesign-main流程；起点412e173b9079fa43a1f0ef50fe07d38e852b1940。用户2026-10-28要求按已完成评审修改。此最小契约仅供H6逐文件凭证与范围机器核验，不是重复总台账；status不代表验收通过。旧pending造成准入阻断时保留真实FAIL，不放宽门禁。",
+  "note": "所有者明确指定本C盘工作树和分支，覆盖旧redesign-main流程；起点412e173b9079fa43a1f0ef50fe07d38e852b1940。用户2026-10-28要求按已完成评审修改。此最小契约仅供H6逐文件凭证与范围机器核验，不是重复总台账；status不代表验收通过。旧pending造成准入阻断时保留真实FAIL，不放宽门禁。2026-10-28准入结案批（dad436e3f）：14文件逐功能矩阵补全440行＋13行重锚＋11条pending结案（依据admission-closure.md），project单元真实门禁validate-reuse -Head全过；树级门禁剩余runtime CMake生产证据冻结失败属POL-T13批登记遗留，任务保持ready待树级绿后收口。",
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",

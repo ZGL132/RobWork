@@ -97,3 +97,7 @@ sync-bindings.py只重锚已变源/输入和登记实际新增函数/回归，�
 ## 独立验收（2026-10-28）
 
 所有者另开独立会话对实施与回归面验收 **PASS**，登记于 [acceptance/PRJ-T19-20261028-r1.json](../acceptance/PRJ-T19-20261028-r1.json)（证据同目录），范围显式 `-Base 412e173b9 -Head 59af1f9b4`（100 路径允许面）。独立会话受影响目标增量重建后真实重跑：project 完整单元 305（终态，含其后追加的共享对象新例）／完整契约 34／去重回归 58／真实进程 10（Tx7ProcessLock＋TransactionBoundaries/F8ProcessCrash 精确过滤）／execution 消费者 6／独立冒烟 39／性能 2（热样本 930～1016ms，3 秒硬预算断言 PASS）全部 decisive 零失败；ird_gates 零命中、scope 与 commit-lint PASS。validate-docs 的登记 FAIL（首败 REUSE-COVERAGE DraftService.hpp no functional matrix＋既有 AD-PENDING）独立复现且失败面一致——**包级文档/复用准入仍未通过，任务保持 ready 不收口 done**；13 项修复、扫描去重与性能预算经源码 diff 与真实子进程/性能测试核对成立。
+
+## 准入结案批（2026-10-28，dad436e3f）
+
+所有者指示"解决阻塞的 fail"后实施：[admission-closure.md](admission-closure.md) 为 evidence 锚点，[fill-coverage.py](fill-coverage.py)（可重复生成器）对 14 个已变更文件按语义区段补全 **440 条功能行**（函数/类/TEST/文件壳，描述取自源码注释与签名）、重锚 **13 条**既有行区段、将压在已变更文件上的 **11 条 pending** 结案为 business-specific/migrated（逐条依据在 admission-closure.md；AtomicFile.cpp 8 条 pending 因文件未变更保持原状）。复刻口径自检（区段摘要/符号/行覆盖/目标注册/字段完整性）全绿后提交，真实门禁 `validate-reuse.ps1 -Head dad436e3f` 按单元序检查——**project.json 全部通过**，其后唯一失败为 `REUSE-FRESHNESS: runtime/CMakeLists.txt`（POL-T13 批 a167f4d4d 自行登记的生产证据冻结遗留，涉及 REUSE-T53 冻结报告链，不归本批处置）。本批零产品代码改动；任务保持 ready，树级门禁转绿后收口 done。

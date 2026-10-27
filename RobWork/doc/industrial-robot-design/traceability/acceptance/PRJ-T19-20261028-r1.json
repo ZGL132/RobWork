@@ -43,22 +43,105 @@
     "C1 免检集合/C2 诊断 GAP/C3 listRuns 强度/C4 真实 policy 身份及 close/acquireInFlight、abandon/writeBatch 交错疑点：维持未决登记，本包不裁决"
   ],
   "commands": [
-    { "name": "project-full", "command": "sdurws_ird_project_test.exe（增量重建后全量）", "exitCode": 0, "passed": true, "log": "integration/full-unit.log", "evidence": "integration/full-unit.xml＋ird-test-report（305/305 decisive）" },
-    { "name": "project-contract", "command": "sdurws_ird_project_contract_test.exe（全量，含真实崩溃重开）", "exitCode": 0, "passed": true, "log": "integration/full-contract.log", "evidence": "34/34 decisive" },
-    { "name": "dedup-regression", "command": "sdurws_ird_project_test.exe --gtest_filter=ProjectReviewRegression.*:TxEngineTest.*:ProjectStoreTest.*", "exitCode": 0, "passed": true, "log": "integration/dedup-unit.log", "evidence": "58/58 decisive（实施批同过滤）" },
-    { "name": "real-process", "command": "sdurws_ird_project_contract_test.exe --gtest_filter=Tx7ProcessLock.*:TransactionBoundaries/F8ProcessCrash.*", "exitCode": 0, "passed": true, "log": "integration/final-process.log", "evidence": "10/10 decisive（真实子进程锁与 F8 五边界）" },
-    { "name": "consumer-execution", "command": "sdurws_ird_execution_contract_test.exe --gtest_filter=ArchiveCollaborationContractTest.*:WorkerProcessContractTest.（三项定向）", "exitCode": 0, "passed": true, "log": "integration/consumer-execution.log", "evidence": "6/6 decisive" },
-    { "name": "perf", "command": "sdurws_ird_project_perf_test.exe（完整组）", "exitCode": 0, "passed": true, "log": "integration/perf.log", "evidence": "2/2；热样本 930～1016ms，硬预算 3s 断言 PASS；冷组 report-only（integration/perf.xml＋ird-test-report）" },
-    { "name": "smoke", "command": "build/core-smoke/project/Release/sdurws_ird_project_test.exe --gtest_filter=ProjectReviewRegression.*:TxEngineTest.*", "exitCode": 0, "passed": true, "log": "smoke/smoke-final.log", "evidence": "39/39 decisive（独立配置）" },
-    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/project-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "全部检查零命中" },
-    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile …/PRJ-T19.json", "exitCode": 1, "passed": false, "log": "validate-docs.log", "evidence": "与实施批登记一致：首败 REUSE-COVERAGE DraftService.hpp no functional matrix＋既有 AD-PENDING；无新增失败类" },
-    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile …/PRJ-T19.json -Base 412e173b9… -Head 59af1f9b4…", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "100 路径全部允许面" },
-    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 412e173b9….59af1f9b4…", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "59af1f9b4 PASS" }
+    {
+      "name": "project-full",
+      "command": "sdurws_ird_project_test.exe（增量重建后全量）",
+      "exitCode": 0,
+      "passed": true,
+      "log": "integration/full-unit.log",
+      "evidence": "integration/full-unit.xml＋ird-test-report（305/305 decisive）"
+    },
+    {
+      "name": "project-contract",
+      "command": "sdurws_ird_project_contract_test.exe（全量，含真实崩溃重开）",
+      "exitCode": 0,
+      "passed": true,
+      "log": "integration/full-contract.log",
+      "evidence": "34/34 decisive"
+    },
+    {
+      "name": "dedup-regression",
+      "command": "sdurws_ird_project_test.exe --gtest_filter=ProjectReviewRegression.*:TxEngineTest.*:ProjectStoreTest.*",
+      "exitCode": 0,
+      "passed": true,
+      "log": "integration/dedup-unit.log",
+      "evidence": "58/58 decisive（实施批同过滤）"
+    },
+    {
+      "name": "real-process",
+      "command": "sdurws_ird_project_contract_test.exe --gtest_filter=Tx7ProcessLock.*:TransactionBoundaries/F8ProcessCrash.*",
+      "exitCode": 0,
+      "passed": true,
+      "log": "integration/final-process.log",
+      "evidence": "10/10 decisive（真实子进程锁与 F8 五边界）"
+    },
+    {
+      "name": "consumer-execution",
+      "command": "sdurws_ird_execution_contract_test.exe --gtest_filter=ArchiveCollaborationContractTest.*:WorkerProcessContractTest.（三项定向）",
+      "exitCode": 0,
+      "passed": true,
+      "log": "integration/consumer-execution.log",
+      "evidence": "6/6 decisive"
+    },
+    {
+      "name": "perf",
+      "command": "sdurws_ird_project_perf_test.exe（完整组）",
+      "exitCode": 0,
+      "passed": true,
+      "log": "integration/perf.log",
+      "evidence": "2/2；热样本 930～1016ms，硬预算 3s 断言 PASS；冷组 report-only（integration/perf.xml＋ird-test-report）"
+    },
+    {
+      "name": "smoke",
+      "command": "build/core-smoke/project/Release/sdurws_ird_project_test.exe --gtest_filter=ProjectReviewRegression.*:TxEngineTest.*",
+      "exitCode": 0,
+      "passed": true,
+      "log": "smoke/smoke-final.log",
+      "evidence": "39/39 decisive（独立配置）"
+    },
+    {
+      "name": "ird-gates",
+      "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/project-review-gates -P cmake/ird_gates.cmake",
+      "exitCode": 0,
+      "passed": true,
+      "log": "ird-gates.log",
+      "evidence": "全部检查零命中"
+    },
+    {
+      "name": "validate-docs",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile …/PRJ-T19.json",
+      "exitCode": 1,
+      "passed": false,
+      "log": "validate-docs.log",
+      "evidence": "与实施批登记一致：首败 REUSE-COVERAGE DraftService.hpp no functional matrix＋既有 AD-PENDING；无新增失败类"
+    },
+    {
+      "name": "scope",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile …/PRJ-T19.json -Base 412e173b9… -Head 59af1f9b4…",
+      "exitCode": 0,
+      "passed": true,
+      "log": "scope.log",
+      "evidence": "100 路径全部允许面"
+    },
+    {
+      "name": "commit-lint",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 412e173b9….59af1f9b4…",
+      "exitCode": 0,
+      "passed": true,
+      "log": "commit-lint.log",
+      "evidence": "59af1f9b4 PASS"
+    }
   ],
   "executionNotes": [
     "本验收为重跑型：四个集成目标与冒烟 project 目标增量重建（逐目标 -m:1）后执行；构建缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 确认。",
     "真实进程过滤首跑仅命中 5 项（TransactionBoundaries.* 未匹配含'/'的参数化套件名），按实施批精确过滤 TransactionBoundaries/F8ProcessCrash.* 复跑得 10/10；原 5 项运行日志保留于 final-process.log 同文件被复跑覆盖前的结论以 10 项运行为准。",
     "validate-docs 的 FAIL 为实施批如实登记的准入缺口（存量全文件矩阵＋11 项 pending），本会话独立复现且失败面一致；本验收不将其转嫁为新增缺陷，也不以通过其他门禁冒称整体治理 PASS。"
   ],
-  "limitations": "PASS 仅覆盖 PRJ-T19 送验范围的实施与回归面（412e173b9..59af1f9b4 的 13 项确定问题修复＋扫描去重性能整改）。包级文档/复用准入门禁 validate-docs 处于 FAIL（登记的存量覆盖缺口），任务保持 ready、不收口 done；关闭须另行补齐全文件矩阵缺口并重跑治理门禁。11 项 pending、C1～C4 待裁决、close/acquireInFlight 与 abandon/writeBatch 交错疑点维持原状。evidence 不得把归档成功/摘要匹配当作当前工程结论（Currentness 判定仍须独立输入）。"
+  "limitations": "PASS 仅覆盖 PRJ-T19 送验范围的实施与回归面（412e173b9..59af1f9b4 的 13 项确定问题修复＋扫描去重性能整改）。包级文档/复用准入门禁 validate-docs 处于 FAIL（登记的存量覆盖缺口），任务保持 ready、不收口 done；关闭须另行补齐全文件矩阵缺口并重跑治理门禁。11 项 pending、C1～C4 待裁决、close/acquireInFlight 与 abandon/writeBatch 交错疑点维持原状。evidence 不得把归档成功/摘要匹配当作当前工程结论（Currentness 判定仍须独立输入）。",
+  "admissionClosure": {
+    "status": "resolved-at-unit",
+    "commit": "dad436e3f",
+    "detail": "所有者指示解决阻塞 fail 后实施准入结案批：14 个已变更文件补全 440 条语义区段功能行、重锚 13 条既有行、11 条 pending 结案（依据 traceability/project-review-r1/admission-closure.md 与可重复生成器 fill-coverage.py）。真实门禁 validate-reuse -Head dad436e3f 按单元序检查 project.json 全部通过；其后唯一失败 REUSE-FRESHNESS runtime/CMakeLists.txt 属 POL-T13 批（a167f4d4d）登记的生产证据冻结遗留，不归本任务处置。任务保持 ready，树级门禁转绿后收口 done。",
+    "log": "见 acceptance/PRJ-T19-20261028-r1/ 与 traceability/project-review-r1/admission-closure.md"
+  }
 }

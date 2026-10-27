@@ -1449,7 +1449,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | 未参与开发者可直接实现 | ✔ 数据类型字段表（§4.4）、接口签名/前置/错误/线程/示例（§5）、七步逐步表（§7.1）、任务卡（§12） | 全文 |
 | 上游输入版本如实登记 | ✔ §1.2 磁盘实测表（含缺失项，未虚构） | §1.2 |
 
-### 15.6 PRJ-T19 评审整改后的实施口径（2026-10-28，独立验收PASS（[验收记录](../traceability/acceptance/PRJ-T19-20261028-r1.json)）；复用准入缺口未关闭，任务保持 ready）
+### 15.6 PRJ-T19 评审整改后的实施口径（2026-10-28，独立验收PASS（[验收记录](../traceability/acceptance/PRJ-T19-20261028-r1.json)）；准入矩阵缺口已由 dad436e3f 结案批补全（[admission-closure](../traceability/project-review-r1/admission-closure.md)），任务待树级门禁转绿后收口）
 
 本节说明当前实现，不追认历史自审为测试证据。原始命令、红绿回归、环境、未决项及实际门禁结果统一见 [实施记录](../traceability/project-review-r1/IMPLEMENTATION.md)。公共签名与持久化字节格式不变。
 
