@@ -1,0 +1,58 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_policy_test
+  CollisionEvaluationTest.cpp
+  JointLimitsTest.cpp
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::createModel” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(207,40):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::createModel”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::destroyModel” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(212,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::destroyModel”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::addGeometry” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(219,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::addGeometry”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(228,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(233,30):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(239,5):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::clear” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(244,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::clear”的声明
+  
+  sdurws_ird_policy_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe

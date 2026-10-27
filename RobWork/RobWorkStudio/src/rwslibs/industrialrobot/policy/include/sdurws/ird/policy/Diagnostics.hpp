@@ -137,7 +137,7 @@ enum class PolicyDiagCode {
                                ///< ——告知性，KIN-05）
     // ---- JNT 家族（§9.6——评估输出诊断轨）----
     JntTableInvalid,           ///< POLICY-JNT-TABLE-INVALID（关节表区间非法——D-13）
-    JntEngineeringRangeInvalid, ///< POLICY-JNT-ENGINEERING-RANGE-INVALID（工程工作
+    JntEngineeringRangeInvalid, ///< POLICY-ENGINEERING-RANGE-INVALID（工程工作
                                 ///< 范围非法——MDL-12）
     // ---- 版本/身份（§8.2/§5.3）----
     VersionIncompatible,       ///< POLICY-VERSION-INCOMPATIBLE（策略版本不兼容——
@@ -215,7 +215,7 @@ constexpr std::string_view policyDiagCode(PolicyDiagCode code) noexcept
     case PolicyDiagCode::CllGeometryMissing:         return "POLICY-CLL-GEOMETRY-MISSING";
     // ---- JNT 家族（§9.6 清单 21~22——同上迁移通道）----
     case PolicyDiagCode::JntTableInvalid:            return "POLICY-JNT-TABLE-INVALID";
-    case PolicyDiagCode::JntEngineeringRangeInvalid: return "POLICY-JNT-ENGINEERING-RANGE-INVALID";
+    case PolicyDiagCode::JntEngineeringRangeInvalid: return "POLICY-ENGINEERING-RANGE-INVALID";
     // ---- 版本/身份（§8.2 诊断行／§5.3——清单 13~14）----
     case PolicyDiagCode::VersionIncompatible:        return "POLICY-VERSION-INCOMPATIBLE";
     case PolicyDiagCode::ContentIdentityMismatch:    return "POLICY-CONTENT-IDENTITY-MISMATCH";

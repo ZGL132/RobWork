@@ -727,8 +727,8 @@ struct BackendConfig {
  * @brief ICollisionEvaluator 唯一产品实现（§6.5 装配线：构造入口唯一——
  *        RobWorkCollisionEvaluator）。
  *
- * 装配语义：构造时实例化内置后端（ProximityStrategyRW——sdurw_proximity，
- * R-5 例外许可的唯一消费方）并固化复现要素描述符；createSession 把
+ * 装配语义：构造时固化复现要素描述符；createSession 实例化会话私有
+ * 内置后端（ProximityStrategyRW——sdurw_proximity，R-5 许可消费点），把
  * (policy, scene, names) 三步构建委托给会话构造函数（单一实现——本类无
  * 第二套校验/展开逻辑）。
  *
@@ -761,14 +761,8 @@ public:
                   const IPolicyNameContext& names) const override;
 
 private:
-    /// 内置后端实例（构造期一次——进程级共享给全部会话；非空不变式）。
-    std::shared_ptr<rw::proximity::CollisionStrategy> m_strategy;
     /// 复现要素描述符（构造期固化——backend() 与 sessionIdentity 组成同源）。
     CollisionBackendDescriptor m_descriptor;
-    /// 后端查询互斥（构造期一次——本评估器全部会话共享：同一后端实例的
-    /// 全部访问串行化，POL-T07 评估半区的并发只读安全机制；POL-T06 的
-    /// 直构会话（缺省参数）自建会话级互斥——单会话形态等价安全）。
-    std::shared_ptr<std::mutex> m_queryMutex;
 };
 
 /**

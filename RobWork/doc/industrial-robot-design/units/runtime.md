@@ -1645,3 +1645,7 @@ DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列
 ### REUSE-T10：原版EAA适用边界（2026-10-23）
 
 所有者撤销上游EAA补丁，原库不变。旋转表示转换对照限值唯一取REQUIREMENTS附录D第13项（矩阵→EAA、EAA→矩阵及相关往返统一1e-6，所有者明确数值裁决，均为最大元素绝对误差）；FK/编译链仍按附录D第4项1e-9 m/rad，矩阵合法性与Custom预设语义不随表示容差改变。原EAA双向量构造的近反平行/极轴约定也须按实际编译链审查，不能把表示转换限值用于放过关节轴映射误差。当前仅完成原库恢复和误差测量，不宣称runtime旋转/offset已经迁移。
+
+## 专项修正（POL-T13，2026-10-28）
+
+本条取代历史 MA-02 中 runtime 自持碰撞检测器/规则的当前实现说明：RuntimeCollisionSession 及其公共头、实现、专属测试和直接 proximity/PQP 链接已删除。runtime 继续独占规范模型、编译 WorkCell、名称映射和快照生命周期；碰撞策略与判定由 policy 单一权威供给，宿主经既有 kinematics 适配器连接。历史 MA-02 记录不改写为本轮验收。见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。

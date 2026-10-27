@@ -1,0 +1,370 @@
+RuntimeBuild.
+  SourceTreeReachable_RT_BUILD
+  NoQtInclude_RT_BUILD_NFR_MNT_01
+  NoCrossUnitInclude_RT_BUILD_R1_R2
+  BaselineLibsPinned_RT_BUILD_P_RT_3
+RuntimeErrorsFullTable.
+  AllCodesPerToken_RT_ERR_NFR_COR_03
+RuntimeErrorsThrow.
+  MessagePrefixAndCodeAccessor_RT_ERR
+RuntimeErrorsPayload.
+  ResolveAndNameErrorCarryEcho_RT_ERR
+SourcesContract.
+  InterfacesAreAbstract_RT_SRC
+SourcesObjectBytes.
+  ScriptedHitAndMiss_RT_SRC_S2
+SourcesRevision.
+  SummaryRoundtripAndUnknownRevision_RT_SRC_S1
+SourcesAttribution.
+  InjectionPointsMapToCodes_RT_SRC_ACCEPT2
+SourcesCancel.
+  ToggleIsFinal_RT_SRC_TASK01
+SourcesLifetime.
+  DeleteThroughBasePointer_RT_SRC
+ExpectedSemantics.
+  OkStateCarriesValue_ACC3
+  ErrStateCarriesError_ACC3
+  GetOnErrorFailsFast_ACC3_NFR_COR_03
+  ErrorOnOkFailsFast_ACC3
+  StatesAreMutuallyExclusive_ACC3
+  CopyAndMovePreserveState_ACC3
+  SupportsMoveOnlyTypes_ACC3
+ExpectedQueryPath.
+  ResolveMirrorNoThrowWithEcho_ACC3
+DescriptionType.
+  DefaultsMatchContract
+  ValueSemanticsDeepCopyAndMove
+  SourcedValueCarriesMissingNotZero
+  CouplingMatrixRowMajorAccess
+  ReaderAbstractAndPureFunction
+  EnumSurfaceAnchored
+DescriptionValidator.
+  CleanFixturePassesWithNoIssues
+  NamedTcpRejectsDuplicateEmptyAndInvalidTransform_REQ01_A15
+  MissingCapabilitiesDoNotBlock
+  DeterministicReport
+CouplingValidation.
+  WellConditionedCPasses_RT_CPL_1
+  SingularCBlocked_RT_CPL_1
+  NearSingularDetApproxZeroBlocked_RT_CPL_1
+  ConditionNumber1e10Blocked_RT_CPL_1
+  ExactSingularBoundaryDiscrimination_T34
+  RepeatedValidationBitwiseDeterministic_T34
+  NonSquareCBlocked
+  DimensionCountMismatchBlocked
+  RangeOutOfBoundsStructureInvalid
+  ZeroCountStructureInvalid
+  DataSizeMismatchBlocked
+  NonFiniteEntryBlocked
+  DeclaredConditionNumberNotTrusted
+ProvidedIllegal.
+  NegativeMassLocated_RT_CPX_3
+  ZeroMassAndToolMassBlocked
+  NegativeVelocityAndAccelerationBlocked
+  NonPositiveRatioAndFrictionBlocked
+  InertiaAsymmetricAndNonSpdBlocked
+IllegalTransform.
+  ReflectedJointOriginBlocked_RT_BW_6
+  NonOrthogonalJointOriginBlocked_RT_BW_6
+  NaNTranslationBlocked_RT_BW_6
+  ScenePoseNonFiniteBlocked_RT_BW_6
+  ToolTcpOffsetReflectionBlocked_RT_BW_6
+StructureHard.
+  EmptyJointsRejected
+  LinkCountMismatchRejected
+  FrictionLengthMismatchRejected
+  RatioLengthMismatchRejected
+  ZeroContractVersionRejected
+  IllegalRobotLocalNameRejected
+  EmptyJointLocalNameRejected
+  ZeroAxisAndNonFiniteAxisRejected
+  MissingLowerBoundRejected
+  MissingUpperBoundRejected
+  LowerAboveUpperRejected
+  ContinuousWithBoundsRejected
+  WorkingRangeOnRevoluteRejected
+  InvalidWorkingRangeRejected
+  CustomWithoutEaaRejected
+  NonFiniteBasePositionRejected
+  EmptyLinkToolSceneNamesRejected
+UnitValidation.
+  NonFiniteBoundsRejected_ACC3_NFR_COR_03
+  NonFiniteVelocityRejected_ACC3_NFR_COR_03
+  DegreeMagnitudeBoundWarnsButDoesNotBlock_ACC3
+  MillimeterMagnitudePrismaticWarns_ACC3
+  FixedJointProvidedBoundsStillValidated
+InertiaValidationF784.
+  SmallScaleAsymmetryRejected_MDL06_AT01
+  LargeScaleRelativeNoiseAccepted_MDL06_AT01
+  RelativeThresholdSidesAcrossScales_MDL06_AT01
+  SymmetrizationDeterminesSpd_MDL06_AT01
+  ExtremeScalesKeepSpdDecision_MDL06_AT01
+  StrictPositiveBoundaryWithoutMargin_MDL06_AT01
+  ZeroSkewAndNonFiniteRejected_NFRCOR03_AT01
+CanonicalModelBuilderTest.
+  BuildsMinimalFixtureAndDerivesCapability
+  FixedFrameHasSceneWithoutCollision_MDL15_AT28
+  RichFixtureHasAllCapabilityBits
+  RejectsEmptyAndDuplicateObjectRefs
+  RejectsInvalidHeaderFields
+  RejectsIllegalTWorldBase
+  RejectsIllegalGravity
+  RejectsCustomPresetWithIdentityRotation
+  RejectsBadChainAndNormalizesAxis
+  RejectsIllegalBounds
+  RejectsIllegalProvidedValues
+  InertiaWitnessMixedScaleAndExtremes_T34
+  InertiaOriginalBitsPreserved_F784_AT01
+  RejectsDuplicateIds_AllowsForeignJointIds_O36
+  RejectsIllegalLocalNames
+  RejectsResourceReferenceViolations
+  RejectsDefaultTcpViolations
+  DefaultTcpSurvivesToolSorting_F584
+  RejectsErrorLevelDiagnostics
+  NamedTcpIdentityOrderAndValidation_REQ01_A15
+CanonicalModelCapabilityTest.
+  BitsFollowContentDerivation
+CanonicalModelIndexTest.
+  ObjectAndResourceIndicesResolve
+CanonicalModelEqualityTest.
+  BitPatternEqualityNotTolerance
+CanonicalModelTransientTest.
+  NoPersistenceMemberSurface
+  CodecApiIsInMemoryOnly
+  SourceScanNoPersistenceIncludes
+CodecRoundtripTest.
+  FixedSceneFramePresenceAndVersion_MDL15_AT28
+  NamedTcpRoundtripTamperAndOldMinor_REQ01_A15
+  MinimalModelRoundtripsExactly
+  NonCoordinateAxisRoundtripsExactly_R3_A3
+  RichModelPreservesIdentityExcludedFields
+  DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618
+  OldMinorVersionBytesRejected_F626
+  SparseOptionalsRoundtripAsAbsent
+CodecNegativeTest.
+  RejectsMalformedEncodings
+  DetectsContentIdentityMismatch
+RT_ID_1_RepeatBuildStability.
+  SameFixtureYieldsByteIdenticalEncodingAndIdentity
+RT_ID_2_NoFloatToleranceEquivalence.
+  TinyDeltaChangesIdentityWhileToleranceSaysEqual
+RT_ID_3_DisplayFieldExclusion.
+  RevisionSeqDoesNotAffectIdentity
+  InstallPresetMarkerDoesNotAffectIdentity
+  DiagnosticsDoNotAffectIdentity
+  IdentityDomainEncodingIsStrictSubset
+RuntimeNameMapTest.
+  FixedFrameHasObjectButNoGeometryName_MDL15_AT28
+NameMapBuildTest.
+  BuildsAllScopesFromRichFixture_RT_NM_1
+  DeviceEntryHasNoPrefix_R4
+  DeterministicRebuildByteEqual_RT_NM_1
+  BodyScopeGatedByDynamicCapability_RT_NM_1
+  IdentityEntriesPerObjectResolve_RT_NM_1
+NameMapRoundtripTest.
+  ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1
+  ReverseChainNameToObjectToName_RT_NM_1
+  BijectionCounts_RT_NM_1
+  EncodeParseRoundtrip_RT_NM_1
+  ParseRejectsMalformedInput_RT_NM_1
+  ParseRejectsNonAdjacentDuplicateFullName_F_806_RT_NM_1
+  EmptyMapEncodeRejected
+NameMapResolveErrorTest.
+  ResolveMissesEchoAndNeverThrow_RT_NM_3
+NameMapDisambiguationTest.
+  DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2
+  IllegalCharVariantsCollideAfterLegalization_RT_NM_2
+  LegalizationRulesLeadingDigitAndChars_RT_NM_2
+  ReservedWorldDisambiguated_RT_NM_2
+  SuffixProbeSkipsTakenNames_RT_NM_2
+NameMapCrossProjectTest.
+  SameDisplayNamesAcrossProjects_RT_NM_4
+NameMapRenameTest.
+  RenameRebuildNoOldResidue_RT_NM_5
+NameMapCrossCheckTest.
+  CrossCheckPassesOnMapSubset_RT_NM_6
+  DoublePrefixRejected_RT_NM_6
+NameMapIdentityTest.
+  NameAndIdentityTypesNotInterconvertible_RT_NM_7
+  StaleConcatenationMisses_RT_NM_7_R4
+  ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06
+NameMapR4SourceScan.
+  PrefixJoinConfinedToNameMapModule_RT_R4
+PresetRotationTest.
+  GroundIsExactlyIdentity_RT_BW_2
+  InvertedIsFrozenRxPi_RT_BW_2_P_RT_4
+  WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4
+  InvertedBaseZPointsWorldDown_P_RT_4
+  WallBaseZPointsWorldHorizontal_P_RT_4
+  FixedPresetElementsExactlySignedUnit_RT_BW_2
+  CustomPresetHasNoFixedMatrix_Throws
+CustomEaaTest.
+  ZeroEaaYieldsIdentity
+  QuarterTurnAboutZMatchesAnalytic
+  HalfTurnAboutXMatchesFrozenMatrix_P_RT_4
+  NonFiniteEaaThrowsInputInvalid
+  DeterministicBitwiseRepeat
+ResolveTest.
+  DefaultBaseResolvesGroundIdentity_RT_BW_3
+  GroundCarriesBasePosition
+  InvertedResolvesFrozenMatrix
+  WallResolvesFrozenMatrix
+  CustomWithoutEaaRejected
+  CustomResolvesViaRodrigues
+  NonFinitePositionRejected
+ValidateTest.
+  WellFormedTransformPasses
+  ReflectionMatrixRejected_RT_BW_6
+  NonOrthogonalMatrixRejected_RT_BW_6
+  NonFiniteComponentsRejected_RT_BW_6
+  NearOrthogonalWithinTolerancePasses
+PresetConsistencyTest.
+  InvertedWithFrozenMatrixPasses
+  InvertedWithIdentityRejected
+  WallWithWrongPresetMatrixRejected
+  CustomWithIdentityRejected
+  CustomWithRotatedMatrixPasses
+  GroundAcceptsIdentityAndArbitraryRotation
+InverseAndPointTest.
+  NumericExamplePointTransform_RT_BW_1
+  NumericExampleInverseRoundtrip_RT_BW_1
+  NumericExampleGravityProjection_RT_BW_1
+  InverseRoundtripAllFourPresets_RT_BW_2
+  InverseOfInvertedMatchesFrozenMatrix
+  InverseRejectsNonOrthogonalInput
+ComposeTest.
+  AssociativityTwoGroupings_RT_BW_1
+  ComposedTranslationMatchesManualFormula
+BaseMountConsistencyTest.
+  ExactMatchConsistent
+  DoubleApplicationDetected_RT_BW_4
+  WrongRotationNotMarkedDoubleApplied
+  WithinToleranceDeviationPasses
+WorkCellCompilerTest.
+  JointFieldsExplicit_RT_AD_2
+  JointBoundsOffsetMapping_RT_AD_2
+  ContinuousJointExplicitInfiniteBounds_RT_AD_2
+  FixedJointIsFrameNotJoint_RT_T07
+  FkEquivalence_RT_EQ_1
+  RepeatCompileStructuralEquality_RT_EQ
+  BaseMountReadback_RT_BW_4
+  DoubleAppliedDetected_RT_BW_4
+  SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4
+  FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37
+  TranslateRealRobWorkException_RT_AD_1
+  TranslateBadAlloc_RT_AD_1
+  TranslateUnknownStdException_RT_AD_1
+  FrameNamesMatchNameMap_RT_T07
+  RichFixtureCompilesWithToolAndScene_RT_T07
+  PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1
+  RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1
+WorkCellConstViewTest.
+  ViewQueries_RT_T07
+  NullHandleRejected_RT_T07
+WorkCellGeometryTest.
+  PrimitivesAttachedPerMappedFrame_RT_GEO_1
+  GeometryPoseFollowsFrameThroughFk_RT_GEO_1
+  DerivedDimensionsAreSiTruth_RT_GEO_2
+  SameModelSamePrimitives_RT_GEO_3
+  HonestSkipWithoutProviderOrManifest_RT_GEO_4
+  S6ProductSurfacesUnchangedByGeometry_RT_GEO_5
+  ResourceMeshStlAttachedEndToEnd_RT_GEO_7
+  ResourceMeshObjAttachedEndToEnd_RT_GEO_7
+  ResourceMeshDigestMismatchSkipped_RT_GEO_7
+  ResourceMeshUnsupportedFormatSkipped_RT_GEO_7
+  ContentMeshesWithoutPathHint_T30
+  ConcurrentSameMeshCompiles_REUSE_T13
+  LoaderRestoresThreadLocale_REUSE_T13
+DynamicWorkCellCompilerTest.
+  AllLinksNoPhysicsSkipsDwc_RT_CPX_2
+  PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2
+  ProvidedIllegalIsNotCapabilityMissing_S5_6
+  CompiledPathBodiesAndExplicitValues_RT_T08
+  DeviceConsistencyJointsCrossCheck_RT_T08
+  FrictionCarriedViaMaterialDataMap_R2
+  ToolAndFrictionMissingStillCompiles_RT_T08
+  DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1
+  DwcFixedSegmentCompositeRigidBody_REUSE_T30
+  DwcProductConsumableByUpstreamRne_REUSE_T30
+  DwcConstructionFailureIsAtomic_RT_CPX_1
+  NullWorkCellRejected_RT_T08
+  DestructionOrderDwcBeforeWorkCell_RT_AD_3
+DynamicWorkCellConstView.
+  ViewQueriesAndNullRejection_RT_T08
+SnapshotTest.
+  CreatePublishesSnapshotFields_RT_T09
+  SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1
+  WorkCellCompileIdentityFormula_RT_T09
+  ConcurrentReadOnlyView_RT_SNAP_1
+  WorkerMaterializeRoundtrip_RT_SNAP_2
+  WorkerIdentityMismatchRejected_D_13
+  MaterializeCodecRoundtripAndValidation_RT_9_5
+  StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3
+  ReferenceReleaseLifecycle_RT_SNAP_4
+  CancelAtStageBoundary_RT_CPX_4
+  BadAllocBecomesResourceBudget_RT_CPX_4
+  CreateFailureDiagnosticsAndContractViolation_RT_T09
+  DwcStateBothCauses_RT_T09
+  Cr05ValueSupplyEnvironmentEntries_CR_05
+RuntimeSnapshotTest.
+  FactoryRetainsRequestedMeshResources_T30
+CacheKeyTest.
+  BuildsTwoLayerKeysDeterministic_RT_CACHE_1
+  ComponentPerturbationPreciseReasons_RT_CACHE_1
+  FingerprintSetPinsPureContentKey_RT_CACHE_1
+  WorkCellOnlyReuseNotFullReuse_RT_CACHE_2
+  OldCompilerContractRejected_RT_CACHE_3
+  HeadAdvanceDoesNotInvalidate_RT_CACHE_4
+  UnfinalizedKeyNeverHits_RT_CACHE_1
+CompilerTest.
+  CompilesTenStageChainAndPublishes_RT_T11_ACC3
+  RepeatCompileIsDeterministic_SameSnapshotIdentity
+  FactoryWithProductCompilerPublishes_ViaSegmentEntrance
+  InvertedPresetResolvedIntoWorldTransform_S5Assembly
+  DefaultTcpStaysDescriptionFirstAfterToolSort_F584
+  ReaderFailureFailsWithLocationThenRetrySucceeds
+  ObjectOutsideClosureRejected_RT_CONT_1
+  ObjectBytesDigestMismatchRejected_CM0ByteFace
+  MassProvidedNegativeFailsLocated_RT_CPX_3
+  MassNotProvidedPublishesDegraded_RT_CPX_2
+  JointObjectIdOutsideRefsAllowedAtS5_O36
+  CancelAtStageBoundaryReturnsCancelledThenRetry_RT_CPX_4
+  BadAllocTranslatedToResourceBudget_RT_CPX_4
+  NoTokenCompilesToPublish_NoInternalTimeout_D11_ACC2
+  CancelPollsEveryStageBoundary_D11PollDensity
+  ResourceMissingFailsLocated_RT_RES_1
+  ResourceDigestMismatchAtS4Fails_RT_RES_1
+  ResourceBudgetFails_RT_RES_1
+  ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2
+  SolidifiedResourceSkipsRecheck_RT_RES_2
+  RecordedResourceWarnsNotBlocked
+  BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+  CompileLeavesObjectStoreUnchanged_RT_CONT_2
+  UnknownRevisionFailsFast_UnknownObject
+  MissingProjectContextRejected
+  TransactionRollbackIsIdempotentAndPublishIsTerminal
+ContractSuite.
+  ChildProcessWorker_RT_ID_1
+  CrossProcessIdentityStable_RT_ID_1
+  TinyFloatDeltaSplitsIdentityAndCache_RT_ID_2
+  DisplayFieldsNeverEnterRuntimeIdentity_RT_ID_3
+  NumericExampleThroughSnapshotView_RT_BW_1
+  DefaultBaseCompilesToIdentityTransform_RT_BW_3
+  ConsumerDoubleApplicationIntercepted_RT_BW_4
+  FourConsumersConsistentOnInvertedModel_RT_BW_5
+  MixedMissingInputsDeriveCorrectCapabilities_RT_CAP_1
+  MissingCapabilityNeverEscalates_RT_CAP_2
+  SourcePathHintIsNotIdentity_RT_RES_3
+  GoldenFkEquationDataset_RT_EQ_1
+  GoldenNameMapRoundtripDataset_RT_NM_1
+HostPresentationViewTest.
+  IdentityBindingsVerifiable_RT_PRES_1
+  ViewLifecycleDoesNotTouchSnapshotIdentity_RT_PRES_2
+  PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3
+  ResolutionAndTransformReuseSameSource_RT_PRES_4
+  FactoryFailsFastOnInvalidInput_RT_PRES_5
+GoldenDataLint.
+  RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3
+  RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3
+  ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3
+  CoveredRequirementsInDictionary_RT_T12_ACC3

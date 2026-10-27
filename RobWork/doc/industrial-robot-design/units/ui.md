@@ -2107,3 +2107,7 @@ T30第4批追加MDL-07/UX-06：HostHighlightOutlet每次先清旧对象，再在
 T30第5批MDL-07：人工反馈base未高亮，查明runtime连杆主身份为LinkFrame，而WC首/末连杆只构造BaseFrame/Flange。HostRuntimeNameMapPort仅在连杆主名没有实际帧时，从当前同一权威NameMap的同OID条目选择WC中实际存在的帧；设备/几何等非连杆语义不变，缺供返回空。无runtime主映射、公共端口、存储或依赖边变化；精确追加三个私有实现/测试文件登记于T30契约，红绿及正式三维证据新增batch5-boundary-link，验证后人工暂停。
 
 T30第6批GF-A（2026-10-21）：建模关节页四组＋高级表共享暂存，数值、名称、类型整表差异确认；重置/取消和单位浏览不写项目。正式三维仍只在项目级应用及双编译成功后替换。宿主经ModelingPluginAssembly::guardPendingInputs装配缝保护应用、关闭、最近项目切换和顶窗退出，非模态延续回调需QPointer和原adapter身份相符；无框架或ui公共表单契约改动。真实宿主modeling-tour新增主分组输入、整表拒绝、单次草稿撤销/重做、正式父系变换与改名OID、高亮、关闭重开及磁盘来源核查；截图须逐张审看，不仅检查布尔标记。其余页统一显示留GF-B，不能外推本批通过。
+
+## 专项修正（POL-T13，2026-10-28）
+
+运动学同步/覆盖/单点/批量通道共用 makePolicyCollisionSession，复用既有 kinematics 场景源端口与 policy 唯一评估器，不再向 runtime 投影 Object-only 规则。快照只读 WorkCell 别名保持 runtime 所有权；首末连杆从公开名称表按 BaseFrame/Flange 范围取精确别名，不拼剥名称。距离能力缺失保留 FacilityFailed；缺几何与空域保持缺证。无控件/布局改动；模型级宿主通道回归不能替代完整场景 GUI 人工验收。见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。

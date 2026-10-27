@@ -77,7 +77,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -106,7 +106,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -133,7 +133,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -160,14 +160,14 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
       "id": "REUSE-T17-KinEvaluationChannelTest.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-        "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811"
+        "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99"
       },
       "targets": [
         "sdurws_ird_ui_test"
@@ -289,7 +289,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -318,7 +318,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -369,7 +369,7 @@
       "permissionRef": "ARCH:3.6",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
       }
     },
     {
@@ -377,7 +377,7 @@
       "usageRole": "adapter",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
-        "sha256": "9c6dac0001316f6dddabcf9a2858fd5a413a26f219aca71305b0d39895a82d09"
+        "sha256": "0675aa5af37b9e37bf4b4cb84c468ad2fef20d630bdcdb12659a26351c722ad5"
       },
       "targets": [
         "sdurws_ird_policy"
@@ -393,7 +393,7 @@
       "permissionRef": "ARCH:3.6",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
       }
     },
     {
@@ -421,7 +421,7 @@
       "permissionRef": "ARCH:3.6",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
       }
     },
     {
@@ -582,7 +582,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -608,7 +608,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -693,7 +693,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     },
     {
@@ -719,7 +719,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
       }
     }
   ]

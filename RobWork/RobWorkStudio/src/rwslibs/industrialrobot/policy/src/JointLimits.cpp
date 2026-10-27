@@ -33,7 +33,7 @@
  * 单点字面量〔v0.9 ⑧登记〕已按 §9.6 迁移通道注记收敛为码表引用别名，
  * CollisionQuery.cpp 同任务同款迁移）：
  *   POLICY-JNT-TABLE-INVALID             关节表区间非法（伴随 IntervalInvalid）
- *   POLICY-JNT-ENGINEERING-RANGE-INVALID 工程工作范围非法（伴随 EngineeringRangeInvalid）
+ *   POLICY-ENGINEERING-RANGE-INVALID 工程工作范围非法（伴随 EngineeringRangeInvalid）
  *   POLICY-CLL-NAME-UNRESOLVED           名称不可解析（ARC-04 不猜测）
  *   POLICY-CLL-EVALUATION-FAILED         构型位置非有限（§7.5 不伪造）
  *
@@ -386,9 +386,9 @@ JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,
                 const double qmax = *spec.qMax;   // SI rad
                 // ---- A1 区间有效性（qmin＜qmax——硬断言的检出侧：违约→
                 // 诊断级发现＋跳过该关节，状态仍 Completed——D-13：判定权归
-                // 命令处理器，本评估器不阻断、不伪造裕量）。NaN 端点经
-                // "NaN 参与的 ＜ 比较恒 false"自然落入本分支（确定性）。
-                if (!(qmin < qmax)) {
+                // 命令处理器，本评估器不阻断、不伪造裕量）。端点必须有限，
+                // 非有限结构错误不得转成可确认的行程超限（POL-T13）。
+                if (!std::isfinite(qmin) || !std::isfinite(qmax) || !(qmin < qmax)) {
                     JointLimitFinding finding;
                     finding.jointObject = spec.jointObject;
                     finding.localName = spec.localName;
@@ -405,7 +405,7 @@ JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,
                     comparison.expected = comparativeValue(qmax);
                     out.diagnostics.push_back(makeJointDiagnostic(
                         kCodeJntTableInvalid, spec.jointObject, spec.localName, runtimeName,
-                        "关节区间非法（qmin ≥ qmax，须 qmin＜qmax——硬断言的检出侧，"
+                        "关节区间非法（须双端有限且 qmin＜qmax——硬断言的检出侧，"
                         "MDL-06）：qmin=" + formatRawDouble(qmin)
                             + ", qmax=" + formatRawDouble(qmax) + "（SI rad）——该关节"
                             "已跳过（不产出裕量，D-13 判定权归命令处理器）",
@@ -414,11 +414,22 @@ JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,
                         std::move(comparison)));
                     continue;   // 跳过：无行程/违例/近限位检查、无裕量记录
                 }
+                // POL-T13/NFR-COR-03：有限端点差值仍可能溢出。算术失败
+                // 不是工程超限，任何派生数值发布前必须可表示。
+                const double width = qmax - qmin;  // SI rad，A1 保证数学上正值。
+                if (!std::isfinite(width)) {
+                    out.diagnostics.push_back(makeJointDiagnostic(
+                        kCodeEvaluationFailed, spec.jointObject, spec.localName, runtimeName,
+                        "关节区间宽度溢出（SI rad）：qmin=" + formatRawDouble(qmin)
+                            + ", qmax=" + formatRawDouble(qmax),
+                        "核对限位的数值范围后重评；失败输出不入正式证据"));
+                    return out;
+                }
                 // ---- A2 行程上限比较（§7.4 行程上限行：T＝|qmax−qmin|，
                 // T＞L 才超限；T＝L 不超限——边界含于合规侧，D-08；开关关闭
                 // 时整段跳过——⑤c 标记已声明）。
                 if (travelCheckEnabled) {
-                    const double travel = std::fabs(qmax - qmin);   // T，SI rad
+                    const double travel = width;   // T，SI rad（正且有限）。
                     if (travel > travelLimitRad) {
                         JointLimitFinding finding;
                         finding.jointObject = spec.jointObject;
@@ -435,7 +446,6 @@ JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,
                 }
                 // ---- A3 逐构型扫描：限位违例（首个命中）＋近限位（首个命中）
                 // ＋逐构型裕量记录（每样本一条——KIN-01 逐构型逐关节口径）。
-                const double halfWidth = (qmax - qmin) / 2.0;   // 区间半宽，SI rad（＞0——A1 保证）
                 bool limitViolatedEmitted = false;   // 每关节每 kind 至多一条——首个命中
                 bool nearLimitEmitted = false;
                 for (std::size_t s = 0; s < q.configurations.size(); ++s) {
@@ -443,7 +453,16 @@ JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,
                     // 有符号裕量与近限位比（§7.4 口径——区间内 ∈[0,半宽]/[0,1]，
                     // 越限为负有符号事实；计算恒执行——记录必须逐样本齐备）。
                     const double margin = std::min(pos - qmin, qmax - pos);   // SI rad
-                    const double ratio = margin / halfWidth;                  // 无量纲 r
+                    // 先归一再乘 2，避免次正规正区间的半宽下溢为零。
+                    const double ratio = (margin / width) * 2.0;  // 无量纲 r
+                    if (!std::isfinite(margin) || !std::isfinite(ratio)) {
+                        out.diagnostics.push_back(makeJointDiagnostic(
+                            kCodeEvaluationFailed, spec.jointObject, spec.localName, runtimeName,
+                            "关节裕量或近限位比不可表示：sample=" + std::to_string(s)
+                                + ", q=" + formatRawDouble(pos) + "（SI rad）",
+                            "核对构型与限位范围后重评；失败输出不入正式证据"));
+                        return out;
+                    }
                     // 限位违例（q ∉ [qmin,qmax]——闭区间端点不违例；硬过滤
                     // 素材，过滤动作归 kinematics KIN-02；阈值侧＝被越过的端）。
                     if (!limitViolatedEmitted && (pos < qmin || pos > qmax)) {

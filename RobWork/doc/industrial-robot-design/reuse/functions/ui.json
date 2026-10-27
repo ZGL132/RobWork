@@ -211,8 +211,8 @@
           "symbol": "SnapshotViewAdapter",
           "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SnapshotViewAdapter",
           "startLine": 1,
-          "endLine": 1765,
-          "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
+          "endLine": 1734,
+          "sha256": "d4a85c157b23ecc8a82456941c8dbc5046cce703eede8b523a6693c08c7f9849"
         }
       ],
       "targets": [
@@ -227,7 +227,7 @@
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
       },
-      "differences": "REUSE-T17：持shared_ptr<const RuntimeSnapshot>保活，现三成员（model/worldToBase/runtimeModelView锚转发——同源真实引用计数）；未来Device/State FK消费锚，不重建WC",
+      "differences": "REUSE-T17：持shared_ptr<const RuntimeSnapshot>保活，现三成员（model/worldToBase/runtimeModelView锚转发——同源真实引用计数）；未来Device/State FK消费锚，不重建WC；POL-T13新增既有场景源端口转发：共享只读WorkCell别名保活、编译/名称身份、首末帧按名称表scope选择，不拼名、不构造模型。此原整文件行不替代新增入口的单独语义说明。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -254,7 +254,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
-        "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
+        "sha256": "d4a85c157b23ecc8a82456941c8dbc5046cce703eede8b523a6693c08c7f9849"
       },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
@@ -270,8 +270,8 @@
           "symbol": "KinSessionModelView",
           "qualifiedSymbol": "sdurws::ird::ui::KinSessionModelView",
           "startLine": 1,
-          "endLine": 693,
-          "sha256": "40a76ed6819feb2ca99044ae02088a52a3a360b6eeb484346bbc311f208b0178"
+          "endLine": 703,
+          "sha256": "2bb2904c13dc21aeaaa7ec7d1a42d1c26e9a6662d025a8f5b4764193d083a302"
         }
       ],
       "targets": [
@@ -313,7 +313,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
-        "sha256": "40a76ed6819feb2ca99044ae02088a52a3a360b6eeb484346bbc311f208b0178"
+        "sha256": "2bb2904c13dc21aeaaa7ec7d1a42d1c26e9a6662d025a8f5b4764193d083a302"
       },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
@@ -328,8 +328,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
           "symbol": "KinEvaluationExecutor::attachSnapshot",
           "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachSnapshot",
-          "startLine": 101,
-          "endLine": 118,
+          "startLine": 147,
+          "endLine": 164,
           "sha256": "7ee13cb1f92be65a94a134b04b25cecd74492c8a0104e46d6dbbba37bfb0f423"
         }
       ],
@@ -372,7 +372,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
-        "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
+        "sha256": "d4a85c157b23ecc8a82456941c8dbc5046cce703eede8b523a6693c08c7f9849"
       },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
@@ -387,8 +387,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
           "symbol": "KinEvaluationExecutor::attachView",
           "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachView",
-          "startLine": 120,
-          "endLine": 146,
+          "startLine": 166,
+          "endLine": 192,
           "sha256": "062c9562039423014d223ba8b83d1069999ece782c48bfaee98d2c6b49eb73c6"
         }
       ],
@@ -431,7 +431,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
-        "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
+        "sha256": "d4a85c157b23ecc8a82456941c8dbc5046cce703eede8b523a6693c08c7f9849"
       },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
@@ -490,7 +490,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-        "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811"
+        "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99"
       },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
@@ -550,7 +550,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-        "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811"
+        "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99"
       },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
@@ -2540,7 +2540,7 @@
       "auditBoundary": "仅本测试文件的锚语义用例；替身不授予生产模型权限",
       "nonOverlapEvidence": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-        "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811"
+        "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99"
       }
     },
     {
@@ -2660,6 +2660,156 @@
         "sha256": "452108b49acb30c7bcc4b86f6269e03a84bbdfcb8f29d3b7a5f617fe83dec4ef"
       },
       "auditBoundary": "宿主装配体业务定性（SA-18/B1-SPEC 装配层）；本行为行覆盖载体不授权限（宿主受限面授权归 ARCH §3.6.2 HOST-WORKBENCH 治理批与 permissions.json 逐文件精确 grant）；不证明 T01 完整或迁移完成"
+    },
+    {
+      "functionId": "ui.POL_T13.HostCollisionAssembly",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "symbol": "makePolicyCollisionSession",
+          "startLine": 659,
+          "endLine": 671,
+          "sha256": "25f0208665d82ad7a504f6c9af1d8ae1bf595b1102dbe105d74770363603506e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "宿主仅连接已发布快照、完整策略和既有kinematics/policy端口；无模型构造、规则投影或几何计算"
+      },
+      "differences": "POL-T13：宿主仅连接已发布快照、完整策略和既有kinematics/policy端口；无模型构造、规则投影或几何计算；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "sha256": "d4a85c157b23ecc8a82456941c8dbc5046cce703eede8b523a6693c08c7f9849"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "ui.POL_T13.Regression.L1956",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+          "symbol": "/**",
+          "startLine": 1956,
+          "endLine": 1960,
+          "sha256": "8218d69b4bb9111e0ce30be577e2f66792a3e71d9ec54dd90fb00a1daec1a9a6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+          "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "ui.POL_T13.Regression.L1961",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+          "symbol": "TEST (KinEvaluationChannel, HostCollisionUsesCompletePolicyRules_POL_T13)",
+          "startLine": 1961,
+          "endLine": 2082,
+          "sha256": "b9ac4fa73ee21a7021436d2784528151ec5fe94eba5224124f59e5dfd9c92579"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+          "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
     }
   ]
 }

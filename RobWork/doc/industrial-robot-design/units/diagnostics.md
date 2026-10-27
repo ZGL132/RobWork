@@ -1345,3 +1345,18 @@ public:
 所有者已批准 GAP-DIAG-RETENTION-01 方案 A。FileLogFileOps 仍使用原 std::filesystem 与同实例互斥；keep 含活动文件，keep=1 不生成 .1，降低 keep 时只清理本日志规范正整数后缀普通文件。目录/符号链接不作世代删除或覆盖；失败沿原 bool/管线 guardOpsBool 轨，不新增日志框架。原逐行 fopen("ab")/fclose 与幂等 flush 不变，不承诺 fsync 或跨进程并发。
 
 本次测试目标复用既有 testkit 原生报告监听器，不引入 XML 转换器；diagnostics 产品仍只依赖 core 与标准库。_test 与 _contract_test 均使用 test/TestMainReport.cpp；这是测试报告设施依赖，不是产品反向依赖。原B35及新真实文件结果见 traceability/reuse/REUSE-T16/README.md，独验尚未完成。队列/格式/两Tier/稳定码/脱敏/worker值载荷由既有实现唯一承载，未迁移其职责或新增模型持有权。
+
+## 专项修正（POL-T13，2026-10-28）
+
+在§4.6原23项POLICY清单后追加以下正式生产码，POLICY共29项、内置表共94项。既有码的类别、严重度与版本不变；新码使用首次登记版本1、空参数schema，文案键沿现有单点派生规则。
+
+| 码 | 分类 | 严重度 |
+| --- | --- | --- |
+| POLICY-THRESHOLD-REQUIRED-MISSING | input-invalid | Error |
+| POLICY-POLICY-OBJECT-INVALID | internal | Error |
+| POLICY-ENCODING-INVALID | format-or-version | Error |
+| POLICY-PORT-ASSEMBLY-INCOMPLETE | internal | Error |
+| POLICY-OBJECT-MISSING | resource-missing | Error |
+| POLICY-CLL-QUERY-INVALID | input-invalid | Error |
+
+工程范围记录使用既有正式拼写 POLICY-ENGINEERING-RANGE-INVALID；枚举名保留，旧错误拼写不再作为新记录输出，不改写历史证据。policy契约测试逐码通过正式StableCodeRegistry/DiagnosticsFactory创建条目，产品policy库不反链diagnostics。见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。

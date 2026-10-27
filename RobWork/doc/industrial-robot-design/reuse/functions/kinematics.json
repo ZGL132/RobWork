@@ -2700,6 +2700,156 @@
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
         "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
       }
+    },
+    {
+      "functionId": "kinematics.POL_T13.CoverageVerdict",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Collision.cpp",
+          "symbol": "PolicyCollisionSessionAdapter::evaluate",
+          "startLine": 223,
+          "endLine": 305,
+          "sha256": "820df0452d9689524b1913ae7f84ecc9427d85713b0f7a93390f8d25d35495e2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "将policy正式结果映射为运动学淘汰/缺证事实，覆盖不足不得安全通过；无几何计算"
+      },
+      "differences": "POL-T13：将policy正式结果映射为运动学淘汰/缺证事实，覆盖不足不得安全通过；无几何计算；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Collision.cpp",
+          "sha256": "92e9c848343e845730a4e4a1753327571cfbac5de9a8c7ac81b91a1e7bebedc5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "kinematics.POL_T13.MissingGeometryRegression",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
+          "symbol": "MissingGeometryCannotBecomeEvaluated_POL_T13",
+          "startLine": 764,
+          "endLine": 777,
+          "sha256": "4d07fc094e21b3adb764870e023fa4006bb30dc4e6474a5568d7d2ada9b6d21e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "用端口替身验证不完整覆盖到EvidenceMissing的契约映射，真实几何证据另见policy回归"
+      },
+      "differences": "POL-T13：用端口替身验证不完整覆盖到EvidenceMissing的契约映射，真实几何证据另见policy回归；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
+          "sha256": "1b350564abdec106b5c1d456e88a1af69f96fffebd8c07077db751e6021fc843"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "kinematics.POL_T13.SnapshotFixtureClosure",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/AnalysisConfigTest.cpp",
+          "symbol": "ConfigDigestEntersSliceIdNotBaseline_WP15T10_ACC2",
+          "startLine": 272,
+          "endLine": 297,
+          "sha256": "bfbf98d503dee4f6b1e442f3105a3c22ea92b4e217e3abe99e024971ae0474f9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "修正测试夹具来源闭包，两个配置分别绑定对应冻结快照；不改变evidence产品规则"
+      },
+      "differences": "POL-T13：修正测试夹具来源闭包，两个配置分别绑定对应冻结快照；不改变evidence产品规则；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/AnalysisConfigTest.cpp",
+          "sha256": "ea2279bfe5bb68f3ce8f4311550fb1de9fdee1ae8dc5f6d01aecae05e6eb896c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
     }
   ]
 }

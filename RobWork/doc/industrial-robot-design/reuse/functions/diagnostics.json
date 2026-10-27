@@ -15,8 +15,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "void StableCodeRegistry::registerCode(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::registerCode",
-          "startLine": 604,
-          "endLine": 720,
+          "startLine": 619,
+          "endLine": 735,
           "sha256": "51efe4fd84c85eccf6036bc952d8e2b1fc583bd38e91c028853c16e8862047ad"
         }
       ],
@@ -48,7 +48,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -56,7 +56,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -72,7 +72,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -100,7 +100,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -209,7 +209,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -217,7 +217,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -233,7 +233,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -261,7 +261,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -382,7 +382,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -390,7 +390,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -406,7 +406,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -434,7 +434,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -555,7 +555,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -563,7 +563,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -579,7 +579,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -607,7 +607,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -716,7 +716,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -724,7 +724,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -740,7 +740,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -768,7 +768,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -877,7 +877,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -885,7 +885,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -901,7 +901,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -929,7 +929,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -1038,7 +1038,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -1046,7 +1046,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -1062,7 +1062,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -1090,7 +1090,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -1199,7 +1199,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
@@ -1207,7 +1207,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
@@ -1223,7 +1223,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/CatalogFactoryTest.cpp",
@@ -1251,7 +1251,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt",
@@ -1349,11 +1349,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -1381,7 +1381,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -1409,7 +1409,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -1515,11 +1515,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -1547,7 +1547,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -1575,7 +1575,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -1681,11 +1681,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -1713,7 +1713,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -1741,7 +1741,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -1847,11 +1847,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -1879,7 +1879,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -1907,7 +1907,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -2013,11 +2013,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -2045,7 +2045,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -2073,7 +2073,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -2179,11 +2179,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -2211,7 +2211,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -2239,7 +2239,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -2345,11 +2345,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -2377,7 +2377,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -2405,7 +2405,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -2511,11 +2511,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -2543,7 +2543,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -2571,7 +2571,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -2677,11 +2677,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -2709,7 +2709,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -2737,7 +2737,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -2820,11 +2820,11 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "symbol": "const std::array<BuiltinSpec, 88>& builtinSpecs()",
+          "symbol": "const std::array<BuiltinSpec, 94>& builtinSpecs()",
           "qualifiedSymbol": "sdurws::ird::diagnostics::(anonymous namespace)::builtinSpecs",
           "startLine": 255,
-          "endLine": 493,
-          "sha256": "c85f552e5a8593258ee1a662ef23bd2d758c16dcbc56e943b81a456c7822d54b"
+          "endLine": 508,
+          "sha256": "c151d859f51fe92099acd6e30eb9b8abb53e1cb8def9cc411ff61b28f93bdef6"
         }
       ],
       "targets": [
@@ -2843,11 +2843,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -2875,7 +2875,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -2903,7 +2903,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -2988,8 +2988,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "std::string_view categoryToken(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::categoryToken",
-          "startLine": 501,
-          "endLine": 521,
+          "startLine": 516,
+          "endLine": 536,
           "sha256": "66abfeb6c0069b8a8c516e119f6470d72f9987587d91ddf46d5c824d2078e15c"
         }
       ],
@@ -3009,11 +3009,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -3041,7 +3041,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -3069,7 +3069,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -3154,8 +3154,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "std::string_view severityToken(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::severityToken",
-          "startLine": 523,
-          "endLine": 532,
+          "startLine": 538,
+          "endLine": 547,
           "sha256": "589275021a9facc915e02c25e54ac04586f8bb799b300abee0fcd1ddbdeee050"
         }
       ],
@@ -3175,11 +3175,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -3207,7 +3207,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -3235,7 +3235,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -3320,8 +3320,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "std::string_view retryKindToken(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::retryKindToken",
-          "startLine": 534,
-          "endLine": 542,
+          "startLine": 549,
+          "endLine": 557,
           "sha256": "3400ac6813a8670845922e3c6a81ccdfcf655dd3472f9fae20b1456812770def"
         }
       ],
@@ -3341,11 +3341,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -3373,7 +3373,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -3401,7 +3401,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -3486,8 +3486,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "bool isValidDiagCodeSyntax(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::isValidDiagCodeSyntax",
-          "startLine": 569,
-          "endLine": 593,
+          "startLine": 584,
+          "endLine": 608,
           "sha256": "82a344d71431351d61ae5d97755cc924de04dfe1f0ae2de4757bdd7f513546c6"
         }
       ],
@@ -3507,11 +3507,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -3539,7 +3539,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -3567,7 +3567,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -3652,8 +3652,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "std::vector<CodeDescriptor> builtinCodeDescriptors()",
           "qualifiedSymbol": "sdurws::ird::diagnostics::builtinCodeDescriptors",
-          "startLine": 831,
-          "endLine": 839,
+          "startLine": 846,
+          "endLine": 854,
           "sha256": "692769e5f3f35a513e6e34e3f6c593402cb5f09757601e89b92778c6a5fbe7b2"
         }
       ],
@@ -3673,11 +3673,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -3705,7 +3705,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -3733,7 +3733,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -3818,8 +3818,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "void registerBuiltinCodes(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::registerBuiltinCodes",
-          "startLine": 841,
-          "endLine": 849,
+          "startLine": 856,
+          "endLine": 864,
           "sha256": "04197a9b7447ed32469cb5eda52c852d4ee4d87a5b64c1e844f730c0f2e8eb72"
         }
       ],
@@ -3839,11 +3839,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -3871,7 +3871,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -3899,7 +3899,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -3984,8 +3984,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "bool CodeDescriptor::operator==(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::CodeDescriptor::operator==",
-          "startLine": 548,
-          "endLine": 567,
+          "startLine": 563,
+          "endLine": 582,
           "sha256": "9aeb7ed5b7158ca845ffa04e318652cc8ded37adbf69562dd68a09b041db2f9e"
         }
       ],
@@ -4005,11 +4005,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -4037,7 +4037,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -4065,7 +4065,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -4150,8 +4150,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "void StableCodeRegistry::seal()",
           "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::seal",
-          "startLine": 599,
-          "endLine": 602,
+          "startLine": 614,
+          "endLine": 617,
           "sha256": "5dfe9b74f0161ec74880e82d081e32376d253ab9518e05ba6516c093071415ce"
         }
       ],
@@ -4171,11 +4171,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -4203,7 +4203,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -4231,7 +4231,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -4316,8 +4316,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "const CodeDescriptor* StableCodeRegistry::find(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::find",
-          "startLine": 722,
-          "endLine": 730,
+          "startLine": 737,
+          "endLine": 745,
           "sha256": "32a9593564fa56c12324981d6fdd788605edb670812ff6e33c56eec00c2427b1"
         }
       ],
@@ -4337,11 +4337,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -4369,7 +4369,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -4397,7 +4397,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -4482,8 +4482,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "std::vector<std::string> StableCodeRegistry::registeredCodes(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::registeredCodes",
-          "startLine": 732,
-          "endLine": 743,
+          "startLine": 747,
+          "endLine": 758,
           "sha256": "9617c2727b5cfe261afbda73edfb2b8df875a6778df409f359582e691cf4c0bb"
         }
       ],
@@ -4503,11 +4503,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -4535,7 +4535,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -4563,7 +4563,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -4648,8 +4648,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "CodeTableManifest StableCodeRegistry::manifest()",
           "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::manifest",
-          "startLine": 745,
-          "endLine": 790,
+          "startLine": 760,
+          "endLine": 805,
           "sha256": "8ecf97a40bb86f4435f938d997c0b6d2ae10bb3bcf9496188ec9794de4844030"
         }
       ],
@@ -4669,11 +4669,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -4701,7 +4701,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -4729,7 +4729,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -4814,8 +4814,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
           "symbol": "void StableCodeRegistry::deprecate(",
           "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::deprecate",
-          "startLine": 792,
-          "endLine": 825,
+          "startLine": 807,
+          "endLine": 840,
           "sha256": "c2f07aca6aabce4e6ed38529ee3a019aa97bca70772056c9d54154b581750805"
         }
       ],
@@ -4835,11 +4835,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -4867,7 +4867,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -4895,7 +4895,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -5001,11 +5001,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -5033,7 +5033,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -5061,7 +5061,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -5167,11 +5167,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -5199,7 +5199,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -5227,7 +5227,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -5333,11 +5333,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -5365,7 +5365,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -5393,7 +5393,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -5499,11 +5499,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -5531,7 +5531,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -5559,7 +5559,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -5665,11 +5665,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -5697,7 +5697,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -5725,7 +5725,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -5831,11 +5831,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -5863,7 +5863,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -5891,7 +5891,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -5997,11 +5997,11 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
-          "sha256": "4811d544fd829cdf4e7c90f55009f2b7da73ce8f5ffb2ea86de5cbc8e75c4041"
+          "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
-          "sha256": "8c3481d8ae54c1392c3fd6217695f7bf2bd727b3bdd6442864f018dc93805889"
+          "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -6029,7 +6029,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
@@ -6057,7 +6057,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-          "sha256": "b246a0e2454cd1d247e5a2d79aa917a3179dfaa2ece96ab522a775caaa8ad076"
+          "sha256": "f3f7ac422913ad1a8acbe107a1907307f849e78e933358574169af27b9f17079"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/CMakeLists.txt",
@@ -14250,7 +14250,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14313,7 +14313,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14376,7 +14376,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14439,7 +14439,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14502,7 +14502,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14538,8 +14538,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "const std::vector<const char*>& builtinCodeLiterals()",
           "startLine": 115,
-          "endLine": 162,
-          "sha256": "64db15933dda3e58d88e26b04aa38b21b82f0fc1aa6519b209edea69830c8186"
+          "endLine": 165,
+          "sha256": "fc87aabb7770a6bf6a2e8eaaf8c0b4baa02f81021e052240fd0868b51e87cda2"
         }
       ]
     },
@@ -14565,7 +14565,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14600,8 +14600,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "std::unique_ptr<StableCodeRegistry> makeBuiltinRegistry()",
-          "startLine": 167,
-          "endLine": 172,
+          "startLine": 170,
+          "endLine": 175,
           "sha256": "e1d66e37285a0ca38826f6f76f28c6ed5fa276a9d172eddefe44708b863c88ea"
         }
       ]
@@ -14628,7 +14628,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14663,9 +14663,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg1_BuiltinTableRegistersFullyAndManifestStable)",
-          "startLine": 182,
-          "endLine": 221,
-          "sha256": "ac194d3aea7af0c02d02749ed44680bda6104141337852fa2efef7b084d822cf"
+          "startLine": 185,
+          "endLine": 224,
+          "sha256": "68d93e93f65e3f701107f12a6687fb3d98ae6dfd9abb594bfb4986536ac9e708"
         }
       ]
     },
@@ -14691,7 +14691,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14726,8 +14726,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg1_BuiltinTableValuesMatchDesignVerbatim)",
-          "startLine": 225,
-          "endLine": 235,
+          "startLine": 228,
+          "endLine": 238,
           "sha256": "3c68a7ad11a5cb24f2b0230058f5534661c7888f7ba84782432e2c3cd0c8d67f"
         }
       ]
@@ -14754,7 +14754,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14789,8 +14789,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg1_ManifestIndependentOfRegistrationOrder)",
-          "startLine": 239,
-          "endLine": 266,
+          "startLine": 242,
+          "endLine": 269,
           "sha256": "e40b7ced9a42e865440d9dae2780040f2de3d64449029cad5fd7ed2cdf4fa977"
         }
       ]
@@ -14817,7 +14817,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14852,8 +14852,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg2_DuplicateRegistrationRejectedNotOverwritten)",
-          "startLine": 274,
-          "endLine": 298,
+          "startLine": 277,
+          "endLine": 301,
           "sha256": "2c16cb3312496a1aae508ea7e02854963555bbc1a046eacbe936c0a248d780bf"
         }
       ]
@@ -14880,7 +14880,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14915,8 +14915,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.registerCode(original); },",
-          "startLine": 281,
-          "endLine": 281,
+          "startLine": 284,
+          "endLine": 284,
           "sha256": "86ded8ffd237e03a03132ef9a4af4eda71a76f815b1fb3b8a65ef321f70b03d6"
         }
       ]
@@ -14943,7 +14943,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -14978,8 +14978,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.registerCode(mutated); },",
-          "startLine": 289,
-          "endLine": 289,
+          "startLine": 292,
+          "endLine": 292,
           "sha256": "9ae1554907c2fb43e04be65b38a08a5f89d4c221027daed097272d95bf83fca2"
         }
       ]
@@ -15006,7 +15006,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15041,8 +15041,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg5_VersionConflictIsDuplicateRejection)",
-          "startLine": 302,
-          "endLine": 313,
+          "startLine": 305,
+          "endLine": 316,
           "sha256": "fb07a330ac210f14a4af93ae8fa3e66c6d2a7ed2a9d3135f930f3b9059494aa8"
         }
       ]
@@ -15069,7 +15069,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15104,8 +15104,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.registerCode(newer); },",
-          "startLine": 309,
-          "endLine": 309,
+          "startLine": 312,
+          "endLine": 312,
           "sha256": "4e971c2b275cd72160d192f5b18b270982380e30345b598ad456b05a788952fc"
         }
       ]
@@ -15132,7 +15132,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15167,8 +15167,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg2_TextKeyCollisionRejected)",
-          "startLine": 317,
-          "endLine": 339,
+          "startLine": 320,
+          "endLine": 342,
           "sha256": "c5e6150818eb958d5b33e0a032cc58faa339a7d7d8b7b70325da877b8ada5251"
         }
       ]
@@ -15195,7 +15195,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15230,8 +15230,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.registerCode(thief); },",
-          "startLine": 325,
-          "endLine": 325,
+          "startLine": 328,
+          "endLine": 328,
           "sha256": "6a6083aa7bfd58d379e5f39e512931b5a1c5f732b69098f8c0c521ce12c0edf9"
         }
       ]
@@ -15258,7 +15258,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15293,8 +15293,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.registerCode(thief2); },",
-          "startLine": 332,
-          "endLine": 332,
+          "startLine": 335,
+          "endLine": 335,
           "sha256": "ae1cdc33b316d7f52eaa429782083b0d1f2c72305e2d5b91441a5c401f62e02d"
         }
       ]
@@ -15321,7 +15321,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15356,8 +15356,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected)",
-          "startLine": 352,
-          "endLine": 383,
+          "startLine": 355,
+          "endLine": 386,
           "sha256": "320eb8b129bbb98ac5af564ab149abbbc7baf20c72060cafc26979d190847e93"
         }
       ]
@@ -15384,7 +15384,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15419,8 +15419,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "[&] { writable.registerCode(makeValidDescriptor(\"FOO-BAR\")); },",
-          "startLine": 366,
-          "endLine": 366,
+          "startLine": 369,
+          "endLine": 369,
           "sha256": "8da28f35a132b1bd0f39e3f4da48a4f7f042941873a7cd4adc710f022f4ed2a1"
         }
       ]
@@ -15447,7 +15447,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15482,8 +15482,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "[&] {",
-          "startLine": 377,
-          "endLine": 380,
+          "startLine": 380,
+          "endLine": 383,
           "sha256": "c68dac233deb2170d7b1013dca36654095129f40985114b09940c24ed9c736cb"
         }
       ]
@@ -15510,7 +15510,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15545,8 +15545,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg4_ExceptionTextIsNotACode)",
-          "startLine": 395,
-          "endLine": 424,
+          "startLine": 398,
+          "endLine": 427,
           "sha256": "f4d1c657e933cb90c0d04494c344f1ab1b66ec59cb79465bf1bbb15d668b7dde"
         }
       ]
@@ -15573,7 +15573,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15608,8 +15608,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "[&] {",
-          "startLine": 411,
-          "endLine": 414,
+          "startLine": 414,
+          "endLine": 417,
           "sha256": "e5c3aea65e79e9fc457035a3022158f5f45199845e80352c2596ea82c757e8dc"
         }
       ]
@@ -15636,7 +15636,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15671,9 +15671,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg5_ParamSchemaValidation)",
-          "startLine": 432,
-          "endLine": 487,
-          "sha256": "e681cd7ea3101d7afabdc514bd17c9543c083b680fb6fc2f8984c07d514c9d5e"
+          "startLine": 435,
+          "endLine": 490,
+          "sha256": "ec8d710dc22cd50df27f7ebde849837bce5c67d73a6e0404e3ed302863483fc7"
         }
       ]
     },
@@ -15699,7 +15699,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15734,8 +15734,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "const auto schemaOf = [](std::string schema) {",
-          "startLine": 434,
-          "endLine": 438,
+          "startLine": 437,
+          "endLine": 441,
           "sha256": "7787ebc094d6da6fa72a7f9c59ae6d3c08ef869e2f77d518361af8f676247a04"
         }
       ]
@@ -15762,7 +15762,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15797,8 +15797,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] {",
-          "startLine": 442,
-          "endLine": 445,
+          "startLine": 445,
+          "endLine": 448,
           "sha256": "d99b5ca9bfe5df0e5b90a572b96b82a6cc4e8ee5604d221d81c9f22dff98dba8"
         }
       ]
@@ -15825,7 +15825,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15860,8 +15860,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] {",
-          "startLine": 448,
-          "endLine": 451,
+          "startLine": 451,
+          "endLine": 454,
           "sha256": "d6d9bb40def5faa6f17a5bb1d5d9c9d26dfca1459c3136709ff6a4e7e4a22444"
         }
       ]
@@ -15888,7 +15888,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15923,8 +15923,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] {",
-          "startLine": 454,
-          "endLine": 457,
+          "startLine": 457,
+          "endLine": 460,
           "sha256": "50d6b5eebce214a88891d753b53143326c1e49b4d8bbd8c860ef18fdd9a62ac7"
         }
       ]
@@ -15951,7 +15951,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -15986,8 +15986,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] {",
-          "startLine": 460,
-          "endLine": 463,
+          "startLine": 463,
+          "endLine": 466,
           "sha256": "847ccef569817e7a2e1fc57f666d0f338f4fd7d4b8dbad967c3b3e19f989b1e8"
         }
       ]
@@ -16014,7 +16014,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16049,8 +16049,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] {",
-          "startLine": 466,
-          "endLine": 469,
+          "startLine": 469,
+          "endLine": 472,
           "sha256": "d2b66790f8b1cc9a3536b7958a0ff55f3dec5728cf46222a8337e792cf2d4709"
         }
       ]
@@ -16077,7 +16077,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16112,8 +16112,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg5_ParamSchemaFailureClearsNames_F968)",
-          "startLine": 495,
-          "endLine": 523,
+          "startLine": 498,
+          "endLine": 526,
           "sha256": "3821e39d720dacdd7f5ef87542a198f880630ea6b5d0d565b6af56abb9c652cc"
         }
       ]
@@ -16140,7 +16140,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16175,8 +16175,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg5_DeprecateTombstoneKeptAndNavigable)",
-          "startLine": 527,
-          "endLine": 571,
+          "startLine": 530,
+          "endLine": 574,
           "sha256": "d5f2e0ceab563e8fabfc1e9a6f198a816fbe9ff8c2d638e06dc04fd6e3baec8c"
         }
       ]
@@ -16203,7 +16203,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16238,8 +16238,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.deprecate(\"RT-NOT-REGISTERED\", {}); },",
-          "startLine": 564,
-          "endLine": 564,
+          "startLine": 567,
+          "endLine": 567,
           "sha256": "caefac4e7559c7933b8def3f4da88f1a5f836e1c6b003c1b435995a7085d3113"
         }
       ]
@@ -16266,7 +16266,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16301,8 +16301,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "[&] { registry.deprecate(\"RT-CANCELLED\", std::string{\"RT-CANCELLED\"}); },",
-          "startLine": 568,
-          "endLine": 568,
+          "startLine": 571,
+          "endLine": 571,
           "sha256": "50db67f4003f1e557a5e485b2905c616cf7357f0833a9df3996c77e317a6f1c2"
         }
       ]
@@ -16329,7 +16329,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16364,8 +16364,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent)",
-          "startLine": 576,
-          "endLine": 602,
+          "startLine": 579,
+          "endLine": 605,
           "sha256": "6f2a7f0aa4edcf973d2eb858c8931589f2f3836d6277b46153ad12724890318f"
         }
       ]
@@ -16392,7 +16392,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16427,9 +16427,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesRegistry, DtReg5_RuntimeMutationRejectedAfterSeal)",
-          "startLine": 606,
-          "endLine": 626,
-          "sha256": "80bd1a6df3ed5ccf758590a3ce235369d7f92daa5d8e06c2a828def28806675a"
+          "startLine": 609,
+          "endLine": 629,
+          "sha256": "15a3899d3e203528de3c5ab5c8394ab1da51bec5f95b603fc77a62f77ea3378a"
         }
       ]
     },
@@ -16455,7 +16455,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16490,8 +16490,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "[&] { registry.registerCode(makeValidDescriptor(\"RT-LATE-BINDING\")); },",
-          "startLine": 615,
-          "endLine": 615,
+          "startLine": 618,
+          "endLine": 618,
           "sha256": "709a151e2f125fddfdeb53184835efca6437bcc171e6bc7680c09d332020c7de"
         }
       ]
@@ -16518,7 +16518,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16553,8 +16553,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "[&] { registry.deprecate(\"RT-INPUT-INVALID\", {}); },",
-          "startLine": 619,
-          "endLine": 619,
+          "startLine": 622,
+          "endLine": 622,
           "sha256": "df0b1fa3a5c924a730577e7f3f372d4ae53dfa2354acacc4b30b5241b2d6d8f7"
         }
       ]
@@ -16581,7 +16581,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16616,8 +16616,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesVocabulary, DtPdiag3_Category15Severity4TokensFrozen)",
-          "startLine": 635,
-          "endLine": 676,
+          "startLine": 638,
+          "endLine": 679,
           "sha256": "a2dd5bf5dcf1c050a16f5aee49cd886f5acc5eafc0ea4041bcb5992f40305ea7"
         }
       ]
@@ -16644,7 +16644,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16679,8 +16679,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesVocabulary, DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata)",
-          "startLine": 681,
-          "endLine": 709,
+          "startLine": 684,
+          "endLine": 712,
           "sha256": "b06eaef1ab78cd97937f895102079046545ec8c6c1c1a43c4368253cfabde0ca"
         }
       ]
@@ -16707,7 +16707,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16742,8 +16742,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesLevel, F618_LevelMappingAcrossBuiltinTable)",
-          "startLine": 719,
-          "endLine": 740,
+          "startLine": 722,
+          "endLine": 743,
           "sha256": "6f3a77e4480dc6726b3de08c26b5037b2d6808f652b8824ef92458c1ec764534"
         }
       ]
@@ -16770,7 +16770,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16805,8 +16805,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesLevel, F618_LevelSeverityMismatchRejected)",
-          "startLine": 745,
-          "endLine": 778,
+          "startLine": 748,
+          "endLine": 781,
           "sha256": "38af1f9e16aed08a99f1609e2f7e211a3a58c249fef5979ad8a1def24ac2bb60"
         }
       ]
@@ -16833,7 +16833,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16868,8 +16868,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.registerCode(bad); },",
-          "startLine": 753,
-          "endLine": 753,
+          "startLine": 756,
+          "endLine": 756,
           "sha256": "4bccc069d168c2d3e9f58526ef34d93bee168fc546d0159b879b9fe1ae4af3ff"
         }
       ]
@@ -16896,7 +16896,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16931,8 +16931,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "expectThrowsWithCode([&] { registry.registerCode(bad); },",
-          "startLine": 762,
-          "endLine": 762,
+          "startLine": 765,
+          "endLine": 765,
           "sha256": "4bccc069d168c2d3e9f58526ef34d93bee168fc546d0159b879b9fe1ae4af3ff"
         }
       ]
@@ -16959,7 +16959,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -16994,8 +16994,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesCoreBaseline, DtPdiag1_CodeFieldIsCoreDiagCode)",
-          "startLine": 787,
-          "endLine": 796,
+          "startLine": 790,
+          "endLine": 799,
           "sha256": "ce4991c224849e88f5dcbd8b832933e03e6479db58bc26671cab100d3e3448a3"
         }
       ]
@@ -17022,7 +17022,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -17057,8 +17057,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagCodesTextKeys, DtPdiag9_TextKeysFollowConventionAndAreUnique)",
-          "startLine": 800,
-          "endLine": 827,
+          "startLine": 803,
+          "endLine": 830,
           "sha256": "b41043229ad3d0c1f6927c7f52f29944196359976ca8446e837b2a2378bc99b5"
         }
       ]
@@ -17085,7 +17085,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -17120,8 +17120,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "[&] {",
-          "startLine": 821,
-          "endLine": 824,
+          "startLine": 824,
+          "endLine": 827,
           "sha256": "a8372a82d0ee8b411eeec20c918e4457f0179dcd282bf71019b2ed96431c6616"
         }
       ]
@@ -17148,7 +17148,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -17183,8 +17183,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "TEST(DiagnosticsErrors, DtReg_TokenTableComplete)",
-          "startLine": 830,
-          "endLine": 850,
+          "startLine": 833,
+          "endLine": 853,
           "sha256": "cfaafd994b06dccc8a7522deed62564052170c0c17f534d664189add95be2888"
         }
       ]
@@ -17211,7 +17211,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -17274,7 +17274,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -17351,7 +17351,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339"
+          "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
@@ -17402,153 +17402,153 @@
           "symbol": "// ---------------------------------------------------------------------",
           "startLine": 108,
           "endLine": 114,
-          "sha256": "1f0f695d11b30093cfd12af66d4f6780b91df4a1f9bfbb33457ca0e4cac50a87"
+          "sha256": "ecf261ce17b086f41cd1ca7c2b648768d0214ff098b76f738197f1e95be6401b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/// 构造一个已装配 §4.6 全表的注册表（多数用例的前置态——\"注册表就绪\"）。",
-          "startLine": 164,
-          "endLine": 166,
+          "startLine": 167,
+          "endLine": 169,
           "sha256": "061aceb1d53facf33c28fbf01cb25ef77a30a0ae8ddfadba0842aae26f97e891"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "}  // namespace",
-          "startLine": 174,
-          "endLine": 181,
+          "startLine": 177,
+          "endLine": 184,
           "sha256": "cc219a269664fcdbf0ca5233942d2aee33bee5ebb069a0d6d6dda032a96adab3"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** DT-REG-1 补充：码值集合与 §4.6 收编原文逐位一致（码值不重排——dtb",
-          "startLine": 223,
-          "endLine": 224,
+          "startLine": 226,
+          "endLine": 227,
           "sha256": "e97fae4c4c34fddeaf63e3a9a386f19d660bcc57eda15b7b0d2f3d56c6405e99"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** DT-REG-1 补充：manifest 确定性——注册顺序不同的两个注册表必得同一",
-          "startLine": 237,
-          "endLine": 238,
+          "startLine": 240,
+          "endLine": 241,
           "sha256": "bc7d18ec6b604b7082735a8106403b22029db896d16f1c8e1cd06b7220d785e1"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 268,
-          "endLine": 273,
+          "startLine": 271,
+          "endLine": 276,
           "sha256": "8ccdef4b65bab78f6ca3953f401e89ddfa20eca2bd9b6d6249bde544a37e1d81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** DT-REG-2/DT-REG-5：同码不同 registryVersion 的注册＝重复注册拒绝",
-          "startLine": 300,
-          "endLine": 301,
+          "startLine": 303,
+          "endLine": 304,
           "sha256": "a1fe9e4a7e81bb175fdae3eb17bd7510a21614c019283b4cefb3fee3d25fcc50"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** DT-REG-2 补充（NFR-MNT-03 文案单一权威）：titleKey/detailKey 跨码唯一——",
-          "startLine": 315,
-          "endLine": 316,
+          "startLine": 318,
+          "endLine": 319,
           "sha256": "292acfc1fea4d05b1979111e1cdc68c0aac7ec6489408001131e1aca7991c215"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 341,
-          "endLine": 351,
+          "startLine": 344,
+          "endLine": 354,
           "sha256": "68d7a134049cb0c7f5481c82363ed6339326dbd8b6eb10d42522358877e698c9"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 385,
-          "endLine": 394,
+          "startLine": 388,
+          "endLine": 397,
           "sha256": "af9ec0136d3b2eecd5261a1918ebc30a5543495bad1ebf451e4126dd12ffc866"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 426,
-          "endLine": 431,
+          "startLine": 429,
+          "endLine": 434,
           "sha256": "6c1087287f2f09a6672e0011dad4113ac5f2209470c4d8e793ecdf6643db3ac5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/**",
-          "startLine": 489,
-          "endLine": 494,
+          "startLine": 492,
+          "endLine": 497,
           "sha256": "3e116751c6d35392967faa33a294b295921050d2dc10cffcd812c50449df43e5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** DT-REG-5：deprecate 后 tombstone——只读映射保留、supersededBy 导航、",
-          "startLine": 525,
-          "endLine": 526,
+          "startLine": 528,
+          "endLine": 529,
           "sha256": "53c0a097a014f8e60e695d7bbf78d06077032bad963b9c46246782e343588566"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** DT-REG-5：含 tombstone 的装配清单——新表注册 deprecated 描述符成功且",
-          "startLine": 573,
-          "endLine": 575,
+          "startLine": 576,
+          "endLine": 578,
           "sha256": "4ee4e1f557c69a43abaeedcec81f820d00a1e0ef61b6022d884bc9370006c35e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** DT-REG-5／§9.1\"非法调用\"行：运行期（seal 后）registerCode/deprecate→",
-          "startLine": 604,
-          "endLine": 605,
+          "startLine": 607,
+          "endLine": 608,
           "sha256": "a7df2d0128451f0d203ae94f8da7f2c9e4f14a0abd505216be26790dfd3c3577"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 628,
-          "endLine": 634,
+          "startLine": 631,
+          "endLine": 637,
           "sha256": "2f3070c3e808ef82b637654b92000b97faa0408a4b4896461808f56e051a9aca"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
-          "symbol": "/** P-DIAG-3 补充：内置 88 码的码元数据登记面（category/severity/level/",
-          "startLine": 678,
-          "endLine": 680,
-          "sha256": "a6f57b51013c69c3add2741bd0ddd1617f495a6e5a651576039e6f49e7ea74a4"
+          "symbol": "/** P-DIAG-3 补充：内置 94 码的码元数据登记面（category/severity/level/",
+          "startLine": 681,
+          "endLine": 683,
+          "sha256": "06d9d87d7c29dc513982b25a5db46416698f051b634f649cd0b2a7ba81e0c4d6"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 711,
-          "endLine": 718,
+          "startLine": 714,
+          "endLine": 721,
           "sha256": "e90b6a9a534b2e8311a14681da7e0768fa271cb53a23a76def3f284c99a506e6"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** F-618②：level 与 severity 映射不一致的登记在注册边界拒绝（Usage——",
-          "startLine": 742,
-          "endLine": 744,
+          "startLine": 745,
+          "endLine": 747,
           "sha256": "65612fe1940e1db46b936bd097e79b7fa98ae9a23572d4bb1613d315442935d6"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 780,
-          "endLine": 786,
+          "startLine": 783,
+          "endLine": 789,
           "sha256": "9ec12b8670e322bf11bae77f704b5dd43a5cda04b1edcbe7b79df1dab49a99ac"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** P-DIAG-9：文案键随码表登记——命名约定 diag.<code-lower>.title/detail",
-          "startLine": 798,
-          "endLine": 799,
+          "startLine": 801,
+          "endLine": 802,
           "sha256": "65a5969598f124750def003da4213032561b7832d511549b63d4f3c0f6fff001"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
           "symbol": "/** §9.0：错误码 token 全表（11 值逐值钉住——设施异常轨的码面稳定）。 */",
-          "startLine": 829,
-          "endLine": 829,
+          "startLine": 832,
+          "endLine": 832,
           "sha256": "908219d787ed2b486d7c72ad82e1cf4a334da63526a50c4e2b3a45ed7caf34fd"
         }
       ]

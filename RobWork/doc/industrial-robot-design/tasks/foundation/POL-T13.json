@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "POL-T13",
+  "unit": "policy",
+  "masterWp": "WP-G",
+  "title": "policy专项评审整改：会话隔离、宿主唯一入口、数值与诊断闭包",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "ARC-05",
+    "CON-01",
+    "KIN-05",
+    "NFR-COR-03",
+    "NFR-COR-05"
+  ],
+  "designRefs": [
+    "units/policy.md#6",
+    "units/policy.md#7",
+    "units/runtime.md#4",
+    "units/kinematics.md#4",
+    "units/diagnostics.md#4",
+    "reuse/policy.md#1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Collision.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/AnalysisConfigTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/Diagnostics.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicySet.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyDiagnosticsRegistryContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CollisionSession.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CollisionSession.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CollisionSessionTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/policy.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/POL-T13.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/POL-T13.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/policy.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "12项确定缺陷修复、正式回归与原始证据；逐文件及功能绑定；本地可回滚提交，待所有者独立验收"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T13.json"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "真实独立双盒场景、有限性/生命周期/枚举/几何接收/最小值短路/过滤留痕/限位边界及正式诊断闭包回归",
+    "同步/覆盖/单点/批量统一policy入口，删除runtime规则与计算副本；模型owner不变，不新写核心、不放宽门禁",
+    "集成、独立冒烟与直接消费者回归，原始XML/JSON/日志齐全；性能微基准仅提供测量，不冒充既定预算验收",
+    "保留pending/proposal及真实门禁阻断；不自签独验，Group/完整角色/真实距离/bool严格编码待原裁决"
+  ],
+  "note": "用户要求按照专项评审建议修改；指定C盘工作树覆盖旧主线调度。实施源码起点59af1f9b449ee23fb78dfe547b3a7339df9d325d；期间他会话提交b8602fb00/fd198f54c的PRJ-T19验收登记，无产品源码变化；本包提交范围基点fd198f54c0b66bc61dd64b29a04e2b1675f42dbc，不把他会话登记纳入本包。最小契约仅为H6与范围核验，ready不代表独验通过。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/POL-T13.json"
+  }
+}
