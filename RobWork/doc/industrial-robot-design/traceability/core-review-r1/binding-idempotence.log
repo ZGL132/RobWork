@@ -1,0 +1,1 @@
+PASS: repeated synchronization from fixed base produced identical bytes for all six outputs.

@@ -28,7 +28,6 @@ find_package(Boost CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 add_library(sdurws_ird_core STATIC
-    src/Core.cpp
     src/Identity.cpp
     src/Digest.cpp
     src/Provenance.cpp
@@ -64,8 +63,8 @@ target_include_directories(sdurws_ird_core PUBLIC
 
 # 链接 L1 数学库 sdurw_math（rw::math；core.md §3.2 唯一允许的框架依赖）。
 # 仅集成模式（被 RobWorkStudio 构建树包含）下该目标存在；独立冒烟模式没有
-# 框架目标，此时不链接——冒烟只验证本单元目标注册与 C++17 编译，占位实现
-# 也不引用 rw::math 头，两模式各自成立。
+# 框架目标，此时不链接——冒烟执行不依赖真实 rw::math 的 core 用例；
+# 真实 Q/Transform 条件用例由集成模式覆盖，不能用冒烟结果替代。
 if(TARGET sdurw_math)
     target_link_libraries(sdurws_ird_core PUBLIC sdurw_math)
 endif()

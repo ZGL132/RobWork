@@ -1,0 +1,12 @@
+RobWork/RobWork/src/rw/math/Random.cpp:26:#include <boost/random/variate_generator.hpp>
+RobWork/RobWork/src/rw/math/Random.cpp:31:boost::mt19937 generator;
+RobWork/RobWork/src/rw/math/Random.cpp:36:boost::variate_generator< boost::mt19937&, dist_type >
+RobWork/RobWork/src/rw/math/Random.cpp:37:    normal_distribution (generator, boost::normal_distribution< double > (0, 1));
+RobWork/RobWork/src/rw/math/Random.cpp:47:    return distributor (generator);
+RobWork/RobWork/src/rw/math/Random.cpp:50:void Random::seed (unsigned seed)
+RobWork/RobWork/src/rw/math/Random.cpp:53:    generator.seed (static_cast< boost::mt19937::result_type > (seed));
+RobWork/RobWork/src/rw/math/Random.cpp:56:void Random::seed ()
+RobWork/RobWork/src/rw/core/Event.hpp:90:    class Event
+RobWork/RobWork/src/rw/core/Event.hpp:137:        void add (CallBackMethod callback, const void* obj = nullptr, int id = 0)
+RobWork/RobWork/src/rw/core/Event.hpp:150:        void remove (void* obj)
+RobWork/RobWork/src/rw/core/Event.hpp:169:        void remove (void* obj, int id)

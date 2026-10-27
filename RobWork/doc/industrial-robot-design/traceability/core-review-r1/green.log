@@ -1,0 +1,27 @@
+Note: Google Test filter = *CORE_T12:ReferenceBus.*
+[==========] Running 6 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from IdentityGenerate
+[ RUN      ] IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12
+[       OK ] IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12 (0 ms)
+[----------] 1 test from IdentityGenerate (0 ms total)
+
+[----------] 1 test from EventPayload
+[ RUN      ] EventPayload.ActualVariantMismatch_CORE_T12
+[       OK ] EventPayload.ActualVariantMismatch_CORE_T12 (0 ms)
+[----------] 1 test from EventPayload (1 ms total)
+
+[----------] 4 tests from ReferenceBus
+[ RUN      ] ReferenceBus.FifoDeliveryOrder_UT_EVT
+[       OK ] ReferenceBus.FifoDeliveryOrder_UT_EVT (0 ms)
+[ RUN      ] ReferenceBus.UnsubscribeStopsDelivery_UT_EVT
+[       OK ] ReferenceBus.UnsubscribeStopsDelivery_UT_EVT (0 ms)
+[ RUN      ] ReferenceBus.MultipleSubscribersAllReceive_UT_EVT
+[       OK ] ReferenceBus.MultipleSubscribersAllReceive_UT_EVT (0 ms)
+[ RUN      ] ReferenceBus.DestructionUnsubscribes_CORE_T12
+[       OK ] ReferenceBus.DestructionUnsubscribes_CORE_T12 (0 ms)
+[----------] 4 tests from ReferenceBus (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 3 test suites ran. (1 ms total)
+[  PASSED  ] 6 tests.

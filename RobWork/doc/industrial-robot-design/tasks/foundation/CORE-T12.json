@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "CORE-T12",
+  "unit": "core",
+  "masterWp": "WP-B",
+  "title": "core第一轮评审整改：身份播种、事件错误轨与参考句柄RAII",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "ARC-04",
+    "CON-01",
+    "TASK-03",
+    "NFR-COR-02",
+    "NFR-MNT-01"
+  ],
+  "designRefs": [
+    "units/core.md#4",
+    "units/core.md#5",
+    "reuse/policy.md#1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/IdentityRandom.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/IdentityTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/EventsTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/BuildRedLineTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Core.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/README.md",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T12.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/CORE-T12.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/traceability/core-review-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "core实现、回归与原始证据；逐文件及逐功能凭证；本地提交，待所有者独立验收"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_core_test",
+    "cmake --build build/core-smoke --config Release --target sdurws_ird_core_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T12.json"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "固定128位熵消费回归先红后绿，真实生成入口完整身份去重；六类型/文本/FNV不变",
+    "四访问器在实际variant错配时抛CoreError；RAII析构退订、显式退订后句柄晚销毁、同sink参考语义及FIFO持句柄真实断言",
+    "集成/冒烟与直接project/execution事件消费者回归，日志/XML/原生报告齐全；ird_gates与复用文档门禁按实测报告",
+    "删除无符号Core.cpp、同步当前说明；不改变SHA/C4/R3/单位/泛型异常接口，不冒称独验通过"
+  ],
+  "note": "所有者2026-10-27明确要求从cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb新建分支和工作树，按core第一轮评审结果修改完善；此指令覆盖REUSE-T41列出的core参考句柄残留实施。原主工作树保持。独立验收由所有者另开会话，本实施不自签。新增最小契约仅为既有逐文件凭证机器检查所需，不另设治理状态。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/CORE-T12.json"
+  }
+}

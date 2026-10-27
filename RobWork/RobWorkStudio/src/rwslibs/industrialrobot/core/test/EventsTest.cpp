@@ -129,7 +129,8 @@ TEST(ReferenceBus, FifoDeliveryOrder_UT_EVT)
 {
     ReferenceEventBus bus;
     RecordingSink sink;
-    ASSERT_NE(bus.subscribe(sink).get(), nullptr);
+    auto subscription=bus.subscribe(sink);
+    ASSERT_NE(subscription.get(), nullptr);
 
     // 同发布者顺序发布：修订→失效（顺序敏感——§4.9 总线契约示例）。
     const auto commit = DomainEvent::make(RevisionCommittedPayload{
@@ -191,5 +192,58 @@ TEST(ReferenceBus, MultipleSubscribersAllReceive_UT_EVT)
     bus.publish(second);
     EXPECT_EQ(s1.received().size(), 1u);
     EXPECT_EQ(s2.received().size(), 2u);
+}
+
+/** CORE-T12：字段先合法经工厂，实际variant错配须统一走CoreError错误轨。 */
+TEST(EventPayload, ActualVariantMismatch_CORE_T12)
+{
+    const auto task=sampleTask();
+    auto event=DomainEvent::make(RevisionCommittedPayload{task.project,task.branch,task.revision,std::nullopt});
+    ASSERT_EQ(event.asRevisionCommitted().revision,task.revision);
+    event.kind=DomainEventKind::ResultArchived;
+    EXPECT_THROW(event.asResultArchived(),CoreError);
+    event=DomainEvent::make(DependencyInvalidatedPayload{task.project,task.branch,task.revision});
+    event.kind=DomainEventKind::RevisionCommitted;
+    EXPECT_THROW(event.asRevisionCommitted(),CoreError);
+    event=DomainEvent::make(ResultArchivedPayload{task});
+    event.kind=DomainEventKind::TaskStatusChanged;
+    EXPECT_THROW(event.asTaskStatusChanged(),CoreError);
+    event.kind=DomainEventKind::DependencyInvalidated;
+    EXPECT_THROW(event.asDependencyInvalidated(),CoreError);
+}
+
+/** CORE-T12/F-967：bus与sink仍存活，句柄离开作用域立即退订；不执行悬垂访问。 */
+TEST(ReferenceBus, DestructionUnsubscribes_CORE_T12)
+{
+    ReferenceEventBus bus;
+    RecordingSink sink;
+    { auto handle=bus.subscribe(sink); ASSERT_EQ(bus.subscriberCount(),1u); }
+    EXPECT_EQ(bus.subscriberCount(),0u);
+    bus.publish(DomainEvent::make(ResultArchivedPayload{sampleTask()}));
+    EXPECT_TRUE(sink.received().empty());
+}
+
+/** CORE-T12：显式退订后句柄清空借持，允许在总线销毁后安全析构。 */
+TEST(ReferenceBus, UnsubscribedHandleOutlivesBus_CORE_T12)
+{
+    RecordingSink sink;
+    std::unique_ptr<IEventSubscription> handle;
+    { ReferenceEventBus bus; handle=bus.subscribe(sink); handle->unsubscribe(); }
+    EXPECT_NO_THROW(handle->unsubscribe());
+    handle.reset();
+}
+
+/** CORE-T12：同sink重复注册沿原参考语义整体退订，析构后不残留注册。 */
+TEST(ReferenceBus, DuplicateSinkKeepsReferenceSemantics_CORE_T12)
+{
+    ReferenceEventBus bus;
+    RecordingSink sink;
+    auto first=bus.subscribe(sink);
+    auto second=bus.subscribe(sink);
+    EXPECT_EQ(bus.subscriberCount(),2u);
+    first.reset();
+    EXPECT_EQ(bus.subscriberCount(),0u);
+    second.reset();
+    EXPECT_EQ(bus.subscriberCount(),0u);
 }
 }  // namespace

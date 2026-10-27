@@ -280,7 +280,7 @@ core ──► C++17 标准库
 | `kind` | `ProvenanceKind` | 是 | 无（必须显式） | — |
 | `sourceObject` | `std::optional<ObjectId>` | 否 | `nullopt` | 值来源关联对象（如目录条目对象、导入记录对象）；提供时须 `isValid()` |
 | `sourceVersion` | `std::optional<ContentVersion>` | 否 | `nullopt` | `sourceObject` 的内容版本（目录版本锁定 SEL-08 的引用基础）；仅在 `sourceObject` 存在时允许存在 |
-| `methodTag` | `std::optional<std::string>` | 否 | `nullopt` | 产生方法稳定短标记（如 `MDL-05/hollow-cylinder`）；字符集 `[a-z0-9./_-]`、非空、≤64 字符；**词表归产生单元**，core 只做语法校验 |
+| `methodTag` | `std::optional<std::string>` | 否 | `nullopt` | 产生方法稳定短标记（如 `MDL-05/hollow-cylinder`）；字符集 `[A-Za-z0-9./_-]`、非空、≤64 字符；**词表归产生单元**，core 只做语法校验 |
 
 相等：四字段全等。不变量 P-1：`sourceVersion.has_value() ⇒ sourceObject.has_value()`（工厂校验，违反抛 `CoreError`）。
 
@@ -577,7 +577,7 @@ struct ValueProvenance {
     ProvenanceKind                    kind;             // 必填
     std::optional<ObjectId>           sourceObject;
     std::optional<ContentVersion>     sourceVersion;    // 仅 sourceObject 存在时允许
-    std::optional<std::string>        methodTag;        // [a-z0-9./_-]{1,64}
+    std::optional<std::string>        methodTag;        // [A-Za-z0-9./_-]{1,64}
     static ValueProvenance make(ProvenanceKind, std::optional<ObjectId> = {},
                                 std::optional<ContentVersion> = {},
                                 std::optional<std::string> = {});      // 校验 P-1/语法，违约抛 CoreError
@@ -707,8 +707,8 @@ struct ConfirmableFinding {
     ConfirmationState state = ConfirmationState::Pending;
     std::optional<ConfirmationCredential> credential;    // C-2
     static ConfirmableFinding make(DiagnosticRecord r);  // C-1：必为比较型
-    ConfirmableFinding confirmed(ConfirmationCredential) &&;  // Pending→Confirmed
-    ConfirmableFinding rejected() &&;                        // Pending→Rejected
+    void confirm(ConfirmationCredential);  // Pending→Confirmed
+    void reject();                        // Pending→Rejected
 };
 ```
 
@@ -805,7 +805,7 @@ class IDomainEventBus { public: virtual ~IDomainEventBus() = default;
 ```
 modeling 产出 ConfirmableFinding（core DiagData；码值来自 diagnostics 注册表）
 → project ProjectCommandService 收集待确认集 → 命令上下文回调（project 接口）→ ui 确认对话
-→ 用户确认：ui 组装 ConfirmationCredential → project 调 finding.confirmed(cred)
+→ 用户确认：ui 组装 ConfirmationCredential → project 调 finding.confirm(cred)
 → 确认记录写入命令摘要（project 持久化）→ 修订提交 → project 经 IDomainEventBus 发布
    RevisionCommitted → DependencyInvalidated（同一发布者，FIFO 保证顺序）
 → ui/workflow/evidence 订阅方刷新（ARCH §7.1）
@@ -1052,3 +1052,12 @@ core产品库与公共头零变化。本轮集成65通过、独立63通过，均
 ### REUSE-T21：C4同时溢出有界修正（R3获批范围）
 
 仍按§4.5非对称逐元素C4，阈值/C7、公开签名与noexcept不变。仅有限合法tolerance且diff/limit同时溢出时，将binary64精确乘积委托既有Boost固定128位，再以固定4224位进行差/绝对值/加法/比较；不再以Inf<=Inf作为结论。正常路径保留原浮点舍入，非法聚合tolerance沿原行为，vector/Q仍委托唯一标量入口。没有新比较平台、模型缓存或自写补偿循环。来源、位宽与异常边界、生产数值/性能及待独验状态见[REUSE-T21原记录](../traceability/reuse/REUSE-T21/README.md)。性能批准与独验分别登记，不因实施标记关闭F-966。
+
+### CORE-T12 第一轮评审整改（2026-10-27）
+
+起始SHA为cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb；所有者明确要求新分支/工作树实施，分支codex/core-review-fixes；实施记录见[core-review-r1](../traceability/core-review-r1/README.md)。实现待独验，不以本轮实施关闭独立验收。
+
+- 身份：保留六强类型、tag/字节协议与thread_local mt19937_64；初始化以标准seed_seq消费四个独立32位随机字（128位熵），避免单字种子把独立流空间压至32位。确定性固定熵回归与真实新线程生成分别验证播种与实际入口，不以输出位宽推定熵。
+- 事件访问器同时守卫kind与variant，损坏输入仍按既有契约抛CoreError。参考句柄析构幂等退订；bus必须覆盖未退订句柄生存期，sink覆盖订阅期；已显式退订的句柄可晚于bus销毁。单线程快照投递、同sink整体移除的原参考语义不变，不成为生产线程总线。
+- 文档事实同步：methodTag大写沿v0.5/CORE-T03已接受偏差；确认接口示例改为CORE-T07已验收的原地confirm/reject，零公共API变化。删除空Core.cpp及源列表项，真实翻译单元承接库构建。
+- 不实施GAP-DIGEST-01替换、不改变C4/R3/单位表/舍入或SourcedValue泛型异常契约。UnitToken已注册前置与B32的泛型noexcept事项仍按原记录待决，不借文档同步审批新接口。

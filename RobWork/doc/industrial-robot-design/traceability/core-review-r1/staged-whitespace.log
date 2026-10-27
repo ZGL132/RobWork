@@ -1,0 +1,136 @@
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:48: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:52: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:59: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:63: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:69: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:73: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:78: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build-retry.log:82: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build.log:38: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build.log:109: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/consumer-build.log:210: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/final-core-build.log:18: trailing whitespace.
++-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/final-core-build.log:31: trailing whitespace.
++-- RobWork: RW C flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/final-core-build.log:34: trailing whitespace.
++-- RobWork: RW linker flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/final-core-build.log:81: trailing whitespace.
++-- RobWork: system id= 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/final-core-build.log:108: trailing whitespace.
++-- 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/final-core-build.log:157: trailing whitespace.
++-- RobWorkStudio: platform  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/final-core-build.log:216: trailing whitespace.
++-- RobWorkSim: Adding RWSIM CXX flags: -EHa -bigobj /MP -openmp 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-ready.log:14: trailing whitespace.
++-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-ready.log:27: trailing whitespace.
++-- RobWork: RW C flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-ready.log:30: trailing whitespace.
++-- RobWork: RW linker flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-ready.log:77: trailing whitespace.
++-- RobWork: system id= 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-ready.log:104: trailing whitespace.
++-- 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-ready.log:153: trailing whitespace.
++-- RobWorkStudio: platform  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-ready.log:212: trailing whitespace.
++-- RobWorkSim: Adding RWSIM CXX flags: -EHa -bigobj /MP -openmp 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-retry.log:14: trailing whitespace.
++-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-retry.log:27: trailing whitespace.
++-- RobWork: RW C flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-retry.log:30: trailing whitespace.
++-- RobWork: RW linker flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-retry.log:77: trailing whitespace.
++-- RobWork: system id= 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-retry.log:104: trailing whitespace.
++-- 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-retry.log:158: trailing whitespace.
++-- RobWorkStudio: platform  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure-retry.log:217: trailing whitespace.
++-- RobWorkSim: Adding RWSIM CXX flags: -EHa -bigobj /MP -openmp 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure.log:27: trailing whitespace.
++-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure.log:40: trailing whitespace.
++-- RobWork: RW C flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure.log:43: trailing whitespace.
++-- RobWork: RW linker flags: 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure.log:90: trailing whitespace.
++-- RobWork: system id= 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure.log:117: trailing whitespace.
++-- 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure.log:173: trailing whitespace.
++-- RobWorkStudio: platform  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/integration-configure.log:217: trailing whitespace.
++-- RobWorkSim: Adding RWSIM CXX flags: -EHa -bigobj /MP -openmp 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/project-contract-build.log:59: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:129: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:146: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:157: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:166: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:173: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:192: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:196: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:200: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:204: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:208: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:212: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:216: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:220: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:224: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:228: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:232: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:236: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:240: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/red-build.log:244: trailing whitespace.
++  
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:37: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:40: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:58: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:76: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:77: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:95: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:113: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:131: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+RobWork/doc/industrial-robot-design/traceability/core-review-r1/smoke-configure.log:132: trailing whitespace.
++-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 

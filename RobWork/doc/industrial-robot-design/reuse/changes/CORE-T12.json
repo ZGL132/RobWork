@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "CORE-T12",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T12.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "sha256": "2bc7c5832dbc5eb835a474c3456f7cd0fa811f397f5acfe561a17508a25506c0",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/IdentityRandom.hpp",
+      "sha256": "6e46a83b23b66d41e7567e09391f7fb0459d8aba45cf71c047e4800bc4d2ab2b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "sha256": "2d2731c8e6ffdb6dfbc55fa841d93fa7d3b493c00cfe2e76e73f9db3d9e8e274",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/IdentityTest.cpp",
+      "sha256": "aaac1eb327ce3b337695b24bd7960a3da1415de9f5f1f45b9241571ddaea05fc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/EventsTest.cpp",
+      "sha256": "8fbf92078f6076d42fae1736b7e9599901e3458a41f49bf063faf865e886d3a8",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/BuildRedLineTest.cpp",
+      "sha256": "3cde219ed22bb4082dc4dfa517089c302d5d96d6415a78e2ec88a25e396ea805",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "sha256": "5304c2657ffac79015b34cb3365052e55d6e5c2aefb0fd8eb000316a20ea4795",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Core.cpp",
+      "sha256": "deleted",
+      "mode": "remove",
+      "capabilities": [],
+      "boundary": "CORE-T12：标准库多字熵播种/variant错误轨/参考句柄RAII与回归；删除空占位，保留规范协议、生产execution总线、C4/SHA/单位语义；职责与授权见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/core-review-r1/README.md"
+    }
+  ]
+}

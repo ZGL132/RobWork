@@ -1,0 +1,11 @@
+Note: Google Test filter = IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from IdentityGenerate
+[ RUN      ] IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12
+[       OK ] IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12 (0 ms)
+[----------] 1 test from IdentityGenerate (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.

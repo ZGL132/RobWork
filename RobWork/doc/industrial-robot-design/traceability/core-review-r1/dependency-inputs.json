@@ -1,0 +1,14 @@
+[
+  {
+    "source": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3\\Eigen\\src\\Eigenvalues\\SelfAdjointEigenSolver.h",
+    "localReadOnlyInput": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h",
+    "sha256": "f7f7c8dc2f3fdee15317858582311b4135eed3a1759dc629386e8bfff0499996",
+    "purpose": "本地验证所需的既有安装头原样副本；不编辑vcpkg源码、安装配置或原供给，不作为新增依赖"
+  },
+  {
+    "source": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3\\Eigen\\src\\Geometry\\Quaternion.h",
+    "localReadOnlyInput": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Geometry/Quaternion.h",
+    "sha256": "647bee175ef29e4b57252cf84f0ca211c34b30096aeb8ea5898e2f7b05c5e039",
+    "purpose": "本地验证所需的既有安装头原样副本；不编辑vcpkg源码、安装配置或原供给，不作为新增依赖"
+  }
+]
