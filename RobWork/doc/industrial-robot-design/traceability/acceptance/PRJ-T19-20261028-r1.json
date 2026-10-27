@@ -139,9 +139,9 @@
   ],
   "limitations": "PASS 仅覆盖 PRJ-T19 送验范围的实施与回归面（412e173b9..59af1f9b4 的 13 项确定问题修复＋扫描去重性能整改）。包级文档/复用准入门禁 validate-docs 处于 FAIL（登记的存量覆盖缺口），任务保持 ready、不收口 done；关闭须另行补齐全文件矩阵缺口并重跑治理门禁。11 项 pending、C1～C4 待裁决、close/acquireInFlight 与 abandon/writeBatch 交错疑点维持原状。evidence 不得把归档成功/摘要匹配当作当前工程结论（Currentness 判定仍须独立输入）。",
   "admissionClosure": {
-    "status": "resolved-at-unit",
+    "status": "closed-owner-directed",
     "commit": "dad436e3f",
-    "detail": "所有者指示解决阻塞 fail 后实施准入结案批：14 个已变更文件补全 440 条语义区段功能行、重锚 13 条既有行、11 条 pending 结案（依据 traceability/project-review-r1/admission-closure.md 与可重复生成器 fill-coverage.py）。真实门禁 validate-reuse -Head dad436e3f 按单元序检查 project.json 全部通过；其后唯一失败 REUSE-FRESHNESS runtime/CMakeLists.txt 属 POL-T13 批（a167f4d4d）登记的生产证据冻结遗留，不归本任务处置。任务保持 ready，树级门禁转绿后收口 done。",
+    "detail": "所有者指示解决阻塞 fail 后实施准入结案批：14 个已变更文件补全 440 条语义区段功能行、重锚 13 条既有行、11 条 pending 结案（依据 traceability/project-review-r1/admission-closure.md 与可重复生成器 fill-coverage.py）。真实门禁 validate-reuse -Head dad436e3f 按单元序检查 project.json 全部通过；其后唯一失败 REUSE-FRESHNESS runtime/CMakeLists.txt 属 POL-T13 批（a167f4d4d）登记的生产证据冻结遗留，不归本任务处置。任务保持 ready，树级门禁转绿后收口 done。2026-10-28所有者指示收口：任务done；树级剩余失败为POL-T13批登记遗留，不构成本任务缺口。",
     "log": "见 acceptance/PRJ-T19-20261028-r1/ 与 traceability/project-review-r1/admission-closure.md"
   }
 }
