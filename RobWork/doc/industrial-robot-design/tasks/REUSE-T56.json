@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T56",
+  "unit": "runtime",
+  "masterWp": "WP-A",
+  "title": "RC-06 Snapshot 面定案——RuntimeSnapshot 四访问器按实际受控视图/任务私有 State 转发实测登记（零代码改动）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T30"
+  ],
+  "requirements": [
+    "ARC-03"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.5",
+    "reuse/policy.md#1.1",
+    "units/runtime.md#9.1",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T56.json",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_runtime_test.exe --gtest_output=xml:<REUSE-T56>/run/runtime.xml --ird_report=<REUSE-T56>/run/runtime-report.json（全量消费者回归，312 项=311P/1S/0F，证据落 traceability/reuse/REUSE-T56/run/）",
+    "四访问器区段/全文件摘要复算（reuse-contract.ps1 Digest 口径，脚本与输出见 traceability/reuse/REUSE-T56/README.md）"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T56.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T56.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T56/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T56-20261028-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T56-20261028-r1/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Snapshot.hpp"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "RC-06 Snapshot 面四访问器定案登记：functions/runtime.json 四行 search 定案证据（受控视图转发×2／任务私有 State 转发／ARCH §3.6.1 既有借持保留），零产品代码改动",
+    "断开实验结构性阻塞分析与既有无关阻断（ird_gates SA02×2）归因留档；全量消费者回归证据落 traceability/reuse/REUSE-T56/run/"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "四访问器逐个定案零代码改动（依据实测）：workCell=受控视图转发（返回构造期一次建立的 m_workCellView，Snapshot.cpp:753-756/:664）；workCellHandle=已合规保留（ARCH §3.6.1 明文登记的已存在非 const 上游兼容借持，仅碰撞适配契约消费 CollisionSession.cpp:69，快照保活，Snapshot.cpp:758-766 零所有权借持）；tryDynamicWorkCell=受控视图转发＋Expected 错误面（DynamicWorkCellConstView 只读包装/无 DWC 时 UnknownObject 能力定位，Snapshot.cpp:768-784）；makeState=任务私有 State 转发（m_workCellView.defaultState() 值拷贝上游 WorkCell::getDefaultState，WorkCell.hpp:347，每线程私有，Snapshot.cpp:811-816）——均为既有机制可消费形态，无薄适配缺口、无平行实现、无权限越面；登记而非改码（禁止制造无意义改动）",
+    "摘要实测：Snapshot.cpp 全文件 Digest=756c110afc4c2b8f265ab6dbf8ba58eadc607fe0a65d8774a5a6181d13735004（与 HEAD 零 diff）；四区段摘要逐一与矩阵登记值相等（753-756=6c7afba0…、758-766=527e41a9…、768-784=1d7153ea…、811-816=76031e32…）——已执行，命令与输出留档 README",
+    "全量消费者回归已执行：sdurws_ird_runtime_test 312 项＝311 passed/0 failed/1 skipped（ContractSuite.ChildProcessWorker_RT_ID_1 子进程 worker 契约测试环境排除项）/0 NOT RUN，exit 0，ird-test-report decisive=true——RC-06『实际消费者达标』判据面",
+    "ird_gates 已执行：2 处既有 IRD-GATE-SA02 命中（登记册引用的补丁文件不存在：0004-sandbox-optimization-levenbergmarquardt.patch——补丁本体按 §13.5.6/RC-04 裁决存设计树 REUSE-T55/，门禁按 patches/ 目录核对，454d4cfc6 引入的登记交付形态与门禁位置核对不一致；PATCHES.md 与门禁均不在本批授权面）——既有无关全局阻断，T56 相关零命中，不冒称全局 PASS",
+    "NOT RUN：生产正向证据四象限（normal/disconnected/oracle/upstreamComparison 逐功能报告与 decision/status 迁移）——纯恒等转发结构性不可安全断开：workCell/workCellHandle 断开即空句柄/空视图崩溃，tryDynamicWorkCell always-err 变异将使命中断言（:279 EXPECT_TRUE 非致命）后 dwc.get() 抛 std::logic_error（Errors.hpp:240 实证）进程崩溃，均违反断开实验『无 error 节点＋真实断言失败』约束；处置（登记 nonOverlap 式豁免或按 T13 聚合口径放宽）待所有者裁决，随 RC-11 能力包批次",
+    "NOT RUN：独立验收（所有者另开会话或人工执行，实施者不自签）；commit-lint/verify-task-scope（本批不执行 git 写命令、无送验 SHA，随提交批显式 -Base/-Head 执行）；validate-docs -DeepEvidence 全库证据索引深查与 evidence-index.json 重建（索引非本批授权面）",
+    "边界：不触 catalog.json（待 T44）、DhConvert.cpp/Sampling.cpp（LM proposal 锁定面）、RpyMath.hpp（冻结）、requirements 面（待 T42）、reporting/ui 权限扩面（RC-09 另批）、他人改动（trace-matrix.json 等）；不执行 git push/fetch"
+  ],
+  "note": "migration.md §13.5.3 RC-06（:417）Snapshot 面——原文『runtime/src/Snapshot.cpp 四访问器按实际受控视图/任务私有 State 转发定案』。起始 SHA=454d4cfc6219d69c415b3463f5c8cf62e08f97b2（RC-04 收口提交）。查重（2026-10-28 实测）：tasks/、reuse/changes/、traceability/reuse/ 均无 REUSE-T56（T55 已用），建档成立。授权口径：所有者 2026-10-27 委托『后续所有裁决授权按建议进行』——本批按建议定案四访问器为已合规保留（零代码改动），与 T30 同族修正（decision 保持 pending 不假关）口径衔接：pending 语义＝生产正向证据未产出不假关，本次在 search.conclusion 升级为 RC-06 定案证据而非仅背景修正。先例对照：T19-Fk.cpp 消费侧（模型消费经 runtimeModelView 受控视图、Device::setQ 任务私有 State、无 WC 构造无发布面）与本批供给侧四访问器为同一受控视图/任务私有 State 口径的两端；T52 buildRneConsumptionDevice 确认构造权归 runtime owner——四访问器零构造零写入，不涉该墙。ARCH §3.6.1 对 workCellHandle 有明文既有登记（『不在本轮改产品接口』），收窄须兼容设计与独立验收。断开实验结构性阻塞为本次实施发现：四访问器均为纯恒等转发/值转发，任何语义断开即崩溃，无法产出 gate 形态的 disconnected 证据（T13 聚合断开先例针对逻辑承载面，不适用）；如实 NOT RUN 并留待所有者对登记形态裁决，不自行放宽准入。ird_gates SA02×2 命中经代码归因（ird_gates.cmake:713 从 PATCHES.md 全文 MATCHALL 提取 *.patch 要求存在于 patches/ 目录）确认为 454d4cfc6 既有问题，引用原始登记（PATCHES.md 0004 行设计树交付口径）并明确责任面，不在本批处置。status=ready 表示实施完成待独验，不冒称通过。",
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T56.json"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  }
+}

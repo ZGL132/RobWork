@@ -1047,8 +1047,8 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"getDefaultState|findFrame|findDevice\" RobWork/RobWork/src/rw/models/WorkCell.hpp",
-        "conclusion": "快照WC访问器＝受控视图/任务私有State工厂转发面（WorkCellConstView.defaultState→WorkCell::getDefaultState值拷贝、findFrame/findDevice直转发，WorkCell.hpp:251/306实测命中）；原KIN-FK/setQ|baseTframe|baseJframe检索系T01批历史错配（REUSE-T30评审缺口7同族），capabilityId更正为RUNTIME-WC-MODEL（catalog边界含受控视图，WorkCellConstView兄弟行同判）；decision保持pending不假关，修正登记见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
+        "command": "rg -n \"WorkCellConstView|DynamicWorkCellConstView|defaultState|workCellHandle\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+        "conclusion": "RC-06定案（2026-10-28，REUSE-T56实测零代码改动）：本访问器＝受控视图转发面——返回构造期一次建立的m_workCellView（Snapshot.cpp:664由快照Ptr<const WorkCell>构造，空Ptr视图构造fail-fast），消费方经WorkCellConstView只读契约访问编译产物WC（SnapshotTest.cpp:271帧数/:522 worker等价/:706借持保活断言），无第二构造链、无WC拓扑/物性写入，真值唯一归属runtime owner（ARCH §3.6.1受控视图行）。区段摘要753-756按Digest口径实测=6c7afba0…与登记一致；全量消费者回归312项=311P/1S/0F（traceability/reuse/REUSE-T56/run/）。decision/status保持pending不假关——生产正向证据四象限未产出（纯恒等转发无法安全断开：断开即空句柄/空视图崩溃，违反断开实验无error约束，已随REUSE-T56登记待所有者处置），留RC-11能力包批次。T30能力更正背景（KIN-FK→RUNTIME-WC-MODEL）见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
       },
       "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
       "inputs": [
@@ -1102,8 +1102,8 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"getDefaultState|findFrame|findDevice\" RobWork/RobWork/src/rw/models/WorkCell.hpp",
-        "conclusion": "快照WC访问器＝受控视图/任务私有State工厂转发面（WorkCellConstView.defaultState→WorkCell::getDefaultState值拷贝、findFrame/findDevice直转发，WorkCell.hpp:251/306实测命中）；原KIN-FK/setQ|baseTframe|baseJframe检索系T01批历史错配（REUSE-T30评审缺口7同族），capabilityId更正为RUNTIME-WC-MODEL（catalog边界含受控视图，WorkCellConstView兄弟行同判）；decision保持pending不假关，修正登记见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
+        "command": "rg -n \"getDefaultState\" RobWork/RobWork/src/rw/models/WorkCell.hpp",
+        "conclusion": "RC-06定案（2026-10-28，REUSE-T56实测零代码改动）：任务私有State转发面——m_workCellView.defaultState()（Snapshot.cpp:811-816）值拷贝上游WorkCell::getDefaultState（WorkCell.hpp:347实测命中），每线程私有、跨线程绝不共享（§8.7/§9.2；SnapshotTest.cpp:453多线程各自setQ读回隔离用例钉住）；ARCH §3.6.1『业务适配器可持任务私有State』既有口径已合规，无State共享面、无模型写入。区段摘要811-816按Digest口径实测=76031e32…与登记一致；全量消费者回归312项=311P/1S/0F（traceability/reuse/REUSE-T56/run/）。decision/status保持pending不假关——生产正向证据四象限未产出（任务私有State转发断开即状态源失效/崩溃，结构性不可安全断开，已随REUSE-T56登记待所有者处置），留RC-11能力包批次。T30能力更正背景见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
       },
       "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
       "inputs": [
@@ -1158,7 +1158,7 @@
       "status": "pending",
       "search": {
         "command": "rg -n \"tryDynamicWorkCell|DynamicWorkCellConstView|hasDynamicWorkCell\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkSim/src/rwsim/dynamics/DynamicWorkCell.hpp",
-        "conclusion": "DWC视图访问面已审读（快照无DWC→UnknownObject能力缺失定位；有则只读视图包装）；本批仍未实施生产接线或全生命周期回归，维持pending"
+        "conclusion": "RC-06定案（2026-10-28，REUSE-T56实测零代码改动）：受控视图转发＋Expected错误面——有DWC时DynamicWorkCellConstView只读包装（§8.2收敛const，兄弟行runtime.DynamicWorkCellConstView.accessors=adapter同判），无DWC时UnknownObject＋能力定位非崩溃路径（SnapshotTest.cpp:826物性缺失/:841未请求DWC双成因钉住）；DWC句柄由快照m_dynamicWorkCell持有背书（§8.5析构序D-14）。区段摘要768-784按Digest口径实测=1d7153ea…与登记一致；全量消费者回归312项=311P/1S/0F（traceability/reuse/REUSE-T56/run/）。decision/status保持pending不假关——生产正向证据四象限未产出（always-err变异将使命中断言后dwc.get()抛logic_error进程崩溃，纯转发面结构性不可安全断开，已随REUSE-T56登记待所有者处置），留RC-11能力包批次"
       },
       "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
       "inputs": [
@@ -1212,8 +1212,8 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"getDefaultState|findFrame|findDevice\" RobWork/RobWork/src/rw/models/WorkCell.hpp",
-        "conclusion": "快照WC访问器＝受控视图/任务私有State工厂转发面（WorkCellConstView.defaultState→WorkCell::getDefaultState值拷贝、findFrame/findDevice直转发，WorkCell.hpp:251/306实测命中）；原KIN-FK/setQ|baseTframe|baseJframe检索系T01批历史错配（REUSE-T30评审缺口7同族），capabilityId更正为RUNTIME-WC-MODEL（catalog边界含受控视图，WorkCellConstView兄弟行同判）；decision保持pending不假关，修正登记见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
+        "command": "rg -n \"workCellHandle\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+        "conclusion": "RC-06定案（2026-10-28，REUSE-T56实测零代码改动）：已合规保留——ARCH §3.6.1明文登记的『已存在的非const上游兼容借持』：仅按碰撞适配契约消费（生产消费方CollisionSession.cpp:69）、必须由快照保活、禁止结构写入/跨进程传递/扩大暴露，『不能因返回非const就整类判违规』『收窄接口须经兼容设计与独立验收，不在本轮改产品接口』（§3.6.1原文）；实现为rw Ptr裸构造零所有权借持（Snapshot.cpp:758-766析构不释放，快照m_workCell持有背书），测试消费SnapshotTest.cpp:937。区段摘要758-766按Digest口径实测=527e41a9…与登记一致；全量消费者回归312项=311P/1S/0F（traceability/reuse/REUSE-T56/run/）。decision/status保持pending不假关——生产正向证据四象限未产出（恒等句柄断开即空指针崩溃，结构性不可安全断开；收窄属产品接口变更归后续独立验收裁决），登记见traceability/reuse/REUSE-T56/"
       },
       "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
       "inputs": [
