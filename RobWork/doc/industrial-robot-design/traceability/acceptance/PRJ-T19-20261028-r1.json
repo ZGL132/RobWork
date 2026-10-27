@@ -1,0 +1,64 @@
+{
+  "taskId": "PRJ-T19",
+  "baseCommit": "412e173b9079fa43a1f0ef50fe07d38e852b1940",
+  "reviewedCommit": "59af1f9b449ee23fb78dfe547b3a7339df9d325d",
+  "branch": "codex/core-review-fixes",
+  "verdict": "pass",
+  "admissionGate": {
+    "status": "fail-registered",
+    "detail": "validate-docs -TaskFile PRJ-T19.json exit 1（本会话复现）：首败 REUSE-COVERAGE project/include/sdurws/ird/project/DraftService.hpp no functional matrix＝实施记录登记的存量逐文件矩阵缺口；其余为既有 REUSE-AD-PENDING 与 11 项 pending，无 REUSE-FRESHNESS 或新增失败类。13 项修复与性能整改的实施/回归面验收 PASS，但包级治理准入未通过——任务保持 ready 不收口 done，关闭前须补齐全文件矩阵缺口批次。",
+    "log": "validate-docs.log"
+  },
+  "createdAt": "2026-10-28T00:00:00.000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "所有者另开的独立验收会话（ZCode，无子智能体；同会话此前完成 CORE-T12/TK-T13/EV-T13 独验）",
+    "authorization": "所有者要求按 project 首轮评审 13 项确定问题修改，并指示本会话独立验收",
+    "constraints": "未参与实施；除本验收产物目录与记录指针更新外未修改任何文件；未远程同步、未改写历史、未触碰 main、未关闭 11 项 pending 与 C1～C4 待裁决；受影响目标增量重建后真实重跑。"
+  },
+  "scope": "独立复验 412e173b9..59af1f9b4（单实施提交，100 路径）：问题1 提交后失败误报（事件/清理异常不改提交事实、executeCommit 采用已验证候选）、2 非法 token/命令提交前复验证（isCommandTypeToken 单源＋注册校验＋留痕 parse）、3 只读不删 writer 现场（scanForRecovery/scanOrphanDrafts 权限边界、tryLoad 不删 .new）、4 恢复完整性（闭包序号唯一/parent 链严格递减/元数据谱系单调/必需 command/HEAD-清单身份一致）、5 缺 current 恢复 bak、6 幂等归档重算既有清单摘要＋工件实核、7 新 HEAD 配旧索引（verifiedHead＋正向闭包装载＋查询整体刷新置换）、8 未提交对象隐藏（referencesObject）、9 保留名 ASCII 大小写折叠、10 幻影登记守卫前置＋重复 revisionId 拒绝、11 SDK 磁盘错误码（含 ERROR_HANDLE_DISK_FULL）、12 canonical 长路径保留、13 每 exe 原生报告分离；及恢复扫描对象去重（当次 scan 内 ObjectKey 集合去重、保留首现序、逐唯一对象实算、无跨扫描缓存）。",
+  "counts": {
+    "failed": 0,
+    "passed": 444,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "本会话实际执行 gtest 实例（套件间存在包含关系）：project 完整单元 305（终态，较实施批全量 304 多 1＝其后追加的共享对象新例，与其'只补测受影响路径'说明一致）＋完整契约 34（含真实进程 10 的重验）＋去重回归 58（全集子集）＋真实进程定向 10（Tx7ProcessLock 5＋TransactionBoundaries/F8ProcessCrash 5）＋execution 消费者 6＋独立冒烟定向 39＋性能基准 2；全部通过零失败零跳过"
+  },
+  "checks": [
+    "现场：工作树干净、HEAD=59af1f9b4＝送验 Head＝实施提交；IMPLEMENTATION.md/commands 记录/raw 原始红绿（14 单元＋2 进程反例红）与首次性能 FAIL（热 P95 8939.726ms）逐一在案，失败记录未被清洗。",
+    "测试真实重跑：project 完整 305/305、契约 34/34（含真实崩溃重开）、去重回归 58/58（与 commands.ps1 同过滤）、真实进程 10/10（Tx7ProcessLock.*＋TransactionBoundaries/F8ProcessCrash.*——套件名为含'/'前缀，首轮误过滤 5 项后按实施批口径复跑）、execution 消费者 6/6、独立冒烟 39/39、性能 2/2；ird-test-report 全部 decisive。",
+    "性能预算独立复现：热启动 1 预热＋15 有效样本 930.559～1015.858ms（与实施批 P95=917.376ms 同量级），HotStartP95_Within3s_DT_PM16 硬预算断言 PASS（28.3s 全程）；冷组软指标 report-only 如实登记；去重实现为当次扫描 ObjectKey/ObjectKeyHash 集合去重、无跨扫描缓存、免检集合语义未动。",
+    "问题1/10 语义核对：幻影登记守卫前移至首次登记之前＋重复 revisionId 入口拒绝；发布/清理/诊断全部 catch 后走 reportDev（noexcept 化），提交事实不被改报；CommandServiceImpl 视图装配为附属快照，失败仅诊断；executeCommit 直接采用引擎已验证的 result.metadata，不再提交后读盘推进。",
+    "问题4/7 语义核对：committedClosure 增加修订序号唯一、parent 存在且序号严格递减（证无环/拒自指/拒缺父）、metadata supersedes 谱系存在且单调；恢复要求必需 command 可解析、manifest.revisionId 与目录名一致、HEAD 与目标清单的序号/分支一致；loadCommittedState 只装载 scan.verifiedHead＋committedRevisions 正向集合；查询各入口在 writer 锁内整体刷新（复用打开协议构建候选，验证后原子置换唯一索引/权威），branchHistory 同锁复制全链防置换竞态，tryObject/object 核对 referencesObject。",
+    "问题3/5/6/9/11/12/13 核对：扫描/查询只读（仅持 OS 排他锁的启动者清理已知分支 .new）；tryLoad 观察 .new 不删除、current 缺失时继续 bak 归属校验回退不写回；幂等重投递先核 existing 自身摘要再核工件字节（合法篡改/等长篡改/还原重试由测试钉住）；保留名与 .ird-part 按 ASCII 折叠拒绝；三处 OS 错误映射统一 SDK 常量并补 ERROR_HANDLE_DISK_FULL；createNew 组装区保留长路径前缀；CTest/_report 每 exe 唯一原生 JSON。",
+    "红线与复用合规：ird_gates R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（本会话重跑）；core 身份/摘要/事件、Win32 事务原语、runtime/io/execution/evidence 职责边界未动；公共签名与持久化字节格式不变；上游检索（rw::core::IOUtil/RobWorkSim 文件族）不能兑现事务语义的理由在案，未另建平台。",
+    "范围与提交：verify-task-scope 显式 -Base 412e173b9 -Head 59af1f9b4 exit 0（changed=100 全部在 28 条允许面，3 条禁止面零触碰）；commit-lint 单提交 PASS。",
+    "治理门禁：ird_gates PASS；validate-docs -TaskFile PRJ-T19.json exit 1（本会话复现）＝首败 REUSE-COVERAGE DraftService.hpp no functional matrix（与实施批登记逐字一致）＋既有 REUSE-AD-PENDING，无 REUSE-FRESHNESS 或新增失败类——失败面与登记完全相符，未发现被掩盖的缺口；validate-task 逻辑随 validate-docs 同跑，包级准入以 FAIL 如实登记。"
+  ],
+  "issues": [],
+  "notRun": [
+    "全库 DeepEvidence、无关单元完整测试、GUI、远程同步：按增量范围不触发",
+    "execution 生产归档路径扩大重跑：内部扫描去重不影响其（不调用恢复扫描），归档修复已由 6 项直接契约实测",
+    "断电持久性、Win32 原子可见性扩大验证：进程 kill 只证所测边界，维持既有边界",
+    "C1 免检集合/C2 诊断 GAP/C3 listRuns 强度/C4 真实 policy 身份及 close/acquireInFlight、abandon/writeBatch 交错疑点：维持未决登记，本包不裁决"
+  ],
+  "commands": [
+    { "name": "project-full", "command": "sdurws_ird_project_test.exe（增量重建后全量）", "exitCode": 0, "passed": true, "log": "integration/full-unit.log", "evidence": "integration/full-unit.xml＋ird-test-report（305/305 decisive）" },
+    { "name": "project-contract", "command": "sdurws_ird_project_contract_test.exe（全量，含真实崩溃重开）", "exitCode": 0, "passed": true, "log": "integration/full-contract.log", "evidence": "34/34 decisive" },
+    { "name": "dedup-regression", "command": "sdurws_ird_project_test.exe --gtest_filter=ProjectReviewRegression.*:TxEngineTest.*:ProjectStoreTest.*", "exitCode": 0, "passed": true, "log": "integration/dedup-unit.log", "evidence": "58/58 decisive（实施批同过滤）" },
+    { "name": "real-process", "command": "sdurws_ird_project_contract_test.exe --gtest_filter=Tx7ProcessLock.*:TransactionBoundaries/F8ProcessCrash.*", "exitCode": 0, "passed": true, "log": "integration/final-process.log", "evidence": "10/10 decisive（真实子进程锁与 F8 五边界）" },
+    { "name": "consumer-execution", "command": "sdurws_ird_execution_contract_test.exe --gtest_filter=ArchiveCollaborationContractTest.*:WorkerProcessContractTest.（三项定向）", "exitCode": 0, "passed": true, "log": "integration/consumer-execution.log", "evidence": "6/6 decisive" },
+    { "name": "perf", "command": "sdurws_ird_project_perf_test.exe（完整组）", "exitCode": 0, "passed": true, "log": "integration/perf.log", "evidence": "2/2；热样本 930～1016ms，硬预算 3s 断言 PASS；冷组 report-only（integration/perf.xml＋ird-test-report）" },
+    { "name": "smoke", "command": "build/core-smoke/project/Release/sdurws_ird_project_test.exe --gtest_filter=ProjectReviewRegression.*:TxEngineTest.*", "exitCode": 0, "passed": true, "log": "smoke/smoke-final.log", "evidence": "39/39 decisive（独立配置）" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/project-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "全部检查零命中" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile …/PRJ-T19.json", "exitCode": 1, "passed": false, "log": "validate-docs.log", "evidence": "与实施批登记一致：首败 REUSE-COVERAGE DraftService.hpp no functional matrix＋既有 AD-PENDING；无新增失败类" },
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile …/PRJ-T19.json -Base 412e173b9… -Head 59af1f9b4…", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "100 路径全部允许面" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 412e173b9….59af1f9b4…", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "59af1f9b4 PASS" }
+  ],
+  "executionNotes": [
+    "本验收为重跑型：四个集成目标与冒烟 project 目标增量重建（逐目标 -m:1）后执行；构建缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 确认。",
+    "真实进程过滤首跑仅命中 5 项（TransactionBoundaries.* 未匹配含'/'的参数化套件名），按实施批精确过滤 TransactionBoundaries/F8ProcessCrash.* 复跑得 10/10；原 5 项运行日志保留于 final-process.log 同文件被复跑覆盖前的结论以 10 项运行为准。",
+    "validate-docs 的 FAIL 为实施批如实登记的准入缺口（存量全文件矩阵＋11 项 pending），本会话独立复现且失败面一致；本验收不将其转嫁为新增缺陷，也不以通过其他门禁冒称整体治理 PASS。"
+  ],
+  "limitations": "PASS 仅覆盖 PRJ-T19 送验范围的实施与回归面（412e173b9..59af1f9b4 的 13 项确定问题修复＋扫描去重性能整改）。包级文档/复用准入门禁 validate-docs 处于 FAIL（登记的存量覆盖缺口），任务保持 ready、不收口 done；关闭须另行补齐全文件矩阵缺口并重跑治理门禁。11 项 pending、C1～C4 待裁决、close/acquireInFlight 与 abandon/writeBatch 交错疑点维持原状。evidence 不得把归档成功/摘要匹配当作当前工程结论（Currentness 判定仍须独立输入）。"
+}
