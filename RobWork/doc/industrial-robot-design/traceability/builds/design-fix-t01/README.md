@@ -34,3 +34,5 @@ DYN-02/R1外力输入、P-DT-4负载惯量权威供给等既有未决事项保�
 文档/任务/复用门禁及ird_gates均PASS（最终见docs-final4.log、ird-gates.log，exit 0）。复用结果仅为治理检查通过，存量DEBT/UNRESOLVED仍保留；未据此宣称全库算法合规、语义审计或独立验收通过。
 
 提交自查：源码及文档的staged diff --check通过；原始构建日志保留工具输出的行尾空格，日志未作内容清洗。
+
+实施提交：5f7f39147c503cb53c14782b1fa70ea6f96de363。显式Base=612143da54365c277a236d12edd665732f2388ee、Head=5f7f39147c503cb53c14782b1fa70ea6f96de363 的范围检查PASS（151路径），新增提交commit-lint PASS；见task-scope.log及commit-lint.log。本段及对应日志由后续记录提交保存，不改写实施提交或自签独立验收。

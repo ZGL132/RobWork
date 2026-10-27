@@ -271,6 +271,22 @@
       "status": "PASS",
       "log": "ird-gates.log",
       "exitCode": 0
+    },
+    {
+      "exitCode": 0,
+      "changedPaths": 151,
+      "log": "task-scope.log",
+      "status": "PASS",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/DESIGN-T01.json -Base 612143da54365c277a236d12edd665732f2388ee -Head 5f7f39147c503cb53c14782b1fa70ea6f96de363",
+      "name": "verify-task-scope"
+    },
+    {
+      "log": "commit-lint.log",
+      "status": "PASS",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 612143da54365c277a236d12edd665732f2388ee..5f7f39147c503cb53c14782b1fa70ea6f96de363",
+      "exitCode": 0,
+      "name": "commit-lint"
     }
-  ]
+  ],
+  "implementationCommit": "5f7f39147c503cb53c14782b1fa70ea6f96de363"
 }
