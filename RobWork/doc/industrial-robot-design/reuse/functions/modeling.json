@@ -1324,11 +1324,15 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1.json",
+       "sha256": "b77e059bd7b09e7595638f05825eef662a442671fb5ca7f7f0e49d2ff7958ea5"
+      },
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+        "conclusion": "REUSE-T32 定案保留（独验 PASS 在案：上游 ADD_RW_GTEST 非 CONFIG 导出、20 单元同形薄宏为既有形态；TEST-HARNESS capability 保持 candidate；只共享必要产品 CMake include、不搬运上游未导出宏）——薄入口不等于平行测试内核"
       },
       "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
       "inputs": [
@@ -1383,11 +1387,15 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1.json",
+       "sha256": "b77e059bd7b09e7595638f05825eef662a442671fb5ca7f7f0e49d2ff7958ea5"
+      },
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+        "conclusion": "REUSE-T32 定案保留（独验 PASS 在案：上游 ADD_RW_GTEST 非 CONFIG 导出、20 单元同形薄宏为既有形态；TEST-HARNESS capability 保持 candidate；只共享必要产品 CMake include、不搬运上游未导出宏）——薄入口不等于平行测试内核"
       },
       "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
       "inputs": [

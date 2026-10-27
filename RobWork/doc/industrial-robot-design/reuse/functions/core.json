@@ -140,8 +140,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -267,11 +271,15 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1.json",
+       "sha256": "b77e059bd7b09e7595638f05825eef662a442671fb5ca7f7f0e49d2ff7958ea5"
+      },
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
-        "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+        "conclusion": "REUSE-T32 定案保留（独验 PASS 在案：上游 ADD_RW_GTEST 非 CONFIG 导出、20 单元同形薄宏为既有形态；TEST-HARNESS capability 保持 candidate；只共享必要产品 CMake include、不搬运上游未导出宏）——薄入口不等于平行测试内核"
       },
       "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
       "inputs": [
@@ -1213,8 +1221,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1301,8 +1313,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1389,8 +1405,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1477,8 +1497,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1565,8 +1589,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1641,8 +1669,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1717,8 +1749,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1793,8 +1829,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1869,8 +1909,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -1945,8 +1989,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2021,8 +2069,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2097,8 +2149,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2173,8 +2229,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2265,8 +2325,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2357,8 +2421,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2449,8 +2517,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2541,8 +2613,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2633,8 +2709,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2725,8 +2805,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2817,8 +2901,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2905,8 +2993,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -2993,8 +3085,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3081,8 +3177,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3169,8 +3269,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3257,8 +3361,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3345,8 +3453,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3433,8 +3545,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3521,8 +3637,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3609,8 +3729,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3697,8 +3821,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -3786,13 +3914,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "CORE-EVENT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1.json",
+       "sha256": "977cf429eecee963e98783837ad3d8e3b1735bd988a17428c992b04971fa2c3a"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，越界 core::ReferenceEventBus 产品使用点归零、类本体仅测试语义钉保留，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -3911,13 +4043,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "CORE-EVENT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1.json",
+       "sha256": "977cf429eecee963e98783837ad3d8e3b1735bd988a17428c992b04971fa2c3a"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，越界 core::ReferenceEventBus 产品使用点归零、类本体仅测试语义钉保留，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -4036,13 +4172,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "CORE-EVENT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1.json",
+       "sha256": "977cf429eecee963e98783837ad3d8e3b1735bd988a17428c992b04971fa2c3a"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，越界 core::ReferenceEventBus 产品使用点归零、类本体仅测试语义钉保留，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -4161,13 +4301,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "CORE-EVENT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1.json",
+       "sha256": "977cf429eecee963e98783837ad3d8e3b1735bd988a17428c992b04971fa2c3a"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，越界 core::ReferenceEventBus 产品使用点归零、类本体仅测试语义钉保留，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -4286,13 +4430,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "CORE-EVENT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T41-20261026-r1.json",
+       "sha256": "977cf429eecee963e98783837ad3d8e3b1735bd988a17428c992b04971fa2c3a"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，越界 core::ReferenceEventBus 产品使用点归零、类本体仅测试语义钉保留，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -4410,8 +4558,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -4494,8 +4646,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -4578,8 +4734,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -4662,8 +4822,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -4746,8 +4910,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -4830,8 +4998,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -4915,13 +5087,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -5015,8 +5191,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -5099,8 +5279,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -5183,8 +5367,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -5268,13 +5456,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -5368,8 +5560,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+       "sha256": "3316b734813dc16d907f3d2c7ae089a570e0b3be7be586c12090974d45dedf1a"
+      },
       "search": {
         "command": "batch28/search.json",
         "conclusion": "见core-identity-events-audit.md；原语候选与业务值契约区别，未授权新核心或扩大core依赖"
@@ -7964,8 +8160,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -8094,8 +8294,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -8224,8 +8428,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -8354,8 +8562,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -8484,8 +8696,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -8614,8 +8830,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -8744,8 +8964,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -8874,8 +9098,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9004,8 +9232,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9134,8 +9366,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9264,8 +9500,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9394,8 +9634,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9524,8 +9768,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9654,8 +9902,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9784,8 +10036,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -9914,8 +10170,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10044,8 +10304,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10174,8 +10438,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10304,8 +10572,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10434,8 +10706,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10564,8 +10840,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10694,8 +10974,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10824,8 +11108,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -10954,8 +11242,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -11084,8 +11376,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -13358,8 +13654,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -13504,8 +13804,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "UTIL-UNITS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+       "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+      },
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
@@ -13633,13 +13937,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -13758,13 +14066,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -13883,13 +14195,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14008,13 +14324,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14133,13 +14453,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14258,13 +14582,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14363,13 +14691,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14468,13 +14800,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14573,13 +14909,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14678,13 +15018,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14783,13 +15127,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -14969,13 +15317,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -15094,13 +15446,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -15219,13 +15575,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -15344,13 +15704,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -15469,13 +15833,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -15574,13 +15942,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
@@ -15679,13 +16051,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+       "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+      },
       "search": {
         "command": "batch32/search.json",
         "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
       },
-      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "differences": "F-967 已由 REUSE-T41 落地批修复（生产装配换核 execution::DomainEventBusImpl，独验 PASS）；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",

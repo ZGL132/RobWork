@@ -69,7 +69,7 @@
       "status": "pending",
       "search": {
         "command": "rg -n \"inCollision \\(|distance \\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
-        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+        "conclusion": "上游 inCollision/distance/ProximityStrategyRW 消费面已核（S4 复跑在案）；策略过滤/覆盖事实与会话编排归 policy（REUSE-T01 B18 审计第 27 行＋T36 COLLISION capability review 独验 PASS）——保留面登记，未授源码修改权；RC-10 登记批缺口：本行脱离 pending 审计豁免即触发 IRD-GATE-AD（policy/src/CollisionQuery.cpp 携带 rw/proximity 受限消费且 permissions.json 无精确 grant——登记扫描实测 categories=state/operations=write-state），权限最小方案归 RC-09 逐文件审查，本批不代授——保持 pending"
       },
       "differences": "已有inCollision/distance结果消费，策略过滤与覆盖事实归policy；内置二值后端无distance时诚实Failed，需对照可用距离后端，不另写几何距离",
       "inputs": [
@@ -503,11 +503,15 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1.json",
+       "sha256": "b77e059bd7b09e7595638f05825eef662a442671fb5ca7f7f0e49d2ff7958ea5"
+      },
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+        "conclusion": "REUSE-T32 定案保留（独验 PASS 在案：上游 ADD_RW_GTEST 非 CONFIG 导出、20 单元同形薄宏为既有形态；TEST-HARNESS capability 保持 candidate；只共享必要产品 CMake include、不搬运上游未导出宏）——薄入口不等于平行测试内核"
       },
       "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
       "inputs": [
@@ -565,8 +569,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -647,8 +655,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -729,8 +741,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -815,7 +831,7 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：context/cause/action 中文文案与 diagnostics 正式模板职责（SA-12/19）未核——保持 pending 不包装"
       },
       "differences": "登记码通过policyDiagCode引用、记录经core DiagnosticRecord::make；context/cause/action为本TU中文文本，按SA-12/19须核与diagnostics正式模板职责，不能判已合规",
       "inputs": [
@@ -893,8 +909,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -975,8 +995,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1057,8 +1081,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MODEL-BOUNDS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1139,8 +1167,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1221,8 +1253,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1307,7 +1343,7 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：正式中文文案收口 diagnostics 权威未核——保持 pending 不包装"
       },
       "differences": "registryCode+core DiagnosticRecord::make单一数据构造；正式中文文案仍由调用点注入，需与diagnostics权威分清",
       "inputs": [
@@ -1385,8 +1421,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1467,8 +1507,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1549,8 +1593,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1631,8 +1679,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1717,7 +1769,7 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：域窗文案收口 diagnostics 渲染未核——保持 pending 不包装"
       },
       "differences": "重复域窗中文描述；应保留结构化domain/界值由diagnostics渲染，非上游数学核心",
       "inputs": [
@@ -1795,8 +1847,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1877,8 +1933,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1959,8 +2019,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2041,8 +2105,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2123,8 +2191,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2205,8 +2277,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2291,7 +2367,7 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：级别文案收口与真实消费核对未做——保持 pending 不包装"
       },
       "differences": "中文级别文本在policy本地，SA-12要求正式文案收口，待真实消费核对",
       "inputs": [
@@ -2369,8 +2445,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2451,8 +2531,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2533,8 +2617,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2615,8 +2703,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2697,8 +2789,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2779,8 +2875,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -4325,7 +4425,7 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：同 CollisionQuery.cpp 权限墙（登记扫描实测 categories=model,state 无 grant，归 RC-09）——保持 pending"
       },
       "differences": "真实WC findDevice/findFrame/getObjects只读，按scope固化帧、hasModel/addModel共享锁注册、几何缺失显式coverage、dynamic_cast探distance；每条对象只索引首个base Object需核多Object模型，直构共享backend未共锁有风险，未实测并发错",
       "inputs": [

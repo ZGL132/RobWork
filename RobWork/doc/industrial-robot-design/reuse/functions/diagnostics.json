@@ -26,8 +26,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+       "sha256": "b042a49211ecbd28e4ea76c646514a15d8f52cdad12d04464b73cfcf9bc946cb"
+      },
       "search": {
         "command": "batch33/search.json",
         "conclusion": "上游DOM/XML/StringUtil先查，已安装PropertyTree有类型/词法差异；不直接替代受限文法、不扩大diagnostics仅core依赖"
@@ -533,8 +537,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+       "sha256": "b042a49211ecbd28e4ea76c646514a15d8f52cdad12d04464b73cfcf9bc946cb"
+      },
       "search": {
         "command": "batch33/search.json",
         "conclusion": "上游DOM/XML/StringUtil先查，已安装PropertyTree有类型/词法差异；不直接替代受限文法、不扩大diagnostics仅core依赖"
@@ -694,8 +702,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+       "sha256": "b042a49211ecbd28e4ea76c646514a15d8f52cdad12d04464b73cfcf9bc946cb"
+      },
       "search": {
         "command": "batch33/search.json",
         "conclusion": "上游DOM/XML/StringUtil先查，已安装PropertyTree有类型/词法差异；不直接替代受限文法、不扩大diagnostics仅core依赖"
@@ -855,8 +867,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+       "sha256": "b042a49211ecbd28e4ea76c646514a15d8f52cdad12d04464b73cfcf9bc946cb"
+      },
       "search": {
         "command": "batch33/search.json",
         "conclusion": "上游DOM/XML/StringUtil先查，已安装PropertyTree有类型/词法差异；不直接替代受限文法、不扩大diagnostics仅core依赖"
@@ -1016,8 +1032,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+       "sha256": "b042a49211ecbd28e4ea76c646514a15d8f52cdad12d04464b73cfcf9bc946cb"
+      },
       "search": {
         "command": "batch33/search.json",
         "conclusion": "上游DOM/XML/StringUtil先查，已安装PropertyTree有类型/词法差异；不直接替代受限文法、不扩大diagnostics仅core依赖"
@@ -1177,8 +1197,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+       "sha256": "b042a49211ecbd28e4ea76c646514a15d8f52cdad12d04464b73cfcf9bc946cb"
+      },
       "search": {
         "command": "batch33/search.json",
         "conclusion": "上游DOM/XML/StringUtil先查，已安装PropertyTree有类型/词法差异；不直接替代受限文法、不扩大diagnostics仅core依赖"
@@ -1339,8 +1363,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -1505,8 +1533,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -1671,8 +1703,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -1837,8 +1873,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -2003,8 +2043,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -2169,8 +2213,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -2335,8 +2383,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -2501,8 +2553,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -2667,8 +2723,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -2833,8 +2893,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -2999,8 +3063,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -3165,8 +3233,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -3331,8 +3403,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -3497,8 +3573,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -3663,8 +3743,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -3829,8 +3913,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -3995,8 +4083,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -4161,8 +4253,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -4327,8 +4423,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -4493,8 +4593,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -4659,8 +4763,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -4825,8 +4933,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -4991,8 +5103,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -5157,8 +5273,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -5323,8 +5443,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -5489,8 +5613,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -5655,8 +5783,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -5821,8 +5953,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"
@@ -5987,8 +6123,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.3",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
+       "sha256": "3c27191a70c91691a4054f80f7c043d0a8221bd7d02f06e616beecadafe677d0"
+      },
       "search": {
         "command": "batch34/search.json",
         "conclusion": "码词法复用既有core候选、小写派生复用同单元codeLower；BINArchive协议不等于IRDDCM2，保持产品码权威和依赖边界"

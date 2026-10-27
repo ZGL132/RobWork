@@ -24,11 +24,15 @@
    "usageRole": "adapter",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T57/nonoverlap-retention.json",
+    "sha256": "9edc27f08e4e6dc9f692285a3a683e4eef4c8c957b1e65da0b3beb2f3e28b597"
+   },
    "search": {
     "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
-    "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+    "conclusion": "不可变 CAS 发布/同内容共享/冲突复验为 project 写协议权威；IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归（project 287/287＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant"
    },
    "differences": "不可变CAS发布/同内容共享/冲突复验是project写权威；IOUtil仅底层工具候选，不提供publishNew原子协议，不能放宽fsync和防覆盖",
    "inputs": [
@@ -61,11 +65,15 @@
    "usageRole": "adapter",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T57/nonoverlap-retention.json",
+    "sha256": "9edc27f08e4e6dc9f692285a3a683e4eef4c8c957b1e65da0b3beb2f3e28b597"
+   },
    "search": {
     "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
-    "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+    "conclusion": "按内容身份核摘要/缓存/预算的读取为 project 写协议权威消费面；IOUtil::readFile 只读全部字节不提供该契约（S3＋REUSE-T06 分类独验 PASS 在案）；摘要继续单源 core（GAP-DIGEST-01 边界不变）——保留面登记，不发 grant"
    },
    "differences": "读取需按内容身份核摘要、缓存和预算；IOUtil::readFile只读全部字节，不提供这些契约。摘要继续单源core",
    "inputs": [
@@ -5360,11 +5368,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "真实句柄INVALID_HANDLE_VALUE失败置null、GetLastError；成功显式0",
    "inputs": [
@@ -5438,11 +5450,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "只失败读取GetLastError，成功错误码归0，薄返回值适配",
    "inputs": [
@@ -5516,11 +5532,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "CreateFileW宽路径/独占/CREATE_ALWAYS/WRITE_THROUGH；仅暂存，不能由普通IOUtil替代持久化",
    "inputs": [
@@ -5594,11 +5614,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "WriteFile同步DWORD长度，空块成功、短写失败；部分写时GetLastError残留风险需核，未实测",
    "inputs": [
@@ -5672,11 +5696,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "直接FlushFileBuffers薄适配，调用失败透传",
    "inputs": [
@@ -5750,11 +5778,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "直接CloseHandle薄适配",
    "inputs": [
@@ -5828,11 +5860,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "MoveFileExW无替换标志，目标在则拒绝；同卷由调用方保证",
    "inputs": [
@@ -5906,11 +5942,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "MoveFileExW REPLACE_EXISTING|WRITE_THROUGH；不超诺同卷断电后必新值",
    "inputs": [
@@ -5984,11 +6024,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "std filesystem error_code薄适配，幂等建父目录，不自写遍历器",
    "inputs": [
@@ -6062,11 +6106,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "std filesystem remove_all，临时清理幂等，非项目GC",
    "inputs": [
@@ -6140,11 +6188,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "64KiB来源为既有头常量，开→分块写→flush→显式close；任一失败保留部分暂存，守卫不泄漏句柄",
    "inputs": [
@@ -6218,11 +6270,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "委托唯一IFileOps::publishNew，业务共享判定归ObjectStore",
    "inputs": [
@@ -6296,11 +6352,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "委托IFileOps::replaceExisting，提交点由上层指定",
    "inputs": [
@@ -6374,11 +6434,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "生产构造引用函数级静态无状态Win32FileOps，非owning，C++11初始化线程安全",
    "inputs": [
@@ -6452,11 +6516,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "注入构造拒null，由注入方保活，无第二文件后端",
    "inputs": [
@@ -6530,11 +6598,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "writeThrough提前返回时真实关句柄，正常close前dismiss；析构写closeResult不传播首次失败，保留主要错误",
    "inputs": [
@@ -6608,11 +6680,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "命令槽串行，acquireInFlight在try前，随后S1/S2/executePlan；仅StoreError值化，其他异常透传；排队关闭并发未跑，不假设提交/算法归runtime",
    "inputs": [
@@ -6686,11 +6762,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "writer锁内权威metadata快照，锁外投影保留branches磁盘序，非WorkCell视图",
    "inputs": [
@@ -6764,11 +6844,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "从权威tip锁外沿不可变parent读，maxCount0空、unknown invalid_argument、悬挂StoreCorrupt；reserve(maxCount)资源上限/索引访问并发需原回归",
    "inputs": [
@@ -6842,11 +6926,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "UTIL-FILE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "std ifstream二进制整读，exists/open/bad返回nullopt，空文件合法，和其他读helper有重复但错误语义不同；IOUtil候选要核宽路径/int长度/异常",
    "inputs": [
@@ -6920,11 +7008,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "真实SDK ERROR_DISK_FULL/ACCESS_DENIED映射，可供错误数字表收口候选；当前无quota单列，需保留精确码语义",
    "inputs": [
@@ -6998,11 +7090,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "task/manifest/写权→canonical摘要→writer锁内终局复核/幂等→文件size+core摘要→原子manifest→终结事件票据；writerGuard仍在作用域，锁外注释非锁序证明",
    "inputs": [
@@ -7076,11 +7172,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "sessions锁内置态摘登记并移动ticket，sessions锁外reset；调用者可能仍持writer锁，不宣称所有锁已释放",
    "inputs": [
@@ -7154,11 +7254,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "core事件payload只带TaskIdentity，无路径；既有bus两次重试，noexcept但事件make在try前需审异常保证",
    "inputs": [
@@ -7232,11 +7336,15 @@
    "usageRole": "owner",
    "permissionRef": "ARCH:3.6",
    "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
+   "decision": "business-specific",
+   "status": "audited",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+   },
    "search": {
     "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
-    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+    "conclusion": "project 写协议权威；上游 IOUtil 仅底层工具不提供契约（S3 复跑＋REUSE-T06 分类独验 PASS 在案）；写协议链经 REUSE-T40 落地批实链回归覆盖（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS）——保留面登记，不发 grant 不迁上游"
    },
    "differences": "scan预检后真实装载修订/metadata，核projectId/schema/format；没有HEAD manifestDigest校验，公共open已复现漏检F962，非只静态调用推断",
    "inputs": [
