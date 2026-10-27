@@ -14,8 +14,8 @@
      "symbol": "singularValues",
      "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::singularValues",
      "startLine": 1,
-     "endLine": 2277,
-     "sha256": "7b23f98afcd34d88920246b324ca6541293fda88357f4529eaf440b408d91e9c"
+     "endLine": 2292,
+     "sha256": "ce9b99bc6310a29c21a833cab6375a66ccefe29877aa3626c950dbab9e904fba"
     }
    ],
    "targets": [
@@ -45,8 +45,8 @@
     "target": "sdurws_ird_drivetrain"
    },
    "evidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/production-singularValues.json",
-    "sha256": "924121aef2485d8a656749b26e50a08c48e24dcee66c21713065f0d947d1acb5"
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/production-singularValues.json",
+    "sha256": "1e3572819257aaf28fbd7680bdcb3194b0bb8443dc67be36ce73280b924b108f"
    }
   },
   {
@@ -61,8 +61,8 @@
      "symbol": "invertSquareMatrix",
      "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::invertSquareMatrix",
      "startLine": 1,
-     "endLine": 2277,
-     "sha256": "7b23f98afcd34d88920246b324ca6541293fda88357f4529eaf440b408d91e9c"
+     "endLine": 2292,
+     "sha256": "ce9b99bc6310a29c21a833cab6375a66ccefe29877aa3626c950dbab9e904fba"
     }
    ],
    "targets": [
@@ -96,8 +96,8 @@
     "target": "sdurws_ird_drivetrain"
    },
    "evidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/production-invertSquareMatrix.json",
-    "sha256": "e8deef37a198c96ec02bc6909693fcfa3b9e5297dcb7df408adf7956dbf634f2"
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/production-invertSquareMatrix.json",
+    "sha256": "cc94a58aa89112c32e6b08bb5cf09a31be54e0592814632d7fa844ee5c5c9a2b"
    }
   },
   {
@@ -822,8 +822,8 @@
      "symbol": "MappingR2Linalg",
      "qualifiedSymbol": "",
      "startLine": 1,
-     "endLine": 1233,
-     "sha256": "504896711151b6a17156c21c094cc08f8035aeec3afd9a22d9b765668abbf801"
+     "endLine": 1251,
+     "sha256": "0f53e88ee2fc7144a8ffd77fc04899e563acc3b5f35b50a7611594da9c8539a6"
     }
    ],
    "targets": [
@@ -847,7 +847,335 @@
    ],
    "nonOverlapEvidence": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingR2GoldenTest.cpp",
-    "sha256": "504896711151b6a17156c21c094cc08f8035aeec3afd9a22d9b765668abbf801"
+    "sha256": "0f53e88ee2fc7144a8ffd77fc04899e563acc3b5f35b50a7611594da9c8539a6"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.GoldenDatasetContractTest.contract",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/GoldenDatasetContractTest.cpp",
+     "symbol": "DtGoldenDatasetContract",
+     "startLine": 1,
+     "endLine": 344,
+     "sha256": "2c753ed957661256289b853924384431dfd9173843b4ca5aaa8b90dcf4e61f6c"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain_contract_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.Codec",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/Codec.hpp",
+     "symbol": "kMappingContractVersion",
+     "startLine": 1,
+     "endLine": 175,
+     "sha256": "25493fb5beba14308766c8718708452b07699786050012d496d50977151256ed"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.Series",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/Series.hpp",
+     "symbol": "MotorDriveSample",
+     "startLine": 1,
+     "endLine": 423,
+     "sha256": "5183953ec60d7fa1b3f753de18458b6294613c8fb50239286997dda191d1d5df"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.MappingCore",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+     "symbol": "DriveTrainMappingCore",
+     "startLine": 1,
+     "endLine": 2292,
+     "sha256": "ce9b99bc6310a29c21a833cab6375a66ccefe29877aa3626c950dbab9e904fba"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.GoldenDtTest",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/GoldenDtTest.cpp",
+     "symbol": "DtGoldenMapping",
+     "startLine": 1,
+     "endLine": 968,
+     "sha256": "83530e61673a67e8706cd5f3030f37eccd675cea0c7f102456596dc09f6a7403"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.MappingGoldenTest",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingGoldenTest.cpp",
+     "symbol": "DtDesignReview",
+     "startLine": 1,
+     "endLine": 1353,
+     "sha256": "3a3ef21240850c1ebf25c1eb3c73b45042134e87b28520fb9b94ce2ea6517345"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.MappingR2GoldenTest",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingR2GoldenTest.cpp",
+     "symbol": "DtDesignReview",
+     "startLine": 1,
+     "endLine": 1251,
+     "sha256": "0f53e88ee2fc7144a8ffd77fc04899e563acc3b5f35b50a7611594da9c8539a6"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "drivetrain.designReview.make_dt_mapping_golden.golden",
+   "ownerUnit": "drivetrain",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.1.0/generate/make_dt_mapping_golden.mjs",
+     "symbol": "const ",
+     "startLine": 1,
+     "endLine": 273,
+     "sha256": "7a2481e06b0481cac1ed2106bb832be0c351c10f7757ef633d98020c272e2639"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_drivetrain_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+     "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
    }
   }
  ]

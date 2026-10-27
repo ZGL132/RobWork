@@ -1,0 +1,225 @@
+{
+  "schema": "wf-gate-advice-fixtures/1",
+  "note": "workflow 门控/建议/级联映射纯函数面的固定投影夹具（units/workflow.md §11.0——golden wf-* 随 WP-22-T13 登记）。每算例携带：七阶段汇聚投影板（snapshots，stage 词形＝ui §6.4 token）、会话事件窗口（events，发布序；kind 词形＝core DomainEventKind token）、建议会话态附加事实（advice，AdviceInputs 四事实＋目标阶段）、级联映射场景（invalidation：失效信号＝受影响域键＋evidence 原因词表值）。判定面全部为布尔/枚举/键串事实（I-WF-3 零领域阈值）——无浮点输入，重放期望为精确值对照（容差档案登记零容差声明）。",
+  "reasonTokenVocabulary": {
+    "note": "evidence::InvalidationReason 词表值经 JSON 词形承载（value＝evidence InvalidationKind 枚举注释词形的 kebab-case token，key＝涉事依赖键 dependencyKey；detail 差异摘要为呈现层知识——夹具不伪造，恒空串）。生成器与消费测试按同词形重组结构化原因——门控零加工透传（D-WF-2）。",
+    "values": [
+      { "value": "object-content-changed", "key": "obj-model-mesh" },
+      { "value": "upstream-result-changed", "key": "obj-kin-chain" }
+    ]
+  },
+  "cases": [
+    {
+      "id": "all-ready",
+      "epoch": 100,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [],
+      "advice": [
+        { "id": "adv-run", "stage": "modeling", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": false, "sessionReadOnly": false },
+        { "id": "adv-ro", "stage": "modeling", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": false, "sessionReadOnly": true }
+      ],
+      "invalidation": null
+    },
+    {
+      "id": "missing-kinematics",
+      "epoch": 101,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": false, "missingItemKeys": [ "stage.kinematics.missing.robot-definition", "stage.kinematics.missing.joint-limits" ], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [],
+      "advice": [
+        { "id": "adv-fix", "stage": "kinematics", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": false, "sessionReadOnly": false }
+      ],
+      "invalidation": null
+    },
+    {
+      "id": "domain-absent-trajectory",
+      "epoch": 102,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [],
+      "advice": [],
+      "invalidation": null
+    },
+    {
+      "id": "aggregate-partial-missing",
+      "epoch": 103,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": false, "missingItemKeys": [ "stage.trajectory-dynamics.missing.dynamics-payload" ], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [],
+      "advice": [],
+      "invalidation": null
+    },
+    {
+      "id": "active-task-in-progress",
+      "epoch": 105,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": true } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [],
+      "advice": [
+        { "id": "adv-review", "stage": "kinematics", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": false, "sessionReadOnly": false }
+      ],
+      "invalidation": null
+    },
+    {
+      "id": "archived-then-invalidated",
+      "epoch": 104,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [
+        { "kind": "result-archived", "domainKeys": [ "modeling" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "requirements" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "kinematics" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "trajectory", "dynamics" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "selection" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "optimization" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "reporting" ], "reasonTokens": [] },
+        { "kind": "dependency-invalidated", "domainKeys": [ "kinematics" ], "reasonTokens": [ "object-content-changed", "upstream-result-changed" ] }
+      ],
+      "advice": [
+        { "id": "adv-stale", "stage": "kinematics", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": true, "sessionReadOnly": false },
+        { "id": "adv-down-keep", "stage": "selection", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": true, "sessionReadOnly": false }
+      ],
+      "invalidation": {
+        "signalDomainKeys": [ "kinematics" ],
+        "reasonTokens": [ "object-content-changed", "upstream-result-changed" ]
+      }
+    },
+    {
+      "id": "blocked-with-stale",
+      "epoch": 106,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": false, "missingItemKeys": [ "stage.kinematics.missing.robot-definition" ], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [
+        { "kind": "result-archived", "domainKeys": [ "kinematics" ], "reasonTokens": [] },
+        { "kind": "dependency-invalidated", "domainKeys": [ "kinematics" ], "reasonTokens": [ "object-content-changed" ] }
+      ],
+      "advice": [
+        { "id": "adv-prio", "stage": "kinematics", "recoveryBannerKeys": [ "banner.recovery.draft-detected" ], "blockingDiagnosticKeys": [ "diag.preflight.kin-verify-blocked" ], "hasArchivedResult": true, "sessionReadOnly": false }
+      ],
+      "invalidation": null
+    },
+    {
+      "id": "epoch-behind",
+      "epoch": 150,
+      "lastEpoch": 200,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [],
+      "advice": [],
+      "invalidation": null
+    },
+    {
+      "id": "partial-completed",
+      "epoch": 107,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [
+        { "kind": "result-archived", "domainKeys": [ "modeling" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "requirements" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "kinematics" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "trajectory", "dynamics" ], "reasonTokens": [] }
+      ],
+      "advice": [
+        { "id": "adv-advance", "stage": "trajectory-dynamics", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": true, "sessionReadOnly": false },
+        { "id": "adv-none", "stage": "reporting", "recoveryBannerKeys": [], "blockingDiagnosticKeys": [], "hasArchivedResult": true, "sessionReadOnly": false }
+      ],
+      "invalidation": null
+    },
+    {
+      "id": "map-cascade",
+      "epoch": 108,
+      "lastEpoch": 0,
+      "snapshots": [
+        { "stage": "modeling", "domains": [ { "domainKey": "modeling", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "requirements", "domains": [ { "domainKey": "requirements", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "kinematics", "domains": [ { "domainKey": "kinematics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "trajectory-dynamics", "domains": [ { "domainKey": "trajectory", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false }, { "domainKey": "dynamics", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "selection", "domains": [ { "domainKey": "selection", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "optimization", "domains": [ { "domainKey": "optimization", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] },
+        { "stage": "reporting", "domains": [ { "domainKey": "reporting", "inputComplete": true, "missingItemKeys": [], "hasActiveTask": false } ] }
+      ],
+      "events": [
+        { "kind": "result-archived", "domainKeys": [ "selection" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "optimization" ], "reasonTokens": [] },
+        { "kind": "result-archived", "domainKeys": [ "reporting" ], "reasonTokens": [] }
+      ],
+      "advice": [],
+      "invalidation": {
+        "signalDomainKeys": [ "trajectory", "dynamics" ],
+        "reasonTokens": [ "upstream-result-changed" ]
+      }
+    }
+  ]
+}

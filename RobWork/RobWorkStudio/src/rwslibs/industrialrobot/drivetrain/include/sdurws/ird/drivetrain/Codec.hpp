@@ -62,7 +62,7 @@ namespace sdurws::ird::drivetrain {
 inline constexpr std::string_view kMappingEvaluationKey = "dt-mapping";
 
 /// 输入/输出契约版本（>0；进 sliceId——CON-04；随契约面演进递增并登记）。
-inline constexpr std::uint32_t kMappingContractVersion = 1;
+inline constexpr std::uint32_t kMappingContractVersion = 2; ///< DESIGN-T01：实际轴转矩/惯量/象限修正，旧缓存不复用
 
 /// 传动配置 Object 依赖键（组装方经该键把 DriveTrainModel 编码字节挂入切片）。
 inline constexpr std::string_view kModelDrivetrainKey = "model.drivetrain";

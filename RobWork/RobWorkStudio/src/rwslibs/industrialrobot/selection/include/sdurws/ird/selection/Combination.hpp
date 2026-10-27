@@ -97,7 +97,7 @@ namespace sdurws::ird::selection {
 inline constexpr std::string_view kCombinationCheckEvaluationKey = "sel-combination-check";
 
 /// 组合校核输入/输出契约版本（>0；进 sliceId——CON-04；随契约面演进递增）。
-inline constexpr std::uint32_t kCombinationCheckContractVersion = 1;
+inline constexpr std::uint32_t kCombinationCheckContractVersion = 2; ///< 完整过载时序契约，旧结果不得缓存命中
 
 /// 依赖键：目录锁定版本对象（Object——卡 §9.2 管线②切片条目）。
 inline constexpr std::string_view kCatalogLockKey = "catalog.lock";
@@ -479,6 +479,9 @@ struct MappingAxisFact {
     std::optional<double> motorPowerPeak;   ///< 电机侧峰值功率（W）
     std::optional<double> motorPowerRms;    ///< 电机侧 RMS 功率（W）
     std::optional<double> peakDuration;     ///< 峰值段持续时长（s）
+    /// 完整循环(时间s,实际电机轴转矩N·m)，由dt.mapping的MotorSeries值传递；
+    /// 语义同AxisWorkpointFacts，不从峰值窗伪造；空值由筛选器判数据不足。
+    std::vector<std::pair<double, double>> motorTorqueHistory;
     double peakAtTime = 0.0;                ///< 峰值工作点时间（s——定位面）
     std::string peakSegmentId;              ///< 峰值所在轨迹段 ID（定位面）
     // ---- 惯量与效率事实 ----
@@ -495,7 +498,8 @@ struct MappingAxisFact {
             && motorSpeedRms == o.motorSpeedRms
             && motorPowerPeak == o.motorPowerPeak
             && motorPowerRms == o.motorPowerRms
-            && peakDuration == o.peakDuration && peakAtTime == o.peakAtTime
+            && peakDuration == o.peakDuration && motorTorqueHistory == o.motorTorqueHistory
+            && peakAtTime == o.peakAtTime
             && peakSegmentId == o.peakSegmentId
             && inertiaRatio == o.inertiaRatio
             && reflectedInertia == o.reflectedInertia

@@ -585,13 +585,29 @@ EligibilityCheck checkReviewRecordEligibility(const VerdictInput& input,
 // =====================================================================
 
 /**
+ * @brief 对共同输入内容身份生成规范比较摘要（DESIGN-T01，非完整复评身份）。
+ * @param requirementsId [in] 共同需求规范内容身份，非零
+ * @param caseInputsId [in] 共同工况内容身份，非零；不是候选模型或修订身份
+ * @param sampleSetIds [in] 冻结采样计划顺序的身份，可空；每项非零
+ * @param environmentId [in] 共同比较环境/策略规范内容身份，非零
+ * @return SHA-256 内容身份；输入顺序固定，模型/分支/NameMap不进入本接口
+ * @throws std::invalid_argument 任一必需身份为全零
+ * 组装方负责从权威内容生成各身份；本函数只规范编码，不宣称核验业务真实性。
+ * 纯值、无共享状态，可重入；编码为IRDCMP1 + 三个32字节身份 + 大端u64数量 + 样本身份。
+ */
+core::ContentIdentity computeComparisonInputId(
+    const core::ContentIdentity& requirementsId, const core::ContentIdentity& caseInputsId,
+    const std::vector<core::ContentIdentity>& sampleSetIds,
+    const core::ContentIdentity& environmentId);
+
+/**
  * @brief 比较基准（§6.5 ComparisonBaseline——从各结果的 envelope 提取）。
  *
  * 值语义；线程安全：纯值。
  */
 struct ComparisonBaseline {
     core::ProjectId project;                    ///< 项目身份（跨项目结果不得直接比较）
-    core::BranchId branch;                      ///< 方案分支身份（跨分支不得直接比较）
+    core::BranchId branch;                      ///< 被比较方案分支，仅追溯，不要求相同
     /// 模型/需求/工况集/冻结样本集基准（D-04 双层身份的基准层——§5.1）。
     core::ContentIdentity inputBaselineId;
     /// 必验工况集身份（§6.5 字段表原文——快照 caseSet 冻结凭据）。
@@ -600,12 +616,17 @@ struct ComparisonBaseline {
     /// 为规范序，I-8；采样预算改变→身份变→不可直接比较，KIN-04/C5）。
     std::vector<core::ContentIdentity> sampleSetIds;
 
+    /// DESIGN-T01：共同需求/工况/样本及比较环境的规范内容摘要。
+    /// 输入组装方按共同输入声明生成，排除候选模型、名称映射及修订/分支。
+    /// 禁止用完整 inputBaselineId 冒充此值；旧调用未提供时仅允许完整输入相同。
+    std::optional<core::ContentIdentity> comparisonInputId;
+
     bool operator==(const ComparisonBaseline& o) const
     {
         return project == o.project && branch == o.branch
             && inputBaselineId == o.inputBaselineId
             && requiredCaseSetId == o.requiredCaseSetId
-            && sampleSetIds == o.sampleSetIds;
+            && sampleSetIds == o.sampleSetIds && comparisonInputId == o.comparisonInputId;
     }
     bool operator!=(const ComparisonBaseline& o) const { return !(*this == o); }
 };
@@ -616,8 +637,8 @@ struct ComparisonBaseline {
  */
 enum class BaselineDifferenceDimension : std::uint8_t {
     Project,          ///< project 不等（跨项目比较——拒绝面）
-    Branch,           ///< branch 不等（跨分支比较——拒绝面）
-    InputBaseline,    ///< inputBaselineId 不等（模型/需求/工况集/冻结样本集基准——EVI-02）
+    Branch,           ///< 保留历史枚举槽；分支仅追溯，不再作为拒绝维度
+    InputBaseline,    ///< 共同输入摘要不一致/缺失；旧结果回退完整inputBaselineId校验
     RequiredCaseSet,  ///< requiredCaseSetId 不等（必验工况集不同）
     SampleSets,       ///< sampleSetIds 不等（采样预算改变——KIN-04 冻结样本集，EV-COV-4）
 };
@@ -644,7 +665,8 @@ struct BaselineConsistencyResult {
 /**
  * @brief 比较基准一致性检查（§6.5 checkComparisonBaselinesConsistent）。
  *
- * 规则（§6.5 原文）：全部相等→通过；任何不等→失败并列出差异维度——
+ * 规则（DESIGN-T01）：项目、共同输入、必验工况和样本一致才通过；
+ * 分支/候选模型只追溯。均无共同摘要的旧结果保守回退完整基准相等；
  * 基准不同的方案/候选/报告变体不得直接比较（RPT-04 方案比较、OPT 内部
  * Pareto 比较、报告变体章节共用本检查）；样本集身份不等（如采样预算改变）
  * →旧覆盖率/候选指标不可与新的直接比较（KIN-04 冻结样本集＋C5 复评规则

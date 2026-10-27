@@ -1,0 +1,363 @@
+CMake is re-running because D:/10_Source_Repos/21_robot/RobWork/build/govt24-smoke/core/CMakeFiles/generate.stamp is out-of-date.
+  the file 'D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/boost/BoostConfigVersion.cmake'
+  is newer than 'D:/10_Source_Repos/21_robot/RobWork/build/govt24-smoke/core/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  runtime/CMakeLists.txt:241 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin not registered (framework-hosted plugin target, integrated tree only; ui.md §13 UI-T16)
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_studio not registered (framework-hosted product target, integrated tree only; WP-24-T08 / B1-SPEC §2.1)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  modeling/CMakeLists.txt:383 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  kinematics/CMakeLists.txt:289 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  drivetrain/CMakeLists.txt:129 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  selection/CMakeLists.txt:211 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  dynamics/CMakeLists.txt:230 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (73.4s)
+-- Generating done (9.4s)
+-- Build files have been written to: D:/10_Source_Repos/21_robot/RobWork/build/govt24-smoke
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Compare.cpp
+  Identity.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  Currentness.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Envelope.cpp
+  Report.cpp
+  Evaluator.cpp
+  SetCheckMatch.cpp
+  Verdict.cpp
+  正在生成代码...
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  DriveTrainCodec.cpp
+  Evaluator.cpp
+  MappingCore.cpp
+  sdurws_ird_drivetrain.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\drivetrain\Release\sdurws_ird_drivetrain.lib
+  ToleranceProfile.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  BuildRedLineTest.cpp
+  DiagCodesTest.cpp
+  GoldenDtTest.cpp
+  MappingGoldenTest.cpp
+  MappingR2GoldenTest.cpp
+  TestMainReport.cpp
+  sdurws_ird_drivetrain_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\drivetrain\Release\sdurws_ird_drivetrain_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  ErrorsTest.cpp
+  DependencyTest.cpp
+  SnapshotTest.cpp
+  SliceTest.cpp
+  EvidenceTest.cpp
+  VerdictTest.cpp
+  EnvelopeTest.cpp
+  CurrentnessTest.cpp
+  CompatibilityTest.cpp
+  EvaluatorTest.cpp
+  EvaluatorPortSuiteTest.cpp
+  正在生成代码...
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  Backfill.cpp
+  CapabilityCurve.cpp
+  CatalogValidation.cpp
+  CombinationCheck.cpp
+  DiagCodes.cpp
+  FeasibleSet.cpp
+  Preference.cpp
+  Screening.cpp
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\selection\Release\sdurws_ird_selection.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt
+  SelectionPluginAssembly.cpp
+  SelPanelModel.cpp
+  SelPanelCommandCatalog.cpp
+  SelCatalogPanelWidget.cpp
+  SelUiModule.cpp
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\selection\Release\sdurws_ird_selection_plugin.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt
+  TestMainReport.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  CatalogImportTest.cpp
+  CapabilityCurveTest.cpp
+  CatalogLockTest.cpp
+  ReproBenchmarkTest.cpp
+  ScreeningMotorTest.cpp
+  ScreeningGearboxTest.cpp
+  CombinationBuilderTest.cpp
+  CombinationCheckTest.cpp
+  CombinationCheckCodecTest.cpp
+  CombinationCheckEvaluatorTest.cpp
+  FeasibleSetTest.cpp
+  PreferenceFilterTest.cpp
+  CatalogDiffTest.cpp
+  AxisOutOfScopeTest.cpp
+  BackfillTest.cpp
+  SelPluginPanelTest.cpp
+  SelGoldenDatasetTest.cpp
+  LinearDriveCatalogTest.cpp
+  LinearDriveScreeningTest.cpp
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\selection\Release\sdurws_ird_selection_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\selection\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  Project.cpp
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\ui\Release\sdurws_ird_ui.lib
+  Codec.cpp
+  Csv.cpp
+  Json.cpp
+  正在生成代码...
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\io\Release\sdurws_ird_io.lib
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\project\sdurws_ird_project.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  SolidifyServiceImpl.cpp
+  StoreClone.cpp
+  SaveAsServiceImpl.cpp
+  PackageServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+  正在生成代码...
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\project\Release\sdurws_ird_project.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  Reporting.cpp
+  Errors.cpp
+  Admission.cpp
+  Identity.cpp
+  ReportModel.cpp
+  CacheCoordinator.cpp
+  ReportCodec.cpp
+  ChannelProtocol.cpp
+  Sections.cpp
+  Checkpoint.cpp
+  Builder.cpp
+  Controller.cpp
+  EventBus.cpp
+  FrameworkSections.cpp
+  RunRegistry.cpp
+  Render.cpp
+  Scheduler.cpp
+  StateMachine.cpp
+  Consistency.cpp
+  TaskTypes.cpp
+  Archive.cpp
+  WorkerSupervisor.cpp
+  Export.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(308,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(306,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  正在生成代码...
+  Bundle.cpp
+  Roundtrip.cpp
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\execution\Release\sdurws_ird_execution.lib
+  正在生成代码...
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\reporting\Release\sdurws_ird_reporting.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt
+  Workflow.cpp
+  Types.cpp
+  Gate.cpp
+  Advice.cpp
+  Lifecycle.cpp
+  Projection.cpp
+  Settings.cpp
+  Comparison.cpp
+  Commands.cpp
+  BackfillTranslate.cpp
+  CloseSupervisor.cpp
+  正在生成代码...
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\sdurws_ird_workflow.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt
+  WorkflowUiModule.cpp
+  WorkflowCommandCatalog.cpp
+  WorkflowHostAdapters.cpp
+  WorkflowPluginAssembly.cpp
+  正在生成代码...
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\sdurws_ird_workflow_plugin.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  GateAdviceTest.cpp
+  LifecycleTest.cpp
+  OpenWizardHomeTest.cpp
+  CloseFlowTest.cpp
+  SaveAsPackageTest.cpp
+  ReconnectReadOnlyTest.cpp
+  StatusProjectionTest.cpp
+  SettingsTest.cpp
+  ComparisonTest.cpp
+  CommandsTest.cpp
+  HostAdapterTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\test\HostAdapterTest.cpp(1283,32): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\sdurws_ird_workflow_test.vcxproj]
+  正在生成代码...
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\sdurws_ird_workflow_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\gtest.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_json-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\boost_json-vc143-mt-x64-1_92.dll done

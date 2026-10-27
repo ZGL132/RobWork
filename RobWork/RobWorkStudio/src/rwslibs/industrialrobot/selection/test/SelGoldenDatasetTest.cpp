@@ -343,6 +343,12 @@ sel::AxisWorkpointFacts factsFromJson(const tk::JsonValue& o, const core::Object
     f.motorPowerPeak = optNum(o, "motorPowerPeak");
     f.motorPowerRms = optNum(o, "motorPowerRms");
     f.peakDuration = optNum(o, "peakDuration");
+    // DESIGN-T01：读取独立显式时序，禁止从峰值窗推造过载区间。
+    if (const auto* history = o.find("motorTorqueHistory"); history && history->isArray()) {
+        for (const auto& point : history->items) {
+            f.motorTorqueHistory.emplace_back(num(point, "time"), num(point, "torque"));
+        }
+    }
     f.requiredHoldingTorque = optNum(o, "requiredHoldingTorque");
     if (const tk::JsonValue* ex = o.find("externalLoad"); ex != nullptr && !ex->isNull()) {
         f.externalLoad = sel::ExternalLoadFacts{num(*ex, "radial"), num(*ex, "axial"),
@@ -745,7 +751,7 @@ TEST_F(SelGoldenCatalog, CatalogLockSemantics_WP19T11_ACC1)
 
 class SelGoldenScreening : public tk::GoldenFixture {
 protected:
-    tk::DatasetRef datasetRef() const override { return {"sel-screening-golden", "1.0.0"}; }
+    tk::DatasetRef datasetRef() const override { return {"sel-screening-golden", "1.1.0"}; }
 };
 
 /**

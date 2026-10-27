@@ -48,6 +48,8 @@
 namespace dt = sdurws::ird::drivetrain;
 namespace core = sdurws::ird::core;
 
+// DESIGN-T01 的物理回归见文件末：恒速功率一致性与反转四象限。
+
 namespace {
 
 // =====================================================================
@@ -218,7 +220,7 @@ TEST(DtMappingGolden, DiagonalMappingAnalytic_WP18T03_ACC1)
         EXPECT_PRED_FORMAT2(closeRel, s.thetaDot, qd / c);              // rad/s
         EXPECT_PRED_FORMAT2(closeRel, s.thetaDDot, qdd / c);            // rad/s²
         EXPECT_PRED_FORMAT2(closeRel, s.tauIdeal, c * 2.0);             // N·m
-        EXPECT_PRED_FORMAT2(closeRel, s.tauMotor, c * 2.0 + jRotor * (qdd / c)); // N·m
+        EXPECT_PRED_FORMAT2(closeRel, s.tauMotor, (2.0 * qd > 0.0 ? c * 2.0 / 0.9 : c * 2.0 * 0.7) + jRotor * (qdd / c)); // N·m
         EXPECT_PRED_FORMAT2(closeRel, s.pJoint, 2.0 * qd);              // W
         EXPECT_PRED_FORMAT2(closeRel, s.pRotor, jRotor * (qdd / c) * (qd / c)); // W
     }
@@ -229,7 +231,7 @@ TEST(DtMappingGolden, DiagonalMappingAnalytic_WP18T03_ACC1)
     EXPECT_NEAR(mid.thetaDot, 0.0, 1e-12);         // cos(π/2)=0
     EXPECT_NEAR(mid.thetaDDot, -394.7841760435743, 1e-6); // −0.4π²/0.01
     EXPECT_NEAR(mid.tauIdeal, 0.02, 1e-12);        // 0.01×2
-    EXPECT_NEAR(mid.tauMotor, 0.02 - 0.03947841760435743, 1e-9); // ＋J·θ̈
+    EXPECT_NEAR(mid.tauMotor, 0.02 / 0.9 - 0.03947841760435743, 1e-9); // ＋J·θ̈
 }
 
 // =====================================================================
@@ -709,12 +711,12 @@ TEST(DtMappingGolden, RotorSingleInclusionAndNoExtraFriction_WP18T03_ACC2)
         // 单一计入的准确表达：输出与 M-12 公式**逐位一致**（τ_m 与
         // τ_ideal＋J_rotor·θ̈ 同一表达式求值——位等成立），即除显式转子项
         // 外无任何第二处叠加（重复计入会使位等破坏）。
-        EXPECT_EQ(s.tauMotor, s.tauIdeal + 2e-4 * s.thetaDDot)
+        EXPECT_EQ(s.tauMotor, (s.pJoint > 0.0 ? s.tauIdeal / 0.8 : s.tauIdeal * 0.6) + 2e-4 * s.thetaDDot)
             << "转子项必须只计入一次（样本 " << i << "）";
         // 匀速样本（θ̈ 精确零——t=0 处 sin(0)=0）：τ_m＝τ_ideal＝c·τ_joint
         //（摩擦只经 τ_joint 进入，无额外摩擦项——量级锚定）。
         if (s.thetaDDot == 0.0) {
-            EXPECT_EQ(s.tauMotor, 0.01 * 2.3);
+            EXPECT_EQ(s.tauMotor, 0.01 * 2.3 / 0.8);
         }
     }
 }
@@ -836,7 +838,7 @@ TEST(DtMappingGolden, DwellAndZeroPower_WP18T03_ACC2)
     // RMS 含驻留（§10.4——力矩保持计入热负载）：τ_m=[5,5,3,3]、T=3、梯形
     // ∫τ²dt＝25＋17＋9＝51 ⟹ RMS(τ)=√(51/3)；ω=[0,0,2,2]、∫ω²dt＝0＋2＋4＝6
     // ⟹ RMS(ω)=√(6/3)=√2。
-    EXPECT_PRED_FORMAT2(closeRel, p.tauRms, std::sqrt(51.0 / 3.0));
+    EXPECT_PRED_FORMAT2(closeRel, p.tauRms, std::sqrt((37.5 + 1.5 * (3.0 / 0.9) * (3.0 / 0.9)) / 3.0));
     EXPECT_PRED_FORMAT2(closeRel, p.omegaRms, std::sqrt(6.0 / 3.0));
 
     // 零速样本只计时间占比（2/3），不计象限能量（§10.6 表行 5）。
@@ -937,12 +939,12 @@ TEST(DtMappingGolden, PeakAndRmsMultiSegment_WP18T03_ACC2)
     // 正/负峰值分列（不混取绝对值——§10.4），带时刻/段/工况（"峰值不带
     // 来源即非法输出"——§11.2）。
     ASSERT_TRUE(p.tauPeakPos.present);
-    EXPECT_PRED_FORMAT2(closeRel, p.tauPeakPos.value, 8.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.tauPeakPos.value, 8.0 / 0.9);
     EXPECT_PRED_FORMAT2(closeRel, p.tauPeakPos.t, 1.0);
     EXPECT_EQ(p.tauPeakPos.segmentId, "seg-2");
     EXPECT_EQ(p.tauPeakPos.caseId, series.caseId);
     ASSERT_TRUE(p.tauPeakNeg.present);
-    EXPECT_PRED_FORMAT2(closeRel, p.tauPeakNeg.value, -6.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.tauPeakNeg.value, -6.0 * 0.7);
     EXPECT_EQ(p.tauPeakNeg.segmentId, "seg-3");
 
     // 速度峰值（带符号实测值）与功率峰值（pMotor＝pJoint/η⁺——q̇=1、
@@ -953,10 +955,10 @@ TEST(DtMappingGolden, PeakAndRmsMultiSegment_WP18T03_ACC2)
     EXPECT_PRED_FORMAT2(closeRel, p.powerPeak.value, 8.0 / 0.9);
 
     // RMS（完整循环、梯形）：τ²=[4,64,36,36]⟹∫＝34＋50＋36＝120⟹RMS=√40。
-    EXPECT_PRED_FORMAT2(closeRel, p.tauRms, std::sqrt(120.0 / 3.0));
+    EXPECT_PRED_FORMAT2(closeRel, p.tauRms, std::sqrt((66.0 / (0.9 * 0.9) + 54.0 * 0.7 * 0.7) / 3.0));
     // 负载率（参考值——§10.4）：RMS/额定。
     ASSERT_TRUE(p.loadRatio.has_value());
-    EXPECT_PRED_FORMAT2(closeRel, *p.loadRatio, std::sqrt(120.0 / 3.0) / 10.0);
+    EXPECT_PRED_FORMAT2(closeRel, *p.loadRatio, std::sqrt((66.0 / (0.9 * 0.9) + 54.0 * 0.7 * 0.7) / 3.0) / 10.0);
 }
 
 // =====================================================================
@@ -1012,8 +1014,8 @@ TEST(DtMappingGolden, QuadrantCoverage_WP18T03_ACC2)
     // q3（t3：pJoint＝τ·ω＝2×(−1)＝−2）；q4（t2：pJoint＝−2×(−1)＝+2）。
     EXPECT_PRED_FORMAT2(closeRel, p.q1.energy, 2.0);
     EXPECT_PRED_FORMAT2(closeRel, p.q2.energy, -2.0);
-    EXPECT_PRED_FORMAT2(closeRel, p.q3.energy, -2.0);
-    EXPECT_PRED_FORMAT2(closeRel, p.q4.energy, 2.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q3.energy, 2.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q4.energy, -2.0);
     EXPECT_EQ(p.zeroDwell.energy, 0.0);
 }
 
@@ -1075,7 +1077,7 @@ TEST(DtMappingGolden, DataInsufficientDegradation_WP18T03_ACC2)
     EXPECT_TRUE(rotorMissingDiag);
     ASSERT_EQ(out2.motorSeries.size(), 1U);
     EXPECT_EQ(out2.motorSeries[0].samples[0].tauMotor,
-              out2.motorSeries[0].samples[0].tauIdeal); // 理想口径输出
+              out2.motorSeries[0].samples[0].tauIdeal / 0.9); // 转子缺失，仍对传动矩应用效率
 
     // ---- 估算来源（Estimated）贯穿：缺失清单含限定语素材（§10.7）。
     dt::DriveTrainModel estEff = dt::makeDiagonalDriveTrainModel(
@@ -1301,4 +1303,51 @@ TEST(DtMappingGolden, FactsExtraction_WP18T03_ACC2)
     EXPECT_PRED_FORMAT2(closeRel, f.axes[0].tauRms, out.points[0].tauRms);
     EXPECT_TRUE(f.axes[0].efficiencyApplied);
     EXPECT_EQ(f.diagnosticCount, out.diagnostics.size());
+}
+
+/** DYN-04/AT-07：损耗改变实际轴转矩；恒速不得出现 P_motor≠τ_motor·ω。 */
+TEST(DtDesignReview, EfficiencyChangesShaftTorqueAndReverseQuadrants)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04"}, std::vector<std::string>{"AT-07"});
+    const auto model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {dt::TransmissionRatio{0.1, dt::SourcedValueTag::ModelingField}},
+        {0.0}, testIdentity(), {eta(0.5, 0.5)}, {rotor(0.01)});
+    dt::DriveTrainMappingCore mapping;
+    for (const double speed : {2.0, -2.0}) {
+        for (const double torque : {10.0, -10.0}) {
+            auto series = sineSeries(1, 0.0, 0.0, {0.0, 1.0}, torque, "constant");
+            for (auto& sample : series.samples) { sample.qd = speed; }
+            const auto out = mapping.evaluate(model, series, nullptr);
+            const auto& sample = out.motorSeries[0].samples[0];
+            const bool driving = speed * torque > 0.0;
+            EXPECT_NEAR(sample.tauMotor, driving ? torque * 0.2 : torque * 0.05, 1e-12);
+            EXPECT_NEAR(sample.pMotor, sample.tauMotor * sample.thetaDot, 1e-12);
+            if (speed < 0.0) {
+                const auto& point = out.points[0];
+                EXPECT_EQ(sample.quadrant, driving ? dt::Quadrant::Q3 : dt::Quadrant::Q4);
+                EXPECT_DOUBLE_EQ(driving ? point.q3.timeShare : point.q4.timeShare, 1.0);
+            }
+        }
+    }
+}
+
+/** DYN-04/AT-07：零外负载加速的电机能量等于转子动能增加，不得清零。 */
+TEST(DtDesignReview, UnloadedAccelerationRetainsRotorEnergy)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04"}, std::vector<std::string>{"AT-07"});
+    const auto model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)}, {{1.0, dt::SourcedValueTag::ModelingField}},
+        {0.0}, testIdentity(), {eta(0.5, 0.5)}, {rotor(2.0)});
+    auto series = sineSeries(1, 0.0, 0.0, {0.0, 1.0}, 0.0, "unloaded");
+    series.samples[0].qd = 1.0;
+    series.samples[1].qd = 2.0;
+    for (auto& sample : series.samples) { sample.qdd = 1.0; }
+    dt::DriveTrainMappingCore mapping;
+    const auto out = mapping.evaluate(model, series, nullptr);
+    // Δ(½Jω²)=3 J，关节功率与传动损耗均为零。
+    EXPECT_NEAR(out.points[0].energy.eMotor, 3.0, 1e-12);
+    EXPECT_NEAR(out.points[0].energy.eRotor, 3.0, 1e-12);
+    EXPECT_DOUBLE_EQ(out.points[0].energy.eJoint, 0.0);
+    EXPECT_DOUBLE_EQ(out.points[0].q1.timeShare, 1.0);
 }

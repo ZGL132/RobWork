@@ -195,8 +195,8 @@ struct InputSlice {
     /// 与失效判据，CON-05；builder 计算，非申报值）。
     core::ContentIdentity sliceId;
     /// 输入基准身份＝SHA-256 over SliceCodec baseline-projection 形态编码
-    /// （§5.1 D-04：仅基准类条目＋快照身份块参与——比较基准（EVI-02/
-    /// RPT-04）与"同一冻结输入复评"（C5）的凭据；builder 计算，非申报值）。
+    /// （§5.1 D-04：仅基准类条目＋快照身份块参与——完整冻结输入复评
+    /// （C5）的凭据；跨设计共同基准另见Verdict.hpp，builder计算，非申报值）。
     core::ContentIdentity inputBaselineId;
 
     /// 全字段成员精确等值（测试/codec 往返核对用；身份判定以 sliceId 为准

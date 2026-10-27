@@ -5479,6 +5479,47 @@
         "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
       },
       "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.designReview.Recheck",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Recheck.cpp",
+          "symbol": "Recheck",
+          "startLine": 1,
+          "endLine": 635,
+          "sha256": "1c2605e7fceb5adda1bae73b83de23afef6204e319fde5f815a74c4a71e4e24b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+        "conclusion": "仅修正正安全间距注释；真实距离能力及查询归policy端口，不改计算路径"
+      },
+      "differences": "DESIGN-T01：仅修正正安全间距注释；真实距离能力及查询归policy端口，不改计算路径",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+        "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+      }
     }
   ]
 }

@@ -74,7 +74,7 @@ using workflow::StaleHint;
 
 /// 被测数据集与档案引用（WP-22-T13 登记的 golden wf-*——当前一件）。
 constexpr const char* kDatasetId = "wf-gate-advice-fixture";
-constexpr const char* kDatasetVersion = "1.0.0";
+constexpr const char* kDatasetVersion = "1.1.0";
 constexpr const char* kProfileId = "wf-fixture";
 constexpr const char* kProfileVersion = "1.0.0";
 

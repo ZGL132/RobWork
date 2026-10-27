@@ -13,8 +13,8 @@
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
      "symbol": "aggregateVerdict",
      "qualifiedSymbol": "sdurws::ird::evidence::aggregateVerdict",
-     "startLine": 379,
-     "endLine": 586,
+     "startLine": 381,
+     "endLine": 588,
      "sha256": "3cb1da55f8cfa4f3494915d17b9161f82688313bb728ad3b09dd9fb5b7ccbf5f"
     }
    ],
@@ -1205,6 +1205,211 @@
    "nonOverlapEvidence": {
     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T47/nonoverlap-evidence.json",
     "sha256": "d9b45fffbcf7014095ffe0724bd0cd5c02fdce769f5a40797093fd6de8982c7e"
+   }
+  },
+  {
+   "functionId": "evidence.designReview.Compatibility",
+   "ownerUnit": "evidence",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Compatibility.hpp",
+     "symbol": "CachedResultSummary",
+     "startLine": 1,
+     "endLine": 399,
+     "sha256": "f7051d036ec35913f7782494a92ad3b0422b7409705e9c8e7c89753c9b07a055"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_evidence"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容"
+   },
+   "differences": "DESIGN-T01：共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+     "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "evidence.designReview.Slice",
+   "ownerUnit": "evidence",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Slice.hpp",
+     "symbol": "InputSlice",
+     "startLine": 1,
+     "endLine": 418,
+     "sha256": "3e7d79b2d9541e417602b39ebebedc2cf1aaf47534f224af4ca3a3db796babca"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_evidence"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容"
+   },
+   "differences": "DESIGN-T01：共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+     "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "evidence.designReview.Verdict",
+   "ownerUnit": "evidence",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
+     "symbol": "checkComparisonBaselinesConsistent",
+     "startLine": 1,
+     "endLine": 765,
+     "sha256": "5d9c30515cbca3b152f625b83bba580c7675d9ebc76735e12a2cd87146131178"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_evidence"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容"
+   },
+   "differences": "DESIGN-T01：共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+     "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "evidence.designReview.VerdictTest",
+   "ownerUnit": "evidence",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/VerdictTest.cpp",
+     "symbol": "VerdictBaseline",
+     "startLine": 1,
+     "endLine": 1206,
+     "sha256": "df9c7f3037b1e236ccb6e53a07b262bdcdb5faefcc3719345d7cda5bb2067b7e"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_evidence_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+     "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "evidence.designReview.Verdict.hpp",
+   "ownerUnit": "evidence",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Verdict.hpp",
+     "symbol": "ComparisonBaseline",
+     "startLine": 1,
+     "endLine": 689,
+     "sha256": "411885762440a57cbf384f0b8a022eec482382ccca838488c263db3c2604f881"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_evidence"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容"
+   },
+   "differences": "DESIGN-T01：公共值接口/声明及业务边界说明；实现与实际消费者分别登记，无新上游数值核心",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+     "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
    }
   }
  ]

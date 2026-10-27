@@ -329,7 +329,7 @@ SnapshotBuilder 协议（单线程、有限时长）：
 | `evaluationKey / evaluatorContractVersion` | EvaluationKey / uint32 | 是 | 切片绑定的评估器与契约版本（进入身份——同输入不同契约版本＝不同切片，CON-04） |
 | `entries` | std::vector\<DependencyEntry\> | 是（≥1） | 冻结的依赖清单（按 (kind,key) 字典序稳定存储）；每条 Object 条目必须能在快照 objectClosure 中找到（子集校验，防漏声明错配） |
 | `sliceId` | core::ContentIdentity | 是 | 切片内容身份（§5.1）——缓存键与失效判据（CON-05） |
-| `inputBaselineId` | core::ContentIdentity | 是 | **输入基准身份**（§5.1 D-04）：仅模型/需求/工况集/冻结样本集条目参与，排除求解类配置——"同一冻结输入复评"（C5）与比较基准（EVI-02）的凭据 |
+| `inputBaselineId` | core::ContentIdentity | 是 | **输入基准身份**（§5.1 D-04）：仅模型/需求/工况集/冻结样本集条目参与，排除求解类配置——"同一冻结输入复评"（C5）的完整输入凭据；方案比较另用§6.5共同基准 |
 | `snapshotId` | core::ContentIdentity | 是 | 来源快照（切片 ⊆ 快照内容） |
 
 #### 4.2.3 声明—解析—冻结协议与条件依赖
@@ -374,7 +374,7 @@ SnapshotBuilder 协议（单线程、有限时长）：
 | --- | --- | --- | --- | --- |
 | `snapshotId` | SnapshotCodec(refs-only) 规范字节 | SHA-256（core ContentDigester，D-05 同源） | 字节等值（摘要相等） | 快照完整性凭据；通用证据门禁项（§6.2） |
 | `sliceId` | SliceCodec(全部冻结条目含 Environment 版本要素) | 同上 | 字节等值 | **缓存键与失效判据**（CON-05）；运行身份组成部分 |
-| `inputBaselineId` | SliceCodec 的**子集**（Object(task/region/case-set/model 类角色)＋SampleSet＋NameMap＋快照身份块；排除求解类 Configuration 与 Environment 中的非基准版本；`runtime.model-identity`/`runtime.robwork-baseline` 属**基准类要素、进入** inputBaselineId——跨基线/跨编译器比较被 EVI-02 拦截，CR-05） | 同上 | 字节等值 | 比较基准（EVI-02/RPT-04）；"同一冻结输入复评"凭据（C5） |
+| `inputBaselineId` | SliceCodec 的**子集**（Object(task/region/case-set/model 类角色)＋SampleSet＋NameMap＋快照身份块；排除求解类 Configuration 与 Environment 中的非基准版本；`runtime.model-identity`/`runtime.robwork-baseline` 属**基准类要素、进入** inputBaselineId——跨基线/跨编译器比较被 EVI-02 拦截，CR-05） | 同上 | 字节等值 | 完整输入复评凭据（C5）；不可直接用作跨设计比较的共同基准 |
 | `evidenceManifest.digest` / `profile.contentIdentity` / `proof` 绑定身份 | 各自 canonical 编码 | 同上 | 字节等值 | 结果追溯与兼容判定（§6、§8.2） |
 
 **三种"等价"的区别（冻结规则）**：
@@ -564,15 +564,18 @@ VerdictResult aggregateVerdict(const VerdictInput&, const EvaluatorRegistry&,
 
 ### 6.5 比较基准一致性检查（EVI-02/RPT-04/OPT 纯判定）
 
+**DESIGN-T01（2026-10-27）**：`inputBaselineId`仍保存模型/名称映射/完整输入身份，保持复评、缓存与历史追溯语义。新增`comparisonInputId`由输入组装方对共同需求、工况内容、冻结样本以及共同策略/环境/评估版本的规范内容生成；排除候选模型、名称映射、分支与修订，禁止直接复制完整输入摘要代替共同基准。需求内容不同即必须不同，不能只比较对象ID或必验集合ID。evidence只消费权威规范摘要，不猜领域对象角色。比较允许同项目内不同设计、不同分支；项目边界保留。生成入口为`computeComparisonInputId(requirementsId, caseInputsId, sampleSetIds, environmentId)`，各身份由组装方对权威规范内容求得；编码为`IRDCMP1`＋三个32字节内容身份（需求、工况、环境）＋大端u64样本数量＋按冻结顺序的样本身份；非零前置校验，摘要统一经core::ContentDigester。双方共同摘要均提供且非零时比较该摘要、requiredCaseSetId和sampleSetIds；一侧缺失/零摘要或任一维不一致拒绝。兼容旧调用：双方均未提供共同摘要时，仅允许完整inputBaselineId相同的保守比较。该兼容路径不能放行不同设计。空集/单条仅表示无可比差异，不产生正式比较结论。
+
 ```cpp
 struct ComparisonBaseline {          // 从各结果的 envelope 提取
     core::ProjectId project; core::BranchId branch;
     core::ContentIdentity inputBaselineId;   // 模型/需求/工况集/冻结样本集基准（§5.1）
     core::ContentIdentity requiredCaseSetId; // 必验工况集身份
     std::vector<core::ContentIdentity> sampleSetIds;
+    std::optional<core::ContentIdentity> comparisonInputId; // 共同输入，排除被比较设计
 };
 CheckResult checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>&);
-// 全部相等→通过；任何不等→失败并列出差异维度（基准不同的方案/候选/报告变体不得直接比较）
+// 同项目、共同输入、工况与样本一致→通过；设计/分支允许不同，差异逐项列出
 ```
 
 方案比较（RPT-04）、优化候选比较（OPT 内部 Pareto 比较）与报告变体章节共用本检查；样本集身份不等（如采样预算改变）→ 旧覆盖率/候选指标不可与新的直接比较（KIN-04 冻结样本集 + C5 复评规则的联合落地，EV-COV-4）。

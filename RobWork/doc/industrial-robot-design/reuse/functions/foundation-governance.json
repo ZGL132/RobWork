@@ -2280,7 +2280,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2351,7 +2351,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2422,7 +2422,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2494,7 +2494,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2566,7 +2566,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2650,7 +2650,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2734,7 +2734,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2818,7 +2818,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2933,7 +2933,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -3049,7 +3049,7 @@
     },
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     },
     {
      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -9863,8 +9863,8 @@
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
      "symbol": "foreach ($selectedTaskFile in $TaskFile)",
-     "startLine": 219,
-     "endLine": 226,
+     "startLine": 221,
+     "endLine": 228,
      "sha256": "8da9d289a2db14757b2fa62202890f084f28678265e9862869d627d6df3c6598"
     }
    ],
@@ -9882,7 +9882,7 @@
    "inputs": [
     {
      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-     "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+     "sha256": "63b66fcbd47e6b2c1ff6638101667098f2c7dba9ccc2ae2917e4279832f12090"
     }
    ],
    "execution": {
@@ -10099,6 +10099,84 @@
     "sha256": "f7a5c0cad3b84fabbee5327f00ddc26ae45d54b4425f6d9ab0394b3783a51785"
    },
    "auditBoundary": "仅生成器头注/导入区段覆盖载体（REUSE-T49 落地批）；功能语义由 fixtureGeneration 行承载；不证明 T01 完整或迁移完成"
+  },
+  {
+   "functionId": "foundation-governance.designGolden.golden-assets",
+   "ownerUnit": "foundation-governance",
+   "requirements": [
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/scripts/industrialrobot/golden-assets.ps1",
+     "sha256": "32a1af185369d9291aa4fdfcb8ef024acd388249fcf59a03904c1ab8672edfd6",
+     "symbol": "Test-DeclaredGoldenJson",
+     "startLine": 1,
+     "endLine": 43
+    }
+   ],
+   "targets": [],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "NONE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+    "conclusion": "17项真实正反例通过；新黄金数据资产的精确路径、manifest身份、登记、大小/摘要核验。治理执行记录不授予核心算法权限。"
+   },
+   "differences": "新增JSON数据资产检查和正反例，脚本等可执行文件仍经原源码检查，未知文件仍拒绝",
+   "inputs": [
+    {
+     "path": "RobWork/scripts/industrialrobot/golden-assets.ps1",
+     "sha256": "32a1af185369d9291aa4fdfcb8ef024acd388249fcf59a03904c1ab8672edfd6"
+    }
+   ],
+   "execution": {
+    "kind": "governance-script",
+    "entry": "RobWork/scripts/industrialrobot/golden-assets.ps1",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1; dot-source RobWork/scripts/industrialrobot/golden-assets.ps1"
+   },
+   "auditBoundary": "本包治理分支实施自查；pending不代表治理独立验收或复用迁移关闭"
+  },
+  {
+   "functionId": "foundation-governance.designGolden.test-golden-assets",
+   "ownerUnit": "foundation-governance",
+   "requirements": [
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+     "sha256": "2ff513940aacbf4786e60e28283f1920ea0f373dd8ba3215ef12ce1e3938fcd8",
+     "symbol": "ExpectRejected",
+     "startLine": 1,
+     "endLine": 91
+    }
+   ],
+   "targets": [],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "NONE",
+   "decision": "pending",
+   "status": "pending",
+   "search": {
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+    "conclusion": "17项真实正反例通过；新黄金数据资产的精确路径、manifest身份、登记、大小/摘要核验。治理执行记录不授予核心算法权限。"
+   },
+   "differences": "新增JSON数据资产检查和正反例，脚本等可执行文件仍经原源码检查，未知文件仍拒绝",
+   "inputs": [
+    {
+     "path": "RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+     "sha256": "2ff513940aacbf4786e60e28283f1920ea0f373dd8ba3215ef12ce1e3938fcd8"
+    }
+   ],
+   "execution": {
+    "kind": "governance-script",
+    "entry": "RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1; dot-source RobWork/scripts/industrialrobot/test-golden-assets.ps1"
+   },
+   "auditBoundary": "本包治理分支实施自查；pending不代表治理独立验收或复用迁移关闭"
   }
  ]
 }

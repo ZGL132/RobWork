@@ -156,6 +156,8 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 
 ### 1.2 阶段映射（REQUIREMENTS §3 ＋ ARCH §10.1）
 
+DESIGN-T01（2026-10-27）：阶段B的OPT-B与RPT-01-B须可在轨迹/动力学/选型已装配但输入不足时独立使用；七阶段导航序不构成全前序强制依赖。各能力缺项仍由其域就绪投影报告，C/D能力不得借静态入口绕过自身前置。当前审核修正契约见[tasks/DESIGN-T01.json](tasks/DESIGN-T01.json)，实施提交不等于独立验收。
+
 | 阶段 | 启用 WP | 单元 |
 | --- | --- | --- |
 | A 平台 | WP-01~11（＋WP-24 版本基线首版、WP-00 治理、WP-22 任务卡先行） | core/testkit/project/evidence/runtime/policy/execution/diagnostics/ui/io ＋ workflow 卡 |

@@ -185,7 +185,11 @@ StageGatingState PureStageGateService::evaluate(const GateInputs& inputs) const
         // 字面"非 Blocked"）不阻断本阶段独立判定——就绪权威在域投影（N1：
         // 各域自报），门控不替域判断"上游产物是否真的够用"。
         const GateDecision* blockedPrefix = nullptr;  // 借用指针——指向本函数局部 decisions，生命周期内有效
-        for (std::size_t p = 0; p < i; ++p) {
+        // DESIGN-T01：优化/报告的最低能力为B期静态链；C期的轨迹、
+        // 动力与器件只在相应能力投影要求时生效，不能从导航顺序追加依赖。
+        const std::size_t prerequisiteCount =
+            stage == ui::StageId::Optimization || stage == ui::StageId::Reporting ? 3U : i;
+        for (std::size_t p = 0; p < prerequisiteCount; ++p) {
             if (state.decisions[p].status == ui::StageViewStatus::Blocked) {
                 blockedPrefix = &state.decisions[p];
                 break;  // 取首个（序位最小）Blocked 前序——确定性

@@ -20,6 +20,8 @@
 #include <sdurws/ird/evidence/Verdict.hpp>
 
 #include <algorithm>
+#include <stdexcept>
+#include <sdurws/ird/core/Digest.hpp>
 #include <utility>
 
 namespace sdurws::ird::evidence {
@@ -676,6 +678,35 @@ EligibilityCheck checkReviewRecordEligibility(const VerdictInput& input,
 // 比较基准一致性检查（§6.5——实现口径 I-8）
 // =====================================================================
 
+core::ContentIdentity computeComparisonInputId(
+    const core::ContentIdentity& requirementsId, const core::ContentIdentity& caseInputsId,
+    const std::vector<core::ContentIdentity>& sampleSetIds,
+    const core::ContentIdentity& environmentId)
+{
+    core::ContentDigester digester;
+    constexpr std::string_view magic{"IRDCMP1"};
+    digester.update(magic.data(), magic.size());
+    // 固定宽度身份无分隔歧义；全零不是可供比较的内容凭据。
+    const auto appendIdentity = [&digester](const core::ContentIdentity& identity) {
+        if (identity == core::ContentIdentity{}) {
+            throw std::invalid_argument("comparison input identity must be nonzero");
+        }
+        digester.update(identity.bytes.data(), identity.bytes.size());
+    };
+    appendIdentity(requirementsId);
+    appendIdentity(caseInputsId);
+    appendIdentity(environmentId);
+    const auto count = static_cast<std::uint64_t>(sampleSetIds.size());
+    for (int shift = 56; shift >= 0; shift -= 8) {
+        const auto byte = static_cast<std::uint8_t>(count >> shift);
+        digester.update(&byte, 1);
+    }
+    for (const auto& identity : sampleSetIds) { appendIdentity(identity); }
+    core::ContentIdentity result;
+    result.bytes = digester.finalize();
+    return result;
+}
+
 BaselineConsistencyResult
 checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baselines)
 {
@@ -690,7 +721,6 @@ checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baseli
     }
 
     bool diffProject = false;
-    bool diffBranch = false;
     bool diffInputBaseline = false;
     bool diffRequiredCaseSet = false;
     bool diffSampleSets = false;
@@ -700,9 +730,15 @@ checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baseli
     const ComparisonBaseline& first = baselines.front();
     for (const ComparisonBaseline& other : baselines) {
         diffProject = diffProject || !(other.project == first.project);
-        diffBranch = diffBranch || !(other.branch == first.branch);
-        diffInputBaseline =
-            diffInputBaseline || !(other.inputBaselineId == first.inputBaselineId);
+        // 被比较的设计/分支可以不同；完整复评身份仍用于缓存与历史追溯。
+        // 新共同基准必须双边提供且相同；单边缺失不能退回放行。
+        const bool commonProvided = other.comparisonInputId || first.comparisonInputId;
+        diffInputBaseline = diffInputBaseline
+            || (commonProvided ? (!first.comparisonInputId || !other.comparisonInputId
+                                   || *first.comparisonInputId == core::ContentIdentity{}
+                                   || *other.comparisonInputId == core::ContentIdentity{}
+                                   || other.comparisonInputId != first.comparisonInputId)
+                               : other.inputBaselineId != first.inputBaselineId);
         diffRequiredCaseSet =
             diffRequiredCaseSet || !(other.requiredCaseSetId == first.requiredCaseSetId);
         diffSampleSets = diffSampleSets || !(other.sampleSetIds == first.sampleSetIds);
@@ -711,9 +747,6 @@ checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baseli
     // 按枚举声明序输出（＝§6.5 字段序——确定性，NFR-COR-02）。
     if (diffProject) {
         out.differingDimensions.push_back(BaselineDifferenceDimension::Project);
-    }
-    if (diffBranch) {
-        out.differingDimensions.push_back(BaselineDifferenceDimension::Branch);
     }
     if (diffInputBaseline) {
         out.differingDimensions.push_back(BaselineDifferenceDimension::InputBaseline);

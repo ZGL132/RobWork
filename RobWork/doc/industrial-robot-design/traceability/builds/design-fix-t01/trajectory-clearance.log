@@ -1,0 +1,53 @@
+Note: Google Test filter = SmoothRecheckTest.*
+[==========] Running 22 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 22 tests from SmoothRecheckTest
+[ RUN      ] SmoothRecheckTest.RecheckPassedBaselineZeroSubdivision_WP16T07_ACC1
+[       OK ] SmoothRecheckTest.RecheckPassedBaselineZeroSubdivision_WP16T07_ACC1 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckDetectsMidPathCollision_WP16T07_AT06
+[       OK ] SmoothRecheckTest.RecheckDetectsMidPathCollision_WP16T07_AT06 (1 ms)
+[ RUN      ] SmoothRecheckTest.RecheckBudgetExhaustedDataInsufficient_WP16T07_AT06
+[       OK ] SmoothRecheckTest.RecheckBudgetExhaustedDataInsufficient_WP16T07_AT06 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckEvidenceUnavailableDataInsufficient_WP16T07_AT06
+[       OK ] SmoothRecheckTest.RecheckEvidenceUnavailableDataInsufficient_WP16T07_AT06 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckDetectsLimitViolation_WP16T07_V15
+[       OK ] SmoothRecheckTest.RecheckDetectsLimitViolation_WP16T07_V15 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckCanceledZeroMaterial_WP16T07_UX03
+[       OK ] SmoothRecheckTest.RecheckCanceledZeroMaterial_WP16T07_UX03 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckDeterministicReplay_WP16T07_NFRCOR02
+[       OK ] SmoothRecheckTest.RecheckDeterministicReplay_WP16T07_NFRCOR02 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckSamplerContractViolation_WP16T07_ACC2
+[       OK ] SmoothRecheckTest.RecheckSamplerContractViolation_WP16T07_ACC2 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckPreflightFailsFast_WP16T07_ACC2
+[       OK ] SmoothRecheckTest.RecheckPreflightFailsFast_WP16T07_ACC2 (0 ms)
+[ RUN      ] SmoothRecheckTest.RecheckCollisionThenReplanSucceeds_WP16T07_AT06
+[       OK ] SmoothRecheckTest.RecheckCollisionThenReplanSucceeds_WP16T07_AT06 (8 ms)
+[ RUN      ] SmoothRecheckTest.SmoothAnalyticGoldenCase_WP16T07_NFRCOR01
+[       OK ] SmoothRecheckTest.SmoothAnalyticGoldenCase_WP16T07_NFRCOR01 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothCollinearIsNoChange_WP16T07_ACC1
+[       OK ] SmoothRecheckTest.SmoothCollinearIsNoChange_WP16T07_ACC1 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothSimplifyDropsRedundant_WP16T07_ACC1
+[       OK ] SmoothRecheckTest.SmoothSimplifyDropsRedundant_WP16T07_ACC1 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothSimplifyRespectsMandatory_WP16T07_ACC1
+[       OK ] SmoothRecheckTest.SmoothSimplifyRespectsMandatory_WP16T07_ACC1 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothToleranceViolatedSingleAttempt_WP16T07_ACC1
+[       OK ] SmoothRecheckTest.SmoothToleranceViolatedSingleAttempt_WP16T07_ACC1 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothGiveUpAfterRetries_WP16T07_ACC1
+[       OK ] SmoothRecheckTest.SmoothGiveUpAfterRetries_WP16T07_ACC1 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothCanceledZeroMaterial_WP16T07_UX03
+[       OK ] SmoothRecheckTest.SmoothCanceledZeroMaterial_WP16T07_UX03 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothTcpDeviationGatesSimplify_WP16T07_ACC1
+[       OK ] SmoothRecheckTest.SmoothTcpDeviationGatesSimplify_WP16T07_ACC1 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothFkPortErrorPropagates_WP16T07_ACC2
+[       OK ] SmoothRecheckTest.SmoothFkPortErrorPropagates_WP16T07_ACC2 (0 ms)
+[ RUN      ] SmoothRecheckTest.LinearGeometryFactoryContract_WP16T07_ACC3
+[       OK ] SmoothRecheckTest.LinearGeometryFactoryContract_WP16T07_ACC3 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothUpstreamPolynomialCrossCheck_REUSE_T09
+[       OK ] SmoothRecheckTest.SmoothUpstreamPolynomialCrossCheck_REUSE_T09 (0 ms)
+[ RUN      ] SmoothRecheckTest.SmoothRejectsNonFiniteWaypoints_REUSE_T09
+[       OK ] SmoothRecheckTest.SmoothRejectsNonFiniteWaypoints_REUSE_T09 (0 ms)
+[----------] 22 tests from SmoothRecheckTest (13 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 1 test suite ran. (13 ms total)
+[  PASSED  ] 22 tests.

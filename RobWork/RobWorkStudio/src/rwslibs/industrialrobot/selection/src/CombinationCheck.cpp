@@ -382,8 +382,8 @@ constexpr std::uint32_t kScreeningCodecVersion = 1;     ///< IRDSLBV1
 // jointKind 字段〔u8 枚举〕——SEL-09 范围外语义的编码面；字段面演进
 // 版本递增纪律的执行，v1 字节流由 expectHeader 版本核对拒绝——不带
 // 静默兼容读）。
-constexpr std::uint32_t kAxisFactsCodecVersion = 2;     ///< IRDSAFV1
-constexpr std::uint32_t kMappingBatchCodecVersion = 1;  ///< IRDSMBV1
+constexpr std::uint32_t kAxisFactsCodecVersion = 3;     ///< DESIGN-T01：追加实际轴转矩时序，旧载荷须重算
+constexpr std::uint32_t kMappingBatchCodecVersion = 2;  ///< IRDSMBV1：同一时序随组合映射事实传递
 constexpr std::uint32_t kCheckResultCodecVersion = 1;   ///< IRDSCCV1
 constexpr std::uint32_t kDtComboSetCodecVersion = 1;    ///< IRDSDCV1
 
@@ -460,6 +460,26 @@ ScreeningCriteria readScreeningCriteria(ByteReader& r)
     return c;
 }
 
+/** 写入完整循环时序；时间s、转矩N·m，编码器沿用既有有限值与字节序校验。 */
+void writeTorqueHistory(ByteWriter& w, const std::vector<std::pair<double, double>>& history)
+{
+    w.u32(static_cast<std::uint32_t>(history.size()));
+    for (const auto& sample : history) { w.f64(sample.first); w.f64(sample.second); }
+}
+
+/** 读取完整循环时序；逐项受ByteReader边界保护，截断载荷抛invalid_argument。 */
+std::vector<std::pair<double, double>> readTorqueHistory(ByteReader& r)
+{
+    std::vector<std::pair<double, double>> history;
+    const auto count = r.u32();
+    for (std::uint32_t i = 0; i < count; ++i) {
+        const double time = r.f64();
+        const double torque = r.f64();
+        history.emplace_back(time, torque);
+    }
+    return history;
+}
+
 void writeAxisWorkpointFacts(ByteWriter& w, const AxisWorkpointFacts& f)
 {
     w.id128(f.jointId);
@@ -476,6 +496,7 @@ void writeAxisWorkpointFacts(ByteWriter& w, const AxisWorkpointFacts& f)
     w.optF64(f.motorPowerPeak);
     w.optF64(f.motorPowerRms);
     w.optF64(f.peakDuration);
+    writeTorqueHistory(w, f.motorTorqueHistory);
     // 工况需求与轴侧事实。
     w.optF64(f.requiredHoldingTorque);
     w.u8(f.externalLoad.has_value() ? 1 : 0);
@@ -512,6 +533,7 @@ AxisWorkpointFacts readAxisWorkpointFacts(ByteReader& r)
     f.motorPowerPeak = r.optF64();
     f.motorPowerRms = r.optF64();
     f.peakDuration = r.optF64();
+    f.motorTorqueHistory = readTorqueHistory(r);
     f.requiredHoldingTorque = r.optF64();
     if (r.u8() != 0) {
         ExternalLoadFacts load;
@@ -1062,6 +1084,7 @@ std::vector<std::uint8_t> encodeMappingBatchFacts(const MappingBatchFacts& facts
         w.optF64(a.motorPowerPeak);
         w.optF64(a.motorPowerRms);
         w.optF64(a.peakDuration);
+        writeTorqueHistory(w, a.motorTorqueHistory);
         w.f64(a.peakAtTime);
         w.str(a.peakSegmentId);
         // 惯量与效率事实。
@@ -1123,6 +1146,7 @@ MappingBatchFacts decodeMappingBatchFacts(const std::vector<std::uint8_t>& bytes
         a.motorPowerPeak = r.optF64();
         a.motorPowerRms = r.optF64();
         a.peakDuration = r.optF64();
+        a.motorTorqueHistory = readTorqueHistory(r);
         a.peakAtTime = r.f64();
         a.peakSegmentId = r.str();
         a.inertiaRatio = r.optF64();
@@ -1709,6 +1733,7 @@ std::vector<CombinationCheckOutcome> checkCombinations(
                 facts.motorPowerPeak.reset();
                 facts.motorPowerRms.reset();
                 facts.peakDuration.reset();
+                facts.motorTorqueHistory.clear();
                 facts.atTime = 0.0;        // 定位元数据随电机侧一并归零（默认值——非映射权威源不承载）
                 facts.segmentId.clear();
                 if (mfact != nullptr) {
@@ -1719,6 +1744,7 @@ std::vector<CombinationCheckOutcome> checkCombinations(
                     facts.motorPowerPeak = mfact->motorPowerPeak;
                     facts.motorPowerRms = mfact->motorPowerRms;
                     facts.peakDuration = mfact->peakDuration;
+                    facts.motorTorqueHistory = mfact->motorTorqueHistory;
                     facts.atTime = mfact->peakAtTime;
                     facts.segmentId = mfact->peakSegmentId;
                 }

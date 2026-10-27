@@ -56,6 +56,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <utility>  // 完整循环的(时间,实际轴转矩)值对
 
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/evidence/Evaluator.hpp>   // evidence::IEvaluationContext——取消查询
@@ -497,8 +498,11 @@ struct AxisWorkpointFacts {
     std::optional<double> motorSpeedRms;    ///< 电机侧 RMS 角速度，单位 rad/s
     std::optional<double> motorPowerPeak;   ///< 电机侧峰值功率，单位 W
     std::optional<double> motorPowerRms;    ///< 电机侧 RMS 功率，单位 W
-    std::optional<double> peakDuration;     ///< 峰值段持续时长，单位 s（过载
-                                            ///   持续时间维度消费——卡 §7.1）
+    std::optional<double> peakDuration;     ///< 精确峰值窗，单位 s，仅展示，不能证明过载时长
+    /// DESIGN-T01：完整循环的(时间s,实际电机轴转矩N·m)，时间严格递增。
+    /// 相邻点线性连接；必须包含循环首尾及驻留。空/不足两点＝过载证据不足。
+    /// 值所有权归本对象、冻结后只读；不得从峰值/RMS反推补造此序列。
+    std::vector<std::pair<double, double>> motorTorqueHistory;
 
     // ---- 工况需求与轴侧事实 ----
     /// 保持工况需求保持转矩，单位 N·m（nullopt＝无保持工况需求→制动/

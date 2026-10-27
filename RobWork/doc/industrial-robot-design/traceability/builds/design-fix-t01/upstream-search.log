@@ -1,0 +1,27 @@
+RobWork/RobWork/src\sandbox\NvStanHull3D.cpp:390:// due to ambiguity and inconsistent standards ther are no overloaded operators for mult such as va*vb.
+RobWork/RobWork/src\rw\trajectory\TrajectoryIterator.hpp:99:         * @brief Operator overloading ++ for increasing the position of the iterator.
+RobWork/RobWork/src\rw\trajectory\TrajectoryIterator.hpp:113:         * @brief Operator overloading ++ for increasing the position of the iterator.
+RobWork/RobWork/src\rw\trajectory\TrajectoryIterator.hpp:122:         * @brief Operator overloading -- for decreasing the position of the iterator.
+RobWork/RobWork/src\rw\trajectory\TrajectoryIterator.hpp:136:         * @brief Operator overloading -- for decreasing the position of the iterator.
+RobWork/RobWork/src\rw\core\math_fwd.hpp:29:    template< class T > class InertiaMatrix;
+RobWork/RobWork/src\rw\math\InertiaMatrix.hpp:42:    template< class T = double > class InertiaMatrix
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:424:    LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:435:        LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:55:void LinearAlgebra::svd (const Eigen::MatrixXd& M, Eigen::MatrixXd& U, Eigen::VectorXd& sigma,
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEConstraint.cpp:146:    LinearAlgebra::svd (compliance, U, sigmaTmp, V);
+RobWork/RobWork/src\rw\geometry\Line.cpp:118:    LinearAlgebra::svd (covar, U, sigma, V);
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:403:            LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:431:            LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\common\Serializable.hpp:34:     * overloaded read/write methods to perform the serialization.
+RobWork/RobWork/src\rw\common\Serializable.hpp:48:         * @note the id can be empty in which case the overloaded method should provide
+RobWork/RobWork/src\rw\common\Serializable.hpp:60:         * @note the id can be empty in which case the overloaded method should provide
+RobWork/RobWork/src\rw\common\Serializable.hpp:69:     * of some class MyClass one could either inherit from Serializable or provide overloaded
+RobWork/RobWork/src\rw\common\Serializable.hpp:77:         * Enable read-serialization of class T by overloading this method. Data is read
+RobWork/RobWork/src\rw\common\Serializable.hpp:83:         * @note the id can be empty in which case the overloaded method should provide
+RobWork/RobWork/src\rw\common\Serializable.hpp:90:            RW_THROW ("No overloaded method to deserialize class: " << typeid (T).name ());
+RobWork/RobWork/src\rw\common\Serializable.hpp:94:         * Enable write-serialization of class T by overloading this method. Data is written
+RobWork/RobWork/src\rw\common\Serializable.hpp:100:         * @note the id can be empty in which case the overloaded method should provide
+RobWork/RobWork/src\rw\common\Serializable.hpp:107:            RW_THROW ("No overloaded method to serialize class: " << typeid (T).name ());
+RobWork/RobWork/src\rw\common\OutputArchive.hpp:76:         * from the rw::common::Serializable class or where overloaded read() write() methods
+RobWork/RobWork/src\rw\common\OutputArchive.hpp:191:         * inherit from Serializable or there must exist an overloaded method
+RobWork/RobWork/src\rwlibs\algorithms\PointPairsRegistration.cpp:128:    LinearAlgebra::svd (H, U, S, V);

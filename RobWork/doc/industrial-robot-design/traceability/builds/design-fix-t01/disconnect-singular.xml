@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-27T15:23:29.454" name="AllTests">
+  <testsuite name="DtMappingR2Linalg" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T15:23:29.454">
+    <testcase name="SingularValuesAnalyticSpectrum_ConditionNumber" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp" line="1032" status="run" result="completed" time="0." timestamp="2026-10-27T15:23:29.454" classname="DtMappingR2Linalg">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp:1046&#x0A;actual（gate.conditionNumber）=1；expected（3.0）=3；diff=2（容差 1e-9 相对——附录 D 第 9 项）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp:1046
+actual（gate.conditionNumber）=1；expected（3.0）=3；diff=2（容差 1e-9 相对——附录 D 第 9 项）
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

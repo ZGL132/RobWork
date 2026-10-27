@@ -1,0 +1,247 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "DESIGN-T01",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/DESIGN-T01.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/GoldenDatasetContractTest.cpp",
+      "sha256": "2c753ed957661256289b853924384431dfd9173843b4ca5aaa8b90dcf4e61f6c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/Codec.hpp",
+      "sha256": "25493fb5beba14308766c8718708452b07699786050012d496d50977151256ed",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/Series.hpp",
+      "sha256": "5183953ec60d7fa1b3f753de18458b6294613c8fb50239286997dda191d1d5df",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+      "sha256": "ce9b99bc6310a29c21a833cab6375a66ccefe29877aa3626c950dbab9e904fba",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/GoldenDtTest.cpp",
+      "sha256": "83530e61673a67e8706cd5f3030f37eccd675cea0c7f102456596dc09f6a7403",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingGoldenTest.cpp",
+      "sha256": "3a3ef21240850c1ebf25c1eb3c73b45042134e87b28520fb9b94ce2ea6517345",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingR2GoldenTest.cpp",
+      "sha256": "0f53e88ee2fc7144a8ffd77fc04899e563acc3b5f35b50a7611594da9c8539a6",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Compatibility.hpp",
+      "sha256": "f7051d036ec35913f7782494a92ad3b0422b7409705e9c8e7c89753c9b07a055",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Slice.hpp",
+      "sha256": "3e7d79b2d9541e417602b39ebebedc2cf1aaf47534f224af4ca3a3db796babca",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Verdict.hpp",
+      "sha256": "411885762440a57cbf384f0b8a022eec482382ccca838488c263db3c2604f881",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
+      "sha256": "5d9c30515cbca3b152f625b83bba580c7675d9ebc76735e12a2cd87146131178",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/VerdictTest.cpp",
+      "sha256": "df9c7f3037b1e236ccb6e53a07b262bdcdb5faefcc3719345d7cda5bb2067b7e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/SelGoldenDatasetContractTest.cpp",
+      "sha256": "0e9698e306c84e154b9096068a22e9f76cf77b242c3a61f470a142ba26d53ae0",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/include/sdurws/ird/selection/Combination.hpp",
+      "sha256": "6d4435db4b1bababc7504d98c19c8801b6d4e846f5607372cd5e5d5d6fcb3abc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/include/sdurws/ird/selection/Screening.hpp",
+      "sha256": "bde3eaf64e98c7ebe2fad96161fbbf062590e6d187b8e7cbdb12710e4355411f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+      "sha256": "a25d9d82a06cb9f2a2bbde7f0cf49805ec6ee9d1c37b103c73ce7e18cd41be8e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Screening.cpp",
+      "sha256": "765df23493c5d45a91db553bec90d5a131104e19e4d2e0f1169c7ffe07900dda",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/CombinationCheckCodecTest.cpp",
+      "sha256": "46d0c313ebd6bcea8a9c3e9173fc21d8992f8ade4743b5513f6ac34c756f6dcf",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/CombinationTestSupport.hpp",
+      "sha256": "effe30c583c2519de014dbe7cb108f2ae055953db802544033c6d66c0993657b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/ScreeningMotorTest.cpp",
+      "sha256": "bfa2cadf43d45fc2613925282f4fb6ab422cd228ecbc5ca76694c21f97a39f6c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/SelGoldenDatasetTest.cpp",
+      "sha256": "520aec38242164f022f49b93935319360d8532c2f85a074ac868fc06f13e5df1",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.1.0/generate/make_dt_mapping_golden.mjs",
+      "sha256": "7a2481e06b0481cac1ed2106bb832be0c351c10f7757ef633d98020c272e2639",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.1.0/generate/make_sel_screening_golden.mjs",
+      "sha256": "230809a5c889759423fe329021f26279dccbd8be1519d3ab330b5b3423f5bb18",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.1.0/generate/make_wf_gate_advice_fixture.mjs",
+      "sha256": "70876708420e5d67208f9bb9b8cc31572ab9a863a47c9ace7771edda528f18e7",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Recheck.cpp",
+      "sha256": "1c2605e7fceb5adda1bae73b83de23afef6204e319fde5f815a74c4a71e4e24b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/GateAdviceFixtureContractTest.cpp",
+      "sha256": "ec87b8ad0ac3fca6fee446a1631264931e74f91188338c8b4ea9c60ad29a0629",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/include/sdurws/ird/workflow/Gate.hpp",
+      "sha256": "aeeebb80186264285207baa19a8b696245c7fe405d062d01e5d4386f16630859",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp",
+      "sha256": "1cafd766bde262506083b439fa61b9df679fd3d6a06c34150fa64672ed14e699",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/ComparisonTest.cpp",
+      "sha256": "fb13be3fa7a4f767fa2f71ca7fe0b1faed9423221203b49220114c949ae95ad0",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/GateAdviceTest.cpp",
+      "sha256": "4ec11209b3c8058241147644470eb983dc17163da933776e133c1f9cd711349d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DESIGN-T01：保留既有上游能力及产品边界；实际修改功能、消费者和非重叠证据见逐功能矩阵与本包记录，不以文件哈希冒充语义合规/独验",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/README.md"
+    }
+  ]
+}

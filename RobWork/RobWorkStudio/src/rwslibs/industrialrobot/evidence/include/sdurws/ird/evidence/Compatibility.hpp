@@ -119,8 +119,8 @@ namespace sdurws::ird::evidence {
  * inputBaselineId 为什么是 optional：§8.2 原文如此（缓存条目可能早于
  * 基准身份登记引入）。它**不参与** FullHit 判定（§8.2 判定式六条件无
  * 此项——切片身份已含求解配置/契约/环境版本，D-04 双层身份的分工：
- * sliceId 管复用、inputBaselineId 管比较基准一致性〔EVI-02/RPT-04，
- * checkComparisonBaselinesConsistent 消费〕），仅随摘要携带供调用方
+ * sliceId 管复用、inputBaselineId 管完整冻结输入复评；跨设计比较用
+ * Verdict.hpp的comparisonInputId共同摘要），仅随摘要携带供调用方
  * 做记录面核对。
  *
  * 值语义；线程安全：纯值（判定全程只读）。

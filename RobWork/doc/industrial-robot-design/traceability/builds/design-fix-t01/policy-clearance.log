@@ -1,0 +1,168 @@
+Note: Google Test filter = *Collision*:*Clearance*:*Distance*
+[==========] Running 57 tests from 16 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from PolicyThresholdField
+[ RUN      ] PolicyThresholdField.SafetyClearanceZeroIsLegal_D08_Boundary
+[       OK ] PolicyThresholdField.SafetyClearanceZeroIsLegal_D08_Boundary (0 ms)
+[ RUN      ] PolicyThresholdField.SafetyClearanceNegativeRejected_POL_PARSE_2
+[       OK ] PolicyThresholdField.SafetyClearanceNegativeRejected_POL_PARSE_2 (0 ms)
+[----------] 2 tests from PolicyThresholdField (0 ms total)
+
+[----------] 6 tests from PolicyCollisionRules
+[ RUN      ] PolicyCollisionRules.FieldDefaultsPerCard
+[       OK ] PolicyCollisionRules.FieldDefaultsPerCard (0 ms)
+[ RUN      ] PolicyCollisionRules.EnabledWithoutClearanceRejected_POLICY_THRESHOLD_REQUIRED_MISSING
+[       OK ] PolicyCollisionRules.EnabledWithoutClearanceRejected_POLICY_THRESHOLD_REQUIRED_MISSING (0 ms)
+[ RUN      ] PolicyCollisionRules.DisabledWithoutClearanceAllowed
+[       OK ] PolicyCollisionRules.DisabledWithoutClearanceAllowed (0 ms)
+[ RUN      ] PolicyCollisionRules.EnabledEmptyDomainsRejected_APPLICABILITY_INVALID
+[       OK ] PolicyCollisionRules.EnabledEmptyDomainsRejected_APPLICABILITY_INVALID (0 ms)
+[ RUN      ] PolicyCollisionRules.WrongDomainThresholdRejected_PolicyObjectInvalid
+[       OK ] PolicyCollisionRules.WrongDomainThresholdRejected_PolicyObjectInvalid (0 ms)
+[ RUN      ] PolicyCollisionRules.PairRuleStructureValidation
+[       OK ] PolicyCollisionRules.PairRuleStructureValidation (0 ms)
+[----------] 6 tests from PolicyCollisionRules (0 ms total)
+
+[----------] 2 tests from PolicyParseThresholds
+[ RUN      ] PolicyParseThresholds.NonFiniteSafetyClearanceRejectedKeepsRaw_POL_PARSE_2
+[       OK ] PolicyParseThresholds.NonFiniteSafetyClearanceRejectedKeepsRaw_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyParseThresholds.NegativeSafetyClearanceCarriesComparative
+[       OK ] PolicyParseThresholds.NegativeSafetyClearanceCarriesComparative (0 ms)
+[----------] 2 tests from PolicyParseThresholds (0 ms total)
+
+[----------] 1 test from PolicyParseDefaults
+[ RUN      ] PolicyParseDefaults.RequiredMissingWhenEnabledWithoutClearance_Acceptance2
+[       OK ] PolicyParseDefaults.RequiredMissingWhenEnabledWithoutClearance_Acceptance2 (0 ms)
+[----------] 1 test from PolicyParseDefaults (0 ms total)
+
+[----------] 2 tests from PolicyPort
+[ RUN      ] PolicyPort.CollisionBackendReturnsInjectedDescriptor_PortContract
+[       OK ] PolicyPort.CollisionBackendReturnsInjectedDescriptor_PortContract (0 ms)
+[ RUN      ] PolicyPort.CollisionEvaluatorBeforeAssemblyFailsFast_PortContract
+[       OK ] PolicyPort.CollisionEvaluatorBeforeAssemblyFailsFast_PortContract (0 ms)
+[----------] 2 tests from PolicyPort (0 ms total)
+
+[----------] 1 test from SystemDefaultPolicy
+[ RUN      ] SystemDefaultPolicy.ProviderFailsFastOnCollisionHalf_PORT_ASSEMBLY
+[       OK ] SystemDefaultPolicy.ProviderFailsFastOnCollisionHalf_PORT_ASSEMBLY (0 ms)
+[----------] 1 test from SystemDefaultPolicy (0 ms total)
+
+[----------] 4 tests from CollisionSessionScope
+[ RUN      ] CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1
+[       OK ] CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1 (0 ms)
+[ RUN      ] CollisionSessionScope.ThreeDomainMatrixRowAssignment_POL_SCOPE_1
+[       OK ] CollisionSessionScope.ThreeDomainMatrixRowAssignment_POL_SCOPE_1 (0 ms)
+[ RUN      ] CollisionSessionScope.SceneDomainOnlyMandatoryEnters_POL_SCOPE_1
+[       OK ] CollisionSessionScope.SceneDomainOnlyMandatoryEnters_POL_SCOPE_1 (0 ms)
+[ RUN      ] CollisionSessionScope.DisabledPolicyYieldsEmptyScope
+[       OK ] CollisionSessionScope.DisabledPolicyYieldsEmptyScope (0 ms)
+[----------] 4 tests from CollisionSessionScope (0 ms total)
+
+[----------] 13 tests from CollisionSessionGuards
+[ RUN      ] CollisionSessionGuards.ExcludedByRuleKeepsTraceAndSetupExclude_POL_SCOPE_2
+[       OK ] CollisionSessionGuards.ExcludedByRuleKeepsTraceAndSetupExclude_POL_SCOPE_2 (0 ms)
+[ RUN      ] CollisionSessionGuards.MandatoryAdjacentPairSurvivesDefaultFilter_POL_SCOPE_2
+[       OK ] CollisionSessionGuards.MandatoryAdjacentPairSurvivesDefaultFilter_POL_SCOPE_2 (0 ms)
+[ RUN      ] CollisionSessionGuards.ParseTimeConflictStillRejected_POL_SCOPE_2
+[       OK ] CollisionSessionGuards.ParseTimeConflictStillRejected_POL_SCOPE_2 (0 ms)
+[ RUN      ] CollisionSessionGuards.SceneExpansionConflictRecheckRejectsTwoLayerDefense_POL_SCOPE_2
+[       OK ] CollisionSessionGuards.SceneExpansionConflictRecheckRejectsTwoLayerDefense_POL_SCOPE_2 (0 ms)
+[ RUN      ] CollisionSessionGuards.RuleReferenceMissingFromSceneRejected
+[       OK ] CollisionSessionGuards.RuleReferenceMissingFromSceneRejected (0 ms)
+[ RUN      ] CollisionSessionGuards.DuplicateSceneObjectIdsRejected
+[       OK ] CollisionSessionGuards.DuplicateSceneObjectIdsRejected (0 ms)
+[ RUN      ] CollisionSessionGuards.EmptySceneContentIdentityRejected
+[       OK ] CollisionSessionGuards.EmptySceneContentIdentityRejected (0 ms)
+[ RUN      ] CollisionSessionGuards.NullWorkcellRejected
+[       OK ] CollisionSessionGuards.NullWorkcellRejected (0 ms)
+[ RUN      ] CollisionSessionGuards.PrimaryDeviceUnresolvableRejected_NAME_UNRESOLVED
+[       OK ] CollisionSessionGuards.PrimaryDeviceUnresolvableRejected_NAME_UNRESOLVED (0 ms)
+[ RUN      ] CollisionSessionGuards.PrimaryDeviceNameNotADeviceRejected_NAME_UNRESOLVED
+[       OK ] CollisionSessionGuards.PrimaryDeviceNameNotADeviceRejected_NAME_UNRESOLVED (0 ms)
+[ RUN      ] CollisionSessionGuards.GroupTargetConservativelyRejected
+[       OK ] CollisionSessionGuards.GroupTargetConservativelyRejected (0 ms)
+[ RUN      ] CollisionSessionGuards.NullBackendStrategyRejected
+[       OK ] CollisionSessionGuards.NullBackendStrategyRejected (0 ms)
+[ RUN      ] CollisionSessionGuards.MandatoryOnUnlistedMatrixComboRejected_F808
+[       OK ] CollisionSessionGuards.MandatoryOnUnlistedMatrixComboRejected_F808 (0 ms)
+[----------] 13 tests from CollisionSessionGuards (0 ms total)
+
+[----------] 3 tests from CollisionSessionIdentity
+[ RUN      ] CollisionSessionIdentity.SameInputsYieldEqualSessionIdentity
+[       OK ] CollisionSessionIdentity.SameInputsYieldEqualSessionIdentity (0 ms)
+[ RUN      ] CollisionSessionIdentity.CompositionChangesChangeSessionIdentity
+[       OK ] CollisionSessionIdentity.CompositionChangesChangeSessionIdentity (0 ms)
+[ RUN      ] CollisionSessionIdentity.SceneListOrderDoesNotChangeExpansion
+[       OK ] CollisionSessionIdentity.SceneListOrderDoesNotChangeExpansion (0 ms)
+[----------] 3 tests from CollisionSessionIdentity (0 ms total)
+
+[----------] 1 test from CollisionSessionDetector
+[ RUN      ] CollisionSessionDetector.UniqueEntryProducesBuiltinBackend
+[       OK ] CollisionSessionDetector.UniqueEntryProducesBuiltinBackend (0 ms)
+[----------] 1 test from CollisionSessionDetector (0 ms total)
+
+[----------] 1 test from CollisionSessionTokens
+[ RUN      ] CollisionSessionTokens.RoleTokenRoundTripExact
+[       OK ] CollisionSessionTokens.RoleTokenRoundTripExact (0 ms)
+[----------] 1 test from CollisionSessionTokens (0 ms total)
+
+[----------] 2 tests from CollisionSessionNameRules
+[ RUN      ] CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961
+[       OK ] CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961 (0 ms)
+[ RUN      ] CollisionSessionNameRules.PlainDottedNamesPassThroughLiterally_F961
+[       OK ] CollisionSessionNameRules.PlainDottedNamesPassThroughLiterally_F961 (0 ms)
+[----------] 2 tests from CollisionSessionNameRules (0 ms total)
+
+[----------] 1 test from CollisionSessionUpstreamSemantics
+[ RUN      ] CollisionSessionUpstreamSemantics.RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961
+[       OK ] CollisionSessionUpstreamSemantics.RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961 (0 ms)
+[----------] 1 test from CollisionSessionUpstreamSemantics (0 ms total)
+
+[----------] 16 tests from CollisionEvaluation
+[ RUN      ] CollisionEvaluation.SingleStateDetectsAndClearsAnalyticPair_POL_EVAL_1
+[       OK ] CollisionEvaluation.SingleStateDetectsAndClearsAnalyticPair_POL_EVAL_1 (0 ms)
+[ RUN      ] CollisionEvaluation.MandatoryStateFindingCarriesProofMaterial_POL_EVAL_3
+[       OK ] CollisionEvaluation.MandatoryStateFindingCarriesProofMaterial_POL_EVAL_3 (0 ms)
+[ RUN      ] CollisionEvaluation.SampleSetAllCollidingYieldsFindingsOnly_POL_EVAL_2
+[       OK ] CollisionEvaluation.SampleSetAllCollidingYieldsFindingsOnly_POL_EVAL_2 (0 ms)
+[ RUN      ] CollisionEvaluation.PathSequenceKeepsOrderAndPathParameter_POL_EVAL_4
+[       OK ] CollisionEvaluation.PathSequenceKeepsOrderAndPathParameter_POL_EVAL_4 (0 ms)
+[ RUN      ] CollisionEvaluation.BackendExceptionBecomesFailedNotCollision_POL_EVAL_5
+[       OK ] CollisionEvaluation.BackendExceptionBecomesFailedNotCollision_POL_EVAL_5 (1 ms)
+[ RUN      ] CollisionEvaluation.CancellationKeepsPartialFindingsWithoutErrorDiag_POL_EVAL_6
+[       OK ] CollisionEvaluation.CancellationKeepsPartialFindingsWithoutErrorDiag_POL_EVAL_6 (0 ms)
+[ RUN      ] CollisionEvaluation.RepeatedEvaluationsAreFieldIdentical_POL_EVAL_7
+[       OK ] CollisionEvaluation.RepeatedEvaluationsAreFieldIdentical_POL_EVAL_7 (0 ms)
+[ RUN      ] CollisionEvaluation.ConcurrentEvaluateOnSharedSessionIsIdentical_POL_CONC_1
+[       OK ] CollisionEvaluation.ConcurrentEvaluateOnSharedSessionIsIdentical_POL_CONC_1 (0 ms)
+[ RUN      ] CollisionEvaluation.BoundaryDecisionTableByScriptedDistance_POL_EVAL_8
+[       OK ] CollisionEvaluation.BoundaryDecisionTableByScriptedDistance_POL_EVAL_8 (0 ms)
+[ RUN      ] CollisionEvaluation.ModeLabelContextsDoNotChangeOutput_POL_EVAL_8
+[       OK ] CollisionEvaluation.ModeLabelContextsDoNotChangeOutput_POL_EVAL_8 (0 ms)
+[ RUN      ] CollisionEvaluation.GeometryGapKeepsCoverageAndDiagnostic_POL_EVAL_9
+[       OK ] CollisionEvaluation.GeometryGapKeepsCoverageAndDiagnostic_POL_EVAL_9 (0 ms)
+[ RUN      ] CollisionEvaluation.EmptyScopeAndMalformedQueries_POL_EXC_1
+[       OK ] CollisionEvaluation.EmptyScopeAndMalformedQueries_POL_EXC_1 (0 ms)
+[ RUN      ] CollisionEvaluation.ExpiredContextIsRejected_POL_LATE_1
+[       OK ] CollisionEvaluation.ExpiredContextIsRejected_POL_LATE_1 (0 ms)
+[ RUN      ] CollisionEvaluation.MissingDistanceCapabilityFailsLoudly_POL_EVAL_8
+[       OK ] CollisionEvaluation.MissingDistanceCapabilityFailsLoudly_POL_EVAL_8 (0 ms)
+[ RUN      ] CollisionEvaluation.AppliedFiltersTraceAndMandatorySurvive_POL_SCOPE_2
+[       OK ] CollisionEvaluation.AppliedFiltersTraceAndMandatorySurvive_POL_SCOPE_2 (0 ms)
+[ RUN      ] CollisionEvaluation.StopAtFirstFindingTerminatesEarlyWithCoverage
+[       OK ] CollisionEvaluation.StopAtFirstFindingTerminatesEarlyWithCoverage (0 ms)
+[----------] 16 tests from CollisionEvaluation (4 ms total)
+
+[----------] 1 test from CollisionQueryContract
+[ RUN      ] CollisionQueryContract.QueryCarriesNoThresholdOrModeMembers_R_POL_5_D9
+[       OK ] CollisionQueryContract.QueryCarriesNoThresholdOrModeMembers_R_POL_5_D9 (0 ms)
+[----------] 1 test from CollisionQueryContract (0 ms total)
+
+[----------] 1 test from PolCompat1
+[ RUN      ] PolCompat1.CollisionRequiredButDisabledRejected
+[       OK ] PolCompat1.CollisionRequiredButDisabledRejected (0 ms)
+[----------] 1 test from PolCompat1 (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 16 test suites ran. (7 ms total)
+[  PASSED  ] 57 tests.

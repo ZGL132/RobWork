@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DESIGN-T01",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "设计审核七项问题的文档与实际消费者修正",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [],
+  "requirements": [
+    "DYN-04",
+    "SEL-03",
+    "EVI-02",
+    "TRJ-04",
+    "UX-12",
+    "RPT-04"
+  ],
+  "designRefs": [
+    "units/drivetrain.md#9.3",
+    "units/evidence.md#6.5",
+    "units/selection.md#7.1",
+    "units/workflow.md#4.2",
+    "units/trajectory.md#11.2"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/DESIGN-T01.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-*/**",
+    "RobWork/doc/industrial-robot-design/units/*.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/reuse/changes/DESIGN-T01.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/*.json",
+    "RobWork/doc/industrial-robot-design/tasks/DESIGN-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/**",
+    "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "RobWork/scripts/industrialrobot/golden-assets.ps1",
+    "RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+    "RobWork/doc/industrial-robot-design/reuse/policy.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "关节侧负载惯量折到电机侧取C转置乘负载乘C；实际轴转矩、效率后功率、RMS与四象限保持物理一致，独立解析反例先红后绿",
+    "完整复评身份保持，比较共同输入与被比较设计分离；跨分支和跨模型同基准可比，需求/工况/样本不一致仍拒绝",
+    "过载按候选额定阈值核完整电机侧时序，精确峰值窗不能冒充超额定持续时间；无时序明确数据不足",
+    "安全间距后端能力缺失不作不适用；静态优化和B报告不受C域缺输入阻断，实际能力前置仍由域投影负责",
+    "受影响集成构建/测试、接口消费者及独立冒烟、ird_gates、文档/复用检查真实留痕；实施完成待所有者另行独验"
+  ],
+  "note": "所有者2026-10-27授权修改本轮审核问题并检查修正代码。主树起点612143da54365c277a236d12edd665732f2388ee；保留既有trace-matrix及未跟踪文件。保留runtime模型owner、evidence完整inputBaselineId/缓存、既有rw::math::LinearAlgebra及构建测试设施；删除错误折算/理想矩冒充实际矩/峰值窗冒充过载/导航全前序拒绝；适配产品比较输入与电机侧时序。检索RobWork/RobWork/src/rw/math/LinearAlgebra.hpp inverse及InertiaMatrix.hpp；不改既有上游矩阵供给，不新增运动学动力学核心。过载目录阈值及比较身份/能力门控属于产品业务规则，无上游同义项目契约；不扩权限或批准未决外力输入通道。独立验收由所有者另行安排，不自签。 新版本黄金JSON触发旧未知资产分支；仅补按已登记数据集清单、大小及SHA-256校验的新JSON规则并保留未知/可执行文件拒绝，17项正反例通过。",
+  "interUnit": true,
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/DESIGN-T01.json"
+  },
+  "outputs": [
+    "七项设计修订、真实回归与待独验记录"
+  ],
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "knownPitfalls": [
+    "P-DT-4",
+    "P-SEL-1",
+    "P-WF-2"
+  ]
+}

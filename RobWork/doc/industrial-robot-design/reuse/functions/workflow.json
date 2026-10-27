@@ -14,8 +14,8 @@
      "symbol": "PureStageGateService::evaluate",
      "qualifiedSymbol": "sdurws::ird::workflow::PureStageGateService::evaluate",
      "startLine": 134,
-     "endLine": 297,
-     "sha256": "55d56e9b1cc1bce3aa074a734f66f778f66da224b01c357b31796020fb0efd08"
+     "endLine": 301,
+     "sha256": "f353655752e8fbd0ee3d8015930d7718cd90f473155ff862cf8209b53a663fcf"
     }
    ],
    "targets": [
@@ -577,6 +577,252 @@
    "nonOverlapEvidence": {
     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
     "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.designReview.GateAdviceFixtureContractTest.contract",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/GateAdviceFixtureContractTest.cpp",
+     "symbol": "WfGateAdviceFixture",
+     "startLine": 1,
+     "endLine": 741,
+     "sha256": "ec87b8ad0ac3fca6fee446a1631264931e74f91188338c8b4ea9c60ad29a0629"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow_contract_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "workflow.designReview.Gate",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp",
+     "symbol": "PureStageGateService",
+     "startLine": 1,
+     "endLine": 391,
+     "sha256": "1cafd766bde262506083b439fa61b9df679fd3d6a06c34150fa64672ed14e699"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划"
+   },
+   "differences": "DESIGN-T01：能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "workflow.designReview.ComparisonTest",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/ComparisonTest.cpp",
+     "symbol": "WfComparison",
+     "startLine": 1,
+     "endLine": 919,
+     "sha256": "fb13be3fa7a4f767fa2f71ca7fe0b1faed9423221203b49220114c949ae95ad0"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "workflow.designReview.GateAdviceTest",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/GateAdviceTest.cpp",
+     "symbol": "WorkflowDesignReview",
+     "startLine": 1,
+     "endLine": 930,
+     "sha256": "4ec11209b3c8058241147644470eb983dc17163da933776e133c1f9cd711349d"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "workflow.designReview.make_wf_gate_advice_fixture.golden",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.1.0/generate/make_wf_gate_advice_fixture.mjs",
+     "symbol": "const ",
+     "startLine": 1,
+     "endLine": 368,
+     "sha256": "70876708420e5d67208f9bb9b8cc31572ab9a863a47c9ace7771edda528f18e7"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "workflow.designReview.Gate.hpp",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/include/sdurws/ird/workflow/Gate.hpp",
+     "symbol": "GateDecision",
+     "startLine": 1,
+     "endLine": 349,
+     "sha256": "aeeebb80186264285207baa19a8b696245c7fe405d062d01e5d4386f16630859"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划"
+   },
+   "differences": "DESIGN-T01：公共值接口/声明及业务边界说明；实现与实际消费者分别登记，无新上游数值核心",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
    }
   }
  ]

@@ -46,6 +46,7 @@ function Digest([string]$text) {
 function Json([string]$path) { return ((ReadText $path) | ConvertFrom-Json) }
 # 私有数据契约函数复用本入口的冻结树读取/规范化摘要；禁止另起可绕过的校验入口。
 . (Join-Path $PSScriptRoot 'reuse-contract.ps1')
+. (Join-Path $PSScriptRoot 'golden-assets.ps1')
 function GitLines([string[]]$arguments) {
     $v = @(& git -C $RepoRoot @arguments)
     if ($LASTEXITCODE -ne 0) { Fail 'GIT' ($arguments -join ' ') }
@@ -179,7 +180,8 @@ try {
         if (-not (IsProduct $p)) {
             # 未知后缀/无后缀的新产品文件不能默认放行；先登记发现规则与复用契约。
             # 基线非代码资产仍由既有文档/数据校验负责，不扩大为算法合规声明。
-            if ($p.StartsWith($product) -and -not $allBaselineProduct.ContainsKey($p)) { Fail 'UNDECLARED' "new product file type requires governance registration: $p" }
+            if ($p.StartsWith($product) -and -not $allBaselineProduct.ContainsKey($p) -and
+                -not (Test-DeclaredGoldenJson $p)) { Fail 'UNDECLARED' "new product file type requires governance registration: $p" }
             continue
         }
         $count++

@@ -270,12 +270,12 @@ flowchart LR
 | `Kinematics` | `kinematics` | 前序链通过＋运动学域投影就绪 |
 | `TrajectoryDynamics` | `trajectory`、`dynamics` | 前序链通过＋两域投影就绪（聚合判定：两域均就绪才解锁；任一未就绪给缺项清单） |
 | `Selection` | `selection` | 前序链通过＋选型域投影就绪（drivetrain 为 L2 共享服务，不单独投影——其可用性经 selection 域投影呈现） |
-| `Optimization` | `optimization` | 前序链通过＋优化域投影就绪 |
-| `Reporting` | `reporting` | 前序链通过＋报告域投影就绪 |
+| `Optimization` | `optimization` | 建模/需求/运动学前置通过＋优化域所选能力投影就绪；OPT-B不要求C期轨迹/动力/器件 |
+| `Reporting` | `reporting` | 建模/需求/运动学前置通过＋报告域所选级别投影就绪；B级不要求C期章节 |
 
 **门控规则要点（I-WF-1～4）**：
 
-- **I-WF-1 前序链**：阶段 N 解锁要求阶段 1..N-1 全部处于非 Blocked 门控状态（顺序即 UX-12 冻结的七阶段顺序；阶段内能力不改变顺序）。
+- **I-WF-1 前序链**：导航保持UX-12七阶段顺序，前置按能力依赖判断。建模→需求→运动学→轨迹/动力学→选型仍沿前序链；优化与报告最低前置只覆盖建模/需求/运动学。OPT-D和C级报告是否缺轨迹/动力/器件由对应域按所选能力自报inputComplete/missingItemKeys，workflow不推导领域阈值或从导航序额外追加依赖（DESIGN-T01）。
 - **I-WF-2 不重算**：门控判定只消费 `DomainReadinessItem{domainKey, verdict(core::EngineeringStatus), inputComplete, missingItemKeys, hasActiveTask}` 与事件流——workflow 不调用任何领域服务、不读领域对象、不推导工程含义（N1）。
 - **I-WF-3 判定零领域阈值**：门控不含"多少算合格"的数值判定；一切合格性已在各域投影与 policy 中判定（PA-1/NFR-MNT-07）。
 - **I-WF-4 epoch 一致性**：门控判定绑定 `StageReadinessSnapshot.epoch`；事件触发的重判定必须基于不小于上次 epoch 的快照（防止旧投影覆盖新事件，§5.3）。
@@ -747,7 +747,7 @@ public:
 
 | 用例 | 场景 | 依据 | 前置 | 操作 | 预期结果与失败语义 | 观测点 | 类型 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WF-VER-101 | 七阶段顺序与解锁 | UX-12 | 固定投影夹具（前序就绪） | evaluate() | 阶段 N 解锁当且仅当前序全过；顺序与 StageId 冻结序一致 | GateDecision 逐阶段 | 模型 |
+| WF-VER-101 | 七阶段顺序与解锁 | UX-12 | 固定投影夹具（前序就绪） | evaluate() | 只检查该能力实际前置；C域缺项不阻断就绪的OPT-B/B报告；导航顺序与StageId冻结序一致 | GateDecision 逐阶段 | 模型 |
 | WF-VER-102 | 缺项锁定与清单 | UX-10/12 | 投影缺项夹具 | evaluate() | Blocked＋missingItemKeys 逐项透传（不重算不增删） | 缺项清单 | 模型 |
 | WF-VER-103 | 域未装配 | §4.2 | 投影缺域夹具 | evaluate() | Unavailable（区别于 Blocked） | 状态词 | 模型 |
 | WF-VER-104 | 聚合阶段（轨迹＋动力学） | §4.2 | 一域就绪一域缺项 | evaluate() | TrajectoryDynamics=Blocked，缺项只含未就绪域 | 聚合判定 | 模型 |

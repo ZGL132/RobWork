@@ -1133,13 +1133,14 @@ ReflectedInertiaResult DriveTrainMappingCore::evaluate(
                 }
                 axis.jReflectedJointSide = jDiag; // kg·m²（关节轴系）
                 axis.windowProjected = true;
-                // 惯量比（§9.5 R2 窗口式）：(C⁻¹ᵀ·J_load·C⁻¹)(wi,wi)
-                //   / J_rotor,wi——负载折算惯量矩阵同形投影（load 按电机轴
-                // 全局下标配对——条目 j 对应电机轴 j）。
-                if (windowIdx[wi] < load.size()) {
+                // DESIGN-T01：负载在关节轴系，q̇=Cθ̇ 的动能等价要求
+                // 电机侧取 Cᵀ·J_load·C；与转子反射到关节侧的逆变换相反。
+                // 全窗口负载齐备才产出投影，防止部分输入越界或冒充完整值。
+                if (std::all_of(windowIdx.begin(), windowIdx.end(),
+                                [&load](std::size_t idx) { return idx < load.size(); })) {
                     double loadDiag = 0.0;
                     for (std::size_t mm = 0; mm < w; ++mm) {
-                        const double g = cinv(mm, wi);
+                        const double g = model.window->C(mm, wi);
                         loadDiag += load[windowIdx[mm]].loadInertiaJointSide * g * g;
                     }
                     axis.inertiaRatio
@@ -1275,14 +1276,28 @@ void DriveTrainMappingCore::apply(const DriveTrainModel& model,
                 s.efficiencyApplicable = true;
             } else {
                 // 精确零：效率不适用（显式标记——ERR-01，不伪造数值）；
-                // P_trans ＝ 0，该样本不计入能量分项与四象限统计的有效样本
-                // 集合（§8.3/§10.6）。
+                // P_trans ＝ 0；转子功率仍按实际轴转矩计入能量与象限统计。
                 s.pTransmission = 0.0;
                 s.efficiencyApplicable = false;
             }
             // 电机侧总机械功率＝效率折算传动功率＋转子功率项（§10.3——
             // 分项分别报告不混写）。
             s.pMotor = s.pTransmission + s.pRotor;
+            // 实际轴转矩供峰值/RMS和选型消费；tauIdeal 保留无损虚功事实。
+            // 静止时效率无能量流向定义，保留理想保持矩＋转子项，禁止 P/ω。
+            const double rotorTorque = k < model.rotor.size()
+                                           ? model.rotor[k].rotorInertia * s.thetaDDot : 0.0;
+            const double transmissionTorque = s.pJoint > 0.0
+                                                  ? s.tauIdeal / eta.etaForward
+                                                  : (s.pJoint < 0.0
+                                                         ? s.tauIdeal * eta.etaBackward
+                                                         : s.tauIdeal);
+            s.tauMotor = transmissionTorque + rotorTorque;
+            // 四象限按实际轴功率标记；反转电动仍为正功率，反转再生为负。
+            const double shaftPower = s.tauMotor * s.thetaDot;
+            s.quadrant = s.thetaDot == 0.0 || shaftPower == 0.0 ? Quadrant::ZeroDwell
+                         : s.thetaDot > 0.0 ? (shaftPower > 0.0 ? Quadrant::Q1 : Quadrant::Q2)
+                                           : (shaftPower > 0.0 ? Quadrant::Q3 : Quadrant::Q4);
         }
     }
 }
@@ -1460,8 +1475,8 @@ std::vector<MotorOperatingPoint> DriveTrainMappingCore::summarize(
             pRotorV.reserve(ms.samples.size());
             for (const MotorDriveSample& s : ms.samples) {
                 ts.push_back(s.t);
-                if (!s.efficiencyApplicable) {
-                    // 零功率样本不计入能量分项（§8.3）——全部列置 0。
+                if (k >= model.efficiency.size()) {
+                    // 未供给效率时不输出完整能量；已供给但关节零功率仍保留转子项。
                     pMotorV.push_back(0.0);
                     pJointV.push_back(0.0);
                     pLossV.push_back(0.0);
@@ -1500,7 +1515,7 @@ std::vector<MotorOperatingPoint> DriveTrainMappingCore::summarize(
                                         : 0.0;
                 const double pQuad = s.tauMotor * s.thetaDot; // W（象限判定口径）
                 const bool zero = (s.thetaDot == 0.0) || (pQuad == 0.0)
-                                  || (!s.efficiencyApplicable);
+                                  || (k >= model.efficiency.size());
                 QuadrantStats* target = nullptr;
                 if (zero) {
                     target = &p.zeroDwell; // 驻留/保持——不计象限能量
@@ -1508,7 +1523,7 @@ std::vector<MotorOperatingPoint> DriveTrainMappingCore::summarize(
                     target = &p.q1; // 正转电动
                 } else if (s.thetaDot > 0.0 && pQuad < 0.0) {
                     target = &p.q2; // 正转再生
-                } else if (s.thetaDot < 0.0 && pQuad < 0.0) {
+                } else if (s.thetaDot < 0.0 && pQuad > 0.0) {
                     target = &p.q3; // 反转电动
                 } else {
                     target = &p.q4; // 反转再生

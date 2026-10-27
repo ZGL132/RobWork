@@ -6,7 +6,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | drivetrain（**L2 共享计算服务**——ARCHITECTURE §2.3/§3.1：非业务域单元、非 L4 插件；dynamics 与 selection 之间的唯一共享传动计算服务） |
-| 文档版本 | v0.6（2026-10-11，WP-18-T05 实现增量登记——R2 耦合矩阵数值路径落位：§7.2 全表矩阵检查＋块对角精确映射〔τ_motor＝Cᵀ·τ_joint＋J_rotor·θ̈_motor、θ̈_motor＝C⁺·q̈_joint〕＋R2 反射惯量完整矩阵/窗口投影＋三方矩阵内容身份核对原语；R1 阻断反例保留不变；实现偏差与口径澄清逐条见 §18.3，v0.1 首版草案 2026-10-06，v0.2~v0.5＝T02~T04/治理批登记——全记录见 §18.5） |
+| 文档版本 | v0.6（2026-10-11，WP-18-T05 实现增量登记——R2 耦合矩阵数值路径落位：§7.2 全表矩阵检查＋块对角精确映射〔τ_motor＝f_dir(Cᵀ·τ_joint)＋J_rotor·θ̈_motor、θ̈_motor＝C⁺·q̈_joint〕＋R2 反射惯量完整矩阵/窗口投影＋三方矩阵内容身份核对原语；R1 阻断反例保留不变；实现偏差与口径澄清逐条见 §18.3，v0.1 首版草案 2026-10-06，v0.2~v0.5＝T02~T04/治理批登记——全记录见 §18.5） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过） |
 | 主 WP | WP-18（DYN-04 唯一映射实现；DYN-04 映射不归 dynamics 自行实现） |
 | 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53 |
@@ -87,7 +87,7 @@
 
 | 需求 | 本卡承接 | 明确不承接 |
 | --- | --- | --- |
-| **DYN-04**（主责） | 唯一 `DriveTrainMappingEvaluator`：电机侧工作点（τ/ω/P 序列）、方向相关效率 η⁺/η⁻、反射惯量 J·i²、惯量比（数值事实）、能量分项、四象限工作制统计；映射动力学口径 M-12（τ_motor＝Cᵀ·τ_joint＋J_rotor·θ̈，θ̈＝C⁺·q̈；无耦合链等价于对角传动比映射；不对角化/不准静态/不丢交叉耦合项；C 非常矩阵/病态→诊断并阻止） | 关节侧广义力计算（DYN-01 RNEA，归 dynamics）；转子等效惯量与壳体质量的合成规则（SEL-10 权威，本卡只消费"未计入合成"的转子字段并防重复计入） |
+| **DYN-04**（主责） | 唯一 `DriveTrainMappingEvaluator`：电机侧工作点（τ/ω/P 序列）、方向相关效率 η⁺/η⁻、反射惯量 J·i²、惯量比（数值事实）、能量分项、四象限工作制统计；映射动力学口径 M-12（τ_motor＝f_dir(Cᵀ·τ_joint)＋J_rotor·θ̈，θ̈＝C⁺·q̈；无耦合链等价于对角传动比映射；不对角化/不准静态/不丢交叉耦合项；C 非常矩阵/病态→诊断并阻止） | 关节侧广义力计算（DYN-01 RNEA，归 dynamics）；转子等效惯量与壳体质量的合成规则（SEL-10 权威，本卡只消费"未计入合成"的转子字段并防重复计入） |
 | DYN-03（上游口径） | 消费其输出的每轴转角/位移、转速、加速度、**类型化**广义力（转动 N·m／移动 N）、机械功率、峰值（含持续时间窗与所在段）与完整循环 RMS（含驻留）——电机侧统计按同口径生成 | 关节侧序列的产生、峰值/RMS 关节侧统计（WP-17） |
 | SEL-05（支撑） | 经③评估器端口向 selection 提供同一口径电机侧工作点；selection 不重新实现映射 | 电机—减速器—负载组合校核、可行集与淘汰原因（WP-19）；**惯量比阈值**（可配置工程规则——归属 O-11 待裁决，本卡只输出惯量比数值，不做阈值判定） |
 | SEL-09（边界） | 输入含移动关节轴时输出"范围外"稳定诊断（`DT-AXIS-TYPE-OUT-OF-SCOPE`），不静默套用旋转传动（与 §2.1 支持矩阵一致） | 直线传动目录模板与选型筛选（SEL-09-S1，R2，归 selection＋本卡 R2 扩展点，§16） |
@@ -240,7 +240,7 @@ L1  框架基线        RobWork(rw) │ RobWorkSim(rwsim) │ RobWorkStudio(rws)
 | `CMakeLists.txt` | **存在（WP-18-T02，T04/T05 增列测试文件）**——`sdurws_ird_drivetrain` STATIC（C++17，PUBLIC 链 core＋evidence——§3.2 两登记边；别名 `RWS::ird::drivetrain` 仅集成模式）；配置期依赖红线守卫（两登记边/零 Qt/零 gtest·testkit 于产品目标）自持 |
 | `include/sdurws/ird/drivetrain/DiagCodes.hpp` | **存在（WP-18-T02；T03 表尾追加至 21 码；T05 零新增码——§7.2 四码与 §9.3 一码 T02 已登记，T05 首次产码）**——DT-* 码值常量＋登记行清单（§6.3 阻断面 8＋§7.2 矩阵 4＋§9 惯量 2＋§10 效率/统计 4＋§12.1 序列 1＋§12.4/§8.4 表尾追加 2；装配期注册数据源——P-DT-7 收编前不进 diagnostics 全局装配，头内"码值权威链"注释） |
 | `include/sdurws/ird/drivetrain/README.md` | 存在（落位说明版；原占位文案"指向卡 §9"偏差已随 T02 修正——§18.3 闭环） |
-| `src/`（DiagCodes/MappingCore/DriveTrainCodec/Evaluator） | **存在（WP-18-T02＋T03＋T05）**——21 码登记行清单＋映射核心唯一实现（阻断面检查序/R1 对角精确虚功映射/**R2 块对角矩阵映射〔§7.1 公式组：τ_motor＝Cᵀ·τ_joint＋J_rotor·θ̈_motor、θ̈_motor＝C⁺·q̈_joint；交叉耦合逐元素保留〕**/R2 数值核〔单侧 Jacobi SVD＋Gauss-Jordan 求逆——确定性〕/R2 反射惯量完整矩阵＋窗口投影/一致性检查/效率折算/工作点统计/R2 耦合模型工厂/矩阵内容身份核对原语）＋canonical 编解码（输出载荷 v2）＋③端口评估器适配（能力位构造注入） |
+| `src/`（DiagCodes/MappingCore/DriveTrainCodec/Evaluator） | **存在（WP-18-T02＋T03＋T05）**——21 码登记行清单＋映射核心唯一实现（阻断面检查序/R1 对角精确虚功映射/**R2 块对角矩阵映射〔§7.1 公式组：τ_motor＝f_dir(Cᵀ·τ_joint)＋J_rotor·θ̈_motor、θ̈_motor＝C⁺·q̈_joint；交叉耦合逐元素保留〕**/R2 数值核〔单侧 Jacobi SVD＋Gauss-Jordan 求逆——确定性〕/R2 反射惯量完整矩阵＋窗口投影/一致性检查/效率折算/工作点统计/R2 耦合模型工厂/矩阵内容身份核对原语）＋canonical 编解码（输出载荷 v2）＋③端口评估器适配（能力位构造注入） |
 | `test/`（TestMainReport/DiagCodesTest/BuildRedLineTest/MappingGoldenTest/MappingR2GoldenTest/GoldenDtTest） | **存在（WP-18-T02/T03；T04 增列 GoldenDtTest.cpp；T05 增列 MappingR2GoldenTest.cpp）**——`sdurws_ird_drivetrain_test` 37 用例：登记表全表/句法/红线扫描＋映射黄金数据组（T03）＋**R2 黄金组（T05，DtMappingR2Golden 6 用例——耦合窗口解析映射/高速多轴联动交叉项保留/R1 等价回归锚/R1 阻断反例保留/§7.2 全表阻断/R2 反射惯量完整矩阵/三方矩阵内容身份）**＋黄金数据集消费组（T04，DtGoldenMapping 6 用例；T05 修订 At38 用例——窗口变体 R2 位转正命题） |
 | `contract_test/`（ContractTestMain/BuildGraphContractTest/EvaluatorContractTest/GoldenDatasetContractTest） | **存在（WP-18-T02/T03/T04；T05 增补 EndToEndCoupledSliceEvaluation 用例——15 用例）**——`sdurws_ird_drivetrain_contract_test`：构建图边界契约＋evidence 评估器注册/切片依赖声明套件＋黄金数据集登记契约＋**R2 端到端切片评估（T05——能力位注入适配器全链）** |
 | `testdata/golden/dt-mapping-golden/1.0.0/` | **存在（WP-18-T04）**——黄金数据集（manifest.json 按 ird-golden-manifest/1 登记：kind=analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38、integrity 全文件 SHA-256、generate 闭式脚本入库；inputs 5 算例＋AT-38 反例 2 变体，expected 独立参考实现产出）——契约 acceptance 2"testdata/golden/dt-* 按 DatasetManifest 登记"的落地面。**T05 注**：at38R1Rejections.coupling-window 的 `expectCodeByR2Capability` 字段已被 T05 语义取代（§18.3——数据集升版不在该任务 allowedFiles，待同步） |
@@ -448,7 +448,7 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
 | 电机速度 | `θ̇_j(t) ＝ q̇_j(t)/c_j` | — |
 | 电机加速度 | `θ̈_j(t) ＝ q̈_j(t)/c_j` | — |
 | 电机力矩（理想） | `τ_m,j(t) ＝ c_j · τ_j(t)` | 虚功对偶 diag 情形（τ_m＝Ĉᵀτ_j） |
-| 电机力矩（含转子项） | `τ_m,j(t) ＝ c_j·τ_j(t) ＋ J_rotor,j·θ̈_j(t)` | M-12 全量口径（转子项 R1 即计入——"无耦合链等价于对角传动比映射"指含转子项的完整口径；J_rotor 缺失→`DT-ROTOR-MISSING`→该轴力矩按理想口径输出并标 DataInsufficient 素材，见 §10.7） |
+| 电机力矩（含转子项） | `τ_m,j(t) ＝ f_dir(c_j·τ_j(t)) ＋ J_rotor,j·θ̈_j(t)` | M-12 全量口径（转子项 R1 即计入——"无耦合链等价于对角传动比映射"指含转子项的完整口径；J_rotor 缺失→`DT-ROTOR-MISSING`→该轴传动转矩仍按已知效率折算，缺少转子项并标DataInsufficient 素材，见 §10.7） |
 | 电机机械功率 | `P_m,j(t) ＝ τ_m,j(t)·θ̇_j(t)` | 含转子项贡献；效率折算见 §10.3 |
 | 关节侧机械功率 | `P_j(t) ＝ τ_j(t)·q̇_j(t)` | 上游提供或由 τ·q̇ 复核（逐元素，§8.3） |
 
@@ -478,7 +478,7 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
 ```
 位置（增量）：      Δq_joint = C · Δθ_motor          （常矩阵 → q̇ = C·θ̇，q̈ = C·θ̈）
 理想虚功对偶：      τ_motor = Cᵀ · τ_joint
-含转子惯量项：      τ_motor = Cᵀ·τ_joint + J_rotor·θ̈_motor
+实际电机轴转矩：    τ_motor = f_dir(Cᵀ·τ_joint) + J_rotor·θ̈_motor（效率方向见§10.3）
 其中：              θ̈_motor = C⁺ · q̈_joint
 ```
 
@@ -534,7 +534,7 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
 | ①理想几何/力矩映射 | τ_m＝Cᵀτ_j（不含损耗、不含转子项） | 黄金算例逐样本逐元素断言（测试对照容差，附录 D 第 9 项） |
 | ②理想机械功率一致性 | P_motor_ideal ＝ τ_mᵀθ̇ ＝ τ_jᵀCθ̇ ＝ τ_jᵀq̇ ＝ P_joint（逐样本恒等） | 同上；**逐元素**（逐样本逐轴），不以总和/均值替代——防正负抵消（附录 D C4） |
 | ③含效率后的功率平衡 | P_motor ＝ f_dir(P_joint)（§10.3 方向折算）；损耗 E_loss＝∫(P_motor−P_joint)dt＞0（§10.5 恒等式） | 能量守恒黄金算例（双向效率样例：正功段/再生段/混合循环） |
-| ④含转子惯量项的电机侧力矩 | τ_m＝Cᵀτ_j＋J_rotor·θ̈（此时 P_m−P_joint＝转子功率＋传动损耗，不再逐样本等于零） | 转子项单独分项（§9.4/§10.5），一致性断言按"理想部分＋转子部分"分解核对 |
+| ④含转子惯量项的电机侧力矩 | τ_m＝f_dir(Cᵀτ_j)＋J_rotor·θ̈（此时 P_m−P_joint＝转子功率＋传动损耗，不再逐样本等于零） | 转子项单独分项（§9.4/§10.5），一致性断言按"效率后传动部分＋转子部分"分解核对 |
 
 **不得把效率损耗引入理想虚功公式后再声称仍然严格相等**：①/②的恒等性只在理想口径成立；③/④是有损/含惯量口径，按能量分项核对，两者表述不得混写。
 
@@ -542,7 +542,7 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
 
 - **正功率（驱动）**：P_joint＞0——功率自电机流向负载，经正向效率 η⁺（§10.3）。
 - **负功率（再生制动）**：P_joint＜0——功率自负载经传动流回电机侧，经反向效率 η⁻；再生功率/能量分项单独统计（§10.5）。
-- **零功率**：P_joint＝0（精确符号判据，不需要阈值）——效率不适用（显式标记"不适用"，ERR-01 口径，不伪造数值），P_motor＝P_joint＝0，该样本不计入能量分项与四象限统计的有效样本集合（单独计数）。
+- **零功率**：P_joint＝0（精确符号判据，不需要阈值）——效率不适用（显式标记"不适用"，ERR-01 口径，不伪造数值），P_transmission＝0；若存在转子加速，P_motor＝P_rotor仍计入能量，四象限按实际轴转矩与转速判定。只有实际轴零速/零功率才归驻留桶。
 - **机械功率与电气功率**：本卡只计算**机械**功率（关节侧/电机侧轴功率）。**电气功率（母线/电机电气端口）不属于本需求语义（REQUIREMENTS 未定义），明确不计算**；再生能量按机械再生功报告，不声明为可回馈电能——限定语在报告侧保留（RPT-05）。
 - **摩擦**：关节侧摩擦（黏性+库仑，DYN-02）已由 RNEA 计入 τ_joint（dynamics 权威）；传动箱损耗仅经 η 折算（§10.3）。**两者是不同物理环节，摩擦不重复计入**（AT-07 验收要点）；本卡不叠加第二套摩擦模型（MDL-16 边界）。
 
@@ -568,7 +568,7 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
         │ R2：θ̇＝C⁻¹q̇ ⟹ J_ref,joint ＝ (C⁻¹)ᵀ·J_rotor_diag·(C⁻¹)   （对称正定，含交叉项）
         │
   负载折算惯量 J_load@joint（组装方提供，来源标记；权威产生者 P-DT-4 待 dynamics 卡对齐）
-        │ 折算到电机轴：J_load@motor ＝ c²·J_load@joint（对角）；R2 ＝ C⁻¹ᵀ·J_load·C⁻¹
+        │ 折算到电机轴：J_load@motor ＝ c²·J_load@joint（对角）；R2 ＝ Cᵀ·J_load·C
         ▼
   惯量比（数值事实，逐轴）＝ J_load@motor / J_rotor ＝ c²·J_load@joint / J_rotor   （阈值判定归 selection，O-11）
 ```
@@ -583,7 +583,7 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
 - 关节侧反射惯量矩阵：`J_ref ＝ (C⁻¹)ᵀ·diag(J_rotor)·(C⁻¹)`——对称正定（J_rotor≻0、C 可逆）；**输出完整矩阵（含交叉惯量项）**，另附逐轴对角视图供单轴消费。
 - 对称性校验：‖J_ref−J_refᵀ‖ 精确为零（构造保证——按对称式计算）；正定性经 Cholesky 判定（失败 → `DT-INERTIA-NOT-POSITIVE-DEFINITE`，属输入/矩阵非法，阻止并诊断）。
 - **反射惯量不默认对角化**：selection 只需单轴数值时消费对角视图，但交叉项保留在完整矩阵中随结果归档（**不因单轴消费丢弃交叉项**）。
-- 电机侧合成功当量惯量（工作点统计用）：`J_eff,motor ＝ diag(J_rotor) ＋ C⁻¹ᵀ·J_load@joint·C⁻¹`（转子与反射负载之和，电机轴系）——用于加速度力矩分项（§10.4），不作为选型结论。
+- 电机侧合成功当量惯量（工作点统计用）：`J_eff,motor ＝ diag(J_rotor) ＋ Cᵀ·J_load@joint·C`（转子与反射负载之和，电机轴系）——用于加速度力矩分项（§10.4），不作为选型结论。
 
 ### 9.4 防重复计入（SEL-10/MDL-05/MDL-16 边界，单一计入位置）
 
@@ -596,7 +596,7 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
 
 ### 9.5 惯量比（数值事实，阈值判定不在本卡）
 
-- 定义（对角）：`惯量比_j ＝ J_load@motor,j / J_rotor,j ＝ c_j²·J_load@joint,j / J_rotor,j`；R2 窗口轴：`（C⁻¹ᵀ·J_load·C⁻¹)_jj / J_rotor,j` 并附"窗口内存在交叉项、单轴比值为投影值"的限定标记。
+- 定义（对角）：`惯量比_j ＝ J_load@motor,j / J_rotor,j ＝ c_j²·J_load@joint,j / J_rotor,j`；R2 窗口轴：`（Cᵀ·J_load·C)_jj / J_rotor,j` 并附"窗口内存在交叉项、单轴比值为投影值"的限定标记。
 - **本卡只输出数值**；惯量比阈值是可配置工程规则（SEL-05），归属待 O-11 裁决（EngineeringPolicySet vs selection 域配置）——本卡不定义、不内嵌任何阈值（P-DT-2 关联）。
 - **反射惯量不是选型结论**：本卡输出的是映射事实；"电机是否合适"由 selection 按目录能力与工程规则判定（§12.2）。
 - 反射惯量结果绑定：矩阵内容身份＋传动比＋转子模型 ContentVersion＋输入切片身份（任一变更即失效）。
@@ -627,6 +627,10 @@ struct DriveTrainIdentity {                    // 传动配置内容身份（进
 - 驻留段（q̇＝0，τ≠0 保持力矩）：P＝0，效率不适用；能量分项不计入正/负功，但计入时间与"保持"统计（RMS 输入含驻留，§10.4）。
 
 ### 10.3 电机侧机械功率（效率折算后）
+
+**DESIGN-T01（2026-10-27，覆盖本文理想矩作为实际矩的旧措辞）**：`τ_ideal=Cᵀτ_joint`仅为无损虚功事实。逐电机轴以传动功率（耦合窗口取虚功元素）判方向：驱动时`τ_trans=τ_ideal/η⁺`，再生时`τ_trans=τ_ideal·η⁻`；`τ_motor=τ_trans+J_rotor·θ̈`，峰值/RMS及选型必须消费该实际轴转矩。`P_motor=τ_motor·θ̇=P_trans+P_rotor`（数值对照按既有容差），效率只作用于传动项，转子与上游摩擦均不重复折算。零传动功率时能流效率不适用，保持理想传动矩并另加转子项，禁止以功率除零速；此时不据功率模型声称已验证静态摩擦/保持效率。效率缺失的理想矩只能作参考，完整映射/选型仍为DataInsufficient。评估器契约升为2，使旧工作点缓存失效。
+
+负载惯量折算必须由`q̇=Cθ̇`的动能等价得到`J_load,motor=CᵀJ_load,jointC`；转子反射到关节侧仍用`C⁻ᵀJ_rotorC⁻¹`，两个方向不得混用。当前LoadInertiaEntry仅承载关节侧对角值，不能冒充完整耦合负载质量阵；窗口任一输入缺失则不产该惯量比。
 
 `P_motor,j(t) ＝ f_dir(P_joint,j(t))`（上式）＋ 转子功率项 `P_rotor,j(t) ＝ J_rotor,j·θ̈_j(t)·θ̇_j(t)`（含转子项时电机侧总机械功率＝效率折算的传动功率＋转子加减速功率；分项分别报告，不混写）。
 
@@ -660,8 +664,8 @@ E_rotor,j   ＝ ∫ J_rotor·θ̈·θ̇ dt                 （转子动能往返
 | --- | --- | --- | --- |
 | Q1 | ω＞0 且 P＞0 | 正转电动 | 时间占比、能量、峰值 |
 | Q2 | ω＞0 且 P＜0 | 正转再生 | 同上 |
-| Q3 | ω＜0 且 P＜0 | 反转电动 | 同上 |
-| Q4 | ω＜0 且 P＞0 | 反转再生 | 同上 |
+| Q3 | ω＜0 且 P＞0 | 反转电动 | 同上 |
+| Q4 | ω＜0 且 P＜0 | 反转再生 | 同上 |
 | 零速/零功率 | ω＝0 或 P＝0 | 驻留/保持 | 时间占比（不计入象限能量） |
 
 ### 10.7 数据不足与结果质量（映射侧素材，判定归 evidence/消费域）
@@ -669,7 +673,7 @@ E_rotor,j   ＝ ∫ J_rotor·θ̈·θ̇ dt                 （转子动能往返
 | 情形 | 映射侧行为 |
 | --- | --- |
 | 效率缺失/非法 | 功率/能量/四象限＝DataInsufficient 素材（缺失项全量列出）；力矩/速度/位置照常（标注未含效率） |
-| 转子惯量缺失 | 含转子项力矩不可得 → 力矩按理想口径输出＋`DT-ROTOR-MISSING`＋限定标记 |
+| 转子惯量缺失 | 完整含转子项力矩不可得 → 已知效率仍折算传动转矩、缺少转子项＋`DT-ROTOR-MISSING`＋限定标记 |
 | 负载折算惯量缺失 | 惯量比＝不适用（显式标记）；反射惯量（转子侧）照常 |
 | 上游序列部分工况缺失 | 缺失工况列入覆盖矩阵缺口（EVI-02 素材）；不混入其他工况数据 |
 | 估算来源 | Estimated 标记贯穿映射结果 → 证据/报告保留限定语（RPT-05） |

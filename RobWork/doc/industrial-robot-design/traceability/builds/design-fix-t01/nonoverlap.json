@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "ird-design-fix-audit/1",
+  "taskId": "DESIGN-T01",
+  "searchCommand": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+  "retained": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "symbols": [
+        "svd",
+        "inverse"
+      ],
+      "decision": "保留已复用线性代数；CᵀJloadC物理投影沿用原RowMatrix容器和矩阵输入，不新增求解器"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
+      "symbols": [
+        "InertiaMatrix"
+      ],
+      "decision": "上游惯量值语义不提供产品目录过载阈值、项目比较身份或七阶段门控契约"
+    }
+  ],
+  "businessBoundaries": {
+    "evidence": "共同输入身份规范编码复用core::ContentDigester；不修改完整切片/复评身份，不替域识别需求内容",
+    "selection": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施",
+    "workflow": "能力前置/投影消费及事件提示属于产品导航编排，不实现运动规划",
+    "trajectory": "仅修正正安全间距注释；真实距离能力及查询归policy端口，不改计算路径",
+    "drivetrain": "既有动力学后处理修正公式和象限口径，保留上游线性代数核；解析黄金与生产实现不共享代码",
+    "tests": "保留gtest/testkit及原单位目标注册；新增物理反例、接口消费者和显式时序，黄金数据原版本保留"
+  },
+  "reviewBoundary": "本包修改功能及实际消费者的实施自查；不是全部20单元语义审计或所有者独立验收"
+}

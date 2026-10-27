@@ -316,7 +316,9 @@ TEST(DtMappingR2Golden, CoupledWindowAnalytic_WP18T05_ACC1)
             const double thetaDotRef = cinv[k][0] * qd + cinv[k][1] * qd;
             const double thetaDDotRef = cinv[k][0] * qdd + cinv[k][1] * qdd;
             const double tauIdealRef = cw[0][k] * tau + cw[1][k] * tau;
-            const double tauMotorRef = tauIdealRef + jRotor[k] * thetaDDotRef;
+            const double tauMotorRef = (tauIdealRef * thetaDotRef > 0.0
+                                             ? tauIdealRef / 0.9 : tauIdealRef * 0.7)
+                                      + jRotor[k] * thetaDDotRef;
             const double pJointRef = tauIdealRef * thetaDotRef;              // W
             const double pRotorRef = jRotor[k] * thetaDDotRef * thetaDotRef; // W
 
@@ -432,7 +434,7 @@ TEST(DtMappingR2Golden, HighSpeedCrossCouplingPreserved_WP18T05_ACC1)
 
         // ---- ④含转子项力矩＝τ_ideal＋J·θ̈（θ̈_1＝(50−20)·q̈＝30·q̈ 解析）。
         EXPECT_PRED_FORMAT2(closeRel, out.motorSeries[1].samples[i].tauMotor,
-                            0.02 * tau + 1e-4 * 30.0 * qdd);
+                            (tau * qd > 0.0 ? 0.02 * tau / 0.9 : 0.02 * tau * 0.7) + 1e-4 * 30.0 * qdd);
     }
 }
 
@@ -869,13 +871,29 @@ TEST(DtMappingR2Golden, ReflectedInertiaR2FullMatrix_WP18T05_ACC2)
             << "窗口轴对角视图必须附投影限定标记（§9.5）";
         EXPECT_GT(jref(k, k), 0.0) << "对角元全正（构造正定的必要面）";
     }
-    // 惯量比（§9.5 R2 窗口投影式）：(C⁻¹ᵀ·J_load·C⁻¹)(0,0)/J_rotor,win0
-    // ＝（0.2·2500＋0.05·0)/2e-4＝2.5×10⁶（无量纲；阈值判定归 selection
-    // ——P-DT-2）。
-    const double loadDiag1 = loadW[0] * cinv[0][0] * cinv[0][0]
-                             + loadW[1] * cinv[1][0] * cinv[1][0];
+    // DESIGN-T01：负载由关节侧折到电机侧，动能要求 Cᵀ·J_load·C；
+    // 与转子折到关节侧的逆矩阵方向相反。本轴为 0.2·0.02²/2e-4＝0.4。
+    const double loadDiag1 = loadW[0] * 0.02 * 0.02;
     ASSERT_TRUE(result.axes[1].inertiaRatio.has_value());
     EXPECT_PRED_FORMAT2(closeRel, *result.axes[1].inertiaRatio, loadDiag1 / jW[0]);
+}
+
+/** DYN-04/AT-38：耦合路径退化为对角矩阵时，负载惯量比必须连续等价。 */
+TEST(DtDesignReview, LoadInertiaMotorSideUsesForwardMapping)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04"}, std::vector<std::string>{"AT-38"});
+    const auto model = dt::makeCoupledDriveTrainModel(
+        {jointAxis(0), jointAxis(1)}, {motorAxis(0), motorAxis(1)},
+        {0, 1}, mat2(0.1, 0.03, 0.0, 0.2), {}, {0.0, 0.0},
+        testIdentity(), {}, {rotor(1.0), rotor(1.0)});
+    dt::DriveTrainMappingCore mapping;
+    const auto result = static_cast<dt::IReflectedInertiaEvaluator&>(mapping).evaluate(
+        model, {{4.0, dt::SourcedValueTag::UserProvided},
+                {9.0, dt::SourcedValueTag::UserProvided}});
+    ASSERT_TRUE(result.axes[0].inertiaRatio);
+    ASSERT_TRUE(result.axes[1].inertiaRatio);
+    EXPECT_NEAR(*result.axes[0].inertiaRatio, 0.04, 1e-12);
+    EXPECT_NEAR(*result.axes[1].inertiaRatio, 0.3636, 1e-12);
 }
 
 // =====================================================================

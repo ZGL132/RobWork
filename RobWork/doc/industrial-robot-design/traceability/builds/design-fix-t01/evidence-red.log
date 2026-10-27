@@ -1,0 +1,19 @@
+Note: Google Test filter = VerdictBaseline.DifferentBranchesCanShareComparisonInputs
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from VerdictBaseline
+[ RUN      ] VerdictBaseline.DifferentBranchesCanShareComparisonInputs
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\VerdictTest.cpp(790): error: Value of: checkComparisonBaselinesConsistent({a, b}).consistent
+  Actual: false
+Expected: true
+
+[  FAILED  ] VerdictBaseline.DifferentBranchesCanShareComparisonInputs (0 ms)
+[----------] 1 test from VerdictBaseline (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] VerdictBaseline.DifferentBranchesCanShareComparisonInputs
+
+ 1 FAILED TEST

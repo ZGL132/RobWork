@@ -1,0 +1,25 @@
+Note: Google Test filter = SelDesignReview.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SelDesignReview
+[ RUN      ] SelDesignReview.PeakDurationAloneCannotProveOverloadSafety
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp(478): error: Expected equality of these values:
+  recs[0].verdict
+    Which is: 4-byte object <00-00 00-00>
+  VerdictKind::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp(479): error: Value of: recs[0].gaps.empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] SelDesignReview.PeakDurationAloneCannotProveOverloadSafety (1 ms)
+[----------] 1 test from SelDesignReview (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] SelDesignReview.PeakDurationAloneCannotProveOverloadSafety
+
+ 1 FAILED TEST
