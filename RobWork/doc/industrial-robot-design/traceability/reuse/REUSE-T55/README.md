@@ -122,3 +122,9 @@ DhConvert.cpp：原 :178-180（rotMul「冒烟模式不可链接」）、:150 �
 - 阶段二 requirements.targetEditRotation（T42 done 前置）与 runtime 5 行（T29 blocked）不在本候选。
 - 独验侧 NOT RUN：独立验收未执行（无送验对象——生产未落地）；verify-task-scope 未执行；commit-lint 未执行（候选留存批提交由收口流程执行，建议标题 `[governance] REUSE-T55 阶段一候选留存：验证完成待整批重排`）。
 - 两项待所有者事项：①zeroConfigFK 前置认定（接口/owner/消费者/权限，policy §1.1-2）；②§10.4 bench 回退处置（policy §1.1-4）。
+
+## 11. RC-00 纠偏消费登记（2026-10-27，migration §13.5.2 RC-00）
+
+- **stage0-report 指针纠偏消费确认（无需重做，不重复修正）**：§1 第二条「`stage0-report.md` 现内容为八契约独验交接核查报告，非本报告」是登记批当时的中间状态陈述——彼时正确的阶段〇报告未落盘。`92b595d2947c925bfcd46a86290717c4716c5ccf` 已按其提交信息「订正说明」补入正确的阶段〇报告存档（本目录 `stage0-report.md`，blob d0f159e22085160c5b911eda7e2e6b840e1e4893，50 行/17334 字节：工作包3阶段〇 axisAngleRotation 适用性独立解析对照＝FAIL upheld，含独立复核意见与差异明细）。RC-00 按 §13.5.2 口径以内容摘要/真实来源核身份（blob d0f159e2 + `git log` 该文件仅此一笔），不再用 handover 大小或 artifact 昵称；§1 该句描述的旧状态自此被 92b595d29 取代，本登记不改写 §1 原文。
+- **候选留存结论照旧消费**：§10 阶段一候选留存（生产未落地、`stage1-candidate.patch` 在库、解阻待 WP3+WP4 同文件整文件批重排）与阶段〇 FAIL 结论不变。本登记仅为纠偏消费留痕；RC-00 不触碰候选生产文件，也不凭修正登记宣称独立验收完成。
+- **zeroConfigFK 前置认定佐证现状（2026-10-28 补记，按未核实处理）**：「前置认定已完成（结论 C＝保留本地 business-specific/closed）」这一主张在仓内的唯一佐证＝`92b595d29` 提交信息自述（「前置认定已另行完成＝保留本地 business-specific/closed，随整批登记入册」）；「复核修正清单」独立留档文件未找到——撰写时点全库检索零命中，登记落盘后未排除本文件的原式（`rg -n --hidden --glob '!.git/**' "复核修正清单" .`）唯一命中为本行自身（自指），排除本文件后可复现零命中：`rg -n --hidden --glob '!.git/**' --glob '!**/REUSE-T55/README.md' "复核修正清单" .` → exit 1，无命中（2026-10-28 核对轮实测）。migration.md:297（两项待所有者事项）、:406（「认定 C」只表示后续包归属，不能当已解决）、tasks/REUSE-T55.json:23 与本文件 §10（前置认定未做）均按待定登记，与「随整批登记入册」自述一致——本登记不作推测，待整批落盘后核对补证。

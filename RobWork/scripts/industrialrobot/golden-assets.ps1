@@ -1,4 +1,4 @@
-# validate-reuse.ps1 的私有数据资产检查；复用其冻结树 ReadText/Json/SafePath/Fail。
+﻿# validate-reuse.ps1 的私有数据资产检查；复用其冻结树 ReadText/Json/SafePath/Fail。
 # DESIGN-T01：新版本黄金 JSON 不能被当成未知源码，也不能成为脚本或未登记数据的豁免。
 function Test-DeclaredGoldenJson([string]$Path) {
     $pattern = '^RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/([a-z0-9-]{3,64})/([0-9]+\.[0-9]+\.[0-9]+)/(manifest\.json|(?:inputs|expected)/[a-zA-Z0-9_./-]+\.json)$'

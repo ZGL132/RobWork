@@ -1,4 +1,4 @@
-# DESIGN-T01：黄金资产新分支的真实正反例；不触发无关 C++/历史治理夹具。
+﻿# DESIGN-T01：黄金资产新分支的真实正反例；不触发无关 C++/历史治理夹具。
 param([string]$OutputDirectory = 'build/design-fix-t01/golden-assets')
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'golden-assets.ps1')
