@@ -1,0 +1,32 @@
+[==========] Running 9 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from PolicyDiagnosticsRegistryContract
+[ RUN      ] PolicyDiagnosticsRegistryContract.EveryEmittedCodeIsAccepted_POL_T13
+[       OK ] PolicyDiagnosticsRegistryContract.EveryEmittedCodeIsAccepted_POL_T13 (2 ms)
+[----------] 1 test from PolicyDiagnosticsRegistryContract (2 ms total)
+
+[----------] 5 tests from PolPolicyCodecFixture
+[ RUN      ] PolPolicyCodecFixture.LoadsThroughFullManifestChain
+[       OK ] PolPolicyCodecFixture.LoadsThroughFullManifestChain (1 ms)
+[ RUN      ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles
+[       OK ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles (0 ms)
+[ RUN      ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation
+[       OK ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation (0 ms)
+[ RUN      ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest
+[       OK ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest (1 ms)
+[ RUN      ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity
+[       OK ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity (0 ms)
+[----------] 5 tests from PolPolicyCodecFixture (5 ms total)
+
+[----------] 3 tests from PolicyTestDoubleBoundary
+[ RUN      ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols
+[       OK ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols (4 ms)
+[ RUN      ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration
+[       OK ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration (0 ms)
+[ RUN      ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText
+[       OK ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText (0 ms)
+[----------] 3 tests from PolicyTestDoubleBoundary (5 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 3 test suites ran. (13 ms total)
+[  PASSED  ] 9 tests.

@@ -58,6 +58,10 @@ Group schema、真实距离后端、完整 Workpiece/Payload 角色供给、bool
 
 独立验收 **NOT RUN**，由所有者另开会话针对送验 SHA 执行；不自签 pass、不推进 execution。回滚应整体撤销本包生产/测试/构建登记和对应文档/绑定，保留历史验证与他会话改动。
 
+## 独立验收（2026-10-28）
+
+所有者另开独立会话对实施与回归面验收 **PASS**，登记于 [acceptance/POL-T13-20261028-r1.json](../acceptance/POL-T13-20261028-r1.json)（证据同目录），范围显式 `-Base fd198f54c -Head b0ac978d9`（110 路径允许面）。独立会话受影响目标增量重建后真实重跑：policy 228／contract 24／diagnostics 123／runtime 相关 97（同过滤）／kinematics 全量 297＋1 既有占位跳过／冒烟 141＋9＋123 全部与实施批逐项一致；**UI 主动扩至全量 346 项＝344 过＋2 失败**，失败集经 UI-T86 独验记录与文件历史三方核对定性为本批之前已登记的既有失败（F-560 钉扎回归＋NamedTcpClosure blocked/F-975），零新增失败。12 项修正 diff 审查成立；ird_gates 红线引擎零命中（R-5 runtime 豁免撤销实证无残留）。**任务保持 ready**：validate-reuse 的 REUSE-FRESHNESS（冻结生产报告绑 runtime/CMakeLists.txt@5ef2e38b vs 当前 23b072f9；活跃矩阵 193 处绑定已由独验逐一复算全新鲜）与其后隐藏的 COVERAGE 缺口（16 文件 7,420 非空行＋59 项未决功能，独验按门禁同口径独立复算与 binding-audit.json 一致）为两项登记结案债——生产证据四象限重跑重绑＋逐功能矩阵补全批——完成后门禁转绿方可收口 done。
+
 ## 本地提交与范围
 
 实施提交为 `a167f4d4d9435b565a1dea3217b8fa7935333451`。`commit-lint` 检查本包1个实施提交通过；`verify-task-scope` 显式比较 `fd198f54c0b66bc61dd64b29a04e2b1675f42dbc` 至该实施 SHA，108个路径全部在允许面内，见 [提交信息核验](raw/commit-lint.log)与[范围核验](raw/verify-task-scope.log)。随后证据提交只补本节、机器核验记录和两份原始日志，不改变产品/测试/权限。原始日志及原评审逐字归档，保留其空白；另对编辑过的源码与文档执行 whitespace 核查通过。
