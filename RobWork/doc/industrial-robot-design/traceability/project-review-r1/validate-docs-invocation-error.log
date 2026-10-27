@@ -1,0 +1,49 @@
+Get-Content: C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\scripts\industrialrobot\validate-docs.ps1:28
+Line |
+  28 |  … elineText = Get-Content (Join-Path $base 'automation-pipeline.md') -R …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path
+     | 'C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\doc\industrial-robot-design\automation-pipeline.md'
+     | because it does not exist.
+Get-Content: C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\scripts\industrialrobot\validate-docs.ps1:29
+Line |
+  29 |  … tanceText = Get-Content (Join-Path $base 'acceptance-protocol.md') -R …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path
+     | 'C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\doc\industrial-robot-design\acceptance-protocol.md'
+     | because it does not exist.
+Get-Content: C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\scripts\industrialrobot\validate-docs.ps1:46
+Line |
+  46 |  $status = Get-Content (Join-Path $base 'traceability/unit-status.json …
+     |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path
+     | 'C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\doc\industrial-robot-design\traceability\unit-status.json' because it does not exist.
+Get-Content: C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\scripts\industrialrobot\validate-docs.ps1:62
+Line |
+  62 |  $trace = Get-Content (Join-Path $base 'traceability/requirements-to-u …
+     |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path
+     | 'C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\doc\industrial-robot-design\traceability\requirements-to-units.json' because it does not exist.
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+Write-Error: unit-status must contain 20 unique units
+Write-Error: missing phase-one task index
+Write-Error: missing context/README.md (asset classification rules)
+Write-Error: missing context/asset-inventory.json
+Write-Error: missing design-tree AGENTS.md (layered rule entry)
+Write-Error: missing source-area AGENTS.md (layered rule entry)
+Write-Error: missing .agents/notes/README.md (decision record format)
+Write-Error: missing notes status dir: implemented
+Write-Error: missing notes status dir: proposed
+Write-Error: missing notes status dir: rejected
+Write-Error: missing notes status dir: archived
+Write-Error: missing skill file: ird-discover-change/SKILL.md
+Write-Error: missing skill file: ird-design-change/SKILL.md
+Write-Error: missing skill file: ird-implement-task/SKILL.md
+Write-Error: missing skill file: ird-verify-change/SKILL.md
+Write-Error: missing skill file: ird-qt-gui-windows/SKILL.md
+Write-Error: missing skill file: ird-handoff/SKILL.md
+Write-Error: missing skill file: ird-python313-dll/SKILL.md
+Write-Error: missing traceability/README.md (evidence lifecycle rules)
+Write-Error: missing traceability/findings.json
+Write-Error: missing traceability/production-assembly-manifest.json (ird-assembly-manifest/1)
+Write-Error: repo root resolution failed: doc base not found under 'C:\Users\zgl18\.codex\worktrees\core-review-fixes'（请用 -RepoRoot 显式指定仓库根）

@@ -1,0 +1,250 @@
+CMake is re-running because C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/core-smoke/runtime/CMakeFiles/generate.stamp is out-of-date.
+  the file 'D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkBuildConfig_none.cmake'
+  is newer than 'C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/core-smoke/runtime/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  runtime/CMakeLists.txt:241 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin not registered (framework-hosted plugin target, integrated tree only; ui.md §13 UI-T16)
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_studio not registered (framework-hosted product target, integrated tree only; WP-24-T08 / B1-SPEC §2.1)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  modeling/CMakeLists.txt:383 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  kinematics/CMakeLists.txt:289 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  drivetrain/CMakeLists.txt:129 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  selection/CMakeLists.txt:211 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  dynamics/CMakeLists.txt:230 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (64.0s)
+-- Generating done (8.6s)
+-- Build files have been written to: C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/core-smoke
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(809,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(809,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  SolidifyServiceImpl.cpp
+  StoreClone.cpp
+  SaveAsServiceImpl.cpp
+  PackageServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+  正在生成代码...
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  BuildRedLineTest.cpp
+  CodecMigrationChannelTest.cpp
+  AtomicFileTest.cpp
+  StoreLockTest.cpp
+  PathCanonicalTest.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  (编译源文件“../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PathCanonicalTest.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(150,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(148,9):
+              请参阅 "PathCanonicalTest_SameProject_DifferentSpellings_CanonicalizeEqual_Test::TestBody" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  PersistenceFormatTest.cpp
+  ObjectStoreTest.cpp
+  RevisionIndexTest.cpp
+  TxEngineTest.cpp
+  ProjectStoreTest.cpp
+  ReviewRegressionTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(209,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(218,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(229,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(246,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  QueryPortTest.cpp
+  CommandServiceTest.cpp
+  DraftServiceTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(506,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(559,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(885,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1096,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1101,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1103,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1110,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1112,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1114,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1134,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  UndoRedoServiceTest.cpp
+  ArchiveServiceTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(419,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(427,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(686,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(838,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(848,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  Tx11Tx13SuiteTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx11Tx13SuiteTest.cpp(384,27): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  SolidifyServiceTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SolidifyServiceTest.cpp(492,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  SaveAsServiceTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(239,27): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(294,35): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(319,35): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(410,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(415,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(421,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  PackageServiceTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(192,29): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(261,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(446,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(455,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(462,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(468,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(473,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(477,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(480,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  正在生成代码...
+  正在编译...
+  StubHandlers.cpp
+  TestMainReport.cpp
+  正在生成代码...
+  sdurws_ird_project_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\Release\sdurws_ird_project_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\Release\gtest.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_json-vc143-mt-x64-1_92.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\Release\boost_json-vc143-mt-x64-1_92.dll done

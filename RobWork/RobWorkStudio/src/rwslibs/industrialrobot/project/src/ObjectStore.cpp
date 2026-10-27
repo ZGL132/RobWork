@@ -70,15 +70,13 @@ StoreError writeOsErrorToStoreError(unsigned long osError,
                                     const std::string& what,
                                     const std::string& path)
 {
-    constexpr unsigned long kDiskFull = 70;              // ERROR_DISK_FULL
-    constexpr unsigned long kQuotaExceeded = 395;        // ERROR_DISK_QUOTA_EXCEEDED
-    constexpr unsigned long kAccessDenied = 5;           // ERROR_ACCESS_DENIED
     const std::string detail = "project/object-store: " + what
         + " path=" + path + " osError=" + std::to_string(osError);
-    if (osError == kDiskFull || osError == kQuotaExceeded) {
+    if (osError == ERROR_DISK_FULL || osError == ERROR_HANDLE_DISK_FULL
+        || osError == ERROR_DISK_QUOTA_EXCEEDED) {
         return StoreError(StoreErrorCode::DiskFull, detail);
     }
-    if (osError == kAccessDenied) {
+    if (osError == ERROR_ACCESS_DENIED) {
         return StoreError(StoreErrorCode::AccessDenied, detail);
     }
     return StoreError(StoreErrorCode::WriteRejected, detail);

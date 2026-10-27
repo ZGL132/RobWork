@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T19",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "project首轮评审整改：提交事实、只读隔离、恢复闭包与归档完整性",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "ARC-04",
+    "CON-01",
+    "CON-02",
+    "CON-04",
+    "PM-01",
+    "PM-04",
+    "PM-07",
+    "PM-08",
+    "PM-16",
+    "NFR-REL-01"
+  ],
+  "designRefs": [
+    "units/project.md#4",
+    "units/project.md#7",
+    "units/project.md#8",
+    "units/project.md#10",
+    "reuse/policy.md#1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/DraftService.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/DraftServiceImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/RevisionIndex.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/RevisionIndex.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/StoreClone.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProcessLockContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProjectStoreTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ReviewRegressionTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/Tx15Child.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T19.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/PRJ-T19.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/project.json",
+    "RobWork/doc/industrial-robot-design/traceability/project-review-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "project实施、回归、原始证据和绑定；本地可回滚提交；待所有者另开独验"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_project_test_report sdurws_ird_project_contract_test_report",
+    "cmake --build build/core-smoke --config Release --target sdurws_ird_project_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T19.json"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "13项确定反例以真实文件/API断言回归，提交前失败保持旧HEAD、提交后观察失败仍Committed",
+    "只读打开与草稿读取不删除writer在途文件；跨进程查询整体刷新闭包且对象查询不暴露残留",
+    "完整project套件各一次、定向真实进程与归档消费者、独立构建及性能/门禁保留真实结果，不以FAIL冒充PASS",
+    "保留core/Win32/Boost.JSON供给、格式和公共签名；旧pending/诊断提案不自行裁决，独验不自签"
+  ],
+  "note": "所有者明确指定本C盘工作树和分支，覆盖旧redesign-main流程；起点412e173b9079fa43a1f0ef50fe07d38e852b1940。用户2026-10-28要求按已完成评审修改。此最小契约仅供H6逐文件凭证与范围机器核验，不是重复总台账；status不代表验收通过。旧pending造成准入阻断时保留真实FAIL，不放宽门禁。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/PRJ-T19.json"
+  }
+}

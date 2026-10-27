@@ -876,7 +876,7 @@ TEST_F(TxEngineTest, F1_PrepareFails_StagingDirCreate)
 TEST_F(TxEngineTest, F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag)
 {
     const auto before = snapshotCommitted();
-    m_ops->failAt(fp::kWriteChunk, 3, 70 /*ERROR_DISK_FULL*/);
+    m_ops->failAt(fp::kWriteChunk, 3, ERROR_DISK_FULL);
     // 200 000 字节＝4 个 chunk：occ 1＝元数据对象、occ 2～5＝域对象——
     // 命中第 3 次＝域对象中途（"第 N 字节写失败"的边界落点）。
     const CommitPlan plan = makePlan(kBigPayloadBytes);
@@ -1307,7 +1307,7 @@ TEST_F(TxEngineTest, StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir)
     m_engine = std::make_unique<TxEngine>(m_ops.get(), m_proj, m_objects.get(),
                                           m_index.get(), m_bus.get(),
                                           m_sink.get());
-    const TxRecoveryScan scan = m_engine->scanForRecovery();
+    const TxRecoveryScan scan = m_engine->scanForRecovery(true);
     EXPECT_FALSE(fs::exists(m_proj / ".staging" / "tmp" / "compile-junk.bin"));
     EXPECT_EQ(scan.ignoredStagingTxs.size(), std::size_t{1});
 }
@@ -1324,7 +1324,7 @@ TEST_F(TxEngineTest, StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir)
 TEST_F(TxEngineTest, Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean)
 {
     // 第一次提交：F2 注入失败（seq＝2 已消费）。
-    m_ops->failAt(fp::kWriteChunk, 3, 70);
+    m_ops->failAt(fp::kWriteChunk, 3, ERROR_DISK_FULL);
     const CommitPlan failed = makePlan(kBigPayloadBytes);
     expectStoreError(StoreErrorCode::DiskFull, [&] {
         m_engine->commit(failed, m_engine->readHead(), m_seed.m0,

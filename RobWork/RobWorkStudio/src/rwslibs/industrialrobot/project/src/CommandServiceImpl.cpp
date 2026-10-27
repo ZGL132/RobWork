@@ -18,6 +18,7 @@
  */
 
 #include "CommandServiceImpl.hpp"
+#include "Codec.hpp"
 
 #include <algorithm>
 #include <stdexcept>
@@ -75,9 +76,9 @@ void HandlerRegistry::registerHandler(std::unique_ptr<ICommandHandler> handler)
             "project/command: registerHandler 非法——handler 为空");
     }
     const std::string token = handler->commandType();
-    if (token.empty()) {
+    if (!codec::isCommandTypeToken(token) || handler->currentPayloadVersion() == 0) {
         throw std::invalid_argument(
-            "project/command: registerHandler 非法——commandType 为空"
+            "project/command: registerHandler 非法——commandType或载荷版本无效"
             "（处理器注册 token 是提交与历史浏览的唯一解析键——§4.4.4）");
     }
     std::lock_guard<std::mutex> guard(m_impl->mutex);
@@ -716,11 +717,15 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
     //      索引，tryRevision 必命中——nullopt 属防御面，开发诊断）。
     result.status.kind = CommandStatus::Kind::Committed;
     result.newRevision = committed.revisionId;
-    result.newHeadState = m_host.query().tryRevision(committed.revisionId);
-    if (!result.newHeadState.has_value() && m_sink != nullptr) {
-        m_sink->reportDev("project/command",
-                          "提交后视图装配未命中（防御面——数据侧异常）rev="
-                              + committed.revisionId.toCanonical());
+    try {
+        result.newHeadState = m_host.query().tryRevision(committed.revisionId);
+    } catch (...) {
+        // PRJ-R1：视图是返回值的附属快照，失败不改变已提交身份；消费者可重查。
+        try {
+            if (m_sink != nullptr) {
+                m_sink->reportDev("project/command", "提交后视图装配失败（已提交，不可盲目重试）");
+            }
+        } catch (...) { /* 诊断通道不覆盖提交结果。 */ }
     }
 }
 

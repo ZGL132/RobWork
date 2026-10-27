@@ -1,0 +1,38 @@
+Note: Google Test filter = ProjectReviewRegression.*
+[==========] Running 14 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 14 tests from ProjectReviewRegression
+[ RUN      ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact
+[       OK ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact (82 ms)
+[ RUN      ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit
+[       OK ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit (32 ms)
+[ RUN      ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit
+[       OK ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit (34 ms)
+[ RUN      ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile
+[       OK ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile (42 ms)
+[ RUN      ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting
+[       OK ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting (28 ms)
+[ RUN      ] ProjectReviewRegression.QueryHidesUncommittedObject
+[       OK ] ProjectReviewRegression.QueryHidesUncommittedObject (22 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand
+[       OK ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand (24 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest
+[       OK ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest (26 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch
+[       OK ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch (26 ms)
+[ RUN      ] ProjectReviewRegression.FailedValidationRollsBackRegistration
+[       OK ] ProjectReviewRegression.FailedValidationRollsBackRegistration (22 ms)
+[ RUN      ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected
+[       OK ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected (1 ms)
+[ RUN      ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath
+[       OK ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath (27 ms)
+[ RUN      ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest
+ird-tempdir-remove-failed: C:\Users\zgl18\AppData\Local\Temp\ird-test/96712-prj-r1-68e78d4c345c28df: Ŀ¼���ǿյġ�
+[       OK ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest (51 ms)
+[ RUN      ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively
+[       OK ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively (31 ms)
+[----------] 14 tests from ProjectReviewRegression (455 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 1 test suite ran. (455 ms total)
+[  PASSED  ] 14 tests.

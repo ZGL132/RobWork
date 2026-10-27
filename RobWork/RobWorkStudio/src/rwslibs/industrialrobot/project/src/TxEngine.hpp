@@ -199,6 +199,8 @@ struct CommitResult {
     std::string manifestDigest;
     /// 已切换的 HEAD 内容（切换后重读自校验通过的字节级事实）。
     HeadRecord newHead;
+    /// 已通过发布校验的权威值；宿主推进无需在提交后再次读盘解析。
+    ProjectMetadataRecord metadata;
 };
 
 /**
@@ -229,6 +231,9 @@ struct TxRecoveryScan {
     /// 且 size＋SHA-256 校验通过；false＝存在缺失/损坏（定位细节经开发
     /// 诊断上报，用户级诊断码 PRJ-STORE-CORRUPT）。
     bool headIntegrityVerified = false;
+    /// 本次验证绑定的HEAD与正向闭包；搬运装载只认此集合，禁止纳入扫描后新残留。
+    HeadRecord verifiedHead;
+    std::vector<RevisionId> committedRevisions;
 };
 
 // =====================================================================
@@ -349,13 +354,14 @@ public:
      *   - ① `.staging/` 子目录扫描：每个 tx 目录＝未提交事务 → 记入
      *     ignoredStagingTxs＋用户级诊断 PRJ-RECOVERY-IGNORED-UNCOMMITTED
      *     （**忽略不删**——现场保留，§4.1 .staging 行口径）；`.staging/tmp`
-     *     → 启动清理（整树删除，按需重建——§4.1 tmp 行"启动清理"，D-09
+     *     → 受权启动者显式请求时清理（只读扫描保留，D-09
      *     临时物不得逸出该目录）；
      *   - ④ HEAD 引用闭包完整性：读 HEAD → **HEAD.manifestDigest 与 HEAD
      *     指向修订清单字节的实算比对**（F-962 修复——经 CR-02 唯一摘要
      *     入口 codec::contentVersionOf，与提交路径同口径；缺失/不符＝
      *     损坏并定位到文件）→ 装载磁盘全部修订清单入临时索引 →
-     *     committedClosure（悬挂引用/起点缺失＝损坏）→ 对闭包内
+     *     committedClosure（悬挂/循环/序号冲突＝损坏）→ 校验闭包必需命令
+     *     和HEAD序号/分支一致性 → 对闭包内
      *     全部对象引用做 size＋SHA-256 校验（scanObjects verifyDigest 档）
      *     → 任一失败＝headIntegrityVerified=false＋PRJ-STORE-CORRUPT＋
      *     开发诊断（定位到文件；用户诊断 cause 采首败钉扎——扫描序中
@@ -370,9 +376,10 @@ public:
      * false"表达（HEAD 缺失＝§4.1"损坏/缺失＝CorruptStoreDetected"，
      * 诊断码同落 PRJ-STORE-CORRUPT）。
      *
+     * @param cleanupTemporaryFiles [in] 仅持有OS写锁且未激活服务的启动者可传true。
      * @return 恢复扫描报告（清单确定性排序——NFR-COR-02）
      */
-    TxRecoveryScan scanForRecovery();
+    TxRecoveryScan scanForRecovery(bool cleanupTemporaryFiles = false);
 
     // ---- 读取辅助（打开协议/测试消费；并发只读安全） ----
 
@@ -440,7 +447,7 @@ private:
     /**
      * @brief 开发级诊断出口（channel 约定前缀 "project/tx-engine"）。
      */
-    void reportDev(const std::string& message) const;
+    void reportDev(const std::string& message) const noexcept;
 
     // ---- 注入协作部件（全部非 owning——生存期由持有方保证，见类头） ----
     win32::IFileOps* m_fileOps;                  ///< 文件/目录操作接缝

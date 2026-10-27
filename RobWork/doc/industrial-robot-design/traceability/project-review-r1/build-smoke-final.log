@@ -1,0 +1,14 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\core\Release\sdurws_ird_core.lib
+  QueryPortImpl.cpp
+  TxEngine.cpp
+  正在生成代码...
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\testkit\Release\sdurws_ird_testkit.lib
+  ReviewRegressionTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(210,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(219,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(230,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(247,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\sdurws_ird_project_test.vcxproj]
+  sdurws_ird_project_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\project\Release\sdurws_ird_project_test.exe

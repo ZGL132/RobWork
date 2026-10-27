@@ -19,8 +19,8 @@
  *   持有的 RevisionIndex（会话索引——闭包外修订不注册，§7.3/PRJ-TX-9，
  *   "闭包外不可见"由此结构性成立）；对象读取直接消费 ObjectStore（LRU
  *   缓存/首读校验在其内部——§4.6"缓存互斥内部实现"）；权威元数据取自
- *   宿主的 m_authoritative（executeCommit 成功路径"自磁盘读回"更新的
- *   地面事实）。本类只做三件事：①生命周期门卫（Closed 拒绝）；②与提交
+ *   宿主的 m_authoritative（提交后采用已验证候选推进，跨进程只读刷新
+ *   则整体安装已校验的 HEAD/索引/元数据快照）。本类只做三件事：①生命周期门卫（Closed 拒绝）；②与提交
  *   的一致性互斥（writer 锁内取 HEAD/权威快照——挡住"已注册未切 HEAD"
  *   的提交中窗口，§4.5.1 结论④）；③视图组装（清单→RevisionView，含
  *   command.json 摘要/逆命令读取）。
@@ -29,13 +29,13 @@
  *   - 锁序遵守宿主约定：m_lifecycleMutex 先于 m_writerMutex，不反向；
  *   - head/tryRevision/revision/metadataAt/currentMetadata/branchTips/
  *     branchHistory 在 writer 锁内完成"权威/HEAD 锚点＋首级索引读"的
- *     快照，锁外完成视图组装——组装只读**不可变数据**（已注册清单/记录
+ *     快照（branchHistory 复制整条链），锁外完成视图组装——组装只读**不可变数据**（已注册清单/记录
  *     一经注册不可变——PA-2；revisions/<rev>/command.json 发布后就位
  *     只增不改——§4.1），锁外读安全且不放大 writer 锁持有时长；
- *   - tryObject/object/listDrafts/listRuns/runDir 不取 writer 锁：对象
- *     文件不可变（内容寻址只增——§4.6）、草稿/manifest 原子替换或原子
- *     发布（读到完整或不存在的文件——§5.4/§10.1 原语保证），与写并发
- *     天然安全；
+ *   - tryObject/object 在 writer 锁内刷新完整视图并校验已提交引用后读取；
+ *     listDrafts 在同锁内取分支快照，锁外扫描原子发布的草稿；
+ *     listRuns/runDir 保留独立的结果查询契约。刷新可替换宿主索引，
+ *     因此锁外不得访问 m_index/m_engine；
  *   - 由此实现"查询端口全部方法线程安全（并发只读）"（§4.7）：多查询
  *     线程可并发进入，互斥仅覆盖与提交的一致性窗口，不承诺查询间并行
  *     加速（§9.8"调用方线程：查询端口并发只读"的线程安全语义）。

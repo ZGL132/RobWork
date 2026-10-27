@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "PRJ-T19",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T19.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+      "sha256": "8c8311096553409046d39803c27bb4641cd80a4ac1f1e2f1ad39b9a343a064ba",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/DraftService.hpp",
+      "sha256": "87797a467847cdd002421a6f4d30e33a00e7f82f1d35aaa0441387a50283aa6d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "sha256": "2cbdc3570da9145981a3176c1ee7164c2e58c2f3a827c60eab0354ae2336befa",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+      "sha256": "3000eddbefff3a96923cb91c94753677ae5cca35d4429d836d434b1c3b2e17a7",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+      "sha256": "e8263408e562ba3e559a333474875bd48ad5e7d6c3df2bc1736d2f0fe0c1ff1f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+      "sha256": "fd87dcf900d7313beedab5934e039588cee9b23d44a3a17fb328ed646542b5d8",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/DraftServiceImpl.cpp",
+      "sha256": "93b8b251de583b65d4b97a5405d7aba06fca05e289a007c077c16d8b907f92a1",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+      "sha256": "ad5f8c44f60c831ac9189cbf2a5a327b94385c50dbe362fd0e20a99f665e2d3f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+      "sha256": "0022a22d75b318f557dd4fb690eab6e60d1bbb5eb41821905d21fb2fd5d08065",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.hpp",
+      "sha256": "d3b153ed11943e6d55b000a824777e2dbd379fd66f6d04a940ef3a720a23cdaf",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+      "sha256": "9db7cf9eeff330c763da0dfb16631cbaf497fd25a56ddacc10ae3aa5a214b8dd",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.hpp",
+      "sha256": "8c71ddc79fe3491810c926d786674cc43b2d310d5ffed441b2b7a67b7ba18fe4",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/RevisionIndex.cpp",
+      "sha256": "9c1c80107c2fbc48e063708683dac2e34b94c49bc5313f7831ab8a21ecd72a58",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/RevisionIndex.hpp",
+      "sha256": "4b5b23ee19ad3dfab1c3c30948770c20cb103dd30833c2df1050d79e089e126d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/StoreClone.cpp",
+      "sha256": "b05751300d36869d8ba72d15d52db420a837e5a0c62db021d99328f81cde4b6e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "sha256": "d49b3ea8537de55e3985195a303f0e297fac215a0bf65dc1b0981f72aaffd392",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+      "sha256": "8996dd8430aea6d53810d69f4dc0632db409674802fcdf8d2352da94e0718e04",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProcessLockContractTest.cpp",
+      "sha256": "5b48a8e76f8d1877a147201e65c1b53cb0aded81ac7511c7953e1e4c6ac0906d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProjectStoreTest.cpp",
+      "sha256": "455c44ff1fd42eea9a19c4e911b54c1628229eb1dfe06e6a9168a1397bca9d34",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ReviewRegressionTest.cpp",
+      "sha256": "5623ec8fbd5cef52e6a3191bf1ddf969f4316085741569112d400c7deab89bad",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/Tx15Child.cpp",
+      "sha256": "ac9f6ff1fb328c8571e2d732e53a99f7701d042740aca6885786278c4cc27fb1",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp",
+      "sha256": "5a6b22d094bb7c54f79d086dfd7496fc21e64ea47c201684949888bdb711b251",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "PRJ-T19：产品修订/恢复/引用/归档编排和回归；保留已有core摘要身份、Win32原语及编码契约，不授予旧pending新批准，详见本批实施记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/project-review-r1/IMPLEMENTATION.md"
+    }
+  ]
+}

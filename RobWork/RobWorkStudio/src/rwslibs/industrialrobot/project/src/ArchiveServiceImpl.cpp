@@ -373,13 +373,18 @@ void ArchiveServiceImpl::validateRelPath(const std::string& relPath)
     // 保留名：manifest.json 是 finalize 的发布名（批次占用会与完整性
     // 发布冲突）；.ird-part 后缀是写路径暂存名（实现口径⑤）；Windows
     // 设备名（重定向防线）。
-    if (components == 1 && last == kManifestFileName) {
+    // PRJ-R1：Win32文件名大小写别名必须与发布名视为同一个位置。
+    std::string folded{last};
+    for (char& c : folded) {
+        if (c >= 'A' && c <= 'Z') { c = static_cast<char>(c - 'A' + 'a'); }
+    }
+    if (components == 1 && folded == kManifestFileName) {
         throw std::invalid_argument(
             "project/archive: relPath 不得为保留名 manifest.json（finalize"
             " 发布名）");
     }
     if (last.size() >= kWriteTempSuffix.size()
-        && last.compare(last.size() - kWriteTempSuffix.size(),
+        && folded.compare(folded.size() - kWriteTempSuffix.size(),
                         kWriteTempSuffix.size(), kWriteTempSuffix)
                == 0) {
         throw std::invalid_argument(
@@ -901,9 +906,56 @@ ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,
         }
     }
 
+    // PRJ-R1：首次发布与幂等重试共用工件实算校验，不信任清单字段。
+    const auto verifyArtifacts = [&]() -> ArchiveStatus {
+        for (const RunManifestItem& item : out.items) {
+            const std::filesystem::path file
+                = state->runDir / relPathToPath(item.relPath);
+            const auto bytes = readSmallFile(file);
+            if (!bytes.has_value()) {
+                reportDev("project/archive",
+                          "finalize verify failed（批次文件缺失/不可读） relPath="
+                              + item.relPath);
+                return ArchiveStatus{
+                    false,
+                    StoreError{StoreErrorCode::StoreCorrupt,
+                               "project/archive: manifest 条目缺失或不可读"
+                               " relPath=" + item.relPath}};
+            }
+            if (bytes->size() != item.sizeBytes) {
+                reportDev("project/archive",
+                          "finalize verify failed（size 不符） relPath="
+                              + item.relPath + " disk="
+                              + std::to_string(bytes->size()) + " declared="
+                              + std::to_string(item.sizeBytes));
+                return ArchiveStatus{
+                    false,
+                    StoreError{StoreErrorCode::StoreCorrupt,
+                               "project/archive: manifest 条目 size 与磁盘不符"
+                               " relPath=" + item.relPath}};
+            }
+            const core::ContentVersion diskDigest
+                = codec::contentVersionOf(*bytes);
+            // 声明 hex 与磁盘字节实算摘要比对（cv- 前缀剥离后逐字符——
+            // CR-02：声明的摘要只透传不重算，实算对象是磁盘字节）。
+            if (diskDigest.toCanonical().substr(3) != item.sha256) {
+                reportDev("project/archive",
+                          "finalize verify failed（sha256 不符） relPath="
+                              + item.relPath);
+                return ArchiveStatus{
+                    false,
+                    StoreError{StoreErrorCode::StoreCorrupt,
+                               "project/archive: manifest 条目 sha256 与磁盘不符"
+                               " relPath=" + item.relPath}};
+            }
+        }
+
+        return ArchiveStatus{true, std::nullopt};
+    };
+
     // 第 2 步：同 run 已有 manifest 的 D-14 摘要比对（§10.1"重投递幂等
     // 与内容冲突"行）。比对先于磁盘核验（顺序语义）：manifest 在＝该
-    // 运行已完整（D-13），重投递只与"已发布事实"比对——摘要一致＝幂等、
+    // 运行声明已发布（D-13）；摘要匹配后仍校验清单自身和工件字节，
     // 不一致＝冲突；磁盘核验仅把守发布路径（无 manifest 时才需要——
     // 否则"声明了未写入文件"的分歧重投递会被误判为 store-corrupt 而非
     // archive-conflict）。
@@ -931,9 +983,15 @@ ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,
                                + e.what()}};
         }
         // 幂等判据＝既有摘要 vs 本次重算摘要（同一摘要函数下等价于
-        // "内容全同"）。一致＝幂等成功：不重写磁盘、不重复发布事件
+        // "内容全同"）。清单及工件均通过后才幂等成功：不重写、不重复事件
         // （实现口径⑥——进程内总线恰一次），会话终结释放引用。
+        if (computeManifestDigestHex(existing) != existing.manifestDigest) {
+            return ArchiveStatus{false, StoreError{StoreErrorCode::StoreCorrupt,
+                "project/archive: existing manifest digest mismatch path=" + manifestFile.string()}};
+        }
         if (existing.manifestDigest == out.manifestDigest) {
+            const auto verified = verifyArtifacts();
+            if (!verified.ok) { return verified; }
             reportDev("project/archive",
                       "finalize idempotent（D-14 摘要一致——不重写） run="
                           + state->task.run.toCanonical());
@@ -970,47 +1028,8 @@ ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,
     // 声明（D-13），不发布与磁盘不符的声明（O-12 完整性发布义务）；
     // 不符＝StoreCorrupt（数据侧），会话不终结（调用方可修复后重试或
     // abandon）。仅发布路径到达此处（manifest 缺席——第 2 步已分流）。
-    for (const RunManifestItem& item : out.items) {
-        const std::filesystem::path file
-            = state->runDir / relPathToPath(item.relPath);
-        const auto bytes = readSmallFile(file);
-        if (!bytes.has_value()) {
-            reportDev("project/archive",
-                      "finalize verify failed（批次文件缺失/不可读） relPath="
-                          + item.relPath);
-            return ArchiveStatus{
-                false,
-                StoreError{StoreErrorCode::StoreCorrupt,
-                           "project/archive: manifest 条目缺失或不可读"
-                           " relPath=" + item.relPath}};
-        }
-        if (bytes->size() != item.sizeBytes) {
-            reportDev("project/archive",
-                      "finalize verify failed（size 不符） relPath="
-                          + item.relPath + " disk="
-                          + std::to_string(bytes->size()) + " declared="
-                          + std::to_string(item.sizeBytes));
-            return ArchiveStatus{
-                false,
-                StoreError{StoreErrorCode::StoreCorrupt,
-                           "project/archive: manifest 条目 size 与磁盘不符"
-                           " relPath=" + item.relPath}};
-        }
-        const core::ContentVersion diskDigest
-            = codec::contentVersionOf(*bytes);
-        // 声明 hex 与磁盘字节实算摘要比对（cv- 前缀剥离后逐字符——
-        // CR-02：声明的摘要只透传不重算，实算对象是磁盘字节）。
-        if (diskDigest.toCanonical().substr(3) != item.sha256) {
-            reportDev("project/archive",
-                      "finalize verify failed（sha256 不符） relPath="
-                          + item.relPath);
-            return ArchiveStatus{
-                false,
-                StoreError{StoreErrorCode::StoreCorrupt,
-                           "project/archive: manifest 条目 sha256 与磁盘不符"
-                           " relPath=" + item.relPath}};
-        }
-    }
+    const auto verified = verifyArtifacts();
+    if (!verified.ok) { return verified; }
 
     // 第 4 步：原子发布（§4.1 results 行"manifest 原子替换"；§7.2 行 3
     // ——write-through 暂存→replaceFile 原子就位＝D-13 提交点：发布前
