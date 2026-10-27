@@ -49,3 +49,7 @@ Release、VS 2022 x64、C++17。新树没有可复用 build，核对后建立独
 `reuse/changes/CORE-T12.json` 绑定八个实际产品源码/测试/CMake 路径。core 矩阵保留未变功能和历史审计原件，重钉变动源区段和输入，补私有模板及回归区段；16 条 Events.cpp 补业务/通用原语边界，migrated 仅表示实施落地，不表示独验或 F-967 结项。diagnostics/execution/ui 矩阵只刷新实际引用的变动输入摘要，不改其生产代码或权限。同步脚本固定起始 SHA，可重复生成，片段摘要不冒用整文件摘要。
 
 本地提交形成一组可回滚变更，回滚连同测试/说明/凭证，且会恢复已知缺陷；未合并/推送。原评审在 `C:/Users/zgl18/.codex/visualizations/2026/10/27/01a17c71-e8b0-77a3-a24e-64fb5e74ce94/core-review/core-review.md`。本记录不重复建台账、不代替冻结版本独验。B31/B32 泛型、无效 UnitToken 等仍待接口负责人裁决；SHA 继续原 GAP 流程。
+
+## 独立验收（2026-10-27）
+
+所有者另开独立会话验收 **PASS**，登记于 [acceptance/CORE-T12-20261027-r1.json](../acceptance/CORE-T12-20261027-r1.json)（证据同目录）。独立会话受影响四目标增量重建后真实重跑：core 79／smoke 76／project 15＋contract 3／execution 25 全绿，ird-test-report 全部 decisive；131072 线程真实身份入口探针独立复现 duplicate_full_ids=0；ird_gates 零命中；validate-docs（task/reuse/docs 三段）、verify-task-scope（显式 Base/Head，81 路径允许面）、commit-lint 均 PASS。＋11.6µs 每线程一次性播种代价独验评估为可接受（惰性初始化、无逐 ID 开销、正确性必要代价）。两条非阻断文案观察（Provenance.cpp 小写字符集注释/错误信息遗留、他单元 Core.cpp 历史先例注释）登记于验收记录 `issues`，不属本包缺陷、不扩本包范围。

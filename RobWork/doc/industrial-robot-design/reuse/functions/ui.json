@@ -2391,7 +2391,7 @@
       "inputs": [
         {
           "path": "RobWork/doc/industrial-robot-design/units/core.md",
-          "sha256": "170269dd0f576ae5554b04f6d9463ae69a6dc8dd2439fb496f9c12a95b07a163"
+          "sha256": "3e1019889d758689bc2545f3cd1fab1c1cc10c82b68c1e5ac5e3e31667f1d991"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/CMakeLists.txt",

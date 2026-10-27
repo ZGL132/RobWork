@@ -1055,7 +1055,7 @@ core产品库与公共头零变化。本轮集成65通过、独立63通过，均
 
 ### CORE-T12 第一轮评审整改（2026-10-27）
 
-起始SHA为cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb；所有者明确要求新分支/工作树实施，分支codex/core-review-fixes；实施记录见[core-review-r1](../traceability/core-review-r1/README.md)。实现待独验，不以本轮实施关闭独立验收。
+起始SHA为cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb；所有者明确要求新分支/工作树实施，分支codex/core-review-fixes；实施记录见[core-review-r1](../traceability/core-review-r1/README.md)。独立验收PASS（2026-10-27，[验收记录](../traceability/acceptance/CORE-T12-20261027-r1.json)），非阻断文案观察留验收记录issues。
 
 - 身份：保留六强类型、tag/字节协议与thread_local mt19937_64；初始化以标准seed_seq消费四个独立32位随机字（128位熵），避免单字种子把独立流空间压至32位。确定性固定熵回归与真实新线程生成分别验证播种与实际入口，不以输出位宽推定熵。
 - 事件访问器同时守卫kind与variant，损坏输入仍按既有契约抛CoreError。参考句柄析构幂等退订；bus必须覆盖未退订句柄生存期，sink覆盖订阅期；已显式退订的句柄可晚于bus销毁。单线程快照投递、同sink整体移除的原参考语义不变，不成为生产线程总线。

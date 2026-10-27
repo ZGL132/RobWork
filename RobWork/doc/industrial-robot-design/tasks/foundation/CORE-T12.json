@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "core第一轮评审整改：身份播种、事件错误轨与参考句柄RAII",
-  "status": "ready",
+  "status": "done",
   "branch": "codex/core-review-fixes",
   "dependsOn": [],
   "requirements": [

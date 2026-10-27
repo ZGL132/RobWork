@@ -1,0 +1,15 @@
+Note: Google Test filter = ArchiveContractTest.*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from ArchiveContractTest
+[ RUN      ] ArchiveContractTest.PRJ_TX8_ContextSurvivesUntilFinalizeThenClosed
+[       OK ] ArchiveContractTest.PRJ_TX8_ContextSurvivesUntilFinalizeThenClosed (47 ms)
+[ RUN      ] ArchiveContractTest.PRJ_TX8_CrossProjectEventNotWritten
+[       OK ] ArchiveContractTest.PRJ_TX8_CrossProjectEventNotWritten (78 ms)
+[ RUN      ] ArchiveContractTest.Ppr4_ConcurrentSessionsSerializedByWriterMutex
+[       OK ] ArchiveContractTest.Ppr4_ConcurrentSessionsSerializedByWriterMutex (91 ms)
+[----------] 3 tests from ArchiveContractTest (217 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (226 ms total)
+[  PASSED  ] 3 tests.

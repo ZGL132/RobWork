@@ -1,0 +1,79 @@
+{
+  "taskId": "CORE-T12",
+  "baseCommit": "cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb",
+  "reviewedCommit": "63e2b6305df3b0091d579a4276dd04fc812ff215",
+  "branch": "codex/core-review-fixes",
+  "verdict": "pass",
+  "createdAt": "2026-10-27T00:00:00.000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "所有者另开的独立验收会话（ZCode，无子智能体）",
+    "authorization": "所有者 2026-10-27 要求从 cdd0eae9 新建分支/工作树实施 core 第一轮评审整改，并指示本会话独立验收",
+    "constraints": "未参与实施；除本验收产物目录、任务状态收口与记录指针更新外未修改任何产品文件；未远程同步、未改写历史、未触碰 main；受影响目标增量重建后重跑，不引用实施批运行结果替代本次执行。"
+  },
+  "scope": "独立复验 cdd0eae9..63e2b6305 送验范围（1 提交 81 文件）：core 身份播种（4×32 位熵＋标准 seed_seq 初始化 thread_local mt19937_64）、四个 as* 访问器 kind＋holds_alternative 双守卫恢复 CoreError 契约、F-967 core 参考句柄析构幂等退订、空占位 Core.cpp 删除与单元卡/README 事实同步；直接消费者 project/execution 事件与身份路径回归；ird_gates、治理门禁与范围检查直跑。",
+  "counts": {
+    "failed": 0,
+    "passed": 199,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "本会话实际重跑的 gtest 用例（core 79＋smoke 76＋project 15＋project-contract 3＋execution 25＋131072 线程身份探针 1）；ird_gates/validate-docs/verify-task-scope/commit-lint 另列 checks，不相加"
+  },
+  "checks": [
+    "现场：工作树干净、HEAD=63e2b6305df3＝送验 Head＝实施申报 SHA；分支 codex/core-review-fixes；整改记录 traceability/core-review-r1/README.md 与 commands.md 完整，原始证据（红 3 败→绿 6 过、core/smoke/project/execution 日志、探针、微基准、ird_gates、治理日志）逐一在案且与申报计数一致。",
+    "测试真实重跑（非引用）：受影响四目标增量重建（-m:1 逐目标，避开 D8040 记录在案的 /m:6 问题）后 core 79/79、smoke 76/76、project 15/15、project-contract 3/3、execution 25/25，ird-test-report summary 全部 decisive＝79/76/15/3/25 passed＋0 failed＋0 skipped；与实施批计数逐项一致。",
+    "身份播种语义核对：原 thread_local 单 32 位字播种把独立流压至 2^32（131072 线程生日期望约 2 对同种子＝完整身份重复，实施批 red 阶段已实证）；新 makeIdentityEngine 消费四个 uniform_int_distribution<uint32_t> 字（128 位熵）经标准 seed_seq 初始化既有 mt19937_64，固定熵回归逐字扰动断言每个熵字均影响流（red→green 真实路径）；六强类型/字节/文本/非零重取/FNV128 未动。",
+    "131072 线程探针独立复现：本会话重跑 review-probe（真实公开 generate 入口，random_device bits=32）＝fresh_threads=131072 duplicate_full_ids=0（6.4s），ird-report decisive；固定熵回归与真实入口探针分工与实施批口径一致，不混称。",
+    "事件契约核对：四个 as* 同时守卫 kind 与 holds_alternative，损坏输入统一抛 CoreError('core/events/kind-payload: …')，不再泄漏 std::bad_variant_access；测试以工厂合法构造后篡改 kind 制造真实 variant 错配，四访问器逐一 EXPECT_THROW CoreError。ReferenceSubscription 析构委托幂等 unsubscribe（removeSink 后 bus_/sink_ 置空），FIFO 测试改持句柄、新增析构退订/显式退订句柄晚于 bus 销毁/同 sink 整体移除三用例；快照投递、单线程参考语义与 execution 逐句柄总线的边界注释未推广。",
+    "消费者与占位清理：project 创建/基线/单调写/SaveAs/命令事件与 ArchiveContractTest（正确 _contract_test 目标）及 execution RunRegistryAdmissionTest 全绿；无符号 Core.cpp 删除后 CMake 源表、BuildRedLineTest 断言说明与公共头 README 同步，其余八个 TU 承接 STATIC 库；ird_gates LIB 门与自测夹具（临时目录合成文件）不受影响。",
+    "红线与复用合规：core 零 Qt（IdentityRandom.hpp 仅 <array>/<cstdint>/<random>，ird_gates R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中）；IdentityRandom.hpp 为 core 私有边界仅本单元 src/test 消费，不跨单元；上游先检索后适配（Random.cpp 全局 32 位 boost mt19937 与 Event.hpp 无 RAII/线程契约的不能整替理由在案），未平行实现、未改框架/vcpkg（verify-task-scope 证）；中文注释含 CORE-T12 溯源与线程约束；公共头零 API 变化（include 目录仅 README.md 变动）。",
+    "范围与提交：verify-task-scope 显式 -Base cdd0eae9 -Head 63e2b6305 exit 0（changed=81 全部在 17 条允许面，3 条禁止面零触碰）；commit-lint cdd0eae9..63e2b6305 PASS（单提交 [units] 标题合规）；空白自查记录保留原始 68 条 .log 行末提示、产品源码面 exit 0 的口径如实登记。",
+    "治理门禁直跑：validate-docs -TaskFile CORE-T12.json exit 0（validate-task PASS 1 tasks；validate-reuse PASS governance only inventory=1401 units=20 changed=175 DEBT=16 UNRESOLVED=1399；validate-docs PASS 20 units/432 task files）——与实施批同口径，不构成算法合规或债务结项；全库深证据审计按规不触发（-DeepEvidence 显式运行才查）。",
+    "单元卡事实同步核对：methodTag 大写允许与 Provenance.cpp:69-73 长期行为一致（大写接受自 dde89f12e 2026-09-11 CORE-T03 起），文档补记既有已接受偏差非新批接口；confirm/reject 原地接口与 DiagData.hpp:166/169 一致；删除占位、保留历史记录原文的边界与申报相符。"
+  ],
+  "performanceAssessment": "每线程首次播种 712.8ns→12264.2ns（17.2 倍，＋约 11.6µs/线程一次性）：无登记预算，独验评估为可接受——该代价仅在每线程首次生成身份时发生（thread_local 惰性初始化），后续生成仍走原 MT 输出/字节路径无逐 ID 开销；量级远低于线程创建与常规命令成本，且系修复 32 位种子空间缺陷的必要代价（正确性优先）。仅测初始化与前两输出的口径限制如实登记，不接受为完整生产延迟基准，亦不据此重开性能项。",
+  "issues": [
+    "非阻断观察①：core/src/Provenance.cpp:61 注释与 :76 错误信息文案仍写 [a-z0-9./_-]，实际校验与单元卡 v0.5 已接受偏差为 [A-Za-z0-9./_-]（大写接受系 2026-09-11 既有行为，非本包引入）；诊断码 core/provenance/method-tag 稳定、拒绝行为与契约一致，仅提示文案偏窄。本包声明不扩大 Provenance 清理，属既有遗留，留后续可选修正。",
+    "非阻断观察②：其他单元注释/CMake 仍引用 core/src/Core.cpp 作 CORE-T01 历史先例（执行/项目/诊断/IO/报告/testkit 等九处），文件已删除但引用为历史陈述且各单位自有锚点 TU 仍在；本包声明不扩大清理，不改其合规性。"
+  ],
+  "notRun": [
+    "GUI 真实生产路径：本范围无 GUI 接线（core 零 Qt，include 目录零头文件变化），不适用",
+    "全库证据索引深审（validate-docs -DeepEvidence）：按 §4 增量范围不触发",
+    "跨进程/更长程身份统计与密码学强度声明：不在契约内，实施批与独验均不作此承诺",
+    "悬垂句柄访问 bus 的负向实验：显式登记为参考前置之外，未执行"
+  ],
+  "commands": [
+    { "name": "core-full", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_core_test.exe（增量重建后全量）", "exitCode": 0, "passed": true, "log": "core.log", "evidence": "core.xml＋core.ird-test-report.json（79/79 decisive）" },
+    { "name": "smoke-full", "command": "build/core-smoke/core/Release/sdurws_ird_core_test.exe（实施批同源构建，本会话重跑）", "exitCode": 0, "passed": true, "log": "smoke.log", "evidence": "smoke.xml＋smoke.ird-test-report.json（76/76 decisive）" },
+    { "name": "project", "command": "sdurws_ird_project_test.exe --gtest_filter=ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen:ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed:ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically:SaveAs*.*:CommandSubmitS6.*:ArchiveContractTest.*", "exitCode": 0, "passed": true, "log": "project.log", "evidence": "project.xml（15/15；该目标无 ArchiveContractTest 注册，与实施批口径一致）" },
+    { "name": "project-contract", "command": "sdurws_ird_project_contract_test.exe --gtest_filter=ArchiveContractTest.*", "exitCode": 0, "passed": true, "log": "project-contract.log", "evidence": "project-contract.xml（3/3）" },
+    { "name": "execution", "command": "sdurws_ird_execution_test.exe --gtest_filter=RunRegistryAdmissionTest.*", "exitCode": 0, "passed": true, "log": "execution.log", "evidence": "execution.xml（25/25）" },
+    { "name": "identity-probe", "command": "traceability/core-review-r1/review-probe.exe --gtest_filter=ReviewIdentity.FirstTwoValuesInFreshThreadsAreDistinct", "exitCode": 0, "passed": true, "log": "real-identity.log", "evidence": "real-identity.xml＋ird-test-report（131072 线程 duplicate_full_ids=0）" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=…/industrialrobot -DIRD_SELFTEST_DIR=…/build/core-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T12.json", "exitCode": 0, "passed": true, "log": "validate-docs.log", "evidence": "validate-task/validate-reuse/validate-docs 三段 PASS" },
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile …/CORE-T12.json -Base cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb -Head 63e2b6305df3b0091d579a4276dd04fc812ff215", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "81 路径全部允许面" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb..63e2b6305df3b0091d579a4276dd04fc812ff215", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "63e2b6305df3 PASS" },
+    { "name": "binding-refresh", "command": "python refresh-bindings.py（收口编辑后只刷新 units/core.md 与 core-review-r1/README.md 的 digest-only 绑定）", "exitCode": 0, "passed": true, "log": "", "evidence": "core.json 210／execution.json 11／ui.json 1 处刷新；刷新后 validate-docs PASS" }
+  ],
+  "executionNotes": [
+    "本验收为重跑型（范围含产品源码改动，与 REUSE-T53 只读复核型不同）：四个集成测试目标增量重建（cmake --build --target 逐目标 -m:1）确认二进制与 HEAD 一致后执行；冒烟树未重建（产品源与实施批最终构建逐位相同、工作树干净），复用其同源二进制重跑。",
+    "Git Bash 下 MSBuild 多目标与 '/m:1' 开关发生路径转义损坏（MSB1008），改逐目标 '-m:1'；pwsh 经 WindowsApps 全路径调用（bash PATH 无 pwsh/powershell）。",
+    "收口登记（任务状态 ready→done、实施记录追加验收节、单元卡状态行）触发一次 REUSE-FRESHNESS：矩阵 digest-only 钉扎的 units/core.md 与 core-review-r1/README.md 摘要过期；按同口径以 refresh-bindings.py 只刷新实际引用绑定（core.json 210、execution.json 11、ui.json 1；diagnostics.json 无引用），不触碰源码区段钉扎，刷新后 validate-docs 三段 PASS（validate-docs.log 为刷新后终态）。",
+    "实施批登记的环境事实（缺 ini.template.static 静态资产原样复制、D8040 低并行重试、两个登记 Eigen 安装头供给复制）均引用原件核对，本会话未复现也未推翻；其性质为环境供给复制、未改框架/vcpkg/门禁脚本。"
+  ],
+  "limitations": "PASS 仅覆盖 CORE-T12 送验范围（cdd0eae9..63e2b6305）＝core 身份播种、事件访问器异常契约、F-967 core 参考句柄残留与占位/文档同步；不关闭 F-967 之外的其他 findings，不解除 GAP-DIGEST-01、B31/B32 泛型与 UnitToken 无效值等仍待接口负责人裁决事项，不构成迁移债务结项或 REUSE-T02 放行。validate-reuse 为 governance only（UNRESOLVED=1399 现状），语义审计仍按 audit-contract 演进。131072 线程零重复为该规模实证，不作概率穷尽证明。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/core.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/core.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/core.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/smoke.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/smoke.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/smoke.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/project.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/project.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/project.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/project-contract.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/project-contract.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/project-contract.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/execution.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/execution.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/execution.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/real-identity.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/real-identity.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/real-identity.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/CORE-T12-20261027-r1/refresh-bindings.py"
+  ]
+}
