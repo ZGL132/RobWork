@@ -172,13 +172,17 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-SVD",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
       "search": {
         "command": "rg -n \"singularValuesOneSidedJacobi|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+        "conclusion": "T34 终审结案：直接 svd 与 σ-only 直连 Eigen 两候选均被三规模实测退化否决（独验复跑证实可复现），本地单侧 Jacobi 为奇异/病态两档分档的正确形态——business-specific/audited 登记，见 differences 与 nonOverlapEvidence"
       },
-      "differences": "手写单侧 Jacobi；保留有限性/条件数/奇异阈值的产品语义。REUSE-T34 候选实测（LinearAlgebra::svd）：n=3/6/12 分别 2.597/2.154/1.944× 退化、σ 相对差 ≤2.1e-15（上游对照通过）——按预声明规则（无既有预算；T07 同接口 4.662× 悬置前科）不落地生产，候选/测量交所有者单项裁决；上游 svd 强制 ComputeFullU|ComputeFullV 而 σ-only 直连亦 1.8× 慢且属未批依赖渠道（performance.log）。",
+      "differences": "手写单侧 Jacobi；保留有限性/条件数/奇异阈值的产品语义。REUSE-T34 候选实测（LinearAlgebra::svd）：n=3/6/12 分别 2.597/2.154/1.944× 退化、σ 相对差 ≤2.1e-15（上游对照通过）——按预声明规则（无既有预算；T07 同接口 4.662× 悬置前科）不落地生产，候选/测量交所有者单项裁决；上游 svd 强制 ComputeFullU|ComputeFullV 而 σ-only 直连亦 1.8× 慢且属未批依赖渠道（performance.log）。REUSE-T34 终审＋所有者委托裁决（2026-10-28，§13.5.6）：终局保留——①退化经独验复跑证实可复现（2.439/1.985/1.989×）；②上游无 σ-only 入口（强制全量 U/V）无改善空间，直连 Eigen 属未批渠道；③本地单侧法小奇异值相对精度与条件数无关（Demmel–Veselić）是奇异/病态两档分档与 κ≈1e8 阻止边界可信的前提；④保留非隐藏兜底（唯一实现、无平行结构）。upgrade 唯一路径＝LinearAlgebra 增 σ-only 入口的最小上游扩展（沿 RC-04 LM patch 登记形态），须缺口证据＋明确批准，本轮不提案。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md",
+        "sha256": "8e82a0313ff7c843f23a159dc5abb727676cc0b776630aab6ee86c0f9cbc5e09"
+      },
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
