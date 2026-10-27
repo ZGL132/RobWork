@@ -448,3 +448,11 @@ RC-11 随各能力包执行，不堆到最后一次刷新全部历史报告。T0
 构建沿根 AGENTS §4 和各契约真实命令：先确认集成 cache 的 RWS_BUILD_INDUSTRIALROBOT=ON，再构建受影响目标/ird_gates；公共接口、依赖、CMake 和核心数值增加必要独立冒烟及相关对端回归。T19 的 kinematics 冒烟 LNK2019 缺口须在实际受影响模式解决，不能用“集成绿”代替其契约。证据包含构建日志、gtest XML、per-exe ird-test-report.json 或脚本真实报告，分列 passed/skipped/failed/NOT RUN。每包是可回滚的本地提交组，不暂存他人 trace-matrix 或未跟踪材料。
 
 **立即下一任务**：先执行 RC-00/RC-02 的只读核对并准备最小裁决材料，由所有者安排 RC-01 独验；RC-03 的性能建议供所有者作具体裁决。只有同文件所有未决行有合法解决路径且退化获处理后，才把 RC-05 转为生产实施任务。若关键提案被否且仍需保留平行核心，明确报告“复用重构尚未彻底完成”，不再以候选留存或登记任务 done 结束总目标。
+
+#### 13.5.6 裁决与授权登记（2026-10-28，所有者委托口径）
+
+所有者 2026-10-27 委托「后续所有裁决授权按建议进行，不再参与，不因此阻断工作流」。阶段A 材料包（REUSE-T55/ 同源产物，独立复核 upheld）制备后，按委托作如下裁决登记：
+
+1. **RC-03 性能裁决＝选项一（接受当前候选退化）**：验收基准＝仓内首测口径（dhToExplicit#6r +25.6%、generateGridPositions#rotated-box +80.0%、generateSampleSet#rotated-box +22.8%；原件 bench-pre/post-swap.log md5 钉死，见 REUSE-T55/run/）；交接补充分析（+19.1%/+78.1%/+12.2%）口径未核实、原件未定位，不作为验收基准，仅留档。依据：三路径均为采样/展开建立型非逐帧热循环、无既有预算登记；数值等价面 P1～P9 探针＋26/26 checksums 已过；确定性 checksums 逐组一致。P6b 双重无效输入优先级翻转与 P9 结合序 ULP 差异（768 例中 243 例、maxUlp 160、maxAbsDiff 4.441e-16）按附录 D 容差级判定接受（非位模式契约，下游无跨帧累积链），随批登记 candidate-changes-manifest。RC-05 准入条件之性能面满足。
+2. **RC-04 LM 家族最小上游扩展提案＝批准**：按 RC-02 材料行 4-7 提案要点最小化实施——sandbox/optimization 增 LevenbergMarquardtOptimizer（沿 Optimizer/StopCondition 接口族、复用 NumericalDerivative，确定性优先），产品侧薄适配仅承担 residual functor/初值/钉住坐标掩码；rankAndFreeColumns 按 policy §1.2 拆分——通用消元/求解上游化，字典序自由列分类契约留产品侧薄层。按 SA-02 登记 industrialrobot/patches/PATCHES.md 及 patch 后实施；换核前后同输入数值差异如实登记（P9 先例口径），黄金 expansion/roundtrip 重制风险评估随批交付。EAA/DH 精度缺口不提案（EAA 已被阶段〇否决；DH 3 行 business-specific 收口）。
+3. **独验边界（委托不覆盖）**：八契约独验、FD 补审路径②、T55 及后续各包独验仍由所有者安排独立会话，实施侧不得自签；相关项如实登记 NOT RUN／待所有者安排，不阻断其他工作。
