@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="32" failures="0" disabled="0" errors="0" time="0.426" timestamp="2026-10-27T22:52:54.732" name="AllTests">
+  <testsuite name="JsonRoundtrip" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-27T22:52:54.732">
+    <testcase name="DecimalParsingIgnoresNumericLocale_ReviewR07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="29" status="run" result="completed" time="0.001" timestamp="2026-10-27T22:52:54.732" classname="JsonRoundtrip" />
+    <testcase name="DecimalRangeAndSignedZeroPreserved_ReviewR07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="42" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.734" classname="JsonRoundtrip" />
+    <testcase name="UnsignedIntegerTextIsExact_ReviewR06" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="54" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonRoundtrip" />
+    <testcase name="CanonicalTextRestored_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="120" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonRoundtrip" />
+    <testcase name="InsertionOrderStable_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="140" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonRoundtrip" />
+  </testsuite>
+  <testsuite name="JsonAccess" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.735">
+    <testcase name="ExactIntegerEqualityAndReplacement_ReviewR06" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="64" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonAccess" />
+    <testcase name="KindDiscriminatorsAndFind_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="151" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonAccess" />
+  </testsuite>
+  <testsuite name="JsonRejections" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.735">
+    <testcase name="DumpRejectsNonFiniteNumbers_ReviewR03" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="84" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonRejections" />
+    <testcase name="RejectionMatrix_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="174" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonRejections" />
+    <testcase name="GrammarViolations_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="189" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.735" classname="JsonRejections" />
+  </testsuite>
+  <testsuite name="JsonErrorLocation" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.736">
+    <testcase name="LineColumnPrecision_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="206" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.736" classname="JsonErrorLocation" />
+  </testsuite>
+  <testsuite name="JsonUnicode" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.736">
+    <testcase name="EscapesToUtf8_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="214" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.736" classname="JsonUnicode" />
+  </testsuite>
+  <testsuite name="JsonBoundary" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.736">
+    <testcase name="DumpOutputReparseable_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="228" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.736" classname="JsonBoundary" />
+  </testsuite>
+  <testsuite name="ToleranceProfileLoad" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.006" timestamp="2026-10-27T22:52:54.736">
+    <testcase name="SchemaRequiredAndVersionChecked_ReviewR05" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="90" status="run" result="completed" time="0.006" timestamp="2026-10-27T22:52:54.736" classname="ToleranceProfileLoad" />
+  </testsuite>
+  <testsuite name="AssertMacrosBehavior" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.742">
+    <testcase name="FiniteEvaluatesExactlyOnce_ReviewR02" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="134" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.742" classname="AssertMacrosBehavior" />
+  </testsuite>
+  <testsuite name="SetEquivalent" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.742">
+    <testcase name="IdentifiedElementsNeverFallBackToNumerics_ReviewR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.742" classname="SetEquivalent" />
+  </testsuite>
+  <testsuite name="StableOrder" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.742">
+    <testcase name="ShorterSequenceReportsEarliestDivergence_ReviewR11" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="112" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.742" classname="StableOrder" />
+  </testsuite>
+  <testsuite name="ReproRecordReview" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.742">
+    <testcase name="ExactSeedRoundtrip_ReviewR06" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp" line="46" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.742" classname="ReproRecordReview" />
+    <testcase name="RejectsInvalidIntegerFields_ReviewR06" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp" line="58" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.743" classname="ReproRecordReview" />
+  </testsuite>
+  <testsuite name="ReproBenchmark" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.008" timestamp="2026-10-27T22:52:54.743">
+    <testcase name="ThreeLegsEquivalentPassMeasured_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="152" status="run" result="completed" time="0.001" timestamp="2026-10-27T22:52:54.743" classname="ReproBenchmark" />
+    <testcase name="ValueShiftDetectedAsSetViolation_WP23T09_ACC2" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="190" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.744" classname="ReproBenchmark" />
+    <testcase name="SwapDetectedAsOrderViolation_WP23T09_ACC3" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="212" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.745" classname="ReproBenchmark" />
+    <testcase name="ReportJsonRoundtrip_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="238" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.745" classname="ReproBenchmark" />
+    <testcase name="ReportFileWriteRoundtrip_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="265" status="run" result="completed" time="0.005" timestamp="2026-10-27T22:52:54.746" classname="ReproBenchmark" />
+  </testsuite>
+  <testsuite name="PerfBenchmark" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.751">
+    <testcase name="NonFinitePercentileRejected_ReviewR12" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\PerfBenchmarkTest.cpp" line="44" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.751" classname="PerfBenchmark" />
+  </testsuite>
+  <testsuite name="TestRecordJson" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T22:52:54.751">
+    <testcase name="MachineReadableFieldTable_UT_RPT" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReportTest.cpp" line="91" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.751" classname="TestRecordJson" />
+    <testcase name="NonFiniteAndMissingValuesStayMachineReadable_ReviewR03" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReportTest.cpp" line="148" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.751" classname="TestRecordJson" />
+  </testsuite>
+  <testsuite name="ListenerOwnership" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.408" timestamp="2026-10-27T22:52:54.751">
+    <testcase name="AppendTakesOwnershipAndDestroysOnce_UT_LSN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ListenerOwnershipTest.cpp" line="179" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.751" classname="ListenerOwnership" />
+    <testcase name="ReleaseReturnsOwnershipToCaller_UT_LSN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ListenerOwnershipTest.cpp" line="192" status="run" result="completed" time="0." timestamp="2026-10-27T22:52:54.751" classname="ListenerOwnership" />
+    <testcase name="ChildPassReportAndExitZero_UT_LSN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ListenerOwnershipTest.cpp" line="209" status="run" result="completed" time="0.35" timestamp="2026-10-27T22:52:54.751" classname="ListenerOwnership" />
+    <testcase name="ChildFailReportAndNonZeroExit_UT_LSN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ListenerOwnershipTest.cpp" line="220" status="run" result="completed" time="0.018" timestamp="2026-10-27T22:52:55.102" classname="ListenerOwnership" />
+    <testcase name="ChildSkipReportAndExitZero_UT_LSN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ListenerOwnershipTest.cpp" line="231" status="run" result="completed" time="0.039" timestamp="2026-10-27T22:52:55.120" classname="ListenerOwnership" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,13 @@
+Note: Google Test filter = PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs:PolicyContractDoubles.At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from PolicyContractDoubles
+[ RUN      ] PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs
+[       OK ] PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs (0 ms)
+[ RUN      ] PolicyContractDoubles.At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes
+[       OK ] PolicyContractDoubles.At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes (0 ms)
+[----------] 2 tests from PolicyContractDoubles (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 2 tests.

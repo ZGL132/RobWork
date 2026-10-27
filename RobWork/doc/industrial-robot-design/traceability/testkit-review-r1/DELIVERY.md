@@ -20,3 +20,7 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 6dc
 任务 `TK-T13` 保持 ready，F-015～F-018 保持 open。需要所有者另开独立会话验收冻结源码和本包 acceptance，本实施不自签、不合并、不推送。不重做未受影响的T20性能接受、T49生成器独验、core全套或GUI。
 
 在所列版本、范围和已执行验证内，未发现其他问题。
+
+## 独立验收（2026-10-27）
+
+所有者另开独立会话验收 **PASS**，登记于 [acceptance/TK-T13-20261027-r1.json](../acceptance/TK-T13-20261027-r1.json)（证据同目录），范围显式 `-Base 6dc1141ae -Head 7a941b988`（211 路径允许面）。独立会话受影响目标增量重建后真实重跑：集成 testkit 106／optimization 2／policy contract 2（正确 `_contract_test` 目标）／project contract 1／独立冒烟 32 全绿（ird-test-report 全部 decisive）；lsnchild 真实 listener 子进程七项交叉核对退出码全符合预期，报告实测 `"+Inf"`/`"-Inf"`/`"NaN"` 字符串、缺失侧 null、`seed=18446744073709551615` 完整精度整数，与批准方案逐字一致。ird_gates 零命中、validate-docs 三段 PASS、commit-lint 两提交 PASS。首次基线 132 PASS＋1 FAIL 与 policy 首次零命中原始记录核实未被清洗。F-015～F-018 台账状态保持 open，关口归所有者。

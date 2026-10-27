@@ -1008,7 +1008,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 
 ---
 
-2026-10-27 第一轮评审整改（TK-T13）恢复上述既有契约：有身份元素不进入数值回退；首错位不被长度掩盖；有限宏只求值一次；档案强制核对 schema 并保存已校验量纲；parameters 可选、整数字段转换前检查、完整性包含 generate 来源；lint 装载档案并核对需求及 AT；安装扫描包含测试头；分位数拒绝非有限 q。未改附录 D 容差、Boost 匹配核心、core 比较或摘要。JSON 转换显式使用 C 数值 locale，保留下溢与负零。R03/R06 格式已获所有者批准，表示见 §4.1；实施证据见 [整改记录](../traceability/testkit-review-r1/README.md)，本说明不构成独立验收。
+2026-10-27 第一轮评审整改（TK-T13）恢复上述既有契约：有身份元素不进入数值回退；首错位不被长度掩盖；有限宏只求值一次；档案强制核对 schema 并保存已校验量纲；parameters 可选、整数字段转换前检查、完整性包含 generate 来源；lint 装载档案并核对需求及 AT；安装扫描包含测试头；分位数拒绝非有限 q。未改附录 D 容差、Boost 匹配核心、core 比较或摘要。JSON 转换显式使用 C 数值 locale，保留下溢与负零。R03/R06 格式已获所有者批准，表示见 §4.1；实施证据见 [整改记录](../traceability/testkit-review-r1/README.md)。独立验收PASS（2026-10-27，[验收记录](../traceability/acceptance/TK-T13-20261027-r1.json)），F-015～F-018 台账关口归所有者。
 
 ## 附录 A：完整示例（均为**设计示例**，非已执行的验证结果）
 
