@@ -1,0 +1,32 @@
+Note: Google Test filter = Tx7ProcessLock.*:TransactionBoundaries/F8ProcessCrash.*
+[==========] Running 10 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from Tx7ProcessLock
+[ RUN      ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles
+[       OK ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles (89 ms)
+[ RUN      ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit
+[       OK ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit (135 ms)
+[ RUN      ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid
+[       OK ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid (93 ms)
+[ RUN      ] Tx7ProcessLock.AliveHolderNeverTakenOver_KillEnablesTakeover
+[       OK ] Tx7ProcessLock.AliveHolderNeverTakenOver_KillEnablesTakeover (163 ms)
+[ RUN      ] Tx7ProcessLock.CrashThenConcurrentTakeover_SingleWinner
+[       OK ] Tx7ProcessLock.CrashThenConcurrentTakeover_SingleWinner (133 ms)
+[----------] 5 tests from Tx7ProcessLock (615 ms total)
+
+[----------] 5 tests from TransactionBoundaries/F8ProcessCrash
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T1_Uncommitted
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T1_Uncommitted (78 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T2T3_Uncommitted
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T2T3_Uncommitted (320 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T4_Uncommitted
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T4_Uncommitted (116 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T5_Committed
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T5_Committed (112 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T6_Committed
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T6_Committed (141 ms)
+[----------] 5 tests from TransactionBoundaries/F8ProcessCrash (769 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 2 test suites ran. (1385 ms total)
+[  PASSED  ] 10 tests.

@@ -1,0 +1,91 @@
+Note: Google Test filter = ProjectReviewRegression.*:TxEngineTest.*
+[==========] Running 39 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 24 tests from TxEngineTest
+[ RUN      ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01
+[       OK ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01 (55 ms)
+[ RUN      ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01
+[       OK ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01 (45 ms)
+[ RUN      ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned
+[       OK ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned (36 ms)
+[ RUN      ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester
+[       OK ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester (38 ms)
+[ RUN      ] TxEngineTest.F1_PrepareFails_StagingDirCreate
+[       OK ] TxEngineTest.F1_PrepareFails_StagingDirCreate (13 ms)
+[ RUN      ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag
+[       OK ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag (19 ms)
+[ RUN      ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish
+[       OK ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish (29 ms)
+[ RUN      ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes
+[       OK ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes (33 ms)
+[ RUN      ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted
+[       OK ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted (35 ms)
+[ RUN      ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands
+[       OK ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands (38 ms)
+[ RUN      ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands
+[       OK ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands (38 ms)
+[ RUN      ] TxEngineTest.F7_CleanupFails_CommittedStateIntact
+[       OK ] TxEngineTest.F7_CleanupFails_CommittedStateIntact (40 ms)
+[ RUN      ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant (20 ms)
+[ RUN      ] TxEngineTest.F8_AfterStage_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterStage_OldStateByteInvariant (29 ms)
+[ RUN      ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant (41 ms)
+[ RUN      ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir
+[       OK ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir (36 ms)
+[ RUN      ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean
+[       OK ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean (46 ms)
+[ RUN      ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites
+[       OK ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites (12 ms)
+[ RUN      ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast
+[       OK ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast (16 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings
+[       OK ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings (40 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt (20 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt (17 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt (12 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen
+[       OK ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen (19 ms)
+[----------] 24 tests from TxEngineTest (741 ms total)
+
+[----------] 15 tests from ProjectReviewRegression
+[ RUN      ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact
+[       OK ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact (111 ms)
+[ RUN      ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit
+[       OK ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit (32 ms)
+[ RUN      ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit
+[       OK ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit (30 ms)
+[ RUN      ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile
+[       OK ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile (64 ms)
+[ RUN      ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting
+[       OK ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting (49 ms)
+[ RUN      ] ProjectReviewRegression.QueryHidesUncommittedObject
+[       OK ] ProjectReviewRegression.QueryHidesUncommittedObject (35 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand
+[       OK ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand (43 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest
+[       OK ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest (56 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch
+[       OK ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch (49 ms)
+[ RUN      ] ProjectReviewRegression.FailedValidationRollsBackRegistration
+[       OK ] ProjectReviewRegression.FailedValidationRollsBackRegistration (31 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryChecksSharedHistoricalObjectBytes
+[       OK ] ProjectReviewRegression.RecoveryChecksSharedHistoricalObjectBytes (161 ms)
+[ RUN      ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected
+[       OK ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected (1 ms)
+[ RUN      ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath
+ird-tempdir-remove-failed: C:\Users\zgl18\AppData\Local\Temp\ird-test/61476-prj-r1-ec8788f561734858: 目录不是空的。
+[       OK ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath (42 ms)
+[ RUN      ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest
+[       OK ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest (76 ms)
+[ RUN      ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively
+[       OK ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively (26 ms)
+[----------] 15 tests from ProjectReviewRegression (812 ms total)
+
+[----------] Global test environment tear-down
+[==========] 39 tests from 2 test suites ran. (1591 ms total)
+[  PASSED  ] 39 tests.

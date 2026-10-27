@@ -93,3 +93,7 @@ sync-bindings.py只重锚已变源/输入和登记实际新增函数/回归，�
 回滚边界：以PRJ-T19本地提交整体revert回到起点语义；格式无迁移，已有项目/备份/工件不改写、不清理。若后续按W1—W7拆回滚，TxEngine结果字段/宿主推进、扫描快照/查询刷新、command校验/合法夹具须成组，不能只回退一端。不得通过回滚删除用户数据或恢复已被篡改的实验文件到真实工程。
 
 下一步由所有者另开独立会话审查冻结提交：核对原13项、实际红绿、HEAD提交后错误分类、全文件准入缺口、只读与历史引用、性能及无格式变化；本实施不自签独验，不写任务done，不合并/推送。待裁决C1—C4及close/acquireInFlight、abandon/writeBatch未证实交错继续保留。evidence不得把listRuns存在、归档成功、摘要字段匹配或本批自查当作“当前结果可用于工程判断”；仍须独立输入/修订/策略/完整性与当前性判断。
+
+## 独立验收（2026-10-28）
+
+所有者另开独立会话对实施与回归面验收 **PASS**，登记于 [acceptance/PRJ-T19-20261028-r1.json](../acceptance/PRJ-T19-20261028-r1.json)（证据同目录），范围显式 `-Base 412e173b9 -Head 59af1f9b4`（100 路径允许面）。独立会话受影响目标增量重建后真实重跑：project 完整单元 305（终态，含其后追加的共享对象新例）／完整契约 34／去重回归 58／真实进程 10（Tx7ProcessLock＋TransactionBoundaries/F8ProcessCrash 精确过滤）／execution 消费者 6／独立冒烟 39／性能 2（热样本 930～1016ms，3 秒硬预算断言 PASS）全部 decisive 零失败；ird_gates 零命中、scope 与 commit-lint PASS。validate-docs 的登记 FAIL（首败 REUSE-COVERAGE DraftService.hpp no functional matrix＋既有 AD-PENDING）独立复现且失败面一致——**包级文档/复用准入仍未通过，任务保持 ready 不收口 done**；13 项修复、扫描去重与性能预算经源码 diff 与真实子进程/性能测试核对成立。
