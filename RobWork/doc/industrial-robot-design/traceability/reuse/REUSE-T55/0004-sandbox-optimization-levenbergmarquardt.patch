@@ -1,0 +1,416 @@
+diff --git a/RobWork/RobWork/src/sandbox/CMakeLists.txt b/RobWork/RobWork/src/sandbox/CMakeLists.txt
+index 62ef0dc0d..12332300f 100644
+--- a/RobWork/RobWork/src/sandbox/CMakeLists.txt
++++ b/RobWork/RobWork/src/sandbox/CMakeLists.txt
+@@ -37,6 +37,7 @@ if(build)
+         optimization/GradientOptimizer.cpp
+         optimization/GradientDescentOptimizer.cpp
+         optimization/BFGSOptimizer.cpp
++        optimization/LevenbergMarquardtOptimizer.cpp
+         optimization/SimulatedAnnealingOptimizer.cpp
+     )
+ 
+@@ -64,6 +65,7 @@ if(build)
+         optimization/GradientOptimizer.hpp
+         optimization/GradientDescentOptimizer.hpp
+         optimization/BFGSOptimizer.hpp
++        optimization/LevenbergMarquardtOptimizer.hpp
+         optimization/SimulatedAnnealingOptimizer.hpp
+     )
+ 
+diff --git a/RobWork/RobWork/src/sandbox/optimization/LevenbergMarquardtOptimizer.hpp b/RobWork/RobWork/src/sandbox/optimization/LevenbergMarquardtOptimizer.hpp
+new file mode 100644
+--- /dev/null
++++ b/RobWork/RobWork/src/sandbox/optimization/LevenbergMarquardtOptimizer.hpp
+@@ -0,0 +1,183 @@
++﻿/*
++ * LevenbergMarquardtOptimizer.hpp
++ *
++ *  Created on: Oct 28, 2026
++ *
++ *  Levenberg-Marquardt 最小二乘优化器（SA-02 登记的最小上游扩展，授权见
++ *  industrial-robot-design/reuse/migration.md §13.5.6 第 2 条，登记于
++ *  industrialrobot/patches/PATCHES.md）。纯数值通用实现：残差 functor 由
++ *  调用方注入，不携带任何产品业务判定。
++ */
++
++#ifndef SRC_RWLIBS_OPTIMIZATION_LEVENBERGMARQUARDTOPTIMIZER_HPP_
++#define SRC_RWLIBS_OPTIMIZATION_LEVENBERGMARQUARDTOPTIMIZER_HPP_
++
++#include <cstddef>
++#include <rw/core/Ptr.hpp>
++#include <rw/core/macros.hpp>
++#include <vector>
++
++#include "FirstDifferences.hpp"
++#include "NumericalDerivative.hpp"
++#include "Optimizer.hpp"
++#include "Types.hpp"
++
++namespace rwlibs {
++namespace optimization {
++
++/** @addtogroup optimization */
++/*@{*/
++
++/**
++ * @brief Levenberg-Marquardt 最小二乘优化器。
++ *
++ * 最小化目标 F(x) = 0.5·Σ_i r_i(x)²，其中 r_i: VectorType -> double 为注入的
++ * 残差 functor（m 个 FunctionType::Ptr，顺序即雅可比行序，构造后固定不变）。
++ *
++ * 单步核心（固定算术序，详见 LevenbergMarquardtOptimizer.cpp 的 step()）：
++ *  - 残差向量 r 与数值雅可比 J（复用 NumericalDerivative/FirstDifferences 中心差分）；
++ *  - 正规方程 (JᵀJ + λ·diag(d))·δ = -Jᵀr，d_j = max(JᵀJ)_jj（Marquardt 缩放，
++ *    带 1e-12 下限防奇异），Eigen PartialPivLU 求解；
++ *  - 阻尼自适应：接受步 λ ← λ/factorDown，拒绝步 λ ← λ·factorUp，
++ *    并夹取到可配界 [λmin, λmax]（阻尼上限）；
++ *  - 停滞判据：连续 maxStagnationSteps 步无实质改进（拒绝步、代价改进或步长
++ *    低于容差）即冻结迭代。
++ *
++ * 确定性策略（NFR-COR-01/02 口径）：
++ *  - 无任何随机源（区别于 SimulatedAnnealingOptimizer）；
++ *  - 所有循环、累加与比较的算术序固定，同输入同平台必然逐位复现；
++ *  - 线性求解用 PartialPivLU，主元选择对同一矩阵确定；
++ *  - 基类循环的迭代上限经 StopCondition 配置（家族口径）。
++ *
++ * @note 误差语义：currentError 为本步雅可比计算点的 ‖Jᵀr‖₂（F 的梯度范数），
++ * 接受步时相对新点滞后一步；基类接口（只读，不在本补丁范围）无法从 step()
++ * 内部终止循环，停滞冻结后剩余迭代为 O(1) 空操作，由 StopCondition 收尾。
++ */
++class LevenbergMarquardtOptimizer: public Optimizer {
++public:
++	//! Smart pointer.
++	typedef rw::core::Ptr<LevenbergMarquardtOptimizer> Ptr;
++
++	//! Vector type used for internal calculations.
++	typedef Eigen::VectorXd vector;
++
++	//! Matrix type used for internal calculations.
++	typedef Eigen::MatrixXd matrix;
++
++	//! Numerical derivative method type（与 GradientOptimizer 同族；类内命名避免与其匿名命名空间 typedef 冲突）.
++	typedef rw::math::NumericalDerivative<ResultType, VectorType, GradientType> NumericalDerivativeMethod;
++
++	//! First differences (central difference) derivative method type.
++	typedef rw::math::FirstDifferences<ResultType, VectorType, GradientType> FirstDifferencesMethod;
++
++public:
++	/**
++	 * @brief Constructor.
++	 *
++	 * @param residuals [in] 残差 functor 列表（m ≥ 1，不得含空指针；构造后固定）
++	 * @param initialLambda [in] 初始阻尼因子 λ（> 0，默认 1e-3）
++	 * @param numericalDerivative [in] 数值导数方法（默认中心差分，步长 1e-6）
++	 */
++	LevenbergMarquardtOptimizer(const std::vector<FunctionType::Ptr>& residuals,
++			double initialLambda = 1e-3,
++			typename NumericalDerivativeMethod::Ptr numericalDerivative =
++					rw::core::ownedPtr(new FirstDifferencesMethod(1e-6)));
++
++	//! Destructor.
++	virtual ~LevenbergMarquardtOptimizer();
++
++	/**
++	 * @brief 阻尼因子夹取界（可配的阻尼上下限）。
++	 *
++	 * @param lambdaMin [in] 下界（> 0）
++	 * @param lambdaMax [in] 上界（≥ lambdaMin）；触界仍无改善即停滞
++	 */
++	void setLambdaBounds(double lambdaMin, double lambdaMax) {
++		if (lambdaMin <= 0.0 || lambdaMax < lambdaMin)
++			RW_THROW("LevenbergMarquardtOptimizer: require 0 < lambdaMin <= lambdaMax");
++		_lambdaMin = lambdaMin;
++		_lambdaMax = lambdaMax;
++	}
++
++	/**
++	 * @brief 阻尼缩放倍率（接受步除以 \b factorDown，拒绝步乘以 \b factorUp）。
++	 *
++	 * @param factorDown [in] 接受步缩放倍率（> 1）
++	 * @param factorUp [in] 拒绝步放大倍率（≥ factorDown）
++	 */
++	void setLambdaFactors(double factorDown, double factorUp) {
++		if (factorDown <= 1.0 || factorUp < factorDown)
++			RW_THROW("LevenbergMarquardtOptimizer: require 1 < factorDown <= factorUp");
++		_lambdaFactorDown = factorDown;
++		_lambdaFactorUp = factorUp;
++	}
++
++	/**
++	 * @brief 停滞步数上限：连续 \b steps 步无实质改进即冻结迭代（≥ 1）。
++	 */
++	void setMaxStagnationSteps(std::size_t steps) {
++		if (steps < 1)
++			RW_THROW("LevenbergMarquardtOptimizer: maxStagnationSteps must be >= 1");
++		_maxStagnationSteps = steps;
++	}
++
++	/**
++	 * @brief 停滞容差：代价改进 ≤ \b costTolerance·(1+|F|)（F 为改进起算点，
++	 * 即本步开始时的代价）或步长 ‖δ‖₂ ≤ \b stepTolerance 视为无实质改进。
++	 */
++	void setStagnationTolerances(double costTolerance, double stepTolerance) {
++		if (costTolerance < 0.0 || stepTolerance < 0.0)
++			RW_THROW("LevenbergMarquardtOptimizer: stagnation tolerances must be >= 0");
++		_costTolerance = costTolerance;
++		_stepTolerance = stepTolerance;
++	}
++
++	//! Get current damping factor.
++	double getLambda() const {
++		return _lambda;
++	}
++
++	//! Is the optimizer frozen by the stagnation criterion?
++	bool isStagnated() const {
++		return _stagnated;
++	}
++
++	//! Get the number of consecutive stagnant steps.
++	std::size_t getStagnationCount() const {
++		return _stagnationCount;
++	}
++
++protected:
++	//! @copydoc Optimizer::newOptimization
++	virtual void newOptimization(const VectorType& initialGuess,
++			ResultType& initialValue, double& initialError);
++
++	//! @copydoc Optimizer::step
++	virtual void step(VectorType& currentGuess, ResultType& currentValue,
++			double& currentError);
++
++private:
++	std::vector<FunctionType::Ptr> _residuals; //! 残差 functor（行序固定）
++	FunctionType::Ptr _cost; //! 残差平方和代价 F(x)=0.5·Σ r_i²（基类 currentValue 语义）
++	typename NumericalDerivativeMethod::Ptr _derivative; //! 数值雅可比方法
++
++	double _initialLambda; //! 每次 optimize() 重置的初始阻尼
++	double _lambda; //! 当前阻尼因子
++	double _lambdaMin; //! 阻尼下界
++	double _lambdaMax; //! 阻尼上界（停滞判据的一部分）
++	double _lambdaFactorDown; //! 接受步阻尼缩放倍率
++	double _lambdaFactorUp; //! 拒绝步阻尼放大倍率
++
++	std::size_t _maxStagnationSteps; //! 连续停滞步数上限
++	std::size_t _stagnationCount; //! 当前连续停滞计数
++	double _costTolerance; //! 代价改进停滞容差（相对形式）
++	double _stepTolerance; //! 步长范数停滞容差
++	bool _stagnated; //! 停滞冻结标志
++};
++
++/*@}*/
++
++} /* namespace optimization */
++} /* namespace rwlibs */
++
++#endif /* SRC_RWLIBS_OPTIMIZATION_LEVENBERGMARQUARDTOPTIMIZER_HPP_ */
+diff --git a/RobWork/RobWork/src/sandbox/optimization/LevenbergMarquardtOptimizer.cpp b/RobWork/RobWork/src/sandbox/optimization/LevenbergMarquardtOptimizer.cpp
+new file mode 100644
+--- /dev/null
++++ b/RobWork/RobWork/src/sandbox/optimization/LevenbergMarquardtOptimizer.cpp
+@@ -0,0 +1,203 @@
++﻿/*
++ * LevenbergMarquardtOptimizer.cpp
++ *
++ *  Created on: Oct 28, 2026
++ *
++ *  Levenberg-Marquardt 最小二乘优化器实现（SA-02 登记的最小上游扩展）。
++ *  确定性优先（NFR-COR-01/02 口径）：全实现无随机源；遍历、累加、比较与
++ *  λ 更新的算术序固定并在各步骤注释中标明，同输入同平台必然逐位复现。
++ */
++
++#include "LevenbergMarquardtOptimizer.hpp"
++
++#include <Eigen/Dense>
++#include <algorithm>
++#include <cmath>
++#include <limits>
++
++namespace rwlibs {
++namespace optimization {
++
++namespace { /* anonymous namespace */
++
++/**
++ * @brief 残差平方和代价函数 F(x) = 0.5·Σ_i r_i(x)²。
++ *
++ * 供基类 Optimizer 的 currentValue/getFunction 语义使用；累加按残差下标
++ * 升序固定进行（与 step() 中试验点求值保持同一算术来源）。
++ */
++class SumOfSquaresCost: public FunctionType {
++public:
++	//! Constructor.
++	explicit SumOfSquaresCost(const std::vector<FunctionType::Ptr>& residuals) :
++			_residuals(residuals) {
++	}
++
++	//! Destructor.
++	virtual ~SumOfSquaresCost() {
++	}
++
++	//! @copydoc Function::f
++	virtual ResultType f(VectorType q) {
++		double sum = 0.0;
++		for (std::size_t i = 0; i < _residuals.size(); ++i) {
++			const double ri = _residuals[i]->f(q);
++			sum += ri * ri; // 固定顺序累加（残差下标升序）
++		}
++		return 0.5 * sum;
++	}
++
++private:
++	std::vector<FunctionType::Ptr> _residuals;
++};
++
++} /* anonymous namespace */
++
++LevenbergMarquardtOptimizer::LevenbergMarquardtOptimizer(
++		const std::vector<FunctionType::Ptr>& residuals, double initialLambda,
++		typename NumericalDerivativeMethod::Ptr numericalDerivative) :
++		Optimizer(rw::core::ownedPtr(new SumOfSquaresCost(residuals))), //
++		_residuals(residuals), _cost(getFunction()), _derivative(numericalDerivative), //
++		_initialLambda(initialLambda), _lambda(initialLambda), //
++		_lambdaMin(1e-12), _lambdaMax(1e12), //
++		_lambdaFactorDown(2.0), _lambdaFactorUp(10.0), //
++		_maxStagnationSteps(5), _stagnationCount(0), //
++		_costTolerance(1e-12), _stepTolerance(1e-12), _stagnated(false) {
++	// 构造即校验入参（fail-fast）：残差列表非空且不含空指针，阻尼初值为正。
++	if (residuals.empty())
++		RW_THROW("LevenbergMarquardtOptimizer: at least one residual function is required");
++	for (std::size_t i = 0; i < residuals.size(); ++i) {
++		if (!residuals[i])
++			RW_THROW("LevenbergMarquardtOptimizer: residual function at index " << i << " is null");
++	}
++	if (initialLambda <= 0.0)
++		RW_THROW("LevenbergMarquardtOptimizer: initialLambda must be > 0, got " << initialLambda);
++}
++
++LevenbergMarquardtOptimizer::~LevenbergMarquardtOptimizer() {
++}
++
++void LevenbergMarquardtOptimizer::newOptimization(const VectorType& initialGuess,
++		ResultType& initialValue, double& initialError) {
++	// 重置迭代状态：阻尼回到初值，停滞计数清零。
++	_lambda = _initialLambda;
++	_stagnationCount = 0;
++	_stagnated = false;
++
++	// 初始代价经同一 SumOfSquaresCost 求值；初始误差置最大（首步后由梯度范数给出）。
++	initialValue = _cost->f(initialGuess);
++	initialError = std::numeric_limits<double>::max();
++}
++
++void LevenbergMarquardtOptimizer::step(VectorType& currentGuess,
++		ResultType& currentValue, double& currentError) {
++	// 停滞冻结后不再改动任何状态：基类循环（接口只读，不在本补丁范围）无法从
++	// step() 内部终止，剩余迭代由 StopCondition 的迭代上限收尾，各步为 O(1) 空操作。
++	if (_stagnated) {
++		return;
++	}
++
++	const std::size_t m = _residuals.size();
++	const Eigen::Index n = static_cast<Eigen::Index>(currentGuess.size());
++
++	/*
++	 * 1) 残差向量与数值雅可比（复用 NumericalDerivative/FirstDifferences 中心差分）。
++	 *    遍历序固定：残差 i 外层升序、参数 j 内层升序；同输入必然产出同雅可比。
++	 */
++	vector r = vector::Zero(static_cast<Eigen::Index>(m));
++	matrix J = matrix::Zero(static_cast<Eigen::Index>(m), n);
++	for (std::size_t i = 0; i < m; ++i) {
++		r(static_cast<Eigen::Index>(i)) = _residuals[i]->f(currentGuess);
++
++		const GradientType row = _derivative->derivative(_residuals[i], currentGuess);
++		for (Eigen::Index j = 0; j < n; ++j) {
++			J(static_cast<Eigen::Index>(i), j) = row(j);
++		}
++	}
++
++	// 2) 正规方程：H = JᵀJ（半正定），g = Jᵀr（F 的梯度）。Eigen 密集乘积分块序固定。
++	const matrix H = J.transpose() * J;
++	const vector g = J.transpose() * r;
++
++	/*
++	 * 3) Marquardt 缩放对角：d_j = max(H_jj, 1e-12)。下限固定，防止零列导致
++	 *    JᵀJ + λ·diag(d) 奇异；d 按下标升序生成，先于 λ 参与后续算式。
++	 */
++	const double diagonalFloor = 1e-12;
++	vector d = vector::Zero(n);
++	for (Eigen::Index j = 0; j < n; ++j) {
++		d(j) = std::max(H(j, j), diagonalFloor);
++	}
++
++	// 4) 解 (JᵀJ + λ·diag(d))·δ = -g。PartialPivLU 主元选择对同一矩阵确定，无随机源。
++	//    λ·d 就地加到 H 的对角（A 的构造顺序固定：先复制 H，再对角逐位相加）。
++	matrix A = H;
++	for (Eigen::Index j = 0; j < n; ++j) {
++		A(j, j) += _lambda * d(j);
++	}
++	const Eigen::PartialPivLU<matrix> lu(A);
++	const vector delta = lu.solve(-g);
++
++	/*
++	 * 5) 预测下降量（标准二次模型，固定算式）：由正规方程 gᵀδ = -δᵀHδ - λ·Σ_j d_j·δ_j²
++	 *    代入 predRed = -(gᵀδ + 0.5·δᵀHδ + 0.5·λ·Σ_j d_j·δ_j²)，得
++	 *    predRed = 0.5·δᵀHδ + 0.5·λ·Σ_j d_j·δ_j² ≥ 0；两项分别按下标序/点积序计算。
++	 *    该值仅用于 >0 的符号判断（第 7 步），δ=0 时两项同为 0 ⇒ 拒绝。
++	 */
++	const double quadH = delta.dot(H * delta);
++	double dampTerm = 0.0;
++	for (Eigen::Index j = 0; j < n; ++j) {
++		dampTerm += d(j) * delta(j) * delta(j);
++	}
++	const double predictedReduction = 0.5 * quadH + 0.5 * _lambda * dampTerm;
++
++	// 6) 试验点评估：x⁺ = x + δ；代价固定经同一 SumOfSquaresCost 求值（累加序同上）。
++	const VectorType trialGuess = currentGuess + VectorType(delta);
++	const double trialValue = _cost->f(trialGuess);
++	const double improvement = currentValue - trialValue;
++
++	// 7) 接受/拒绝：预测与实际下降均为正才接受；λ 缩放倍率固定（可配，见头文件）。
++	const bool accepted = (predictedReduction > 0.0) && (improvement > 0.0);
++	// 停滞容差的相对尺度按改进起算点（本步开始时的代价 F）固定，先于状态更新取值，
++	// 使接受步与拒绝步的判据取值时点一致（避免误用更新后的 F⁺）。
++	const double costScale = 1.0 + std::fabs(currentValue);
++	if (accepted) {
++		currentGuess = trialGuess;
++		currentValue = trialValue;
++		_lambda /= _lambdaFactorDown;
++	} else {
++		_lambda *= _lambdaFactorUp;
++	}
++	// λ 夹取顺序固定：先下界后上界。λ 触及上界仍无改善 ⇒ 停滞计数必然累计。
++	if (_lambda < _lambdaMin) {
++		_lambda = _lambdaMin;
++	}
++	if (_lambda > _lambdaMax) {
++		_lambda = _lambdaMax;
++	}
++
++	/*
++	 * 8) 停滞判据（固定算术序）：拒绝步、代价改进 ≤ costTolerance·(1+|F|)
++	 *    （F 为改进起算点，即本步开始时的代价），或步长 ‖δ‖₂ ≤ stepTolerance，
++	 *    均计一次停滞；否则清零。连续 maxStagnationSteps 次即冻结迭代。
++	 */
++	const double stepNorm = delta.norm();
++	if (!accepted || improvement <= _costTolerance * costScale
++			|| stepNorm <= _stepTolerance) {
++		++_stagnationCount;
++	} else {
++		_stagnationCount = 0;
++	}
++	if (_stagnationCount >= _maxStagnationSteps) {
++		_stagnated = true;
++	}
++
++	/*
++	 * 9) 误差状态：本步雅可比计算点的 ‖Jᵀr‖₂（F 的梯度范数），供 StopCondition 的
++	 *    minTolerance 终止判断；接受步时相对新点滞后一步，下一迭代即在新点重算。
++	 */
++	currentError = g.norm();
++}
++
++} /* namespace optimization */
++} /* namespace rwlibs */
