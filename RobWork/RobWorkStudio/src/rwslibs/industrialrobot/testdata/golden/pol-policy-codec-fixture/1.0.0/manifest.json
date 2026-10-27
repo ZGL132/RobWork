@@ -21,10 +21,12 @@
   },
   "inputs": [
     "inputs/policy-input.json",
-    "inputs/policy-input-variant.json"
+    "inputs/policy-input-variant.json",
+    "inputs/policy-input-rc07-baseline.json"
   ],
   "expected": [
-    "expected/identity.json"
+    "expected/identity.json",
+    "expected/policy-output-rc07-baseline.json"
   ],
   "parameters": {
     "contract": "policy RawPolicyInput/PolicyCodec（IRDPOL1 版本 1）——full 形态往返载体＋语义闭包投影（contentIdentity 唯一摘要输入）",
@@ -35,7 +37,12 @@
       "closure": "inputs 的 closure 节承载解析⑤闭包应答（对象/角色/组）——发布路径走真实 resolvePolicy 七段管线，身份对照对'已发布语义'生效"
     },
     "framesNote": "编码契约面无坐标系语义（frames 仅为 manifest schema 必填项的空声明——与 ev-slice-fixture 同口径）",
-    "emptyCaseSet": "applicability.taskObjects/caseObjects 为空集（合法形态——空集＝不限适用范围，§4.2.1）"
+    "emptyCaseSet": "applicability.taskObjects/caseObjects 为空集（合法形态——空集＝不限适用范围，§4.2.1）",
+    "rc07ByteBaseline": {
+      "scope": "policy/src/PolicyInput.cpp 字节原语（functions/policy.json UTIL-BINARCHIVE 6 条绑定）——PolicyCodec::encode/decode/encodeSemanticProjection/contentIdentity/canonicalF64/parseCanonicalF64 真实公共入口",
+      "capture": "期望字节由 REUSE-T58 会话 harness 对主构建树 Release 静态库真实运行捕获（双运行逐字节一致）——与上方 node 独立重实现 expected 相互独立、互不覆盖；本条目为 RC-07 换核批（Boost.Endian/JSON 渠道）的逐位探针输入",
+      "roundtripNote": "pol-full-normal-roundtrip valueEqual=false 为现网实现既定行为（未规范化输入的编码侧规范化——承载序比较不等）；字节级基线以 encode 输出 hex 为准"
+    }
   },
   "units": {},
   "frames": {
@@ -69,6 +76,16 @@
       "path": "generate/make_pol_policy_fixture.mjs",
       "sha256": "21725a1b7d8b6c339b6454a650951826afe93092a98e029508c1852adc45b561",
       "sizeBytes": 17698
+    },
+    {
+      "path": "inputs/policy-input-rc07-baseline.json",
+      "sha256": "f16ed63bde52d3168ec1df0d469e6eb75129ac6695ffea758ec0321402d470e7",
+      "sizeBytes": 5475
+    },
+    {
+      "path": "expected/policy-output-rc07-baseline.json",
+      "sha256": "d83846234140243f412a70b1a83c6abf93bae60ce61e68006d927dd18367bc5e",
+      "sizeBytes": 3901
     }
   ],
   "generator": {
@@ -82,6 +99,13 @@
       "date": "2026-09-14",
       "change": "首版：策略解析/编码契约夹具（canonical＋variant 双变体；full/投影双形态编码＋内容身份独立摘要对照——POL-ID-1/2/3 的数据集载体、CON-05 身份可独立复算的双实现互证）——POL-T11 §12 产物行数据集面（acceptance 3 contract-fixture 类）",
       "reReviewedBy": "WP-07",
+      "supersededBy": ""
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-10-28",
+      "change": "RC-07 增量（REUSE-T58，起始 e428cd0cf）：追加 PolicyInput.cpp 字节原语基线 inputs/expected（23 用例——canonicalF64 位模式 15 值＋full/投影/缺席面编码与身份）——现网实现真实运行捕获，既有 canonical/variant 条目零改动",
+      "reReviewedBy": "REUSE-T58（独立验收待所有者安排）",
       "supersededBy": ""
     }
   ]

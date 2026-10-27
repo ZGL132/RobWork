@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "rt-codec-fixture",
+  "version": "1.0.0",
+  "kind": "regression",
+  "scenarioCategory": "runtime/byte-baseline",
+  "coveredRequirements": [
+    "NFR-COR-02",
+    "CON-05",
+    "ARC-03"
+  ],
+  "coveredAt": [],
+  "toleranceProfile": {
+    "id": "rt-runtime",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/rt-codec-fixture-inputs.json"
+  ],
+  "expected": [
+    "expected/rt-codec-fixture-output.json"
+  ],
+  "parameters": {
+    "contract": "RC-07 字节基线（REUSE-T58）：runtime/src/Codec.cpp 字节原语（functions/runtime.json UTIL-BINARCHIVE 绑定）经真实公共入口的现网期望字节——换核（Boost.Endian/JSON 渠道）前后逐位一致探针",
+    "captureHarness": "期望字节由 REUSE-T58 会话 harness（rc07_capture.cpp，会话工具不入库——源码全文与重建/复核命令登记于 traceability/reuse/REUSE-T58/README.md）对主构建树 Release 静态库（build/RobWorkStudio/libs/Release，构建晚于源文件——现网实现）真实运行捕获；同输入双运行逐字节一致（确定性验证）",
+    "capturedVia": [
+      "rtcodec::encode/encodeIdentityDomain/computeContentIdentity（minimal＋rich 模型）",
+      "rtcodec::parse 往返",
+      "rtcodec::encodeNameMap/parseNameMap/computeNameMapContentIdentity"
+    ],
+    "boundaries": "覆盖常规值/边界值/空载荷/定宽上界（u16 0xFFFF、u32 0xFFFFFFFF、u64 2^64-1）/浮点位模式（0/-0/DBL_MIN/DBL_MAX/次正规）/长度前缀空串/全值域字节 0x00..0xFF/定宽域溢出边界（attempt 2^64-1 填满 168B 身份块 attempt 域——解码拒绝）",
+    "framesNote": "编码契约面无坐标系语义（frames 仅为 manifest schema 必填项的空声明——与 pol-policy-codec-fixture 同口径）"
+  },
+  "units": {},
+  "frames": {
+    "base": "robot-base"
+  },
+  "referenceSource": {
+    "method": "production-snapshot",
+    "scope": "runtime/src/Codec.cpp 字节原语（rt-codec-fixture 版本 1.0.0 捕获集）",
+    "independentOfProductionImpl": false,
+    "description": "期望字节为生产实现快照（回归身份载体，不可作正确性依据——语义等价由渠道批准文档与既有 business-specific/audited 审计另证；本数据集只钉\"换核前后逐位一致\"）"
+  },
+  "producer": {
+    "softwareVersion": "msvc-v143-x64-release-cpp17（ird 静态库 build/RobWorkStudio/libs/Release@e428cd0cf 工作树）",
+    "algorithmId": "rc07-byte-baseline-capture-v1",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-28T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/rt-codec-fixture-inputs.json",
+      "sha256": "e2c450ee5fddb5e0c94ebc53bf16d56d4bbe07a1fe219484cd8c33ae59a2e83b",
+      "sizeBytes": 2736
+    },
+    {
+      "path": "expected/rt-codec-fixture-output.json",
+      "sha256": "3dcce2ffa8e51f6d5223f15182b6ce1513cdb0e19eafd52c01438734c3fb655b",
+      "sizeBytes": 21399
+    }
+  ],
+  "generator": {
+    "script": "generate/rc07-capture-notes.txt",
+    "invocation": "harness 不入库（committed=false——generate/ 无落盘文件，避免新产品树文件触发复用门禁 UNDECLARED）；重建与逐字节复核命令：①构建 cl /std:c++17 /utf-8 /EHsc /O2 /MD（include=四单元 include＋evidence/project include＋vcpkg eigen3＋RobWork/RobWork/src；link=build/RobWorkStudio/libs/Release 的 sdurws_ird_{execution,runtime,policy,core}.lib＋build/RobWork/libs/Release 的 sdurw_{math,common,core}.lib）；②运行 PATH 前置 build/RobWork/bin/Release 与 vcpkg bin，rc07_capture.exe <outDir> 两次→diff -r 逐字节一致；③与入库 expected 逐字节比对（cmp）——完整命令表与源码全文见 traceability/reuse/REUSE-T58/README.md §4/附录 A",
+    "committed": false
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-28",
+      "change": "首版：RC-07 字节基线捕获（REUSE-T58，起始 e428cd0cf）——runtime/src/Codec.cpp 字节原语 10 用例现网期望字节，确定性双运行逐字节一致",
+      "reReviewedBy": "REUSE-T58（独立验收待所有者安排）",
+      "supersededBy": ""
+    }
+  ]
+}

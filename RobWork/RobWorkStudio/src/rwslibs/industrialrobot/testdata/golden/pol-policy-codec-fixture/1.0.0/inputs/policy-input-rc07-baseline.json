@@ -1,0 +1,100 @@
+{
+  "descriptor": "rc07-byte-baseline-inputs/1",
+  "datasetId": "pol-policy-codec-fixture",
+  "inputFileRole": "用例语义描述符——caseId 与 expected 输出逐条对应；输入构造细节（固定种子 id/摘要派生、字段值）见 parameters.captureHarness 与 traceability/reuse/REUSE-T58/README.md 的 harness 源码登记",
+  "cases": [
+    {
+      "caseId": "f64-bits-00",
+      "input": "PolicyCodec::canonicalF64(0)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 0）"
+    },
+    {
+      "caseId": "f64-bits-01",
+      "input": "PolicyCodec::canonicalF64(0)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 0）"
+    },
+    {
+      "caseId": "f64-bits-02",
+      "input": "PolicyCodec::canonicalF64(1)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 1）"
+    },
+    {
+      "caseId": "f64-bits-03",
+      "input": "PolicyCodec::canonicalF64(-1)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 -1）"
+    },
+    {
+      "caseId": "f64-bits-04",
+      "input": "PolicyCodec::canonicalF64(0.5)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 0.5）"
+    },
+    {
+      "caseId": "f64-bits-05",
+      "input": "PolicyCodec::canonicalF64(0.1)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 0.1）"
+    },
+    {
+      "caseId": "f64-bits-06",
+      "input": "PolicyCodec::canonicalF64(3.141592653589793)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 3.141592653589793）"
+    },
+    {
+      "caseId": "f64-bits-07",
+      "input": "PolicyCodec::canonicalF64(2.2250738585072014e-308)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 2.2250738585072014e-308）"
+    },
+    {
+      "caseId": "f64-bits-08",
+      "input": "PolicyCodec::canonicalF64(5e-324)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 5e-324）"
+    },
+    {
+      "caseId": "f64-bits-09",
+      "input": "PolicyCodec::canonicalF64(1.7976931348623157e+308)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 1.7976931348623157e+308）"
+    },
+    {
+      "caseId": "f64-bits-10",
+      "input": "PolicyCodec::canonicalF64(1e+300)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 1e+300）"
+    },
+    {
+      "caseId": "f64-bits-11",
+      "input": "PolicyCodec::canonicalF64(-2.5)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 -2.5）"
+    },
+    {
+      "caseId": "f64-bits-12",
+      "input": "PolicyCodec::canonicalF64(12.566370614359172)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 12.566370614359172）"
+    },
+    {
+      "caseId": "f64-bits-13",
+      "input": "PolicyCodec::canonicalF64(0.01)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 0.01）"
+    },
+    {
+      "caseId": "f64-bits-14",
+      "input": "PolicyCodec::canonicalF64(2.5)——IEEE754 位模式 8 字节大端＋parseCanonicalF64 位往返（值 2.5）"
+    },
+    {
+      "caseId": "pol-full-minimal",
+      "input": "PolicyCodec::encode(full)最小面——policyObject 固定种子、origin=Template 无来源无注记、compatibilityNotes 缺席、collision 关闭（enabledDomains={Self}）、全部可选阈值缺席、行程校验关、适用范围全空、锚 \"appendixD@v1.16\"——presence=0/空集/空串长度前缀面"
+    },
+    {
+      "caseId": "pol-full-minimal-roundtrip",
+      "input": "decode(encode(pol-full-minimal)) 与输入逐字段精确相等（输入已规范化——承载序等值成立）"
+    },
+    {
+      "caseId": "pol-full-normal",
+      "input": "PolicyCodec::encode(full)承载面——origin=Imported 携 sourceObject+note、compatibilityNotes 在、enabled=true 域乱序入 {Tool,Self}（编码侧升序去重规范化）、safetyClearance {0.01,\"mm\"}、Role/Group/Object 三类 ScopeTarget 的 Must/Should 规则对、nearLimitRatio {0.9,\"\"}/conditionNumberWarning {DBL_MAX,\"1\"}/行程 {5e-324,\"rad\"}（浮点位模式边界）、modes 乱序入、modelObjects 乱序入（Id128 字节字典序）、300 位级锚串"
+    },
+    {
+      "caseId": "pol-full-normal-roundtrip",
+      "input": "decode(encode(pol-full-normal))——valueEqual=false 为现网实现既定行为：输入未规范化（域/集合/规则乱序），编码侧规范化后与承载序比较不等（契约\"未规范化输入的往返以规范化后相等成立\"）——换核须逐位保持编码字节"
+    },
+    {
+      "caseId": "pol-projection-normal",
+      "input": "PolicyCodec::encodeSemanticProjection——SI 真值位模式面：enabled 域 {Environment,Self,Tool}、间距 0.01 m、两规则对、nearLimit 0.9/condWarning 10.0/行程 4π、modes {Quick}、锚参与身份"
+    },
+    {
+      "caseId": "pol-projection-content-identity",
+      "input": "PolicyCodec::contentIdentity（全单元唯一摘要调用点——SHA-256 over 投影编码）"
+    },
+    {
+      "caseId": "pol-projection-absent",
+      "input": "投影缺席面——碰撞关闭（无间距）、阈值槽位全空（presence=0）、行程默认 4π（DefaultAppendixD）、行程校验关、适用范围全空"
+    },
+    {
+      "caseId": "pol-projection-absent-content-identity",
+      "input": "缺席面内容身份"
+    }
+  ],
+  "note": "policy/src/PolicyInput.cpp 字节原语基线输入（RC-07，REUSE-T58）"
+}

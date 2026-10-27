@@ -1,0 +1,48 @@
+{
+  "descriptor": "rc07-byte-baseline-inputs/1",
+  "datasetId": "rt-codec-fixture",
+  "inputFileRole": "用例语义描述符——caseId 与 expected 输出逐条对应；输入构造细节（固定种子 id/摘要派生、字段值）见 parameters.captureHarness 与 traceability/reuse/REUSE-T58/README.md 的 harness 源码登记",
+  "cases": [
+    {
+      "caseId": "rt-minimal-encode",
+      "input": "rtcodec::encode(minimal)——minimal 模型（2 旋转关节 IRB_T；id/摘要固定种子派生，字段值镜像 runtime/test/CanonicalModelFixture.hpp minimalFixture）：帧头 magic IRDCANO/1.3/domain=0＋全字段声明序大端编码"
+    },
+    {
+      "caseId": "rt-minimal-identity-domain",
+      "input": "rtcodec::encodeIdentityDomain(minimal)——CR-02 排除字段（revisionSeq/installPreset/diagnostics/capabilities/contentIdentity）缺席的域差面"
+    },
+    {
+      "caseId": "rt-minimal-content-identity",
+      "input": "rtcodec::computeContentIdentity(minimal)＋严格重演布尔 identityMatchesIdentityDomainDigest＝SHA-256(身份域编码)（core ContentDigester 同源）与摘要逐一相等（§4.3.5）"
+    },
+    {
+      "caseId": "rt-minimal-parse-roundtrip",
+      "input": "parse(encode(minimal))——往返重建成功、再编码与原编码逐字节相等"
+    },
+    {
+      "caseId": "rt-rich-encode",
+      "input": "rtcodec::encode(rich)——全物性/逐关节摩擦/工具（tcpOffset＋namedTcpOffsets 目录）/场景几何（presence 形态 canonical1.3）/2×2 耦合矩阵（含 conditionNumber）/资源清单（含 sourcePathHint）/警告级诊断（F-618 level 字节）；maxAcceleration 1e-300 与 1e300 有限位模式边界"
+    },
+    {
+      "caseId": "rt-rich-identity-domain",
+      "input": "rtcodec::encodeIdentityDomain(rich)"
+    },
+    {
+      "caseId": "rt-rich-content-identity",
+      "input": "rtcodec::computeContentIdentity(rich)＋严格重演布尔同上（rich 全字段面）"
+    },
+    {
+      "caseId": "rt-namemap-encode",
+      "input": "rtcodec::encodeNameMap——3 条目（Device \"IRB_T\"/Joint \"IRB_T.joint_1\"/SceneObject \"Scene.obstacle_1\"），经 fromValidatedEntries 公共恢复路径、ruleVersion=1：magic IRDNAME/1.0 条目存储序编码"
+    },
+    {
+      "caseId": "rt-namemap-content-identity",
+      "input": "rtcodec::computeNameMapContentIdentity＋严格重演布尔 identityMatchesEncodedDigest＝SHA-256(IRDNAME 编码自身)（§7.6 差异点）"
+    },
+    {
+      "caseId": "rt-namemap-parse-roundtrip",
+      "input": "parseNameMap(encodeNameMap)——往返成功、ruleVersion=1、再编码逐字节相等"
+    }
+  ],
+  "note": "runtime/src/Codec.cpp 字节原语基线输入（RC-07，REUSE-T58）"
+}
