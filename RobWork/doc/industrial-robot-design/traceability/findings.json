@@ -5843,7 +5843,7 @@
       "fixedBy": "E2 翻牌批 2026-10-16 翻牌 fixed：实施分支 origin/e2-ui-b（冻结 SHA 1641470f33f253621d226352f37e6aedd9fd732d，merge 33352f84af5f5f148f202c77cc1580579a3b47c6）；对抗式独立验收 PASS（验收记录 traceability/acceptance/E2-UI-B-20261015.md）；常驻回归钉 DefectPinning.HostRegionPreviewEmptySet_ClearsCachesAndDeliversNulloptLayers_F560；缺陷经亲读确认已被 UI-T77（7d7ade8e）既有修复消除（RegionPreviewSink optional 化三层链路），本批补钉扎回归（产品源码零改动）",
       "registeredAt": "2026-10-09",
       "title": "删除最后一个区域后三维框/格/着色层永不清除——RequirementsPanelWidget renderRegionPage 区域集合为空分支只清面板标签文本、不向 m_regionPreview 投递空投影；UiPlugin 侧 m_reqBox/m_reqGrid 原值保留，且后续任一 markers sink 合并投递都以旧值重新挂回（update.boxOutline=m_reqBox 原子替换语义在「空集合」态无生产者）。触发：唯一区域被删除或撤销到无区域→三维残留直到关项目（叠加 F-559 则跨项目残留）",
-      "owner": "三维预览修复批次（空集合分支投递空语义——与后端三层「空＝清除该层」契约对齐：boxOutline=nullopt/sampleGrid=nullopt 合并投递）；【2026-10-09 修复落地（UI-T77）】已修复：RegionPreviewSink 签名改 optional（nullopt＝空态投递，与「nullopt＝清除该层」契约同构）——面板空集合分支投递 nullopt、门面空态直传、UiPlugin 空态分支清两缓存合并投递；新增 gui 用例 RegionPreviewSink_EmptySetDeliversNullopt_UI_T77；待所有者宿主复验（删除唯一区域后三维框/格应即清）后翻转 fixed"
+      "owner": "三维预览修复批次（空集合分支投递空语义——与后端三层「空＝清除该层」契约对齐：boxOutline=nullopt/sampleGrid=nullopt 合并投递）；【2026-10-09 修复落地（UI-T77）】已修复：RegionPreviewSink 签名改 optional（nullopt＝空态投递，与「nullopt＝清除该层」契约同构）——面板空集合分支投递 nullopt、门面空态直传、UiPlugin 空态分支清两缓存合并投递；新增 gui 用例 RegionPreviewSink_EmptySetDeliversNullopt_UI_T77；待所有者宿主复验（删除唯一区域后三维框/格应即清）后翻转 fixed；【2026-10-28 复跑核归属（REUSE-T60 RC-09 批）】ui_test 全量 345 项唯一失败即本缺陷钉扎 DefectPinning.HostRegionPreviewEmptySet_ClearsCachesAndDeliversNulloptLayers_F560（DefectPinningTest.cpp:559 断言② countOccurrences(branch,\"applyPreview\")=0）。亲读生产分支核归属：空态分支语义完好——m_reqBox.reset()＋m_reqGrid.reset()（断言①通过）＋applyCombinedPreview(clearUpdate) 合并投递 nullopt 双层（UiPlugin.cpp:5346-5367），包装器终点即 m_view3dGateway->applyPreview(combined)（UiPlugin.cpp:4792）——归属＝钉扎②字面锚漂移（FIX-T2 空态同拍重构把投递改经 applyCombinedPreview 包装，钉扎字面 applyPreview 未随更新），非缺陷复活，本条保持 fixed 不翻动；钉扎修订（②字面锚改 applyCombinedPreview 或双形态兼容）属产品测试改动，归后续产品测试批（REUSE-T60 不越权）。证据 traceability/reuse/REUSE-T60/t60-ui-full-suite.log:618-622＋README §4"
     },
     {
       "id": "F-561",
@@ -9831,21 +9831,25 @@
       "id": "F-974",
       "source": "REUSE-T41 GUI冒烟归因（gui-smoke-launch.log＋gui-smoke-head-baseline-segfault.log；dev-diagnostics.log历史；2026-10-25 登记）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-28",
+      "fixedBy": "REUSE-T60 RC-09 批 2026-10-28 翻牌 fixed（产品源码零改动——按「不再复现＋同链证据」收口）：HEAD（含 d1c0320c9）重建 sdurws_ird_studio 后以原复现命令 IRD_UI_PLUGIN_SMOKE=auto 复跑——启动越过原崩溃点（「共享面装配完成」后无段错误）、冒烟 8 步全链 [ird-ui-smoke] DONE、exit 0（证据 traceability/reuse/REUSE-T60/t974-studio-smoke.log）。归因＝WP-15-T21（d1c0320c9）同链修复：其 pre-fix 堆栈（traceability/reuse/WP-15-T21/crash-stack-pre-fix.log）即启动装配路径 KinematicsPanelWidget::refreshVisualization 空指针读（KinematicsPanelWidget.cpp:1936，refreshWsParamVisibility/refreshWsProjectionCanvas 链），与 F-974 启动段错误同链；精确修复者归属由 WP-15-T21 独验记录承载，本条按「原复现环境消失」如实收口",
       "registeredAt": "2026-10-25",
       "title": "HEAD 41a59c670 studio启动段错误（共享面装配完成后崩，IRD_UI_PLUGIN_SMOKE全链阻断——GUI真实路径验证不可用）",
       "owner": "所有者归类（候选源疑似同F-973的跨单元漂移或宿主启动链缺陷；10-21前后dev日志曾全程达draft applied/宿主已关闭工作单元，10-24起两次运行同早停）",
-      "resolution": "sdurws_ird_studio＋IRD_UI_PLUGIN_SMOKE=auto在『共享面装配完成』日志后段错误（exit 139）；REUSE-T41实施会话以stash五候选文件重建HEAD基线复跑同点同形崩溃——归因＝HEAD既有缺陷，非候选所致（双跑归因证据双留）。阻断面＝修订事件双sink『delivered after commit』真实GUI路径验证（REUSE-T41候选因此NOT RUN，替代证据＝execution总线契约用例＋ui_contract_test 63项）；亦影响后续任何ui插件GUI验收。归所有者归类处置。"
+      "resolution": "sdurws_ird_studio＋IRD_UI_PLUGIN_SMOKE=auto在『共享面装配完成』日志后段错误（exit 139）；REUSE-T41实施会话以stash五候选文件重建HEAD基线复跑同点同形崩溃——归因＝HEAD既有缺陷，非候选所致（双跑归因证据双留）。阻断面＝修订事件双sink『delivered after commit』真实GUI路径验证（REUSE-T41候选因此NOT RUN，替代证据＝execution总线契约用例＋ui_contract_test 63项）；亦影响后续任何ui插件GUI验收。归所有者归类处置。【2026-10-28 复跑（REUSE-T60）】当前 HEAD 不再复现：启动段错误消失、冒烟 8 步（create-demo/树重建/L1 检查器/draft.apply 6 模块投递/L3 反解/teardown 关停/close-reopen）全过 exit 0——原阻断面中的生产事件投递与关停路径真机可用；修订事件双sink专项GUI验证仍按 REUSE-T41 自身 NOT RUN 登记待独验，本批不代签。"
     },
     {
       "id": "F-975",
       "source": "UI-T86诊断返工批（traceability/reuse/UI-T86/gate-ad-blocked.log＋green13-full-suite.*＋README.md候选补丁；2026-10-27登记）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-28",
+      "fixedBy": "REUSE-T60 RC-09 权限批 2026-10-28 落地（所有者 2026-10-27 委托「后续裁决按建议进行」口径下按证据三选一＝**选项①/test/ 路径 test-fixture graphics 允许面**；三选一证据对比留档 traceability/reuse/REUSE-T60/README.md §2——②宿主例外扩族破坏恰五 ui/plugin/ 生产族不变量且 host-presentation 语义错位，③被①支配且须修订 UI-T78 已验收断言面）：reuse-contract.ps1 增 test-fixture graphics 面（仅 /test/ 路径、仅 test-fixture origin、仅 graphics 类别；host 仍强制精确宿主例外）＋test-reuse-governance.ps1 三正负例（套件 172→175 全绿）＋ARCHITECTURE.md §3.6.2.1 扩登/v0.18＋UI-T86 候选补丁逐字应用（NamedTcpClosure 本地 View 补 runtimeModelView() 锚覆盖）＋permissions.json test-fixture grant（graphics/model/state＋borrow）＋ui.json 新增整文件行（COVERAGE 墙同步解除）；IRD-GATE-AD exit 1→0 实测翻转，ui_test 全量 NamedTcpClosure PASS",
       "registeredAt": "2026-10-27",
       "title": "NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15修复面被IRD-GATE-AD权限门禁机器锁死（HostCompilePipelineTest.cpp携带UI-T78渲染面rw/graphics头依赖——测试路径无任何合法grant形态，修复不可落地）",
       "owner": "所有者裁决（三选一：①门禁为/test/路径开graphics允许面（GOV治理批次，GOV-T22门禁所有者先例）；②宿主例外扩族接纳该测试文件（ARCH §3.6.2＋reuse-contract.ps1硬编码names表同步）；③UI-T78渲染面用例重组（迁移DrawableNode::Physical断言出该TU或改常量钉扎语义——涉及UI-T78已验收断言面契约修订））",
-      "resolution": "根因＝F-973第13项的修复要求改动ui/test/HostCompilePipelineTest.cpp，而该文件含#include <rw/graphics/DrawableNode.hpp>（UI-T78渲染面分组常量断言，:72/:952）——reuse-contract.ps1 CheckSourcePermission对变更文件提取graphics类别（:133提取表），grant携带graphics类别必须origin=host-presentation（:96），host-presentation要求文件路径∈hostExceptions[].files，且hostExceptions文件族被硬校验为恰UiPlugin.{hpp,cpp}五对（:85-90）——测试路径恒不可入。修复候选已实证：本地View补runtimeModelView()锚覆盖（锚＝同源物化快照本体）后全量344/1（仅预存F-560），候选补丁全文存traceability/reuse/UI-T86/README.md；门禁本体实测REUSE-AD exit 1（gate-ad-blocked.log）。UI-T86终态按增量回退该文件（ui_test 343/2：F-560＋本项），其余12项修复不受影响。"
+      "resolution": "根因＝F-973第13项的修复要求改动ui/test/HostCompilePipelineTest.cpp，而该文件含#include <rw/graphics/DrawableNode.hpp>（UI-T78渲染面分组常量断言，:72/:952）——reuse-contract.ps1 CheckSourcePermission对变更文件提取graphics类别（:133提取表），grant携带graphics类别必须origin=host-presentation（:96），host-presentation要求文件路径∈hostExceptions[].files，且hostExceptions文件族被硬校验为恰UiPlugin.{hpp,cpp}五对（:85-90）——测试路径恒不可入。修复候选已实证：本地View补runtimeModelView()锚覆盖（锚＝同源物化快照本体）后全量344/1（仅预存F-560），候选补丁全文存traceability/reuse/UI-T86/README.md；门禁本体实测REUSE-AD exit 1（gate-ad-blocked.log）。UI-T86终态按增量回退该文件（ui_test 343/2：F-560＋本项），其余12项修复不受影响。【2026-10-28 落地（REUSE-T60，选项①）】门禁增面后候选补丁逐字应用落地：validate-reuse PASS（REUSE-AD 不再触发）、ui_test 全量 345=344P/1F（NamedTcpClosure PASS，唯一失败＝F-560 预存钉扎）、ui_gui_test 98/98、门禁自测 175/175（+3 正负例：test+graphics 正例／test 路径 host 类别拒／非 test 路径 test-fixture graphics 拒）；foundation-governance.json 10 处 reuse-contract.ps1 绑定机械级联重钉（T59 同惯例）。边界如实分列：门禁 graphics 面规则的独立验收 NOT RUN 待所有者（REUSE-T59 同批先例「规则未独验前不据其关闭债务」——本修复面的测试实证不依赖规则独验，规则语义归独验核）；ui.json 另登记 ensureSessionPreviewAnchor 行保持 pending（同族 construct-model 死锁——host-presentation 禁持模型构造操作，与 F-975 不同墙：该墙无委托覆盖的三选一授权，归所有者裁决）。证据 traceability/reuse/REUSE-T60/。"
     }
   ]
 }

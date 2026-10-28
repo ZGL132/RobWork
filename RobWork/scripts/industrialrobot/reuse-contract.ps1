@@ -95,7 +95,16 @@ function CheckPermissions {
         # 洗白生产代码的模型操作。
         $isTestFixturePath = $path -match '(^|/)([a-z0-9]+_)?test/'
         if ($g.origin -eq 'test-fixture' -and -not $isTestFixturePath) { Fail 'AD' "$path : test-fixture origin outside /test/" }
-        if (@($g.categories | Where-Object { $_ -in @('host','graphics') }).Count -and $g.origin -ne 'host-presentation') { Fail 'AD' "$path : presentation requires exact host exception" }
+        # F-975 解锁（REUSE-T60 治理批，ARCH §3.6.2.1 graphics 面登记）：/test/
+        # 路径的 test-fixture grant 可持 graphics 类别——测试断言面对 rw/graphics
+        # 常量/类型的既有消费（UI-T78 渲染面分组常量断言先例）此前无合法 grant
+        # 形态，修复面被 IRD-GATE-AD 机器锁死。边界：仅 graphics、仅 test 路径、
+        # 仅 test-fixture origin；host 类别仍强制精确宿主例外（§3.6.2 封闭清单
+        # 不因测试路径放开），非 test 路径与非 test-fixture origin 一律不变。
+        $testFixtureGraphics = $g.origin -eq 'test-fixture' -and $isTestFixturePath -and
+            @($g.categories | Where-Object { $_ -eq 'graphics' }).Count -and
+            -not @($g.categories | Where-Object { $_ -eq 'host' }).Count
+        if (@($g.categories | Where-Object { $_ -in @('host','graphics') }).Count -and $g.origin -ne 'host-presentation' -and -not $testFixtureGraphics) { Fail 'AD' "$path : presentation requires exact host exception" }
         if ($g.origin -eq 'value' -and (@($g.categories | Where-Object { $_ -ne 'value' }).Count -or @($g.operations | Where-Object { $_ -ne 'value' }).Count)) { Fail 'AD' "$path : value is not an ownership bypass" }
         if ($g.origin -eq 'runtime-owner' -and ($unit -ne 'runtime' -or $g.usageRole -ne 'owner')) { Fail 'AD' "$path : runtime is model owner" }
         if ($g.origin -eq 'host-presentation') {

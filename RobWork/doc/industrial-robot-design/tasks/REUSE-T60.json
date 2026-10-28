@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T60",
+  "unit": "ui",
+  "masterWp": "WP-A",
+  "title": "RC-09 权限与真实生产 UI 批——ui 19 行逐行定案＋两文件 host-presentation grant＋F-975①解锁（候选补丁落地＋门禁 graphics 面）＋F-974/F-560 复跑定性",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T41",
+    "UI-T86",
+    "REUSE-T59"
+  ],
+  "requirements": [
+    "ARC-03",
+    "UX-07",
+    "KIN-06",
+    "NFR-COR-01"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.5.4",
+    "reuse/policy.md#1.1",
+    "reuse/audit-contract.md#7.1",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T60.json"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "interUnit": false,
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1（全量函数矩阵/绑定/权限/覆盖检查——3 新 grant 绑定、ui.json 19 行定案＋整文件行、foundation-governance 10 处级联绑定逐一 Digest 复核）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T60.json（文档/任务/链接门禁，内含一次全量复用检查）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1（门禁自测 172→175：新增 fixture-test-fixture-graphics-positive／fixture-test-fixture-host-category-rejected／fixture-graphics-test-fixture-outside-test-rejected；旧例零回归）",
+    "sdurws_ird_ui_test 全量（cmake --build build --config Release --target sdurws_ird_ui_test 后 QT_QPA_PLATFORM=windows 逐 executable）：345=344P/1F（唯一失败＝F-560 预存钉扎；NamedTcpClosure PASS——F-975 修复面实证），证据 traceability/reuse/REUSE-T60/t60-ui-full-suite.*＋t60-ui-ird-test-report.json",
+    "sdurws_ird_ui_gui_test 全量（真实 Widgets 路径）：98/98 PASS exit 0，证据 traceability/reuse/REUSE-T60/t60-ui-gui-suite.*＋t60-ui-gui-ird-test-report.json",
+    "sdurws_ird_studio 集成冒烟（IRD_UI_PLUGIN_SMOKE=auto，HEAD 重建后）：8 步全链 DONE exit 0（F-974 复跑——原启动段错误不再复现），证据 traceability/reuse/REUSE-T60/t974-studio-smoke.log",
+    "门禁类别/操作提取逐区段实测（reuse-contract.ps1 :131-152 正则逐字复刻探针）：19 区段＋3 整文件，输出 traceability/reuse/REUSE-T60/t60-probe-extract-output.txt；绑定摘要双运行时（node＋pwsh 权威复刻）复核 t60-digest-double-runtime.txt"
+  ],
+  "allowedFiles": [
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T60.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T60.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/closures.json",
+    "RobWork/doc/industrial-robot-design/traceability/trace-matrix.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "ui.json：19 行定案（18 行 business-specific/migrated＋nonOverlapEvidence 绑定本批 README；ensureSessionPreviewAnchor 保持 pending/pending 如实登记 construct-model 结构性死锁——host-presentation 禁持模型构造操作，T57 CollisionQuery 同族，最小候选方案留档）＋新增整文件行 ui.HostCompilePipelineTest（AnchorCaptureExecutorTest 同型，TEST-HARNESS capability）",
+    "permissions.json +3 grant（81 行纯新增）：HostView3DPreviewBackend.cpp＝host-presentation/HOST-RENDER（graphics/host/model/state＋query/render）；HostView3DGateway.cpp＝host-presentation/HOST-GATEWAY（state＋query/borrow——KIN-FK 行只读借持）；HostCompilePipelineTest.cpp＝test-fixture（graphics/model/state＋borrow——§3.6.2.1 graphics 面）",
+    "F-975① 落地（所有者 2026-10-27 委托按建议裁决；三选一证据对比留档 README §2）：reuse-contract.ps1 test-fixture graphics 面（仅 /test/ 路径、仅 test-fixture、host 仍锁封闭清单）＋test-reuse-governance.ps1 三正负例＋ARCHITECTURE.md §3.6.2.1 扩登＋v0.18＋UI-T86 候选补丁逐字应用（NamedTcpClosure 锚覆盖）＋foundation-governance.json 10 处绑定级联重钉",
+    "F-974 复跑解除：HEAD（含 d1c0320c9）studio 冒烟全链 DONE exit 0——原启动段错误不再复现；归因 WP-15-T21 同链（pre-fix 堆栈＝启动装配路径 refreshVisualization 空指针读）；findings 翻牌 fixed 附复现命令与证据路径",
+    "F-560 复跑核归属：ui_test 唯一失败＝钉扎②字面锚漂移（生产空态分支 m_reqBox/m_reqGrid.reset＋applyCombinedPreview 合并投递完好，UiPlugin.cpp:5346-5367/:4792 终点即网关 applyPreview）——非缺陷复活，F-560 保持 fixed；钉扎修订（产品测试改动）归后续产品测试批",
+    "门禁自测 175/175（+3 例）；ui_test 345=344P/1F；ui_gui_test 98/98；绑定双运行时摘要复核 6/6 一致"
+  ],
+  "acceptance": [
+    "实施侧自验（本契约 verify 全部真实执行）：validate-reuse/validate-docs PASS、治理套 175/175、ui_test/gui_test/studio 冒烟证据落 traceability/reuse/REUSE-T60/——19 行定案与 grant 最小性经探针实测与门禁 REUSE-AD-PENDING 基线对读",
+    "独立验收 NOT RUN 待所有者安排，分列：①门禁 graphics 面规则（治理批；REUSE-T59 先例——规则未独验前不据其关闭债务，本批 19 行定案不依赖该规则独验，仅 F-975 修复面落地依赖）；②F-975 修复面（NamedTcpClosure 锚覆盖语义＋整文件行登记）；③ui 19 行定案语义（business-specific 保留判断＋grant 实际类别/操作最小性＋ensureSessionPreviewAnchor pending 墙登记）；④F-974 翻牌 fixed 的归因精确性（同链证据在案，由 WP-15-T21 独验承载）；⑤F-560 钉扎漂移归属与钉扎修订去向",
+    "独验核对点：精确送验 SHA、ARCH §3.6.2/v0.18 与门禁实现一致性、permissions.json 相对 HEAD 零删改纯新增、F-974 复现命令（IRD_UI_PLUGIN_SMOKE=auto）在独验现场可复跑、ui.json 行区段摘要与实际代码一致"
+  ]
+}

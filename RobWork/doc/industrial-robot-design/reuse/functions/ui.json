@@ -29,10 +29,10 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "【行保持 pending 如实登记（2026-10-28 RC-09）】区段含 new rw::models::WorkCell(\"ird-session-preview\")（门禁提取实测 categories=model ops=construct-model），而门禁模型所有权规则限定 construct-model 仅 runtime-owner（强制 unit=runtime）或 test-fixture（强制 /test/ 路径）可持——host-presentation 禁持模型构造操作，本文件无合法 grant 形态（与 T57 CollisionQuery 2 行、F-975 同族结构性死锁）。语义＝仅场景层空壳锚（studio 模型层零触碰，ARCH §3.6.2 HOST-RENDER「不建计算模型」满足），机械规则与语义登记的缺口归所有者裁决（RC-10/后续权限批输入），本批不代授。锚三级现取语义：场景已挂复用（幂等）→查看器缺位防御返回空→新建空 WORLD 锚＋setWorldNode 世界节点重同步（框架硬契约——setWorkCell 重建节点树后必须补挂）"
       },
-      "differences": "先复用场景WC，缺位才建空WORLD锚，scene setWorkCell后重绑worldNode；仅场景呈现，不是runtime模型构造，权限尚待精确核查",
+      "differences": "未决缺口＝场景锚 WorkCell 构造的权限形态（语义＝呈现层空壳锚非模型真值；机械＝construct-model 门禁禁持）。最小候选：①所有者裁决后门禁为 HOST-RENDER 增锚构造精确点；②锚构造下沉 runtime 工厂授权。两者均超本批授权；未决期间行为不变（锚构造照常运行，行状态如实反映权限未决）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -92,13 +92,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "TCP 会话态数据源（KIN-FK 行）：双缝缺省/双取失败＝nullopt 诚实降级；Kinematics::worldTframe 只读查询宿主会话 State（区段提取实测 categories=state ops=[]——const Frame*/const State* 只读借持，grant REUSE-T60-HostView3DGateway.cpp 覆盖；无 setQ/setTransform，纯读）；KIN-06：零修订、不写设计模型，宿主会话借用按来源保活，不把宿主视图回灌为工程计算真值（ARCH §3.6.2 HOST-GATEWAY 表行语义）"
       },
-      "differences": "worldTframe真实消费Frame/State，只供呈现世界系；装配resolveTcpFrame用JointDevice::getEnd未证明选中工具TCP，不能称runtime TCP已适配",
+      "differences": "呈现位姿查询（需求域捕获流解除降级）；设备 base 即模型根布置时与 base→TCP 一致（注释登记）；零发布面/零 State 构造",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -131,7 +131,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.SampleGridRender.draw",
@@ -157,13 +161,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-LINES",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "采样格呈现自绘 Render：格线骨架（灰细线）＋采样点阵（逐点 applyCellColor 分色；cellStates 空＝中性灰诚实空态不虚构判定）＋高亮样本叠加（放大点芯＋三轴描边环 0.06m——FIX-T2 构造期解析 nullopt 诚实不亮）；区段提取实测零类别/操作"
       },
-      "differences": "格线可候选RenderLines；逐点颜色/高亮圈与GL_POINTS不能整体按线渲染替代",
+      "differences": "Render 构造冻结纪律（UI-T52）：投影更新＝整组重建 drawable，高亮随契约面走零私有态旁路（P-FIX-5）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -196,7 +200,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.SnapshotViewAdapter",
@@ -960,13 +968,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "构造仅存宿主指针（rws::RobWorkStudio* 借持——呈现出口宿主半区，零 GL/零场景触碰）；区段提取实测 categories=[] ops=[]；宿主呈现装配构造业务保留（ARCH §3.6.2 HOST-RENDER 表行语义）"
       },
-      "differences": "studio非拥有，UI线程；场景每次现取，非模型owner",
+      "differences": "构造冻结 m_studio 借持；生命周期＝本后端成员函数族共享（仅 UI 线程）；权限由文件级 grant REUSE-T60-HostView3DPreviewBackend.cpp 承载（host-presentation/HOST-RENDER）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -999,7 +1007,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DPreviewBackend.draw",
@@ -1025,13 +1037,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "宿主三维呈现原子替换主循环：发布链 WC 借持查询（getWorkCell/getWorldFrame/findFrame 只读）→clear 先清→工位标记（position 点值自绘/挂帧 addFrameAxis 双形态）→区域框→采样格逐组 addRender 挂接；区段提取实测 categories=model（rw::models::WorkCell::Ptr 借持）ops=[]，grant REUSE-60 前缀文件 grant 覆盖；宿主呈现编排业务保留（判定归域侧，此处只呈现）"
       },
-      "differences": "真实调用scene addRender/addFrameAxis，消费当前宿主WC或空场景锚WORLD；clear后逐节点添加，异常中途原子性未证",
+      "differences": "呈现生命周期：先清旧组再挂新组（原子替换语义前半区）；失败＝false 诚实返回（锚不可得/视图缺位装配降级，不虚构渲染）；「无锚不画」为框架硬约束（WorkCellScene::addDrawable 防御抛异常），会话预览锚保证恒在位而非放弃渲染",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1064,7 +1076,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DPreviewBackend.clear",
@@ -1090,13 +1106,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "幂等清除半区：节点名清单逐个 scene->removeDrawable（不存在＝false 无副作用）＋清单清零；区段提取实测零类别/操作；与 draw 构成原子替换两半区（先清后挂）；「不残留旧呈现」纪律的宿主侧承载（F-550②/F-559 族）"
       },
-      "differences": "按当前场景逐名removeDrawable后清名单，返回值被忽略；上游未找到名返回true，原注释false不准确，未改产品",
+      "differences": "清除幂等可重复（onSceneCleared 场景拍与 draw 前置双点调用）；场景缺位＝仅清清单诚实返回",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1129,7 +1145,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.PreviewColorScope.constructor",
@@ -1155,13 +1175,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-LINES",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "GL 固定管线状态作用域进入（glPushAttrib ENABLE/LIGHTING/CURRENT/LINE/POINT/TEXTURE 位＋glDisable 光照/一二维纹理——只关颜色覆盖来源，保留深度测试）；区段提取实测零类别/操作（GL 原语经 rwlibs/opengl 聚合头，rwlibs/opengl include 在文件级 graphics 面内）"
       },
-      "differences": "GL属性保存/禁lighting和texture再恢复，仅回调栈上不拥有context",
+      "differences": "RAII 作用域前半：不拥有 GL 上下文，仅当前 UI 渲染线程栈上使用；宿主灯光/材质/纹理保留",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1194,7 +1214,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.PreviewColorScope.destructor",
@@ -1220,13 +1244,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-LINES",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "GL 状态作用域退出（glPopAttrib——恢复进入前宿主状态，避免诊断色污染后续机器人实体/标签/线宽/点大小）；区段提取实测零类别/操作"
       },
-      "differences": "glPopAttrib恢复外层状态，不能覆盖QtText独立挂帧绘制未保存的状态",
+      "differences": "RAII 作用域后半：不得跨上下文或跨绘制回调存活（栈语义）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1259,7 +1283,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.anonymous.applyCellColor",
@@ -1285,13 +1313,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-LINES",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "采样态到 GL 颜色映射（判定已由域侧完成——本函数只做 UiTheme palette 词表到 glColor 的映射：Good 绿/Weak 黄/Failed 红/NotSampled 灰诚实空态）；区段提取实测零类别/操作；UI-T65 词表单点供色（F-495 消硬编码）"
       },
-      "differences": "只把业务状态映射palette，不计算工程真值",
+      "differences": "纯映射无状态；色值全部经 ui::palette 词表（文件零硬编码色值——UI-T65 返工验收面）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1324,7 +1352,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.anonymous.tintColor",
@@ -1350,13 +1382,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-LINES",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "区域框 tint 分色映射（覆盖率档 Good/Weak/Failed→绿/黄/红；None/缺省＝辨识蓝词表值 kRegionTintDefaultGl）；区段提取实测零类别/操作；返回色三元组供 glColor4f 消费"
       },
-      "differences": "缺省/None及三类tint返回palette，非第二政策判定",
+      "differences": "纯映射；不可达防御分支同缺省蓝（switch 全覆盖）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1389,7 +1421,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.StationMarkerRender.draw",
@@ -1415,13 +1451,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-FRAME",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "工位点值标记自绘 Render（UI-T77/F-555）：三轴 GL_LINES＋QtTextBillboard 标签一体挂 WORLD 根帧（根帧局部系＝世界系，位姿零换算——世界系点位可辨）；区段提取实测零类别/操作（rw::math 值面＋自绘面）；HOST-FRAME capability＝框架帧呈现语义保留"
       },
-      "differences": "手写三轴+标签，候选RenderFrame/Drawable transform可表达偏移；不得因addFrameAxis帧原点限制直接排除组合能力",
+      "differences": "构造冻结（position/label）；轴长 0.25m 与框架 addFrameAxis 挂帧形态同尺度；回调 alpha 透传宿主透明语义；挂帧形态（position 空）由 draw 的 addFrameAxis 分支承载（帧随动）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1454,7 +1490,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.RegionOutlineRender.draw",
@@ -1480,13 +1520,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-LINES",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "区域边界框 12 棱线框自绘 Render（八角点二进制角序边表——F-562 修正拓扑直投：x 向/y 向回路＋z 向立柱；tint 分色 UI-T65）；区段提取实测零类别/操作"
       },
-      "differences": "二进制角序12边与tint，候选RenderLines已有；alpha/float降精/GL状态须验",
+      "differences": "构造冻结框值与 tint（整组替换刷新）；glLineWidth 2.0f 呈现后复位 1.0f",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1519,7 +1559,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DGateway.HostView3DGateway",
@@ -1546,13 +1590,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "网关装配校验构造（pickFrame/selection/nameMap 必填非空 fail-fast——禁构造违反拾取承诺的网关；scene/TCP 两缝可空＝诚实降级显式形态）；区段提取实测零类别/操作"
       },
-      "differences": "pick/selection/nameMap必供，TCP/scene可降级，不创建计算模型",
+      "differences": "构造冻结 Deps 注入面；权限由文件级 grant REUSE-T60-HostView3DGateway.cpp 承载（host-presentation/HOST-GATEWAY）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1585,7 +1629,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
@@ -1612,13 +1660,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "上行拾取五拍：pickFrame→帧名→NameMap 反解→双域分发（modeling/requirements 至少其一命中即产出）→selectBusiness 选中汇聚（View3DPick 来源，高亮经既有 HostHighlightOutlet 回环）；区段提取实测 categories=state（rw::kinematics::Frame* 只读借持）ops=[]，grant REUSE-T60-HostView3DGateway.cpp 覆盖；任何一拍失败＝诚实 false（调用方不过滤事件——放行框架默认处理）"
       },
-      "differences": "拾取帧名经同一nameMap反解后分发与selectBusiness；不拼剥前缀，不把域分发返回当全部成功依据",
+      "differences": "Ctrl+双击语义等价承接（UI-T45）；非业务对象＝零选中变化零伪造（L3 分支②）；零 State 写/零模型权限",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1651,7 +1699,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DGateway.applyPresentation",
@@ -1678,13 +1730,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "下行呈现出口（IUiPresentationOutlet 事务第三步宿主半区）：视图完整性前置→hostPayload 本类型解释（void 别名构造＋static 下转，装配纪律）→新呈现先挂接成功后整组摘旧（原子替换；失败保持原状并如实报告）"
       },
-      "differences": "完整性/hostPayload契约别名，先apply新对象再remove旧；type correctness由装配保证非运行时动态验证",
+      "differences": "呈现生命周期：挂接失败三态报告（incomplete-view/payload-null/attach-failure token＋中文 detail）；切换窗口新旧短暂并存对消费者不可见（返回后才见新态）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1717,7 +1769,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DGateway.releasePresentation",
@@ -1744,13 +1800,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "呈现整组摘除（对象侧 remove——网关零场景依赖；失败仅 Dev 留痕既有语义）；区段提取实测零类别/操作"
       },
-      "differences": "remove再reset，底层HostWorkCellPresentationObject remove空动作不能泛称场景已清空",
+      "differences": "幂等（空即返回）；onSceneCleared 与 applyPresentation 成功路径双点调用",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1783,7 +1839,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DGateway.onSceneCleared",
@@ -1810,13 +1870,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "场景清除拍对称收口：releasePresentation＋removePreview 幂等双拍（渲染对象随场景组消亡，此处只做摘除编排——「不残留旧呈现」纪律双拍承载）；区段提取实测零类别/操作"
       },
-      "differences": "release呈现/remove预览，真实事件生命周期仍须消费链验证",
+      "differences": "会话/场景拍生命周期同步（宿主生命周期钩子）；高亮归既有 outlet 的选中流收口（本函数不触）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1849,7 +1909,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DGateway.applyPreview",
@@ -1876,13 +1940,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "会话预览出口（UI-T33 IUiView3DPreviewOutlet 宿主半区）：后端 draw 整组绘制（原子替换契约在后端实现）；后端缺位＝诚实 false（headless/无缝装配不虚构预览）；成功留存 m_previewAttached＋m_currentPreview 会话态"
       },
-      "differences": "后端draw true才更新会话值；测试假draw失败不证明真实backend中途异常回滚",
+      "differences": "预览生命周期：失败＝保留旧呈现（「失败保持原状」事务语义与修订呈现同款）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1915,7 +1979,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.HostView3DGateway.removePreview",
@@ -1942,13 +2010,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.2",
       "capabilityId": "HOST-SCENE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
-        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+        "command": "REUSE-T60 RC-09 逐行复查（2026-10-28，起始 0259db9b2）：生产接线/生命周期 rg 定位＋reuse-contract.ps1 类别/操作提取规则逐区段实测（traceability/reuse/REUSE-T60/t60-probe-extract-output.txt，与门禁 REUSE-AD-PENDING 基线输出对读一致）",
+        "conclusion": "预览清除：后端 clear 幂等调用＋会话态复位（m_previewAttached=false、m_currentPreview 默认值）；区段提取实测零类别/操作"
       },
-      "differences": "清后端与本地预览值，不写修订/结果",
+      "differences": "幂等可重复；与 applyPreview 构成预览生命周期进出对称",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -1981,7 +2049,11 @@
           "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
         }
       ],
-      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      }
     },
     {
       "functionId": "ui.QtTextBillboard.QtTextBillboard",
@@ -2660,6 +2732,48 @@
         "sha256": "452108b49acb30c7bcc4b86f6269e03a84bbdfcb8f29d3b7a5f617fe83dec4ef"
       },
       "auditBoundary": "宿主装配体业务定性（SA-18/B1-SPEC 装配层）；本行为行覆盖载体不授权限（宿主受限面授权归 ARCH §3.6.2 HOST-WORKBENCH 治理批与 permissions.json 逐文件精确 grant）；不证明 T01 完整或迁移完成"
+    },
+    {
+      "functionId": "ui.HostCompilePipelineTest",
+      "ownerUnit": "ui",
+      "requirements": [
+        "REQ-01",
+        "ARC-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+          "symbol": "NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15",
+          "qualifiedSymbol": "sdurws::ird::ui::test::HostCompilePipelineTest_NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15_Test",
+          "startLine": 1,
+          "endLine": 1466,
+          "sha256": "5b792c915be11ee500e88cc2a083977d6212ecea2a42d5c607448b1efb86fca1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n 'TEST\\(|NamedTcpClosure|DrawableNode::Physical' RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp（REUSE-T60 整文件行登记）",
+        "conclusion": "宿主编译管线集成测试整文件（UI-T46 起多批累积，IRD_HAVE_RUNTIME_COMPILE=1 集成门控块专属）：A-15 真实建模字节→宿主十段编译→真实 FK/IK 数值闭环（NamedTcpClosure——UI-T86 锚覆盖修复经 F-975① 解锁于本批落地，全量 345 项 344P/1F 唯一失败为 F-560 预存钉扎）；UI-T78 渲染面分组常量断言（DrawableNode::Physical 只读甄别——graphics 消费，§3.6.2.1 graphics 面 grant 承载）；PM-04 草稿冲突/Codec 边界族。business-specific 保留＝测试脚手架与断言面（TEST-HARNESS capability T32 定案口径，非上游可迁移核）"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        }
+      ],
+      "auditBoundary": "仅本测试文件；替身视图借用已发布不可变物化快照（runtimeModelView 锚＝同源物化快照本体，不经第二包装层伪造），不授予生产权限、无模型所有权主张；仅 sdurws_ird_ui_test 测试目标",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T60/README.md",
+        "sha256": "62994c1f58399fa1fbd19293e62293b3e01b04aeadc99343e83919e05ee47f30"
+      },
+      "differences": "测试文件整行登记（ui.AnchorCaptureExecutorTest 整文件行同型）；本批改动＝本地 View 补 runtimeModelView() 锚覆盖（F-975 候选补丁落地）；权限＝grant REUSE-T60-HostCompilePipelineTest.cpp（origin=test-fixture，categories=graphics/model/state，operations=borrow——借用已发布不可变快照本体，零构造/零 State 写/零 host 类别）"
     }
   ]
 }

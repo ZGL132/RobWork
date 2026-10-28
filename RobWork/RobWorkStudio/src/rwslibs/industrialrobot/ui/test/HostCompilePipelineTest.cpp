@@ -335,12 +335,24 @@ TEST_F(HostCompilePipelineTest, NamedTcpClosureCompilesAndSolvesRealNumerics_REQ
     EXPECT_EQ(materialized.snapshot->modelIdentity(), snapshot->modelIdentity());
     EXPECT_EQ(materialized.snapshot->model(), snapshot->model());
     // 仅借用已发布不可变快照。适配器是IKinRuntimeView端口，不包含计算替身。
+    // UI-T86（F-973 诊断返工）：REUSE-T18 起 FK/IK 只经 runtimeModelView 锚
+    // 消费已编译 WorkCell（锚缺失＝NoDevice 值面，T17 契约禁止隐藏
+    // fallback）——锚＝同源物化快照本体（RuntimeSnapshot 即
+    // IRuntimeModelView；生产快照包装视图必须覆盖——KinTypes.hpp 表尾注），
+    // 不经第二包装层伪造。
     struct View final : kinematics::IKinRuntimeView {
         const runtime::CanonicalModel& value;
-        explicit View(const runtime::CanonicalModel& model) : value(model) {}
+        std::shared_ptr<const runtime::IRuntimeModelView> anchor;
+        View(const runtime::CanonicalModel& model,
+             std::shared_ptr<const runtime::IRuntimeModelView> a)
+            : value(model), anchor(std::move(a)) {}
         const runtime::CanonicalModel& model() const override { return value; }
         rw::math::Transform3D<double> worldToBase() const override { return value.world().T_world_base; }
-    } view(materialized.snapshot->model());
+        std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+        {
+            return anchor;
+        }
+    } view(materialized.snapshot->model(), materialized.snapshot);
     const double q = 0.3;
     for (const auto& row : std::vector<std::pair<std::string, rw::math::Vector3D<double>>>{
             {"a", {0.2,0.8,0.4}}, {"b", {-0.2,0.3,0.4}}}) {

@@ -721,6 +721,87 @@
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
         "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
       }
+    },
+    {
+      "id": "REUSE-T60-HostView3DPreviewBackend.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+        "sha256": "0f99e2f64fc86a672c06adb53090c5a45efe04587b277dc06c8b2b5a1e86a366"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "graphics",
+        "host",
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "render"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-RENDER",
+      "lifetime": "宿主三维会话预览渲染后端实现面（ARCH §3.6.2 HOST-RENDER 表行，RC-09 权限批 REUSE-T60 逐文件登记；2026-10-28）：graphics＝rw/graphics WorkCellScene/Render/SceneViewer/DrawableNode 与 rwlibs/opengl 固定管线 GL 呈现原语（自绘 StationMarkerRender/RegionOutlineRender/SampleGridRender/PreviewColorScope＋QtTextBillboard 标签）；host＝rws RobWorkStudio/RWStudioView3D 公开 API 场景与视图现取；model＝发布链 WorkCell 借持与 getWorldFrame/findFrame 只读查询（节点名清单挂接/移除，零模型结构触碰）；state＝Frame 挂接面。render＝GL 绘制回调，query＝场景挂接与帧解析查询。未授 construct-model：ensureSessionPreviewAnchor 的空场景锚 WorkCell 构造（仅场景层「ird-session-preview」，studio 模型层零触碰）被门禁模型所有权规则（runtime-owner/test-fixture 限定）机器拦阻，该行保持 pending 如实登记（T57 CollisionQuery 同族；ARCH §3.6.2「不建计算模型」语义与机械规则的缺口归所有者裁决）。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+      }
+    },
+    {
+      "id": "REUSE-T60-HostView3DGateway.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+        "sha256": "fc6f24b83dfcd460c5fb5aebaa040f7efa3ce3ce725c8edfe366cb63b50b9c6d"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-GATEWAY",
+      "lifetime": "宿主三维网关实现面（ARCH §3.6.2 HOST-GATEWAY 表行，RC-09 权限批 REUSE-T60 逐文件登记；2026-10-28）：state＝受控会话态只读借持——currentTcpPose（:119-135 KIN-FK 行）经 Deps 回调借持 const Frame*/const State*（保活归来源装配体），Kinematics::worldTframe 只读查询宿主会话 TCP 位姿（KIN-06：零修订、不写设计模型、不把宿主视图回灌为工程计算真值）；handleViewDoubleClick 上行拾取的 Frame 借持同为只读（帧名→NameMap 反解→域分发→选中汇聚）。零 State 构造/写入、零模型类别。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+      }
+    },
+    {
+      "id": "REUSE-T60-HostCompilePipelineTest.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+        "sha256": "5b792c915be11ee500e88cc2a083977d6212ecea2a42d5c607448b1efb86fca1"
+      },
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "categories": [
+        "graphics",
+        "model",
+        "state"
+      ],
+      "operations": [
+        "borrow"
+      ],
+      "origin": "test-fixture",
+      "lifetime": "测试夹具例外 graphics 面（ARCH §3.6.2.1 2026-10-28 扩登；F-975①解锁＝REUSE-T60 治理批，所有者 2026-10-27 委托按建议裁决）：仅测试目标 sdurws_ird_ui_test（集成门控块）。graphics＝UI-T78 渲染面分组常量断言对 DrawableNode::Physical 的只读甄别消费（文件头 rw/graphics include 与分组常量断言——宿主呈现分组不漂移的守卫面）；model/state＝宿主编译管线用例经 runtime 编译快照受控视图的只读消费（NamedTcpClosure 等 A-15 真实 FK/IK 链）；borrow＝本地 View 借用已发布不可变物化快照本体（UI-T86 修复候选落地——runtimeModelView 锚覆盖，RuntimeSnapshot 即 IRuntimeModelView，不经第二包装层伪造）。零构造/零 State 写/零 host 类别（rws 头不在 include 面）；非测试路径冒用 test-fixture 或测试路径携带 host 类别均被门禁拒绝（REUSE-T60 正负例实测）。任务输入装配与断言消费，非模型所有权主张；仅测试目标，无生产权限扩散",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+      }
     }
   ]
 }

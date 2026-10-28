@@ -20,7 +20,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 172
+$driverFailure = ''; $expectedTests = 175
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256='';$copiedGoldenSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -567,6 +567,27 @@ try {
     Case 'fixture-test-model-operation-without-grant-rejected' 'REUSE-AD' {
         TestFixtureChange ('#include <rw/models/WorkCell.hpp>'+"`n"+'void probe(){ auto cell = std::make_shared<rw::models::WorkCell>("fixture"); cell->addDevice(nullptr); }'+"`n")
         $p=GetJson ($reuse+'permissions.json');$p.grants=@();PutJson ($reuse+'permissions.json') $p
+    }
+    # F-975 解锁（REUSE-T60 治理批，§3.6.2.1 graphics 面登记）：/test/ 路径
+    # test-fixture grant 持 graphics 正例（UI-T78 渲染面分组常量断言消费形态）；
+    # host 类别借测试路径准入与非 test 路径 test-fixture graphics 两个负例——
+    # §3.6.2 封闭清单与 /test/ 目录边界各自不放宽。
+    Case 'fixture-test-fixture-graphics-positive' 'PASS' {
+        TestFixtureChange ('#include <rw/graphics/DrawableNode.hpp>'+"`n"+'void probe(){ auto physical = rw::graphics::DrawableNode::Physical; (void)physical; }'+"`n")
+        ProbeMatrix 'business-specific' 'migrated'
+        $p=GetJson ($reuse+'permissions.json');$g=Grant 'test-fixture' @('query') 'sdurws_ird_kinematics_test'
+        $g.source.path=$script:probePath;$g.source.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.source.path)))
+        $g.categories=@('graphics')
+        $g.build.path=$product+'kinematics/CMakeLists.txt';$g.build.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.build.path)))
+        $p.grants=@($g);PutJson ($reuse+'permissions.json') $p
+    }
+    Case 'fixture-test-fixture-host-category-rejected' 'REUSE-AD' {
+        TestFixtureChange '#include <rws/RobWorkStudio.hpp>'
+        ProbeGrant 'test-fixture' @('host') @('query')
+    }
+    Case 'fixture-graphics-test-fixture-outside-test-rejected' 'REUSE-AD' {
+        FunctionalChange '#include <rw/graphics/DrawableNode.hpp>'
+        ProbeGrant 'test-fixture' @('graphics') @('query')
     }
     Case 'closure-new-file-no-independent-record' 'REUSE-MIGRATION : new/current file lacks independent closure' { IsolateFinalClosureMatrices;FunctionalChange 'void probe(){}';ProbeMatrix 'business-specific' 'closed' } @('-RequireMigrationComplete')
     Case 'closure-baseline-cannot-use-absent' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].baselineBlob='absent';PutJson ($reuse+'closures.json') $c }
