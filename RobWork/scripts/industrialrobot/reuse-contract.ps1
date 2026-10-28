@@ -239,17 +239,76 @@ function CheckFunctions($grants, [string[]]$changedSources) {
             if ($scriptAudit) {
                 RequireFields $r.execution @('kind','entry','command') 'EXECUTION'
                 $entry=SafePath "$($r.execution.entry)"
+                # 结项形态（migration §13.5.4 RC-10 规则批）：脚本行允许
+                # decision=business-specific 且 status=migrated/closed，须携带
+                # completionEvidence（真实执行记录）；audited 不是脚本行准入状态。
+                # 审计阶段行维持 pending/proposal；下方既有约束一律不放宽。
+                $scriptClosure=($r.decision -eq 'business-specific' -and $r.status -in @('migrated','closed'))
                 if ($matrix.unit -ne 'foundation-governance' -or $r.usageRole -ne 'owner' -or
                     $r.execution.kind -ne 'governance-script' -or
                     $entry -notmatch '^RobWork/scripts/industrialrobot/[^/]+\.ps1$' -or
                     -not "$($r.execution.command)".Contains($entry) -or
-                    $r.capabilityId -ne 'NONE' -or $r.decision -notin @('pending','proposal') -or
-                    $r.status -notin @('pending','proposal') -or @($r.targets).Count -ne 0 -or
+                    $r.capabilityId -ne 'NONE' -or
+                    (-not $scriptClosure -and ($r.decision -notin @('pending','proposal') -or
+                    $r.status -notin @('pending','proposal'))) -or
+                    @($r.targets).Count -ne 0 -or
                     -not @($r.sources).Count -or $entry -notin @($r.inputs.path)) { Fail 'EXECUTION' $r.functionId }
                 foreach ($s in $r.sources) {
                     # 允许真实入口dot-source的同目录私有helper；两者都须完整摘要绑定。
                     # 具体dot-source调用链由独立语义验收核对，字符串命中不是执行证明。
                     if ($s.path -notmatch '^RobWork/scripts/industrialrobot/[^/]+\.ps1$' -or $s.path -notin @($r.inputs.path)) { Fail 'EXECUTION' 'source/entry/context must bind exact governance scripts' }
+                }
+                if ($scriptClosure) {
+                    # 结项分支只加严：entry 自身区段必须被 sources 覆盖；
+                    # completionEvidence 按 CheckBinding 绑定真实执行记录/报告。
+                    if ($entry -notin @($r.sources.path)) { Fail 'EXECUTION' "$($r.functionId) : closure form must bind entry region" }
+                    RequireFields $r @('completionEvidence') 'EXECUTION'
+                    [void](CheckBinding $r.completionEvidence 'FRESHNESS')
+                    # 已检出的 dot-source 引用必须全部登记为同目录 helper 源区段；
+                    # 检测是下界（仅 $PSScriptRoot/相对形态），$scriptDir 等别名与
+                    # 未检出调用链仍由独立语义验收核对，字符串命中不是执行证明。
+                    foreach ($scanPath in @($entry)+@($r.sources.path)) {
+                        $scanDir=$scanPath.Substring(0,$scanPath.LastIndexOf('/')+1)
+                        $scanText=ReadText $scanPath
+                        $helpers=@()
+                        foreach ($dm in [regex]::Matches($scanText,'(?m)^\s*\.\s+\(\s*Join-Path\s+\$PSScriptRoot\s+''([^'']+\.ps1)''\s*\)')) { $helpers+=$dm.Groups[1].Value }
+                        foreach ($dm in [regex]::Matches($scanText,'(?m)^\s*\.\s+\$PSScriptRoot[\\/]?"?([A-Za-z0-9_.\-]+\.ps1)"?')) { $helpers+=$dm.Groups[1].Value }
+                        foreach ($dm in [regex]::Matches($scanText,'(?m)^\s*\.\s+\.{1,2}[\\/]([A-Za-z0-9_.\-]+\.ps1)')) { $helpers+=$dm.Groups[1].Value }
+                        foreach ($name in $helpers) {
+                            if (@($r.sources | Where-Object { "$($_.path)" -eq ($scanDir+$name) }).Count -eq 0) {
+                                Fail 'EXECUTION' "$($r.functionId) : dot-sourced helper not bound in sources: $scanPath -> $name"
+                            }
+                        }
+                    }
+                    if ($r.status -eq 'closed') {
+                        # closed 沿 closures 协议：验收记录必须是 traceability/acceptance
+                        # 下冻结 Git 对象（verdict=pass、taskId=REUSE-*、被验提交为当前
+                        # tip 祖先）；验收后行只允许 migrated→closed 状态推进与
+                        # acceptance 引用补记，其余字段与被验版本逐字段一致。
+                        RequireFields $r @('acceptance') 'CLOSURE'
+                        $a=$r.acceptance
+                        RequireFields $a @('commit','path','reviewedCommit') 'CLOSURE'
+                        if ("$($a.commit)" -notmatch '^[0-9a-f]{40}$' -or "$($a.reviewedCommit)" -notmatch '^[0-9a-f]{40}$' -or
+                            (SafePath "$($a.path)") -notlike ($design+'traceability/acceptance/*.json')) { Fail 'CLOSURE' "$($r.functionId) : script acceptance binding" }
+                        $saved=$ErrorActionPreference
+                        try { $ErrorActionPreference='Continue'; $raw=& git -C $RepoRoot show "$($a.commit):$($a.path)" 2>$null; $rc=$LASTEXITCODE } finally { $ErrorActionPreference=$saved }
+                        if ($rc) { Fail 'CLOSURE' "$($r.functionId) : acceptance object missing" }
+                        $record=($raw -join "`n")|ConvertFrom-Json
+                        if ($record.verdict -ne 'pass' -or "$($record.taskId)" -notlike 'REUSE-*' -or $record.reviewedCommit -ne $a.reviewedCommit) { Fail 'CLOSURE' "$($r.functionId) : independent script acceptance required" }
+                        $tip='HEAD'; if ($Head) { $tip=$Head }
+                        & git -C $RepoRoot merge-base --is-ancestor $a.reviewedCommit $tip
+                        if ($LASTEXITCODE) { Fail 'CLOSURE' "$($r.functionId) : accepted script registration not ancestor" }
+                        $matrixPath=$design+'reuse/functions/'+$matrix.unit+'.json'
+                        $saved=$ErrorActionPreference
+                        try { $ErrorActionPreference='Continue'; $raw=& git -C $RepoRoot show "$($a.reviewedCommit):$matrixPath" 2>$null; $rc=$LASTEXITCODE } finally { $ErrorActionPreference=$saved }
+                        if ($rc) { Fail 'CLOSURE' "$($r.functionId) : accepted matrix missing" }
+                        $acceptedMatrix=($raw -join "`n")|ConvertFrom-Json
+                        $oldRow=@($acceptedMatrix.functions | Where-Object { "$($_.functionId)|$($_.capabilityId)" -eq $key })
+                        if ($oldRow.Count -ne 1 -or $oldRow[0].status -notin @('migrated','closed')) { Fail 'CLOSURE' "$($r.functionId) : accepted closure-form registration missing" }
+                        $copy=($r | ConvertTo-Json -Depth 40)|ConvertFrom-Json
+                        $copy.PSObject.Properties.Remove('status');$copy.PSObject.Properties.Remove('acceptance');$oldRow[0].PSObject.Properties.Remove('status')
+                        if (($copy|ConvertTo-Json -Depth 40 -Compress) -ne ($oldRow[0]|ConvertTo-Json -Depth 40 -Compress)) { Fail 'CLOSURE' "$($r.functionId) : accepted function changed" }
+                    }
                 }
             } else {
                 RequireFields $r @('targets','inputs') 'FUNCTION'
