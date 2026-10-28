@@ -168,6 +168,9 @@ struct DhChainJoint {
     // 完整 JointEntry；调用方免二次合并）----
     core::SourcedValue<JointLimits> bounds;        ///< 限位 {qmin,qmax}（rad；透传）
     core::SourcedValue<JointLimits> workingRange;  ///< 工程工作范围（rad；仅 Continuous；透传）
+    /// MDL-01/F04：与几何权威模式无关的速率限制，保持 SI 值、缺失状态及来源。
+    core::SourcedValue<double> maxVelocity;
+    core::SourcedValue<double> maxAcceleration;
 };
 
 /**

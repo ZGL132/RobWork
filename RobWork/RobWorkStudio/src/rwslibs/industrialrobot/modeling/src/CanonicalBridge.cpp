@@ -185,6 +185,8 @@ std::optional<core::UnitToken> siUnitToken(core::QuantityKind kind)
         case core::QuantityKind::Inertia:             return core::UnitToken::find("kg*m^2");
         case core::QuantityKind::AngularVelocity:     return core::UnitToken::find("rad/s");
         case core::QuantityKind::AngularAcceleration: return core::UnitToken::find("rad/s^2");
+        case core::QuantityKind::LinearVelocity:      return core::UnitToken::find("m/s");
+        case core::QuantityKind::LinearAcceleration:  return core::UnitToken::find("m/s^2");
         case core::QuantityKind::Dimensionless:       return core::UnitToken::find("1");
         default: return std::nullopt;  // 摩擦系数族（N·m·s/rad）等无 R1 量纲行——走有限性门
     }
@@ -461,9 +463,15 @@ runtime::Expected<runtime::JointDescription, ModelingError>
         }
         const rw::math::Vector3D<double> foldAxis(
             jd.axis(0) / foldNorm, jd.axis(1) / foldNorm, jd.axis(2) / foldNorm);
-        const rw::math::Rotation3D<double> folded =
-            rotMul(originModel.R(), axisAngleRotation(foldAxis, src.zeroOffset));
-        jd.origin = rw::math::Transform3D<double>(originModel.P(), folded);
+        // F02：offset 的量纲随类型变化；移动量在关节局部轴上，由上游乘法投到父系。
+        if (src.type == JointType::Prismatic) {
+            jd.origin = originModel * rw::math::Transform3D<double>(foldAxis * src.zeroOffset);
+        } else if (src.type == JointType::Fixed) {
+            jd.origin = originModel;
+        } else {
+            jd.origin = originModel * rw::math::Transform3D<double>(
+                axisAngleRotation(foldAxis, src.zeroOffset));
+        }
     } else {
         return runtime::Expected<runtime::JointDescription, ModelingError>::err(
             refMissing(src.objectId.toCanonical(), field + ".origin",
@@ -789,6 +797,8 @@ runtime::Expected<std::vector<JointEntry>, ModelingError>
         entry.localName = joint.localName;
         entry.bounds = joint.bounds;        // 两态均权威字段透传（§7.2）
         entry.workingRange = joint.workingRange;
+        entry.maxVelocity = joint.maxVelocity;
+        entry.maxAcceleration = joint.maxAcceleration;
         chain.joints.push_back(std::move(entry));
     }
     // §7.4 无损展开（权威展开，C-5）——空链/基座混入在此不可达（解码门

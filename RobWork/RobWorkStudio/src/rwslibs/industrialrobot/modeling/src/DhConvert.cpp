@@ -1297,6 +1297,8 @@ ExpandOutcome expandDhChain(const DhChain& chain)
         entry.zeroOffset = joint.zeroOffset;  // 权威零位透传（两态均权威）
         entry.bounds = joint.bounds;          // 限位透传（两态均权威——§7.2）
         entry.workingRange = joint.workingRange;
+        entry.maxVelocity = joint.maxVelocity;
+        entry.maxAcceleration = joint.maxAcceleration;
         entry.dhDerived = joint.dh;           // 派生展示值（Explicit 态不入编码——D-MDL-5）
         out.joints.push_back(std::move(entry));
         // 静段前移：本关节的 S_k 成为下一关节 origin 的头部（F-631 拆分）。
@@ -1679,6 +1681,8 @@ std::optional<runtime::RobotDesignDescription> buildChainDescription(
             entry.localName = joint.localName;
             entry.bounds = joint.bounds;
             entry.workingRange = joint.workingRange;
+            entry.maxVelocity = joint.maxVelocity;
+            entry.maxAcceleration = joint.maxAcceleration;
             chain.joints.push_back(std::move(entry));
         }
         const ExpandOutcome expanded = expandDhChain(chain);
@@ -1712,9 +1716,18 @@ std::optional<runtime::RobotDesignDescription> buildChainDescription(
         // T_parent_joint·R_axis(zeroOffset)·R_align 同侧同序）。
         const rw::math::Transform3D<double> originModel =
             static_cast<rw::math::Transform3D<double>>(src.origin.value());
-        const rw::math::Rotation3D<double> folded =
-            rotMul(originModel.R(), axisAngleRotation(src.axis.value(), src.zeroOffset));
-        jd.origin = rw::math::Transform3D<double>(originModel.P(), folded);
+        // F02：等价门与正式桥接同规，m 不能作为 rad 烘入旋转。
+        const auto axis = normalized(src.axis.value());
+        if (src.type == JointType::Prismatic) {
+            jd.origin = originModel * rw::math::Transform3D<double>(axis * src.zeroOffset);
+        } else if (src.type == JointType::Fixed) {
+            jd.origin = originModel;
+        } else {
+            jd.origin = originModel * rw::math::Transform3D<double>(
+                axisAngleRotation(axis, src.zeroOffset));
+        }
+        jd.maxVelocity = src.maxVelocity;
+        jd.maxAcceleration = src.maxAcceleration;
         // b) 限位平移（Revolute/Prismatic；权威 q→Description q）。
         if (src.type == JointType::Revolute || src.type == JointType::Prismatic) {
             if (const auto b = src.bounds.tryValue(); b.has_value()) {

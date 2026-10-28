@@ -1171,8 +1171,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "zeroConfigFK",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::zeroConfigFK",
-          "startLine": 1780,
-          "endLine": 1799,
+          "startLine": 1793,
+          "endLine": 1812,
           "sha256": "0bddab268c3e4daf679960f242da542ef475fedb35e9b158a7a8335cdf6a7b8b"
         }
       ],

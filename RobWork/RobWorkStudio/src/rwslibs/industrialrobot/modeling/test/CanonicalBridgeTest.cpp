@@ -46,6 +46,7 @@
 #include <sdurws/ird/io/IoFwd.hpp>                  // kAccessVersion——accessVersion 期望值来源（io 单点）
 #include <sdurws/ird/modeling/CanonicalBridge.hpp>  // 被测面：builder＋reader＋闭包抽象
 #include <sdurws/ird/modeling/Codec.hpp>
+#include <sdurws/ird/modeling/DhConvert.hpp>
 #include <sdurws/ird/modeling/ObjectTypes.hpp>
 #include <sdurws/ird/modeling/Parts.hpp>
 #include <sdurws/ird/modeling/RobotDesign.hpp>
@@ -79,6 +80,57 @@ using modeling::testbridge::makeRecordedResource;
 using modeling::testbridge::makeRevoluteJoint;
 using modeling::testbridge::makeSolidifiedResource;
 using modeling::testbridge::userProv;
+
+/// MDL-01/12，评审 F02/F09：正负移动偏置沿关节局部轴平移，rate 保留 SI 和来源。
+TEST(MdlBridgeReview, PrismaticOffsetAndRatesPreserveSiAndProvenance)
+{
+    for (const double offset : {-0.25, 0.25}) {
+        std::vector<core::DiagnosticRecord> diags;
+        auto draft = RobotDesignTemplateFactory{}.createDraft(
+            TemplateId{kTemplateIdGeneric6R}, runtime::InstallationPresetToken::Ground,
+            "review", diags).get();
+        auto& joint = draft.design.joints.front();
+        joint.type = JointType::Prismatic;
+        joint.axis = core::SourcedValue<rwmath::Vector3D<double>>::provided(
+            rwmath::Vector3D<double>(1,0,0), userProv());
+        const auto rotation = rwmath::Rotation3D<double>(0,-1,0,1,0,0,0,0,1);
+        joint.origin = core::SourcedValue<JointPose>::provided(
+            JointPose(rwmath::Transform3D<double>(rwmath::Vector3D<double>(1,2,3), rotation)), userProv());
+        joint.zeroOffset = offset;
+        joint.maxVelocity = core::SourcedValue<double>::provided(0.3, userProv());
+        joint.maxAcceleration = core::SourcedValue<double>::provided(0.4, userProv());
+        BridgeClosure closure;
+        closure.put(std::string(kRobotDesignObjectType), encode(draft.design));
+        const auto result = CanonicalModelInputBuilder{}.build(closure, diags);
+        ASSERT_TRUE(result.ok());
+        const auto& mapped = result.get().joints.front();
+        EXPECT_NEAR(mapped.origin.P()[0], 1, 1e-12);
+        EXPECT_NEAR(mapped.origin.P()[1], 2+offset, 1e-12);
+        EXPECT_NEAR(mapped.origin.P()[2], 3, 1e-12);
+        EXPECT_TRUE(mapped.origin.R() == rotation);
+        EXPECT_EQ(mapped.maxVelocity, joint.maxVelocity);
+        EXPECT_EQ(mapped.maxAcceleration, joint.maxAcceleration);
+    }
+}
+
+/// MDL-01，评审 F04：DH 几何展开不能改变两模式共有的权威限制或来源。
+TEST(MdlBridgeReview, DhExpansionKeepsRateValuesAndProvenance)
+{
+    std::vector<core::DiagnosticRecord> diags;
+    auto draft = RobotDesignTemplateFactory{}.createDraft(
+        TemplateId{kTemplateIdGeneric6R}, runtime::InstallationPresetToken::Ground,
+        "review", diags).get();
+    draft.design.authority = AuthorityMode::StandardDH;
+    for (auto& joint : draft.design.joints) { joint.dhDerived = DhParameters{}; }
+    BridgeClosure closure;
+    closure.put(std::string(kRobotDesignObjectType), encode(draft.design));
+    const auto result = CanonicalModelInputBuilder{}.build(closure, diags);
+    ASSERT_TRUE(result.ok());
+    for (std::size_t i=0;i<draft.design.joints.size();++i) {
+        EXPECT_EQ(result.get().joints[i].maxVelocity, draft.design.joints[i].maxVelocity);
+        EXPECT_EQ(result.get().joints[i].maxAcceleration, draft.design.joints[i].maxAcceleration);
+    }
+}
 
 namespace {
 

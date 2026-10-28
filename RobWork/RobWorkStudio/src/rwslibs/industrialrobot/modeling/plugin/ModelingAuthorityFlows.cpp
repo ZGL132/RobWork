@@ -75,6 +75,8 @@ bool executeSwitchAuthorityFlow(ModuleSessionState& session,
         chainJoint.localName = j.localName;
         chainJoint.bounds = j.bounds;
         chainJoint.workingRange = j.workingRange;
+        chainJoint.maxVelocity = j.maxVelocity;
+        chainJoint.maxAcceleration = j.maxAcceleration;
         chain.joints.push_back(std::move(chainJoint));
     }
     const auto expanded = converter.dhToExplicit(chain, diags);
