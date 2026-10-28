@@ -46,6 +46,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <mutex>
 #include <optional>
 #include <string>
@@ -398,13 +399,10 @@ public:
      *        内存采样行 JobMemory 半区的监督器侧聚合；ResourceController
      *        生产采样源 SupervisorMemorySampler 的 worker 半区消费口）。
      *
-     * 聚合口径：对每条**作业有效且进程未终结**的 worker 记录调
-     *   MemProbe::queryJobPeakCommittedBytes（QueryInformationJobObject→
-     *   PeakJobMemoryUsed——作业创建以来的提交内存峰值，单调不回落，
-     *   见 MemProbe.hpp 不超诺声明）后求和；单条查询失败＝该条计 0
-     *   （部分失败不毒化整体读数——"半读数比无读数危险"的关切由采样
-     *   器层的整体失败通道承担，本聚合只做尽力求和）。Dead 记录（作业
-     *   已随进程终结关闭）与空记录不参与。空池返回 0。
+     * 聚合口径：对每条作业有效且进程未终结的记录查询提交内存峰值求和。
+     *   任一查询失败或总和溢出返回 nullopt，由 ResourceController 保留上次治理等级；
+     *   Dead 记录不参与，合法空池返回有值的 0（EXR-10 所有者已批准）。
+     * @return 合计字节或 nullopt；环境查询失败不抛异常。
      *
      * 峰值口径与 §6.1"主进程＋全部 worker 合计峰值 ≤ 物理内存 70%"
      *   预算行对齐：池化复用的 worker 其峰值覆盖整个生命周期（不随任务
@@ -414,7 +412,7 @@ public:
      *   同域；ResourceController::evaluate 在 tick 主锁内调用本方法，
      *   域一致）。
      */
-    std::uint64_t aggregateJobMemoryBytes() const;
+    std::optional<std::uint64_t> aggregateJobMemoryBytes() const;
 
     /**
      * @brief 立即回收全部空闲 worker（EX-T07 增量——§6.1 内存预算行

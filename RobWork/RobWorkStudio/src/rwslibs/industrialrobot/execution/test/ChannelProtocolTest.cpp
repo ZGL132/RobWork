@@ -533,6 +533,30 @@ TEST(ExitClassificationTest, SupervisorForceKillTakesPrecedence)
               ExitClassification::ForceTerminatedBySupervisor);
 }
 
+
+/** EXR-05：手工构造分片 oracle，禁止把不同类型/尝试拼成完整消息。 */
+TEST(MessageReassemblerTest, MixedTypeOrAttemptRejected_EXR05)
+{
+    for (const bool changeType : {false, true}) {
+        ChannelFrame first = makeFrame(ChannelMsgType::DispatchRequest, 1, {});
+        first.flags = kFlagFragmentMore;
+        first.payload = {2,0,0,0,0,0,0,0, 0,0,0,0, 2,0,0,0, 'A'};
+        auto second = first;
+        second.seq = 2;
+        second.flags = 0;
+        second.payload[8] = 1;
+        second.payload.back() = 'B';
+        if (changeType) second.type = ChannelMsgType::FinalOutput;
+        else second.identity.attempt = core::AttemptId{2};
+        MessageReassembler reassembler;
+        bool broken = false;
+        EXPECT_TRUE(reassembler.accept(std::move(first), &broken).empty());
+        EXPECT_FALSE(broken);
+        EXPECT_TRUE(reassembler.accept(std::move(second), &broken).empty());
+        EXPECT_TRUE(broken);
+    }
+}
+
 }  // namespace
 
 /**

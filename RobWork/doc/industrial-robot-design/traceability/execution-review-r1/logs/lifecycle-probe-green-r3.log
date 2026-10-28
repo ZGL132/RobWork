@@ -1,0 +1,19 @@
+Note: Google Test filter = *EXR10Probe:*EXR08Probe
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkerProcessContractTest
+[ RUN      ] WorkerProcessContractTest.MemoryFailureDoesNotBecomeZero_EXR10Probe
+owned worker pids=66856,51456
+[       OK ] WorkerProcessContractTest.MemoryFailureDoesNotBecomeZero_EXR10Probe (147 ms)
+[----------] 1 test from WorkerProcessContractTest (148 ms total)
+
+[----------] 1 test from OverlappedLifecycleProbe
+[ RUN      ] OverlappedLifecycleProbe.PendingReadCompletesBeforeStorageDies_EXR08Probe
+completion waits=1 premature event closes=0
+[       OK ] OverlappedLifecycleProbe.PendingReadCompletesBeforeStorageDies_EXR08Probe (0 ms)
+[----------] 1 test from OverlappedLifecycleProbe (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (157 ms total)
+[  PASSED  ] 2 tests.
+nativeExit=0

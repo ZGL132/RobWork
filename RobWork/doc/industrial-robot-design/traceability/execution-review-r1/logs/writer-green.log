@@ -1,0 +1,16 @@
+Note: Google Test filter = WorkerWriterRegressionTest.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from WorkerWriterRegressionTest
+[ RUN      ] WorkerWriterRegressionTest.HeartbeatCannotReuseFinalFragmentSequence_EXR04
+heartbeat seq=1 final seq=2
+[       OK ] WorkerWriterRegressionTest.HeartbeatCannotReuseFinalFragmentSequence_EXR04 (1 ms)
+[ RUN      ] WorkerWriterRegressionTest.RejectPauseCommandFromAnotherAttempt_EXR05
+foreign attempt pause exit=0
+[       OK ] WorkerWriterRegressionTest.RejectPauseCommandFromAnotherAttempt_EXR05 (0 ms)
+[----------] 2 tests from WorkerWriterRegressionTest (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (5 ms total)
+[  PASSED  ] 2 tests.
+nativeExit=0

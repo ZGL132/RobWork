@@ -455,7 +455,7 @@
       "usageRole": "adapter",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
-        "sha256": "75fe95cea890c3e6b206474ea4a4dc2fde398e7041df2f06c265a22ea672b834"
+        "sha256": "63984228c812e4006fa3e6fe5fe61536c367c2cc5803f3843189daca9d1c2f17"
       },
       "targets": [
         "sdurws_ird_ui_plugin"

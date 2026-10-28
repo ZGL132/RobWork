@@ -1127,4 +1127,60 @@ TEST_F(CheckpointCoordinatorTest, RequestedEvaluatorMismatchRejected_EV_T13)
     EXPECT_TRUE(m_coordinator->listCompatible(query).empty());
 }
 
+
+/** EXR-03/TASK-03：检查点索引主键必须与五元组同源，失败不创建归档。 */
+TEST_F(CheckpointCoordinatorTest, CheckpointIdBelongsToTaskRun_EXR03)
+{
+    auto request = makeWriteRequest();
+    request.record.checkpointId.run = core::RunId::generate();
+    EXPECT_FALSE(request.record.isValid());
+    EXPECT_THROW(m_coordinator->writeCheckpoint(std::move(request)), ExecutionError);
+}
+
+
+/** EXR-13：同 WC、异 DWC 的候选也必须交已登记 judge，不能先由完整键拒绝。 */
+TEST_F(CacheCoordinatorTest, WorkCellCandidateReachesJudge_EXR13)
+{
+    ScriptedCompileJudge judge;
+    judge.script.push_back(CompileCacheVerdict::WorkCellOnlyReuse);
+    m_coordinator->setCompileCacheJudge(&judge);
+    const CompileCacheKeyView cached{cid(kHex64A), cid(kHex64B)};
+    const CompileCacheKeyView requested{cid(kHex64A), cid(kHex64C)};
+    m_coordinator->storeModelCache(cached, {1, 2});
+    auto query = makeQuery(kMode, kSlice, kContract, kProfile);
+    query.requestedModelKey = requested;
+    const auto result = m_coordinator->lookup(query);
+    ASSERT_EQ(judge.calls.size(), 1u);
+    EXPECT_EQ(judge.calls.front().requested, requested);
+    EXPECT_EQ(judge.calls.front().cached, cached);
+    EXPECT_EQ(result.modelVerdict, CacheLookup::ModelVerdict::WorkCellOnlyReuse);
+}
+
+/** EXR-13：字节长度相等不代表内容相等；冲突必须可观测且保留旧条目。 */
+TEST_F(CacheCoordinatorTest, SameLengthModelConflictReported_EXR13)
+{
+    const CompileCacheKeyView key{cid(kHex64A), cid(kHex64B)};
+    m_coordinator->storeModelCache(key, {1, 2});
+    m_coordinator->storeModelCache(key, {3, 4});
+    EXPECT_TRUE(m_sink->hasDevChannel("execution/cache"));
+    EXPECT_EQ(m_coordinator->stats().modelEntries, 1u);
+    EXPECT_EQ(m_coordinator->stats().modelBytes, 2u);
+}
+
+/** EXR-13：完整键候选被 judge 拒绝后仍可考察同 WC 的另一份候选。 */
+TEST_F(CacheCoordinatorTest, RejectedExactCandidateDoesNotHidePartialReuse_EXR13)
+{
+    ScriptedCompileJudge judge;
+    judge.script = {CompileCacheVerdict::Incompatible, CompileCacheVerdict::WorkCellOnlyReuse};
+    m_coordinator->setCompileCacheJudge(&judge);
+    const CompileCacheKeyView exact{cid(kHex64A), cid(kHex64B)};
+    m_coordinator->storeModelCache(exact, {1});
+    m_coordinator->storeModelCache({cid(kHex64A), cid(kHex64C)}, {2});
+    auto query = makeQuery(kMode, kSlice, kContract, kProfile);
+    query.requestedModelKey = exact;
+    const auto result = m_coordinator->lookup(query);
+    EXPECT_EQ(judge.calls.size(), 2u);
+    EXPECT_EQ(result.modelVerdict, CacheLookup::ModelVerdict::WorkCellOnlyReuse);
+}
+
 }  // namespace

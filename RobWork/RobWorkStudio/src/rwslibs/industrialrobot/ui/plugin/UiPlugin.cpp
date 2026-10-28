@@ -1555,8 +1555,8 @@ IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
     }
     // 事件总线兜底收口（F-967——析构可能不经 aboutToQuit，:1515 注同款
     // 幂等兜底）：先退订（RAII 句柄置空；aboutToQuit 已收口时为空操作），
-    // 再 waitForIdle 等在投回调归零——成员逆序销毁 sink 前，投递线程不再
-    // 触碰它们（execution 退订不等在投帧，waitForIdle 是唯一确定性静止点）。
+    // 退订返回即结束本位回调（EXR-09/C1）；再 waitForIdle 排空总线其余队列，
+    // 成员逆序销毁 sink 前，投递线程已不再触碰它们。退订时不持回调所需锁。
     // 随后成员销毁序：句柄（已空）→sink→总线（drain join，空订阅表零回调）
     // →快照互斥（声明序保证晚于总线析构）。
     m_revisionSubscription.reset();
@@ -2314,10 +2314,10 @@ void IrdWorkbenchHostPlugin::connectAppQuitDrain()
                              }
                              // 事件总线退出收口（F-967——§10.4 订阅生命周期）：
                              // 先停发布源（上方 shutdown/stop），再退订（RAII
-                             // 句柄置空——execution 退订在帧边界生效），最后
+                             // 句柄置空——EXR-09/C1 等待本位在投回调），最后
                              // waitForIdle 等队列清空且在投回调归零。投递线程
-                             // 不能托付进程退出：归零后残余队列帧面对空订阅表
-                             // 零回调，线程停在条件等待上，进程退出或总线成员
+                             // 不能托付进程退出：已失效订阅位不会再收到排队帧，
+                             // 排空后线程停在条件等待上，进程退出或总线成员
                              // 析构（drain join）都安全。总线本体保留到成员
                              // 析构——store 适配器仍持总线裸指针（非 owning），
                              // 此处提前 reset 会留悬垂发布指针。

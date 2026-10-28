@@ -1,0 +1,19 @@
+Note: Google Test filter = *EXR01:*EXR03
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from RunRegistryAdmissionTest
+[ RUN      ] RunRegistryAdmissionTest.ResolvedNamePopulatesSubject_EXR01
+[       OK ] RunRegistryAdmissionTest.ResolvedNamePopulatesSubject_EXR01 (40 ms)
+[ RUN      ] RunRegistryAdmissionTest.ResolvedNameRejectsConflictingSubject_EXR01
+[       OK ] RunRegistryAdmissionTest.ResolvedNameRejectsConflictingSubject_EXR01 (27 ms)
+[----------] 2 tests from RunRegistryAdmissionTest (70 ms total)
+
+[----------] 1 test from CheckpointCoordinatorTest
+[ RUN      ] CheckpointCoordinatorTest.CheckpointIdBelongsToTaskRun_EXR03
+[       OK ] CheckpointCoordinatorTest.CheckpointIdBelongsToTaskRun_EXR03 (0 ms)
+[----------] 1 test from CheckpointCoordinatorTest (8 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (85 ms total)
+[  PASSED  ] 3 tests.
+nativeExit=0

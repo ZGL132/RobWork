@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T11",
+  "unit": "execution",
+  "masterWp": "WP-B",
+  "title": "execution 第一轮评审整改：身份、IPC、进程生命周期和资源治理",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "TASK-03",
+    "ARC-04",
+    "CON-01",
+    "NFR-REL-02",
+    "NFR-PERF-02",
+    "NFR-PERF-04",
+    "NFR-MNT-01"
+  ],
+  "designRefs": [
+    "units/execution.md#6",
+    "units/execution.md#9",
+    "units/execution.md#10",
+    "reuse/policy.md#1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/EventBusDeliveryContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/WorkerProcessContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/WorkerSupervisor.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/CacheCoordinator.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Checkpoint.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/EventBus.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ChannelPair.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ChannelPair.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/JobScope.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/JobScope.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/CheckpointCacheTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/WorkerWriterTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/EX-T11.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/EX-T11.json",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "已获授权整改、正式回归及隔离探针；原始证据和逐文件/功能凭证；待独立验收的本地提交"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test sdurws_ird_execution_contract_test",
+    "cmake --build build/execution-smoke --config Release --target sdurws_ird_execution_test sdurws_ird_execution_contract_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/EX-T11.json"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "按本批 README 的保留/删除/适配和职责说明，沿 core/runtime/evidence/project 既有权威修复，不新增数值核心、owner 或上游修改",
+    "EXR-01/03/04/05/07/08/09/10/11/13/14 的反例、真实进程、固定交错及资源边界按原始证据核对；脚本替身不构成业务算法 worker 证据",
+    "C1 与 EXR-10 局部签名按所有者明确批准实施；EXR-02/06/12 及 C2/C5 留待批准，不把未完成能力标通过",
+    "集成/独立冒烟与直接消费者、取消预算、门禁及复用检查如实分列 passed/skipped/failed；本实施不自签独验"
+  ],
+  "note": "所有者指定 C: 工作树 codex/core-review-fixes，覆盖旧 D: 调度条款；起点 6a49e128c00f8cca3943083819ea59aea16a7be9。所有者要求按照审核建议修改，另明确批准 C1 与 EXR-10 局部签名；不改既有任务状态、不推进下一单元。UI 仅同步 C1 生命周期注释并验证直接消费，无新跨单元端口/链接边。最小契约仅供逐文件凭证和范围机器检查。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/EX-T11.json"
+  }
+}

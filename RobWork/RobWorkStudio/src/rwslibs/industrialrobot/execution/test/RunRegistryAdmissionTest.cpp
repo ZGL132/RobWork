@@ -1382,4 +1382,42 @@ TEST_F(RunRegistryAdmissionTest, SearchExhaustionStaysCompletedDataInsufficient_
     EXPECT_TRUE(fs::exists(m_dir/"results"/task.run.toCanonical()/"manifest.json"));
 }
 
+
+/** EXR-01：反解必须填充登记映射的对象，不能只验证名称存在。 */
+TEST_F(RunRegistryAdmissionTest, ResolvedNamePopulatesSubject_EXR01)
+{
+    const auto task = makeIdentity();
+    registerStandardRun(task);
+    auto admission = makeAdmission();
+    auto output = feasibleOutput();
+    const auto target = oid(kHex32A);
+    output.diagnostics.push_back(core::DiagnosticRecord::make(
+        "KIN-CASE-FAIL", std::nullopt, std::nullopt, std::string{"axis.J1"},
+        "定位反例", "登记映射", "核对对象"));
+    m_resolver->bind(cid(kHex64B), "axis.J1", target);
+    m_decoder->enqueue(std::move(output));
+    const auto result = admission.admitResult(makeArrival(task, ResultKind::FinalEnvelope));
+    ASSERT_TRUE(result.envelope);
+    ASSERT_FALSE(result.envelope->diagnostics.empty());
+    EXPECT_EQ(result.envelope->diagnostics.front().subject, std::optional<core::ObjectId>{target});
+}
+
+/** EXR-01：名称与自报对象冲突必须先拒绝，不能归档错误关联。 */
+TEST_F(RunRegistryAdmissionTest, ResolvedNameRejectsConflictingSubject_EXR01)
+{
+    const auto task = makeIdentity();
+    registerStandardRun(task);
+    auto admission = makeAdmission();
+    auto output = feasibleOutput();
+    output.diagnostics.push_back(core::DiagnosticRecord::make(
+        "KIN-CASE-FAIL", core::ObjectId::generate(), std::nullopt, std::string{"axis.J1"},
+        "定位反例", "登记映射", "核对对象"));
+    m_resolver->bind(cid(kHex64B), "axis.J1", oid(kHex32A));
+    m_decoder->enqueue(std::move(output));
+    const auto result = admission.admitResult(makeArrival(task, ResultKind::FinalEnvelope));
+    EXPECT_EQ(result.decision.verdict, AdmissionDecision::Verdict::Rejected);
+    EXPECT_FALSE(result.envelope);
+    EXPECT_FALSE(fs::exists(m_dir / "results" / task.run.toCanonical() / "manifest.json"));
+}
+
 }  // namespace

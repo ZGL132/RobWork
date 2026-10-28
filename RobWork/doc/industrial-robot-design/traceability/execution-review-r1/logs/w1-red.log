@@ -1,0 +1,52 @@
+Note: Google Test filter = *EXR01:*EXR03
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from RunRegistryAdmissionTest
+[ RUN      ] RunRegistryAdmissionTest.ResolvedNamePopulatesSubject_EXR01
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1402): error: Expected equality of these values:
+  result.envelope->diagnostics.front().subject
+    Which is: (nullopt)
+  std::optional<core::ObjectId>{target}
+    Which is: (16-byte object <AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA>)
+
+[  FAILED  ] RunRegistryAdmissionTest.ResolvedNamePopulatesSubject_EXR01 (38 ms)
+[ RUN      ] RunRegistryAdmissionTest.ResolvedNameRejectsConflictingSubject_EXR01
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1418): error: Expected equality of these values:
+  result.decision.verdict
+    Which is: 4-byte object <00-00 00-00>
+  AdmissionDecision::Verdict::Rejected
+    Which is: 4-byte object <02-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1419): error: Value of: result.envelope
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1420): error: Value of: fs::exists(m_dir / "results" / task.run.toCanonical() / "manifest.json")
+  Actual: true
+Expected: false
+
+[  FAILED  ] RunRegistryAdmissionTest.ResolvedNameRejectsConflictingSubject_EXR01 (38 ms)
+[----------] 2 tests from RunRegistryAdmissionTest (78 ms total)
+
+[----------] 1 test from CheckpointCoordinatorTest
+[ RUN      ] CheckpointCoordinatorTest.CheckpointIdBelongsToTaskRun_EXR03
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(1136): error: Value of: request.record.isValid()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(1137): error: Expected: m_coordinator->writeCheckpoint(std::move(request)) throws an exception of type ExecutionError.
+  Actual: it throws nothing.
+
+[  FAILED  ] CheckpointCoordinatorTest.CheckpointIdBelongsToTaskRun_EXR03 (3 ms)
+[----------] 1 test from CheckpointCoordinatorTest (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (91 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] RunRegistryAdmissionTest.ResolvedNamePopulatesSubject_EXR01
+[  FAILED  ] RunRegistryAdmissionTest.ResolvedNameRejectsConflictingSubject_EXR01
+[  FAILED  ] CheckpointCoordinatorTest.CheckpointIdBelongsToTaskRun_EXR03
+
+ 3 FAILED TESTS
+nativeExit=1

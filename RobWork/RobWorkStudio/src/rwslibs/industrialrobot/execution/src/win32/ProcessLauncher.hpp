@@ -56,6 +56,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "JobScope.hpp"
 
@@ -80,11 +81,11 @@ public:
      *
      * @param commandLine   [in] 完整命令行（含可执行路径与参数——
      *                      CreateProcessW 的可变性语义：可就地改写）
-     * @param inheritHandles [in] 是否继承句柄（生产恒 true——管道副本传递）
+     * @param inheritedHandles [in] 仅允许继承的句柄列表；生产为两个管道副本。
      * @param pi            [out] 成功时填充（hThread/hProcess 归调用方关闭）
      * @return false＝创建失败（GetLastError 经 lastError() 透出）
      */
-    virtual bool createProcess(const std::wstring& commandLine, bool inheritHandles,
+    virtual bool createProcess(const std::wstring& commandLine, const std::vector<HANDLE>& inheritedHandles,
                                PROCESS_INFORMATION* pi) = 0;
 
     /// 最近一次失败的 Win32 错误码（诊断承载）。
@@ -94,7 +95,7 @@ public:
 /// 生产实现（CreateProcessW：CREATE_SUSPENDED | CREATE_NO_WINDOW）。
 class RealProcessOps final : public IProcessOps {
 public:
-    bool createProcess(const std::wstring& commandLine, bool inheritHandles,
+    bool createProcess(const std::wstring& commandLine, const std::vector<HANDLE>& inheritedHandles,
                        PROCESS_INFORMATION* pi) override;
     DWORD lastError() const override { return m_lastError; }
 
@@ -121,8 +122,7 @@ struct LaunchResult {
  *                       "ird-exec-<pid>-<序号>" 供给）
  * @param identityArg    [in] 绑定五元组命令行值（五个规范文本以 '|' 连接
  *                       ——worker 宿主握手帧的身份块来源；通道消息全携
- *                       五元组，ARCH §4.1。派发后的绑定以 DispatchRequest
- *                       帧头为准——池化复用换绑的更新点在 worker 宿主）
+ *                       五元组，ARCH §4.1。阶段 A 启动绑定终生不变，派发帧必须与之相等）
  * @param ops            [in] 进程创建接缝（生产传 RealProcessOps；测试注入）
  * @param job            [in] 目标作业对象（须 valid()——失败返回 ok=false）
  * @return 启动产物（ok=false 时 channel 为空、句柄为空——调用方直接出

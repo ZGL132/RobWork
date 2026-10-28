@@ -1,0 +1,40 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_execution_test
+  CheckpointCacheTest.cpp
+  RunRegistryAdmissionTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9): warning C4005: “NOMINMAX”: 宏重定义 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(62,9): warning C4005: “NOMINMAX”: 宏重定义 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(62,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(63,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(63,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1264,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1286,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+  sdurws_ird_execution_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe

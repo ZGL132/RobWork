@@ -50,11 +50,10 @@
  *   3. **投递线程唯一**：全部回调发生在总线自有的投递线程上——订阅方
  *      回调串行执行，单订阅方无须为自己的并发安全付费（§6.2：投递线程
  *      归 execution EventBusImpl）；
- *   4. **退订幂等、不与投递死锁**：退订只拿订阅表锁做移除；投递线程
- *      先在锁内拷贝订阅表快照、再在**锁外**逐个回调——回调期间不持有
- *      任何总线内部锁，另一线程的退订（或订阅）永不等回调完成
- *      （core IDomainEventSink 注明 onEvent 内不得回调总线——本实现
- *      从锁结构上保证即使误用也只影响序、不产生死锁环）；
+ *   4. **退订幂等、不与投递死锁**：退订先停用本订阅位，再在不持总线锁时等待
+ *      该位已开始的回调结束；返回后 sink 可销毁（C1 所有者已批准）。
+ *      外部回调不持总线锁，publish/其他订阅位可前进；onEvent 不得回调
+ *      总线，退订方不得持有该回调完成所需的锁；
  *   5. **事件不持久化**（core D-09）：队列纯内存；关停时已入队事件
  *      **投递完再退出**（drain on close——"至少一次"承诺的进程内兑现），
  *      不落盘、不重放。
@@ -90,8 +89,8 @@ namespace sdurws::ird::execution {
  *
  * 实现结构（与投递语义逐条对应的锁设计）：
  *   - 一把内部互斥保护 {事件队列, 订阅表, 停止位, 在投计数}——临界区只做
- *     簿记（入队/拷表/取帧），任何订阅者回调都在锁外执行；
- *   - 一条投递线程：等待事件→锁内取事件＋订阅表快照→锁外逐订阅方回调；
+ *     簿记（入队/冻结接收位/取帧），任何订阅者回调都在锁外执行；
+ *   - 一条投递线程：等待事件→取发布时接收集合→登记在投→锁外逐位回调；
  *   - RAII 句柄 DeliverySubscription：析构即 unsubscribe；重复 unsubscribe
  *     幂等（表内不存在即 no-op）。
  *
@@ -172,40 +171,42 @@ public:
     std::size_t subscriberCount() const;
 
 private:
-    /// RAII 订阅句柄（subscribe 的返回体）——析构即退订；幂等。
+    /** 单独订阅位：sink 借持至退订返回，active/inCallback 只在总线锁下访问。 */
+    struct SubscriptionSlot {
+        core::IDomainEventSink* sink = nullptr; ///< 非所有权，调用方持有至退订完成。
+        bool active = true;                    ///< 失效位阻止尚未开始的回调。
+        bool inCallback = false;               ///< 唯一投递线程已进入该位回调。
+    };
+    /** 发布时冻结的接收集合；共享位只延长簿记寿命，不延长裸 sink 寿命。 */
+    struct QueuedDelivery {
+        core::DomainEvent event;
+        std::vector<std::shared_ptr<SubscriptionSlot>> recipients;
+    };
+    /** RAII 订阅句柄；总线须比句柄长寿，析构等待本位在投回调完成。 */
     class DeliverySubscription final : public core::IEventSubscription {
     public:
-        /// bus/sink 均为裸回指（非所有权）：总线与订阅方的存活期由调用方
-        /// 保证覆盖句柄存活期（AGENTS §2.5 所有权标注——句柄只是退订凭据，
-        /// 不延长任何一方生命）。
-        DeliverySubscription(DomainEventBusImpl* bus, core::IDomainEventSink* sink);
+        /** @brief 建立单订阅位句柄；bus 借持、slot 共享簿记，无失败语义。 */
+        DeliverySubscription(DomainEventBusImpl* bus, std::shared_ptr<SubscriptionSlot> slot);
         ~DeliverySubscription() override;
-        /// 幂等退订（二次调用 no-op——表内已无此 sink）。
+        /** @brief 幂等停用本位，等待本位在投回调结束后返回。 */
         void unsubscribe() override;
-
     private:
-        DomainEventBusImpl* m_bus;            ///< 回指总线（非所有权）
-        core::IDomainEventSink* m_sink;       ///< 回指订阅方（非所有权）
+        DomainEventBusImpl* const m_bus;
+        const std::shared_ptr<SubscriptionSlot> m_slot;
     };
-
-    /// 退订实现（DeliverySubscription 与析构清理共用；锁内移除，幂等）。
-    void removeSink(core::IDomainEventSink* sink);
-
-    /// 投递线程主循环：等待→取帧＋订阅表快照→锁外逐个回调；停止位且
-    /// 队列空时退出（drain on close 的判定点）。
+    /** @brief 停用并移除精确订阅位；条件等待释放总线锁，完成后 sink 可销毁。 */
+    void removeSink(const std::shared_ptr<SubscriptionSlot>& slot);
+    /** @brief 唯一投递线程，按发布序在锁外回调已生效且未退订的订阅位。 */
     void deliveryLoop();
 
-    mutable std::mutex m_mutex;                     ///< 内部簿记互斥（临界区只做簿记——见文件头）
-    std::condition_variable m_hasWork;              ///< 事件到达/停止唤醒（投递线程等待面）
-    mutable std::condition_variable m_idle;         ///< 队列清空/在投归零唤醒（waitForIdle 等待面）
-    std::deque<core::DomainEvent> m_queue;          ///< 全局 FIFO 事件队列（无界——事件为小值对象，
-                                                    ///  投递速率受订阅方回调支配；容量上限与丢弃策略未在
-                                                    ///  契约定义，阶段 A 不私设丢弃语义以保"至少一次"）
-    std::vector<core::IDomainEventSink*> m_sinks;   ///< 订阅表（订阅序＝投递序——subscribe 后置注）
-    bool m_stopped = false;                         ///< 停止位（析构置位；投递线程的退出条件之一）
-    std::size_t m_inDelivery = 0;                   ///< 正在执行回调的线程数（0/1——投递线程唯一；
-                                                    ///  计数化以便 waitForIdle 判定与未来扩展同形）
-    std::thread m_deliveryThread;                   ///< 投递线程（§6.2——每总线一条，成员最后初始化）
+    mutable std::mutex m_mutex;                     ///< 队列/订阅位/在投计数共用锁。
+    std::condition_variable m_hasWork;              ///< 发布与停止唤醒。
+    mutable std::condition_variable m_idle;         ///< 单位回调完成及队列排空唤醒。
+    std::deque<QueuedDelivery> m_queue;             ///< 发布边界冻结接收集合的 FIFO。
+    std::vector<std::shared_ptr<SubscriptionSlot>> m_sinks; ///< 订阅序排列的有效位。
+    bool m_stopped = false;                         ///< 析构停止意图，队列排空后退出。
+    std::size_t m_inDelivery = 0;                   ///< 正在投递的事件数（0/1）。
+    std::thread m_deliveryThread;                   ///< 最后启动，析构 join。
 };
 
 }  // namespace sdurws::ird::execution

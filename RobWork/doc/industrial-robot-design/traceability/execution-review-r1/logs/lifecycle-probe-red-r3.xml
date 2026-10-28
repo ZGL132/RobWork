@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.152" timestamp="2026-10-28T09:04:01.168" name="AllTests">
+  <testsuite name="WorkerProcessContractTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.146" timestamp="2026-10-28T09:04:01.170">
+    <testcase name="MemoryFailureDoesNotBecomeZero_EXR10Probe" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp" line="46" status="run" result="completed" time="0.146" timestamp="2026-10-28T09:04:01.170" classname="WorkerProcessContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:73&#x0A;Value of: supervisor-&gt;aggregateJobMemoryBytes().has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:73
+Value of: supervisor->aggregateJobMemoryBytes().has_value()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:74&#x0A;Value of: sampler.sample().has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:74
+Value of: sampler.sample().has_value()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:75&#x0A;Expected equality of these values:&#x0A;  resource.evaluate().level&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  ResourceController::Level::Exhausted&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:75
+Expected equality of these values:
+  resource.evaluate().level
+    Which is: 4-byte object <00-00 00-00>
+  ResourceController::Level::Exhausted
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:77&#x0A;Value of: supervisor-&gt;aggregateJobMemoryBytes().has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:77
+Value of: supervisor->aggregateJobMemoryBytes().has_value()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:78&#x0A;Value of: sampler.sample().has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:78
+Value of: sampler.sample().has_value()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:80&#x0A;Value of: supervisor-&gt;aggregateJobMemoryBytes().has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:80
+Value of: supervisor->aggregateJobMemoryBytes().has_value()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:81&#x0A;Value of: sampler.sample().has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp:81
+Value of: sampler.sample().has_value()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="OverlappedLifecycleProbe" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-28T09:04:01.319">
+    <testcase name="PendingReadCompletesBeforeStorageDies_EXR08Probe" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp" line="61" status="run" result="completed" time="0." timestamp="2026-10-28T09:04:01.320" classname="OverlappedLifecycleProbe">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp:72&#x0A;Expected equality of these values:&#x0A;  io_probe::waits&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp:72
+Expected equality of these values:
+  io_probe::waits
+    Which is: 0
+  1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp:73&#x0A;Expected equality of these values:&#x0A;  io_probe::prematureCloses&#x0A;    Which is: 1&#x0A;  0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp:73
+Expected equality of these values:
+  io_probe::prematureCloses
+    Which is: 1
+  0
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,64 @@
+Note: Google Test filter = *EXR10Probe:*EXR08Probe
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkerProcessContractTest
+[ RUN      ] WorkerProcessContractTest.MemoryFailureDoesNotBecomeZero_EXR10Probe
+owned worker pids=79144,49408
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp(73): error: Value of: supervisor->aggregateJobMemoryBytes().has_value()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp(74): error: Value of: sampler.sample().has_value()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp(75): error: Expected equality of these values:
+  resource.evaluate().level
+    Which is: 4-byte object <00-00 00-00>
+  ResourceController::Level::Exhausted
+    Which is: 4-byte object <02-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp(77): error: Value of: supervisor->aggregateJobMemoryBytes().has_value()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp(78): error: Value of: sampler.sample().has_value()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp(80): error: Value of: supervisor->aggregateJobMemoryBytes().has_value()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\MemoryFailureProbe.cpp(81): error: Value of: sampler.sample().has_value()
+  Actual: true
+Expected: false
+
+[  FAILED  ] WorkerProcessContractTest.MemoryFailureDoesNotBecomeZero_EXR10Probe (146 ms)
+[----------] 1 test from WorkerProcessContractTest (146 ms total)
+
+[----------] 1 test from OverlappedLifecycleProbe
+[ RUN      ] OverlappedLifecycleProbe.PendingReadCompletesBeforeStorageDies_EXR08Probe
+completion waits=0 premature event closes=1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp(72): error: Expected equality of these values:
+  io_probe::waits
+    Which is: 0
+  1
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp(73): error: Expected equality of these values:
+  io_probe::prematureCloses
+    Which is: 1
+  0
+
+[  FAILED  ] OverlappedLifecycleProbe.PendingReadCompletesBeforeStorageDies_EXR08Probe (0 ms)
+[----------] 1 test from OverlappedLifecycleProbe (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (152 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] WorkerProcessContractTest.MemoryFailureDoesNotBecomeZero_EXR10Probe
+[  FAILED  ] OverlappedLifecycleProbe.PendingReadCompletesBeforeStorageDies_EXR08Probe
+
+ 2 FAILED TESTS
+nativeExit=1

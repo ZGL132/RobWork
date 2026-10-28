@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.005" timestamp="2026-10-28T08:12:39.879" name="AllTests">
+  <testsuite name="EventBusDeliveryContractTest" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-10-28T08:12:39.880">
+    <testcase name="UnsubscribeDuringDeliveryDoesNotDeadlock" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp" line="294" status="run" result="completed" time="0.002" timestamp="2026-10-28T08:12:39.880" classname="EventBusDeliveryContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:314&#x0A;Value of: finished&#x0A;  Actual: true&#x0A;Expected: false&#x0A;C1：已在投的回调结束前，退订不得承诺 sink 可销毁&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:314
+Value of: finished
+  Actual: true
+Expected: false
+C1：已在投的回调结束前，退订不得承诺 sink 可销毁
+]]></failure>
+    </testcase>
+    <testcase name="UnsubscribeSkipsPendingCallback_EXR09" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp" line="377" status="run" result="completed" time="0." timestamp="2026-10-28T08:12:39.883" classname="EventBusDeliveryContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:389&#x0A;Expected equality of these values:&#x0A;  second.size()&#x0A;    Which is: 1&#x0A;  0u&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:389
+Expected equality of these values:
+  second.size()
+    Which is: 1
+  0u
+    Which is: 0
+]]></failure>
+    </testcase>
+    <testcase name="SubscriptionStartsAtPublishBoundary_EXR14" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp" line="393" status="run" result="completed" time="0." timestamp="2026-10-28T08:12:39.884" classname="EventBusDeliveryContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:405&#x0A;Expected equality of these values:&#x0A;  second.size()&#x0A;    Which is: 1&#x0A;  0u&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:405
+Expected equality of these values:
+  second.size()
+    Which is: 1
+  0u
+    Which is: 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:408&#x0A;Expected equality of these values:&#x0A;  second.size()&#x0A;    Which is: 2&#x0A;  1u&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp:408
+Expected equality of these values:
+  second.size()
+    Which is: 2
+  1u
+    Which is: 1
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

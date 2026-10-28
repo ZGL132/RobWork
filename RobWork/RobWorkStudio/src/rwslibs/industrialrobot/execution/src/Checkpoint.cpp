@@ -109,7 +109,8 @@ bool CheckpointRecord::isValid() const noexcept
         return false;
     }
     // 五元组（§8.1 task 行：有效性同 core TaskIdentity）。
-    if (!task.isValid()) {
+    // EXR-03：检查点主键与归档五元组必须同源，避免按另一 run 建索引。
+    if (!task.isValid() || !(checkpointId.run == task.run)) {
         return false;
     }
     // 四身份非零（§8.1 snapshotId/sliceId/policyIdentity/nameMapIdentity 行）。

@@ -1,0 +1,38 @@
+Note: Google Test filter = *EXR07_EXR11
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkerProcessContractTest
+[ RUN      ] WorkerProcessContractTest.MalformedWorkerReclaimedAndOnlyPipesInherited_EXR07_EXR11
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(1405): error: Value of: exited
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(1407): error: Expected equality of these values:
+  m_events.countOf(WorkerEvent::Kind::WorkerExited)
+    Which is: 0
+  1u
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(1408): error: Expected equality of these values:
+  supervisor->workerCount()
+    Which is: 1
+  0u
+    Which is: 0
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(1409): error: Expected equality of these values:
+  ::WaitForSingleObject(extra, 0)
+    Which is: 0
+  DWORD{258L}
+    Which is: 258
+
+[  FAILED  ] WorkerProcessContractTest.MalformedWorkerReclaimedAndOnlyPipesInherited_EXR07_EXR11 (6061 ms)
+[----------] 1 test from WorkerProcessContractTest (6062 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (6069 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkerProcessContractTest.MalformedWorkerReclaimedAndOnlyPipesInherited_EXR07_EXR11
+
+ 1 FAILED TEST
+nativeExit=1

@@ -13,40 +13,37 @@
 
 namespace sdurws::ird::execution::win32 {
 
-bool RealProcessOps::createProcess(const std::wstring& commandLine, bool inheritHandles,
+bool RealProcessOps::createProcess(const std::wstring& commandLine,
+                                   const std::vector<HANDLE>& inheritedHandles,
                                    PROCESS_INFORMATION* pi)
 {
-    // CreateProcessW 文档口径（§6.6 进程创建行）：
-    //   - CREATE_SUSPENDED：主线程挂起启动——Job assign 必须发生在子进程
-    //     可能派生子进程之前（竞态消除，见 ProcessLauncher.hpp 时序）；
-    //   - CREATE_NO_WINDOW：worker 不产生任何控制台窗口（§6.4 边界规则
-    //     "无窗口、无控制台输出到 UI"的 OS 面）；
-    //   - lpEnvironment/lpCurrentDirectory 缺省：继承主进程环境（离线单机
-    //     部署形态，NFR-DEP-02）；
-    //   - 命令行缓冲可变：文档允许 CreateProcessW 改写——传非 const 缓冲。
-    STARTUPINFOW si{};
-    si.cb = sizeof(si);
-    std::wstring mutableCmd = commandLine;
-    const BOOL ok = ::CreateProcessW(nullptr, mutableCmd.data(), nullptr, nullptr,
-                                     inheritHandles ? TRUE : FALSE,
-                                     CREATE_SUSPENDED | CREATE_NO_WINDOW,
-                                     nullptr, nullptr, &si, pi);
-    if (!ok) {
+    STARTUPINFOEXW startup{};
+    startup.StartupInfo.cb = sizeof(startup);
+    SIZE_T size = 0;
+    ::InitializeProcThreadAttributeList(nullptr, 1, 0, &size);
+    std::vector<unsigned char> storage(size);
+    startup.lpAttributeList = reinterpret_cast<LPPROC_THREAD_ATTRIBUTE_LIST>(storage.data());
+    if (!::InitializeProcThreadAttributeList(startup.lpAttributeList, 1, 0, &size)) {
         m_lastError = ::GetLastError();
         return false;
     }
-    // si 持有的两个标准句柄在非继承场景为空；继承场景亦无需保留（管道
-    // 端点经命令行副本传递）——按文档要求在不再需要时关闭。
-    if (si.hStdInput != nullptr) {
-        ::CloseHandle(si.hStdInput);
+    // EXR-11：即使宿主另有可继承句柄，子进程也只能取得本任务的两份副本。
+    const BOOL configured = ::UpdateProcThreadAttribute(
+        startup.lpAttributeList, 0, PROC_THREAD_ATTRIBUTE_HANDLE_LIST,
+        const_cast<HANDLE*>(inheritedHandles.data()), inheritedHandles.size() * sizeof(HANDLE),
+        nullptr, nullptr);
+    if (!configured) {
+        m_lastError = ::GetLastError();
+        ::DeleteProcThreadAttributeList(startup.lpAttributeList);
+        return false;
     }
-    if (si.hStdOutput != nullptr) {
-        ::CloseHandle(si.hStdOutput);
-    }
-    if (si.hStdError != nullptr) {
-        ::CloseHandle(si.hStdError);
-    }
-    return true;
+    std::wstring mutableCmd = commandLine;
+    const BOOL ok = ::CreateProcessW(nullptr, mutableCmd.data(), nullptr, nullptr, TRUE,
+        CREATE_SUSPENDED | CREATE_NO_WINDOW | EXTENDED_STARTUPINFO_PRESENT,
+        nullptr, nullptr, &startup.StartupInfo, pi);
+    m_lastError = ok ? ERROR_SUCCESS : ::GetLastError();
+    ::DeleteProcThreadAttributeList(startup.lpAttributeList);
+    return ok != FALSE;
 }
 
 LaunchResult launchWorkerProcess(const std::wstring& executablePath,
@@ -84,7 +81,8 @@ LaunchResult launchWorkerProcess(const std::wstring& executablePath,
     // ---- 第 3 步：创建子进程（挂起＋继承——继承面恰为两份管道副本，
     // IProcessOps 接缝承载真实 OS 调用/测试注入）。 ----
     PROCESS_INFORMATION pi{};
-    if (!ops.createProcess(cmd.str(), /*inheritHandles=*/true, &pi)) {
+    if (!ops.createProcess(cmd.str(), {reinterpret_cast<HANDLE>(handles.cmdRead),
+                                      reinterpret_cast<HANDLE>(handles.dataWrite)}, &pi)) {
         result.lastError = ops.lastError();
         return result;
     }
