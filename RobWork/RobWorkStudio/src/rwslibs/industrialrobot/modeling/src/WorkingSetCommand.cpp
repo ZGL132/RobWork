@@ -8,6 +8,7 @@
 #include "WorkingSetCommand.hpp"
 #include <sdurws/ird/modeling/Codec.hpp>
 #include <algorithm>
+#include <sdurws/ird/core/Digest.hpp>
 #include <map>
 #include <set>
 #include <stdexcept>
@@ -66,9 +67,15 @@ DecodeOutcome invalidWorkingSet()
  * @return 规划结果；结构错误为RejectedInvalidInput，真实存储错误透传。
  * 所有SI物理量归原Codec/断言，纯规划不另算任何机器人数学。
  */
-DecodeOutcome planWorkingSet(project::HandlerContext& ctx,const CommandPayload& payload,
+DecodeOutcome planWorkingSet(project::HandlerContext& ctx,const CommandPayload& input,
     const project::RevisionView& revision,const ModelingWorkingSet& baseline,project::CommandPlan& out)
 {
+    // F07：资源字节沿同一v2槽进入计划；只在此完整工作集命令识别，不送建模Codec。
+    auto payload=input;std::vector<PayloadObjectSlot> resources;
+    payload.objects.erase(std::remove_if(payload.objects.begin(),payload.objects.end(),[&](const auto& slot){
+        if(slot.objectTypeToken!="ExternalResource"){return false;}
+        resources.push_back(slot);return true;
+    }),payload.objects.end());
     if(payload.objects.empty()||!payload.removals.empty()){return invalidWorkingSet();}
     const auto& rootSlot=payload.objects.front();
     if(rootSlot.objectTypeToken!=kRobotDesignObjectType){return invalidWorkingSet();}
@@ -117,6 +124,34 @@ DecodeOutcome planWorkingSet(project::HandlerContext& ctx,const CommandPayload& 
     }
     if(!restore&&seen.size()!=refs->size()){return invalidWorkingSet();}
 
+    // 固化副本必须精确匹配清单的oid/cv/digest，绝不改成Recorded或引用旧项目任意字节。
+    std::set<std::string> resourceIds;
+    for(const auto& slot:resources){
+        const auto key=slot.objectId.toCanonical();
+        if(restore||!slot.allocateNew||!slot.objectId.isValid()||slot.objectBytes.empty()
+            ||!resourceIds.insert(key).second||seen.count(key)||slot.objectId==rootSlot.objectId){return invalidWorkingSet();}
+        for(const auto& joint:root.joints){if(joint.objectId==slot.objectId){return invalidWorkingSet();}}
+        for(const auto& link:root.links){if(link.objectId==slot.objectId){return invalidWorkingSet();}}
+        core::ContentDigester digester;digester.update(slot.objectBytes.data(),slot.objectBytes.size());const auto digest=digester.finalize();
+        bool referenced=false;
+        for(const auto& resource:root.resourceManifest){
+            if(resource.state==ResourceState::Solidified&&resource.solidifiedObject&&resource.solidifiedObject->objectId==slot.objectId){
+                referenced=true;
+                if(resource.solidifiedObject->contentVersion.bytes!=digest||resource.contentDigest!=digest){return invalidWorkingSet();}
+            }
+        }
+        if(!referenced){return invalidWorkingSet();}
+    }
+    // 无副本的新固化引用必须已存在于本次固定修订，不允许指向包外悬空对象。
+    for(const auto& resource:root.resourceManifest){
+        if(resource.state!=ResourceState::Solidified||!resource.solidifiedObject){continue;}
+        const auto& ref=*resource.solidifiedObject;
+        if(resourceIds.count(ref.objectId.toCanonical())){continue;}
+        if(std::none_of(revision.objectRefs.begin(),revision.objectRefs.end(),[&](const auto& old){return old.objectId==ref.objectId&&old.contentVersion==ref.contentVersion;})){
+            return invalidWorkingSet();
+        }
+    }
+
     // 第二阶段取号及精确引用回填。仅新部件换ID，旧ID保持；引用集合的规范顺序仍由唯一Codec负责。
     const auto rootId=rootSlot.allocateNew?ctx.objectId():rootSlot.objectId;
     std::map<std::string,core::ObjectId> mapped;
@@ -144,6 +179,14 @@ DecodeOutcome planWorkingSet(project::HandlerContext& ctx,const CommandPayload& 
             if(tool==mapped.end()){return invalidWorkingSet();}
             root.defaultTcp->toolOid=tool->second;
         }
+    }
+    for(const auto& slot:resources){
+        const auto id=ctx.objectId(); // 持久取号唯一归project，不复用包内身份或覆盖无关对象。
+        for(auto& resource:root.resourceManifest){
+            if(resource.solidifiedObject&&resource.solidifiedObject->objectId==slot.objectId){resource.solidifiedObject->objectId=id;}
+        }
+        project::ObjectWrite write;write.objectId=id;write.objectTypeToken="ExternalResource";
+        write.payloadCanonical=slot.objectBytes;writes.push_back(std::move(write));result.affectedOids.push_back(id);
     }
     writes.front().payloadCanonical=restore?rootSlot.objectBytes:encodeValue(ObjectVariant{root});
 

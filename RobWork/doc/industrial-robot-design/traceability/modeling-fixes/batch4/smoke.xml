@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.056" timestamp="2026-10-28T16:31:14.513" name="AllTests">
+  <testsuite name="MdlImport" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-28T16:31:14.513">
+    <testcase name="EmptyNumericAttributesAreInvalid_F12" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp" line="2231" status="run" result="completed" time="0.001" timestamp="2026-10-28T16:31:14.513" classname="MdlImport" />
+  </testsuite>
+  <testsuite name="MdlWorkCellImport" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-28T16:31:14.515">
+    <testcase name="RateSourceUnitsAndInvalidText_C02" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp" line="2257" status="run" result="completed" time="0." timestamp="2026-10-28T16:31:14.515" classname="MdlWorkCellImport" />
+  </testsuite>
+  <testsuite name="MdlModelDiff" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-10-28T16:31:14.515">
+    <testcase name="RatesAndSameIdentityPartFields_F13" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelDiffTest.cpp" line="712" status="run" result="completed" time="0.004" timestamp="2026-10-28T16:31:14.515" classname="MdlModelDiff" />
+  </testsuite>
+  <testsuite name="ModelingCommandFlows" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.049" timestamp="2026-10-28T16:31:14.520">
+    <testcase name="PackageImportPreservesCompleteClosure_F07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="1555" status="run" result="completed" time="0.049" timestamp="2026-10-28T16:31:14.520" classname="ModelingCommandFlows" />
+  </testsuite>
+</testsuites>

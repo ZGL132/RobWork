@@ -726,7 +726,14 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     couplingInvalid.deprecated = false;
     // supersededBy 保持 nullopt。
 
-    return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
+    // MDL-CR-4：复用正式描述符设施；只增加输入诊断，不新增诊断平台。
+    auto valueIllegal=zeroAxis;
+    valueIllegal.code=std::string(kMdlImportValueIllegal);
+    valueIllegal.titleKey="diag.mdl-import-value-illegal.title";
+    valueIllegal.detailKey="diag.mdl-import-value-illegal.detail";
+    valueIllegal.paramSchema="[]";
+
+    return {d, unsupportedJoint, branchSelection, zeroAxis, valueIllegal, pendingConfirm,
             templateRange, xacroUnresolved, templateDisabled,
             travelLimit, massNonpositive, inertiaNotSpd, inertiaTriangle,
             limitInterval, rangeNotFinite, refMissing, resourceState,

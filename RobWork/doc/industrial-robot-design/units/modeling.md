@@ -660,7 +660,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
   - **关节类型**（MDL-12 同一判定）：`<Joint type>` Revolute/Prismatic、`<Frame type=Fixed>`（缺省 Fixed）、`<DHJoint>`（d 属性＝Revolute 形态）可表达；Spherical/PrismaticSpherical/Universal/PrismaticUniversal（多自由度）、Movable 自由帧、词表外类型→`joint-type` 不可表达**无草稿**（不得转 FixedFrame——M-6）；`<Depend>` 从动关节＝mimic 同款（识别＋报告＋阻断，类型保留，草稿不可提交——V-10）。
   - **DH 提取边界（本节增量登记）**：仅"全链均为 Revolute 型 `<DHJoint>`"的同质链经 `IDhExplicitConverter::dhToExplicit` 展开（§7.4 单一实现——DhChain 只参数化 Revolute 链；alpha/offset 源单位 deg 换算 rad）；混合链/含 Prismatic DHJoint 不可展开——逐个列入不可表达清单（诚实边界，不绕过、不重写第二份展开公式）。
   - **位姿/轴**：`<Pos>`（m）＋`<RPY>`（**源单位 deg→rad**，框架 Deg2Rad 同口径）→ origin（T_parent_joint）；缺省→零位（默认清单不静默）；框架 Joint 无轴元素——轴向固定为关节局部系 z 轴 (0,0,1)（框架语义，映射清单注明来源）。
-  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→**F01/{1,1} 起映射** `maxVelocity`/`maxAcceleration`（源制式 SI 直入 rad/s、rad/s²｜m/s、m/s²——框架速度/加速度限值无 deg 换算面；非法/负值＝错误项；Fixed＝忽略面；旧"未保留逐项列出"口径随 §4.3-A 字段落位废止）。
+  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→**F01/{1,1} 起映射** `maxVelocity`/`maxAcceleration`（Revolute 源 deg/s、deg/s² 按上游 XMLRWLoader::addLimits 的 Deg2Rad 转 SI rad/s、rad/s²，Prismatic 源 m/s、m/s² 直入；空/非法/负值＝Invalid＋错误报告＋MDL-IMPORT-VALUE-ILLEGAL 诊断；Fixed＝忽略面；旧"未保留逐项列出"口径随 §4.3-A 字段落位废止）。
   - **Q 构型**：设备内首 `<Q name>`（rad）对位可动关节（Fixed/Passive/Depend 不占位）→ 逐关节 `zeroOffset`（权威零位＝源初始姿态，q_authoritative = q_zeroOffset + q_rw；§7.4 zeroOffset 与 DH θ_offset 显式分离不烘入几何）；备选构型/维数失配→`q-config-residual` 未保留逐项列出。
   - **几何/资源**：`<Drawable>`→visual、`<CollisionModel>`→collision（重复仅首个映射，其余 multiple-visual/multiple-collision 逐条报告）；`<Polytope file>`→Mesh 资源 Recorded 登记（依赖树缺失叶/无叶→IO-RES-MISSING 事实＋missing 状态——缺失≠不可行，V-08）；解析图元→`geometry-primitive` 未保留（GeometryRef 无参数承载）。
   - **碰撞设置**：`<CollisionSetup file>`/`<ProximitySetup file>`（框架文法仅外部文件引用）→`collision-setup-external` 未保留逐项列出（排除对清单不在本通道解析范围）。
@@ -688,6 +688,8 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 - **导出**（会话级文件操作，不产生修订）：规范模型包 = ZIP 封装（io `ZipChannel`）＋`manifest.json`（显式来源标识 `producer=ird-modeling`、schemaVersion、对象清单与 digest）＋根/部件对象 canonical 字节＋Solidified 资源副本＋命名位姿；**原子写出**经 io `AtomicFile`（临时区→校验→替换）——**导出失败保证项目状态不变且旧输出文件不被破坏**（MDL-20"恢复先前输出"的文件层语义）。
 - 另可导出 WorkCell/DWC XML 供外部查看：数据源＝RuntimeSnapshot 的只读视图（runtime `WorkCellConstView`），modeling 仅编排写出（io AtomicWriter），不改造内容。
 - **导入回读**：仅识别本软件导出的规范工件（manifest 来源标识＋schema 校验）；其他文件→稳定诊断引导至 MDL-18/R2 通道；roundtrip 后逐项验证一致（权威参数化 DH/显式、物性、资源引用、碰撞规则、命名位姿——逐项清单入导入报告，对照 §10 行 V-20）。
+- **完整草稿交接（MDL-CR-4/F07）**：确认后一次接收 Tool/TCP、Scene、PoseSet、Drivetrain 与 Solidified 字节；字节随64MiB有界草稿保存恢复，未应用前再导出仍读同一草稿闭包。完整工作集命令核对摘要/闭包后由 project 分配新资源身份并原子写入；runtime 经宿主同次计划覆盖层读取资源并双编译。失败保留旧修订和完整草稿；成功回执重读正式闭包，只清理实际消费的草稿资源。保存草稿不等于应用成功。
+
 
 ---
 
@@ -1225,6 +1227,8 @@ protected:
 | `IModelDiffService` | Model Diff 数据实体（MDL-08；两工作集输入，稳定排序增量表） | `ModelDiffReport diff(const ModelingWorkingSet& baseline, const ModelingWorkingSet& candidate) const`；分组：结构/参数（DH、轴线、限位）/物性；条目含对象定位（供 UX-13 点击） |
 | `IModelPackagePort` | MDL-20 规范模型包导出/导入（io ZipChannel/AtomicFile 承载） | `ExportOutcome exportPackage(const ObjectClosureView&, const ExportTarget&, Diags&) const`；`ImportOutcome importPackage(const ValidatedSource&, Diags&) const`；非本软件工件→引导 MDL-18/R2 稳定诊断 |
 
+ModelDiff 对关节 maxVelocity/maxAcceleration 比较四态及来源，并按稳定 ObjectId 对同 ID 的 Tool/TCP、Scene、PoseSet、Drivetrain 内部字段递归比较（MDL-CR-4/F13）；不构造 runtime 模型或持久对象身份。
+
 ### 9.5 modeling 稳定诊断码登记表（`MDL-` 前缀；装配期经 `IDiagnosticRegistry::registerCode` 注册，ownerUnit=`modeling`）
 
 注册纪律（diagnostics.md §4.5）：码值 `^[A-Z0-9]+(-[A-Z0-9]+)*$` ≤64；一经注册并进入持久化产物不改义不改拼；**不预建无消费者条目**——下表每码随对应任务（§11）注册并附带 CodeDescriptor（category/severity/titleKey/detailKey/paramSchema/confirmable/retryable/…）。
@@ -1243,6 +1247,7 @@ protected:
 | `MDL-IMPORT-UNSUPPORTED-JOINT` | 导入/error | false | mimic/planar/floating/闭环在所选主链 → 移除或改拓扑（不得绕过） | T05 |
 | `MDL-IMPORT-BRANCH-SELECTION` | 导入/info | false | 多可动分支文件 → 显式选择主链 | T05 |
 | `MDL-IMPORT-ZERO-AXIS` | 导入/error | false | 零轴/非有限轴关节 → 修正源文件（该草稿不得提交） | T05 |
+| `MDL-IMPORT-VALUE-ILLEGAL` | 导入/error | false | 源数值空/非法，保留字段、原文及来源行列，Invalid 不可确认成零；用户修正后重试（InputInvalid；无参数；键 diag.mdl-import-value-illegal.title/detail） | MDL-CR-4 |
 | `MDL-IMPORT-PENDING-CONFIRM` | 导入/Warning | false | 待确认项未决（缺 axis 默认 +X/缺限位/工作范围）→ 逐条确认 | T05/T06 |
 | `MDL-IMPORT-TEMPLATE-RANGE` | 导入/info | false | 所选主链可动轴数不在六/七轴（4/5 轴——含或不含 prismatic，及其它轴数），超出首版产品模板范围 → 草稿兼容编辑可用，模板创建与正式计算/报告阻断（类型保留不降级——V12-01；MDL-12-S1 已启用（2026-10-14，WP-13-T19）——六/七轴含 prismatic 放开不再产本诊断，4/5 轴仍产） | T05（v0.6 实现期增登——§6.4"诊断'超出首版产品模板范围'"语义的码面落位，原表缺行；v0.49 随 MDL-12-S1 启用收窄触发面——码值/类别/级别/paramSchema 不变，"一经注册不改义"纪律不受影响） |
 | `MDL-IMPORT-XACRO-UNRESOLVED` | 导入/error | false | Xacro 受控展开语义失败（未定义宏/未定义参数/缺参/签名外属性/不支持构造/宏重定义，宏名或参数名＋源行列）→ 修写源文件为受控子集（include/property/macro/调用；表达式与 $(...) 一律拒绝——绝不执行任意代码，io.md §6.2） | T06（v0.7 实现期增登——§6.5"展开失败→可定位诊断（宏名/行列）"的语义面码位；io 护栏码透传面已覆盖循环/缺失/预算三族，P-MDL-4"护栏 io／语义 modeling"口径下语义面归 modeling；原表缺行） |

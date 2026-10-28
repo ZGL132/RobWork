@@ -541,6 +541,12 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
     /// 失败出口统一收口（报告收尾＋诊断稳定排序——任何出口同一形态）。
     const auto finalizeWc = [&]() {
         appendReportTail();
+        for(const auto& item:outcome.report.errors){
+            if(item.kind=="value-illegal"){
+                pushWcDiag(diagEntries,diagSeq++,kMdlImportValueIllegal,core::ObjectId{},
+                    item.subject,item.detail,"修正源属性；非法值不可确认放行",item.span);
+            }
+        }
         flushWcDiags(diagEntries, diags);
         return std::move(outcome);
     };
@@ -850,8 +856,12 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
         bool limitIllegalOrder = false;    ///< qmin≥qmax（错误面）
         bool hasVelLimit = false;          ///< <VelLimit max>（F01 起映射 maxVelocity）
         double velLimitMax = 0.0;
+        bool velLimitOk = false;
+        std::string velLimitRaw;
         bool hasAccLimit = false;          ///< <AccLimit>（F01 起映射 maxAcceleration）
         double accLimitMax = 0.0;
+        bool accLimitOk = false;
+        std::string accLimitRaw;
         bool isPassive = false;            ///< state="Passive"（未保留注记）
         std::vector<WcModel> models;       ///< 挂本元素的几何模型（文档序）
         ImportSourceSpan span{};           ///< 元素定位
@@ -999,10 +1009,14 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
                 }
             } else if (subName == "VelLimit" && refMatches) {
                 item.hasVelLimit = true;
-                parseDoubleStable(sub.attribute("max").as_string(""), &item.velLimitMax);
+                item.velLimitRaw = std::string("VelLimit@max=[") + sub.attribute("max").as_string("") + "]";
+                item.velLimitOk = parseDoubleStable(sub.attribute("max").as_string(""), &item.velLimitMax);
+                if(item.velLimitOk && item.type==JointType::Revolute){item.velLimitMax*=kDegToRad;}
             } else if (subName == "AccLimit" && refMatches) {
                 item.hasAccLimit = true;
-                parseDoubleStable(sub.attribute("max").as_string(""), &item.accLimitMax);
+                item.accLimitRaw = std::string("AccLimit@max=[") + sub.attribute("max").as_string("") + "]";
+                item.accLimitOk = parseDoubleStable(sub.attribute("max").as_string(""), &item.accLimitMax);
+                if(item.accLimitOk && item.type==JointType::Revolute){item.accLimitMax*=kDegToRad;}
             } else if (subName == "Drawable" || subName == "CollisionModel") {
                 // 链元素直下模型（框架 FrameParser model_p 文法——主挂载点）。
                 item.models.push_back(
@@ -1352,13 +1366,13 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
             }
 
             // —— VelLimit/AccLimit（F01/{1,1}：maxVelocity/maxAcceleration
-            //     真实落点）。源制式＝SI 直入（rad/s、rad/s²｜m/s、m/s²——
-            //     框架速度/加速度限值无 deg 换算面）；合法（有限且 ≥0）→
+            //     真实落点）。源Revolute为deg/s、deg/s²，遵循上游addLimits乘Deg2Rad；
+            //     Prismatic为m/s、m/s²直入SI；合法（有限且 ≥0）→
             //     Provided＋映射行；非法/负值→错误项不静默；Fixed→忽略面。
             {
                 const bool movableItem =
                     item.type == JointType::Revolute || item.type == JointType::Prismatic;
-                const auto mapLimit = [&](bool present, double value, const char* element,
+                const auto mapLimit = [&](bool present, bool parsed, const std::string& raw, double value, const char* element,
                                           const char* field, bool isVelocity) {
                     if (!present) { return; }
                     const std::string jointField =
@@ -1373,19 +1387,21 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
                         outcome.report.ignored.push_back(std::move(ig));
                         return;
                     }
-                    if (!std::isfinite(value) || value < 0.0) {
+                    auto& target = isVelocity ? entry.maxVelocity : entry.maxAcceleration;
+                    if (!parsed || !std::isfinite(value) || value < 0.0) {
+                        target = core::SourcedValue<double>::invalid(raw); // C02：非法文本不能吞成Provided 0。
+                        outcome.report.jointStatuses.back().status="invalid";
                         ImportErrorItem errItem;
                         errItem.kind = "value-illegal";
                         errItem.subject = std::string("joint '") + item.rawName
                                           + "'." + element;
                         errItem.detail = std::string(element)
                                          + " 数值非法（须有限且 ≥0，单位 SI；实值 "
-                                         + formatDoubleStable(value) + "）";
+                                         + raw + "; SI=" + formatDoubleStable(value) + "）";
                         errItem.span = item.span;
                         outcome.report.errors.push_back(std::move(errItem));
                         return;
                     }
-                    auto& target = isVelocity ? entry.maxVelocity : entry.maxAcceleration;
                     target = core::SourcedValue<double>::provided(value,
                                                                   importProvenance());
                     ImportMappedItem mapped;
@@ -1399,9 +1415,9 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
                     mapped.span = item.span;
                     outcome.report.mapped.push_back(std::move(mapped));
                 };
-                mapLimit(item.hasVelLimit, item.velLimitMax, "VelLimit",
+                mapLimit(item.hasVelLimit, item.velLimitOk, item.velLimitRaw, item.velLimitMax, "VelLimit",
                          "maxVelocity", /*isVelocity=*/true);
-                mapLimit(item.hasAccLimit, item.accLimitMax, "AccLimit",
+                mapLimit(item.hasAccLimit, item.accLimitOk, item.accLimitRaw, item.accLimitMax, "AccLimit",
                          "maxAcceleration", /*isVelocity=*/false);
             }
 

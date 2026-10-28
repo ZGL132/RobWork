@@ -706,3 +706,46 @@ TEST(MdlModelDiff, At12DataSidePerItemObservability_WP13T14_ACC4)
     const ModelDiffReport copy = report;
     EXPECT_TRUE(copy == report);
 }
+
+
+/** @brief F13：同ID的部件内容及速率四态/来源必须可见；不拿编码往返充当语义预期。 */
+TEST(MdlModelDiff, RatesAndSameIdentityPartFields_F13)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"MDL-08"}),{"AT-12"});
+    ModelingWorkingSet base;base.rootObjectId=oidOf(100);
+    base.design.joints.push_back(makeJoint(oidOf(1),"j",{0,0,1},0));
+    ToolDefinition tool;tool.objectId=oidOf(2);tool.localName="tool";tool.tcpList={{"tip",{},"Tip"}};
+    base.toolObjects={tool};base.design.toolRefs={tool.objectId};
+    SceneObject scene;scene.objectId=oidOf(3);scene.localName="scene";base.sceneObjects={scene};base.design.sceneRefs={scene.objectId};
+    PoseSet poses;poses.objectId=oidOf(4);poses.entries={{"homeConfiguration",{0},"old"}};
+    base.poseSetObject=poses;base.design.poseSetRef=poses.objectId;
+    DrivetrainDesign drive;drive.objectId=oidOf(5);drive.ratioPerJoint.resize(1);drive.frictionPerJoint.resize(1);drive.torqueLimitsPerJoint.resize(1);
+    base.drivetrainObject=drive;base.design.drivetrainRef=drive.objectId;
+    const ModelDiffService service;
+    const auto check=[&](const auto& change,const std::string& suffix){
+        auto next=base;change(next);const auto report=service.diff(base,next);
+        bool found=false;for(const auto* group:{&report.structure,&report.parameters,&report.properties}){
+            for(const auto& item:*group){if(item.subjectPath.find(suffix)!=std::string::npos){found=true;}}
+        }
+        EXPECT_TRUE(found)<<suffix;EXPECT_EQ(report,service.diff(base,next));
+        EXPECT_EQ(service.diff(base,base),ModelDiffReport({base.rootObjectId,base.rootObjectId,{},{},{}}));
+    };
+    check([](auto& w){w.design.joints[0].maxVelocity=core::SourcedValue<double>::provided(2,userProv());},"maxVelocity");
+    check([](auto& w){w.design.joints[0].maxAcceleration=core::SourcedValue<double>::invalid("bad");},"maxAcceleration");
+    check([](auto& w){w.toolObjects[0].mountInterface.P()[0]=0.2;},"mountInterface");
+    check([](auto& w){w.toolObjects[0].tcpList[0].offset.P()[2]=0.3;},".tcp[tip].offset");
+    check([](auto& w){w.toolObjects[0].tcpList[0].displayName="New";},".displayName");
+    check([](auto& w){w.toolObjects[0].body.mass=core::SourcedValue<double>::provided(2,userProv());},".body.mass");
+    check([](auto& w){w.sceneObjects[0].worldPose.P()[1]=0.4;},"worldPose");
+    check([](auto& w){w.sceneObjects[0].collisionProfileHint="absent";},"collisionProfileHint");
+    check([](auto& w){w.poseSetObject->entries[0].jointConfiguration[0]=0.2;},"jointConfiguration");
+    check([](auto& w){w.poseSetObject->entries[0].note="new";},".note");
+    check([](auto& w){w.drivetrainObject->ratioPerJoint.push_back(core::SourcedValue<double>::provided(42,userProv()));},"ratioPerJoint[1]");
+    check([](auto& w){w.drivetrainObject->frictionPerJoint[0].coulomb=core::SourcedValue<double>::provided(0.2,userProv());},".coulomb");
+    check([](auto& w){w.drivetrainObject->torqueLimitsPerJoint[0].peak=core::SourcedValue<double>::provided(8,userProv());},".peak");
+    check([](auto& w){w.drivetrainObject->coupling=CouplingDesign{1,1,{1},0,0,1};},".coupling");
+    check([](auto& w){w.drivetrainObject->catalogBackfill=CatalogBackfill{"v/1","m","r","base"};},"catalogBackfill.catalogVersion");
+    auto old=base;old.drivetrainObject->catalogBackfill=CatalogBackfill{"a/b","c","d","e"};
+    auto next=old;next.drivetrainObject->catalogBackfill=CatalogBackfill{"a","b/c","d","e"};
+    EXPECT_FALSE(service.diff(old,next).parameters.empty()); // 不能因斜杠拼接碰撞漏报。
+}

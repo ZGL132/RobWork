@@ -56,7 +56,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
-          "sha256": "e854f376bce53967492f1ecbea570e112c519923a40b1bdd3eec89bf1710765d"
+          "sha256": "05c7bacfcaa549c26eae545b1bd7960c5cc851a3c419e6ab70326ac6155e76df"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
@@ -84,11 +84,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
-          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+          "sha256": "9bccc644cd3fb734ec3df115c101e27cc822a7d369a36ba6fa5f460ef4ad1657"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CommandHandlers.cpp",
-          "sha256": "0da9154c69be12bf607f7f5abac431c6fd6de22c33b02caf169ae1e926922efd"
+          "sha256": "adebdde0fb4643830dbbc015d73ceb62faee06041927cf5fea58d58a64abc16e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
@@ -176,7 +176,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
-          "sha256": "e854f376bce53967492f1ecbea570e112c519923a40b1bdd3eec89bf1710765d"
+          "sha256": "05c7bacfcaa549c26eae545b1bd7960c5cc851a3c419e6ab70326ac6155e76df"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
@@ -204,11 +204,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
-          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+          "sha256": "9bccc644cd3fb734ec3df115c101e27cc822a7d369a36ba6fa5f460ef4ad1657"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CommandHandlers.cpp",
-          "sha256": "0da9154c69be12bf607f7f5abac431c6fd6de22c33b02caf169ae1e926922efd"
+          "sha256": "adebdde0fb4643830dbbc015d73ceb62faee06041927cf5fea58d58a64abc16e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
@@ -435,7 +435,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
-          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+          "sha256": "9bccc644cd3fb734ec3df115c101e27cc822a7d369a36ba6fa5f460ef4ad1657"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/Probe.cpp",
@@ -508,7 +508,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
-          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+          "sha256": "9bccc644cd3fb734ec3df115c101e27cc822a7d369a36ba6fa5f460ef4ad1657"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/Probe.cpp",
@@ -6609,7 +6609,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
-          "sha256": "e854f376bce53967492f1ecbea570e112c519923a40b1bdd3eec89bf1710765d"
+          "sha256": "05c7bacfcaa549c26eae545b1bd7960c5cc851a3c419e6ab70326ac6155e76df"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
@@ -6637,11 +6637,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
-          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+          "sha256": "9bccc644cd3fb734ec3df115c101e27cc822a7d369a36ba6fa5f460ef4ad1657"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CommandHandlers.cpp",
-          "sha256": "0da9154c69be12bf607f7f5abac431c6fd6de22c33b02caf169ae1e926922efd"
+          "sha256": "adebdde0fb4643830dbbc015d73ceb62faee06041927cf5fea58d58a64abc16e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",

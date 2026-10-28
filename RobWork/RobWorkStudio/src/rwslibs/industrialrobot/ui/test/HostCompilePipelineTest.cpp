@@ -336,11 +336,14 @@ TEST_F(HostCompilePipelineTest, NamedTcpClosureCompilesAndSolvesRealNumerics_REQ
     EXPECT_EQ(materialized.snapshot->model(), snapshot->model());
     // 仅借用已发布不可变快照。适配器是IKinRuntimeView端口，不包含计算替身。
     struct View final : kinematics::IKinRuntimeView {
-        const runtime::CanonicalModel& value;
-        explicit View(const runtime::CanonicalModel& model) : value(model) {}
-        const runtime::CanonicalModel& model() const override { return value; }
-        rw::math::Transform3D<double> worldToBase() const override { return value.world().T_world_base; }
-    } view(materialized.snapshot->model());
+        std::shared_ptr<const runtime::RuntimeSnapshot> snapshot;
+        explicit View(std::shared_ptr<const runtime::RuntimeSnapshot> value) : snapshot(std::move(value)) {}
+        const runtime::CanonicalModel& model() const override { return snapshot->model(); }
+        rw::math::Transform3D<double> worldToBase() const override { return snapshot->worldToBase(); }
+        // REUSE-T18后的真实前置：与生产SnapshotViewAdapter一样转交同一已编译快照锚。
+        // 原夹具只给CanonicalModel，FK依法拒绝NoDevice；不补算FK或放宽原解析断言。
+        std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override { return snapshot; }
+    } view(materialized.snapshot);
     const double q = 0.3;
     for (const auto& row : std::vector<std::pair<std::string, rw::math::Vector3D<double>>>{
             {"a", {0.2,0.8,0.4}}, {"b", {-0.2,0.3,0.4}}}) {
@@ -1180,6 +1183,15 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     drivetrain.ratioPerJoint={core::SourcedValue<double>::provided(100.0,
         core::ValueProvenance::make(core::ProvenanceKind::UserProvided))};
     drivetrain.frictionPerJoint.resize(1);drivetrain.torqueLimitsPerJoint.resize(1);
+    // F07：包原始资源随完整草稿运输，真实HostCompilePort从同次计划覆盖层读STL。
+    const QByteArray mesh("solid mesh\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid mesh\n");
+    core::ContentDigester meshDigester;meshDigester.update(mesh.constData(),static_cast<std::size_t>(mesh.size()));
+    const auto meshDigest=meshDigester.finalize();const auto packageResourceId=core::ObjectId::generate();
+    modeling::ResourceRef solid;solid.resourceId="imported.stl";solid.state=modeling::ResourceState::Solidified;
+    solid.contentDigest=meshDigest;solid.solidifiedObject=modeling::SolidifiedRef{packageResourceId,core::ContentVersion{meshDigest}};
+    root.resourceManifest={solid};scene.geometry=modeling::GeometryRef{"imported.stl"};
+    const QJsonArray resourceCopies{QJsonObject{{"resourceId","imported.stl"},
+        {"objectId",QString::fromStdString(packageResourceId.toCanonical())},{"bytes",QString::fromLatin1(mesh.toHex())}}};
     const auto setParts=[&](QJsonObject& doc){
         root.toolRefs={tool.objectId};root.defaultTcp=modeling::TcpRef{tool.objectId,"tip"};
         root.sceneRefs={scene.objectId};root.poseSetRef=poses.objectId;root.drivetrainRef=drivetrain.objectId;
@@ -1188,6 +1200,7 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     };
     QJsonObject document{{"format","ird-modeling-draft"},{"version",1},{"rootId",QJsonValue(QJsonValue::Null)}};
     setParts(document);
+    document["importedResources"]=resourceCopies;
     domain.bindSessionAnchor(store->query().head().branch,store->query().head().id);
     const auto stage=[&](QJsonObject doc){
         doc["changes"]=QJsonArray{QJsonObject{{"subject","full.apply"},{"summary","完整工作集编辑"}}};
@@ -1258,10 +1271,15 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     resource.externalRecord=modeling::ExternalResourceRecord{dir.path().toStdString()+"/missing.stl",{}};
     unavailableRoot.resourceManifest={resource};auto unavailableScene=scene;
     unavailableScene.geometry=modeling::GeometryRef{"missing-mesh"};
-    auto unavailable=document;unavailable["root"]=hex(unavailableRoot);unavailable["scenes"]=QJsonArray{hex(unavailableScene)};
+    auto unavailable=document;unavailable["importedResources"]=QJsonArray{};unavailable["root"]=hex(unavailableRoot);unavailable["scenes"]=QJsonArray{hex(unavailableScene)};
     const auto compileFailed=reject(unavailable,nullptr);
     EXPECT_TRUE(compileFailed.status.failed());EXPECT_FALSE(compileFailed.diagnostics.empty());
     EXPECT_FALSE(compile->lastPublishedSnapshot()); // 实际io/编译失败不能发布伪成功快照。
+    // 摘要损坏只改副本字节，仍走真实prepare；旧head与完整草稿原样保留。
+    auto corrupt=document;auto corruptResource=resourceCopies[0].toObject();corruptResource["bytes"]="00";
+    corrupt["importedResources"]=QJsonArray{corruptResource};
+    const auto corruptResult=reject(corrupt,nullptr);
+    EXPECT_EQ(corruptResult.status.rejection,project::CommandStatus::Rejection::InvalidPayload);
     ASSERT_TRUE(stage(document));const auto firstResult=apply();ASSERT_TRUE(firstResult.committed());
     const auto stale=store->commands().submit(validEnvelope);
     EXPECT_EQ(stale.status.rejection,project::CommandStatus::Rejection::StaleRevision);
@@ -1295,6 +1313,14 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     EXPECT_EQ(successProjection.newRevision,firstResult.newRevision);EXPECT_FALSE(successProjection.staleDetail);
     const auto first=store->query().head();HostRevisionClosureView firstClosure(store->query(),first);
     document=savedDoc();root=std::get<modeling::RobotDesign>(decode(document["root"]));
+    ASSERT_EQ(root.resourceManifest.size(),1U);ASSERT_TRUE(root.resourceManifest[0].solidifiedObject);
+    const auto committedResource=*root.resourceManifest[0].solidifiedObject;
+    EXPECT_NE(committedResource.objectId,packageResourceId);EXPECT_EQ(committedResource.contentVersion.bytes,meshDigest);
+    const auto resourceObject=firstClosure.tryObject(committedResource.objectId);ASSERT_TRUE(resourceObject);
+    EXPECT_EQ(QByteArray(reinterpret_cast<const char*>(resourceObject->bytes.data()),static_cast<qsizetype>(resourceObject->bytes.size())),mesh);
+    EXPECT_TRUE(document["importedResources"].toArray().empty()); // 成功回执重读正式闭包，不再携带已消费副本。
+    ASSERT_TRUE(compile->lastPublishedSnapshot());
+
     tool=std::get<modeling::ToolDefinition>(decode(document["tools"].toArray().at(0)));
     scene=std::get<modeling::SceneObject>(decode(document["scenes"].toArray().at(0)));
     poses=std::get<modeling::PoseSet>(decode(document["poses"]));

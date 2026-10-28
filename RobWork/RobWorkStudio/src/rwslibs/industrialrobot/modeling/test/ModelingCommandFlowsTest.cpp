@@ -32,6 +32,9 @@
 #include <sdurws/ird/modeling/Codec.hpp>        // AT-31来源资源随对象编码往返保真。
 #include <sdurws/ird/modeling/ModelDiff.hpp>    // F16：真实服务与呈现边界逐项对账。
 #include <sdurws/ird/modeling/PropertyEstimation.hpp> // F09：仅替代应答，真实估算与Codec。
+#include "BridgeFixtures.hpp"
+#include "plugin/ModelingDraftCodec.hpp"
+#include <sdurws/ird/modeling/Package.hpp>
 #include "plugin/ModelingCommandFlows.hpp"      // executeModelingCommand（被测流）
 #include "plugin/ModelingUiModule.hpp"          // ModuleSessionState（会话态入参）
 #include "plugin/ModelingXacroBridge.hpp"       // WP-13-T24：真实生产展开桥，不能只测内核。
@@ -1546,4 +1549,51 @@ TEST(ModelingCommandFlows, AuthoritySwitchWithoutRuntimeProbePreservesDraft)
     EXPECT_FALSE(executeModelingCommand("modeling.switch-authority", h.session, h.deps(), h.host, summary));
     EXPECT_EQ(h.session.draft, before);
     EXPECT_NE(summary.find("编译验证"), std::string::npos);
+}
+
+/** @brief F07：真实包→UI接收→完整草稿保存恢复；部件/TCP/固化字节全部保留。 */
+TEST(ModelingCommandFlows, PackageImportPreservesCompleteClosure_F07)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"MDL-20","MDL-13","MDL-15"}),{"AT-28"});
+    auto ws=makeSixAxisDraft();
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="gripper";
+    // Codec的TCP集合按key规范排序；夹具用同一正式集合顺序，逐字段原值仍独立构造。
+    tool.tcpList={{"aux",{},"辅助"},{"tip",rw::math::Transform3D<>(rw::math::Vector3D<>(0.1,0.2,0.3)),"夹取"}};
+    SceneObject scene;scene.objectId=core::ObjectId::generate();scene.localName="table";scene.worldPose.P()[1]=1.25;
+    PoseSet poses;poses.objectId=core::ObjectId::generate();poses.entries={{"homeConfiguration",{0,0.1,0.2,0.3,0.4,0.5},"home"}};
+    DrivetrainDesign drive;drive.objectId=core::ObjectId::generate();drive.ratioPerJoint.resize(6);drive.frictionPerJoint.resize(6);drive.torqueLimitsPerJoint.resize(6);
+    ws.design.toolRefs={tool.objectId};ws.design.defaultTcp=TcpRef{tool.objectId,"tip"};
+    ws.design.sceneRefs={scene.objectId};ws.design.poseSetRef=poses.objectId;ws.design.drivetrainRef=drive.objectId;
+    const std::vector<std::uint8_t> bytes={1,2,3,0,255};const auto resourceId=core::ObjectId::generate();
+    core::ContentDigester digester;digester.update(bytes.data(),bytes.size());const auto digest=digester.finalize();
+    ResourceRef ref;ref.resourceId="solid-mesh";ref.state=ResourceState::Solidified;ref.contentDigest=digest;
+    ref.solidifiedObject=SolidifiedRef{resourceId,core::ContentVersion{digest}};ws.design.resourceManifest={ref};
+    testbridge::BridgeClosure closure;
+    closure.put(std::string(kRobotDesignObjectType),testbridge::encode(ws.design));
+    closure.put(tool.objectId,std::string(kToolDefinitionObjectType),testbridge::encode(tool));
+    closure.put(scene.objectId,std::string(kSceneObjectObjectType),testbridge::encode(scene));
+    closure.put(poses.objectId,std::string(kNamedPoseSetObjectType),testbridge::encode(poses));
+    closure.put(drive.objectId,std::string(kRobotDrivetrainObjectType),testbridge::encode(drive));
+    closure.put(resourceId,"ExternalResource",bytes);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());PackageExportTarget target;
+    target.targetFile=std::filesystem::path(dir.path().toStdWString())/"complete.irdbundle";
+    std::vector<core::DiagnosticRecord> diags;
+    const auto exported=ModelPackagePort{}.exportPackage(closure,target,diags);ASSERT_TRUE(exported.ok)<<exported.error.detail;
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.host.openPathAnswer=QString::fromStdWString(target.targetFile.wstring());
+    std::string summary;ASSERT_TRUE(executeModelingCommand("modeling.import-package",fx.session,fx.deps(),fx.host,summary))<<summary;
+    ASSERT_EQ(fx.session.draft.toolObjects.size(),1U);EXPECT_EQ(fx.session.draft.toolObjects[0],tool);
+    ASSERT_EQ(fx.session.draft.sceneObjects.size(),1U);EXPECT_EQ(fx.session.draft.sceneObjects[0],scene);
+    EXPECT_EQ(fx.session.draft.poseSetObject,poses);EXPECT_EQ(fx.session.draft.drivetrainObject,drive);
+    ASSERT_EQ(fx.session.draft.importedResources.size(),1U);EXPECT_EQ(fx.session.draft.importedResources[0].bytes,bytes);
+    std::string error;const auto restored=decodeModelingDraft(encodeModelingDraft(fx.session.draft),{},error);
+    ASSERT_TRUE(restored)<<error;EXPECT_EQ(*restored,fx.session.draft);
+    fx.host.savePathAnswer=dir.filePath("reexport.irdbundle");
+    ASSERT_TRUE(executeModelingCommand("modeling.export-package",fx.session,fx.deps(),fx.host,summary))<<summary;
+    FlowHarness roundtrip;roundtrip.host.openPathAnswer=fx.host.savePathAnswer;
+    ASSERT_TRUE(executeModelingCommand("modeling.import-package",roundtrip.session,roundtrip.deps(),roundtrip.host,summary))<<summary;
+    ASSERT_EQ(roundtrip.session.draft.toolObjects.size(),1U);EXPECT_EQ(roundtrip.session.draft.toolObjects[0],tool);
+    ASSERT_EQ(roundtrip.session.draft.importedResources.size(),1U);EXPECT_EQ(roundtrip.session.draft.importedResources[0].bytes,bytes);
+    fx.host.confirmImportAnswer=false;const auto previous=fx.session.draft;
+    EXPECT_FALSE(executeModelingCommand("modeling.import-package",fx.session,fx.deps(),fx.host,summary));
+    EXPECT_EQ(fx.session.draft,previous); // 拒绝确认保留完整旧草稿与字节。
 }

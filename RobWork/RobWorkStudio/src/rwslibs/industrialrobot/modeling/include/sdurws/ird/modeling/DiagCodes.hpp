@@ -83,6 +83,9 @@ inline constexpr std::string_view kMdlImportUnsupportedJoint = "MDL-IMPORT-UNSUP
 
 /// §9.5 T05 行：MDL-IMPORT-ZERO-AXIS（导入/error——零轴/非有限轴关节→
 /// 修正源文件；该草稿不得提交，MDL-11）。
+/// MDL-CR-4/F08/F12：源数值缺失/非法，保留原文并阻止提交；不允许确认成零。
+inline constexpr std::string_view kMdlImportValueIllegal = "MDL-IMPORT-VALUE-ILLEGAL";
+
 inline constexpr std::string_view kMdlImportZeroAxis = "MDL-IMPORT-ZERO-AXIS";
 
 /// §9.5 T05/T06 行：MDL-IMPORT-PENDING-CONFIRM（导入/Warning——待确认项

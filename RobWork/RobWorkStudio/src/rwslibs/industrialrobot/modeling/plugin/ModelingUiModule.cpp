@@ -146,6 +146,11 @@ std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
     for(const auto& value:scenes){append(value,kSceneObjectObjectType);}
     if(m_session.draft.poseSetObject){append(*m_session.draft.poseSetObject,kNamedPoseSetObjectType);}
     if(m_session.draft.drivetrainObject){append(*m_session.draft.drivetrainObject,kRobotDrivetrainObjectType);}
+    for(const auto& resource:m_session.draft.importedResources){
+        PayloadObjectSlot copy;copy.allocateNew=true;copy.objectId=resource.objectId;
+        copy.objectTypeToken="ExternalResource";copy.objectBytes=resource.bytes;
+        payload.objects.push_back(std::move(copy));
+    }
     envelope.payloadCanonical=encodeCommandPayload(payload);
 
     // ⑥面板引用消费说明：组装路径不触面板（面板是呈现半区——命令组装的
