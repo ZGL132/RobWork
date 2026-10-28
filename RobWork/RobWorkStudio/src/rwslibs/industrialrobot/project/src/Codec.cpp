@@ -1331,6 +1331,17 @@ ProjectMetadataRecord parseMetadataRecord(std::string_view text)
     return v;
 }
 
+bool isCommandTypeToken(std::string_view token) noexcept
+{
+    if (token.size() < 3 || token.size() > 64) { return false; }
+    for (const char c : token) {
+        if (!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-')) {
+            return false;
+        }
+    }
+    return true;
+}
+
 CommandRecord parseCommandRecord(std::string_view text)
 {
     const bj::value root = parseCanonicalJson(text);
@@ -1346,13 +1357,7 @@ CommandRecord parseCommandRecord(std::string_view text)
     // 口径之上收紧到表冻结规则）。
     {
         const std::string& t = v.commandType;
-        bool syntaxOk = t.size() >= 3 && t.size() <= 64;
-        for (const char c : t) {
-            const bool ok =
-                (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-';
-            if (!ok) { syntaxOk = false; break; }
-        }
-        if (!syntaxOk) {
+        if (!isCommandTypeToken(t)) {
             corrupt("field 'commandType' violates ^[a-z0-9-]{3,64}（§4.4.4 冻结语法）: "
                     + t);
         }
@@ -1368,6 +1373,9 @@ CommandRecord parseCommandRecord(std::string_view text)
         }
         InverseCommand i;
         i.commandType = requireTokenField(inv, "commandType");
+        if (!isCommandTypeToken(i.commandType)) {
+            corrupt("inverse.commandType violates ^[a-z0-9-]{3,64}");
+        }
         i.payloadFormatVersion = requireUint32Field(inv, "payloadFormatVersion");
         i.payloadCanonical = decodeHexString(requireStringField(inv, "payloadCanonical"));
         rejectUnknownFields(inv,

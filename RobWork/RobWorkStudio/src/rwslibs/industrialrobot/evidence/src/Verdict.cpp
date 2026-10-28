@@ -20,6 +20,8 @@
 #include <sdurws/ird/evidence/Verdict.hpp>
 
 #include <algorithm>
+#include <stdexcept>
+#include <sdurws/ird/core/Digest.hpp>
 #include <utility>
 
 namespace sdurws::ird::evidence {
@@ -118,6 +120,7 @@ CommonGateOutcome collectCommonGateFailures(const VerdictInput& input,
 
     // ---- a. 快照身份门禁（调用方装配结果——逐字段全量列出）----
     if (!input.snapshotGate.complete) {
+        if (input.snapshotGate.missingFields.empty()) out.missingItems.push_back({"snapshot.identity", "快照门禁未满足"});
         for (const std::string& field : input.snapshotGate.missingFields) {
             out.missingItems.push_back(
                 {field, "快照身份门禁缺失/无效（②级通用必需项）：" + field});
@@ -140,6 +143,8 @@ CommonGateOutcome collectCommonGateFailures(const VerdictInput& input,
                 out.missingItems.push_back(
                     {"externalResources[" + std::to_string(issue.index) + "]",
                      "外部资源未固化（Recorded——Verified 模式阻断正式结论，CON-03）"});
+            } else if (issue.code == SnapshotModeIssueCode::SnapshotInvalid) {
+                out.missingItems.push_back({"snapshot.identity", issue.message});
             } else {
                 // ReproductionIncomplete：复现块版本要素不完整（快照有效性
                 // 通用面——与模式无关，故任何模式都进门禁）。
@@ -288,7 +293,8 @@ bool collectDataInsufficient(const VerdictInput& input,
     if (!completeness.requiredGaps.empty()) {
         for (const EvidenceCompletenessResult::Gap& gap : completeness.requiredGaps) {
             result.missingItems.push_back(
-                {gap.itemId, std::string{evidenceGapStatusText(gap.status)}});
+                {gap.itemId, std::string{evidenceGapStatusText(gap.status)}
+                    + (gap.manifestIndex == static_cast<std::size_t>(-1) ? std::string{} : "；清单实例#" + std::to_string(gap.manifestIndex))});
         }
         result.diagnostics.push_back(makeVerdictDiag(
             kDiagEvidenceMissing, std::nullopt,
@@ -316,6 +322,7 @@ bool collectDataInsufficient(const VerdictInput& input,
     // ---- c. 搜索未果（§6.3 末硬规则：汇总层判 DataInsufficient（附该
     // 记录），不得输出不可行结论——EV-VER-2 第一次/全解被过滤场景）----
     if (input.searchRecord.has_value()) {
+        result.missingItems.push_back({"search.valid-solution", "搜索未找到有效解；需扩大预算或补充证据（C5/C8）"});
         result.diagnostics.push_back(makeVerdictDiag(
             kDiagSearchExhausted, std::nullopt,
             "搜索未果：已用预算 " + std::to_string(input.searchRecord->searchBudgetUsed)
@@ -334,6 +341,7 @@ bool collectDataInsufficient(const VerdictInput& input,
             continue;  // 形状非法已在②级列出——不重复计
         }
         if (check.zeroSample) {
+            result.missingItems.push_back({"region.samples", "区域采样为空，覆盖率未定义"});
             // 零样本：覆盖率不定义（分母为 0——EV-COV-3 反例面）。诊断以
             // 样本集身份定位涉事区域证据。
             result.diagnostics.push_back(makeVerdictDiag(
@@ -344,6 +352,7 @@ bool collectDataInsufficient(const VerdictInput& input,
             hit = true;
         }
         if (check.downgradedRequired) {
+            result.missingItems.push_back({"region.evidence", "区域仍有数据不足样本"});
             result.diagnostics.push_back(makeVerdictDiag(
                 kDiagRegionCoverageDowngraded, std::nullopt,
                 "区域采样证据存在数据不足样本（dataInsufficient>0）——结论整体降级 DataInsufficient，"
@@ -360,6 +369,7 @@ bool collectDataInsufficient(const VerdictInput& input,
         snapshot.caseSet.entries.cbegin(), snapshot.caseSet.entries.cend(),
         [](const CaseEntry& entry) { return entry.enabled && entry.mandatory; });
     if (!hasMandatoryCase) {
+        result.missingItems.push_back({"cases.mandatory", "无启用必验工况"});
         result.diagnostics.push_back(makeVerdictDiag(
             kDiagCaseCoverageMissing, std::nullopt,
             "无启用必验工况（快照必验集为空或全为非必验）——覆盖矩阵平凡完备但正式通过判定不成立（P-EV-7 保守处置）",
@@ -417,6 +427,7 @@ VerdictResult aggregateVerdict(const VerdictInput& input,
     // REQ-06：任一启用 Must 条目非法＝输入未完成——评估不该被派发；若结果
     // 对象仍产生（评估中检出），以此为由判数据不足（§6.4.1 ①行原文）。
     if (!input.readiness.valid) {
+        if (input.readiness.invalidMustItems.empty()) result.missingItems.push_back({"input.readiness", "输入合法性未满足"});
         records[1] = {VerdictLevel::InputReadiness, true, true,
                       "输入未完成（REQ-06：存在非法的启用 Must 条目）——不运行正式评估"};
         result.status = core::EngineeringStatus::DataInsufficient;
@@ -676,6 +687,35 @@ EligibilityCheck checkReviewRecordEligibility(const VerdictInput& input,
 // 比较基准一致性检查（§6.5——实现口径 I-8）
 // =====================================================================
 
+core::ContentIdentity computeComparisonInputId(
+    const core::ContentIdentity& requirementsId, const core::ContentIdentity& caseInputsId,
+    const std::vector<core::ContentIdentity>& sampleSetIds,
+    const core::ContentIdentity& environmentId)
+{
+    core::ContentDigester digester;
+    constexpr std::string_view magic{"IRDCMP1"};
+    digester.update(magic.data(), magic.size());
+    // 固定宽度身份无分隔歧义；全零不是可供比较的内容凭据。
+    const auto appendIdentity = [&digester](const core::ContentIdentity& identity) {
+        if (identity == core::ContentIdentity{}) {
+            throw std::invalid_argument("comparison input identity must be nonzero");
+        }
+        digester.update(identity.bytes.data(), identity.bytes.size());
+    };
+    appendIdentity(requirementsId);
+    appendIdentity(caseInputsId);
+    appendIdentity(environmentId);
+    const auto count = static_cast<std::uint64_t>(sampleSetIds.size());
+    for (int shift = 56; shift >= 0; shift -= 8) {
+        const auto byte = static_cast<std::uint8_t>(count >> shift);
+        digester.update(&byte, 1);
+    }
+    for (const auto& identity : sampleSetIds) { appendIdentity(identity); }
+    core::ContentIdentity result;
+    result.bytes = digester.finalize();
+    return result;
+}
+
 BaselineConsistencyResult
 checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baselines)
 {
@@ -690,7 +730,6 @@ checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baseli
     }
 
     bool diffProject = false;
-    bool diffBranch = false;
     bool diffInputBaseline = false;
     bool diffRequiredCaseSet = false;
     bool diffSampleSets = false;
@@ -700,9 +739,15 @@ checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baseli
     const ComparisonBaseline& first = baselines.front();
     for (const ComparisonBaseline& other : baselines) {
         diffProject = diffProject || !(other.project == first.project);
-        diffBranch = diffBranch || !(other.branch == first.branch);
-        diffInputBaseline =
-            diffInputBaseline || !(other.inputBaselineId == first.inputBaselineId);
+        // 被比较的设计/分支可以不同；完整复评身份仍用于缓存与历史追溯。
+        // 新共同基准必须双边提供且相同；单边缺失不能退回放行。
+        const bool commonProvided = other.comparisonInputId || first.comparisonInputId;
+        diffInputBaseline = diffInputBaseline
+            || (commonProvided ? (!first.comparisonInputId || !other.comparisonInputId
+                                   || *first.comparisonInputId == core::ContentIdentity{}
+                                   || *other.comparisonInputId == core::ContentIdentity{}
+                                   || other.comparisonInputId != first.comparisonInputId)
+                               : other.inputBaselineId != first.inputBaselineId);
         diffRequiredCaseSet =
             diffRequiredCaseSet || !(other.requiredCaseSetId == first.requiredCaseSetId);
         diffSampleSets = diffSampleSets || !(other.sampleSetIds == first.sampleSetIds);
@@ -711,9 +756,6 @@ checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>& baseli
     // 按枚举声明序输出（＝§6.5 字段序——确定性，NFR-COR-02）。
     if (diffProject) {
         out.differingDimensions.push_back(BaselineDifferenceDimension::Project);
-    }
-    if (diffBranch) {
-        out.differingDimensions.push_back(BaselineDifferenceDimension::Branch);
     }
     if (diffInputBaseline) {
         out.differingDimensions.push_back(BaselineDifferenceDimension::InputBaseline);

@@ -288,13 +288,13 @@ TEST(EventBusDeliveryContractTest, RaiiUnsubscribeIdempotentAndStopsDelivery)
 }
 
 // =====================================================================
-// 契约 5：退订不与投递死锁（§10.4——回调在锁外，退订永不等回调完成）
+// 契约 5：退订不与投递死锁（§10.4——回调在锁外，C1：退订等待本位在投回调完成）
 // =====================================================================
 
 TEST(EventBusDeliveryContractTest, UnsubscribeDuringDeliveryDoesNotDeadlock)
 {
-    // 慢消费者阻塞在首帧回调中，另一线程退订：若实现错误地在回调期间
-    // 持锁，退订将永远阻塞——以有界 future 等待证明不死锁（超时即 fail；
+    // 慢消费者阻塞在首帧回调中，另一线程退订：在投回调完成前退订不得返回；
+    // 回调放行后必须完成——以有界 future 等待证明不死锁（超时即 fail；
     // 不 sleep——确定性条件为"退订完成"，回调放行在其后）。
     DomainEventBusImpl bus;
     BlockingOnNthSink slow{1};
@@ -305,13 +305,13 @@ TEST(EventBusDeliveryContractTest, UnsubscribeDuringDeliveryDoesNotDeadlock)
     bus.publish(core::DomainEvent::make(statusPayload(1, core::TaskState::Queued)));
     slow.waitBlocked();   // 确定性同步：回调已进入阻塞点
 
-    // 另一线程退订慢消费者——必须在回调阻塞期间完成（不死锁的结构证明）。
+    // 另一线程退订慢消费者——返回前必须等待该回调完成（所有者 C1 裁决）。
     auto unsubscribeFuture = std::async(std::launch::async, [&subSlow] {
         subSlow->unsubscribe();
     });
     const bool finished = unsubscribeFuture.wait_for(std::chrono::seconds{2})
         == std::future_status::ready;
-    EXPECT_TRUE(finished) << "退订被投递中的回调阻塞——违反'退订不与投递死锁'";
+    EXPECT_FALSE(finished) << "C1：已在投的回调结束前，退订不得承诺 sink 可销毁";
 
     // 收尾：放行回调（无论退订成败，总线线程必须可退出——析构 drain）。
     slow.release();
@@ -370,6 +370,58 @@ TEST(EventBusDeliveryContractTest, WaitForIdleSyncsDeliveryDeterministically)
     }
     bus.waitForIdle();
     EXPECT_EQ(sink.size(), 32u);
+}
+
+
+/** EXR-09：A 已在投时退订尚未开始的 B，快照不得再解引用 B。 */
+TEST(EventBusDeliveryContractTest, UnsubscribeSkipsPendingCallback_EXR09)
+{
+    DomainEventBusImpl bus;
+    BlockingOnNthSink first{1};
+    auto second = std::make_unique<CollectingSink>();
+    auto a = bus.subscribe(first);
+    auto b = bus.subscribe(*second);
+    bus.publish(core::DomainEvent::make(statusPayload(1, core::TaskState::Running)));
+    first.waitBlocked();
+    b->unsubscribe();
+    EXPECT_EQ(second->size(), 0u);
+    second.reset(); // C1 返回即允许销毁；快照仍存在，但不得再访问裸 sink。
+    first.release();
+    bus.waitForIdle();
+}
+
+/** @brief EXR-09：同一 sink 的各次订阅独立；旧句柄重复退订不得移除新位。 */
+TEST(EventBusDeliveryContractTest, RepeatedUnsubscribeDoesNotRemoveOtherSlot_EXR09)
+{
+    DomainEventBusImpl bus;
+    CollectingSink sink;
+    auto oldSlot = bus.subscribe(sink);
+    auto newSlot = bus.subscribe(sink);
+    oldSlot->unsubscribe();
+    oldSlot->unsubscribe();
+    bus.publish(core::DomainEvent::make(statusPayload(1, core::TaskState::Running)));
+    bus.waitForIdle();
+    EXPECT_EQ(sink.size(), 1u);
+    EXPECT_EQ(bus.subscriberCount(), 1u);
+}
+
+/** EXR-14：订阅时已经排队的事件不补投，随后发布的事件正常交付。 */
+TEST(EventBusDeliveryContractTest, SubscriptionStartsAtPublishBoundary_EXR14)
+{
+    DomainEventBusImpl bus;
+    BlockingOnNthSink first{1};
+    CollectingSink second;
+    auto a = bus.subscribe(first);
+    bus.publish(core::DomainEvent::make(statusPayload(1, core::TaskState::Queued)));
+    first.waitBlocked();
+    bus.publish(core::DomainEvent::make(statusPayload(1, core::TaskState::Preparing)));
+    auto b = bus.subscribe(second);
+    first.release();
+    bus.waitForIdle();
+    EXPECT_EQ(second.size(), 0u);
+    bus.publish(core::DomainEvent::make(statusPayload(1, core::TaskState::Running)));
+    bus.waitForIdle();
+    EXPECT_EQ(second.size(), 1u);
 }
 
 }  // namespace

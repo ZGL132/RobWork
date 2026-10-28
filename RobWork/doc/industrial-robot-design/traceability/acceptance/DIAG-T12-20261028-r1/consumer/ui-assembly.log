@@ -1,0 +1,11 @@
+Note: Google Test filter = DiagnosticsAssemblyContract.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DiagnosticsAssemblyContract
+[ RUN      ] DiagnosticsAssemblyContract.RedactsPipelineTailDiskAndFactorySnapshot
+[       OK ] DiagnosticsAssemblyContract.RedactsPipelineTailDiskAndFactorySnapshot (16 ms)
+[----------] 1 test from DiagnosticsAssemblyContract (16 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (16 ms total)
+[  PASSED  ] 1 test.

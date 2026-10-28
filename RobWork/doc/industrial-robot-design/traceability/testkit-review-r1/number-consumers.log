@@ -1,0 +1,240 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\policy\test\PolicyCodecFixtureContractTest.cpp:161:    return v == nullptr ? 0.0 : v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\policy\test\CollisionAnalyticDatasetTest.cpp:120:    return v == nullptr ? 0.0 : v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\test\DynGoldenDatasetTest.cpp:132:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\test\DynGoldenDatasetTest.cpp:145:            out.push_back(item.number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\OptGoldenDatasetTest.cpp:181:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\OptGoldenDatasetTest.cpp:212:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\OptGoldenDatasetTest.cpp:260:            b.defaultValueIndex = static_cast<std::uint32_t>(di->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\OptGoldenDatasetTest.cpp:642:                    lm.massKg = masses->items[i].number;  // kg（黄金事实值）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\OptGoldenDatasetTest.cpp:652:                    pm.minMargin = margins->items[i].number;  // D-KIN-2 归一化承载值
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\OptGoldenDatasetTest.cpp:1288:                  static_cast<std::uint32_t>(dropped->number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\test\OptGoldenDatasetTest.cpp:1559:                table[key] = value.number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:157:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:937:        jd.axis = rw::math::Vector3D<double>(axis->items[0].number, axis->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:938:                                             axis->items[2].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:942:            rw::math::Vector3D<double>(tr->items[0].number, tr->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:943:                                       tr->items[2].number),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:993:        device->setQ(rw::math::Q(3, qArr->items[0].number, qArr->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:994:                                 qArr->items[2].number),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1005:                = canonicalRodrigues(cj.axis, cj.zeroOffset + qArr->items[i].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1027:            IRD_EXPECT_CLOSE(pfx + ".origin.x", anchor.p[0], eo->items[0].number, profile, "m");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1028:            IRD_EXPECT_CLOSE(pfx + ".origin.y", anchor.p[1], eo->items[1].number, profile, "m");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1029:            IRD_EXPECT_CLOSE(pfx + ".origin.z", anchor.p[2], eo->items[2].number, profile, "m");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1030:            IRD_EXPECT_CLOSE(pfx + ".axis.x", handAxis[0], ea->items[0].number, profile, "1");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1031:            IRD_EXPECT_CLOSE(pfx + ".axis.y", handAxis[1], ea->items[1].number, profile, "1");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1032:            IRD_EXPECT_CLOSE(pfx + ".axis.z", handAxis[2], ea->items[2].number, profile, "1");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1101:            rw::math::Vector3D<double>(tr->items[0].number, tr->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\runtime\test\ContractSuiteTest.cpp:1102:                                       tr->items[2].number),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\GoldenKinTest.cpp:114:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\GoldenKinTest.cpp:126:    for (const auto& e : v->items) { out.push_back(e.number); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\GoldenKinTest.cpp:440:                             goldenCond->number, *profile, "1");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\GoldenKinTest.cpp:668:        expectedOrderQs.push_back(qOf(refSols[static_cast<std::size_t>(idx.number)]));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\ReportingScenario.hpp:307:    case ReportCsvCell::Kind::Number: return toCharsShortest(cell.number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\ReportingScenario.hpp:401:        case ReportJsonDom::Type::Number: return toCharsShortest(dom.numberValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:143:    return {v->items[0].number, v->items[1].number, v->items[2].number};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:164:            v->find("value")->number, goldenProvenance());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:271:        rule.rollRange.min = rr->find("min")->number;  // rad
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:272:        rule.rollRange.max = rr->find("max")->number;  // rad
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:307:    seg.distanceM = v->find("distanceM")->number;  // m
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:328:    p.tolerance.positionTolerance = tol->find("positionTolerance")->number;       // m
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:329:    p.tolerance.orientationTolerance = tol->find("orientationTolerance")->number; // rad
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:363:            r.positionSampling.counts[i] = static_cast<std::uint32_t>(counts[i].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:371:            r.positionSampling.spacing[i] = sp[i].number;  // m
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:376:        static_cast<std::uint32_t>(os->find("directionSamples")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:378:        static_cast<std::uint32_t>(os->find("rollSamples")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:381:        j.find("coverageTargets")->find("minPositionCoverage")->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:418:            event.durationS = d->number;  // s
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:423:        c.targetCycleTimeS = t->number;  // s
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:429:        c.demands.minimumJointMargin = m->number;  // rad/m 依关节类型
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:432:        c.verificationOrderHint = static_cast<std::uint32_t>(h->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:617:    EXPECT_EQ(frozen->find("requiredCount")->number, 1.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:988:        expected.find("requiredCasesFrozenSchema")->find("requiredCount")->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:994:    EXPECT_EQ(profile.mustCount, static_cast<std::size_t>(profileJson.find("mustCount")->number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:995:    EXPECT_EQ(profile.shouldCount, static_cast<std::size_t>(profileJson.find("shouldCount")->number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:997:                     profileJson.find("minPositionCoverage")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:999:              static_cast<std::size_t>(profileJson.find("requiredCasesCount")->number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1281:                  static_cast<std::uint64_t>(denominators[i].find("positionSamples")->number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1283:                  static_cast<std::uint64_t>(denominators[i].find("orientationSamples")->number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1426:            EXPECT_DOUBLE_EQ(p.pose.orientation.fixedRpy[0], rpy[0].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1431:            EXPECT_DOUBLE_EQ((*resolution.referenceDirection)[0], dir[0].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1432:            EXPECT_DOUBLE_EQ((*resolution.referenceDirection)[1], dir[1].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1433:            EXPECT_DOUBLE_EQ((*resolution.referenceDirection)[2], dir[2].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1436:                             proj.find("rollRange")->find("min")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1438:                             proj.find("rollRange")->find("max")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1485:            spec.positionTolerance = t->find("positionTolerance")->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1486:            spec.orientationTolerance = t->find("orientationTolerance")->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1544:                    static_cast<std::uint32_t>(counts[k].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1550:                spec.positionSampling.spacing[k] = sp[k].number;  // m
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1555:            static_cast<std::uint32_t>(os->find("directionSamples")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1557:            static_cast<std::uint32_t>(os->find("rollSamples")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1576:                      static_cast<std::uint32_t>(proj.find("counts")->items[k].number))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp:1690:                EXPECT_DOUBLE_EQ(*ev.durationS, proj.find("durationS")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\RenderTest.cpp:345:            case ReportCsvCell::Kind::Number:  texts.push_back(toChars(cell.number)); break;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\RenderTest.cpp:420:        case ReportJsonDom::Type::Number: return number(dom.numberValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\LevelBEndToEndTest.cpp:827:            case ReportCsvCell::Kind::Number:  texts.push_back(toChars(cell.number)); break;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\LevelBEndToEndTest.cpp:902:        case ReportJsonDom::Type::Number: return number(dom.numberValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\ArchiveExportTest.cpp:349:        const auto res = std::to_chars(buf, buf + sizeof(buf), v.numberValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\test\BundleTest.cpp:372:        const auto res = std::to_chars(buf, buf + sizeof(buf), v.numberValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\src\Render.cpp:1180:    cell.number = value;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\At07CoverageContractTest.cpp:109:            out.push_back(item.number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\At07CoverageContractTest.cpp:245:                in.t = s.find("t")->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\At07CoverageContractTest.cpp:246:                in.segmentIndex = static_cast<std::uint32_t>(s.find("segment")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\At07CoverageContractTest.cpp:412:        in.t = sample.find("t")->number;    // s（isObject 已断言——字段必在）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\SelGoldenDatasetTest.cpp:110:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\SelGoldenDatasetTest.cpp:146:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\SelGoldenDatasetTest.cpp:294:        g.housingInertia = hi->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\SelGoldenDatasetTest.cpp:316:        c.voltageRelativeTolerance = vt->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\SelGoldenDatasetTest.cpp:703:                EXPECT_DOUBLE_EQ(*iss.actualValue, av->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveScreeningTest.cpp:90:    return (v != nullptr && v->isNumber()) ? v->number : 0.0;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveScreeningTest.cpp:99:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\GoldenDtTest.cpp:120:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\GoldenDtTest.cpp:134:            out.push_back(item.number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\GoldenDtTest.cpp:244:                rated.push_back(rt.number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\GoldenDtTest.cpp:547:            goldenThetaDot.push_back(tdRow.items[k].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\GoldenDtTest.cpp:549:            goldenTauIdeal.push_back(tiRow.items[k].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\GoldenDtTest.cpp:563:            const double wJoint = row.items[k].number; // W
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\drivetrain\test\GoldenDtTest.cpp:946:                             *a.inertiaRatio, ratio->number, *profile, "1");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:86:    return (v != nullptr && v->isNumber()) ? v->number : 0.0;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:311:        if (d.efficiency) { EXPECT_EQ(*d.efficiency, eff->number); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:315:        if (d.stroke) { EXPECT_EQ(*d.stroke, st->number); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:353:            EXPECT_EQ(c.points[k].x, e.find("points")->items[k].find("x")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:354:            EXPECT_EQ(c.points[k].y, e.find("points")->items[k].find("y")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:435:                      static_cast<std::uint64_t>(e.find("rowNo")->number))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:444:                EXPECT_EQ(*got.actualValue, av->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\selection\test\LinearDriveCatalogTest.cpp:453:                EXPECT_EQ(*got.expectedValue, ev->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:130:        return p->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:425:                     (thetaC - alpha) / travel, interval.find("lower")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:428:                     (thetaC + alpha) / travel, interval.find("upper")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:434:    EXPECT_EQ(plan.find("subdivisionDepthUsed")->number, 7.0) << "细分层数（2^7=128 覆盖双上界）";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:435:    EXPECT_EQ(plan.find("finalSubsegments")->number, 128.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:436:    EXPECT_EQ(plan.find("subsegmentsExamined")->number, 255.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:443:                     travel / 128.0, plan.find("actualMaxJointStep")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:447:                     plan.find("actualMaxCartesianStep")->number, profile, "m");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:454:    EXPECT_EQ(ec.find("firstHitSampleIndex")->number, static_cast<double>(firstHit))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:457:                     firstHit / 128.0, ec.find("firstHitPathParameter")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:461:    EXPECT_EQ(ec.find("lastHitSampleIndex")->number, static_cast<double>(lastHit));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:462:    EXPECT_EQ(ec.find("hitSamplesCount")->number, static_cast<double>(lastHit - firstHit + 1));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:468:    EXPECT_GT(ec.find("firstHitPathParameter")->number, interval.find("lower")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:469:    EXPECT_LT(ec.find("firstHitPathParameter")->number, interval.find("upper")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:473:    EXPECT_EQ(ec.find("centerSampleIndex")->number, 64.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:475:                     ec.find("centerAngleDeviation")->number, profile, "rad");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:532:    EXPECT_EQ(plan.find("subdivisionDepthUsed")->number, 10.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:534:    EXPECT_EQ(plan.find("finalSubsegments")->number, 1024.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:536:    EXPECT_EQ(plan.find("subsegmentsExamined")->number, 2047.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:542:    EXPECT_DOUBLE_EQ(plan.find("actualMaxJointStep")->number, totalTravel / 1024.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:543:    EXPECT_GT(plan.find("actualMaxJointStep")->number, 0.05)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:548:                     ec.find("stepOverDefault")->number, profile, "rad");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:549:    EXPECT_GT(ec.find("stepOverDefault")->number, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:555:                     ec.find("netDisplacement")->number, profile, "rad");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:556:    EXPECT_DOUBLE_EQ(ec.find("netDisplacement")->number, 0.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:558:    EXPECT_DOUBLE_EQ(ec.find("totalTravel")->number, totalTravel);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:559:    EXPECT_EQ(ec.find("collisionQueriesExecuted")->number, 0.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:622:                     (bandLower - q1s) / dq1, interval.find("lower")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:625:                     (bandUpper - q1s) / dq1, interval.find("upper")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:629:    EXPECT_GT(interval.find("lower")->number, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:630:    EXPECT_LT(interval.find("upper")->number, 1.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:631:    EXPECT_LT(interval.find("lower")->number, interval.find("upper")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:643:                     expectedClearance, detour.find("clearanceToBand")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:645:    EXPECT_GT(detour.find("clearanceToBand")->number, 0.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:654:                     tcp.find("x")->number, profile, "m");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:656:                     tcp.find("y")->number, profile, "m");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:722:    IRD_EXPECT_CLOSE("cases[limit-exceeded].peak.s", sStar, peak.find("s")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:724:    IRD_EXPECT_CLOSE("cases[limit-exceeded].peak.q", qPeak, peak.find("q")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:727:                     peak.find("exceed")->number, profile, "rad");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:728:    EXPECT_GT(peak.find("exceed")->number, 0.0)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:734:                     violation.find("actualQ")->number, profile, "rad");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:735:    EXPECT_DOUBLE_EQ(violation.find("boundQ")->number, limitUpper);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:737:    EXPECT_EQ(violation.find("axis")->number, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:740:                     violation.find("pathParameter")->number, profile, "1");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:743:    EXPECT_DOUBLE_EQ(violation.find("pathParameter")->number, peak.find("s")->number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:750:    EXPECT_DOUBLE_EQ(zeroAnchor.find("margin")->number, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:758:                     qPeak - probeExceed, probe.find("limitUpper")->number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:761:                     probe.find("exceed")->number, profile, "rad");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:762:    EXPECT_GT(probe.find("exceed")->number, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\contract_test\At06GoldenContractTest.cpp:763:    EXPECT_LT(probe.find("exceed")->number, 1e-5)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp:233:        caseNode.find("lastEpoch")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp:235:        static_cast<std::uint64_t>(caseNode.find("epoch")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp:289:    decision.epoch = static_cast<std::uint64_t>(node.find("epoch")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp:336:                static_cast<std::uint64_t>(caseNode.find("epoch")->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp:677:        if (in.find("epoch")->number < in.find("lastEpoch")->number) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ReproBenchmarkTest.cpp:260:    ASSERT_TRUE(seed->number.tryUnsigned().has_value());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ReproBenchmarkTest.cpp:261:    EXPECT_EQ(*seed->number.tryUnsigned(), spec.repro.seed);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ReportTest.cpp:130:    EXPECT_DOUBLE_EQ(repro->find("seed")->number, 20260909.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ReportTest.cpp:131:    EXPECT_DOUBLE_EQ(repro->find("threadCount")->number, 2.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ReportTest.cpp:140:    EXPECT_DOUBLE_EQ(duration->number, 5.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ReportTest.cpp:186:    EXPECT_DOUBLE_EQ(summary->find("passed")->number, 1.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\PerfBenchmarkTest.cpp:215:    EXPECT_DOUBLE_EQ(g0.find("p95Ms")->number, 12.5);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\PerfBenchmarkTest.cpp:226:    EXPECT_DOUBLE_EQ(verdicts->items[0].find("thresholdMs")->number, 200.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ListenerOwnershipTest.cpp:158:    EXPECT_DOUBLE_EQ(summary->find("total")->number, 1.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\ListenerOwnershipTest.cpp:161:    EXPECT_DOUBLE_EQ(tokenCount->number, 1.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:37:    EXPECT_DOUBLE_EQ(parseJson("1.5").number, 1.5);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:44:    EXPECT_DOUBLE_EQ(parseJson("4.9406564584124654e-324").number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:46:    EXPECT_EQ(parseJson("1e-999").number, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:47:    EXPECT_TRUE(std::signbit(parseJson("-1e-999").number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:48:    EXPECT_EQ(parseJson("1.7976931348623157e308").number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:73:    exact.number = 1.5;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:74:    EXPECT_FALSE(exact.number.exactUnsigned().has_value());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:76:    exact.number.setUnsigned(std::numeric_limits<std::uint64_t>::max());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:78:    exact.number = 0.0;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:91:        v.number = value;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\test\JsonLiteTest.cpp:170:    EXPECT_EQ(num.number, -0.25);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\RenderCrossUnitContractTest.cpp:264:                texts.push_back(toChars(cell.number));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\RenderCrossUnitContractTest.cpp:364:        case ReportJsonDom::Type::Number: return number(dom.numberValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\ConsistencyCrossUnitContractTest.cpp:311:            case ReportCsvCell::Kind::Number:  texts.push_back(toChars(cell.number)); break;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\contract_test\ConsistencyCrossUnitContractTest.cpp:413:        case ReportJsonDom::Type::Number: return number(dom.numberValue());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\ToleranceProfile.cpp:63:        return core::Tolerance::make(rel->number, abs->number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\Report.cpp:45:    v.number = d;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:444:        v.number = value;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:451:                v.number.setUnsigned(integer);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:516:    case JsonValue::Kind::Number: dumpNumber(v.number, out); break;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:589:        const auto otherInteger = o.number.exactUnsigned();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:593:            const double floating = integer ? o.number : number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:599:        if (std::isnan(number) || std::isnan(o.number)) { return false; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:600:        const double a = number, b = o.number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:643:            case JsonValue::Kind::Number: dumpNumber(v.number, o); break;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\Fixture.cpp:88:    seed.number.setUnsigned(r.seed);   // 完整 uint64 精确轨，报告嵌入时也不会再次舍入。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\Fixture.cpp:92:    threads.number = static_cast<double>(r.threadCount);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\Fixture.cpp:117:    const auto value = requireField(obj, key, JsonValue::Kind::Number).number.tryUnsigned();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\Dataset.cpp:36:    const auto integer = v != nullptr && v->isNumber() ? v->number.tryUnsigned() : std::nullopt;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\include\sdurws\ird\testkit\ReproBenchmark.hpp:141:    v.number = d;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\include\sdurws\ird\testkit\ReproBenchmark.hpp:190:    seed.number.setUnsigned(r.repro.seed);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\include\sdurws\ird\testkit\PerfBenchmark.hpp:319:    v.number = d;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\include\sdurws\ird\testkit\JsonLite.hpp:47: * 原 .number 的 double 读取/赋值写法保留；精确种子必须用 setUnsigned/tryUnsigned。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\test\SliceFixtureContractTest.cpp:213:    const double revisionSeq = (seq != nullptr && seq->isNumber()) ? seq->number : 0.0;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\test\SliceFixtureContractTest.cpp:271:                                                 ->number
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:126:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:512:                         j1Axis->items[static_cast<std::size_t>(c)].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:521:    EXPECT_DOUBLE_EQ(j1BoundsVal->first, j1Bounds->items[0].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:523:    EXPECT_DOUBLE_EQ(j1BoundsVal->second, j1Bounds->items[1].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:538:    EXPECT_DOUBLE_EQ((*j2AxisVal)[0], j2Axis->items[0].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:539:    EXPECT_DOUBLE_EQ((*j2AxisVal)[1], j2Axis->items[1].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:540:    EXPECT_DOUBLE_EQ((*j2AxisVal)[2], j2Axis->items[2].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:736:        EXPECT_DOUBLE_EQ(bounds->first, boundsExp->items[i].items[0].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:738:        EXPECT_DOUBLE_EQ(bounds->second, boundsExp->items[i].items[1].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenTemplateTest.cpp:97:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenTemplateTest.cpp:143:            EXPECT_DOUBLE_EQ(actual[i].axis[c], axis->items[static_cast<std::size_t>(c)].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenTemplateTest.cpp:153:        EXPECT_DOUBLE_EQ(actual[i].bounds.first, bounds->items[0].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenTemplateTest.cpp:155:        EXPECT_DOUBLE_EQ(actual[i].bounds.second, bounds->items[1].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenTemplateTest.cpp:247:                         baseExp->find("basePosition")->items[static_cast<std::size_t>(c)].number)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:122:    return v->number;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:384:            provided(rw::math::Vector3D<double>(axis->items[0].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:385:                                                axis->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:386:                                                axis->items[2].number),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:394:            const rw::math::Vector3D<double> p(pos->items[0].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:395:                                               pos->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:396:                                               pos->items[2].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:398:                rot->items[0].number, rot->items[1].number, rot->items[2].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:399:                rot->items[3].number, rot->items[4].number, rot->items[5].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:400:                rot->items[6].number, rot->items[7].number, rot->items[8].number);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:410:            JointLimits{bounds->items[0].number, bounds->items[1].number},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:494:            IRD_EXPECT_CLOSE(originPath + "x", t.P()[0], pos->items[0].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:496:            IRD_EXPECT_CLOSE(originPath + "y", t.P()[1], pos->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:498:            IRD_EXPECT_CLOSE(originPath + "z", t.P()[2], pos->items[2].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:507:                                rot->items[static_cast<std::size_t>(r * 3 + c)].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:519:            IRD_EXPECT_CLOSE(axisPath + "x", (*axisVal)[0], axis->items[0].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:521:            IRD_EXPECT_CLOSE(axisPath + "y", (*axisVal)[1], axis->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:523:            IRD_EXPECT_CLOSE(axisPath + "z", (*axisVal)[2], axis->items[2].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:593:                      static_cast<std::size_t>(freeExp->items[i].number))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:782:                        t.P() + rw::math::Vector3D<double>(translate->items[0].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:783:                                                           translate->items[1].number,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp:784:                                                           translate->items[2].number),

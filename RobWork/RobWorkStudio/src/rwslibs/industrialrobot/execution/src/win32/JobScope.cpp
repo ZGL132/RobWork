@@ -33,11 +33,14 @@ JobScope::JobScope()
 
 JobScope::~JobScope()
 {
-    // 句柄关闭即 KILL_ON_JOB_CLOSE 生效点：残留进程被 OS 兜杀（文档语义
-    // ——不在析构里另发 TerminateJobObject，避免双杀语义混叠；显式强杀
-    // 走 terminate()）。
+    reset();
+}
+
+void JobScope::reset() noexcept
+{
     if (m_job != nullptr) {
-        ::CloseHandle(m_job);
+        ::CloseHandle(m_job); // KILL_ON_JOB_CLOSE：本对象所拥有树的最后兜底。
+        m_job = nullptr;
     }
 }
 

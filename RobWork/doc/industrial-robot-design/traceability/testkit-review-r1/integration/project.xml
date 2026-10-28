@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0.087" timestamp="2026-10-27T21:27:21.254" name="AllTests">
+  <testsuite name="Tx7ProcessLock" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.087" timestamp="2026-10-27T21:27:21.255">
+    <testcase name="SecondInstanceChildDegradesReadOnly_ReportsHolderPid" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProcessLockContractTest.cpp" line="176" status="run" result="completed" time="0.087" timestamp="2026-10-27T21:27:21.255" classname="Tx7ProcessLock" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,2 @@
+verify-task-scope: CORE-T12 base=cdd0eae9bdba head=63e2b6305df3 changed=81 allowedRules=17 forbiddenRules=3
+verify-task-scope: PASS CORE-T12 —— 81 个路径全部在允许面内

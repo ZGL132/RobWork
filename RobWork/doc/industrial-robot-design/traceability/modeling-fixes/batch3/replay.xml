@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="14" failures="4" disabled="0" errors="0" time="0.042" timestamp="2026-10-28T15:45:01.300" name="AllTests">
+  <testsuite name="ModelingReview" tests="14" failures="4" disabled="0" skipped="0" errors="0" time="0.042" timestamp="2026-10-28T15:45:01.300">
+    <testcase name="DhThroughActualRuntimeVsAnalyticNonzeroQ" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="68" status="run" result="completed" time="0.003" timestamp="2026-10-28T15:45:01.300" classname="ModelingReview" />
+    <testcase name="PrismaticOffsetMustTranslateNotRotate" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="76" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.303" classname="ModelingReview" />
+    <testcase name="PrismaticVelocityAndAccelerationAreAccepted" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="78" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.304" classname="ModelingReview" />
+    <testcase name="StandardDhPreservesJointRateLimits" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="79" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.304" classname="ModelingReview" />
+    <testcase name="AuthoritySwitchMustPreserveNonzeroQAxis" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="80" status="run" result="completed" time="0.002" timestamp="2026-10-28T15:45:01.304" classname="ModelingReview" />
+    <testcase name="StructureAddRemoveAddMustNotDuplicateIds" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="90" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.307" classname="ModelingReview" />
+    <testcase name="StructureReorderKeepsPoseAndDrivetrainBinding" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="91" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.307" classname="ModelingReview" />
+    <testcase name="RejectedDrivetrainEditMustNotMutate" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.307" classname="ModelingReview" />
+    <testcase name="WorkCellRateUnitsAndInvalidText" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="94" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.307" classname="ModelingReview">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:94&#x0A;The difference between j.maxVelocity.value() and 3.141592653589793 is 176.85840734641022, which exceeds 1e-12, where&#x0A;j.maxVelocity.value() evaluates to 180,&#x0A;3.141592653589793 evaluates to 3.1415926535897931, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:94
+The difference between j.maxVelocity.value() and 3.141592653589793 is 176.85840734641022, which exceeds 1e-12, where
+j.maxVelocity.value() evaluates to 180,
+3.141592653589793 evaluates to 3.1415926535897931, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:94&#x0A;The difference between j.maxAcceleration.value() and 3.141592653589793 is 176.85840734641022, which exceeds 1e-12, where&#x0A;j.maxAcceleration.value() evaluates to 180,&#x0A;3.141592653589793 evaluates to 3.1415926535897931, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:94
+The difference between j.maxAcceleration.value() and 3.141592653589793 is 176.85840734641022, which exceeds 1e-12, where
+j.maxAcceleration.value() evaluates to 180,
+3.141592653589793 evaluates to 3.1415926535897931, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:94&#x0A;Expected equality of these values:&#x0A;  j.maxVelocity.state()&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  c::FieldState::Invalid&#x0A;    Which is: 4-byte object &lt;03-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:94
+Expected equality of these values:
+  j.maxVelocity.state()
+    Which is: 4-byte object <00-00 00-00>
+  c::FieldState::Invalid
+    Which is: 4-byte object <03-00 00-00>
+]]></failure>
+    </testcase>
+    <testcase name="UrdfEmptyOrMalformedMustNotThrow" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.308" classname="ModelingReview">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:95&#x0A;Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn&apos;t throw an exception.&#x0A;  Actual: it throws sdurws::ird::core::CoreError with description &quot;core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:95
+Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn't throw an exception.
+  Actual: it throws sdurws::ird::core::CoreError with description "core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:95&#x0A;Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn&apos;t throw an exception.&#x0A;  Actual: it throws sdurws::ird::core::CoreError with description &quot;core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:95
+Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn't throw an exception.
+  Actual: it throws sdurws::ird::core::CoreError with description "core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:95&#x0A;Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn&apos;t throw an exception.&#x0A;  Actual: it throws sdurws::ird::core::CoreError with description &quot;core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:95
+Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn't throw an exception.
+  Actual: it throws sdurws::ird::core::CoreError with description "core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）".
+]]></failure>
+    </testcase>
+    <testcase name="DiffMustShowPartAndRateChanges" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="96" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.308" classname="ModelingReview">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:96&#x0A;Expected: (count) &gt; (0u), actual: 0 vs 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:96
+Expected: (count) > (0u), actual: 0 vs 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:96&#x0A;Expected: (count) &gt; (0u), actual: 0 vs 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:96
+Expected: (count) > (0u), actual: 0 vs 0
+]]></failure>
+    </testcase>
+    <testcase name="PackageUiImportMustKeepParts" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="98" status="run" result="completed" time="0.031" timestamp="2026-10-28T15:45:01.308" classname="ModelingReview">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:98&#x0A;Expected equality of these values:&#x0A;  session.draft.toolObjects.size()&#x0A;    Which is: 0&#x0A;  1u&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp:98
+Expected equality of these values:
+  session.draft.toolObjects.size()
+    Which is: 0
+  1u
+    Which is: 1
+]]></failure>
+    </testcase>
+    <testcase name="DhZeroOffsetControl" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="99" status="run" result="completed" time="0." timestamp="2026-10-28T15:45:01.339" classname="ModelingReview" />
+    <testcase name="GeometryLocalPoseReachesProductionWorkCell" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp" line="110" status="run" result="completed" time="0.002" timestamp="2026-10-28T15:45:01.340" classname="ModelingReview" />
+  </testsuite>
+</testsuites>

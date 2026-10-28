@@ -39,24 +39,25 @@ CacheHitResult judgeCacheHit(const CacheHitQuery& request,
     // 冒充正式证据（表 1——Quick 不得单独支撑正式通过）；Verified 摘要配
     // Quick 请求＝隐式降级同样拒绝（模式是请求效力属性）。Preview 摘要在
     // 真实数据中不存在（make() 构造边界拒绝 Preview 包络，表 3 行 4），
-    // 若调用方手工构造则按普通模式失配处理——判定式不私加特判。
-    if (summary.mode != request.requestedMode) {
+    // 手工摘要也必须拒绝 Preview，不能产生正式命中。
+    if (summary.mode != request.requestedMode
+        || (request.requestedMode != core::EvaluationMode::Quick && request.requestedMode != core::EvaluationMode::Verified)) {
         result.reasons.push_back(CacheMissReason::ModeMismatch);
     }
     // 切片身份：CON-05 缓存键的字节精确等值。策略/种子/线程/配置/样本/
     // 环境版本已含于 sliceId（D-01/D-11）——此一处相等即覆盖全部输入
     // 要素，无需逐项再查；不等即输入已变（结果过期）。
-    if (summary.sliceId != request.requestSliceId) {
+    if (!summary.sliceId.isValid() || !request.requestSliceId.isValid() || summary.sliceId != request.requestSliceId) {
         result.reasons.push_back(CacheMissReason::SliceMismatch);
     }
     // 契约版本：算法契约升级后旧结果不再可信（EV-CPA-2——同 sliceId 不同
     // 契约＝模拟算法升级场景，拒绝复用）。
-    if (summary.evaluatorContractVersion != request.requestContractVersion) {
+    if (summary.evaluatorContractVersion == 0 || request.requestContractVersion == 0 || summary.evaluatorContractVersion != request.requestContractVersion) {
         result.reasons.push_back(CacheMissReason::ContractMismatch);
     }
     // Profile 身份：证据效力口径（§6.1）必须一致——Profile 不同＝判定
     // 证据"够不够"的标尺不同，跨标尺复用无语义。
-    if (summary.profileContentIdentity != request.requestProfileIdentity) {
+    if (!summary.profileContentIdentity.isValid() || !request.requestProfileIdentity.isValid() || summary.profileContentIdentity != request.requestProfileIdentity) {
         result.reasons.push_back(CacheMissReason::ProfileMismatch);
     }
 
@@ -96,22 +97,19 @@ CheckpointCompatibilityResult judgeCheckpointCompatibility(
 {
     CheckpointCompatibilityResult result;
 
-    // ---- 条件 1：评估键词形（C-2）----
-    // "evaluatorKey 相等"的承载：评估键进入切片身份（Slice.hpp——CON-04），
-    // 下方条件 2 的 sliceId 相等已隐含键相等，无需请求侧另带键字段。显式
-    // 字段做词形校验：键词形非法的记录＝损坏或伪造的检查点头（正常写入
-    // 路径产出的键必过 isValidEvaluationKey 词形闸门）——保守拒绝，绝不
-    // 带病恢复（NFR-COR-03）。
+    // EV-T13：显式核对不可信检查点头与请求键；不能由其自报 sliceId 推断。
     if (!isValidEvaluationKey(summary.evaluatorKey)) {
         result.reasons.push_back("evaluator-key-invalid");
     }
+    if (isValidEvaluationKey(summary.evaluatorKey) && (!isValidEvaluationKey(request.requestEvaluatorKey) || summary.evaluatorKey != request.requestEvaluatorKey))
+        result.reasons.push_back("evaluator-key-mismatch");
     // ---- 条件 2：切片身份（字节精确等值——输入变了就得从头跑）----
-    if (summary.sliceId != request.requestSliceId) {
+    if (!summary.sliceId.isValid() || !request.requestSliceId.isValid() || summary.sliceId != request.requestSliceId) {
         result.reasons.push_back("slice-mismatch");
     }
     // ---- 条件 3：契约版本（EV-CPA-2 观测 token"contract-mismatch"）----
     // 契约升级后旧进度的求解状态不可信（求解器内部状态布局可能已变）。
-    if (summary.evaluatorContractVersion != request.requestContractVersion) {
+    if (summary.evaluatorContractVersion == 0 || request.requestContractVersion == 0 || summary.evaluatorContractVersion != request.requestContractVersion) {
         result.reasons.push_back("contract-mismatch");
     }
     // ---- 条件 4：格式版本落在支持闭区间（C-3）----

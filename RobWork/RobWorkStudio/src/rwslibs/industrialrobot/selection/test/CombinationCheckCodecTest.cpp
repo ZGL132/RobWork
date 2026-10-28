@@ -111,6 +111,7 @@ TEST(SelCombinationCheckCodec, AxisFactsBundleRoundtrip)
     const GoldenAxes axes = makeGoldenAxes();
     AxisFactsBundle bundle;
     AxisWorkpointFacts f = makeJointFacts(axes.j1, "case-A", true);
+    f.motorTorqueHistory = {{0.0, 2.0}, {1.0, -3.0}, {5.0, 2.0}}; // s、N·m，双向时序往返
     f.requiredHoldingTorque = 12.0;  // N·m（保持需求）
     f.externalLoad = ExternalLoadFacts{1200.0, 500.0, 0.08};  // N/N/m
     f.mountRequirement = JointMountRequirement{"flangeA", "shaftB", "flangeA"};

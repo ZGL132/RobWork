@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "POL-T13",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/POL-T13.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+      "sha256": "42dfcfc78218c57009afcf3abfbdafddb044a6a88c67e1f3e9bb3afa0feb1d02",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "POL-T13：撤销runtime proximity豁免，仅增加正式诊断对端契约的精确测试边；引擎不变；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/DiagCodes.hpp",
+      "sha256": "9c57cfba833aa9ab3a2766091c5f794b73d91368a2172eeaf21c29113a71080f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：同步正式内置码表94项声明，不另建诊断通道；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "sha256": "6fec343dd75bdfe7c6271df1ff8c992bb5437b8c176978fad039cc9c111abcff",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：正式注册policy生产遗漏六码，复用既有分类/严重度/工厂语义；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "sha256": "82084c51079c775bfa138d2f99d9675660f3dd7d70c0dc4761ec2480ed1a103a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：同步94项全码集合与policy29项计数断言；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Collision.cpp",
+      "sha256": "92e9c848343e845730a4e4a1753327571cfbac5de9a8c7ac81b91a1e7bebedc5",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：仅在完整无碰撞覆盖时返回Evaluated，缺几何保持EvidenceMissing；计算仍归policy；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/AnalysisConfigTest.cpp",
+      "sha256": "ea2279bfe5bb68f3ce8f4311550fb1de9fdee1ae8dc5f6d01aecae05e6eb896c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：修正测试切片的来源快照闭包，不改变evidence产品规则；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
+      "sha256": "1b350564abdec106b5c1d456e88a1af69f96fffebd8c07077db751e6021fc843",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：回归真实缺几何场景及端口覆盖判定，不将替身冒充几何计算证明；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+      "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "POL-T13：注册正式诊断契约源与仅测试侧链接，不给产品policy反链diagnostics；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+      "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：删除评估器级后端与锁，说明会话私有生命周期，公开判定接口不变；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/Diagnostics.hpp",
+      "sha256": "e37e41565e8f40eb571f962131204998e4ec07cf194fcb751d02930575d3692f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：工程范围沿正式既有码拼写，不新增第二码表；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+      "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：同步正式诊断码说明，保持限位业务契约；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicySet.hpp",
+      "sha256": "4bd2556f99205d7b16d668ef9280cd9b10cccab8395b6eefec29cff8df01d40c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：解析与直接工厂共用碰撞域词表校验，不实现上游计算；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+      "sha256": "2fcd7cc891fe700fed1f070e5dea9eb43cb60bc6b598aed1e517e86126df780e",
+      "mode": "adapter",
+      "capabilities": [
+        "COLLISION"
+      ],
+      "boundary": "POL-T13：直接消费上游逐几何addModel/inCollision/distance；补有限性、存活、真实覆盖与摘要留痕，无新几何内核；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+      "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：修正有限端点/算术可表示性与比值计算，结构错误不可降格为可确认工程超限；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：调用共享域词表拒绝表外枚举，继续收集既有解析错误；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+      "sha256": "0675aa5af37b9e37bf4b4cb84c468ad2fef20d630bdcdb12659a26351c722ad5",
+      "mode": "adapter",
+      "capabilities": [
+        "COLLISION"
+      ],
+      "boundary": "POL-T13：各会话直接构造上游ProximityStrategyRW，避免跨WorkCell Frame ID几何缓存串用；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+      "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：真实上游盒/mesh与协议替身回归分开；解析oracle不复用生产变换/规则展开；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+      "sha256": "99d781c95ca6dfe67f2599fee77e8177b3c7d24815ae1f964cd94bc434878122",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：非有限、宽度溢出与次正规端点/中点回归，不放宽容差；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyDiagnosticsRegistryContractTest.cpp",
+      "sha256": "035935b528b219f2ece194c45cb52ace805f75c8724a9c6ba097a815fe1d347d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：逐生产码通过正式registry/factory，无替身注册表；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "POL-T13：移除重复碰撞源、测试与直接proximity/PQP链接；模型/名称owner仍归runtime；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CollisionSession.hpp",
+      "sha256": "deleted",
+      "mode": "remove",
+      "capabilities": [],
+      "boundary": "POL-T13：删除被宿主唯一policy入口替代的重复碰撞公共设施声明；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CollisionSession.cpp",
+      "sha256": "deleted",
+      "mode": "remove",
+      "capabilities": [],
+      "boundary": "POL-T13：删除Object-only规则和直接碰撞副本，不保留旧fallback；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CollisionSessionTest.cpp",
+      "sha256": "deleted",
+      "mode": "remove",
+      "capabilities": [],
+      "boundary": "POL-T13：随重复设施删除专属测试，由policy真实回归及宿主接线回归承接；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+      "sha256": "d4a85c157b23ecc8a82456941c8dbc5046cce703eede8b523a6693c08c7f9849",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：四入口共用既有policy/kinematics会话；只读快照别名和精确名称表转发，无模型构造；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+      "sha256": "2bb2904c13dc21aeaaa7ec7d1a42d1c26e9a6662d025a8f5b4764193d083a302",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：声明插件私有装配缝，保持域/role/mandatory完整策略进入policy；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+      "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "POL-T13：真实发布快照验证宿主域/邻接/必检及缺证；不冒充完整几何或GUI人工验收；不授新核心、不关闭旧pending，具体证据见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md"
+    }
+  ]
+}

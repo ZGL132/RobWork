@@ -1,0 +1,180 @@
+[
+  {
+    "name": "scan-clean",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\clean"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "name": "scan-library",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\library"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "scan-header",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\header"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "scan-dataset",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\dataset"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "scan-near-name",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\near-name"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "scan-near-directory",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\near-directory"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "name": "scan-near-library",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\near-library"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "name": "scan-missing-root",
+    "command": [
+      "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\missing-root"
+    ],
+    "expectedExit": 2,
+    "actualExit": 2,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-default-dict",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-missing-profile",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-unknown-at",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-optional-parameters",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-malformed-dictionary",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-missing-root",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\absent-data"
+    ],
+    "expectedExit": 2,
+    "actualExit": 2,
+    "status": "PASS"
+  }
+]

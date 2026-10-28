@@ -40,6 +40,12 @@
 #ifndef NOMINMAX
 #define NOMINMAX             // 阻止 min/max 宏污染本文件对 std::min/max 的潜在使用
 #endif
+// 上游集成全局仍声明 XP API 级别；本 Windows x64 测试实现需 Vista 起的
+// CompareStringOrdinal。只调整本翻译单元的 SDK 声明，不传播到公共头或框架。
+#if !defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0600
+#endif
 #include <windows.h>
 
 #include <chrono>
@@ -198,7 +204,12 @@ std::wstring utf8ToWide(const std::string& s)
  */
 std::wstring buildEnvironmentBlock(const std::map<std::string, std::string>& overrides)
 {
-    std::map<std::wstring, std::wstring> merged;
+    // Windows 的变量名按大小写不敏感的 ordinal 顺序合并，避免 PATH/Path 等
+    // 同名键共存后由子进程偶然读到旧值；不使用受进程 locale 影响的大小写转换。
+    const auto nameLess = [](const std::wstring& a, const std::wstring& b) {
+        return ::CompareStringOrdinal(a.c_str(), -1, b.c_str(), -1, TRUE) == CSTR_LESS_THAN;
+    };
+    std::map<std::wstring, std::wstring, decltype(nameLess)> merged{nameLess};
 
     // 第一遍：父环境全量装入。GetEnvironmentStringsW 返回
     // "NAME=VALUE\0NAME=VALUE\0...\0" 的双 NUL 结尾块，逐条扫描。

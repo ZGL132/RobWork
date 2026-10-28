@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.003" timestamp="2026-10-27T17:10:12.012" name="AllTests">
+  <testsuite name="IdentityGenerate" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-27T17:10:12.012">
+    <testcase name="EveryEntropyWordAffectsStream_CORE_T12" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp" line="222" status="run" result="completed" time="0.001" timestamp="2026-10-27T17:10:12.012" classname="IdentityGenerate">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:228&#x0A;Expected equality of these values:&#x0A;  first.used&#x0A;    Which is: 1&#x0A;  4u&#x0A;    Which is: 4&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:228
+Expected equality of these values:
+  first.used
+    Which is: 1
+  4u
+    Which is: 4
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:229&#x0A;Expected equality of these values:&#x0A;  same.used&#x0A;    Which is: 1&#x0A;  4u&#x0A;    Which is: 4&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:229
+Expected equality of these values:
+  same.used
+    Which is: 1
+  4u
+    Which is: 4
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:230&#x0A;Expected equality of these values:&#x0A;  last.used&#x0A;    Which is: 1&#x0A;  4u&#x0A;    Which is: 4&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:230
+Expected equality of these values:
+  last.used
+    Which is: 1
+  4u
+    Which is: 4
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:233&#x0A;Expected: (av) != (cv), actual: { 13915952638675311015, 17511516338625233250 } vs { 13915952638675311015, 17511516338625233250 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp:233
+Expected: (av) != (cv), actual: { 13915952638675311015, 17511516338625233250 } vs { 13915952638675311015, 17511516338625233250 }
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="EventPayload" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-27T17:10:12.014">
+    <testcase name="ActualVariantMismatch_CORE_T12" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="197" status="run" result="completed" time="0.001" timestamp="2026-10-27T17:10:12.014" classname="EventPayload">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:203&#x0A;Expected: event.asResultArchived() throws an exception of type CoreError.&#x0A;  Actual: it throws std::bad_variant_access with description &quot;bad variant access&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:203
+Expected: event.asResultArchived() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:206&#x0A;Expected: event.asRevisionCommitted() throws an exception of type CoreError.&#x0A;  Actual: it throws std::bad_variant_access with description &quot;bad variant access&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:206
+Expected: event.asRevisionCommitted() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:209&#x0A;Expected: event.asTaskStatusChanged() throws an exception of type CoreError.&#x0A;  Actual: it throws std::bad_variant_access with description &quot;bad variant access&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:209
+Expected: event.asTaskStatusChanged() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:211&#x0A;Expected: event.asDependencyInvalidated() throws an exception of type CoreError.&#x0A;  Actual: it throws std::bad_variant_access with description &quot;bad variant access&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:211
+Expected: event.asDependencyInvalidated() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReferenceBus" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T17:10:12.015">
+    <testcase name="DestructionUnsubscribes_CORE_T12" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp" line="215" status="run" result="completed" time="0." timestamp="2026-10-27T17:10:12.015" classname="ReferenceBus">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:220&#x0A;Expected equality of these values:&#x0A;  bus.subscriberCount()&#x0A;    Which is: 1&#x0A;  0u&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:220
+Expected equality of these values:
+  bus.subscriberCount()
+    Which is: 1
+  0u
+    Which is: 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:222&#x0A;Value of: sink.received().empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp:222
+Value of: sink.received().empty()
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

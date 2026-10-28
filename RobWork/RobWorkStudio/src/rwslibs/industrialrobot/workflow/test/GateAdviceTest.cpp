@@ -107,6 +107,20 @@ void setStageMissing(GateInputs& inputs, StageId stage, const std::string& domai
     FAIL() << "夹具错误：阶段无该聚合域 " << domainKey;  // 夹具自检（不静默）
 }
 
+/** DESIGN-T01/OPT-B/RPT-01-B：C期域缺输入不能锁住B期静态能力。 */
+TEST(WorkflowDesignReview, StaticOptimizationAndReportIgnoreMissingDynamicInputs)
+{
+    auto inputs = makeReadyBoard(1);
+    setStageMissing(inputs, StageId::TrajectoryDynamics, "dynamics", {"mass-missing"});
+    setStageMissing(inputs, StageId::Selection, "selection", {"catalog-missing"});
+    workflow::PureStageGateService gate;
+    const auto result = gate.evaluate(inputs);
+    EXPECT_FALSE(result.decisions[3].unlocked);
+    EXPECT_FALSE(result.decisions[4].unlocked);
+    EXPECT_TRUE(result.decisions[5].unlocked);
+    EXPECT_TRUE(result.decisions[6].unlocked);
+}
+
 /// 依赖失效事件（core 工厂构造——仅身份载荷；域键与原因由调用方关联，
 /// 模拟"L5 适配层折叠 evidence 投影"的产物，GateEvent 注释同源）。
 core::DomainEvent makeInvalidatedEvent()

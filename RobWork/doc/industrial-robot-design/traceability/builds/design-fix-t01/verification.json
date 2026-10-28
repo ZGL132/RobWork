@@ -1,0 +1,292 @@
+{
+  "taskId": "DESIGN-T01",
+  "baseCommit": "612143da54365c277a236d12edd665732f2388ee",
+  "branch": "redesign-main",
+  "environment": {
+    "compiler": "VS2022 x64 developer environment",
+    "qtPlatform": "windows",
+    "execution": "absolute executable path, one executable at a time",
+    "integratedBuild": "build; RWS_BUILD_INDUSTRIALROBOT:BOOL=ON",
+    "standaloneBuild": "build/govt24-smoke; CMAKE_HOME_DIRECTORY=industrialrobot root"
+  },
+  "groups": {
+    "integration": {
+      "runs": [
+        {
+          "executable": "sdurws_ird_drivetrain_test.exe",
+          "filter": "*",
+          "tests": 46,
+          "passed": 46,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "drivetrain-final.xml",
+          "log": "drivetrain-final.log",
+          "report": "drivetrain-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_drivetrain_contract_test.exe",
+          "filter": "*",
+          "tests": 15,
+          "passed": 15,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "drivetrain_contract-final.xml",
+          "log": "drivetrain_contract-final.log",
+          "report": "drivetrain_contract-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_evidence_test.exe",
+          "filter": "*",
+          "tests": 208,
+          "passed": 208,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "evidence-final.xml",
+          "log": "evidence-final.log",
+          "report": "evidence-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_evidence_contract_test.exe",
+          "filter": "*",
+          "tests": 14,
+          "passed": 14,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "evidence_contract-final.xml",
+          "log": "evidence_contract-final.log",
+          "report": "evidence_contract-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_selection_test.exe",
+          "filter": "*",
+          "tests": 298,
+          "passed": 297,
+          "skipped": 1,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "selection-final.xml",
+          "log": "selection-final.log",
+          "report": "selection-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_selection_contract_test.exe",
+          "filter": "*",
+          "tests": 64,
+          "passed": 64,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "selection_contract-final.xml",
+          "log": "selection_contract-final.log",
+          "report": "selection_contract-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_workflow_test.exe",
+          "filter": "*",
+          "tests": 198,
+          "passed": 198,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "workflow-final.xml",
+          "log": "workflow-final.log",
+          "report": "workflow-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_workflow_contract_test.exe",
+          "filter": "*",
+          "tests": 77,
+          "passed": 77,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "workflow_contract-final.xml",
+          "log": "workflow_contract-final.log",
+          "report": "workflow_contract-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_reporting_test.exe",
+          "filter": "*",
+          "tests": 235,
+          "passed": 235,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "reporting-consumers.xml",
+          "log": "reporting-consumers.log",
+          "report": "reporting-consumers-report.json"
+        },
+        {
+          "executable": "sdurws_ird_optimization_test.exe",
+          "filter": "*",
+          "tests": 215,
+          "passed": 214,
+          "skipped": 1,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "optimization-consumers.xml",
+          "log": "optimization-consumers.log",
+          "report": "optimization-consumers-report.json"
+        },
+        {
+          "executable": "sdurws_ird_trajectory_test.exe",
+          "filter": "SmoothRecheckTest.*",
+          "tests": 22,
+          "passed": 22,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "trajectory-clearance.xml",
+          "log": "trajectory-clearance.log",
+          "report": "trajectory-clearance-report.json"
+        },
+        {
+          "executable": "sdurws_ird_policy_test.exe",
+          "filter": "*Collision*:*Clearance*:*Distance*",
+          "tests": 57,
+          "passed": 57,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "policy-clearance.xml",
+          "log": "policy-clearance.log",
+          "report": "policy-clearance-report.json"
+        }
+      ],
+      "passed": 1447,
+      "skipped": 2,
+      "failed": 0
+    },
+    "standalone": {
+      "runs": [
+        {
+          "executable": "sdurws_ird_drivetrain_test.exe",
+          "filter": "*",
+          "tests": 46,
+          "passed": 46,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "drivetrain-smoke-final.xml",
+          "log": "drivetrain-smoke-final.log",
+          "report": "drivetrain-smoke-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_evidence_test.exe",
+          "filter": "*",
+          "tests": 208,
+          "passed": 208,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "evidence-smoke-final.xml",
+          "log": "evidence-smoke-final.log",
+          "report": "evidence-smoke-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_selection_test.exe",
+          "filter": "*",
+          "tests": 298,
+          "passed": 297,
+          "skipped": 1,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "selection-smoke-final.xml",
+          "log": "selection-smoke-final.log",
+          "report": "selection-smoke-final-report.json"
+        },
+        {
+          "executable": "sdurws_ird_workflow_test.exe",
+          "filter": "*",
+          "tests": 198,
+          "passed": 198,
+          "skipped": 0,
+          "disabled": 0,
+          "failed": 0,
+          "errors": 0,
+          "xml": "workflow-smoke-final.xml",
+          "log": "workflow-smoke-final.log",
+          "report": "workflow-smoke-final-report.json"
+        }
+      ],
+      "passed": 749,
+      "skipped": 1,
+      "failed": 0
+    }
+  },
+  "governance": {
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1",
+    "passed": 17,
+    "skipped": 0,
+    "failed": 0
+  },
+  "commands": {
+    "runner": "run.ps1 (copy of actual runner; output paths retain original invocation directory)",
+    "integrationBuild": "cmake --build build --config Release --target sdurws_ird_drivetrain_test sdurws_ird_drivetrain_contract_test sdurws_ird_evidence_test sdurws_ird_evidence_contract_test sdurws_ird_selection_test sdurws_ird_selection_contract_test sdurws_ird_workflow_test sdurws_ird_workflow_contract_test -- /m:4; selection was rebuilt after finite-duration guard",
+    "consumersBuild": "see consumers-build.log: reporting_test optimization_test trajectory_test policy_test and affected contract targets",
+    "standaloneBuild": "cmake --build build/govt24-smoke --config Release --target sdurws_ird_drivetrain_test sdurws_ird_evidence_test sdurws_ird_selection_test sdurws_ird_workflow_test -- /m:4; selection was rebuilt after finite-duration guard",
+    "gates": "cmake --build build --config Release --target ird_gates",
+    "docs": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/DESIGN-T01.json"
+  },
+  "notRun": [
+    "所有者独立验收",
+    "人工GUI点验（自动Widgets契约测试已执行）",
+    "DeepEvidence全库证据索引审计（按影响规则无需执行）"
+  ],
+  "limitations": [
+    "共同输入内容及电机转矩时序由域组装端经已有值端口提供；接口/codec/实际消费者已验证，无字段时保守拒绝或数据不足，本包不新增跨域直接链接",
+    "保留DYN-02/R1外力输入及P-DT-4负载惯量供给等既有未决项；不关闭迁移债务",
+    "未执行远程同步/推送"
+  ],
+  "checks": [
+    {
+      "name": "validate-docs (includes task and reuse checks)",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/DESIGN-T01.json",
+      "status": "PASS",
+      "log": "docs-final4.log",
+      "exitCode": 0
+    },
+    {
+      "name": "ird_gates",
+      "command": "cmake --build build --config Release --target ird_gates",
+      "status": "PASS",
+      "log": "ird-gates.log",
+      "exitCode": 0
+    },
+    {
+      "exitCode": 0,
+      "changedPaths": 151,
+      "log": "task-scope.log",
+      "status": "PASS",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/DESIGN-T01.json -Base 612143da54365c277a236d12edd665732f2388ee -Head 5f7f39147c503cb53c14782b1fa70ea6f96de363",
+      "name": "verify-task-scope"
+    },
+    {
+      "log": "commit-lint.log",
+      "status": "PASS",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 612143da54365c277a236d12edd665732f2388ee..5f7f39147c503cb53c14782b1fa70ea6f96de363",
+      "exitCode": 0,
+      "name": "commit-lint"
+    }
+  ],
+  "implementationCommit": "5f7f39147c503cb53c14782b1fa70ea6f96de363"
+}

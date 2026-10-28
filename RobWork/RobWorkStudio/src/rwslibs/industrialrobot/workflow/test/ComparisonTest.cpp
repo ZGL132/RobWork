@@ -716,6 +716,14 @@ TEST(WfComparison, ControllerAcceptsConsistentBaseline_WF_VER_224_Core)
 
     const std::string baseCid = std::string(60, '1') + "0030";
     primeDefaultMetrics(metricPort, {kBrA, kBrB}, {"甲", "乙"}, baseCid);
+    auto& comparisonFacts = metricPort.scripted.back();
+    comparisonFacts[0].baseline.branch = kBrA;
+    comparisonFacts[1].baseline.branch = kBrB;
+    comparisonFacts[1].baseline.inputBaselineId = makeCid(std::string(64, 'f'));
+    // DESIGN-T01：实际编排消费者接受不同设计，同时仍绑定共同需求/工况。
+    for (auto& fact : comparisonFacts) {
+        fact.baseline.comparisonInputId = makeCid(std::string(64, 'c'));
+    }
 
     // diff 脚本：首对（甲→乙）产出一条结构组条目＋P-OPT-8 警告。
     SchemeDiffEntry s1;

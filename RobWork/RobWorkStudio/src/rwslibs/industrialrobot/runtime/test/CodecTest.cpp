@@ -83,7 +83,7 @@ TEST(CodecRoundtripTest, NamedTcpRoundtripTamperAndOldMinor_REQ01_A15)
     ASSERT_EQ(decoded.get().tools()[0].namedTcpOffsets.size(), 1U);
     EXPECT_EQ(decoded.get(), model);
     EXPECT_EQ(rtcodec::encode(decoded.get()), bytes);
-    EXPECT_EQ(rtcodec::kVersionMinor, 3U); // B3g场景可选几何升版；A15完整命名目录仍保留。
+    EXPECT_EQ(rtcodec::kVersionMinor, 5U); // F01：独立末静段进入缓存与身份，旧缓存不能沿用。
     // 头7字节magic，随后major/minor各2字节大端；伪装为旧1.1精确拒绝。
     auto old = bytes; old[9] = 0; old[10] = 1;
     EXPECT_FALSE(rtcodec::parse(old).ok());
@@ -511,3 +511,34 @@ TEST(RT_ID_3_DisplayFieldExclusion, IdentityDomainEncodingIsStrictSubset)
 }
 
 }  // namespace
+
+/** @brief F01：末固定段全量入canonical身份/codec，不只验schema升版。 */
+TEST(CodecRoundtripTest, FlangeFixedSegmentRoundtripAndIdentity)
+{
+    auto f=richFixture();
+    const auto before=f.build();
+    f.chain.flangeOffset=rw::math::Transform3D<double>(rw::math::Vector3D<double>(.2,-.1,.3),
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    const auto model=f.build();
+    EXPECT_NE(model.contentIdentity(),before.contentIdentity());
+    const auto parsed=rtcodec::parse(rtcodec::encode(model));
+    ASSERT_TRUE(parsed.ok());
+    EXPECT_EQ(parsed.get(),model);
+}
+
+/** @brief F05：同资源不同局部安装姿态必须入身份并完整往返，旧1.4缓存拒绝。 */
+TEST(CodecRoundtripTest, GeometryReferencePlacementIdentity_F05)
+{
+    auto f=richFixture();
+    const auto original=f.build();
+    const rw::math::Transform3D<double> pose(rw::math::Vector3D<double>(.1,.2,.3),
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    f.chain.links[0].visual=f.manifest.front();f.chain.links[0].visualTransform=pose;
+    f.chain.links[1].collision=f.manifest.front();f.chain.links[1].collisionTransform=pose;
+    f.tools[0].geometry=f.manifest.front();f.tools[0].geometryTransform=pose;
+    f.scene[0].geometry=f.manifest.front();f.scene[0].geometryTransform=pose;
+    const auto placed=f.build();EXPECT_NE(original.contentIdentity(),placed.contentIdentity());
+    const auto bytes=rtcodec::encode(placed);const auto parsed=rtcodec::parse(bytes);
+    ASSERT_TRUE(parsed.ok());EXPECT_EQ(parsed.get(),placed);
+    auto old=bytes;old[9]=0;old[10]=4;EXPECT_FALSE(rtcodec::parse(old).ok());
+}

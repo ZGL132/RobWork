@@ -781,6 +781,16 @@ ParseOutcome runParsePipeline(const RawPolicyInput& input,
             "§5.1④ 权威语义为拒绝）",
             "显式设置启用域（Self/Environment/Tool/Scene 子集）后重新解析"));
     }
+    for (const CollisionDomain domain : input.collision.enabledDomains) {
+        if (!detail::isKnownCollisionDomain(domain)) {
+            outcome.hasError = true;
+            outcome.diagnostics.push_back(makeErrorDiag(
+                PolicyErrorCode::ApplicabilityInvalid, subject, "collision.enabledDomains",
+                "适用范围验证（POL-T13）", "碰撞启用域含未登记值",
+                "使用 Self/Environment/Tool/Scene 子集后重新解析"));
+            break;  // 同一字段只报告一次，仍收集其他字段的错误。
+        }
+    }
     // modes：core::EvaluationMode 强类型枚举——"合法子集"由类型层保证
     // （未知模式 token 不可表达）；空集＝全部模式适用（§4.2.1 空集语义）。
 

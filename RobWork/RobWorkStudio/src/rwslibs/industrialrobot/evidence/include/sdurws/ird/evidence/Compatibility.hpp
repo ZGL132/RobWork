@@ -50,13 +50,8 @@
  *     规则＝身份面（模式/切片/契约/Profile 四项）任一失配→Incompatible；
  *     身份面全对齐且有结果面失配（outcome≠Completed 或清单未封账）→
  *     DiagnosticOnly；全对齐→FullHit——与 §8.2 三档判定式逐字对应。
- *   - C-2 CheckpointSummary.evaluatorKey 暂以 std::string 承载（D-5 同款
- *     词形闸门 isValidEvaluationKey——InputSlice/Envelope 先例；类型化归
- *     Evaluator.hpp〔EV-T10〕落地后按需替换）。"evaluatorKey 相等"条件
- *     的承载：评估键进入切片身份（Slice.hpp——"进 sliceId——CON-04"），
- *     sliceId 相等 ⇒ 评估键相等，故请求侧无需另带键字段；显式字段做
- *     **词形校验**——键词形非法的检查点记录视为损坏/伪造（evaluator-
- *     key-invalid → Incompatible，保守拒绝）。
+ *   - C-2 EV-T13：请求显式携带 requestEvaluatorKey，既验词形又与检查点键相等；
+ *     切片相等不能替代对不可信检查点头字段的校验。缺失或错配保守拒绝。
  *   - C-3 "checkpoint 格式版本兼容"＝summary.checkpointFormatVersion 落在
  *     本构建支持的**闭区间**〔kCheckpointFormatVersionMin,
  *     kCheckpointFormatVersionMax〕内（当前 [1,1]）。格式版本随
@@ -119,8 +114,8 @@ namespace sdurws::ird::evidence {
  * inputBaselineId 为什么是 optional：§8.2 原文如此（缓存条目可能早于
  * 基准身份登记引入）。它**不参与** FullHit 判定（§8.2 判定式六条件无
  * 此项——切片身份已含求解配置/契约/环境版本，D-04 双层身份的分工：
- * sliceId 管复用、inputBaselineId 管比较基准一致性〔EVI-02/RPT-04，
- * checkComparisonBaselinesConsistent 消费〕），仅随摘要携带供调用方
+ * sliceId 管复用、inputBaselineId 管完整冻结输入复评；跨设计比较用
+ * Verdict.hpp的comparisonInputId共同摘要），仅随摘要携带供调用方
  * 做记录面核对。
  *
  * 值语义；线程安全：纯值（判定全程只读）。
@@ -185,12 +180,14 @@ struct CacheHitQuery {
     /// 请求的 Profile 内容身份（与摘要 profileContentIdentity 的相等是
     /// FullHit 的第四条件——证据效力口径必须一致）。
     core::ContentIdentity requestProfileIdentity;
+    /// EV-T13：检查点请求必须显式携带评估键；缓存判定仍按切片身份核对。
+    std::string requestEvaluatorKey;
 
     bool operator==(const CacheHitQuery& o) const
     {
         return requestedMode == o.requestedMode && requestSliceId == o.requestSliceId
             && requestContractVersion == o.requestContractVersion
-            && requestProfileIdentity == o.requestProfileIdentity;
+            && requestProfileIdentity == o.requestProfileIdentity && requestEvaluatorKey == o.requestEvaluatorKey;
     }
     bool operator!=(const CacheHitQuery& o) const { return !(*this == o); }
 };
@@ -299,9 +296,7 @@ inline constexpr std::uint32_t kCheckpointFormatVersionMax = 1;
  * 值语义；线程安全：纯值。
  */
 struct CheckpointSummary {
-    /// 写入检查点的评估器键（isValidEvaluationKey 词形；词形非法＝记录
-    /// 损坏/伪造——C-2 保守拒绝；键相等性由 sliceId 承载：评估键进入
-    /// 切片身份〔Slice.hpp——CON-04〕，sliceId 相等 ⇒ 评估键相等）。
+    /// 写入检查点的评估器键；与请求键精确相等且词形合法。
     std::string evaluatorKey;
     /// 检查点所属运行的切片身份（与请求 requestSliceId 相等是恢复第二条件
     /// ——输入变了就得从头跑，续跑旧输入毫无意义）。
@@ -337,7 +332,7 @@ struct CheckpointSummary {
  * reasons 为稳定 token 串（§8.2 原文 std::vector<std::string>——检查点
  * 拒绝原因需跨进程透出给 execution 通道层〔D-15 错误码化的上游输入〕，
  * 故以自描述 token 承载而非枚举）：词表冻结为五值——
- *   "evaluator-key-invalid"（评估键词形非法——C-2）/ "slice-mismatch"
+ *   "evaluator-key-invalid" / "evaluator-key-mismatch" / "slice-mismatch"
  *   （切片身份失配）/ "contract-mismatch"（契约版本失配——EV-CPA-2
  *   观测 token）/ "checkpoint-format-incompatible"（格式版本出支持区间
  *   ——C-3）/ "integrity-not-verified"（完整性未通过）。按检查序排列
@@ -369,7 +364,7 @@ struct CheckpointCompatibilityResult {
  * 判定式（§8.2 原文）：Resumeable ⇔ evaluatorKey 相等 ∧ sliceId 相等 ∧
  * 契约版本相等 ∧ checkpoint 格式版本兼容 ∧ integrityVerified。五条件逐项
  * 核对、全量收集拒绝原因（实现口径见各结构注释）：
- *   1 评估键：词形校验（键相等性由 sliceId 承载——C-2）；
+ *   1 评估键：请求与摘要词形合法且精确相等（C-2/EV-T13）；
  *   2 切片身份：summary.sliceId == request.requestSliceId（字节精确等值）；
  *   3 契约版本：summary.evaluatorContractVersion == request.requestContractVersion；
  *   4 格式版本：summary.checkpointFormatVersion ∈ 支持闭区间（C-3）；

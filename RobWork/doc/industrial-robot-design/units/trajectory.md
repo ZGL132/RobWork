@@ -851,7 +851,7 @@ PathSequence 评估→findings（含 pathParameter 段内定位）→该候选�
 
 - 复检协议数值参数＝**关节/笛卡尔最大步长默认值与细分上界、细分预算（最大层数/子段数）、碰撞几何代表点集生成规则**——全部登记于 REQUIREMENTS 附录 C P-06，负责人＝需求所有者＋WP-16，冻结前置＝阶段 C（TRJ）启用（WP-16-T02 为硬前置，DTB §2.17/§4.3 O-29）。
 - **P-06 未冻结前：本域复检协议不启用、T07 不开工**（DTB 依赖列明文）；实现落位后运行时数值读取顺序：EngineeringPolicySet 复检字段（若经 policy 卡增量修订引入）→ 否则按 P-06 冻结默认——**本域代码不携带任何默认值字面量**（TRJ-04③"复检不得使用私有线宽/阈值"；违反即 review 打回）。
-- 安全间距阈值消费 policy（§10.3）；当前后端无距离能力时 MarginViolation 不可产出（P-POL-11）→间距检查显式 NotApplicable＋`minCollisionClearance` NotApplicable（不伪造数值）。
+- 安全间距阈值消费 policy（§10.3）；策略要求正安全间距而后端缺少距离能力时（P-POL-11），policy返回Failed＋POLICY-CLL-DETECTOR-UNAVAILABLE，复检段判DataInsufficient；不能标为NotApplicable来豁免必需检查。仅策略未启用距离要求时，附加的最小距离指标可显式不适用。DESIGN-T01核查：CollisionQuery.cpp能力门和Recheck.cpp不可采信映射已按此执行，不新增距离算法。
 
 ### 11.3 复检执行要点
 

@@ -1023,7 +1023,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                     const pugi::xml_attribute xyz = sub.attribute("xyz");
                     joint.axisRaw = std::string(xyz.as_string(""));
                     if (!xyz || joint.axisRaw.empty()) {
-                        joint.axisIllegal = true;  // xyz 属性缺失
+                        joint.axisIllegal = true;
+                        joint.axisRaw = "axis@xyz=<empty-or-missing>"; // F12：非空定位文本。
                     } else {
                         joint.axisIllegal = !parseVec3Stable(joint.axisRaw, &joint.ax,
                                                              &joint.ay, &joint.az);
@@ -1037,14 +1038,14 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                         joint.hasLower = true;
                         if (!parseDoubleStable(lower.as_string(""), &joint.lower)) {
                             joint.limitIllegal = true;
-                            joint.limitRaw = std::string(lower.as_string(""));
+                            joint.limitRaw = "limit@lower=[" + std::string(lower.as_string("")) + "]";
                         }
                     }
                     if (upper) {
                         joint.hasUpper = true;
                         if (!parseDoubleStable(upper.as_string(""), &joint.upper)) {
                             joint.limitIllegal = true;
-                            joint.limitRaw = std::string(upper.as_string(""));
+                            joint.limitRaw = "limit@upper=[" + std::string(upper.as_string("")) + "]";
                         }
                     }
                     const pugi::xml_attribute effort = sub.attribute("effort");
@@ -1060,7 +1061,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                         joint.velocityText = std::string(velocity.as_string(""));
                         double v = 0.0;  // 值仅校验语法（无 schema 落点——不消费）
                         if (!parseDoubleStable(joint.velocityText, &v)) {
-                            joint.limitIllegal = true;  // velocity 语法非法同归 limit 面
+                            joint.limitIllegal = true;
+                            joint.limitRaw = "limit@velocity=[" + joint.velocityText + "]"; // F12：保留空/非法原文定位。
                         }
                     }
                 } else if (subName == "mimic") {
@@ -2217,7 +2219,7 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                 if (src.inertial.massIllegal) {
                     valueIllegal = true;
                     link.body.mass = core::SourcedValue<double>::invalid(
-                        src.inertial.massRaw);
+                        src.inertial.massRaw.empty() ? "mass@value=<empty-or-missing>" : src.inertial.massRaw);
                     ImportErrorItem item2;
                     item2.kind = "value-illegal";
                     item2.subject = "links[" + std::to_string(ci) + "].body.mass";
@@ -2435,6 +2437,13 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
         report.submittable = false;  // 非法数值/物理违例面（错误项清单承载定位）
     }
 
+    // F12：非法原文已落Invalid；同时进入正式诊断，不依赖UI读取报告才可见。
+    for(const auto& item:report.errors){
+        if(item.kind=="value-illegal"){
+            pushImportDiag(diagEntries,diagSeq++,kMdlImportValueIllegal,core::ObjectId{},
+                item.subject,item.detail,"修正源属性；非法值不可确认放行",item.span);
+        }
+    }
     // 诊断稳定排序出口（成功路径——排序与失败出口同一实现，见 flushDiags）。
     flushDiags(diagEntries, diags);
 

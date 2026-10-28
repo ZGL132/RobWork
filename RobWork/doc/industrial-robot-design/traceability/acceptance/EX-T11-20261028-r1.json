@@ -1,0 +1,64 @@
+{
+  "taskId": "EX-T11",
+  "baseCommit": "6a49e128c00f8cca3943083819ea59aea16a7be9",
+  "reviewedCommit": "4284e8e05a42",
+  "branch": "codex/core-review-fixes",
+  "verdict": "pass",
+  "admissionGate": {
+    "status": "fail-registered-inherited",
+    "detail": "validate-reuse 本会话复现唯一失败＝REUSE-FRESHNESS runtime/CMakeLists.txt（REUSE-T13/T30/T52/T53 冻结生产报告绑 5ef2e38b vs 当前 23b072f9）——本批零 runtime 改动（实施批 Check-BaselineBinding.py 与本会话门禁运行共同证明失败面与批前逐字一致），属 POL-T13 批登记的树级结案债，先于本批存在。FRESHNESS 之后的隐藏 COVERAGE 缺口经本会话同口径复算＝POL-T13 批的 16 文件 7,420 非空行（EX-T11 自身变更文件区段覆盖完整），未新增。两项树级债处置路径已登记于 POL-T13-20261028-r1.json admissionGate；EX-T11 收口条件与树级门禁转绿一致，任务保持 ready。",
+    "log": "ird-gates.log"
+  },
+  "createdAt": "2026-10-28T00:00:00.000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "所有者另开的独立验收会话（ZCode，无子智能体；同会话此前完成 CORE-T12/TK-T13/EV-T13/PRJ-T19/POL-T13 验收及 PRJ-T19 准入结案批）",
+    "authorization": "所有者提交 EX-T11 送验并指示本会话独立验收；C1 与 EXR-10 局部签名修订经所有者批准（PROPOSALS.md）",
+    "constraints": "未参与实施；除本验收产物目录与探针隔离构建目录（build/fix-execution-acc，不入库）外未修改任何文件；未远程同步、未改写历史、未触碰 main；受影响目标与隔离探针增量构建后真实重跑。"
+  },
+  "scope": "独立复验 6a49e128c..4284e8e05a42（单实施提交，193 路径允许面）：EXR-01 准入以登记映射反解值为真值并拒绝自报冲突、EXR-03 检查点 run 同源校验、EXR-04 worker 序号/整帧共锁与分片心跳、EXR-05 重组首片核验/命令五元组+严格 seq 阶段 A 不换绑/监督器握手序、EXR-07 reader 提前停止后自有句柄收割与 Dead 墓碑保留、EXR-08 CancelIoEx 后 GetOverlappedResult(TRUE) 等完成再释放、EXR-09/C1 订阅位失效+等待本位在投回调（所有者批准签名修订）、EXR-10 聚合 optional（失采/溢出 nullopt、空池有值 0）、EXR-11 STARTUPINFOEX 仅继承本任务两管道句柄、EXR-13 模型同键幂等完整字节比较与候选稳定序、EXR-14 发布边界冻结接收集合；EXR-02/06/12 依 C5/C2 裁决保留（PROPOSALS.md 方案在案）不私造。",
+  "counts": {
+    "failed": 0,
+    "passed": 450,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "本会话真实重跑：集成 execution 169＋contract 44＋独立冒烟 169＋44＋UI 消费者 12＋9（sdurws_ird_ui_contract_test 目标，实施批同过滤）＋取消协作基准 1（NormalCancelSettleRealWorkerThresholds 8.2s）＋隔离探针绿 2（EXR08/EXR10）；隔离探针红（起始实现对照）0/2 为预期反例不计入通过；ird_gates/validate-reuse/scope/commit-lint 另列 checks"
+  },
+  "checks": [
+    "现场：工作树干净、HEAD=4284e8e05a42＝送验 Head＝实施提交；README/PROPOSALS/ORIGINAL-REVIEW/logs 完整，红→绿（w1 0/3→3/0、writer 0/2→2/0、ipc 0/1→1/0、process 0/1→1/0、bus 0/3→3/0、model 0/3→3/0、phase-before-accept r3）与失败历史（Dead 墓碑过早删除 39/2、Status 当 bool 编译错、探针前两次构造失误）原样保留。",
+    "diff 审查成立：C1 订阅位重设计（active/inCallback 仅总线锁下访问；投递线程检查后同锁置位关闭 UAF 窗；退订条件等待释放总线锁，完成后 sink 可销毁；旧句柄仅移除本位）与 EXR-14 发布冻结接收集合语义正确；EXR-01 准入以 tryResolve 结果覆写 subject、自报不一致拒绝（NameUnresolved 轨）；其余九项逐条对应实现与注释。",
+    "测试真实重跑：集成 169/169＋44/44、冒烟 169/169＋44/44（ird-test-report decisive，零跳过零失败）；冒烟树 build/execution-smoke 的 CMAKE_HOME_DIRECTORY/RobWork_DIR 指向本树（独立配置核对）。",
+    "UI 消费者：sdurws_ird_ui_contract_test 目标 UiLinkage/SessionContract 12/12＋PeerBridge/InteractionTaskContractTest 9/9（首跑误用 ui_test 目标零命中，按实施批 verification 同过滤在契约目标复跑）；取消协作基准 NormalCancelSettleRealWorkerThresholds_WP23T03_B02 PASS（8.2s；首跑 *Cancel* 通配多选入 30s 强杀用例，已按实施批精确过滤更正）。",
+    "隔离探针独立构建运行：probes/ 源码＋compile-inputs.rsp 经 VsDevCmd(D 盘)/Build-Probes.py/cl @red/@green 重编；red（EXR_BASELINE 起始实现＋获批 optional 返回适配）0/2＝预期反例、green（当前实现）2/2（EXR08 PendingReadCompletesBeforeStorageDies、EXR10 聚合失采/恢复），红绿对照证明完成次序与失采语义。",
+    "上游复用核实引用一致：ThreadPool/ThreadSimulator/BINArchive/ReferenceEventBus 的不可替代理由与起始 SHA 检索在案；BINArchive 固定字节合同差异、core 参考总线无线程/C1 能力的边界保留。",
+    "红线与树级债定性：ird_gates 红线子阶段 R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（本会话重跑）；validate-reuse 唯一失败＝runtime/CMakeLists.txt 冻结生产报告绑定（本批零 runtime 改动，失败面与批前一致）；隐藏 COVERAGE 缺口复算＝恰为 POL-T13 批 16 文件 7,420 行，EX-T11 自身变更文件区段覆盖完整、无新增债。",
+    "范围与提交：verify-task-scope 显式 -Base 6a49e128c -Head 4284e8e05a42 exit 0（193 路径全在 35 条允许面，3 条禁止面零触碰）；commit-lint 单提交 PASS。"
+  ],
+  "issues": [],
+  "notRun": [
+    "execution_perf_test 其余性能套件、真实 GUI E2E、正式业务 evaluator 经 worker 的 E2E：维持实施批 NOT RUN 口径（脚本替身真进程只证通道/治理）",
+    "取消基准的强杀用例（TimeoutForceKillRetainsCheckpoint）：本会话首跑通配时已真实执行并通过（30.5s），但不在送验申报范围，未计入通过数",
+    "生产证据四象限重跑与 POL-T13 16 文件矩阵补全：树级登记债，归 POL-T13 结案批",
+    "EXR-02/06/12 与 S1—S6/C3/C4 疑点：依 C5/C2 裁决保留，PROPOSALS.md 方案在案",
+    "全库 DeepEvidence、远程同步：按增量范围不触发"
+  ],
+  "commands": [
+    { "name": "execution-unit", "command": "sdurws_ird_execution_test.exe（集成全量）", "exitCode": 0, "passed": true, "log": "integration/unit.log", "evidence": "integration/unit.xml＋ird-test-report（169/169 decisive）" },
+    { "name": "execution-contract", "command": "sdurws_ird_execution_contract_test.exe（集成全量）", "exitCode": 0, "passed": true, "log": "integration/contract.log", "evidence": "44/44 decisive" },
+    { "name": "smoke", "command": "build/execution-smoke 两目标全量", "exitCode": 0, "passed": true, "log": "smoke/unit.log＋contract.log", "evidence": "169/169＋44/44 decisive（独立配置树核对）" },
+    { "name": "ui-consumer", "command": "sdurws_ird_ui_contract_test.exe --gtest_filter=PeerBridgeContractTest.*:UiLinkage.*:SessionContract.*:InteractionTaskContract.*", "exitCode": 0, "passed": true, "log": "consumer/ui-consumer.log", "evidence": "12/12 decisive" },
+    { "name": "ui-port", "command": "sdurws_ird_ui_contract_test.exe --gtest_filter=PeerBridge.*:InteractionTaskContractTest.*", "exitCode": 0, "passed": true, "log": "consumer/ui-port.log", "evidence": "9/9 decisive" },
+    { "name": "cancel-perf", "command": "sdurws_ird_execution_perf_test.exe --gtest_filter=CancelTimingBenchmark.NormalCancelSettleRealWorkerThresholds_WP23T03_B02", "exitCode": 0, "passed": true, "log": "consumer/cancel-perf.log", "evidence": "8.2s PASS（送验口径=正常协作取消）" },
+    { "name": "probes", "command": "VsDevCmd→Build-Probes.py→cl @red/@green→lifecycle-probes-{red,green}.exe *EXR10Probe:*EXR08Probe", "exitCode": 0, "passed": true, "log": "probes/probes-green.log", "evidence": "red 0/2 预期反例＋green 2/2（probes/*.xml＋ird-test-report；隔离构建目录不入库）" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/execution-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "红线子阶段全部零命中" },
+    { "name": "validate-reuse", "command": "pwsh validate-reuse.ps1（工作树态）", "exitCode": 1, "passed": false, "log": "ird-gates.log", "evidence": "REUSE-FRESHNESS runtime/CMakeLists.txt＝树级登记债（POL-T13 批性质，先于本批）" },
+    { "name": "scope", "command": "pwsh verify-task-scope.ps1 -TaskFile …/EX-T11.json -Base 6a49e128c… -Head 4284e8e05a42", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "193 路径全部允许面" },
+    { "name": "commit-lint", "command": "pwsh commit-lint.ps1 -Range 6a49e128c….4284e8e05a42", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "4284e8e05 PASS" }
+  ],
+  "executionNotes": [
+    "本验收为重跑型：四个集成/性能/UI 目标与冒烟两目标增量重建（逐目标 -m:1）后执行；探针隔离构建于 build/fix-execution-acc（gitignore 域，不入库），旧实现取起始 SHA 仅适配获批 optional 返回类型，与实施批方法一致。",
+    "UI 消费者与取消基准首跑因目标/过滤选择偏差零命中或多选，已按实施批 verification.json 原始过滤在正确目标复跑；首跑输出不销毁、不计入通过数。",
+    "UI 全量套件本批未运行（EX-T11 仅触 UI 两处注释，实施批口径=消费者过滤）；POL-T13 验收已有全量 344/346 登记基线。"
+  ],
+  "limitations": "PASS 仅覆盖 EX-T11 送验范围（6a49e128c..4284e8e05a42）的 11 项修正实施与回归面。任务收口条件＝树级门禁转绿（runtime 冻结生产证据重跑重绑＋POL-T13 16 文件矩阵补全两项既有债，见 POL-T13-20261028-r1.json admissionGate），在此之前任务保持 ready。EXR-02/06/12 依 C5/C2 裁决保留，S1—S6/C3/C4 疑点维持原登记；脚本 worker 真进程不证明正式算法经 worker 执行；L5 装配未扩大。65%/70%、取消预算与支持范围不扩大。"
+}

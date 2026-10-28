@@ -264,6 +264,12 @@ public:
      */
     std::optional<RevisionManifest> tryRevision(const RevisionId& id) const;
 
+    /** @brief 在已装载修订中检查对象引用，不读取对象目录。
+     * @param oid [in] 对象身份；cv [in] 内容版本。
+     * @return 是否有精确引用；调用者须持writer锁，确保索引只含已提交闭包。
+     */
+    bool referencesObject(core::ObjectId oid, core::ContentVersion cv) const;
+
     /**
      * @brief try 轨读取元数据记录；未注册返回 nullopt 不抛。
      *

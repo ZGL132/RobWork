@@ -21,6 +21,9 @@
 #include <cstdio>
 #include <cstring>
 #include <stdexcept>
+#include <cstdlib>
+#include <locale.h>
+#include <limits>
 #include <system_error>
 
 namespace sdurws::ird::testkit {
@@ -28,6 +31,37 @@ namespace {
 
 /// 嵌套深度上限（防恶意/意外深嵌套的栈溢出——远超合法数据集形态）。
 constexpr std::size_t kMaxDepth = 200;
+
+/**
+ * @brief 数字转换独占显式 C locale；不更改进程 locale，保留次正规/下溢舍入。
+ * @param token [in] 已经 JSON 文法校验的十进制串。
+ * @return 完整转换值；转换不完整返回 NaN，由扫描器以原行列归类失败。
+ * @throws TestKitError(EnvUnavailable) locale 创建失败。
+ */
+double parseDecimal(const std::string& token)
+{
+    struct NumericLocale {
+#ifdef _WIN32
+        _locale_t handle = _create_locale(LC_NUMERIC, "C");
+        ~NumericLocale() { if (handle != nullptr) { _free_locale(handle); } }
+#else
+        locale_t handle = newlocale(LC_NUMERIC_MASK, "C", nullptr);
+        ~NumericLocale() { if (handle != nullptr) { freelocale(handle); } }
+#endif
+    };
+    static const NumericLocale locale;
+    if (locale.handle == nullptr) {
+        throw TestKitError(TestKitErrorKind::EnvUnavailable, "json-parse: 无法建立 C 数值 locale");
+    }
+    char* end = nullptr;
+#ifdef _WIN32
+    const double value = _strtod_l(token.c_str(), &end, locale.handle);
+#else
+    const double value = strtod_l(token.c_str(), &end, locale.handle);
+#endif
+    // 文法已在扫描器中严格校验，此处只接受完整转换。
+    return end == token.c_str() + token.size() ? value : std::numeric_limits<double>::quiet_NaN();
+}
 
 /**
  * @brief 递归下降解析器（文本只读；位置与路径为可变状态）。
@@ -395,16 +429,10 @@ private:
             if (eof() || peek() < '0' || peek() > '9') { fail("指数缺数字"); }
             while (!eof() && peek() >= '0' && peek() <= '9') { advance(); }
         }
-        // 语法段提取后经 strtod（标准六进制/Infinity 等已被语法层排除）。
+        // 语法仍由上面的 JSON 扫描约束；转换显式使用 C locale，
+        // 避免进程 LC_NUMERIC 改变小数点，并保留原有极小值舍入到零行为。
         const std::string token{text_.substr(startPos, pos_ - startPos)};
-        double value = 0.0;
-        const std::string tokenz = token + '\0';
-        const char* begin = tokenz.c_str();
-        char* end = nullptr;
-        value = std::strtod(begin, &end);
-        if (end != begin + token.size()) {
-            fail("数字解析不完整（内部错误形态）");
-        }
+        const double value = parseDecimal(token);
         if (!std::isfinite(value)) {
             // 溢出按数字起始位置报告（扫描已前进——游标快照避免行列漂移）。
             line_ = startLine;
@@ -414,6 +442,15 @@ private:
         JsonValue v;
         v.kind = JsonValue::Kind::Number;
         v.number = value;
+        // 非负整数字面量经标准 from_chars 直接进入 uint64 轨，跳过 double 舍入。
+        // 超出 uint64 的通用 JSON 数字仍按既有 double 范围处理；整数字段装载会拒绝。
+        if (token.find_first_of("-.eE") == std::string::npos) {
+            std::uint64_t integer = 0;
+            const auto parsed = std::from_chars(token.data(), token.data() + token.size(), integer);
+            if (parsed.ec == std::errc{} && parsed.ptr == token.data() + token.size()) {
+                v.number.setUnsigned(integer);
+            }
+        }
         return v;
     }
 
@@ -455,10 +492,15 @@ void dumpEscaped(const std::string& s, std::string* out)
 }
 
 /// 数字最短往返输出（std::to_chars——确定性与按位可还原；失败为不可达防御）。
-void dumpNumber(double v, std::string* out)
+void dumpNumber(const JsonNumber& v, std::string* out)
 {
     char buf[64];
-    const auto res = std::to_chars(buf, buf + sizeof(buf), v);
+    if (!std::isfinite(static_cast<double>(v))) {
+        throw TestKitError(TestKitErrorKind::Usage, "json-dump: 非有限数字必须在报告边界显式表示");
+    }
+    const auto integer = v.exactUnsigned();
+    const auto res = integer ? std::to_chars(buf, buf + sizeof(buf), *integer)
+                             : std::to_chars(buf, buf + sizeof(buf), static_cast<double>(v));
     if (res.ec != std::errc()) {
         throw TestKitError(TestKitErrorKind::Usage, "json-dump: 数字序列化失败（不可达防御分支）");
     }
@@ -511,6 +553,31 @@ const JsonValue* JsonValue::find(std::string_view key) const noexcept
     return nullptr;
 }
 
+JsonNumber::operator double() const noexcept
+{
+    if (const auto* integer = std::get_if<std::uint64_t>(&value_)) {
+        return static_cast<double>(*integer);
+    }
+    return std::get<double>(value_);
+}
+
+std::optional<std::uint64_t> JsonNumber::exactUnsigned() const noexcept
+{
+    if (const auto* integer = std::get_if<std::uint64_t>(&value_)) { return *integer; }
+    return std::nullopt;
+}
+
+std::optional<std::uint64_t> JsonNumber::tryUnsigned() const noexcept
+{
+    if (const auto integer = exactUnsigned()) { return integer; }
+    const double value = std::get<double>(value_);
+    // 非整数字面形式的 double 只兼容安全整数区；大 uint64 必须用整数 token，
+    // 防止 9007199254740993.0 等在转换前已舍入后冒充精确种子。
+    if (!std::isfinite(value) || value < 0 || value >= 9007199254740992.0
+        || std::trunc(value) != value) { return std::nullopt; }
+    return static_cast<std::uint64_t>(value);
+}
+
 bool JsonValue::deepEquals(const JsonValue& o) const
 {
     if (kind != o.kind) { return false; }
@@ -518,9 +585,20 @@ bool JsonValue::deepEquals(const JsonValue& o) const
     case Kind::Null:   return true;
     case Kind::Bool:   return boolean == o.boolean;
     case Kind::Number: {
+        const auto integer = number.exactUnsigned();
+        const auto otherInteger = o.number.exactUnsigned();
+        if (integer || otherInteger) {
+            if (integer && otherInteger) { return *integer == *otherInteger; }
+            const auto exact = integer ? *integer : *otherInteger;
+            const double floating = integer ? o.number : number;
+            return std::isfinite(floating) && !std::signbit(floating)
+                   && floating < std::ldexp(1.0, 64) && std::trunc(floating) == floating
+                   && static_cast<std::uint64_t>(floating) == exact;
+        }
         // 按位比较（确定性口径：-0.0 与 0.0 视为不同——序列化输出本就不同）。
         if (std::isnan(number) || std::isnan(o.number)) { return false; }
-        return std::memcmp(&number, &o.number, sizeof(double)) == 0;
+        const double a = number, b = o.number;
+        return std::memcmp(&a, &b, sizeof(double)) == 0;
     }
     case Kind::String: return text == o.text;
     case Kind::Array:

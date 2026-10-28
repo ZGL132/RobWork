@@ -384,16 +384,13 @@ std::optional<ModelingError> applyCentroidEdit(
             {"resolution", "none"},  // 用户既未选迁移也未选覆盖（V-17 分支 c）
         };
         error.detail =
-            "质心修改未决议：须显式二选一（migrate-inertia 平行轴迁移/"
+            "质心修改未决议：须显式二选一（migrate-inertia 整体平移保持质心惯量/"
             "overwrite-inertia 覆盖完整张量）——不允许质心与惯量基准静默脱钩"
             "（MDL-05/M-2，卡 §5.3 规则 2）";
         return error;
     }
 
     // ---- 接受分支：先算全部新值、后一次性提交（强保证——中途无失败路径）。
-    const rw::math::Vector3D<double> oldCom = body.centerOfMass.value();
-    const rw::math::Vector3D<double> delta = newCenterOfMass - oldCom;  // d（m）
-
     // 新 com：用户直接修改→UserProvided 覆盖（§5.3 规则 1——估算值可被
     // 权威值覆盖，来源标记如实切换不伪装）。
     BodyData updated = body;
@@ -402,15 +399,8 @@ std::optional<ModelingError> applyCentroidEdit(
         core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
 
     if (*resolution == CentroidEditResolution::MigrateInertia) {
-        // 分支 (a)：惯量按平行轴迁移（d＝质心位移）。经估算器实例调用——
-        // 平行轴公式的单一实现点（估算合成与确认流共用同一份算式，两处
-        // 各写一份会漂移）。inertia 保留原 provenance：迁移是基准点移动，
-        // 张量数值的来源事实不变（估算衍生物仍是估算衍生物——头注）。
-        const PropertyEstimator estimator;
-        const InertiaTensor migrated = estimator.migrateByParallelAxis(
-            body.inertia.value(), body.mass.value(), delta);
-        updated.inertia = core::SourcedValue<InertiaTensor>::provided(
-            migrated, body.inertia.provenance());
+        // C01：刚体整体安装平移不改变关于自身实际COM的张量数值/来源。
+        updated.inertia = body.inertia;
     } else {
         // 分支 (b)：强制覆盖完整张量（用户输入六分量，质心基准/连杆系姿态
         // 不变——M-2 基准语义由本函数契约定死，调用方无需再声明）。来源

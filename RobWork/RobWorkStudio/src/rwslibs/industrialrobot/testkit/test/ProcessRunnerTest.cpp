@@ -28,6 +28,7 @@
 #include <sdurws/ird/testkit/TestPaths.hpp>   // TestKitError：错误分类断言用
 
 #include <chrono>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
@@ -247,6 +248,70 @@ TEST(ProcessRunnerStart, EnvOverrideReachesChild)
     EXPECT_TRUE(watch.awaitLineInFile(outFile, "IRD_PROBE_VAR=probe-value-42",
                                       5000ms));
     EXPECT_EQ(runner.outcome().kind, ProcessExitKind::Exited);   // 收尾
+}
+
+/** 第一轮评审 R08：Windows 环境变量名不区分大小写；父环境必须被覆盖并恢复。 */
+TEST(ProcessRunnerStart, EnvOverrideIsCaseInsensitive_ReviewR08)
+{
+    const char* const name = "IRD_REVIEW_ENV_CASE";
+    const char* old = std::getenv(name);
+    struct RestoreEnvironment {
+        std::string name;
+        std::string value;
+        ~RestoreEnvironment() { (void)_putenv_s(name.c_str(), value.c_str()); }
+    } restore{name, old == nullptr ? "" : old};
+    ASSERT_EQ(_putenv_s(name, "parent"), 0);
+    TempDir wd{"pr-env-case"};
+    const auto outFile = wd.path() / "env.txt";
+    auto spec = makeSpec({"echo-env", name, outFile.u8string()});
+    spec.env["ird_review_env_case"] = "override";
+    TestProcessRunner runner;
+    runner.start(spec, wd.path());
+    EXPECT_EQ(runner.outcome().kind, ProcessExitKind::Exited);
+    std::ifstream input(outFile, std::ios::binary);
+    const std::string text{std::istreambuf_iterator<char>{input}, {}};
+    EXPECT_NE(text.find("IRD_REVIEW_ENV_CASE=override"), std::string::npos) << text;
+}
+
+/** R09/F-016：lint 真子进程验证默认字典及三类拒绝。具体退出码由独立 CLI 探针核对；
+ * ProcessRunner 现契约将所有非零退出归 Crashed，不能把其固定 exitCode=0 当成功。 */
+TEST(TestdataLint, LoadsProfileAndValidatesAtDictionary_ReviewR09)
+{
+    TempDir wd{"lint-contract"};
+    const fs::path source{IRD_TESTDATA_ROOT};
+    const auto root = wd.path() / "data";
+    const auto family = fs::path{"golden"} / "pol-collision-analytic";
+    fs::create_directories(root / "golden");
+    fs::copy(source / family, root / family, fs::copy_options::recursive);
+    fs::create_directories(root / "tolerance");
+    fs::copy(source / "tolerance" / "pol-analytic", root / "tolerance" / "pol-analytic",
+             fs::copy_options::recursive);
+    fs::copy_file(source / "requirements-ids.json", root / "requirements-ids.json");
+    const auto run = [&] {
+        ProcessSpec spec;
+        spec.executable = helperExe().parent_path() / "sdurws_ird_testdata_lint.exe";
+        spec.args = {"--root", root.u8string()};
+        spec.timeout = 30000ms;
+        TestProcessRunner runner;
+        runner.start(spec, wd.path());
+        const auto result = runner.outcome();
+        return result.kind;
+    };
+    ASSERT_EQ(run(), ProcessExitKind::Exited);
+    fs::rename(root / "tolerance", root / "hidden-tolerance");
+    EXPECT_EQ(run(), ProcessExitKind::Crashed);
+    fs::rename(root / "hidden-tolerance", root / "tolerance");
+    const auto path = root / family / "1.0.0" / "manifest.json";
+    std::ifstream input(path, std::ios::binary);
+    std::string text{std::istreambuf_iterator<char>{input}, {}};
+    input.close();
+    const auto at = text.find("AT-37");
+    ASSERT_NE(at, std::string::npos);
+    text.replace(at, 5, "AT-999");
+    std::ofstream(path, std::ios::binary) << text;
+    EXPECT_EQ(run(), ProcessExitKind::Crashed);
+    std::ofstream(root / "requirements-ids.json", std::ios::binary) << "{}";
+    EXPECT_EQ(run(), ProcessExitKind::Crashed);
 }
 
 /// workingDir：子进程当前目录＝start 给定目录（相对路径产物落在 wd 内——

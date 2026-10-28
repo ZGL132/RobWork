@@ -1,0 +1,11 @@
+Note: Google Test filter = Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from Tx7ProcessLock
+[ RUN      ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid
+[       OK ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid (100 ms)
+[----------] 1 test from Tx7ProcessLock (100 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (101 ms total)
+[  PASSED  ] 1 test.

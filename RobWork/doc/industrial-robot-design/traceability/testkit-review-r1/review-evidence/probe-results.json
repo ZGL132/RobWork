@@ -1,0 +1,506 @@
+[
+  {
+    "case": "00-Review.FiniteSideEffect",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.FiniteSideEffect",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\00-Review.FiniteSideEffect.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\00-Review.FiniteSideEffect.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "xml": {
+      "tests": "1",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:23.741",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.FiniteSideEffect"
+    ]
+  },
+  {
+    "case": "01-Review.NonFiniteReport",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.NonFiniteReport",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\01-Review.NonFiniteReport.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\01-Review.NonFiniteReport.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:23.787",
+      "name": "AllTests"
+    },
+    "reportError": "Expecting value: line 46 column 21 (char 1048)"
+  },
+  {
+    "case": "02-Review.LengthReport",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.LengthReport",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\02-Review.LengthReport.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\02-Review.LengthReport.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:23.843",
+      "name": "AllTests"
+    },
+    "reportError": "Expecting value: line 47 column 23 (char 1072)"
+  },
+  {
+    "case": "03-Review.SchemaRequired",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.SchemaRequired",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\03-Review.SchemaRequired.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\03-Review.SchemaRequired.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.034",
+      "timestamp": "2026-10-27T19:51:23.897",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.SchemaRequired"
+    ]
+  },
+  {
+    "case": "04-Review.IdentityCannotFallBack",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.IdentityCannotFallBack",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\04-Review.IdentityCannotFallBack.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\04-Review.IdentityCannotFallBack.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.019",
+      "timestamp": "2026-10-27T19:51:23.971",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.IdentityCannotFallBack"
+    ]
+  },
+  {
+    "case": "05-Review.FirstDivergence",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.FirstDivergence",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\05-Review.FirstDivergence.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\05-Review.FirstDivergence.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.036",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.FirstDivergence"
+    ]
+  },
+  {
+    "case": "06-Review.ReproSeedExact",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.ReproSeedExact",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\06-Review.ReproSeedExact.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\06-Review.ReproSeedExact.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.077",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.ReproSeedExact"
+    ]
+  },
+  {
+    "case": "07-Review.ManifestValidation",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.ManifestValidation",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\07-Review.ManifestValidation.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\07-Review.ManifestValidation.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.142",
+      "timestamp": "2026-10-27T19:51:24.130",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.ManifestValidation"
+    ]
+  },
+  {
+    "case": "08-Review.JsonLocale",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.JsonLocale",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\08-Review.JsonLocale.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\08-Review.JsonLocale.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.004",
+      "timestamp": "2026-10-27T19:51:24.315",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.JsonLocale"
+    ]
+  },
+  {
+    "case": "09-Review.ProcessEnvironmentCase",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.ProcessEnvironmentCase",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\09-Review.ProcessEnvironmentCase.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\09-Review.ProcessEnvironmentCase.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.034",
+      "timestamp": "2026-10-27T19:51:24.373",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.ProcessEnvironmentCase"
+    ]
+  },
+  {
+    "case": "10-Review.WarmupFailureCount",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\probe.exe",
+      "--gtest_filter=Review.WarmupFailureCount",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\10-Review.WarmupFailureCount.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\10-Review.WarmupFailureCount.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.441",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Review.WarmupFailureCount"
+    ]
+  },
+  {
+    "case": "11-LsnChild.Passes",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.Passes",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\11-LsnChild.Passes.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\11-LsnChild.Passes.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "xml": {
+      "tests": "1",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.469",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "LsnChild.Passes"
+    ]
+  },
+  {
+    "case": "12-LsnChild.Fails",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.Fails",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\12-LsnChild.Fails.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\12-LsnChild.Fails.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.502",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "LsnChild.Fails"
+    ]
+  },
+  {
+    "case": "13-LsnChild.Skips",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.Skips",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\13-LsnChild.Skips.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\13-LsnChild.Skips.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "xml": {
+      "tests": "1",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.535",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "LsnChild.Skips"
+    ]
+  },
+  {
+    "case": "14-LsnChild.NoSuchTest",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.NoSuchTest",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\14-LsnChild.NoSuchTest.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\14-LsnChild.NoSuchTest.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "xml": {
+      "tests": "0",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.577",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": []
+  },
+  {
+    "case": "15-LsnChild.Passes",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+      "--gtest_filter=LsnChild.Passes",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\15-LsnChild.Passes.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\15-LsnChild.Passes.json",
+      "--gtest_repeat=2"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "xml": {
+      "tests": "1",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T19:51:24.619",
+      "name": "AllTests"
+    },
+    "summary": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "LsnChild.Passes",
+      "LsnChild.Passes"
+    ]
+  }
+]

@@ -5,7 +5,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.17（2026-10-26；§3.6.2 增 HOST-WORKBENCH 宿主例外；此前版本见变更记录） |
+| 文档版本 | v0.18（2026-10-28；§3.6.2.1 增测试夹具例外 graphics 面；此前版本见变更记录） |
 | 日期 | 2026-10-22 |
 | 状态 | `Draft`（待评审） |
 | 文档代号 | ARCH |
@@ -277,6 +277,8 @@ HOST-WORKBENCH 扩面登记（2026-10-26，所有者批量批准复用落地裁�
 权限 origin 增加 `test-fixture` 值：**仅当授权文件位于产品树 `/test/` 目录下时合法**（`reuse-contract.ps1` 门禁对非 test 路径用该 origin 一律拒绝，防止借夹具名义洗白生产代码的模型操作）。该例外豁免的只有一件事——测试脚手架在 gtest 夹具中构造/装配模型输入（如 policy 会话测试建 `WorkCell`＋`FakeDevice` 以驱动 `findDevice` 解析链）所必需的 `construct-model`/`mutate-model` 类操作授权；此前规则把这两类操作强制绑定 `runtime-owner`，而 `runtime-owner` 又强制 `unit=runtime`，使任何非 runtime 单元的模型构造型测试文件都无法通过 IRD-GATE-AD。
 
 理由与边界：测试夹具构造模型是**任务输入装配**，不是模型所有权主张——§3.6.1 的 runtime owner 红线约束的是**产品代码路径**（编译/物化/发布权威模型的唯一性），测试脚手架语义不同；`load/clone/publish-model` 与 `write-state` 不在豁免内，`host/graphics` 类别仍强制精确宿主例外（§3.6.2），`_worker` 目标限制不变。授权脉络：2026-10-26 所有者批量批准复用落地裁决表（含 REUSE-T36＝F-961 policy 修复候选落地），实施会话在落地中发现上述死锁后按既有宿主例外扩面先例（L3 同型治理机器修改）裁决批准本 schema 扩展，治理批独立提交、可整体回退，所有者 2026-10-26 已追认（指令原文「A1~A4 全按推荐」）；此死锁同样是后续 WP-04/05/07 各单元测试落地的必然障碍。
+
+graphics 面扩登（2026-10-28，RC-09 权限批 REUSE-T60/F-975 解锁；所有者 2026-10-27 委托「后续裁决按建议进行」）：`/test/` 路径的 `test-fixture` grant 自本批起**可持 `graphics` 类别**——测试断言面对 `rw/graphics` 常量/类型的只读甄别消费（先例＝UI-T78 渲染面分组常量断言在 `ui/test/HostCompilePipelineTest.cpp`：72/：952 消费 `DrawableNode::Physical`）此前无任何合法 grant 形态（graphics 强制 `host-presentation`，而 hostExceptions 封闭清单恒为 `ui/plugin/` 五生产族，测试路径不可入），F-973 第 13 项 NamedTcpClosure 的锚覆盖修复面因此被 IRD-GATE-AD 机器锁死（F-975）。边界：仅 `graphics`、仅 `/test/` 路径、仅 `test-fixture` origin；`host` 类别仍强制精确宿主例外（§3.6.2 封闭清单不因测试路径放开），非测试路径与非 test-fixture origin 一律不变，模型构造/State 写豁免面（construct/mutate-model 的夹具装配豁免与本 graphics 面互不扩展）。授权登记仍逐文件精确（permissions.json 单一 grant per 文件＋sha256 绑定＋目标绑定），不批目录豁免；三选一裁决证据与未选项（②宿主例外扩族接纳测试文件——破五族不变量且 host-presentation 语义错位；③UI-T78 断言重组——无法独立落地且须修订已验收断言面）留档 [REUSE-T60](traceability/reuse/REUSE-T60/README.md)。门禁实现与正负例（test+graphics 正例／test 路径 host 拒／非 test 路径 graphics 拒）随治理批登记，独立验收 NOT RUN 待所有者安排。
 
 #### 3.6.3 evidence / diagnostics 承重边界
 
@@ -867,6 +869,7 @@ WP-00～25 为需求文档预留的任务包编号，单元↔WP 对应沿用其
 | v0.15 | 2026-10-22 | 所有者最终复用方案的文档治理：新增 §3.6 / SA-19（分形态权限、runtime owner、四组宿主精确例外、evidence/diagnostics 与 worker 边界、B/C/D/E 被否备选）；链接逐功能审计/catalog/正向证据及待实现门禁契约。需求及依赖白名单不变，本轮不改产品代码/门禁实现，不批准新核心。 |
 | v0.16 | 2026-10-26 | 新增 §3.6.2.1 测试夹具例外（origin=test-fixture，仅产品树 /test/ 路径合法；仅豁免夹具装配所必需的 construct/mutate-model 授权）：解除非 runtime 单元模型构造型测试文件的 IRD-GATE-AD 死锁（REUSE-T36 F-961 落地实施中发现；WP-04/05/07 测试落地同障碍）。§3.6.1 runtime owner 红线、§3.6.2 宿主例外、worker 边界均不变；需求语义零变化。门禁实现与自测正负例随治理批登记，所有者 2026-10-26 已追认（指令原文「A1~A4 全按推荐」）。 |
 | v0.17 | 2026-10-26 | §3.6.2 宿主例外封闭清单 4→5：新增 HOST-WORKBENCH（ui/plugin/UiPlugin 精确文件族，呈现装配层——宿主插件装配体 SA-18 装配特权边承载者；受限面＝框架壳接入/选中几何呈现/借持模型指针/D8 Jog 桥任务私有 State 写；不授模型构造或结构写入，runtime owner 红线不变）。2026-10-26 所有者批量批准复用落地裁决表第 1~4 项（REUSE-T41/F-967 生产装配落地批）的解阻前置——此前 REUSE-T41 blocked 裁决（2026-10-25）明示扩宿主例外属所有者独立治理批次。门禁机读表（reuse-contract.ps1 $names 恰 5 项）与自测正负例（HOST-WORKBENCH 命中、未知 ID 仍拒）随治理批同批登记；需求语义零变化。 |
+| v0.18 | 2026-10-28 | §3.6.2.1 测试夹具例外增 graphics 面：/test/ 路径 test-fixture grant 可持 graphics 类别（测试断言面对 rw/graphics 常量/类型的只读甄别消费——UI-T78 渲染面分组常量断言先例），解除 F-975 的 IRD-GATE-AD 机器死锁（F-973 第 13 项 NamedTcpClosure 锚覆盖修复面）。边界：仅 graphics、仅 /test/ 路径、仅 test-fixture origin；host 类别仍强制精确宿主例外，模型构造/State 写豁免面不变，授权仍逐文件精确登记（不批目录豁免）。所有者 2026-10-27 委托「后续裁决按建议进行」口径下按证据选①落地（三选一证据留档 REUSE-T60）；§3.6.1 runtime owner 红线、§3.6.2 封闭清单、worker 边界均不变；需求语义零变化。门禁实现与正负例随治理批登记，独立验收 NOT RUN 待所有者。 |
 
 
 ## 2026-09-10 文档同步状态

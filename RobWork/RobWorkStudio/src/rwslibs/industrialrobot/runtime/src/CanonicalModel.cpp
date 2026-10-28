@@ -620,6 +620,7 @@ CanonicalModel CanonicalModelBuilder::build() const
     }
 
     // 逐关节校验＋轴向规格化（"编译器规格化"是 §4.3.3 axis 行明文的构造步骤）。
+    requireValidTransform(chain.flangeOffset, "chain.flangeOffset");
     for (std::size_t i = 0; i < chain.joints.size(); ++i) {
         CanonicalJoint& j = chain.joints.at(i);
         const std::string what = "chain.joints[" + std::to_string(i) + "]";
@@ -717,7 +718,9 @@ CanonicalModel CanonicalModelBuilder::build() const
             requireValidInertia(*im, what + ".inertia");
         }
         requireInManifest(l.visual, what + ".visual");
+        if (l.visual) { requireValidTransform(l.visualTransform, what + ".visualTransform"); }
         requireInManifest(l.collision, what + ".collision");
+        if (l.collision) { requireValidTransform(l.collisionTransform, what + ".collisionTransform"); }
     }
 
     // ---- 第 5 步：工具（§4.3.4）----
@@ -753,6 +756,7 @@ CanonicalModel CanonicalModelBuilder::build() const
             requireValidTransform(entry.second, what + ".namedTcpOffsets[" + entry.first + "]");
         }
         requireInManifest(t.geometry, what + ".geometry");
+        if (t.geometry) { requireValidTransform(t.geometryTransform, what + ".geometryTransform"); }
     }
 
     // ---- 第 6 步：默认 TCP（§4.3.4 defaultTcp 行——有 tools 时必填且指向
@@ -779,6 +783,7 @@ CanonicalModel CanonicalModelBuilder::build() const
         // 世界系固连位姿（不得预乘安装旋转的检测在 S6/S9——此处拦值级非法）。
         requireValidTransform(s.worldPose, what + ".worldPose");
         requireInManifest(s.geometry, what + ".geometry");
+        if (s.geometry) { requireValidTransform(s.geometryTransform, what + ".geometryTransform"); }
     }
 
     // ---- 第 8 步：全模型 ObjectId 唯一性＋引用∈objectRefs（CM-0 值层面）----
@@ -1017,6 +1022,7 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
     if (!vecEqual(m_world.gravityWorld, o.m_world.gravityWorld)) { return false; }
 
     // 链块。
+    if (!transformEqual(m_chain.flangeOffset, o.m_chain.flangeOffset)) { return false; }
     if (!(m_chain.robotObjectId == o.m_chain.robotObjectId
           && m_chain.robotLocalName == o.m_chain.robotLocalName
           && m_chain.deviceName == o.m_chain.deviceName
@@ -1060,8 +1066,10 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
         if (!(x.objectId == y.objectId && x.localName == y.localName)) { return false; }
         if (x.visual.has_value() != y.visual.has_value()) { return false; }
         if (x.visual && !resourceIdentityEqual(*x.visual, *y.visual)) { return false; }
+        if (x.visual && !transformEqual(x.visualTransform, y.visualTransform)) { return false; }
         if (x.collision.has_value() != y.collision.has_value()) { return false; }
         if (x.collision && !resourceIdentityEqual(*x.collision, *y.collision)) { return false; }
+        if (x.collision && !transformEqual(x.collisionTransform, y.collisionTransform)) { return false; }
         if (!svDoubleEqual(x.mass, y.mass) || !svVecEqual(x.centerOfMass, y.centerOfMass)
             || !svInertiaEqual(x.inertia, y.inertia)) {
             return false;
@@ -1082,6 +1090,7 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
         }
         if (x.geometry.has_value() != y.geometry.has_value()) { return false; }
         if (x.geometry && !resourceIdentityEqual(*x.geometry, *y.geometry)) { return false; }
+        if (x.geometry && !transformEqual(x.geometryTransform, y.geometryTransform)) { return false; }
         if (!svDoubleEqual(x.mass, y.mass) || !svVecEqual(x.centerOfMass, y.centerOfMass)
             || !svInertiaEqual(x.inertia, y.inertia)
             || !transformEqual(x.tcpOffset, y.tcpOffset)) {
@@ -1100,6 +1109,7 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
         // 可选状态也是身份内容；固定帧不能与任意“空资源”比较为相等。
         if(x.geometry.has_value()!=y.geometry.has_value()){return false;}
         if(x.geometry&&!resourceIdentityEqual(*x.geometry,*y.geometry)){return false;}
+        if(x.geometry&&!transformEqual(x.geometryTransform,y.geometryTransform)){return false;}
     }
     if (m_drivetrain.ratioPerJoint.size() != o.m_drivetrain.ratioPerJoint.size()) { return false; }
     for (std::size_t i = 0; i < m_drivetrain.ratioPerJoint.size(); ++i) {

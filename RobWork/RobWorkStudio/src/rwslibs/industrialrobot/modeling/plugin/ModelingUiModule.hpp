@@ -74,6 +74,7 @@ class QWidget;  // 前置声明：createPanel 返回类型（全局域——插�
 
 namespace sdurws::ird::modeling {
 
+class CompileProbe;
 class ModelingPanelWidget;
 class ObjectClosureView; // 同步借用的只读闭包端口，完整类型仅实现文件消费。
 struct ModelingSessionPoseRequest; // 装配纯值请求，完整定义归公共装配头。
@@ -88,6 +89,7 @@ struct ModelingSessionPoseRequest; // 装配纯值请求，完整定义归公共
  * 返回本结构的 draft 指针）。所有权：值持有（工作集按值存于本结构）。
  */
 struct ModuleSessionState {
+    const CompileProbe* compileProbe = nullptr; ///< 非 owning；宿主持有，UI 线程同步借用。
     core::BranchId branch{};                    ///< 目标分支（信封 branch——brn- 规范身份）
     ModelingWorkingSet draft{};                 ///< 当前草稿工作集（编辑态——§4.9）
     std::optional<core::RevisionId> baseRevision;  ///< 草稿基线修订（nullopt＝提交期解析 tip——§6.2）

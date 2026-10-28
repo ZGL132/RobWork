@@ -95,6 +95,7 @@ AxisWorkpointFacts makeGoldenFacts(const core::ObjectId& axis)
     f.motorPowerPeak = 1200.0; // W
     f.motorPowerRms = 700.0;   // W
     f.peakDuration = 5.0;      // s（峰值段 5 s ＜ 过载窗口 8 s——过载维通过）
+    f.motorTorqueHistory = {{0.0, 7.0}, {5.0, 7.0}}; // 完整时序，超额定持续5s
     // 关节侧（电机筛选不消费——缺省 nullopt 即可）。
     // 保持/外载荷/安装需求：nullopt＝对应维度不适用（黄金默认无这些工况）。
     f.atTime = 1.5;       // s
@@ -256,6 +257,7 @@ TEST(SelScreeningMotor, PeakTorqueInsufficientGoldenRow)
 
     Fixture fx = makeFixture();
     fx.facts.motorTorquePeak = 10.5;  // N·m
+    fx.facts.motorTorqueHistory = {{0.0, 10.5}, {5.0, 10.5}};
     HardConstraintSelector selector;
     const std::vector<FeasibilityRecord> recs
         = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
@@ -451,6 +453,7 @@ TEST(SelScreeningMotor, OverloadTimeInsufficientGoldenRow)
     Fixture fx = makeFixture();
     fx.facts.motorTorquePeak = 8.0;   // N·m（＞额定 4——进入过载区；≤峰值 10）
     fx.facts.peakDuration = 10.0;     // s ＞ 窗口 8
+    fx.facts.motorTorqueHistory = {{0.0, 8.0}, {10.0, 8.0}};
     HardConstraintSelector selector;
     const std::vector<FeasibilityRecord> recs
         = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
@@ -466,6 +469,55 @@ TEST(SelScreeningMotor, OverloadTimeInsufficientGoldenRow)
     EXPECT_NE(r->thresholdSource.find("overload_duration_s"), std::string::npos);
 }
 
+/** DESIGN-T01/SEL-03：只有精确峰值窗，无法证明整个超额定区间合格。 */
+TEST(SelDesignReview, PeakDurationAloneCannotProveOverloadSafety)
+{
+    Fixture fx = makeFixture();
+    fx.facts.motorTorquePeak = 8.0;
+    fx.facts.peakDuration = 0.1;
+    fx.facts.motorTorqueHistory.clear(); // 旧输入只有峰值窗，没有完整时序
+    HardConstraintSelector selector;
+    const auto recs = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    ASSERT_EQ(recs.size(), 1U);
+    EXPECT_EQ(recs[0].verdict, VerdictKind::DataInsufficient);
+    EXPECT_FALSE(recs[0].gaps.empty());
+}
+
+/** SEL-03/AT-08：短峰值叠加长平台，RMS合格仍须按完整超额定区间淘汰。 */
+TEST(SelDesignReview, LongOverloadPlateauRejectedDespiteShortPeak)
+{
+    auto fx = makeFixture();
+    fx.facts.motorTorquePeak = 8.0;
+    fx.facts.motorTorqueRms = 2.5;
+    fx.facts.peakDuration = 0.1;
+    fx.facts.motorTorqueHistory = {{0.0, 0.0}, {1.0, 7.6}, {5.0, 7.6},
+                                  {5.1, 8.0}, {5.2, 7.6}, {11.0, 7.6},
+                                  {12.0, 0.0}, {100.0, 0.0}};
+    HardConstraintSelector selector;
+    const auto recs = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    ASSERT_EQ(recs.size(), 1U);
+    const auto reason = findReason(recs[0], ReasonToken::OverloadTimeInsufficient);
+    ASSERT_TRUE(reason);
+    EXPECT_GT(reason->actual, 10.0);
+    EXPECT_EQ(recs[0].verdict, VerdictKind::Rejected);
+    EXPECT_TRUE(recs[0].gaps.empty());
+}
+
+/** SEL-03：反向跨零应分成两段；循环首尾则合并为连续超额定区间。 */
+TEST(SelDesignReview, SignCrossingAndCyclicBoundaryHaveDifferentContinuity)
+{
+    auto fx = makeFixture();
+    fx.facts.motorTorquePeak = 8.0;
+    fx.facts.motorTorqueHistory = {{0.0, 8.0}, {10.0, -8.0}};
+    HardConstraintSelector selector;
+    auto recs = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    EXPECT_FALSE(findReason(recs[0], ReasonToken::OverloadTimeInsufficient));
+    fx.facts.motorTorqueHistory = {{0.0, 8.0}, {5.0, 8.0}, {6.0, 0.0},
+                                  {7.0, 8.0}, {12.0, 8.0}};
+    recs = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    EXPECT_TRUE(findReason(recs[0], ReasonToken::OverloadTimeInsufficient));
+}
+
 /** 未过载不触发：τ_peak=3.5 ≤ 额定 4（额定区内）——峰值段时长不核查。 */
 TEST(SelScreeningMotor, OverloadDimensionNotTriggeredInContinuousZone)
 {
@@ -473,6 +525,7 @@ TEST(SelScreeningMotor, OverloadDimensionNotTriggeredInContinuousZone)
 
     Fixture fx = makeFixture();
     fx.facts.motorTorquePeak = 3.5;   // N·m（额定区内）
+    fx.facts.motorTorqueHistory = {{0.0, 3.5}, {5.0, 3.5}};
     fx.facts.peakDuration = 999.0;    // s（荒谬值——不触发即不判，证明条件式）
     HardConstraintSelector selector;
     const std::vector<FeasibilityRecord> recs
@@ -1195,4 +1248,32 @@ TEST(SelScreeningMotor, NegativeWorkpointWithinLimitPasses_F_814_SEL_03)
         = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
     ASSERT_EQ(recs.size(), 1U);
     expectRecordShape(recs[0], VerdictKind::Feasible, {}, 0U, "M-GOLD");
+}
+
+/** SEL-03：完整时序不能靠欠报峰值绕过筛选；非法时序在任一能力区均fail-fast。 */
+TEST(SelDesignReview, InvalidTorqueHistoryCannotBypassContinuousZone)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-03"}, std::vector<std::string>{"AT-08"});
+    auto fx = makeFixture();
+    fx.facts.motorTorquePeak = 3.0;
+    HardConstraintSelector selector;
+    EXPECT_THROW((void)selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr),
+                 std::invalid_argument); // 时序峰值7，声明3：调用方事实矛盾
+    fx.facts.motorTorqueHistory = {{0.0, 2.0}, {0.0, 2.0}};
+    EXPECT_THROW((void)selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr),
+                 std::invalid_argument);
+    fx.facts.motorTorqueHistory = {{0.0, 2.0}, {1.0, std::numeric_limits<double>::quiet_NaN()}};
+    EXPECT_THROW((void)selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr),
+                 std::invalid_argument);
+}
+
+/** SEL-03/NFR-COR-03：有限端点导致不可表示的循环跨度时必须fail-fast。 */
+TEST(SelDesignReview, UnrepresentableCycleDurationRejected)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-03"}, std::vector<std::string>{"AT-08"});
+    auto fx = makeFixture();
+    fx.facts.motorTorqueHistory = {{-1e308, 7.0}, {1e308, 7.0}};
+    HardConstraintSelector selector;
+    EXPECT_THROW((void)selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr),
+                 std::invalid_argument);
 }

@@ -39,6 +39,7 @@
  * 形态闸门共同暴露（跨单元联锁）。
  */
 
+#include "FreezeFixture.hpp"
 #include <sdurws/ird/evidence/Dependency.hpp>
 #include <sdurws/ird/evidence/Errors.hpp>
 #include <sdurws/ird/evidence/Slice.hpp>
@@ -183,6 +184,7 @@ ObjectRefEntry closureEntry(const char* oidHex32, const std::vector<std::uint8_t
 
 /// 组装一份冻结快照：2 对象闭包＋策略＋名称映射＋复现块（§4.1.2 必填项
 /// 的最小合法集——切片条目从闭包取 Object 载荷）。
+DependencyEntry configEntry(const std::string&, double);
 AnalysisSnapshot makeFrozenSnapshot()
 {
     std::vector<ObjectRefEntry> closure;
@@ -201,6 +203,9 @@ AnalysisSnapshot makeFrozenSnapshot()
     nameMap.nameMapContentIdentity = cid(kHexB);
     b.setNameMapRef(nameMap);
     b.setReproduction(validReproduction());
+    const auto config = std::get<ConfigurationDependencyPayload>(configEntry("solver-config",1e-6).payload);
+    b.addConfiguration({config.configKindToken,config.canonicalBytes,config.contentIdentity});
+    b.addSamplingPlan({fixedObjectId("cccc0000000000000000000000000000"),cid(kHexA),1,1,cid(kHexC)});
 
     FakeRevisionClosureSource source(fixedRevision(), closure);
     return b.build(source);
@@ -310,6 +315,18 @@ SliceVariant standardVariant(const AnalysisSnapshot& snapshot)
     return v;
 }
 
+/** @brief EV-T13：正控变体同步快照引用；负控仍直接调用 builder。 */
+AnalysisSnapshot snapshotForVariant(AnalysisSnapshot snapshot, const SliceVariant& variant) {
+    for (const auto& e:variant.entries) {
+        if (e.kind==DependencyKind::Configuration) {
+            const auto& p=std::get<ConfigurationDependencyPayload>(e.payload);
+            snapshot.configurationRefs={{p.configKindToken,p.canonicalBytes,p.contentIdentity}};
+        } else if (e.kind==DependencyKind::Policy) snapshot.policyRef.policyContentIdentity=std::get<PolicyDependencyPayload>(e.payload).policyContentIdentity;
+        else if (e.kind==DependencyKind::NameMap) snapshot.nameMapRef.nameMapContentIdentity=std::get<NameMapDependencyPayload>(e.payload).nameMapContentIdentity;
+        else if (e.kind==DependencyKind::SampleSet) snapshot.samplingPlans[0].sampleSetIdentity=std::get<SampleSetDependencyPayload>(e.payload).sampleSetIdentity;
+    }
+    return testdoubles::refreezeSnapshot(snapshot);
+}
 /// 由变体组装切片（snapshot 提供来源身份与闭包事实）。
 InputSlice buildSlice(const AnalysisSnapshot& snapshot, const SliceVariant& variant,
                       const std::string& evaluationKey = "kin-batch-ik",
@@ -402,7 +419,11 @@ TEST(EvidenceSliceIdentity, DigestViaCoreContentDigesterOnly_CR_02)
     const InputSlice slice = buildSlice(snapshot, standardVariant(snapshot));
 
     // 手工重算 sliceId（full 形态编码 → ContentDigester）。
-    const std::vector<std::uint8_t> full = SliceCodec::encodeFull(slice);
+    std::vector<std::uint8_t> full = SliceCodec::encodeFull(slice);
+    // v2 身份投影 form=2，去除 evaluatorKey/contract 后的 32 字节 snapshot 追溯字段。
+    full[9] = 2;
+    const std::size_t snapshotOffset = 10 + 2 + slice.evaluationKey.size() + 4;
+    full.erase(full.begin()+snapshotOffset,full.begin()+snapshotOffset+32);
     core::ContentDigester d1;
     d1.update(full.data(), full.size());
     core::ContentIdentity expectSliceId;
@@ -440,7 +461,7 @@ TEST(EvidenceSliceIdentity, NoFloatApproximateEquivalence_EV_ID_2)
             e.payload = configEntry(e.key, 1e-6 + 1e-15).payload;
         }
     }
-    const InputSlice altered = buildSlice(snapshot, changed);
+    const InputSlice altered = buildSlice(snapshotForVariant(snapshot, changed), changed);
 
     // 配置身份不同（canonical 字节位模式不同 → 内容身份不同）——按 key
     // 显式查找（buildSlice 产出已按 (kind,key) 排序，不用位置下标）。
@@ -532,7 +553,7 @@ TEST(EvidenceSliceBaseline, Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05)
     const auto rebuild = [&snapshot](std::function<void(SliceVariant&)> mutate) {
         SliceVariant v = standardVariant(snapshot);
         mutate(v);
-        return buildSlice(snapshot, v);
+        return buildSlice(snapshotForVariant(snapshot, v), v);
     };
 
     // ---- 排除面 1：仅改 Configuration（求解类——KIN-13/D-04：进 sliceId
@@ -814,7 +835,7 @@ TEST(EvidenceSliceCr05, SharedSampleValuePassThrough_RT_T09)
             e.payload = configEntry(e.key, 2e-6).payload;
         }
     }
-    const InputSlice altered = buildSlice(snapshot, changed);
+    const InputSlice altered = buildSlice(snapshotForVariant(snapshot, changed), changed);
     EXPECT_FALSE(slice.sliceId == altered.sliceId);
     EXPECT_TRUE(slice.inputBaselineId == altered.inputBaselineId)
         << "改求解配置影响 inputBaselineId（CR-05 联合断言 3 违约）";

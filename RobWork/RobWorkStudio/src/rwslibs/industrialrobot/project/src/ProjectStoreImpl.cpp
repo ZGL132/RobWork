@@ -390,7 +390,7 @@ private:
  * 判定（保守版，登记为口径⑤）：
  *   - `<file>.new` / `<file>.bak`：保存崩溃现场/上一版残留——直接报告
  *     （§8.4".new 残留＝崩溃现场→丢弃 .new、保留 current/.bak 并报告"；
- *     现场文件不删，处置归 DraftService/ui）；
+ *     只读打开保留全部现场；持OS写锁的启动者仅清理已知分支.new）；
  *   - `<module>.draft.json`：读不到＝损坏；解析失败＝损坏；projectId 与
  *     本项目不符＝跨项目残留；branchId 不在权威分支表＝无对应分支孤儿；
  *     所在目录名与文档 branchId 不一致＝路径与内容不一致（§8.4）。
@@ -399,12 +399,14 @@ private:
  * @param authoritative [in] 权威元数据（分支表判定依据）
  * @param projectId     [in] 本项目身份（归属校验依据）
  * @param sink          [in] 开发诊断出口（可空）
+ * @param cleanupTemporaryDrafts [in] 持OS写锁且服务未激活时可清理.new
  * @return 孤儿文件相对路径清单（相对项目根；字典序——NFR-COR-02）
  */
 std::vector<std::string> scanOrphanDrafts(const std::filesystem::path& projectDir,
                                           const ProjectMetadataRecord& authoritative,
                                           const core::ProjectId& projectId,
-                                          IDiagnosticsSink* sink)
+                                          IDiagnosticsSink* sink,
+                                          bool cleanupTemporaryDrafts)
 {
     std::vector<std::string> orphans;
     const std::filesystem::path draftsRoot = projectDir / kDraftsDirName;
@@ -445,6 +447,20 @@ std::vector<std::string> scanOrphanDrafts(const std::filesystem::path& projectDi
                     || fileName.compare(fileName.size() - 4, 4, ".bak")
                            == 0)) {
                 orphans.push_back(relPath);
+                // PRJ-R1：仅启动期间持有排他OS锁的writer可以清理.new。
+                // 服务激活前没有同上下文保存，外部writer由OS锁排除。
+                const std::string suffix = ".draft.json.new";
+                if (cleanupTemporaryDrafts && knownBranches.count(branchDirName) != 0
+                    && fileName.size() > suffix.size()
+                    && fileName.compare(fileName.size() - suffix.size(), suffix.size(), suffix) == 0) {
+                    std::error_code removeError;
+                    const bool removed = std::filesystem::remove(fileIt->path(), removeError);
+                    if (sink != nullptr) {
+                        sink->reportDev("project/open", std::string{"unpublished .new "}
+                            + (removed && !removeError ? "discarded" : "cleanup-failed")
+                            + " path=" + fileIt->path().string());
+                    }
+                }
                 continue;
             }
 
@@ -499,13 +515,13 @@ std::vector<std::string> scanOrphanDrafts(const std::filesystem::path& projectDi
  * @brief 装载闭包成员入会话索引（实现口径④的两段式第二段）。
  *
  * 前置：scanForRecovery 已通过（headIntegrityVerified==true——闭包内
- * 清单/对象全部完好）；本函数跳过 uncommittedRevisions 后搬运装载，
+ * 清单/对象全部完好）；本函数仅搬运 committedRevisions 正向集合，
  * 遇到失败＝扫描后竞态损坏（防御分支，如实按 store-corrupt 抛）。
  *
  * @param engine         [in] 事务引擎（HEAD 读取与项目根绑定）
  * @param objects        [in] 对象库（元数据经校验读通道读取）
  * @param index          [in] 会话索引（装载目标——闭包外不注册）
- * @param scan           [in] 恢复扫描结论（uncommittedRevisions 名单）
+ * @param scan           [in] 恢复扫描确认的HEAD及完整已提交闭包
  * @param projectId      [in] project.json 声明的身份（跨文件一致性）
  * @param schemaVersion  [in] project.json 声明的版本（跨文件一致性）
  * @param sink           [in] 诊断出口（可空）
@@ -527,8 +543,8 @@ void loadCommittedState(tx::TxEngine& engine,
                         ProjectMetadataRecord& outAuthoritative,
                         ObjectRefPair& outAuthoritativeRef)
 {
-    // HEAD 读取（scan 已确认存在且可解析——此处失败只可能是竞态改写）。
-    const HeadRecord head = engine.readHead();
+    // PRJ-T19：采用扫描时已验证的HEAD，避免新HEAD配旧闭包的跨进程撕裂。
+    const HeadRecord head = scan.verifiedHead;
 
     // 跨文件一致性（§4.1 project.json/HEAD 行——打开协议 PRJ-T08 的明确
     // 义务；PersistenceFormat.hpp HeadRecord 注释同口径）。
@@ -546,11 +562,10 @@ void loadCommittedState(tx::TxEngine& engine,
         throw StoreError(StoreErrorCode::StoreCorrupt, detail);
     }
 
-    // 闭包外名单（§7.3：已发布但未提交——装载跳过，"查询不可见"的
-    // 结构性保证，PRJ-TX-9）。
-    std::set<std::string> uncommitted;
-    for (const RevisionId& rid : scan.uncommittedRevisions) {
-        uncommitted.insert(rid.toCanonical());
+    // PRJ-T19：仅装载扫描确认的正向闭包；扫描后新发布内容仍不可见。
+    std::set<std::string> committed;
+    for (const RevisionId& rid : scan.committedRevisions) {
+        committed.insert(rid.toCanonical());
     }
 
     // ---- 清单搬运装载（跳过闭包外；遇到失败＝竞态损坏，防御性抛）。
@@ -571,7 +586,7 @@ void loadCommittedState(tx::TxEngine& engine,
             if (!core::RevisionId::tryFromCanonical(dirName).has_value()) {
                 continue;  // 不合规目录名（scan 已开发观测——搬运侧跳过）
             }
-            if (uncommitted.count(dirName) != 0) {
+            if (committed.count(dirName) == 0) {
                 continue;  // 闭包外＝未提交残留——不装载（PRJ-TX-9）
             }
             const auto bytes = readAllBytes(it->path() / "manifest.json");
@@ -1006,15 +1021,10 @@ tx::CommitResult ProjectStoreImpl::executeCommit(const tx::CommitPlan& plan)
     const tx::CommitResult result
         = m_engine->commit(plan, m_head, m_authoritative, m_authoritativeRef);
 
-    // 提交成功：会话权威前进——HEAD 取切换后字节事实（newHead）；权威
-    // 元数据自对象库读回（地面事实＋顺带走发布完整性校验通道，不靠
-    // 内存推导）。读回失败＝已提交但读不回（StoreCorrupt 硬错误——
-    // 与 TxEngine 第 5 步自校验同口径的 D-18 不回滚路径，如实上抛）。
+    // PRJ-R1：使用引擎已经验证并发布的权威值前进；提交后不再额外IO/解析，
+    // 避免附属读取失败被上层改报为未提交。仍由同一事务维护磁盘与索引。
     m_head = result.newHead;
-    const auto metaBytes = m_objects->object(result.metadataRef.objectId,
-                                             result.metadataRef.contentVersion);
-    m_authoritative = codec::parseMetadataRecord(std::string{
-        reinterpret_cast<const char*>(metaBytes.data()), metaBytes.size()});
+    m_authoritative = result.metadata;
     m_authoritativeRef = result.metadataRef;
     return result;
 }
@@ -1024,6 +1034,39 @@ tx::CommitResult ProjectStoreImpl::executeCommit(const tx::CommitPlan& plan)
 // 入口同层级——它需要访问 ProjectStoreImpl 的私有构造，friend 关系
 // 登记于 ProjectStoreImpl.hpp）
 // =====================================================================
+
+void ProjectStoreImpl::refreshCommittedViewLocked()
+{
+    const auto diskHead = m_engine->readHead();
+    if (diskHead == m_head) { return; }
+    if (m_lock != nullptr) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/query: HEAD changed outside exclusive writer path="
+                             + (m_canonicalDirFs / "HEAD").string());
+    }
+    // PRJ-R1：复用打开协议，临时索引只作候选；扫描绑定一个HEAD和正向闭包，
+    // 即使另一个writer继续提交，也不会把扫描后新发布的残留提升为已提交。
+    auto index = std::make_unique<revindex::RevisionIndex>();
+    auto engine = std::make_unique<tx::TxEngine>(&sharedFileOps(), m_canonicalDirFs,
+        m_objects.get(), index.get(), m_eventBus, m_sink);
+    const auto scan = engine->scanForRecovery();  // 查询始终只读，不做清理。
+    if (!scan.headIntegrityVerified) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/query: refreshed committed closure invalid path="
+                             + m_canonicalDirFs.string());
+    }
+    HeadRecord head;
+    ProjectMetadataRecord metadata;
+    ObjectRefPair ref;
+    loadCommittedState(*engine, *m_objects, *index, scan, m_head.projectId,
+                       m_head.schemaVersion, m_sink, head, metadata, ref);
+    // 到此全部候选已验证；writer锁内用不抛移动交换，权威只有这一份。
+    m_index.swap(index);
+    m_engine.swap(engine);
+    std::swap(m_head, head);
+    std::swap(m_authoritative, metadata);
+    m_authoritativeRef = ref;
+}
 
 /**
  * @brief 打开协议主体（前置约定：调用方已持 factoryMutex——open 的
@@ -1183,7 +1226,7 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
                                              objects.get(), index.get(),
                                              request.eventBus, collector.get());
 
-    const tx::TxRecoveryScan scan = engine->scanForRecovery();
+    const tx::TxRecoveryScan scan = engine->scanForRecovery(lock != nullptr);
     if (!scan.headIntegrityVerified) {
         // ④失败：打开中止（激活前失败——构造中的部件随 unique_ptr 析构，
         // 锁随 RAII 释放＋注册表随守卫注销；当前项目不受影响——§8.7）。
@@ -1202,7 +1245,7 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
     // ---- ⑤ 孤儿草稿扫描（§7.4③）＋用户级汇总诊断（报告快照同步收集）。
     const std::vector<std::string> orphans
         = scanOrphanDrafts(projectDir, authoritative, identity.projectId,
-                           collector.get());
+                           collector.get(), lock != nullptr);
     if (!orphans.empty()) {
         collector->report(makeOrphanDraftRecord(orphans.size()));
     }
@@ -1301,7 +1344,7 @@ OpenStoreResult ProjectStoreFactory::createNew(
     // <seq>"。序号计数器为进程内静态（组装区存活期＝本函数栈；同名
     // 并发创建已由工厂互斥排除）。
     static std::atomic<std::uint64_t> s_assemblySeq{0};
-    std::string baseName = dir.filename().string();
+    std::string baseName = projectDir.filename().string();
     if (baseName.empty()) {
         baseName = "project";  // 根路径/尾分隔符等退化形态的兜底名
     }
@@ -1309,7 +1352,7 @@ OpenStoreResult ProjectStoreFactory::createNew(
     assemblyName << baseName << ".new-" << currentProcessId() << "-"
                  << s_assemblySeq.fetch_add(1);
     const std::filesystem::path assembly
-        = dir.parent_path() / assemblyName.str();
+        = projectDir.parent_path() / assemblyName.str();
     std::filesystem::create_directories(assembly, ec);
     if (ec) {
         throw StoreError(StoreErrorCode::WriteRejected,

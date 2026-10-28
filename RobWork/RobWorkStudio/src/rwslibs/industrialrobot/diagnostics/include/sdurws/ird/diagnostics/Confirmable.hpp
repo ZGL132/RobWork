@@ -496,7 +496,8 @@ private:
      * const 成员：转移对象是传入的记录（查询路径的惰性转移——服务自身
      * 可变状态不被修改，查询方法因此保持 const）。
      */
-    void expireIfDue(FindingRecord& record) const;
+    // notices 为调用者局部通知缓冲，释放状态锁后派发；出口异常不传播。
+    void expireIfDue(FindingRecord& record, std::vector<std::string>& notices) const;
 
     /**
      * @brief 复核绑定四元组（§5.3——确认提交时的服务端复核半区）。
@@ -519,14 +520,15 @@ private:
     bool verifyBinding(const FindingRecord& record, std::string_view& reason) const;
 
     /**
-     * @brief 状态转移公共尾（Dev 日志＋token 作废——须在互斥锁内调用）。
+     * @brief 状态转移公共尾（token 作废＋通知快照——须在互斥锁内调用）。
      *
      * §5.4 转移约束："每次状态转移写入开发级日志（findingId/转移/原因
      * token——可追溯）"。callbackToken 一次性：任何终态转移后令牌作废。
      * const 成员（理由同 expireIfDue——只演进传入记录）。
      */
     void finishTransition(FindingRecord& record, FindingState to,
-                          std::optional<std::string_view> reason) const;
+                          std::optional<std::string_view> reason,
+                          std::vector<std::string>& notices) const;
 
     const IDiagnosticRegistry* m_registry;             ///< 稳定码注册表（非拥有；create confirmable 校验面）
     const IConfirmationEnvironment* m_environment;     ///< 绑定复核环境探针（非拥有；当前值来源）

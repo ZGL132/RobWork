@@ -11,6 +11,7 @@
 #include "RevisionIndex.hpp"
 
 #include <algorithm>
+#include <set>
 #include <stdexcept>
 #include <utility>
 
@@ -154,6 +155,17 @@ std::optional<RevisionManifest> RevisionIndex::tryRevision(const RevisionId& id)
         return std::nullopt;
     }
     return it->second;  // 值语义深拷贝——PA-3：调用方与索引后续变化隔离
+}
+
+bool RevisionIndex::referencesObject(core::ObjectId oid, core::ContentVersion cv) const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    for (const auto& entry : m_revisions) {
+        for (const auto& ref : entry.second.objectRefs) {
+            if (ref.objectId == oid && ref.contentVersion == cv) { return true; }
+        }
+    }
+    return false;
 }
 
 std::optional<ProjectMetadataRecord> RevisionIndex::tryMetadata(const ObjectRefPair& ref) const
@@ -561,6 +573,7 @@ CommittedClosure RevisionIndex::committedClosure(const RevisionId& headRevisionI
     std::unordered_set<std::string> metaSeen;
     revSeen.reserve(64);
     metaSeen.reserve(16);
+    std::set<std::uint64_t> sequences;
 
     // 修订栈：起点先入栈；栈空即闭包完毕。
     std::vector<RevisionId> revStack{headRevisionId};
@@ -581,8 +594,19 @@ CommittedClosure RevisionIndex::committedClosure(const RevisionId& headRevisionI
                              revIndexDetail("闭包行走遇未注册修订 revision=" + revText(revId)));
         }
         const RevisionManifest& manifest = revIt->second;
+        if (!sequences.insert(manifest.revisionSeq).second) {
+            throw StoreError(StoreErrorCode::StoreCorrupt,
+                             revIndexDetail("闭包修订序号重复 revision=" + revText(revId)));
+        }
         revOrder.push_back(revId);
         if (manifest.parentRevisionId.has_value()) {
+            const auto parent = m_revisions.find(*manifest.parentRevisionId);
+            // 严格递减既证明parent无环，又拒绝自指/缺父；不同分支共享祖先仍合法。
+            if (parent == m_revisions.end()
+                || parent->second.revisionSeq >= manifest.revisionSeq) {
+                throw StoreError(StoreErrorCode::StoreCorrupt,
+                                 revIndexDetail("parent缺失或序号非递减 revision=" + revText(revId)));
+            }
             revStack.push_back(*manifest.parentRevisionId);
         }
 
@@ -598,6 +622,17 @@ CommittedClosure RevisionIndex::committedClosure(const RevisionId& headRevisionI
                                  revIndexDetail("闭包行走遇未注册元数据 ref=" + refText(metaCursor)));
             }
             const ProjectMetadataRecord& record = metaIt->second;
+            if (record.supersedes) {
+                const auto previous = m_metadata.find(*record.supersedes);
+                const auto currentRev = m_revisions.find(record.committedBy);
+                const auto previousRev = previous == m_metadata.end() ? m_revisions.end()
+                    : m_revisions.find(previous->second.committedBy);
+                if (currentRev == m_revisions.end() || previousRev == m_revisions.end()
+                    || previousRev->second.revisionSeq >= currentRev->second.revisionSeq) {
+                    throw StoreError(StoreErrorCode::StoreCorrupt,
+                                     revIndexDetail("metadata谱系缺失/成环/非单调 ref=" + refText(metaCursor)));
+                }
+            }
             metaOrder.push_back(metaCursor);
             // 谱系回连（D-4 的第二通道关键步）：把 committedBy 修订作为
             // 修订继续访问——其 parent 链随主循环上行（§4.5.1 结论③

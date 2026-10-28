@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "WP-15-T21",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/WP-15-T21.json",
+  "files": [
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+      "sha256": "605bce8d72eeb1f998d16eff4c9a74fb45144626a9fdbbd3a0e2e03948a49eff",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/WP-15-T21/README.md",
+      "boundary": "WP-15-T21（启动崩溃修复）：refreshVisualization 将 worldToBase() 取值从快照空态判定之前移到消费分支内（lastWorkspaceRun 分支＋batchRender 非空分支就地取值）——构造期无快照路径不再对未绑定 KinSessionModelView 委托做虚分派（缝契约注释『快照缺位不取模型』的消费方兑现）。产品业务呈现逻辑（样本点云/失败点标记/解集标记/previewSink 投放）零语义变化，KinEvaluationChannel.hpp 缝契约零改动，无上游 API 变化、无权限变化、无新依赖"
+    }
+  ],
+  "note": "单文件缺陷修复批（2026-10-28 所有者全量编译运行验证任务中发现启动崩溃）：修复前 sdurws_ird_studio 无参启动 4/4 必崩（crash 日志 2026-10-24/25/28 在案），崩溃栈经 Python 调试循环＋RelWithDebInfo PDB 符号化定位（worldToBase+0xD 空指针虚分派）；修复后真机启动主窗口呈现＋六域装配报告全绿＋UIA 界面操作无崩溃，kinematics_gui_test 与 stash 基线逐项一致（零回归）。随批同步 functions/kinematics.json 两处 Digest（Digest 口径＝BOM 剥除＋CRLF→LF＋尾单换行后 SHA256）与 AnchorRuntimeView 端行平移（2355→2362，本包净 +7 行）。门禁实测：ird_gates 本包零新增命中（SA02 全局 2 命中＝RC-04/REUSE-T55 0004 LM 补丁登记在途项，先于本包存在）；validate-reuse.ps1 全量 PASS（exit 0）。"
+}

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T55",
+  "unit": "modeling",
+  "masterWp": "WP-A",
+  "title": "工作包3 MATH-ROT 剩余重复数学收口——阶段〇 FAIL 已结；阶段一换核候选已完成全部验证、结构性未落地（候选留存待 WP3+WP4 同文件整批重排）",
+  "status": "blocked",
+  "branch": "redesign-main",
+  "dependsOn": [],
+  "requirements": [
+    "MDL-10",
+    "KIN-04"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13",
+    "traceability/reuse/REUSE-T55/README.md",
+    "reuse/policy.md#1.1",
+    "REQUIREMENTS.md#25"
+  ],
+  "verify": [
+    "候选验证已全部真实执行（2026-10-27 实施批，证据落 traceability/reuse/REUSE-T55/）：位模式/判定/合成等价探针 run/probe-swap-equivalence.exe（run/probe-swap.log P1—P9，含 P6b 双重无效优先级与 P9 orientBoxPoint 结合序）；四套件 run/{modeling-test,modeling-contract,kinematics-test,kinematics-contract}.{log,xml}；断开红例 production/{modeling,kinematics}-disconnect.{xml,log}＋run/disconnect-*-recheck.log；运行效果前后测量 run/bench-{pre-swap,post-swap}.log；候选完整 diff＝stage1-candidate.patch；候选凭证草案＝candidate-changes-manifest.json",
+    "blocked（2026-10-27 所有者裁决，路径 B 候选留存变体）：REUSE-COVERAGE 全文件解决规则与 14 行范围结构性冲突——validate-reuse.ps1/validate-docs.ps1 实测 REUSE-COVERAGE（reuse-contract.ps1:285-290）：被改产品文件上所有绑定行须 resolved，而 DhConvert.cpp 尚余 8 行非本包 pending（MATH-DH 3 行＝WP4 终审；LM 4 行＝分类B H5 不批；zeroConfigFK＝WP4 条件范围、定案以 policy §1.1-2 前置认定为前提）、Sampling.cpp 尚余 3 行非本包 pending（generateGridPositions/generateRandomPositions/generateDirections＝黄金锁定采样实现，非本包 3 个 MATH-ROT 行）；门禁红未被接受、生产未落地",
+    "重排前置：zeroConfigFK 前置认定（接口形态/owner/消费者/使用写入权限，policy §1.1-2，编排2）＋bench 回退处置（dhToExplicit +25.6%、generateGridPositions +80%、generateSampleSet +22.8%，无既有预算，policy §1.1-4 待所有者判断）＋WP3+WP4 合并为同文件整文件解决批的调度裁决——三者均由所有者定",
+    "独验侧事项（NOT RUN 如实分列）：独立验收未执行（实施未落地，无送验对象）；verify-task-scope 未执行；commit-lint 未执行（候选留存批提交由收口流程执行）"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T55.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/requirements.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+    "RobWork/doc/industrial-robot-design/reuse/functions/**"
+  ],
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "outputs": [
+    "阶段〇结论登记（FAIL，已所有者确认）＋阶段一候选包：8 处换核候选完整 diff（stage1-candidate.patch）＋全部验证证据（探针位模式恒等/四套件/断开红例/bench 前后测）留档 traceability/reuse/REUSE-T55/；生产树零改动（候选未落地，T33 A/D 与 T29 候选留存先例同型）"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "阶段〇（已结）：modeling.axisAngleRotation 换上游 EAA 不适用＝FAIL——EAA::axis()（EAA.hpp:219-226）θ<1e-6 返回零轴、(0,1e-6) 开区间丢失非对角一阶项（θ=1e-8 误差≈1e-8 超 DH/FK 1e-9 容差）；REQUIREMENTS.md:784 第13项 1e-6＝固定仅表示转换、:786 明文不改变 FK/编译链/DH 容差且实质差异必须保留缺口；EAA 路线撤出、axisAngleRotation 保留本地登记缺口；结论全文 traceability/reuse/REUSE-T55/README.md §1—§6（其 §1 补证提示：所有者确认事实的独立凭证待独验会话向所有者核对）",
+    "候选验证（全部真实执行、生产未落地）：换核 8 处候选经位模式探针逐点核验——rotVec/rotMul/transformMul/rotateTranspose/rotateTransposeFrame 各 256 例位模式逐位恒等最大差 0（P1—P5）；validateBoxOrientation 判定映射 561 例（含 ±1.5e-9 边界带 300 例）完全一致＋三分诊断消息集合经非有限预检＋isOrthonormal 细分保持，**双重无效输入的类别优先级变化＝P6b 4/4 实测翻转（基线列序扫描「非正交」先抛→新核全元素预检「非有限」恒先抛；异常类型同为 std::invalid_argument，RegionCoverageTest 仅钉类型不受影响）**（P6/P6b）；rotZ/rotX 换 RPY 表示转换 84 角例数值恒等最大差 0、仅 (2,0) 元 +0→−0 零符号差（±0 同义为 canonical 身份面契约，Sampling.cpp:237 注＋RegionCoverageTest 负零恒等用例）（P7）；poseFromDirectionRoll 第一段 Rodrigues 与 ±ẑ 退化分支保留自持、第二段滚转组合黄金集 4186 例数值恒等（P8）；**orientBoxPoint 全表达式中心加法结合序语义差异＝P9 实测（c+((t0+t1)+t2) vs 原 ((c+t0)+t1)+t2，768 例中 243 例 ULP 级位差、maxAbsDiff 4.441e-16、maxUlp 160——附录 D 容差与 RegionCoverageTest 1e-14 之内）**；rotationAngleBetween 保留（migration.md:270 T32 反例直接引用）",
+    "候选验证（续）：四套件 modeling_test 480/480＋modeling_contract 17/17＋kinematics_test 296 passed/1 既有 skipped＋kinematics_contract 57/57；断开红例 rotMul 变异 4 真红 exit 1、orientBoxPoint 变异 1 真红 exit 1、恢复原字节（sha256 逐位核对）转绿 24/1；2 处失真冒烟注释订正随候选 diff 内（DhConvert.cpp 原 :178-180 等、Sampling.cpp 原 :366-367 等）",
+    "运行效果（policy §1.1-4，待所有者判断）：wp3-bench 同 harness 前后测——path 组回退 dhToExplicit#6r 1796.8→2257.6ns/op（+25.6%）、generateGridPositions 3.97→7.14ms/op（+80%）、generateSampleSet 19.34→23.74ms/op（+22.8%）；机理＝上游 multiply 外联符号（Rotation3D.cpp）替代内联可向量化替身核＋RPY 路径多 2 次 cos/sin；无既有预算，候选落地与否的裁决随整批重排由所有者定",
+    "阻断与重排（本任务 blocked 的明确阻断）：REUSE-COVERAGE 全文件解决规则（reuse-contract.ps1:285-290）要求被改产品文件全部绑定行 resolved——DhConvert.cpp 余 8 行＋Sampling.cpp 余 3 行非本包 pending（其中 zeroConfigFK 定案以 WP4 前置认定为前提，LM 4 行 H5 分类B、MATH-DH 3 行 WP4 终审、采样 3 行黄金锁定定案均不在本包五问授权面）；14 行范围在该规则下结构性不可单独落地（计划层缺口）；解阻路径＝所有者裁决「WP3+WP4 同文件整文件解决批」重排（以 zeroConfigFK 前置认定为前置）并一并裁决 bench 回退处置；候选完整材料（stage1-candidate.patch＋全部验证证据）随时可按重排结果应用"
+  ],
+  "note": "计划原文＝.zcode/workflow-drafts/plan-v3.md §3 工作包3 五问（会话外文件）。编号查重：tasks/ 目录 T50—T54 已占、无 T55（登记批 ls 实测）；migration.md:262 REUSE-T35 系历史规划编号占位（原文「不另立 tasks/ 契约文件」）、与本编号无关。status=blocked 依 :258 枚举（candidate 非法承载）＋REUSE-T33 A/D 候选留存与 REUSE-T29 blocked 候选先例（候选＋验证证据留存、生产恢复起点、不计已完成迁移）。起始 SHA＝220189b2f42ea2a824bf9de3fc23affbd2abfe61；生产与矩阵已按 2026-10-27 所有者裁决（路径 B 候选留存变体）回退至 HEAD 原位（git restore 两生产文件系该裁决特别授权；两矩阵经 git show HEAD 内容回写、git diff 实测为空），工作树生产零改动。候选批次提交文件面＝tasks/REUSE-T55.json＋reuse/migration.md（REUSE-T55 行）＋traceability/reuse/REUSE-T55/**（裁决第 4 条）；本契约不建 reuse/changes/REUSE-T55.json（候选未落地不登记 ird-reuse-change 凭证，草案留档 candidate-changes-manifest.json）。独立验收由所有者另开会话执行（AGENTS §6.4），实施者不得自签；禁改写历史、不执行 git push/fetch。"
+}

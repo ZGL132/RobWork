@@ -564,6 +564,7 @@ enum class RegistrationIssueCode : std::uint8_t {
     //      DependencyIssueCode 承载，本码只标注类别；拒绝码面＝
     //      DeclarationInvalid〔EV-T02 预登记契约〕）----
     DeclarationIssue,              ///< 依赖声明校验问题（映射自 DependencyIssue 清单）
+    SupportedModeUnknown, ///< EV-T13：支持模式不在 core 词表
 };
 
 /**

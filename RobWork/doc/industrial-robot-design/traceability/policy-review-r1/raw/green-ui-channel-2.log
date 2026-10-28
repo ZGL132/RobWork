@@ -1,0 +1,80 @@
+Note: Google Test filter = KinEvaluationChannel.*:KinAnchorCapture.*:KinSessionModelView.*
+[==========] Running 30 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 29 tests from KinEvaluationChannel
+[ RUN      ] KinEvaluationChannel.Submit_RejectsWhenSnapshotUnbound_UI_T64
+[       OK ] KinEvaluationChannel.Submit_RejectsWhenSnapshotUnbound_UI_T64 (0 ms)
+[ RUN      ] KinEvaluationChannel.Submit_RejectsIncompleteBackgroundRequests_KIN_P4
+[       OK ] KinEvaluationChannel.Submit_RejectsIncompleteBackgroundRequests_KIN_P4 (0 ms)
+[ RUN      ] KinEvaluationChannel.Submit_RejectsEmptyPlanSlice_UI_T64
+[       OK ] KinEvaluationChannel.Submit_RejectsEmptyPlanSlice_UI_T64 (0 ms)
+[ RUN      ] KinEvaluationChannel.Submit_RunsAndRecordsCoverage_UI_T64
+[       OK ] KinEvaluationChannel.Submit_RunsAndRecordsCoverage_UI_T64 (16 ms)
+[ RUN      ] KinEvaluationChannel.MapSampleStateToCell_TableDriven_UI_T65
+[       OK ] KinEvaluationChannel.MapSampleStateToCell_TableDriven_UI_T65 (0 ms)
+[ RUN      ] KinEvaluationChannel.View3DTintFromCoverage_TableDriven_UI_T65
+[       OK ] KinEvaluationChannel.View3DTintFromCoverage_TableDriven_UI_T65 (0 ms)
+[ RUN      ] KinEvaluationChannel.RegionTint_FollowsPositionAxisNotMixed_UI_T65
+[       OK ] KinEvaluationChannel.RegionTint_FollowsPositionAxisNotMixed_UI_T65 (0 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_WorldToBaseTranslation_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_WorldToBaseTranslation_KIN_P1 (33 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_InvertedBasePreset_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_InvertedBasePreset_KIN_P1 (27 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_WallBasePreset_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_WallBasePreset_KIN_P1 (32 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1 (32 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_ArbitraryRotatedFrame_REQ03_A21
+[       OK ] KinEvaluationChannel.ProjectPlan_ArbitraryRotatedFrame_REQ03_A21 (16 ms)
+[ RUN      ] KinEvaluationChannel.Rebind_ClearsAccountAndDropsLateResult_UI_T64
+[       OK ] KinEvaluationChannel.Rebind_ClearsAccountAndDropsLateResult_UI_T64 (1 ms)
+[ RUN      ] KinEvaluationChannel.CoverageProgressAndDetachStopRealComputation_MA03
+[       OK ] KinEvaluationChannel.CoverageProgressAndDetachStopRealComputation_MA03 (19434 ms)
+[ RUN      ] KinEvaluationChannel.SolveChannel_BackgroundRealSolve_KIN_P4
+[       OK ] KinEvaluationChannel.SolveChannel_BackgroundRealSolve_KIN_P4 (14 ms)
+[ RUN      ] KinEvaluationChannel.SolveChannel_RebindCancelsInflight_KIN_P4
+[       OK ] KinEvaluationChannel.SolveChannel_RebindCancelsInflight_KIN_P4 (0 ms)
+[ RUN      ] KinEvaluationChannel.BatchChannel_RealComputationAndOutcomes_KIN_P4
+[       OK ] KinEvaluationChannel.BatchChannel_RealComputationAndOutcomes_KIN_P4 (17 ms)
+[ RUN      ] KinEvaluationChannel.BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23
+[       OK ] KinEvaluationChannel.BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23 (12 ms)
+[ RUN      ] KinEvaluationChannel.BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23
+[       OK ] KinEvaluationChannel.BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23 (28 ms)
+[ RUN      ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21
+[       OK ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21 (18 ms)
+[ RUN      ] KinEvaluationChannel.BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15
+[       OK ] KinEvaluationChannel.BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15 (12 ms)
+[ RUN      ] KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16
+[       OK ] KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16 (28 ms)
+[ RUN      ] KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16
+[       OK ] KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16 (45 ms)
+[ RUN      ] KinEvaluationChannel.OppositeDirectionRejected_REQ09_WP14T12
+[       OK ] KinEvaluationChannel.OppositeDirectionRejected_REQ09_WP14T12 (31 ms)
+[ RUN      ] KinEvaluationChannel.DirectionCorrectionFromZero_REQ09_WP14T12
+[       OK ] KinEvaluationChannel.DirectionCorrectionFromZero_REQ09_WP14T12 (12 ms)
+[ RUN      ] KinEvaluationChannel.BatchDirectionRulesFreeToolRoll_WP14T12
+[       OK ] KinEvaluationChannel.BatchDirectionRulesFreeToolRoll_WP14T12 (12 ms)
+[ RUN      ] KinEvaluationChannel.PolicyRebindClearsFinishedSolve_ARC05_A23
+[       OK ] KinEvaluationChannel.PolicyRebindClearsFinishedSolve_ARC05_A23 (12 ms)
+[ RUN      ] KinEvaluationChannel.EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23
+[       OK ] KinEvaluationChannel.EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23 (12 ms)
+[ RUN      ] KinEvaluationChannel.HostCollisionUsesCompletePolicyRules_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(2058): error: Value of: session
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinEvaluationChannel.HostCollisionUsesCompletePolicyRules_POL_T13 (1 ms)
+[----------] 29 tests from KinEvaluationChannel (19857 ms total)
+
+[----------] 1 test from KinAnchorCapture
+[ RUN      ] KinAnchorCapture.RebindKeepsOldTaskModelAndLifetime_REUSE_T17
+[       OK ] KinAnchorCapture.RebindKeepsOldTaskModelAndLifetime_REUSE_T17 (0 ms)
+[----------] 1 test from KinAnchorCapture (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 30 tests from 2 test suites ran. (19858 ms total)
+[  PASSED  ] 29 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinEvaluationChannel.HostCollisionUsesCompletePolicyRules_POL_T13
+
+ 1 FAILED TEST

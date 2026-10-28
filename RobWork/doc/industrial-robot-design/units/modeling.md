@@ -392,7 +392,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 | --- | --- | --- |
 | `objectId` / `localName` | 同关节 | — |
 | `body.mass` | `SourcedValue<double>`，kg；已提供则 m>0（断言①） | 缺失＝NotProvided，不触发断言，走 DataInsufficient 降级（MDL-06/V15-01） |
-| `body.centerOfMass` | `SourcedValue<rw::math::Vector3D<double>>`，m，连杆系下 | 修改触发平行轴确认流（§5.3，M-2） |
+| `body.centerOfMass` | `SourcedValue<rw::math::Vector3D<double>>`，m，连杆系下 | 修改触发刚体平移/完整覆盖确认流（§5.3，C01/M-2） |
 | `body.inertia` | `SourcedValue<InertiaTensor{ixx,iyy,izz,ixy,ixz,iyz}>`，kg·m²；基准＝**质心、参考姿态＝连杆坐标系**（M-2）；已提供则对称（相对 1×10⁻¹²，附录 D 第 6 项）＋SPD（对称化后特征值严格>0，第 7 项）＋惯性椭球三角不等式（断言②③） | 同上 |
 | `body.material` | `std::optional<MaterialRef{ materialId, densitySourced }>`, kg/m³ | 估算输入（§5.3） |
 | `shape.visual` / `shape.collision` | `std::optional<GeometryRef{ resourceRefId（→resourceManifest）, localTransform（T_link_geom，m/rad）, kind: Mesh|Primitive }>` | 视觉/碰撞分离字段（evidence 失效矩阵的语义基础）；碰撞几何不等于碰撞判定（policy 唯一评估） |
@@ -541,7 +541,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 **规则**：
 
 1. 估算结果一律 `ValueProvenance{kind=GeometricEstimate, methodTag="mdl-property-formula/1"}`；用户直接修改物性→UserProvided 覆盖（保留来源标记，MDL-05"允许几何级权威值覆盖"）。
-2. **质心修改确认流**：用户修改 com 时，编辑器必须让用户显式二选一——(a) 惯量按平行轴定理迁移（`I' = I + m((d·d)E − ddᵀ)`，d＝质心位移）；(b) 强制覆盖完整张量（用户输入全部六分量）。选择随编辑差值与命令摘要留痕；**不允许质心与惯量基准静默脱钩**（M-2/MDL-05）。既无迁移也无覆盖的 com 修改＝调用方错误拒绝。
+2. **质心修改确认流（C01，所有者2026-10-28裁决）**：惯量张量始终关于刚体自身实际质心，并在连杆局部坐标轴表达（kg·m²）。修改com仅代表刚体安装平移，编辑器要求显式二选一：(a) 整体平移，关于COM的张量六分量及来源保持不变（兼容旧`migrate-inertia` token，禁止正平行轴增量）；(b) 用户覆盖完整六分量张量，代表整体物性输入。未来局部旋转仅按`R I_C Rᵀ`变换表达坐标轴。选择留痕；未选择即拒绝。多段刚体合成仍按上文相对合成COM的平行轴公式处理，两者不可混用。
 3. **合法性与缺失**：估算输出在返回前自检（对称、SPD、三角不等式）；物性**缺失**（NotProvided）不触发断言、不阻断应用，登记为就绪校验 Warning 并在动力学评估侧按 DYN-06 走 DataInsufficient 降级（V15-01）。
 4. **估算精度与版本**：公式表版本号随 methodTag 入来源；估算算法确定性（同输入→同字节）；估算精度不做统计声明（"估算值"限定语在报告措辞冻结，RPT-05）。
 5. **边界**：modeling 只负责参数与估算契约；runtime 负责编译；dynamics 负责实际动力学计算；**估算质量不当作动力学证据**（DYN-06 可信等级由 dynamics/evidence 口径判定，modeling 仅提供来源标记）。
@@ -660,7 +660,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
   - **关节类型**（MDL-12 同一判定）：`<Joint type>` Revolute/Prismatic、`<Frame type=Fixed>`（缺省 Fixed）、`<DHJoint>`（d 属性＝Revolute 形态）可表达；Spherical/PrismaticSpherical/Universal/PrismaticUniversal（多自由度）、Movable 自由帧、词表外类型→`joint-type` 不可表达**无草稿**（不得转 FixedFrame——M-6）；`<Depend>` 从动关节＝mimic 同款（识别＋报告＋阻断，类型保留，草稿不可提交——V-10）。
   - **DH 提取边界（本节增量登记）**：仅"全链均为 Revolute 型 `<DHJoint>`"的同质链经 `IDhExplicitConverter::dhToExplicit` 展开（§7.4 单一实现——DhChain 只参数化 Revolute 链；alpha/offset 源单位 deg 换算 rad）；混合链/含 Prismatic DHJoint 不可展开——逐个列入不可表达清单（诚实边界，不绕过、不重写第二份展开公式）。
   - **位姿/轴**：`<Pos>`（m）＋`<RPY>`（**源单位 deg→rad**，框架 Deg2Rad 同口径）→ origin（T_parent_joint）；缺省→零位（默认清单不静默）；框架 Joint 无轴元素——轴向固定为关节局部系 z 轴 (0,0,1)（框架语义，映射清单注明来源）。
-  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→**F01/{1,1} 起映射** `maxVelocity`/`maxAcceleration`（源制式 SI 直入 rad/s、rad/s²｜m/s、m/s²——框架速度/加速度限值无 deg 换算面；非法/负值＝错误项；Fixed＝忽略面；旧"未保留逐项列出"口径随 §4.3-A 字段落位废止）。
+  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→**F01/{1,1} 起映射** `maxVelocity`/`maxAcceleration`（Revolute 源 deg/s、deg/s² 按上游 XMLRWLoader::addLimits 的 Deg2Rad 转 SI rad/s、rad/s²，Prismatic 源 m/s、m/s² 直入；空/非法/负值＝Invalid＋错误报告＋MDL-IMPORT-VALUE-ILLEGAL 诊断；Fixed＝忽略面；旧"未保留逐项列出"口径随 §4.3-A 字段落位废止）。
   - **Q 构型**：设备内首 `<Q name>`（rad）对位可动关节（Fixed/Passive/Depend 不占位）→ 逐关节 `zeroOffset`（权威零位＝源初始姿态，q_authoritative = q_zeroOffset + q_rw；§7.4 zeroOffset 与 DH θ_offset 显式分离不烘入几何）；备选构型/维数失配→`q-config-residual` 未保留逐项列出。
   - **几何/资源**：`<Drawable>`→visual、`<CollisionModel>`→collision（重复仅首个映射，其余 multiple-visual/multiple-collision 逐条报告）；`<Polytope file>`→Mesh 资源 Recorded 登记（依赖树缺失叶/无叶→IO-RES-MISSING 事实＋missing 状态——缺失≠不可行，V-08）；解析图元→`geometry-primitive` 未保留（GeometryRef 无参数承载）。
   - **碰撞设置**：`<CollisionSetup file>`/`<ProximitySetup file>`（框架文法仅外部文件引用）→`collision-setup-external` 未保留逐项列出（排除对清单不在本通道解析范围）。
@@ -688,6 +688,8 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 - **导出**（会话级文件操作，不产生修订）：规范模型包 = ZIP 封装（io `ZipChannel`）＋`manifest.json`（显式来源标识 `producer=ird-modeling`、schemaVersion、对象清单与 digest）＋根/部件对象 canonical 字节＋Solidified 资源副本＋命名位姿；**原子写出**经 io `AtomicFile`（临时区→校验→替换）——**导出失败保证项目状态不变且旧输出文件不被破坏**（MDL-20"恢复先前输出"的文件层语义）。
 - 另可导出 WorkCell/DWC XML 供外部查看：数据源＝RuntimeSnapshot 的只读视图（runtime `WorkCellConstView`），modeling 仅编排写出（io AtomicWriter），不改造内容。
 - **导入回读**：仅识别本软件导出的规范工件（manifest 来源标识＋schema 校验）；其他文件→稳定诊断引导至 MDL-18/R2 通道；roundtrip 后逐项验证一致（权威参数化 DH/显式、物性、资源引用、碰撞规则、命名位姿——逐项清单入导入报告，对照 §10 行 V-20）。
+- **完整草稿交接（MDL-CR-4/F07）**：确认后一次接收 Tool/TCP、Scene、PoseSet、Drivetrain 与 Solidified 字节；字节随64MiB有界草稿保存恢复，未应用前再导出仍读同一草稿闭包。完整工作集命令核对摘要/闭包后由 project 分配新资源身份并原子写入；runtime 经宿主同次计划覆盖层读取资源并双编译。失败保留旧修订和完整草稿；成功回执重读正式闭包，只清理实际消费的草稿资源。保存草稿不等于应用成功。
+
 
 ---
 
@@ -759,8 +761,7 @@ T_{i-1,i} = Rot_z(θᵢ + qᵢ) · Trans_z(dᵢ) · Trans_x(aᵢ) · Rot_x(αᵢ
 
 - 基座与工具变换**不在 DH 参数内**：基座安装走 BasePlacement（§7.7 隔离）；法兰后工具走 ToolDefinition——DH 只参数化关节链（MDL-02 范围）。
 - 零位对齐（**v0.42 增量修订——audit F-590 零位烘焙纪律**）：权威零位语义由 `zeroOffset` 承载（`q_authoritative = q_zeroOffset + q_rw`，runtime 口径）；DH 的 θᵢ_offset 与 zeroOffset 在转换中显式分离，**zeroOffset 不烘入展开几何**——权威零位旋转的唯一烘焙归口在 modeling→Description 映射的单一折叠 `origin_desc = origin · R(axis, zeroOffset)`（CanonicalBridge mapJoint 与等价验证映射同规，不按来源特判）。展开产物为 q_model=0（＝DH 变量零位；建模域坐标 `q_authoritative = q_model − zeroOffset`）位姿；roundtrip 验证含零位（q_model=0 时显式位姿==DH 派生位姿 Rot_z(θᵢ)；映射后 q_authoritative=0 构型==DH 派生位姿 Rot_z(θᵢ+zeroOffset)——修复前展开预烘 zeroOffset、映射再折叠一次，零位构型多转 R_axis(q0)）。求解方向（§7.5）重建式同规：Rot_z(θᵢ)（zeroOffset 不入几何、不入求解相位）。
-- **DH→显式（权威展开，无损）**：拆分装配（**v0.44 增量修订——audit F-631 一般位姿位置发散修复**；推导：运行时 origin·R(axis,q) 组合的转轴过 origin 平移后的点，标准 DH 单步的转轴 z_{i-1} 过**父**帧原点——origin 平移必须沿转轴本身（Trans_z 沿轴不改轴线），Tx(a)/Rx(α) 不得留在本关节 origin 内——原实现烘入尾部使转轴过子原点，一般位姿（a≠0、q≠0）位置误差 2a·sin(θ/2)，a=0.5、q=1.1 时 0.5227 m）：
-  `origin_i = [Trans_x(a_{i-1})·Rot_x(α_{i-1})]（i>0 头部静段，S_{-1}=I）· Rot_z(θᵢ_offset)·Trans_z(dᵢ) · [i＝末关：Trans_x(aᵢ)·Rot_x(αᵢ)]（链尾静段）`；**零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}**（全链 FK 严格还原；一般位姿全链 FK 组合序＝各关节 origin·R(axis,ψ) 直乘、末关节拆 [纯段]·R(axis,ψ)·[尾段]——恒等于级联；末关节一般位姿单关节组合的一阶残差（2a·sin(ψ/2)）为 runtime origin·R(axis,ψ) 表达面的定理性极限——转轴必过自身关节系原点，链上无旋转后静段槽位，以拆分组合序为恢复路径）。`axis_i`＝关节系内转轴方向（世界系恒等于 z_{i-1}）：中间关节＝ez（头部静段 Rx(α_{i-1}) 与显式累积帧的回拉 Rx(−α_{i-1}) 相消）；末关节＝Rx(−αᵢ)·ez＝(0, sinαᵢ, cosαᵢ)（**v0.43 F-591**：尾部静段 Rx(αᵢ) 由 axis 吸收——原式 `axis=z_i=T_{0,i}·(0,0,1)` 为基座系子帧 z，α≠0 链被 runtime 按关节系方向消费后物理轴错误）；数值误差仅浮点累乘（对照附录 D 第 4 项容差验证，实测远优于 1×10⁻⁹）。a=0 且 α=0 链逐位零漂移（Tx(0)Rx(0)＝精确恒等不改变乘积）。
+- **DH→显式（F01 / Owner 2026-10-28 修订）**：令 `S_i=Tx(a_i)·Rx(alpha_i)`、`S_-1=I`，则 `origin_i=S_(i-1)·Rz(theta_i)·Tz(d_i)`，所有关节局部 `axis=(0,0,1)`。最后 `S_(n-1)` 作为独立 `flangeOffset` 交给 runtime，在末关节变量之后建立 FixedFrame。完整链为 `Π(origin_i·Rz(zeroOffset_i+q_i))·flangeOffset`，与标准 DH 直接矩阵级联等价。禁止把末段烘入末关节 origin，禁止测试专门调整组合顺序。显式权威的 flangeOffset 同为权威固定段；切换候选必须保持实际法兰坐标，不要求退化链逐项回收同一 DH 参数。
 - **变换方向图**：
 
 ```
@@ -798,8 +799,8 @@ DH 权威 ──(展开，无损，允许)──> 显式权威        显式权�
 
 ### 7.6 等价验证与权威切换（MDL-02/10、ARC-03）
 
-- **权威切换条件**：仅 Exact/ExactNonUnique **且**编译链 FK 对照等价验证通过后，才可置 `authority=StandardDH`；Approximate/NotExpressible 锁定显式权威。等价验证＝对同一模型分别按（切换前显式权威）与（候选 DH 权威）构造 Description→经 runtime 编译链（S1–S5 buildCanonicalModel）取 FK 对照——位置 ≤1×10⁻⁹ m、姿态 ≤1×10⁻⁹ rad（附录 D 第 4 项；AT-16）。
-- **roundtrip 验证**（§10 行 V-11）：DH 权威→展开显式→再求 DH：参数级（≤第 5 项容差）与 FK 级（≤第 4 项容差）双重一致；黄金数据集三套（DH/显式/不可表达样本，DTB WP-13-T16）承载。
+- **权威切换条件**：仅 Exact/ExactNonUnique **且**编译链 FK 对照等价验证通过后，才可置 `authority=StandardDH`；Approximate/NotExpressible 锁定显式权威。等价验证＝对同一模型分别按（切换前显式权威）与（候选 DH 权威）构造 Description→经 runtime 正式 WorkCell 编译及上游 FK 取边界点、各轴边界、交错非零内点的全链位姿对照（F03；采样为必要门，不宣称有限采样证明任意连续构型全域）——位置 ≤1×10⁻⁹ m、姿态 ≤1×10⁻⁹ rad（附录 D 第 4 项；AT-16）。
+- **roundtrip 验证**（§10 行 V-11；Owner 2026-10-28）：保留黄金原件和 10⁻⁹ 阈值，比较独立 Fixed 末段与真实 runtime 多构型物理等价；退化链允许参数重表示。C03 冻结 LM/雅可比骨架，只修真实 axis 输入与接受门；Exact/ExactNonUnique 的数值分类本身不能代替多构型验证，部分可表达链可能被保守拒绝。
 - 切换动作是**独立领域命令**（`apply-robot-design` 的权威切换变体）：prepare 内执行转换判定＋等价验证（调用 runtime 编译分段入口，只读、不发布快照），摘要记录判定状态与验证容差结果；验证失败不产生修订。
 - **基座—世界变换隔离（MDL-22/M-11）**：转换只作用于关节链；`R_world_base` 由 runtime 从 BasePlacement 编译产生、四消费方（三维视图/环境几何/碰撞/重力投影）读同一编译产物；modeling 在任何转换、导入、优化路径中都**不得**计算、缓存或二次叠加基座—世界旋转（含倒挂/壁装模板的渲染位姿——归 runtime 编译产物）。预设轴向以 runtime `installationPresetRotation()` 为唯一权威产出点（P-RT-4 交叉核对随 WP-13-T11 完成并留痕）。
 
@@ -1226,6 +1227,8 @@ protected:
 | `IModelDiffService` | Model Diff 数据实体（MDL-08；两工作集输入，稳定排序增量表） | `ModelDiffReport diff(const ModelingWorkingSet& baseline, const ModelingWorkingSet& candidate) const`；分组：结构/参数（DH、轴线、限位）/物性；条目含对象定位（供 UX-13 点击） |
 | `IModelPackagePort` | MDL-20 规范模型包导出/导入（io ZipChannel/AtomicFile 承载） | `ExportOutcome exportPackage(const ObjectClosureView&, const ExportTarget&, Diags&) const`；`ImportOutcome importPackage(const ValidatedSource&, Diags&) const`；非本软件工件→引导 MDL-18/R2 稳定诊断 |
 
+ModelDiff 对关节 maxVelocity/maxAcceleration 比较四态及来源，并按稳定 ObjectId 对同 ID 的 Tool/TCP、Scene、PoseSet、Drivetrain 内部字段递归比较（MDL-CR-4/F13）；不构造 runtime 模型或持久对象身份。
+
 ### 9.5 modeling 稳定诊断码登记表（`MDL-` 前缀；装配期经 `IDiagnosticRegistry::registerCode` 注册，ownerUnit=`modeling`）
 
 注册纪律（diagnostics.md §4.5）：码值 `^[A-Z0-9]+(-[A-Z0-9]+)*$` ≤64；一经注册并进入持久化产物不改义不改拼；**不预建无消费者条目**——下表每码随对应任务（§11）注册并附带 CodeDescriptor（category/severity/titleKey/detailKey/paramSchema/confirmable/retryable/…）。
@@ -1244,6 +1247,7 @@ protected:
 | `MDL-IMPORT-UNSUPPORTED-JOINT` | 导入/error | false | mimic/planar/floating/闭环在所选主链 → 移除或改拓扑（不得绕过） | T05 |
 | `MDL-IMPORT-BRANCH-SELECTION` | 导入/info | false | 多可动分支文件 → 显式选择主链 | T05 |
 | `MDL-IMPORT-ZERO-AXIS` | 导入/error | false | 零轴/非有限轴关节 → 修正源文件（该草稿不得提交） | T05 |
+| `MDL-IMPORT-VALUE-ILLEGAL` | 导入/error | false | 源数值空/非法，保留字段、原文及来源行列，Invalid 不可确认成零；用户修正后重试（InputInvalid；无参数；键 diag.mdl-import-value-illegal.title/detail） | MDL-CR-4 |
 | `MDL-IMPORT-PENDING-CONFIRM` | 导入/Warning | false | 待确认项未决（缺 axis 默认 +X/缺限位/工作范围）→ 逐条确认 | T05/T06 |
 | `MDL-IMPORT-TEMPLATE-RANGE` | 导入/info | false | 所选主链可动轴数不在六/七轴（4/5 轴——含或不含 prismatic，及其它轴数），超出首版产品模板范围 → 草稿兼容编辑可用，模板创建与正式计算/报告阻断（类型保留不降级——V12-01；MDL-12-S1 已启用（2026-10-14，WP-13-T19）——六/七轴含 prismatic 放开不再产本诊断，4/5 轴仍产） | T05（v0.6 实现期增登——§6.4"诊断'超出首版产品模板范围'"语义的码面落位，原表缺行；v0.49 随 MDL-12-S1 启用收窄触发面——码值/类别/级别/paramSchema 不变，"一经注册不改义"纪律不受影响） |
 | `MDL-IMPORT-XACRO-UNRESOLVED` | 导入/error | false | Xacro 受控展开语义失败（未定义宏/未定义参数/缺参/签名外属性/不支持构造/宏重定义，宏名或参数名＋源行列）→ 修写源文件为受控子集（include/property/macro/调用；表达式与 $(...) 一律拒绝——绝不执行任意代码，io.md §6.2） | T06（v0.7 实现期增登——§6.5"展开失败→可定位诊断（宏名/行列）"的语义面码位；io 护栏码透传面已覆盖循环/缺失/预算三族，P-MDL-4"护栏 io／语义 modeling"口径下语义面归 modeling；原表缺行） |

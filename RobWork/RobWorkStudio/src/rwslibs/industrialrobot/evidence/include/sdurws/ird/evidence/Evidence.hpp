@@ -286,6 +286,7 @@ enum class ProfileIssueCode : std::uint8_t {
     ApplicabilityTokenInvalid,  ///< conditionToken 空/含 NUL（isWellFormedToken 下限）
     ReferencedKeysEmpty,        ///< referencedKeys 空集（条件不由任何键决定——永不重解析）
     ReferencedKeySyntax,        ///< referencedKey 语法非法（isValidDependencyKey——§9.5 语法校验）
+    ItemDefinitionConflict, ///< EV-T13：重复 ID、列表与类别冲突或未知类别
 };
 
 /**
@@ -459,6 +460,8 @@ enum class EvidenceItemIssueCode : std::uint8_t {
     SatisfiedDigestMissing,     ///< Satisfied 必填 artifactDigest（缺失或全零保留值）
     InvalidReasonMissing,       ///< Invalid 必填 invalidReason（ERR-01：不伪造、留原因）
     NotApplicableReasonMissing, ///< NotApplicable 必填非空 notApplicableReason（C2/ERR-01）
+    StatusInvalid, ///< EV-T13：词表外状态不得视为满足
+    DuplicateInstance, ///< 同 itemId/subject/规范 caseScope 的重复实例
 };
 
 /**
@@ -548,6 +551,8 @@ struct EvidenceCompletenessResult {
     struct Gap {
         std::string itemId;                              ///< 不满足的 Profile 项 id
         EvidenceItemStatus status = EvidenceItemStatus::Missing; ///< 不满足原因态
+        /// EV-T13：清单实例位置；未提供项为 size_t(-1)，供缺失明细追溯。
+        std::size_t manifestIndex = static_cast<std::size_t>(-1);
     };
     std::vector<Gap> requiredGaps;      ///< 必需项不满足清单（全量、保序）
     std::vector<std::string> suggestedGaps; ///< 建议项缺失 id（单独标注、不阻断）
@@ -558,12 +563,10 @@ struct EvidenceCompletenessResult {
  *        RequiredEvidenceProfile 的完备性核对"的纯函数承载）。
  *
  * 规则（§6.2 逐值后果表）：
- *   - Profile.required 逐项查找清单（按 itemId 首个匹配——清单构造方
- *     保证 id 唯一，重复项为构造方违约、此处不判定）：
- *     未出现→Missing；状态 Satisfied→满足；NotApplicable→**不计缺失**
- *     （EV-VER-7）；Missing/Invalid/Unverified→不满足入 requiredGaps；
- *   - Profile.suggested 逐项：未出现或不满足→suggestedGaps（不阻断），
- *     NotApplicable 同样不计；
+ *   - Profile.required 按 itemId 核对全部实例，逐项列出 Missing/Invalid/Unverified；
+ *     Satisfied 须通过 presence 校验，NotApplicable 仅限有条件项且原因齐备；
+ *   - 同名项允许按 subject/caseScope 区分实例；同一实例重复拒绝；
+ *   - Profile.suggested 以同样纪律单独标注，不阻断正式判定；
  *   - 通用必需项不在本核对（§6.1："任何 Verified 评估隐式附加"——其
  *     门禁在汇总②级，EV-T06；D-14：域明细不进 evidence，本函数也只
  *     消费域传入的 Profile 结构）。
@@ -588,6 +591,7 @@ EvidenceCompletenessResult checkEvidenceCompleteness(const RequiredEvidenceProfi
 enum class SnapshotModeIssueCode : std::uint8_t {
     ExternalResourceNotSolidified, ///< Verified 模式存在 state==Recorded 的被消费外部资源（CON-03：未固化即阻断正式结论——证据不足口径）
     ReproductionIncomplete,        ///< 复现块版本要素不完整（productVersion/evidenceContractVersion 空——NFR-COR-02/RPT-03）
+    SnapshotInvalid, ///< EV-T13：冻结值或内容身份校验失败
 };
 
 /**
@@ -827,6 +831,7 @@ enum class ProofIssueCode : std::uint8_t {
     SliceIdMismatch,            ///< sliceId 与被汇总结果切片不一致（expectedSliceId）
     // ---- ⑤ 覆盖声明（§6.3 校验清单第 5 项：coverageClaim 句法合法）----
     CoverageClaimInvalid,       ///< coverageClaim 与类别规范声明不符（§6.3 两规范值）
+    CommonFieldMissing, ///< EV-T13：主张、对象、适用前提缺失或含 NUL
 };
 
 /**
@@ -1040,6 +1045,7 @@ enum class CoverageIssueCode : std::uint8_t {
     EntryRunRefInvalid,          ///< runId 有值但为保留值（追溯面损坏）
     EntryResultSliceRefInvalid,  ///< resultSliceId 有值但为保留值（追溯面损坏）
     MissingMandatoryExecution,   ///< enabled∧mandatory 工况无 Executed 条目（漏验——EV-COV-1；非矩阵非法）
+    StatusInvalid,              ///< EV-T13：未知工况执行状态
 };
 
 /**

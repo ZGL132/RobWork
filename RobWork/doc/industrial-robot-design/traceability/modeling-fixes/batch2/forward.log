@@ -1,0 +1,83 @@
+Note: Google Test filter = DynForward.*
+[==========] Running 13 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 13 tests from DynForward
+[ RUN      ] DynForward.AnalyticStraightConfigurationPassed_DYN05
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFC6C16B0
+set motor 0 ird-rne/joint1 id: 000002BFFC6C1990
+[       OK ] DynForward.AnalyticStraightConfigurationPassed_DYN05 (69 ms)
+[ RUN      ] DynForward.ConsistencyFailedBelowMachinePrecision_DYN05
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFC834520
+set motor 0 ird-rne/joint1 id: 000002BFFC834800
+[       OK ] DynForward.ConsistencyFailedBelowMachinePrecision_DYN05 (65 ms)
+[ RUN      ] DynForward.DivergenceDetected_DYN05
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFD71A210
+set motor 0 ird-rne/joint1 id: 000002BFFD71A690
+[       OK ] DynForward.DivergenceDetected_DYN05 (77 ms)
+[ RUN      ] DynForward.NumericAnomalySingularMassMatrix_DYN05
+[       OK ] DynForward.NumericAnomalySingularMassMatrix_DYN05 (2 ms)
+[ RUN      ] DynForward.RneaPartialRowsDoNotEscapeContract_F581
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFC587E60
+set motor 0 ird-rne/joint1 id: 000002BFFC588140
+[       OK ] DynForward.RneaPartialRowsDoNotEscapeContract_F581 (55 ms)
+[ RUN      ] DynForward.NotRunEmptyAndSingleSample_DYN05
+[       OK ] DynForward.NotRunEmptyAndSingleSample_DYN05 (0 ms)
+[ RUN      ] DynForward.NotRunNonFiniteInitialState_DYN05
+[       OK ] DynForward.NotRunNonFiniteInitialState_DYN05 (0 ms)
+[ RUN      ] DynForward.NotApplicableWhenSkipped_DYN05
+[       OK ] DynForward.NotApplicableWhenSkipped_DYN05 (0 ms)
+[ RUN      ] DynForward.CancelledReturnsNotRunZeroError_DYN05_UX03
+[       OK ] DynForward.CancelledReturnsNotRunZeroError_DYN05_UX03 (0 ms)
+[ RUN      ] DynForward.DeterministicRepeat_NFR_COR_02
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFC5872E0
+set motor 0 ird-rne/joint1 id: 000002BFFC5878A0
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFC587B80
+set motor 0 ird-rne/joint1 id: 000002BFFD2D89E0
+[       OK ] DynForward.DeterministicRepeat_NFR_COR_02 (135 ms)
+[ RUN      ] DynForward.PayloadEventSameSourceConsistency_DYN05
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFD2D75C0
+set motor 0 ird-rne/joint1 id: 000002BFFD2D8FA0
+ODEBody.cpp:376 Body: ird-rne/link1 has no geometry!
+
+ODEBody.cpp:376 Body: ird-rne/link2 has no geometry!
+
+set motor 0 ird-rne/joint0 id: 000002BFFD2D8700
+set motor 0 ird-rne/joint1 id: 000002BFFD2DAF40
+[       OK ] DynForward.PayloadEventSameSourceConsistency_DYN05 (118 ms)
+[ RUN      ] DynForward.FailFastContractViolations_DYN05
+[       OK ] DynForward.FailFastContractViolations_DYN05 (0 ms)
+[ RUN      ] DynForward.InitialStateQLengthMismatchInputInvalid_F644
+[       OK ] DynForward.InitialStateQLengthMismatchInputInvalid_F644 (0 ms)
+[----------] 13 tests from DynForward (524 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 1 test suite ran. (524 ms total)
+[  PASSED  ] 13 tests.

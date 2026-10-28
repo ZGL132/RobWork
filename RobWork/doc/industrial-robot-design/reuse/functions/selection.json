@@ -2170,6 +2170,416 @@
     "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
    },
    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+   "functionId": "selection.designReview.SelGoldenDatasetContractTest.contract",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/SelGoldenDatasetContractTest.cpp",
+     "symbol": "SelGoldenDatasetContract",
+     "startLine": 1,
+     "endLine": 272,
+     "sha256": "0e9698e306c84e154b9096068a22e9f76cf77b242c3a61f470a142ba26d53ae0"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection_contract_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.Combination",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/include/sdurws/ird/selection/Combination.hpp",
+     "symbol": "MappingAxisFact",
+     "startLine": 1,
+     "endLine": 1008,
+     "sha256": "6d4435db4b1bababc7504d98c19c8801b6d4e846f5607372cd5e5d5d6fcb3abc"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.CombinationCheck",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+     "symbol": "checkCombinations",
+     "startLine": 1,
+     "endLine": 2209,
+     "sha256": "a25d9d82a06cb9f2a2bbde7f0cf49805ec6ee9d1c37b103c73ce7e18cd41be8e"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.Screening",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Screening.cpp",
+     "symbol": "HardConstraintSelector",
+     "startLine": 1,
+     "endLine": 1725,
+     "sha256": "765df23493c5d45a91db553bec90d5a131104e19e4d2e0f1169c7ffe07900dda"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.CombinationCheckCodecTest",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/CombinationCheckCodecTest.cpp",
+     "symbol": "SelCombinationCheckCodec",
+     "startLine": 1,
+     "endLine": 356,
+     "sha256": "46d0c313ebd6bcea8a9c3e9173fc21d8992f8ade4743b5513f6ac34c756f6dcf"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.CombinationTestSupport",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/CombinationTestSupport.hpp",
+     "symbol": "makeMappingFact",
+     "startLine": 1,
+     "endLine": 307,
+     "sha256": "effe30c583c2519de014dbe7cb108f2ae055953db802544033c6d66c0993657b"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.ScreeningMotorTest",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/ScreeningMotorTest.cpp",
+     "symbol": "SelDesignReview",
+     "startLine": 1,
+     "endLine": 1279,
+     "sha256": "bfa2cadf43d45fc2613925282f4fb6ab422cd228ecbc5ca76694c21f97a39f6c"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.SelGoldenDatasetTest",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/SelGoldenDatasetTest.cpp",
+     "symbol": "SelGoldenScreening",
+     "startLine": 1,
+     "endLine": 1544,
+     "sha256": "520aec38242164f022f49b93935319360d8532c2f85a074ac868fc06f13e5df1"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.make_sel_screening_golden.golden",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.1.0/generate/make_sel_screening_golden.mjs",
+     "symbol": "const ",
+     "startLine": 1,
+     "endLine": 619,
+     "sha256": "230809a5c889759423fe329021f26279dccbd8be1519d3ab330b5b3423f5bb18"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：独立黄金/回归夹具及接口消费者，复用gtest/testkit和既有目标",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
+  },
+  {
+   "functionId": "selection.designReview.Screening.hpp",
+   "ownerUnit": "selection",
+   "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/include/sdurws/ird/selection/Screening.hpp",
+     "symbol": "AxisWorkpointFacts",
+     "startLine": 1,
+     "endLine": 677,
+     "sha256": "bde3eaf64e98c7ebe2fad96161fbbf062590e6d187b8e7cbdb12710e4355411f"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_selection"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"LinearAlgebra::svd|LinearAlgebra::inverse|class InertiaMatrix|overload|ComparisonBaseline|StageGate\" RobWork/RobWork/src RobWork/RobWorkSim/src --glob *.hpp --glob *.cpp",
+    "conclusion": "实际时序的候选阈值穿越和最长区间为目录筛选业务规则；不重新求运动学/动力学、不引入热动力学模型。codec沿用原规范字节设施"
+   },
+   "differences": "DESIGN-T01：公共值接口/声明及业务边界说明；实现与实际消费者分别登记，无新上游数值核心",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+     "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad"
+    }
+   ],
+   "auditBoundary": "本行归属当前文件内的产品协议/业务后处理或测试功能；数值核复用另见既有adapter记录；本包实施自查不等于全单元审计/独验",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/nonoverlap.json",
+    "sha256": "528557449bfdf27dd4edb21aaeb31959f4c94a9b59a7b18424daca0fcd003a3a"
+   }
   }
  ]
 }

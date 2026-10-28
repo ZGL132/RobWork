@@ -1,0 +1,128 @@
+[
+  {
+    "header": "Check.hpp",
+    "command": [
+      "cl.exe",
+      "/nologo",
+      "/std:c++17",
+      "/EHsc",
+      "/MD",
+      "/utf-8",
+      "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+      "/Zs",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\Check.cpp"
+    ],
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "header": "JsonLite.hpp",
+    "command": [
+      "cl.exe",
+      "/nologo",
+      "/std:c++17",
+      "/EHsc",
+      "/MD",
+      "/utf-8",
+      "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+      "/Zs",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\JsonLite.cpp"
+    ],
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "header": "PerfBenchmark.hpp",
+    "command": [
+      "cl.exe",
+      "/nologo",
+      "/std:c++17",
+      "/EHsc",
+      "/MD",
+      "/utf-8",
+      "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+      "/Zs",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\PerfBenchmark.cpp"
+    ],
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "header": "ReproBenchmark.hpp",
+    "command": [
+      "cl.exe",
+      "/nologo",
+      "/std:c++17",
+      "/EHsc",
+      "/MD",
+      "/utf-8",
+      "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+      "/Zs",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\ReproBenchmark.cpp"
+    ],
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "header": "SetCheck.hpp",
+    "command": [
+      "cl.exe",
+      "/nologo",
+      "/std:c++17",
+      "/EHsc",
+      "/MD",
+      "/utf-8",
+      "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+      "/Zs",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\SetCheck.cpp"
+    ],
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "header": "gtest/AssertMacros.hpp",
+    "command": [
+      "cl.exe",
+      "/nologo",
+      "/std:c++17",
+      "/EHsc",
+      "/MD",
+      "/utf-8",
+      "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+      "/Zs",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+      "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+      "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\AssertMacros.cpp"
+    ],
+    "actualExit": 0,
+    "status": "PASS"
+  }
+]

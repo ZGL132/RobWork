@@ -1645,3 +1645,20 @@ DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列
 ### REUSE-T10：原版EAA适用边界（2026-10-23）
 
 所有者撤销上游EAA补丁，原库不变。旋转表示转换对照限值唯一取REQUIREMENTS附录D第13项（矩阵→EAA、EAA→矩阵及相关往返统一1e-6，所有者明确数值裁决，均为最大元素绝对误差）；FK/编译链仍按附录D第4项1e-9 m/rad，矩阵合法性与Custom预设语义不随表示容差改变。原EAA双向量构造的近反平行/极轴约定也须按实际编译链审查，不能把表示转换限值用于放过关节轴映射误差。当前仅完成原库恢复和误差测量，不宣称runtime旋转/offset已经迁移。
+
+## 专项修正（POL-T13，2026-10-28）
+
+本条取代历史 MA-02 中 runtime 自持碰撞检测器/规则的当前实现说明：RuntimeCollisionSession 及其公共头、实现、专属测试和直接 proximity/PQP 链接已删除。runtime 继续独占规范模型、编译 WorkCell、名称映射和快照生命周期；碰撞策略与判定由 policy 单一权威供给，宿主经既有 kinematics 适配器连接。历史 MA-02 记录不改写为本轮验收。见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。
+
+
+### modeling 评审修复 F01/F03 交接补充（Owner 2026-10-28）
+
+RobotDesignDescription/RobotChain 的 flangeOffset 是末关节变量之后到末连杆/法兰的固定变换（平移 m、旋转无量纲，旧 modeling 字节默认恒等）。唯一模型 owner runtime 将它挂为 FixedFrame；连杆原始 COM/关于 COM 的惯量仍在该连杆帧表达，RNE 特殊载体只作必要坐标适配，不能修改 canonical 物性定义。canonical 缓存协议升为 1.4、实现版本升为 ird-runtime-canonical-compiler/1.2，禁止复用旧编译产物。
+
+### MDL-CR-3 几何引用局部安装变换（F05）
+
+Description 的 GeometryRef.localTransform 表示所挂连杆/TCP/场景帧到mesh的变换（平移m，旋转无量纲），默认恒等。canonical在每次引用上分别保存visualTransform/collisionTransform/geometryTransform；资源清单只标识资源内容，同字节资源可安装在不同位置。工具几何原在工具系表达，modeling桥仅以inverse(T_tool_tcp)转换到runtime所挂TCP帧，mountInterface已在TCP帧上，不重复旋转/平移。runtime复用Geometry::setTransform挂接，物理张量、DWC及运动学坐标不因此改变。
+
+协议升为canonical1.5、实现版本ird-runtime-canonical-compiler/1.3；局部变换进入内容身份和缓存，旧1.4缓存拒绝并从原项目对象重编译，project/modeling对象原格式不变。实施回归不代表独立验收。
+
+sampleCompiledChain 在 runtime 内调用同一正式 WorkCell 编译器与上游 Device::setQ/Kinematics::worldTframe，仅向 modeling 返回纯值位姿；局部 State/WorkCell 不逃逸且不持久化。集成和独立冒烟使用同一实现；不新增运动学核心。有限多构型验证为接受必要条件，不等同连续空间的数学证明。

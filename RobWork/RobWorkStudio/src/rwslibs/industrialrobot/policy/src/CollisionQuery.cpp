@@ -199,6 +199,9 @@ void validateQueryShape(const CollisionQuery& q, std::size_t deviceDof)
                               "SampleSet 查询不得携带路径参数（§6.2——样本独立无路径语义）");
         }
         break;
+    default:
+        throw PolicyError(PolicyErrorCode::QueryInvalid,
+                          "碰撞查询 kind 不在已登记词表内（POL-T13）");
     }
     // 第二步：构型维度＝设备自由度（Device::setQ 前置条件的先验校验——
     // 维度不符不是环境错误而是装配/构造错误，fail-fast 优于后端异常轨）。
@@ -298,8 +301,8 @@ void CollisionEvaluationSession::buildEvaluationHalf(const IPolicyNameContext& n
                                   + "'（obj=" + id.toCanonical() + "）");
         }
         record.frame = frame;
-        // 几何注册（声明有几何才尝试；全程持互斥——共享后端实例的构建期
-        // 注册与其他会话的评估查询串行化）。注册核对以 hasModel 为准——
+        // 几何注册（声明有几何才尝试；全程持会话后端互斥）。逐几何核对
+        // 上游接收结果：仅有模型壳不能证明几何完整有效（POL-T13）。
         // "声明有几何"而产物无 Object/无几何 → registeredGeometry=false：
         // 评估期以 coverage 缺口＋POLICY-CLL-GEOMETRY-MISSING 显式化
         // （§7.5 几何缺失行——不伪装已检、不输出无碰撞结论，KIN-05），
@@ -308,12 +311,18 @@ void CollisionEvaluationSession::buildEvaluationHalf(const IPolicyNameContext& n
         if (record.declaredGeometry) {
             std::lock_guard<std::mutex> lock(*m_backendQueryMutex);
             const auto objIt = objectByFrame.find(frame);
-            if (objIt != objectByFrame.end() && !m_strategy->hasModel(frame)) {
-                // 幂等注册（hasModel 先核对——同一后端实例可能已被同 Frame
-                // 的其他会话注册；重复 addModel 会叠加几何，破坏确定性）。
-                m_strategy->addModel(objIt->second);
+            if (objIt != objectByFrame.end()) {
+                const auto geometries = objIt->second->getGeometry();
+                bool allAccepted = !geometries.empty();
+                for (const auto& geometry : geometries) {
+                    // 上游 Object 重载忽略 addGeometry 的拒收结果；逐几何
+                    // 重载返回真实接收状态，任何缺口都不能计为完整已检。
+                    const bool accepted = geometry
+                        && m_strategy->addModel(frame, geometry, false);
+                    allAccepted = allAccepted && accepted;
+                }
+                record.registeredGeometry = allAccepted;
             }
-            record.registeredGeometry = m_strategy->hasModel(frame);
         }
         m_evaluationObjects.push_back(std::move(record));
     }
@@ -417,6 +426,8 @@ CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallC
         }
     }
 
+    out.coverage.excluded = out.appliedFilters;  // POL-T13：两公开留痕面同源、同序。
+
     // ---- ② 迟到调用拒绝（§6.1/POL-LATE-1——输出永不入正式证据）----
     if (!ctx.alive()) {
         out.diagnostics.push_back(makeEvaluationDiagnostic(
@@ -424,6 +435,32 @@ CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallC
             "调用上下文已失效（快照/运行已结束——迟到调用拒绝，POL-LATE-1）",
             "重新发起携带存活上下文的评估；失效上下文的输出不得进入正式证据"));
         return out;   // status=Failed，finalized=false
+    }
+
+    // POL-T13/NFR-COR-03：先验扫描全部数值，包含禁用/空域与短路后样本。
+    // 非有限输入不能送入运动学，也不能成为 finalized 路径定位事实。
+    for (std::size_t sample = 0; sample < q.configurations.size(); ++sample) {
+        for (std::size_t joint = 0; joint < q.configurations[sample].size(); ++joint) {
+            if (!std::isfinite(q.configurations[sample][joint])) {
+                out.diagnostics.push_back(makeEvaluationDiagnostic(
+                    kCodeEvaluationFailed, std::nullopt, std::string{},
+                    "构型位置非有限（SI rad，原文="
+                        + formatRawDouble(q.configurations[sample][joint])
+                        + "）：sample=" + std::to_string(sample)
+                        + ", joint=" + std::to_string(joint),
+                    "修正构型数据后重评；失败输出不入正式证据"));
+                return out;
+            }
+        }
+        if (q.kind == CollisionQueryKind::PathSequence
+            && !std::isfinite(q.pathParameters[sample])) {
+            out.diagnostics.push_back(makeEvaluationDiagnostic(
+                kCodeEvaluationFailed, std::nullopt, std::string{},
+                "路径参数非有限（原文=" + formatRawDouble(q.pathParameters[sample])
+                    + "）：sample=" + std::to_string(sample),
+                "修正路径参数后重评；失败输出不入正式证据"));
+            return out;
+        }
     }
 
     // ---- ③ 适用性判定（§6.2 ScopeApplicability——两者皆非"无碰撞"结论）----
@@ -485,6 +522,14 @@ CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallC
 
     const std::size_t sampleCount = q.configurations.size();
     for (std::size_t sample = 0; sample < sampleCount; ++sample) {
+        // POL-T13：上下文失效独立于取消；开始后失效同样不得入正式证据。
+        if (!ctx.alive()) {
+            out.diagnostics.push_back(makeEvaluationDiagnostic(
+                kCodeContextExpired, std::nullopt, std::string{},
+                "评估期间调用上下文已失效（样本边界）",
+                "重新发起携带存活上下文的评估；部分输出不入正式证据"));
+            return out;
+        }
         // 样本边界：协作取消检查点（§6.3 Canceled 行/TASK-02/UX-03）——
         // 取消≠失败：部分 findings 保留、无错误诊断、finalized=false。
         if (ctx.cancellationRequested()) {
@@ -603,6 +648,14 @@ CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallC
                         out.status = CollisionEvaluationStatus::Failed;
                         return out;   // finalized=false
                     }
+                    // POL-T13：先记录已测事实，再执行首个发现短路；摘要仅
+                    // 承诺已实测对的最小值，碰撞对未测距离不参与。
+                    if (q.requestMinDistance
+                        && (!sampleBestDistance.has_value() || measured < *sampleBestDistance)) {
+                        sampleBestDistance = measured;
+                        sampleBestA = pair.objectA;
+                        sampleBestB = pair.objectB;
+                    }
                     // §7.4 行 3：0 ≤ d ＜ m → 间距不足（非碰撞）；d＝m 边界
                     // 含于安全侧（D-08 冻结——"安全间距"语义＝d ≥ m 即满足）。
                     if (marginNeeded && measured < clearance) {
@@ -625,14 +678,6 @@ CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallC
                         if (q.stopAtFirstFinding) {
                             break;
                         }
-                    }
-                    // 逐样本最小距离追踪（仅 requestMinDistance——摘要承诺
-                    // 的是"已实测对"的最小，碰撞对未实测不参与）。
-                    if (q.requestMinDistance
-                        && (!sampleBestDistance.has_value() || measured < *sampleBestDistance)) {
-                        sampleBestDistance = measured;
-                        sampleBestA = pair.objectA;
-                        sampleBestB = pair.objectB;
                     }
                 }
             }
@@ -683,6 +728,15 @@ CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallC
             out.status = CollisionEvaluationStatus::Failed;
             return out;
         }
+    }
+
+    // 最后一轮后端查询可能使上下文失效；终态化前必须再次核对（POL-T13）。
+    if (!ctx.alive()) {
+        out.diagnostics.push_back(makeEvaluationDiagnostic(
+            kCodeContextExpired, std::nullopt, std::string{},
+            "评估期间调用上下文已失效（终态化前）",
+            "重新发起携带存活上下文的评估；部分输出不入正式证据"));
+        return out;
     }
 
     // ---- ⑥ 稳定排序＋终态化（§6.4——三入口跨进程逐字节一致，NFR-COR-05/

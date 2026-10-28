@@ -1,0 +1,1000 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  ArchiveServiceImpl.cpp
+  CommandServiceImpl.cpp
+  DraftServiceImpl.cpp
+  ProjectStoreImpl.cpp
+  QueryPortImpl.cpp
+  TxEngine.cpp
+  UndoRedoServiceImpl.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(809,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(809,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_project_test
+  ArchiveServiceTest.cpp
+  CommandServiceTest.cpp
+  DraftServiceTest.cpp
+  PackageServiceTest.cpp
+  ProjectStoreTest.cpp
+  QueryPortTest.cpp
+  ReviewRegressionTest.cpp
+  SaveAsServiceTest.cpp
+  SolidifyServiceTest.cpp
+  StubHandlers.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(419,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(427,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(686,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(838,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(848,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  Tx11Tx13SuiteTest.cpp
+  TxEngineTest.cpp
+  UndoRedoServiceTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(209,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(218,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(229,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(246,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(506,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(559,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(885,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1096,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1101,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1103,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1110,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1112,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1114,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1134,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SolidifyServiceTest.cpp(492,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(239,27): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(294,35): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(319,35): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(410,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(415,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\SaveAsServiceTest.cpp(421,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(192,29): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(261,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(446,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(455,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(462,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(468,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(473,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(477,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PackageServiceTest.cpp(480,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx11Tx13SuiteTest.cpp(384,27): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  sdurws_ird_project_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+  ird: run sdurws_ird_project_test and write gtest XML report
+  [==========] Running 304 tests from 49 test suites.
+  [----------] Global test environment set-up.
+  [----------] 5 tests from ProjectBuild
+  [ RUN      ] ProjectBuild.SourceTreeReachable_DT_BUILD
+  [       OK ] ProjectBuild.SourceTreeReachable_DT_BUILD (3 ms)
+  [ RUN      ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+  [       OK ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (26 ms)
+  [ RUN      ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+  [       OK ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (23 ms)
+  [ RUN      ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+  [       OK ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (24 ms)
+  [ RUN      ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2
+  [       OK ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2 (1 ms)
+  [----------] 5 tests from ProjectBuild (79 ms total)
+  
+  [----------] 3 tests from CodecMigrationChannel
+  [ RUN      ] CodecMigrationChannel.LoneSurrogateEscapes_Rejected
+  [       OK ] CodecMigrationChannel.LoneSurrogateEscapes_Rejected (0 ms)
+  [ RUN      ] CodecMigrationChannel.NulEscapeAndEscapedSlash_RoundTrip
+  [       OK ] CodecMigrationChannel.NulEscapeAndEscapedSlash_RoundTrip (0 ms)
+  [ RUN      ] CodecMigrationChannel.WhitespaceInValidDocument_Rejected
+  [       OK ] CodecMigrationChannel.WhitespaceInValidDocument_Rejected (0 ms)
+  [----------] 3 tests from CodecMigrationChannel (0 ms total)
+  
+  [----------] 13 tests from AtomicFileTest
+  [ RUN      ] AtomicFileTest.WriteThrough_WritesExactBytes_NFR_REL_01
+  [       OK ] AtomicFileTest.WriteThrough_WritesExactBytes_NFR_REL_01 (18 ms)
+  [ RUN      ] AtomicFileTest.WriteThrough_TruncatesExistingContent
+  [       OK ] AtomicFileTest.WriteThrough_TruncatesExistingContent (20 ms)
+  [ RUN      ] AtomicFileTest.WriteThrough_EmptyBytes_CreatesEmptyFile
+  [       OK ] AtomicFileTest.WriteThrough_EmptyBytes_CreatesEmptyFile (1 ms)
+  [ RUN      ] AtomicFileTest.WriteThrough_OpenFailure_CreatesNothing
+  [       OK ] AtomicFileTest.WriteThrough_OpenFailure_CreatesNothing (0 ms)
+  [ RUN      ] AtomicFileTest.WriteChunk_FailureMidway_ResidueConfined_NFR_REL_01
+  [       OK ] AtomicFileTest.WriteChunk_FailureMidway_ResidueConfined_NFR_REL_01 (16 ms)
+  [ RUN      ] AtomicFileTest.Flush_FailureFailsDurabilityGate_NeverPublishes
+  [       OK ] AtomicFileTest.Flush_FailureFailsDurabilityGate_NeverPublishes (1 ms)
+  [ RUN      ] AtomicFileTest.PublishNew_MovesTempToAbsentTarget
+  [       OK ] AtomicFileTest.PublishNew_MovesTempToAbsentTarget (12 ms)
+  [ RUN      ] AtomicFileTest.PublishNew_TargetExists_FailsAndKeepsBothSides
+  [       OK ] AtomicFileTest.PublishNew_TargetExists_FailsAndKeepsBothSides (22 ms)
+  [ RUN      ] AtomicFileTest.ReplaceFile_SwapsTargetToNewContent
+  [       OK ] AtomicFileTest.ReplaceFile_SwapsTargetToNewContent (17 ms)
+  [ RUN      ] AtomicFileTest.ReplaceFile_BeforeCommitPoint_OldBytesStable
+  [       OK ] AtomicFileTest.ReplaceFile_BeforeCommitPoint_OldBytesStable (23 ms)
+  [ RUN      ] AtomicFileTest.ReplaceFile_FailureKeepsOldTargetIntact_NFR_REL_01
+  [       OK ] AtomicFileTest.ReplaceFile_FailureKeepsOldTargetIntact_NFR_REL_01 (5 ms)
+  [ RUN      ] AtomicFileTest.PublishNew_FailureCreatesNoTarget_NFR_REL_01
+  [       OK ] AtomicFileTest.PublishNew_FailureCreatesNoTarget_NFR_REL_01 (2 ms)
+  [ RUN      ] AtomicFileTest.DefaultCtor_RealChain_StagingThenPublish
+  [       OK ] AtomicFileTest.DefaultCtor_RealChain_StagingThenPublish (7 ms)
+  [----------] 13 tests from AtomicFileTest (150 ms total)
+  
+  [----------] 13 tests from StoreLockTest
+  [ RUN      ] StoreLockTest.Acquire_WritesPidRecord_FixedWidth
+  [       OK ] StoreLockTest.Acquire_WritesPidRecord_FixedWidth (8 ms)
+  [ RUN      ] StoreLockTest.Constructor_ContractViolations_FailFast
+  [       OK ] StoreLockTest.Constructor_ContractViolations_FailFast (1 ms)
+  [ RUN      ] StoreLockTest.Heartbeat_RewritesInPlace_FileIdentityStable_D03
+  [       OK ] StoreLockTest.Heartbeat_RewritesInPlace_FileIdentityStable_D03 (90 ms)
+  [ RUN      ] StoreLockTest.StaleHeartbeat_IsNeverWriteAuthorityCriterion_SA17_D03
+  [       OK ] StoreLockTest.StaleHeartbeat_IsNeverWriteAuthorityCriterion_SA17_D03 (3 ms)
+  [ RUN      ] StoreLockTest.SecondInstance_WriteEntries_UniformlyRejected_TX13
+  [       OK ] StoreLockTest.SecondInstance_WriteEntries_UniformlyRejected_TX13 (14 ms)
+  [ RUN      ] StoreLockTest.Diagnostics_ProducedThroughCoreRecordFactory_PPR6
+  [       OK ] StoreLockTest.Diagnostics_ProducedThroughCoreRecordFactory_PPR6 (14 ms)
+  [ RUN      ] StoreLockTest.Release_RejectsWrites_AuthorityLost_ThenReacquirable
+  [       OK ] StoreLockTest.Release_RejectsWrites_AuthorityLost_ThenReacquirable (19 ms)
+  [ RUN      ] StoreLockTest.ProbeFailure_LatchesLostWrite_SecondLine
+  [       OK ] StoreLockTest.ProbeFailure_LatchesLostWrite_SecondLine (2 ms)
+  [ RUN      ] StoreLockTest.IoErrorClassification_ThreeCodesLatch_OthersNot
+  [       OK ] StoreLockTest.IoErrorClassification_ThreeCodesLatch_OthersNot (40 ms)
+  [ RUN      ] StoreLockTest.HeartbeatWriteFailure_ClassifiedAsAuthorityLoss
+  [       OK ] StoreLockTest.HeartbeatWriteFailure_ClassifiedAsAuthorityLoss (2 ms)
+  [ RUN      ] StoreLockTest.Takeover_ReadsResidual_RecoveryDevDiagnostic_PM08
+  [       OK ] StoreLockTest.Takeover_ReadsResidual_RecoveryDevDiagnostic_PM08 (25 ms)
+  [ RUN      ] StoreLockTest.ReadHolderRecord_TornContent_Tolerated
+  [       OK ] StoreLockTest.ReadHolderRecord_TornContent_Tolerated (29 ms)
+  [ RUN      ] StoreLockTest.StalledHolder_NotTakenOver_OverTime_D03
+  [       OK ] StoreLockTest.StalledHolder_NotTakenOver_OverTime_D03 (137 ms)
+  [----------] 13 tests from StoreLockTest (393 ms total)
+  
+  [----------] 7 tests from PathCanonicalTest
+  [ RUN      ] PathCanonicalTest.Canonicalize_ExistingDir_FinalPathForm
+  [       OK ] PathCanonicalTest.Canonicalize_ExistingDir_FinalPathForm (1 ms)
+  [ RUN      ] PathCanonicalTest.SameProject_DifferentSpellings_CanonicalizeEqual
+  [       OK ] PathCanonicalTest.SameProject_DifferentSpellings_CanonicalizeEqual (1 ms)
+  [ RUN      ] PathCanonicalTest.RelativeSpelling_CanonicalizesToSameStore
+  [       OK ] PathCanonicalTest.RelativeSpelling_CanonicalizesToSameStore (1 ms)
+  [ RUN      ] PathCanonicalTest.ShortPathSpelling_ResolvedWhenAvailable
+  [       OK ] PathCanonicalTest.ShortPathSpelling_ResolvedWhenAvailable (1 ms)
+  [ RUN      ] PathCanonicalTest.DifferentDirectories_Differ
+  [       OK ] PathCanonicalTest.DifferentDirectories_Differ (1 ms)
+  [ RUN      ] PathCanonicalTest.NonexistentAndEmpty_FailWithOsError
+  [       OK ] PathCanonicalTest.NonexistentAndEmpty_FailWithOsError (1 ms)
+  [ RUN      ] PathCanonicalTest.SameProjectMultiPathOpen_SecondWritableRefused
+  [       OK ] PathCanonicalTest.SameProjectMultiPathOpen_SecondWritableRefused (20 ms)
+  [----------] 7 tests from PathCanonicalTest (29 ms total)
+  
+  [----------] 9 tests from PersistenceFormatRoundTrip
+  [ RUN      ] PersistenceFormatRoundTrip.StaticIdentity_ValuePreserved_CON01
+  [       OK ] PersistenceFormatRoundTrip.StaticIdentity_ValuePreserved_CON01 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.HeadRecord_ValueAndDeterministicBytes_CON01_NFRCOR02
+  [       OK ] PersistenceFormatRoundTrip.HeadRecord_ValueAndDeterministicBytes_CON01_NFRCOR02 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.RevisionManifest_OptionalPresenceAndAbsence_CON01
+  [       OK ] PersistenceFormatRoundTrip.RevisionManifest_OptionalPresenceAndAbsence_CON01 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.MetadataRecord_ChineseEscapedRoundTrip_CON01_NFRCOR02
+  [       OK ] PersistenceFormatRoundTrip.MetadataRecord_ChineseEscapedRoundTrip_CON01_NFRCOR02 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.CommandRecord_FullAndMinimal_CON01
+  [       OK ] PersistenceFormatRoundTrip.CommandRecord_FullAndMinimal_CON01 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.DraftDocument_WithAndWithoutExternalRefs_CON01
+  [       OK ] PersistenceFormatRoundTrip.DraftDocument_WithAndWithoutExternalRefs_CON01 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.HeadRecord_GoldenBytes_FieldOrderFixed_CON01_NFRCOR02
+  [       OK ] PersistenceFormatRoundTrip.HeadRecord_GoldenBytes_FieldOrderFixed_CON01_NFRCOR02 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.AllTypes_DumpOutputPureAscii_CON01
+  [       OK ] PersistenceFormatRoundTrip.AllTypes_DumpOutputPureAscii_CON01 (0 ms)
+  [ RUN      ] PersistenceFormatRoundTrip.MetadataRecord_AstralPlaneChar_SurrogatePairRoundTrip_CON01
+  [       OK ] PersistenceFormatRoundTrip.MetadataRecord_AstralPlaneChar_SurrogatePairRoundTrip_CON01 (0 ms)
+  [----------] 9 tests from PersistenceFormatRoundTrip (0 ms total)
+  
+  [----------] 20 tests from PersistenceFormatReject
+  [ RUN      ] PersistenceFormatReject.TruncatedInput_Rejected_AllTypes_PRJTX_CON01
+  [       OK ] PersistenceFormatReject.TruncatedInput_Rejected_AllTypes_PRJTX_CON01 (0 ms)
+  [ RUN      ] PersistenceFormatReject.TruncatedLastByte_Rejected_HeadRecord
+  [       OK ] PersistenceFormatReject.TruncatedLastByte_Rejected_HeadRecord (0 ms)
+  [ RUN      ] PersistenceFormatReject.GarbageAndEmptyInput_Rejected
+  [       OK ] PersistenceFormatReject.GarbageAndEmptyInput_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.NonAsciiRawBytes_Rejected
+  [       OK ] PersistenceFormatReject.NonAsciiRawBytes_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.TrailingContent_Rejected
+  [       OK ] PersistenceFormatReject.TrailingContent_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.WhitespaceInDocument_Rejected
+  [       OK ] PersistenceFormatReject.WhitespaceInDocument_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.HeadRecord_MissingEachField_Rejected
+  [       OK ] PersistenceFormatReject.HeadRecord_MissingEachField_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.UnknownField_Rejected_AtCurrentVersion
+  [       OK ] PersistenceFormatReject.UnknownField_Rejected_AtCurrentVersion (0 ms)
+  [ RUN      ] PersistenceFormatReject.TypeMismatch_Rejected
+  [       OK ] PersistenceFormatReject.TypeMismatch_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.FloatAndExponentLiterals_Rejected
+  [       OK ] PersistenceFormatReject.FloatAndExponentLiterals_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.BooleanAndNullLiterals_Rejected
+  [       OK ] PersistenceFormatReject.BooleanAndNullLiterals_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.IntegerOverflowAndNegative_Rejected
+  [       OK ] PersistenceFormatReject.IntegerOverflowAndNegative_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.LeadingZeroInteger_Rejected
+  [       OK ] PersistenceFormatReject.LeadingZeroInteger_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.DuplicateKey_Rejected
+  [       OK ] PersistenceFormatReject.DuplicateKey_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.BadCanonicalIdentity_Rejected_PPR1Baseline
+  [       OK ] PersistenceFormatReject.BadCanonicalIdentity_Rejected_PPR1Baseline (0 ms)
+  [ RUN      ] PersistenceFormatReject.CommandTypeSyntaxViolation_Rejected
+  [       OK ] PersistenceFormatReject.CommandTypeSyntaxViolation_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.UnknownOrigin_Rejected
+  [       OK ] PersistenceFormatReject.UnknownOrigin_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.EmptyObjectRefsAndBranches_Rejected
+  [       OK ] PersistenceFormatReject.EmptyObjectRefsAndBranches_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.EmptyTokenField_Rejected
+  [       OK ] PersistenceFormatReject.EmptyTokenField_Rejected (0 ms)
+  [ RUN      ] PersistenceFormatReject.UnknownFieldInNestedObject_Rejected
+  [       OK ] PersistenceFormatReject.UnknownFieldInNestedObject_Rejected (0 ms)
+  [----------] 20 tests from PersistenceFormatReject (0 ms total)
+  
+  [----------] 5 tests from PersistenceFormatVersioning
+  [ RUN      ] PersistenceFormatVersioning.FutureMajorVersion_Rejected_WithUpgradeGuidance_NFRDEP04
+  [       OK ] PersistenceFormatVersioning.FutureMajorVersion_Rejected_WithUpgradeGuidance_NFRDEP04 (0 ms)
+  [ RUN      ] PersistenceFormatVersioning.LegacyMajorVersion_Rejected_FormatLegacy_NFRDEP04
+  [       OK ] PersistenceFormatVersioning.LegacyMajorVersion_Rejected_FormatLegacy_NFRDEP04 (0 ms)
+  [ RUN      ] PersistenceFormatVersioning.FormatIdMismatch_Rejected_FormatLegacy
+  [       OK ] PersistenceFormatVersioning.FormatIdMismatch_Rejected_FormatLegacy (0 ms)
+  [ RUN      ] PersistenceFormatVersioning.NextMinorVersion_UnknownOptionalFields_Tolerated_NFRDEP04
+  [       OK ] PersistenceFormatVersioning.NextMinorVersion_UnknownOptionalFields_Tolerated_NFRDEP04 (0 ms)
+  [ RUN      ] PersistenceFormatVersioning.NextMinorVersion_NestedBranchFields_Tolerated
+  [       OK ] PersistenceFormatVersioning.NextMinorVersion_NestedBranchFields_Tolerated (0 ms)
+  [----------] 5 tests from PersistenceFormatVersioning (0 ms total)
+  
+  [----------] 3 tests from ExternalRefRecords
+  [ RUN      ] ExternalRefRecords.SixFieldsRoundTrip_LargeSizeBytes_NFRREL04
+  [       OK ] ExternalRefRecords.SixFieldsRoundTrip_LargeSizeBytes_NFRREL04 (0 ms)
+  [ RUN      ] ExternalRefRecords.MultipleRecords_KeepOrder
+  [       OK ] ExternalRefRecords.MultipleRecords_KeepOrder (0 ms)
+  [ RUN      ] ExternalRefRecords.InvalidHashAndEmptyPath_Rejected
+  [       OK ] ExternalRefRecords.InvalidHashAndEmptyPath_Rejected (0 ms)
+  [----------] 3 tests from ExternalRefRecords (0 ms total)
+  
+  [----------] 5 tests from ContentDigestBoundary
+  [ RUN      ] ContentDigestBoundary.ContentVersionOf_MatchesCoreDigester_CR02_D10
+  [       OK ] ContentDigestBoundary.ContentVersionOf_MatchesCoreDigester_CR02_D10 (0 ms)
+  [ RUN      ] ContentDigestBoundary.ContentVersionOf_DeterministicDistinctAndEmpty_CR02
+  [       OK ] ContentDigestBoundary.ContentVersionOf_DeterministicDistinctAndEmpty_CR02 (0 ms)
+  [ RUN      ] ContentDigestBoundary.DomainPayload_TransparentBytePreservation_CR02_D10
+  [       OK ] ContentDigestBoundary.DomainPayload_TransparentBytePreservation_CR02_D10 (0 ms)
+  [ RUN      ] ContentDigestBoundary.DigestFields_PassedThroughNotRecomputed_CR02
+  [       OK ] ContentDigestBoundary.DigestFields_PassedThroughNotRecomputed_CR02 (0 ms)
+  [ RUN      ] ContentDigestBoundary.InvalidUtf8Payload_DumpRejected_FailFast
+  [       OK ] ContentDigestBoundary.InvalidUtf8Payload_DumpRejected_FailFast (0 ms)
+  [----------] 5 tests from ContentDigestBoundary (0 ms total)
+  
+  [----------] 1 test from CoreContractConsumption
+  [ RUN      ] CoreContractConsumption.IdStrictness_ConsumedAsBaseline_PPR1
+  [       OK ] CoreContractConsumption.IdStrictness_ConsumedAsBaseline_PPR1 (0 ms)
+  [----------] 1 test from CoreContractConsumption (0 ms total)
+  
+  [----------] 28 tests from ObjectStoreTest
+  [ RUN      ] ObjectStoreTest.Publish_CreatesContentAddressedPath_CON01
+  [       OK ] ObjectStoreTest.Publish_CreatesContentAddressedPath_CON01 (12 ms)
+  [ RUN      ] ObjectStoreTest.Publish_ReturnsCv_MatchesCoreDigesterAndCodecEntry_CR02
+  [       OK ] ObjectStoreTest.Publish_ReturnsCv_MatchesCoreDigesterAndCodecEntry_CR02 (5 ms)
+  [ RUN      ] ObjectStoreTest.Publish_SameContent_SharesSingleFileUnchanged_CON01
+  [       OK ] ObjectStoreTest.Publish_SameContent_SharesSingleFileUnchanged_CON01 (33 ms)
+  [ RUN      ] ObjectStoreTest.Publish_SameContentDifferentOid_NoCrossObjectSharing_CON01
+  [       OK ] ObjectStoreTest.Publish_SameContentDifferentOid_NoCrossObjectSharing_CON01 (8 ms)
+  [ RUN      ] ObjectStoreTest.Publish_NewVersion_AlongsidesOldBothReadable_CON01
+  [       OK ] ObjectStoreTest.Publish_NewVersion_AlongsidesOldBothReadable_CON01 (20 ms)
+  [ RUN      ] ObjectStoreTest.Publish_EmptyPayload_RoundTrip_FipsEmptyVector_CON01
+  [       OK ] ObjectStoreTest.Publish_EmptyPayload_RoundTrip_FipsEmptyVector_CON01 (3 ms)
+  [ RUN      ] ObjectStoreTest.Publish_AllZeroOid_FailFastInvalidArgument
+  [       OK ] ObjectStoreTest.Publish_AllZeroOid_FailFastInvalidArgument (0 ms)
+  [ RUN      ] ObjectStoreTest.Publish_ExistingTargetDigestMismatch_RejectsStoreCorruptNoOverwrite
+  [       OK ] ObjectStoreTest.Publish_ExistingTargetDigestMismatch_RejectsStoreCorruptNoOverwrite (32 ms)
+  [ RUN      ] ObjectStoreTest.TryObject_MissingObject_ReturnsNulloptNoThrow_CON01
+  [       OK ] ObjectStoreTest.TryObject_MissingObject_ReturnsNulloptNoThrow_CON01 (5 ms)
+  [ RUN      ] ObjectStoreTest.Object_MissingReferenced_ThrowsStoreCorrupt
+  [       OK ] ObjectStoreTest.Object_MissingReferenced_ThrowsStoreCorrupt (0 ms)
+  [ RUN      ] ObjectStoreTest.TryObject_TamperedContent_RejectedStoreCorrupt
+  [       OK ] ObjectStoreTest.TryObject_TamperedContent_RejectedStoreCorrupt (12 ms)
+  [ RUN      ] ObjectStoreTest.TryObject_TamperedSize_RejectedStoreCorrupt
+  [       OK ] ObjectStoreTest.TryObject_TamperedSize_RejectedStoreCorrupt (12 ms)
+  [ RUN      ] ObjectStoreTest.Read_BinaryPayloadPreservedByteExactly_D10
+  [       OK ] ObjectStoreTest.Read_BinaryPayloadPreservedByteExactly_D10 (10 ms)
+  [ RUN      ] ObjectStoreTest.Read_VerifiedOnce_FreeOfRecheckWithinContext_PinnedSemantic
+  [       OK ] ObjectStoreTest.Read_VerifiedOnce_FreeOfRecheckWithinContext_PinnedSemantic (10 ms)
+  [ RUN      ] ObjectStoreTest.TryObject_AllZeroKeys_FailFastInvalidArgument
+  [       OK ] ObjectStoreTest.TryObject_AllZeroKeys_FailFastInvalidArgument (0 ms)
+  [ RUN      ] ObjectStoreTest.PublishNewVersion_OldVersionAndReadersNeverOverwritten_PA2
+  [       OK ] ObjectStoreTest.PublishNewVersion_OldVersionAndReadersNeverOverwritten_PA2 (16 ms)
+  [ RUN      ] ObjectStoreTest.Cache_EvictsLeastRecentlyUsed_WithinBudget
+  [       OK ] ObjectStoreTest.Cache_EvictsLeastRecentlyUsed_WithinBudget (12 ms)
+  [ RUN      ] ObjectStoreTest.Cache_OversizeNotCached_ExactFitCached
+  [       OK ] ObjectStoreTest.Cache_OversizeNotCached_ExactFitCached (9 ms)
+  [ RUN      ] ObjectStoreTest.Cache_EvictionDoesNotAffectHeldCopies_PA3
+  [       OK ] ObjectStoreTest.Cache_EvictionDoesNotAffectHeldCopies_PA3 (8 ms)
+  [ RUN      ] ObjectStoreTest.ConcurrentReads_WhilePublishing_ThreadSafe
+  [       OK ] ObjectStoreTest.ConcurrentReads_WhilePublishing_ThreadSafe (71 ms)
+  [ RUN      ] ObjectStoreTest.Scan_AllReferencedPresent_NoFindings
+  [       OK ] ObjectStoreTest.Scan_AllReferencedPresent_NoFindings (10 ms)
+  [ RUN      ] ObjectStoreTest.Scan_MissingReferenced_ReportedNoThrow
+  [       OK ] ObjectStoreTest.Scan_MissingReferenced_ReportedNoThrow (4 ms)
+  [ RUN      ] ObjectStoreTest.Scan_DanglingObject_ReportedAsDevDiagnostic_NotDeleted
+  [       OK ] ObjectStoreTest.Scan_DanglingObject_ReportedAsDevDiagnostic_NotDeleted (7 ms)
+  [ RUN      ] ObjectStoreTest.Scan_CorruptReferenced_FullAndExistenceModes
+  [       OK ] ObjectStoreTest.Scan_CorruptReferenced_FullAndExistenceModes (37 ms)
+  [ RUN      ] ObjectStoreTest.Scan_MixedFindings_AllBuckets_DeterministicReport
+  [       OK ] ObjectStoreTest.Scan_MixedFindings_AllBuckets_DeterministicReport (35 ms)
+  [ RUN      ] ObjectStoreTest.Scan_EmptyStore_NoFindings_InvalidRefFailsFast
+  [       OK ] ObjectStoreTest.Scan_EmptyStore_NoFindings_InvalidRefFailsFast (0 ms)
+  [ RUN      ] ObjectStoreTest.CoreContract_AddressingPath_SingleHashViaCore_CR02_PPR1
+  [       OK ] ObjectStoreTest.CoreContract_AddressingPath_SingleHashViaCore_CR02_PPR1 (14 ms)
+  [ RUN      ] ObjectStoreTest.CoreContract_StrictCanonicalParse_ConsumedAsBaseline
+  [       OK ] ObjectStoreTest.CoreContract_StrictCanonicalParse_ConsumedAsBaseline (4 ms)
+  [----------] 28 tests from ObjectStoreTest (403 ms total)
+  
+  [----------] 2 tests from Walkthrough
+  [ RUN      ] Walkthrough.SevenSteps_BranchTipsPreserved_Acc1
+  [       OK ] Walkthrough.SevenSteps_BranchTipsPreserved_Acc1 (0 ms)
+  [ RUN      ] Walkthrough.BranchBaseRevisionReferencesWithoutCopyingObjects_Acc1
+  [       OK ] Walkthrough.BranchBaseRevisionReferencesWithoutCopyingObjects_Acc1 (0 ms)
+  [----------] 2 tests from Walkthrough (0 ms total)
+  
+  [----------] 4 tests from Closure
+  [ RUN      ] Closure.DualChannelCoversAllCommittedRevisions_NoIsland_Acc2
+  [       OK ] Closure.DualChannelCoversAllCommittedRevisions_NoIsland_Acc2 (0 ms)
+  [ RUN      ] Closure.ResidueOutsideClosure_AfterPublishBeforeHeadSwitch_Acc2
+  [       OK ] Closure.ResidueOutsideClosure_AfterPublishBeforeHeadSwitch_Acc2 (0 ms)
+  [ RUN      ] Closure.DanglingReferencesRejectedAsCorrupt_Acc2
+  [       OK ] Closure.DanglingReferencesRejectedAsCorrupt_Acc2 (0 ms)
+  [ RUN      ] Closure.DeterministicOrdering_Acc2
+  [       OK ] Closure.DeterministicOrdering_Acc2 (0 ms)
+  [----------] 4 tests from Closure (0 ms total)
+  
+  [----------] 10 tests from PublishValidation
+  [ RUN      ] PublishValidation.ParentMetadataRebuildRejected_Acc2
+  [       OK ] PublishValidation.ParentMetadataRebuildRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.TipRegressionRejected_Acc2
+  [       OK ] PublishValidation.TipRegressionRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.ForeignBranchTipChangeRejected_Acc2
+  [       OK ] PublishValidation.ForeignBranchTipChangeRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.LabelRenameRejected_Acc2_PPR8
+  [       OK ] PublishValidation.LabelRenameRejected_Acc2_PPR8 (0 ms)
+  [ RUN      ] PublishValidation.BaseRewriteRejected_Acc2
+  [       OK ] PublishValidation.BaseRewriteRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.InvM1_DuplicateBranchAndUnknownTipRejected_Acc2
+  [       OK ] PublishValidation.InvM1_DuplicateBranchAndUnknownTipRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.CommittedByAndLineageAnchorRejected_Acc2
+  [       OK ] PublishValidation.CommittedByAndLineageAnchorRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.LineageCycleInjectionRejected_Acc2
+  [       OK ] PublishValidation.LineageCycleInjectionRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.LineageMonotonicityInjectionRejected_Acc2
+  [       OK ] PublishValidation.LineageMonotonicityInjectionRejected_Acc2 (0 ms)
+  [ RUN      ] PublishValidation.CallerContractViolationsFailFast
+  [       OK ] PublishValidation.CallerContractViolationsFailFast (0 ms)
+  [----------] 10 tests from PublishValidation (0 ms total)
+  
+  [----------] 1 test from SeqAllocation
+  [ RUN      ] SeqAllocation.MonotonicAllocationAndHeadAdoption_Acc3
+  [       OK ] SeqAllocation.MonotonicAllocationAndHeadAdoption_Acc3 (0 ms)
+  [----------] 1 test from SeqAllocation (0 ms total)
+  
+  [----------] 3 tests from Derive
+  [ RUN      ] Derive.CopiesAuthoritativeVerbatim_UpdatesOnlyDeclared_Acc3
+  [       OK ] Derive.CopiesAuthoritativeVerbatim_UpdatesOnlyDeclared_Acc3 (0 ms)
+  [ RUN      ] Derive.TipUpdateAppliesToDeclaredBranchOnly_Acc3
+  [       OK ] Derive.TipUpdateAppliesToDeclaredBranchOnly_Acc3 (0 ms)
+  [ RUN      ] Derive.ConstructorViolationsFailFast_Acc3
+  [       OK ] Derive.ConstructorViolationsFailFast_Acc3 (0 ms)
+  [----------] 3 tests from Derive (0 ms total)
+  
+  [----------] 1 test from Registration
+  [ RUN      ] Registration.IdempotentDuplicateConflictingAndImmutability
+  [       OK ] Registration.IdempotentDuplicateConflictingAndImmutability (0 ms)
+  [----------] 1 test from Registration (0 ms total)
+  
+  [----------] 3 tests from CoreContract
+  [ RUN      ] CoreContract.IdentityCanonicalRoundTripViaCoreApi_Acc4
+  [       OK ] CoreContract.IdentityCanonicalRoundTripViaCoreApi_Acc4 (0 ms)
+  [ RUN      ] CoreContract.BranchTipQuerySemantics
+  [       OK ] CoreContract.BranchTipQuerySemantics (0 ms)
+  [ RUN      ] CoreContract.TryQueriesReturnNulloptWhenAbsent
+  [       OK ] CoreContract.TryQueriesReturnNulloptWhenAbsent (0 ms)
+  [----------] 3 tests from CoreContract (0 ms total)
+  
+  [----------] 24 tests from TxEngineTest
+  [ RUN      ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01
+  [       OK ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01 (76 ms)
+  [ RUN      ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01
+  [       OK ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01 (92 ms)
+  [ RUN      ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned
+  [       OK ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned (71 ms)
+  [ RUN      ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester
+  [       OK ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester (55 ms)
+  [ RUN      ] TxEngineTest.F1_PrepareFails_StagingDirCreate
+  [       OK ] TxEngineTest.F1_PrepareFails_StagingDirCreate (26 ms)
+  [ RUN      ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag
+  [       OK ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag (36 ms)
+  [ RUN      ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish
+  [       OK ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish (62 ms)
+  [ RUN      ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes
+  [       OK ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes (53 ms)
+  [ RUN      ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted
+  [       OK ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted (61 ms)
+  [ RUN      ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands
+  [       OK ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands (61 ms)
+  [ RUN      ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands
+  [       OK ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands (79 ms)
+  [ RUN      ] TxEngineTest.F7_CleanupFails_CommittedStateIntact
+  [       OK ] TxEngineTest.F7_CleanupFails_CommittedStateIntact (60 ms)
+  [ RUN      ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant
+  [       OK ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant (31 ms)
+  [ RUN      ] TxEngineTest.F8_AfterStage_OldStateByteInvariant
+  [       OK ] TxEngineTest.F8_AfterStage_OldStateByteInvariant (50 ms)
+  [ RUN      ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant
+  [       OK ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant (67 ms)
+  [ RUN      ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir
+  [       OK ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir (48 ms)
+  [ RUN      ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean
+  [       OK ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean (70 ms)
+  [ RUN      ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites
+  [       OK ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites (40 ms)
+  [ RUN      ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast
+  [       OK ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast (25 ms)
+  [ RUN      ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings
+  [       OK ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings (64 ms)
+  [ RUN      ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt
+  [       OK ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt (34 ms)
+  [ RUN      ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt
+  [       OK ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt (35 ms)
+  [ RUN      ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt
+  [       OK ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt (26 ms)
+  [ RUN      ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen
+  [       OK ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen (52 ms)
+  [----------] 24 tests from TxEngineTest (1285 ms total)
+  
+  [----------] 19 tests from ProjectStoreTest
+  [ RUN      ] ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen
+  [       OK ] ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen (35 ms)
+  [ RUN      ] ProjectStoreTest.Open_ReopenClosedProject_IdentityPreserved
+  [       OK ] ProjectStoreTest.Open_ReopenClosedProject_IdentityPreserved (50 ms)
+  [ RUN      ] ProjectStoreTest.Tx9_ClosedLateWrite_RejectedWithStableDiag
+  [       OK ] ProjectStoreTest.Tx9_ClosedLateWrite_RejectedWithStableDiag (68 ms)
+  [ RUN      ] ProjectStoreTest.Tx9_DrainingRejectsWrite_ThenDrainsInFlight
+  [       OK ] ProjectStoreTest.Tx9_DrainingRejectsWrite_ThenDrainsInFlight (30 ms)
+  [ RUN      ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen
+  [       OK ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen (87 ms)
+  [ RUN      ] ProjectStoreTest.Tx9_OpenFailure_DoesNotTouchCurrentProject
+  [       OK ] ProjectStoreTest.Tx9_OpenFailure_DoesNotTouchCurrentProject (86 ms)
+  [ RUN      ] ProjectStoreTest.LegacyFormat_StableReadOnlyRejection
+  [       OK ] ProjectStoreTest.LegacyFormat_StableReadOnlyRejection (26 ms)
+  [ RUN      ] ProjectStoreTest.SchemaFuture_RejectedWithUpgradeGuidance
+  [       OK ] ProjectStoreTest.SchemaFuture_RejectedWithUpgradeGuidance (26 ms)
+  [ RUN      ] ProjectStoreTest.RecoveryReport_StagingResidueAndOrphanDrafts
+  [       OK ] ProjectStoreTest.RecoveryReport_StagingResidueAndOrphanDrafts (54 ms)
+  [ RUN      ] ProjectStoreTest.RecoveryReport_HeadIntegrityFailure_StopsOpen
+  [       OK ] ProjectStoreTest.RecoveryReport_HeadIntegrityFailure_StopsOpen (26 ms)
+  [ RUN      ] ProjectStoreTest.ReadOnlyOpen_ProvidesQueriesAndRejectsWrites
+  [       OK ] ProjectStoreTest.ReadOnlyOpen_ProvidesQueriesAndRejectsWrites (24 ms)
+  [ RUN      ] ProjectStoreTest.WritableOpen_DegradesToReadOnlyWhenHeld
+  [       OK ] ProjectStoreTest.WritableOpen_DegradesToReadOnlyWhenHeld (17 ms)
+  [ RUN      ] ProjectStoreTest.InProcessSecondWritableOpen_Rejected
+  [       OK ] ProjectStoreTest.InProcessSecondWritableOpen_Rejected (19 ms)
+  [ RUN      ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected
+  [       OK ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected (26 ms)
+  [ RUN      ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically
+  [       OK ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically (77 ms)
+  [ RUN      ] ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed
+  [       OK ] ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed (48 ms)
+  [ RUN      ] ProjectStoreTest.Ppr6_SinkInjectionOptionalWithSameCodes
+  [       OK ] ProjectStoreTest.Ppr6_SinkInjectionOptionalWithSameCodes (69 ms)
+  [ RUN      ] ProjectStoreTest.CreateNew_NonEmptyTarget_FailsFast
+  [       OK ] ProjectStoreTest.CreateNew_NonEmptyTarget_FailsFast (2 ms)
+  [ RUN      ] ProjectStoreTest.Open_NotAProject_MissingPathOrManifest
+  [       OK ] ProjectStoreTest.Open_NotAProject_MissingPathOrManifest (0 ms)
+  [----------] 19 tests from ProjectStoreTest (779 ms total)
+  
+  [----------] 14 tests from ProjectReviewRegression
+  [ RUN      ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact
+  [       OK ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact (98 ms)
+  [ RUN      ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit
+  [       OK ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit (20 ms)
+  [ RUN      ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit
+  [       OK ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit (20 ms)
+  [ RUN      ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile
+  [       OK ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile (32 ms)
+  [ RUN      ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting
+  [       OK ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting (28 ms)
+  [ RUN      ] ProjectReviewRegression.QueryHidesUncommittedObject
+  [       OK ] ProjectReviewRegression.QueryHidesUncommittedObject (22 ms)
+  [ RUN      ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand
+  [       OK ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand (26 ms)
+  [ RUN      ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest
+  [       OK ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest (31 ms)
+  [ RUN      ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch
+  [       OK ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch (30 ms)
+  [ RUN      ] ProjectReviewRegression.FailedValidationRollsBackRegistration
+  [       OK ] ProjectReviewRegression.FailedValidationRollsBackRegistration (23 ms)
+  [ RUN      ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected
+  [       OK ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected (0 ms)
+  [ RUN      ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath
+  ird-tempdir-remove-failed: C:\Users\zgl18\AppData\Local\Temp\ird-test/86708-prj-r1-c87cf725da5fe084: 目录不是空的。
+  [       OK ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath (33 ms)
+  [ RUN      ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest
+  [       OK ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest (90 ms)
+  [ RUN      ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively
+  [       OK ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively (45 ms)
+  [----------] 14 tests from ProjectReviewRegression (504 ms total)
+  
+  [----------] 14 tests from QueryPortTest
+  [ RUN      ] QueryPortTest.RevisionView_HeadAndRevision_FieldsAssembled
+  [       OK ] QueryPortTest.RevisionView_HeadAndRevision_FieldsAssembled (73 ms)
+  [ RUN      ] QueryPortTest.MetadataAndBranchViews_AuthoritativeDiscipline
+  [       OK ] QueryPortTest.MetadataAndBranchViews_AuthoritativeDiscipline (136 ms)
+  [ RUN      ] QueryPortTest.BranchHistory_WalksParentChainWithLimit
+  [       OK ] QueryPortTest.BranchHistory_WalksParentChainWithLimit (152 ms)
+  [ RUN      ] QueryPortTest.ObjectRead_TryTrackAndStrongTrack
+  [       OK ] QueryPortTest.ObjectRead_TryTrackAndStrongTrack (75 ms)
+  [ RUN      ] QueryPortTest.ObjectCacheBudget_EnforcedThroughQueryPort
+  [       OK ] QueryPortTest.ObjectCacheBudget_EnforcedThroughQueryPort (189 ms)
+  [ RUN      ] QueryPortTest.ClosureOutsideRevision_InvisibleToQueryPort
+  [       OK ] QueryPortTest.ClosureOutsideRevision_InvisibleToQueryPort (98 ms)
+  [ RUN      ] QueryPortTest.TryTrack_MissingReturnsNullopt_NoThrow
+  [       OK ] QueryPortTest.TryTrack_MissingReturnsNullopt_NoThrow (39 ms)
+  [ RUN      ] QueryPortTest.ContextClosed_AllMethodsRejected
+  [       OK ] QueryPortTest.ContextClosed_AllMethodsRejected (110 ms)
+  [ RUN      ] QueryPortTest.ReadOnlyInstance_QueriesFullyServed
+  [       OK ] QueryPortTest.ReadOnlyInstance_QueriesFullyServed (118 ms)
+  [ RUN      ] QueryPortTest.ConcurrentReadOnly_ThreadSafeWithConcurrentCommits
+  [       OK ] QueryPortTest.ConcurrentReadOnly_ThreadSafeWithConcurrentCommits (437 ms)
+  [ RUN      ] QueryPortTest.ViewIsValueCopy_ImmutableAfterReturn
+  [       OK ] QueryPortTest.ViewIsValueCopy_ImmutableAfterReturn (147 ms)
+  [ RUN      ] QueryPortTest.DraftListing_CurrentOnly_StaleAndOrder
+  [       OK ] QueryPortTest.DraftListing_CurrentOnly_StaleAndOrder (194 ms)
+  [ RUN      ] QueryPortTest.RunListing_OnlyFinalizedFiltered_runDir
+  [       OK ] QueryPortTest.RunListing_OnlyFinalizedFiltered_runDir (124 ms)
+  [ RUN      ] QueryPortTest.Ppr1_ViewIdentityTypes_AreCoreContractTypes
+  [       OK ] QueryPortTest.Ppr1_ViewIdentityTypes_AreCoreContractTypes (58 ms)
+  [----------] 14 tests from QueryPortTest (1955 ms total)
+  
+  [----------] 2 tests from CommandRegistry
+  [ RUN      ] CommandRegistry.RegisteredTypes_ListsSortedTokens
+  [       OK ] CommandRegistry.RegisteredTypes_ListsSortedTokens (0 ms)
+  [ RUN      ] CommandRegistry.DuplicateRegistration_RejectedInvalidArgument
+  [       OK ] CommandRegistry.DuplicateRegistration_RejectedInvalidArgument (0 ms)
+  [----------] 2 tests from CommandRegistry (0 ms total)
+  
+  [----------] 5 tests from CommandSubmitS1
+  [ RUN      ] CommandSubmitS1.UnknownCommandType_RejectedNoRevision
+  [       OK ] CommandSubmitS1.UnknownCommandType_RejectedNoRevision (34 ms)
+  [ RUN      ] CommandSubmitS1.PayloadVersionMismatch_RejectedInvalidPayload
+  [       OK ] CommandSubmitS1.PayloadVersionMismatch_RejectedInvalidPayload (42 ms)
+  [ RUN      ] CommandSubmitS1.UnknownBranch_RejectedInvalidPayload
+  [       OK ] CommandSubmitS1.UnknownBranch_RejectedInvalidPayload (41 ms)
+  [ RUN      ] CommandSubmitS1.ReadOnlyContext_RejectedNotWritableWithLockHeldDiag
+  [       OK ] CommandSubmitS1.ReadOnlyContext_RejectedNotWritableWithLockHeldDiag (63 ms)
+  [ RUN      ] CommandSubmitS1.ClosedContext_RejectedNotWritableWithAuthorityDiag
+  [       OK ] CommandSubmitS1.ClosedContext_RejectedNotWritableWithAuthorityDiag (40 ms)
+  [----------] 5 tests from CommandSubmitS1 (222 ms total)
+  
+  [----------] 2 tests from CommandSubmitS3
+  [ RUN      ] CommandSubmitS3.HardAssertFailed_RejectedWithDiagnosticsNoRevision
+  [       OK ] CommandSubmitS3.HardAssertFailed_RejectedWithDiagnosticsNoRevision (31 ms)
+  [ RUN      ] CommandSubmitS3.PrepareInvalidInput_RejectedWithDiagnostics
+  [       OK ] CommandSubmitS3.PrepareInvalidInput_RejectedWithDiagnostics (40 ms)
+  [----------] 2 tests from CommandSubmitS3 (71 ms total)
+  
+  [----------] 5 tests from CommandSubmitS4
+  [ RUN      ] CommandSubmitS4.FindingsWithoutInteraction_RejectedConfirmationsUnresolved
+  [       OK ] CommandSubmitS4.FindingsWithoutInteraction_RejectedConfirmationsUnresolved (41 ms)
+  [ RUN      ] CommandSubmitS4.InteractionRejects_RejectedConfirmationsRejected
+  [       OK ] CommandSubmitS4.InteractionRejects_RejectedConfirmationsRejected (42 ms)
+  [ RUN      ] CommandSubmitS4.InteractionDead_AbortedInteractionLost
+  [       OK ] CommandSubmitS4.InteractionDead_AbortedInteractionLost (31 ms)
+  [ RUN      ] CommandSubmitS4.InteractionThrows_AbortedInteractionLost
+  [       OK ] CommandSubmitS4.InteractionThrows_AbortedInteractionLost (23 ms)
+  [ RUN      ] CommandSubmitS4.InteractionConfirms_Committed
+  [       OK ] CommandSubmitS4.InteractionConfirms_Committed (55 ms)
+  [----------] 5 tests from CommandSubmitS4 (194 ms total)
+  
+  [----------] 8 tests from CommandSubmitS6
+  [ RUN      ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents
+  [       OK ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents (56 ms)
+  [ RUN      ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+  [       OK ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit (75 ms)
+  [ RUN      ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08
+  [       OK ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08 (139 ms)
+  [ RUN      ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04
+  [       OK ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04 (154 ms)
+  [ RUN      ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips
+  [       OK ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips (61 ms)
+  [ RUN      ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen
+  [       OK ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen (67 ms)
+  [ RUN      ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible
+  [       OK ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible (71 ms)
+  [ RUN      ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload
+  [       OK ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload (20 ms)
+  [----------] 8 tests from CommandSubmitS6 (649 ms total)
+  
+  [----------] 1 test from CommandSubmitS7
+  [ RUN      ] CommandSubmitS7.EventPublishFailure_DoesNotRollbackRevision
+  [       OK ] CommandSubmitS7.EventPublishFailure_DoesNotRollbackRevision (48 ms)
+  [----------] 1 test from CommandSubmitS7 (48 ms total)
+  
+  [----------] 2 tests from CommandSlot
+  [ RUN      ] CommandSlot.SecondSubmitWaitsWhileFirstInPrepare
+  [       OK ] CommandSlot.SecondSubmitWaitsWhileFirstInPrepare (430 ms)
+  [ RUN      ] CommandSlot.DualCompileWithoutPort_FailsFastInvalidArgument
+  [       OK ] CommandSlot.DualCompileWithoutPort_FailsFastInvalidArgument (29 ms)
+  [----------] 2 tests from CommandSlot (459 ms total)
+  
+  [----------] 4 tests from CommandConfirmTx2
+  [ RUN      ] CommandConfirmTx2.Path1_HardAssert_NoRevisionNoCommandRecord
+  [       OK ] CommandConfirmTx2.Path1_HardAssert_NoRevisionNoCommandRecord (29 ms)
+  [ RUN      ] CommandConfirmTx2.Path2_NoInteraction_NoRevisionNoCommandRecord
+  [       OK ] CommandConfirmTx2.Path2_NoInteraction_NoRevisionNoCommandRecord (33 ms)
+  [ RUN      ] CommandConfirmTx2.Path3_InteractionRejects_NoRevisionNoCommandRecord
+  [       OK ] CommandConfirmTx2.Path3_InteractionRejects_NoRevisionNoCommandRecord (22 ms)
+  [ RUN      ] CommandConfirmTx2.Path4_BindingMismatch_RejectedUnresolvedNoRevision
+  [       OK ] CommandConfirmTx2.Path4_BindingMismatch_RejectedUnresolvedNoRevision (36 ms)
+  [----------] 4 tests from CommandConfirmTx2 (122 ms total)
+  
+  [----------] 1 test from BindingVerify
+  [ RUN      ] BindingVerify.EachMemberMismatch_DetectedAndClassified
+  [       OK ] BindingVerify.EachMemberMismatch_DetectedAndClassified (0 ms)
+  [----------] 1 test from BindingVerify (0 ms total)
+  
+  [----------] 5 tests from CommandConfirmLifecycle
+  [ RUN      ] CommandConfirmLifecycle.ConfirmWait_HoldsSlot_SecondSubmitQueued
+  [       OK ] CommandConfirmLifecycle.ConfirmWait_HoldsSlot_SecondSubmitQueued (407 ms)
+  [ RUN      ] CommandConfirmLifecycle.ConfirmWait_ZeroTransactionResources
+  [       OK ] CommandConfirmLifecycle.ConfirmWait_ZeroTransactionResources (76 ms)
+  [ RUN      ] CommandConfirmLifecycle.SessionClose_CancelsConfirmWait_NoPermanentWait
+  [       OK ] CommandConfirmLifecycle.SessionClose_CancelsConfirmWait_NoPermanentWait (54 ms)
+  [ RUN      ] CommandConfirmLifecycle.SuspendThenUserCancel_RejectedContextUnharmed
+  [       OK ] CommandConfirmLifecycle.SuspendThenUserCancel_RejectedContextUnharmed (117 ms)
+  [ RUN      ] CommandConfirmLifecycle.Callback_SynchronousOnSubmitterThread
+  [       OK ] CommandConfirmLifecycle.Callback_SynchronousOnSubmitterThread (99 ms)
+  [----------] 5 tests from CommandConfirmLifecycle (755 ms total)
+  
+  [----------] 3 tests from CommandConfirmPersistence
+  [ RUN      ] CommandConfirmPersistence.Confirmations_PersistedToCommandJson_RoundTrip
+  [       OK ] CommandConfirmPersistence.Confirmations_PersistedToCommandJson_RoundTrip (90 ms)
+  [ RUN      ] CommandConfirmPersistence.NoFindings_ConfirmationsFieldOmitted
+  [       OK ] CommandConfirmPersistence.NoFindings_ConfirmationsFieldOmitted (83 ms)
+  [ RUN      ] CommandConfirmPersistence.Callback_ReceivesComparativeData_Ux03
+  [       OK ] CommandConfirmPersistence.Callback_ReceivesComparativeData_Ux03 (83 ms)
+  [----------] 3 tests from CommandConfirmPersistence (257 ms total)
+  
+  [----------] 15 tests from DraftServiceTest
+  [ RUN      ] DraftServiceTest.SaveThenLoadRoundTripProducesNoRevision
+  [       OK ] DraftServiceTest.SaveThenLoadRoundTripProducesNoRevision (66 ms)
+  [ RUN      ] DraftServiceTest.DomainVersionInputNormalizedReadableBackRoundtripPin
+  [       OK ] DraftServiceTest.DomainVersionInputNormalizedReadableBackRoundtripPin (55 ms)
+  [ RUN      ] DraftServiceTest.CorruptCurrentRecoversFromBakAfterReopen
+  [       OK ] DraftServiceTest.CorruptCurrentRecoversFromBakAfterReopen (74 ms)
+  [ RUN      ] DraftServiceTest.StaleNewResidueDiscardedCurrentKeptOnReopen
+  [       OK ] DraftServiceTest.StaleNewResidueDiscardedCurrentKeptOnReopen (57 ms)
+  [ RUN      ] DraftServiceTest.DiscardRemovesCurrentAndBakIdempotent
+  [       OK ] DraftServiceTest.DiscardRemovesCurrentAndBakIdempotent (46 ms)
+  [ RUN      ] DraftServiceTest.ApplyCommittedExactlyOneRevisionFromDraft
+  [       OK ] DraftServiceTest.ApplyCommittedExactlyOneRevisionFromDraft (85 ms)
+  [ RUN      ] DraftServiceTest.StaleBaselineRejectedAndDraftRetained
+  [       OK ] DraftServiceTest.StaleBaselineRejectedAndDraftRetained (104 ms)
+  [ RUN      ] DraftServiceTest.SummarizeProjectsMultiModuleWithStaleAndSortOrder
+  [       OK ] DraftServiceTest.SummarizeProjectsMultiModuleWithStaleAndSortOrder (105 ms)
+  [ RUN      ] DraftServiceTest.DraftOverwriteVsRevisionAppendOnly
+  [       OK ] DraftServiceTest.DraftOverwriteVsRevisionAppendOnly (137 ms)
+  [ RUN      ] DraftServiceTest.ReadOnlyOpenRejectsSaveAndDiscardAllowsRead
+  [       OK ] DraftServiceTest.ReadOnlyOpenRejectsSaveAndDiscardAllowsRead (41 ms)
+  [ RUN      ] DraftServiceTest.ClosedContextRejectsDraftWritesAndReads
+  [       OK ] DraftServiceTest.ClosedContextRejectsDraftWritesAndReads (38 ms)
+  [ RUN      ] DraftServiceTest.AutosaveAndManualShareSingleSavePath
+  [       OK ] DraftServiceTest.AutosaveAndManualShareSingleSavePath (36 ms)
+  [ RUN      ] DraftServiceTest.PayloadWithSourcedValuePassthroughUnexplained
+  [       OK ] DraftServiceTest.PayloadWithSourcedValuePassthroughUnexplained (34 ms)
+  [ RUN      ] DraftServiceTest.ModuleIdWhitelistRejectsUnsafeTokens
+  [       OK ] DraftServiceTest.ModuleIdWhitelistRejectsUnsafeTokens (31 ms)
+  [ RUN      ] DraftServiceTest.SaveRejectsForeignProjectDocument
+  [       OK ] DraftServiceTest.SaveRejectsForeignProjectDocument (20 ms)
+  [----------] 15 tests from DraftServiceTest (936 ms total)
+  
+  [----------] 11 tests from UndoRedoServiceTest
+  [ RUN      ] UndoRedoServiceTest.ApplyUndoRedoEachCommittedAsNewRevisionHistoryAppendOnly
+  [       OK ] UndoRedoServiceTest.ApplyUndoRedoEachCommittedAsNewRevisionHistoryAppendOnly (172 ms)
+  [ RUN      ] UndoRedoServiceTest.UndoThenRedoRestoresOriginalPayloadAndCommandFamily
+  [       OK ] UndoRedoServiceTest.UndoThenRedoRestoresOriginalPayloadAndCommandFamily (161 ms)
+  [ RUN      ] UndoRedoServiceTest.EmptyHistoryStablePromptDataAndPreconditionViolationFailsFast
+  [       OK ] UndoRedoServiceTest.EmptyHistoryStablePromptDataAndPreconditionViolationFailsFast (35 ms)
+  [ RUN      ] UndoRedoServiceTest.CrossBranchCommitDoesNotTouchSiblingBranchStacks
+  [       OK ] UndoRedoServiceTest.CrossBranchCommitDoesNotTouchSiblingBranchStacks (265 ms)
+  [ RUN      ] UndoRedoServiceTest.NewCommandClearsRedoStackWithOneShotStaleReason
+  [       OK ] UndoRedoServiceTest.NewCommandClearsRedoStackWithOneShotStaleReason (156 ms)
+  [ RUN      ] UndoRedoServiceTest.ReopenProjectRedoLostUndoDerivedFromTip
+  [       OK ] UndoRedoServiceTest.ReopenProjectRedoLostUndoDerivedFromTip (184 ms)
+  [ RUN      ] UndoRedoServiceTest.UnregisteredInverseTokenTypeRelayedAsUnknownCommandNoRevision
+  [       OK ] UndoRedoServiceTest.UnregisteredInverseTokenTypeRelayedAsUnknownCommandNoRevision (134 ms)
+  [ RUN      ] UndoRedoServiceTest.DraftEditingStaysOutsideCommandUndoService
+  [       OK ] UndoRedoServiceTest.DraftEditingStaysOutsideCommandUndoService (121 ms)
+  [ RUN      ] UndoRedoServiceTest.Ppr1_SessionTypesAreCoreContractIdentities
+  [       OK ] UndoRedoServiceTest.Ppr1_SessionTypesAreCoreContractIdentities (126 ms)
+  [ RUN      ] UndoRedoServiceTest.MultiLevelUndoConsecutiveRedoPopsReplayedRecordPerLevel
+  [       OK ] UndoRedoServiceTest.MultiLevelUndoConsecutiveRedoPopsReplayedRecordPerLevel (385 ms)
+  [ RUN      ] UndoRedoServiceTest.RedoBookkeepingDoesNotClobberSubsequentUndoRecord
+  [       OK ] UndoRedoServiceTest.RedoBookkeepingDoesNotClobberSubsequentUndoRecord (238 ms)
+  [----------] 11 tests from UndoRedoServiceTest (1982 ms total)
+  
+  [----------] 12 tests from ArchiveServiceTest
+  [ RUN      ] ArchiveServiceTest.F9_FinalizeManifestIsCompletenessJudge
+  [       OK ] ArchiveServiceTest.F9_FinalizeManifestIsCompletenessJudge (71 ms)
+  [ RUN      ] ArchiveServiceTest.D14_RedeliveryIdempotentAndConflictRejected
+  [       OK ] ArchiveServiceTest.D14_RedeliveryIdempotentAndConflictRejected (51 ms)
+  [ RUN      ] ArchiveServiceTest.D14_BatchLevelRedeliverySkipOrConflict
+  [       OK ] ArchiveServiceTest.D14_BatchLevelRedeliverySkipOrConflict (34 ms)
+  [ RUN      ] ArchiveServiceTest.F9_FinalizeVerifiesManifestAgainstDisk
+  [       OK ] ArchiveServiceTest.F9_FinalizeVerifiesManifestAgainstDisk (30 ms)
+  [ RUN      ] ArchiveServiceTest.SessionRef_LifecycleAndOwnership
+  [       OK ] ArchiveServiceTest.SessionRef_LifecycleAndOwnership (41 ms)
+  [ RUN      ] ArchiveServiceTest.Abandon_FullPathTerminationNoPermanentWait
+  [       OK ] ArchiveServiceTest.Abandon_FullPathTerminationNoPermanentWait (61 ms)
+  [ RUN      ] ArchiveServiceTest.RelPath_WhitelistFailFast
+  [       OK ] ArchiveServiceTest.RelPath_WhitelistFailFast (42 ms)
+  [ RUN      ] ArchiveServiceTest.Begin_RejectionMatrix
+  [       OK ] ArchiveServiceTest.Begin_RejectionMatrix (33 ms)
+  [ RUN      ] ArchiveServiceTest.Task03_ArchiveBoundToOriginalRevisionIgnoreHeadAdvance
+  [       OK ] ArchiveServiceTest.Task03_ArchiveBoundToOriginalRevisionIgnoreHeadAdvance (177 ms)
+  [ RUN      ] ArchiveServiceTest.Begin_ReadOnlyContextRejected
+  [       OK ] ArchiveServiceTest.Begin_ReadOnlyContextRejected (54 ms)
+  [ RUN      ] ArchiveServiceTest.Draining_RejectsNewBeginButServesExistingSession
+  [       OK ] ArchiveServiceTest.Draining_RejectsNewBeginButServesExistingSession (42 ms)
+  [ RUN      ] ArchiveServiceTest.AbandonFinalizeEndgameExclusive_F805
+  [       OK ] ArchiveServiceTest.AbandonFinalizeEndgameExclusive_F805 (105 ms)
+  [----------] 12 tests from ArchiveServiceTest (745 ms total)
+  
+  [----------] 1 test from Tx13ReadOnlyAllWrites
+  [ RUN      ] Tx13ReadOnlyAllWrites.TraversesEveryWriteEntry_AllRejectedWithStableDiag
+  [       OK ] Tx13ReadOnlyAllWrites.TraversesEveryWriteEntry_AllRejectedWithStableDiag (122 ms)
+  [----------] 1 test from Tx13ReadOnlyAllWrites (122 ms total)
+  
+  [----------] 1 test from Tx11CopyConsistency
+  [ RUN      ] Tx11CopyConsistency.SaveAsAndPackageImport_ReferenceWalkConsistent
+  [       OK ] Tx11CopyConsistency.SaveAsAndPackageImport_ReferenceWalkConsistent (222 ms)
+  [----------] 1 test from Tx11CopyConsistency (222 ms total)
+  
+  [----------] 10 tests from SolidifyServiceTest
+  [ RUN      ] SolidifyServiceTest.SolidifySuccess_PublishesImmutableCopyAndNewRevision
+  [       OK ] SolidifyServiceTest.SolidifySuccess_PublishesImmutableCopyAndNewRevision (65 ms)
+  [ RUN      ] SolidifyServiceTest.SolidifyReplacementVersion_SameObjectNewContentVersion
+  [       OK ] SolidifyServiceTest.SolidifyReplacementVersion_SameObjectNewContentVersion (155 ms)
+  [ RUN      ] SolidifyServiceTest.SourceChangedDuringCopy_AbortedWithZeroRevision
+  [       OK ] SolidifyServiceTest.SourceChangedDuringCopy_AbortedWithZeroRevision (37 ms)
+  [ RUN      ] SolidifyServiceTest.MissingSource_AbortedWithZeroRevision
+  [       OK ] SolidifyServiceTest.MissingSource_AbortedWithZeroRevision (29 ms)
+  [ RUN      ] SolidifyServiceTest.BudgetExceeded_AbortedWithZeroRevision
+  [       OK ] SolidifyServiceTest.BudgetExceeded_AbortedWithZeroRevision (28 ms)
+  [ RUN      ] SolidifyServiceTest.Probe_PassthroughThreeStates
+  [       OK ] SolidifyServiceTest.Probe_PassthroughThreeStates (29 ms)
+  [ RUN      ] SolidifyServiceTest.GateData_NotMaterializedVersusReferenced
+  [       OK ] SolidifyServiceTest.GateData_NotMaterializedVersusReferenced (79 ms)
+  [ RUN      ] SolidifyServiceTest.DraftRecordProjection_RoundTripAndTokenTable
+  [       OK ] SolidifyServiceTest.DraftRecordProjection_RoundTripAndTokenTable (35 ms)
+  [ RUN      ] SolidifyServiceTest.RegistrationProtocol_TokensRegisteredDuplicateFailsFast
+  [       OK ] SolidifyServiceTest.RegistrationProtocol_TokensRegisteredDuplicateFailsFast (34 ms)
+  [ RUN      ] SolidifyServiceTest.InvalidArguments_FailFast
+  [       OK ] SolidifyServiceTest.InvalidArguments_FailFast (93 ms)
+  [----------] 10 tests from SolidifyServiceTest (590 ms total)
+  
+  [----------] 1 test from SaveAsRewire
+  [ RUN      ] SaveAsRewire.ThreeRewritePointsOnly_IdsPreserved
+  [       OK ] SaveAsRewire.ThreeRewritePointsOnly_IdsPreserved (186 ms)
+  [----------] 1 test from SaveAsRewire (186 ms total)
+  
+  [----------] 1 test from SaveAsSelectiveCopy
+  [ RUN      ] SaveAsSelectiveCopy.ReportReferenceIntegrity_SelectiveTrees
+  [       OK ] SaveAsSelectiveCopy.ReportReferenceIntegrity_SelectiveTrees (211 ms)
+  [----------] 1 test from SaveAsSelectiveCopy (211 ms total)
+  
+  [----------] 1 test from SaveAsFailureCleanup
+  [ RUN      ] SaveAsFailureCleanup.InjectedFailures_LeaveNoTargetNoResidue
+  [       OK ] SaveAsFailureCleanup.InjectedFailures_LeaveNoTargetNoResidue (137 ms)
+  [----------] 1 test from SaveAsFailureCleanup (137 ms total)
+  
+  [----------] 1 test from SaveAsContract
+  [ RUN      ] SaveAsContract.CallerErrorsFailFast_ClosedContextViaResult
+  [       OK ] SaveAsContract.CallerErrorsFailFast_ClosedContextViaResult (91 ms)
+  [----------] 1 test from SaveAsContract (91 ms total)
+  
+  [----------] 1 test from PackageRoundtrip
+  [ RUN      ] PackageRoundtrip.ExportImport_ByteRestore
+  [       OK ] PackageRoundtrip.ExportImport_ByteRestore (108 ms)
+  [----------] 1 test from PackageRoundtrip (108 ms total)
+  
+  [----------] 1 test from PackageExportD17
+  [ RUN      ] PackageExportD17.SnapshotAnchoredDuringConcurrentCommit
+  [       OK ] PackageExportD17.SnapshotAnchoredDuringConcurrentCommit (141 ms)
+  [----------] 1 test from PackageExportD17 (141 ms total)
+  
+  [----------] 1 test from PackageCancel
+  [ RUN      ] PackageCancel.CheckpointCancel_NoTargetOutput_NoResidue
+  [       OK ] PackageCancel.CheckpointCancel_NoTargetOutput_NoResidue (75 ms)
+  [----------] 1 test from PackageCancel (75 ms total)
+  
+  [----------] 1 test from PackageImportFailures
+  [ RUN      ] PackageImportFailures.DiagnosticsPassedThrough_NoTargetNoResidue
+  [       OK ] PackageImportFailures.DiagnosticsPassedThrough_NoTargetNoResidue (90 ms)
+  [----------] 1 test from PackageImportFailures (90 ms total)
+  
+  [----------] 1 test from PackageContract
+  [ RUN      ] PackageContract.CallerErrorsFailFast_AssemblyViolations
+  [       OK ] PackageContract.CallerErrorsFailFast_AssemblyViolations (70 ms)
+  [----------] 1 test from PackageContract (70 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 304 tests from 49 test suites ran. (14315 ms total)
+  [  PASSED  ] 304 tests.
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_project_contract_test
+  CommandContractTest.cpp
+  ProcessLockContractTest.cpp
+  SolidifyContractTest.cpp
+  StubHandlers.cpp
+  Tx15Child.cpp
+  Tx2DiagnosticRecordContractTest.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/Tx15Child.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(302,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(302,27):
+              请参阅 "sdurws::ird::project::tx15::`anonymous-namespace'::runCrashCommitChild" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_ird_project_contract_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+  ird: run sdurws_ird_project_contract_test and write gtest XML report
+  [==========] Running 34 tests from 11 test suites.
+  [----------] Global test environment set-up.
+  [----------] 5 tests from ProjectLinkage
+  [ RUN      ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+  [       OK ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+  [ RUN      ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1
+  [       OK ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+  [ RUN      ] ProjectLinkage.CoreEdgePresent_DT_BUILD
+  [       OK ] ProjectLinkage.CoreEdgePresent_DT_BUILD (0 ms)
+  [ RUN      ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD
+  [       OK ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD (0 ms)
+  [ RUN      ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09
+  [       OK ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09 (15 ms)
+  [----------] 5 tests from ProjectLinkage (18 ms total)
+  
+  [----------] 5 tests from LockContractTest
+  [ RUN      ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07
+  [       OK ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07 (4033 ms)
+  [ RUN      ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03
+  [       OK ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03 (403 ms)
+  [ RUN      ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02
+  [       OK ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02 (648 ms)
+  [ RUN      ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03
+  [       OK ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03 (124 ms)
+  [ RUN      ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused
+  [       OK ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused (76 ms)
+  [----------] 5 tests from LockContractTest (5287 ms total)
+  
+  [----------] 2 tests from CommandContractTx1
+  [ RUN      ] CommandContractTx1.TwoConcurrentSubmits_SerializedExactlyOneRevisionEach
+  [       OK ] CommandContractTx1.TwoConcurrentSubmits_SerializedExactlyOneRevisionEach (121 ms)
+  [ RUN      ] CommandContractTx1.StaleBaseline_RejectedStaleRevisionNoRevision
+  [       OK ] CommandContractTx1.StaleBaseline_RejectedStaleRevisionNoRevision (136 ms)
+  [----------] 2 tests from CommandContractTx1 (258 ms total)
+  
+  [----------] 3 tests from CommandContractTx3
+  [ RUN      ] CommandContractTx3.WcFail_NoRevisionNoPublishTmpCleaned
+  [       OK ] CommandContractTx3.WcFail_NoRevisionNoPublishTmpCleaned (29 ms)
+  [ RUN      ] CommandContractTx3.DwcFail_NoRevisionNoPublishTmpCleaned
+  [       OK ] CommandContractTx3.DwcFail_NoRevisionNoPublishTmpCleaned (34 ms)
+  [ RUN      ] CommandContractTx3.BothOk_ExactlyOneRevision
+  [       OK ] CommandContractTx3.BothOk_ExactlyOneRevision (69 ms)
+  [----------] 3 tests from CommandContractTx3 (133 ms total)
+  
+  [----------] 1 test from PrjCommand
+  [ RUN      ] PrjCommand.DrainingRejectsAtS1_F804
+  [       OK ] PrjCommand.DrainingRejectsAtS1_F804 (35 ms)
+  [----------] 1 test from PrjCommand (35 ms total)
+  
+  [----------] 3 tests from ArchiveContractTest
+  [ RUN      ] ArchiveContractTest.PRJ_TX8_ContextSurvivesUntilFinalizeThenClosed
+  [       OK ] ArchiveContractTest.PRJ_TX8_ContextSurvivesUntilFinalizeThenClosed (33 ms)
+  [ RUN      ] ArchiveContractTest.PRJ_TX8_CrossProjectEventNotWritten
+  [       OK ] ArchiveContractTest.PRJ_TX8_CrossProjectEventNotWritten (72 ms)
+  [ RUN      ] ArchiveContractTest.Ppr4_ConcurrentSessionsSerializedByWriterMutex
+  [       OK ] ArchiveContractTest.Ppr4_ConcurrentSessionsSerializedByWriterMutex (72 ms)
+  [----------] 3 tests from ArchiveContractTest (178 ms total)
+  
+  [----------] 1 test from Tx8ArchiveProcessKill
+  [ RUN      ] Tx8ArchiveProcessKill.KillWhileArchiveInFlight_NoManifestRunNotListed
+  [       OK ] Tx8ArchiveProcessKill.KillWhileArchiveInFlight_NoManifestRunNotListed (92 ms)
+  [----------] 1 test from Tx8ArchiveProcessKill (92 ms total)
+  
+  [----------] 5 tests from Tx7ProcessLock
+  [ RUN      ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles
+  [       OK ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles (89 ms)
+  [ RUN      ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit
+  [       OK ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit (130 ms)
+  [ RUN      ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid
+  [       OK ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid (109 ms)
+  [ RUN      ] Tx7ProcessLock.AliveHolderNeverTakenOver_KillEnablesTakeover
+  [       OK ] Tx7ProcessLock.AliveHolderNeverTakenOver_KillEnablesTakeover (166 ms)
+  [ RUN      ] Tx7ProcessLock.CrashThenConcurrentTakeover_SingleWinner
+  [       OK ] Tx7ProcessLock.CrashThenConcurrentTakeover_SingleWinner (171 ms)
+  [----------] 5 tests from Tx7ProcessLock (667 ms total)
+  
+  [----------] 1 test from Tx2DiagnosticContract
+  [ RUN      ] Tx2DiagnosticContract.FourRejectionPaths_DiagnosticRecordsPassContractCheck
+  [       OK ] Tx2DiagnosticContract.FourRejectionPaths_DiagnosticRecordsPassContractCheck (113 ms)
+  [----------] 1 test from Tx2DiagnosticContract (113 ms total)
+  
+  [----------] 3 tests from SolidifyContractTest
+  [ RUN      ] SolidifyContractTest.Relink_ExplicitCommandProducesNewRevision
+  [       OK ] SolidifyContractTest.Relink_ExplicitCommandProducesNewRevision (133 ms)
+  [ RUN      ] SolidifyContractTest.CommandHistory_PayloadV1Traceable
+  [       OK ] SolidifyContractTest.CommandHistory_PayloadV1Traceable (64 ms)
+  [ RUN      ] SolidifyContractTest.ReadOnlyStore_SolidifyRejectedWithLockHeld
+  [       OK ] SolidifyContractTest.ReadOnlyStore_SolidifyRejectedWithLockHeld (43 ms)
+  [----------] 3 tests from SolidifyContractTest (241 ms total)
+  
+  [----------] 5 tests from TransactionBoundaries/F8ProcessCrash
+  [ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T1_Uncommitted
+  [       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T1_Uncommitted (82 ms)
+  [ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T2T3_Uncommitted
+  [       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T2T3_Uncommitted (113 ms)
+  [ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T4_Uncommitted
+  [       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T4_Uncommitted (100 ms)
+  [ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T5_Committed
+  [       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T5_Committed (108 ms)
+  [ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T6_Committed
+  [       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T6_Committed (109 ms)
+  [----------] 5 tests from TransactionBoundaries/F8ProcessCrash (514 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 34 tests from 11 test suites ran. (7550 ms total)
+  [  PASSED  ] 34 tests.

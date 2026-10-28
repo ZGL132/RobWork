@@ -576,7 +576,7 @@ void composeFlangeVariant(RneConsumptionChain& chain,
     rwsim::dynamics::BodyInfo& flangeInfo =
         chain.rne.rigidDevice->getLinks().back()->getInfo();
     flangeInfo.mass = totalMass;
-    flangeInfo.masscenter = chain.rne.flangeAlignInverse * compositeCom;
+    flangeInfo.masscenter = chain.rne.flangeAlignInverse * compositeCom + chain.rne.flangeTranslation;
     flangeInfo.inertia =
         chain.rne.flangeAlignInverse * compositeInertia * rw::math::inverse(chain.rne.flangeAlignInverse);
 }

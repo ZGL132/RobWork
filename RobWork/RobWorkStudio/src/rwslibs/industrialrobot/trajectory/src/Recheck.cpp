@@ -534,7 +534,7 @@ RecheckOutcome recheckSegment(const RecheckRequest& request)
     }
     query.pathParameters = sampleParameters;
     query.stopAtFirstFinding = true;   // 淘汰场景——首个发现即停（输出仍带 coverage）
-    query.requestMinDistance = false;  // 二值后端无距离能力（P-POL-11），不请求
+    query.requestMinDistance = false;  // 不额外请求距离指标；正间距策略仍由policy强制检查，缺能力即失败
 
     RecheckCallContext ctx(&request.cancel);
     const policy::CollisionEvaluation evaluation =

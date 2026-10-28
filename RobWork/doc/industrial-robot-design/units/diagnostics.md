@@ -1345,3 +1345,26 @@ public:
 所有者已批准 GAP-DIAG-RETENTION-01 方案 A。FileLogFileOps 仍使用原 std::filesystem 与同实例互斥；keep 含活动文件，keep=1 不生成 .1，降低 keep 时只清理本日志规范正整数后缀普通文件。目录/符号链接不作世代删除或覆盖；失败沿原 bool/管线 guardOpsBool 轨，不新增日志框架。原逐行 fopen("ab")/fclose 与幂等 flush 不变，不承诺 fsync 或跨进程并发。
 
 本次测试目标复用既有 testkit 原生报告监听器，不引入 XML 转换器；diagnostics 产品仍只依赖 core 与标准库。_test 与 _contract_test 均使用 test/TestMainReport.cpp；这是测试报告设施依赖，不是产品反向依赖。原B35及新真实文件结果见 traceability/reuse/REUSE-T16/README.md，独验尚未完成。队列/格式/两Tier/稳定码/脱敏/worker值载荷由既有实现唯一承载，未迁移其职责或新增模型持有权。
+
+## 专项修正（POL-T13，2026-10-28）
+
+在§4.6原23项POLICY清单后追加以下正式生产码，POLICY共29项、内置表共94项。既有码的类别、严重度与版本不变；新码使用首次登记版本1、空参数schema，文案键沿现有单点派生规则。
+
+| 码 | 分类 | 严重度 |
+| --- | --- | --- |
+| POLICY-THRESHOLD-REQUIRED-MISSING | input-invalid | Error |
+| POLICY-POLICY-OBJECT-INVALID | internal | Error |
+| POLICY-ENCODING-INVALID | format-or-version | Error |
+| POLICY-PORT-ASSEMBLY-INCOMPLETE | internal | Error |
+| POLICY-OBJECT-MISSING | resource-missing | Error |
+| POLICY-CLL-QUERY-INVALID | input-invalid | Error |
+
+工程范围记录使用既有正式拼写 POLICY-ENGINEERING-RANGE-INVALID；枚举名保留，旧错误拼写不再作为新记录输出，不改写历史证据。policy契约测试逐码通过正式StableCodeRegistry/DiagnosticsFactory创建条目，产品policy库不反链diagnostics。见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。
+
+## 专项修正（DIAG-T12，2026-10-28，实施待独验）
+
+本轮按 F-618 明确工厂正式条目的 `record.level` 取自 descriptor，输入记录本身不变；其他 core 字段保持值拷贝。注册期拒绝 category/severity/retryable 表外值。目录容量保护含待追加条目的三种引用，输出按 orderKey 排序后限量；容量淘汰仍用入目录序。cause-root 聚合与 code 聚合一致按 TaskIdentity 分区。
+
+生产装配的 pipeline/factory/catalog 统一挂接脱敏服务。凭据规则覆盖引号键及 key；普通 log/logDev/worker 记录不能通过 channel 名字取得旁路；消息及 channel/code/threadTag 在写盘和尾部缓存前脱敏并转义控制字符。同步脱敏失败通知只输出固定安全常量，私有来源位阻断回环。确认状态锁内不调用日志出口，日志异常不覆盖确认结果。
+
+flush 通过日志线程完成文件冲刷，调用者按期限等待完成凭据；关闭预算到期停止剩余排队/延迟观测并计数。同步在途 ILogFileOps 仍不可取消，析构 join 的严格硬时限缺口未关闭，不能据此降低 §7.6/§9.6 要求。Windows 文件使用原生宽路径；UTF-8 切点复用单元私有 helper，各出口标记预算不变。详见 [实施与边界](../traceability/diagnostics-review-r1/IMPLEMENTATION.md)；原契约冲突与未验证疑点保留待裁决。

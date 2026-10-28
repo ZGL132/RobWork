@@ -20,6 +20,7 @@
 #include <sstream>      // std::ostringstream（目录名拼装/错误消息拼装）
 #include <random>       // std::random_device＋mt19937_64（随机后缀——并行隔离三要素之一）
 #include <vector>
+#include <limits>
 
 #ifdef _WIN32
 #include <process.h>  // _getpid（Windows：pid 三要素之一）
@@ -84,8 +85,7 @@ JsonValue reproToJsonValue(const ReproRecord& r)
     };
     JsonValue seed;
     seed.kind = JsonValue::Kind::Number;
-    seed.number = static_cast<double>(r.seed);   // JsonLite 数字为 double——
-                                                 // 2^53 内整数按位精确（20260909 远小于界）
+    seed.number.setUnsigned(r.seed);   // 完整 uint64 精确轨，报告嵌入时也不会再次舍入。
     v.members.emplace_back("seed", std::move(seed));
     JsonValue threads;
     threads.kind = JsonValue::Kind::Number;
@@ -112,15 +112,14 @@ const JsonValue& requireField(const JsonValue& obj, const char* key,
 }
 
 /// 数字字段 → 整数值（非整数或超界抛——防静默截断，F-018③ 教训内化）。
-std::int64_t requireIntegral(const JsonValue& obj, const char* key)
+std::uint64_t requireIntegral(const JsonValue& obj, const char* key)
 {
-    const double d = requireField(obj, key, JsonValue::Kind::Number).number;
-    const auto asInt = static_cast<std::int64_t>(d);
-    if (static_cast<double>(asInt) != d) {
+    const auto value = requireField(obj, key, JsonValue::Kind::Number).number.tryUnsigned();
+    if (!value) {
         throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                           std::string{"repro-json: 数字字段必须为整数: "} + key);
+                           std::string{"repro-json: 数字字段必须为 uint64 范围内非负整数: "} + key);
     }
-    return asInt;
+    return *value;
 }
 
 }  // namespace
@@ -208,16 +207,11 @@ ReproRecord ReproRecord::fromJson(std::string_view text)
     }
     ReproRecord r;
     // 逐字段提取（缺失/类型不符即抛，消息含字段路径——拒绝必须可定位）。
-    const auto seedValue = requireIntegral(v, "seed");
-    if (seedValue < 0) {
-        throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                           "repro-json: seed 不得为负: seed");
-    }
-    r.seed = static_cast<std::uint64_t>(seedValue);
+    r.seed = requireIntegral(v, "seed");
     const auto threads = requireIntegral(v, "threadCount");
-    if (threads < 1) {
+    if (threads < 1 || threads > static_cast<std::uint64_t>(std::numeric_limits<int>::max())) {
         throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                           "repro-json: threadCount 必须 ≥1: threadCount");
+                           "repro-json: threadCount 必须在 [1,INT_MAX]: threadCount");
     }
     r.threadCount = static_cast<int>(threads);
     r.softwareVersion = requireField(v, "softwareVersion", JsonValue::Kind::String).text;

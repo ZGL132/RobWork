@@ -1,0 +1,18 @@
+PASS registered manifest
+PASS registered input
+PASS registered expected
+PASS CRLF normalization
+PASS tampered content
+PASS unlisted asset
+PASS wrong manifest identity
+PASS unknown manifest schema
+PASS wrong size
+PASS missing integrity entry
+PASS manifest self reference
+PASS no source exemption inputs/input.cpp
+PASS no source exemption inputs/input.json.ps1
+PASS no source exemption inputs/input.mjs
+PASS no source exemption inputs/input.txt
+PASS outside golden folder
+PASS path traversal
+test-golden-assets: PASS passed=17 skipped=0 failed=0

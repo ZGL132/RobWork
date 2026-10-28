@@ -2036,7 +2036,7 @@ TEST(MdlWorkCellImport, Extract_LossyReportItemsListed_WP13T17_ACC2)
         ASSERT_EQ(outcome.draft->joints[0].maxVelocity.state(),
                   FieldState::NotProvided);
         ASSERT_EQ(outcome.draft->joints[1].maxVelocity.state(), FieldState::Provided);
-        EXPECT_DOUBLE_EQ(outcome.draft->joints[1].maxVelocity.value(), 1.5);
+        EXPECT_DOUBLE_EQ(outcome.draft->joints[1].maxVelocity.value(), 1.5 * (3.14159265358979323846 / 180.0)); // 源deg/s→SI rad/s；不改精度。
     }
     // —— 场景内容（单设备草稿不携带）。
     ASSERT_NE(findUnsupported(outcome.report, "scene-object", "table"), nullptr);
@@ -2224,4 +2224,56 @@ TEST(MdlWorkCellImport, InterfaceDelegatesToEngine_WP13T17_ACC1)
                                                      diagsViaEngine);
     EXPECT_EQ(viaInterface, viaEngine) << "接口＝引擎委托（单一实现）";
     EXPECT_EQ(diagsViaInterface, diagsViaEngine) << "诊断产出同源";
+}
+
+
+/** @brief MDL-CR-4/F12：空属性仍是非法输入，不能触发CoreError或静默零值。 */
+TEST(MdlImport, EmptyNumericAttributesAreInvalid_F12)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"MDL-03","MDL-06"}),{});
+    for(const std::string fragment:{"<axis xyz=''/>","<limit lower='' upper='1'/>",
+        "<limit lower='-1' upper='1' velocity=''/>","<origin xyz='' rpy='0 0 0'/>"}){
+        SCOPED_TRACE(fragment);
+        const std::string xml="<robot name='arm'><link name='base'/><link name='tip'/><joint name='j' type='revolute'><parent link='base'/><child link='tip'/>"+fragment+"</joint></robot>";
+        std::vector<sdurws::ird::core::DiagnosticRecord> diags;ImportOutcome out;
+        ASSERT_NO_THROW(out=ModelImportMapper{}.mapUrdf(makeSource(xml),{},diags));
+        ASSERT_TRUE(out.draft);EXPECT_FALSE(out.report.submittable);EXPECT_FALSE(out.report.errors.empty());
+        EXPECT_FALSE(diags.empty());
+    }
+    for(const std::string fragment:{"<mass value=''/>","<mass/>","<inertia ixx='' iyy='1' izz='1' ixy='0' ixz='0' iyz='0'/>","<origin xyz=''/>"}){
+        SCOPED_TRACE(fragment);
+        const std::string xml="<robot name='arm'><link name='base'/><link name='tip'><inertial>"+fragment+"</inertial></link><joint name='j' type='revolute'><parent link='base'/><child link='tip'/></joint></robot>";
+        std::vector<sdurws::ird::core::DiagnosticRecord> diags;ImportOutcome out;
+        ASSERT_NO_THROW(out=ModelImportMapper{}.mapUrdf(makeSource(xml),{},diags));
+        ASSERT_TRUE(out.draft);EXPECT_FALSE(out.report.submittable);EXPECT_FALSE(out.report.errors.empty());
+        EXPECT_TRUE(hasDiag(diags,sdurws::ird::modeling::kMdlImportValueIllegal));
+        const auto& body=out.draft->links.back().body;
+        if(fragment.find("mass")!=std::string::npos){EXPECT_EQ(body.mass.state(),FieldState::Invalid);}
+        if(fragment.find("inertia ")!=std::string::npos){EXPECT_EQ(body.inertia.state(),FieldState::Invalid);}
+    }
+}
+
+/** @brief C02/F08：上游角速率deg→SI、移动速率直入，空/坏/负属性全部拒绝。 */
+TEST(MdlWorkCellImport, RateSourceUnitsAndInvalidText_C02)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"MDL-03","MDL-06"}),{});
+    for(const std::string type:{"Revolute","Prismatic"}){
+        for(const std::string raw:{"180","bad","","-1"}){
+            SCOPED_TRACE(type+":"+raw);
+            const auto xml="<WorkCell name='wc'><SerialDevice name='arm'><Frame name='base' type='Fixed'/><Joint name='j' type='"+type+"'><VelLimit max='"+raw+"'/><AccLimit max='"+raw+"'/></Joint></SerialDevice></WorkCell>";
+            std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+            const auto out=ModelImportMapper{}.mapWorkCellXml(makeSource(xml),{},diags);
+            ASSERT_TRUE(out.draft);const auto& joint=out.draft->joints.back();
+            if(raw=="180"){
+                ASSERT_EQ(joint.maxVelocity.state(),FieldState::Provided);
+                EXPECT_DOUBLE_EQ(joint.maxVelocity.value(),type=="Revolute"?3.14159265358979323846:180.0);
+                EXPECT_DOUBLE_EQ(joint.maxAcceleration.value(),type=="Revolute"?3.14159265358979323846:180.0);
+            }else{
+                EXPECT_EQ(joint.maxVelocity.state(),FieldState::Invalid);
+                EXPECT_EQ(joint.maxAcceleration.state(),FieldState::Invalid);
+                EXPECT_FALSE(out.report.submittable);
+                EXPECT_TRUE(hasDiag(diags,sdurws::ird::modeling::kMdlImportValueIllegal));
+            }
+        }
+    }
 }

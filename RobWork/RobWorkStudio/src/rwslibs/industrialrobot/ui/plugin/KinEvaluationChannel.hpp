@@ -71,6 +71,17 @@ namespace ird {
 namespace ui {
 
 /**
+ * @brief POL-T13/ARC-05：宿主同步/后台共用的 policy 碰撞装配入口。
+ * @param snapshot [in] 已发布快照；只读别名保活，runtime 仍为模型 owner。
+ * @param resolvedPolicy [in] 已发布策略；域、Role 和必检/排除均交 policy 展开。
+ * @return 任务持有的只读会话；快照/策略/设施缺失返回空，距离能力缺失由会话如实失败。
+ * @note 可并发构造；单一评估器只持描述符，各会话后端/锁独立，不新增规则权威。
+ */
+std::shared_ptr<const kinematics::IKinCollisionSession> makePolicyCollisionSession(
+    const std::shared_ptr<const runtime::RuntimeSnapshot>& snapshot,
+    const std::shared_ptr<const policy::EngineeringPolicySet>& resolvedPolicy);
+
+/**
  * @brief 创建UI同步求解的策略装配器；source[in]仅UI线程取当前已发布纯值，空值视为缺证。
  * @return 宿主独占拥有的IIkSolver；内部调用真实IkSolver，不另实现数值算法。
  */

@@ -1,0 +1,139 @@
+Note: Google Test filter = ProjectReviewRegression.*
+[==========] Running 14 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 14 tests from ProjectReviewRegression
+[ RUN      ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(134): error: Value of: result.committed()
+  Actual: false
+Expected: true
+
+[  FAILED  ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact (71 ms)
+[ RUN      ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(147): error: Expected: opened.store->handlerRegistry().registerHandler( std::make_unique<NoteHandler>("Bad.Token")) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+[  FAILED  ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit (29 ms)
+[ RUN      ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(157): error: Value of: submit(*opened.store).committed()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(158): error: Expected equality of these values:
+  before
+    Which is: "{\"formatId\":\"rwdesign\",\"schemaVersion\":10000,\"projectId\":\"prj-2dcad0cfc236133d3d873f3a4b814c6d\",\"revisionId\":\"rev-f73af53f857a1fed27fa03a15b86e119\",\"revisionSeq\":1,\"branchId\":\"brn-e8ffbc942c0f483e31d830ee5639df7c\",\"manifestDigest\":\"8732cb2434ebb3d04de9188e140469645c6f83afc68c675dc70e810e0a7cba8d\"}"
+  readBytes(opened.store->canonicalPath() / "HEAD")
+    Which is: "{\"formatId\":\"rwdesign\",\"schemaVersion\":10000,\"projectId\":\"prj-2dcad0cfc236133d3d873f3a4b814c6d\",\"revisionId\":\"rev-619efcb4d363feab501ff4e0071fefe7\",\"revisionSeq\":2,\"branchId\":\"brn-e8ffbc942c0f483e31d830ee5639df7c\",\"manifestDigest\":\"44ada9d9b272c21dab4744eeb30856918c2456875ca435ac44a6bd1aff1d1d94\"}"
+
+[  FAILED  ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit (56 ms)
+[ RUN      ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(173): error: Value of: fs::exists(pending)
+  Actual: false
+Expected: true
+
+[  FAILED  ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile (40 ms)
+[ RUN      ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(189): error: Value of: recovered
+  Actual: false
+Expected: true
+
+[  FAILED  ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting (42 ms)
+[ RUN      ] ProjectReviewRegression.QueryHidesUncommittedObject
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(204): error: Value of: opened.store->query().tryObject(oid, cv)
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(205): error: Expected: opened.store->query().object(oid, cv) throws an exception of type StoreError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ProjectReviewRegression.QueryHidesUncommittedObject (43 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(216): error: Expected: readOnly(dir) throws an exception of type StoreError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand (40 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(233): error: Expected: readOnly(dir) throws an exception of type StoreError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest (48 ms)
+[ RUN      ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(245): error: Expected: readOnly(dir) throws an exception of type StoreError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch (44 ms)
+[ RUN      ] ProjectReviewRegression.FailedValidationRollsBackRegistration
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(264): error: Value of: host.revisionIndex().tryRevision(plan.revisionId)
+  Actual: true
+Expected: false
+
+[  FAILED  ] ProjectReviewRegression.FailedValidationRollsBackRegistration (29 ms)
+[ RUN      ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(273): error: Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+112
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(273): error: Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+39
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(273): error: Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+1295
+
+[  FAILED  ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected (0 ms)
+[ RUN      ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath
+unknown file: error: C++ exception with description "project/object-store: staging-write path=C:\Users\zgl18\AppData\Local\Temp\ird-test/94324-prj-r1-74c4e1b5ca5f0514\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\project.new-94324-10\.staging\ostore-0-7d32f40d79ec21447986a1484c3e0cefbf31a2f473d194cd4a726d57be9eae33.tmp osError=3" thrown in the test body.
+
+[  FAILED  ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath (9 ms)
+[ RUN      ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(322): error: Value of: opened.store->archive().finalize(retry, manifest).ok
+  Actual: true
+Expected: false
+
+[  FAILED  ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest (58 ms)
+[ RUN      ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(341): error: Expected: opened.store->archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(341): error: Expected: opened.store->archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(341): error: Expected: opened.store->archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp(343): error: Value of: fs::exists(req.runDir / "manifest.json")
+  Actual: true
+Expected: false
+
+[  FAILED  ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively (35 ms)
+[----------] 14 tests from ProjectReviewRegression (551 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 1 test suite ran. (551 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 14 tests, listed below:
+[  FAILED  ] ProjectReviewRegression.PostCommitObserversCannotChangeCommitFact
+[  FAILED  ] ProjectReviewRegression.InvalidRegisteredTokenRejectedBeforeCommit
+[  FAILED  ] ProjectReviewRegression.InvalidInverseRejectedBeforeCommit
+[  FAILED  ] ProjectReviewRegression.DraftReadPreservesInFlightNewFile
+[  FAILED  ] ProjectReviewRegression.MissingCurrentRecoversBackupWithoutWriting
+[  FAILED  ] ProjectReviewRegression.QueryHidesUncommittedObject
+[  FAILED  ] ProjectReviewRegression.RecoveryRejectsMissingCommittedCommand
+[  FAILED  ] ProjectReviewRegression.RecoveryRejectsParentCycleWithValidDigest
+[  FAILED  ] ProjectReviewRegression.RecoveryRejectsHeadSequenceMismatch
+[  FAILED  ] ProjectReviewRegression.FailedValidationRollsBackRegistration
+[  FAILED  ] ProjectReviewRegression.SdkDiskFullErrorsRemainDistinctFromWriteRejected
+[  FAILED  ] ProjectReviewRegression.CreateNewPreservesCanonicalLongPath
+[  FAILED  ] ProjectReviewRegression.IdempotentFinalizeRejectsTamperedManifest
+[  FAILED  ] ProjectReviewRegression.ArchiveRejectsReservedNamesCaseInsensitively
+
+14 FAILED TESTS

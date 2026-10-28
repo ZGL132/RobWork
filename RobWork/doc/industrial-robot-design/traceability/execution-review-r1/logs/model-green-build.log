@@ -1,0 +1,200 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  CacheCoordinator.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(264,38): error C2371: “candidates”: 重定义；不同的基类型 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(174,36):
+      参见“candidates”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,37): error C2664: “sdurws::ird::execution::CompileCacheVerdict sdurws::ird::execution::ICompileCacheJudge::judge(const sdurws::ird::execution::CompileCacheKeyView &,const sdurws::ird::execution::CompileCacheKeyView &) const”: 无法将参数 2 从“const _Ty”转换为“const sdurws::ird::execution::CompileCacheKeyView &” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,37): error C2664:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,37): error C2664:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,37): error C2664:             _Ty=sdurws::ird::execution::CacheEntrySummary [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,37): error C2664:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,69):
+      原因如下: 无法从“const _Ty”转换为“const sdurws::ird::execution::CompileCacheKeyView”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,69):
+      没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\include\sdurws\ird\execution\CacheCoordinator.hpp(163,33):
+      参见“sdurws::ird::execution::ICompileCacheJudge::judge”的声明
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(298,37):
+      尝试匹配参数列表“(const _Ty, const _Ty)”时
+          with
+          [
+              _Ty=sdurws::ird::execution::CompileCacheKeyView
+          ]
+          and
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13): error C2679: 二元“=”: 没有找到接受“const _Ty”类型的右操作数的运算符(或没有可接受的转换) [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13): error C2679:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13): error C2679:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13): error C2679:             _Ty=sdurws::ird::execution::CacheEntrySummary [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13): error C2679:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(617,1):
+      可能是“std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<sdurws::ird::execution::CompileCacheKeyView> &&)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<sdurws::ird::execution::CompileCacheKeyView> &&)”: 无法将参数 2 从“const _Ty”转换为“std::optional<sdurws::ird::execution::CompileCacheKeyView> &&”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,24):
+              原因如下: 无法从“const _Ty”转换为“std::optional<sdurws::ird::execution::CompileCacheKeyView>”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,24):
+              没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(617,1):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<sdurws::ird::execution::CompileCacheKeyView> &)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<sdurws::ird::execution::CompileCacheKeyView> &)”: 无法将参数 2 从“const _Ty”转换为“const std::optional<sdurws::ird::execution::CompileCacheKeyView> &”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,24):
+              原因如下: 无法从“const _Ty”转换为“const std::optional<sdurws::ird::execution::CompileCacheKeyView>”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,24):
+              没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(283,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::nullopt_t) noexcept”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::nullopt_t) noexcept”: 无法将参数 2 从“const _Ty”转换为“std::nullopt_t”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,24):
+              没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(321,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<_Ty2> &&) noexcept(<expr>)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<_Ty2> &&) noexcept(<expr>)”: 无法从“const _Ty”推导出“std::optional<_Ty2> &&”的 模板 参数
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(307,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<_Ty2> &) noexcept(<expr>)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<_Ty2> &) noexcept(<expr>)”: 无法从“const _Ty”推导出“const std::optional<_Ty2> &”的 模板 参数
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(292,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(_Ty2 &&) noexcept(<expr>)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(_Ty2 &&) noexcept(<expr>)”: 无法推导“__formal”的 模板 参数
+              D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(288,33):
+              “std::enable_if_t<false,int>”: 未能使别名模板专用化
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(301,13):
+      尝试匹配参数列表“(std::optional<sdurws::ird::execution::CompileCacheKeyView>, const _Ty)”时
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13): error C2679: 二元“=”: 没有找到接受“const _Ty”类型的右操作数的运算符(或没有可接受的转换) [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13): error C2679:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13): error C2679:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13): error C2679:             _Ty=sdurws::ird::execution::CacheEntrySummary [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13): error C2679:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(617,1):
+      可能是“std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<sdurws::ird::execution::CompileCacheKeyView> &&)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<sdurws::ird::execution::CompileCacheKeyView> &&)”: 无法将参数 2 从“const _Ty”转换为“std::optional<sdurws::ird::execution::CompileCacheKeyView> &&”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,24):
+              原因如下: 无法从“const _Ty”转换为“std::optional<sdurws::ird::execution::CompileCacheKeyView>”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,24):
+              没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(617,1):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<sdurws::ird::execution::CompileCacheKeyView> &)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<sdurws::ird::execution::CompileCacheKeyView> &)”: 无法将参数 2 从“const _Ty”转换为“const std::optional<sdurws::ird::execution::CompileCacheKeyView> &”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,24):
+              原因如下: 无法从“const _Ty”转换为“const std::optional<sdurws::ird::execution::CompileCacheKeyView>”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,24):
+              没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(283,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::nullopt_t) noexcept”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::nullopt_t) noexcept”: 无法将参数 2 从“const _Ty”转换为“std::nullopt_t”
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,24):
+              没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(321,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<_Ty2> &&) noexcept(<expr>)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(std::optional<_Ty2> &&) noexcept(<expr>)”: 无法从“const _Ty”推导出“std::optional<_Ty2> &&”的 模板 参数
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(307,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<_Ty2> &) noexcept(<expr>)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(const std::optional<_Ty2> &) noexcept(<expr>)”: 无法从“const _Ty”推导出“const std::optional<_Ty2> &”的 模板 参数
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(292,28):
+      或    “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(_Ty2 &&) noexcept(<expr>)”
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13):
+          “std::optional<sdurws::ird::execution::CompileCacheKeyView> &std::optional<sdurws::ird::execution::CompileCacheKeyView>::operator =(_Ty2 &&) noexcept(<expr>)”: 无法推导“__formal”的 模板 参数
+              D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\optional(288,33):
+              “std::enable_if_t<false,int>”: 未能使别名模板专用化
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\CacheCoordinator.cpp(306,13):
+      尝试匹配参数列表“(std::optional<sdurws::ird::execution::CompileCacheKeyView>, const _Ty)”时
+          with
+          [
+              _Ty=sdurws::ird::execution::CacheEntrySummary
+          ]
+  
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib

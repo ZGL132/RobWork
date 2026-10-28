@@ -12,6 +12,9 @@
 #include <sdurws/ird/testkit/JsonLite.hpp>
 
 #include <algorithm>
+#include <charconv>
+#include <cmath>
+#include <limits>
 #include <fstream>
 #include <sstream>
 
@@ -24,7 +27,17 @@ using core::ContentDigester;
 [[noreturn]] void failField(const std::string& fieldPath, const std::string& reason)
 {
     throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                       "dataset-invalid: " + fieldPath + ": " + reason);
+                       fieldPath + ": " + reason);
+}
+
+/** 非负整数域在转换前核对范围，避免截断小数及超界浮点转整数。 */
+std::uint64_t requireUnsigned(const JsonValue* v, const std::string& path)
+{
+    const auto integer = v != nullptr && v->isNumber() ? v->number.tryUnsigned() : std::nullopt;
+    if (!integer) {
+        failField(path, "须为 uint64 范围内的非负整数");
+    }
+    return *integer;
 }
 
 /// 必填字符串字段。
@@ -87,7 +100,7 @@ std::string readFileBytes(const std::filesystem::path& p)
     std::ifstream in(p, std::ios::binary);
     if (!in) {
         throw TestKitError(TestKitErrorKind::EnvUnavailable,
-                           "env-unavailable: 无法读取文件 " + p.string());
+                           "无法读取文件 " + p.string());
     }
     std::ostringstream ss;
     ss << in.rdbuf();
@@ -139,21 +152,23 @@ void parseSemanticVersion(std::string_view v, std::string_view fieldPath,
                           int* major, int* minor, int* patch)
 {
     int vals[3] = {0, 0, 0};
-    std::size_t idx = 0;
     std::size_t consumed = 0;
     for (int part = 0; part < 3; ++part) {
         std::size_t start = consumed;
         while (consumed < v.size() && v[consumed] >= '0' && v[consumed] <= '9') { ++consumed; }
         if (consumed == start) {
             throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                               std::string("dataset-invalid: ") + std::string(fieldPath)
+                               std::string(fieldPath)
                                    + ": 语义化版本段缺失数字（期望 M.m.p）: " + std::string{v});
         }
-        vals[part] = std::stoi(std::string{v.substr(start, consumed - start)});
+        const auto parsed = std::from_chars(v.data() + start, v.data() + consumed, vals[part]);
+        if (parsed.ec != std::errc{}) {
+            failField(std::string{fieldPath}, "语义化版本段超出 int 范围");
+        }
         if (part < 2) {
             if (consumed >= v.size() || v[consumed] != '.') {
                 throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                                   std::string("dataset-invalid: ") + std::string(fieldPath)
+                                   std::string(fieldPath)
                                        + ": 版本分隔符缺失（期望 M.m.p）: " + std::string{v});
             }
             ++consumed;
@@ -161,13 +176,12 @@ void parseSemanticVersion(std::string_view v, std::string_view fieldPath,
     }
     if (consumed != v.size()) {
         throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                           std::string("dataset-invalid: ") + std::string(fieldPath)
+                           std::string(fieldPath)
                                + ": 版本含尾随内容: " + std::string{v});
     }
     *major = vals[0];
     *minor = vals[1];
     *patch = vals[2];
-    (void)idx;
 }
 
 bool DatasetManifest::operator==(const DatasetManifest& o) const
@@ -206,7 +220,7 @@ GoldenDataset GoldenDataset::load(const DatasetRef& ref)
     const auto manifestPath = versionDir / "manifest.json";
     if (!std::filesystem::exists(manifestPath)) {
         throw TestKitError(TestKitErrorKind::DatasetInvalid,
-                           "dataset-invalid: manifest 不存在: " + manifestPath.string());
+                           "manifest 不存在: " + manifestPath.string());
     }
 
     // 第一步：解析（TK-T02 JsonLite——行列错误已含定位）。
@@ -233,7 +247,9 @@ GoldenDataset GoldenDataset::load(const DatasetRef& ref)
             [](char c) { return c >= '0' && c <= '9'; })) {
             failField("schemaVersion", "主版本段须为整数: " + m.schemaVersion);
         }
-        if (std::stoi(majorStr) != 1) {
+        int schemaMajor = 0;
+        const auto parsed = std::from_chars(majorStr.data(), majorStr.data() + majorStr.size(), schemaMajor);
+        if (parsed.ec != std::errc{} || schemaMajor != 1) {
             failField("schemaVersion", "未知主版本（当前支持 1）: " + m.schemaVersion);
         }
     }
@@ -286,17 +302,17 @@ GoldenDataset GoldenDataset::load(const DatasetRef& ref)
     m.expected = requireStringArray(root, "expected", 1);
 
     // parameters（对象，域自有 schema——装载层存 JSON 原文）。
-    if (const JsonValue* p = root.find("parameters"); p != nullptr && p->isObject()) {
+    m.parametersJson = "{}";
+    if (const JsonValue* p = root.find("parameters"); p != nullptr) {
+        if (!p->isObject()) { failField("parameters", "须为对象"); }
         m.parametersJson = dumpJson(*p, false);
-    } else {
-        failField("parameters", "必填对象字段缺失");
     }
 
     // units：field→UnitToken（token 须在 core 单位表注册——装载时校验）。
     if (const JsonValue* u = root.find("units"); u != nullptr && u->isObject()) {
         for (const auto& kv : u->members) {
             const auto tok = core::UnitToken::find(kv.second.text);
-            if (!u->members.empty() && !kv.second.isString()) {
+            if (!kv.second.isString()) {
                 failField("units." + kv.first, "单位须为注册 token 字符串");
             }
             if (!tok.has_value()) {
@@ -365,15 +381,15 @@ GoldenDataset GoldenDataset::load(const DatasetRef& ref)
             m.producer.solverConfigJson = dumpJson(*sc, false);
         }
         if (const JsonValue* sd = pr->find("seed"); sd != nullptr && !sd->isNull()) {
-            if (!sd->isNumber() || sd->number < 0) {
-                failField("producer.seed", "seed 须为非负整数或 null");
-            }
             m.producer.seedPresent = true;
-            m.producer.seed = static_cast<std::uint64_t>(sd->number);
+            m.producer.seed = requireUnsigned(sd, "producer.seed");
         }
-        if (const JsonValue* tc = pr->find("threadCount"); tc != nullptr && tc->isNumber()) {
-            m.producer.threadCount = static_cast<int>(tc->number);
-            if (m.producer.threadCount < 1) { failField("producer.threadCount", "须 ≥1"); }
+        if (const JsonValue* tc = pr->find("threadCount"); tc != nullptr) {
+            const auto count = requireUnsigned(tc, "producer.threadCount");
+            if (count < 1 || count > static_cast<std::uint64_t>(std::numeric_limits<int>::max())) {
+                failField("producer.threadCount", "须在 [1,INT_MAX] 内");
+            }
+            m.producer.threadCount = static_cast<int>(count);
         }
         m.producer.generatedAtUtc = requireString(*pr, "generatedAtUtc", "producer.");
     } else {
@@ -408,10 +424,7 @@ GoldenDataset GoldenDataset::load(const DatasetRef& ref)
             e.path = requireString(item, "path", "integrity.");
             e.sha256Hex = requireString(item, "sha256", "integrity.");
             const JsonValue* sz = item.find("sizeBytes");
-            if (sz == nullptr || !sz->isNumber() || sz->number < 0) {
-                failField("integrity.sizeBytes", "须为非负整数");
-            }
-            e.sizeBytes = static_cast<std::uint64_t>(sz->number);
+            e.sizeBytes = requireUnsigned(sz, "integrity.sizeBytes");
             if (e.sha256Hex.size() != 64
                 || !allCharsIn(e.sha256Hex, "0123456789abcdef")) {
                 failField("integrity.sha256", "须为 64 位小写十六进制: " + e.sha256Hex);
@@ -465,6 +478,22 @@ GoldenDataset GoldenDataset::load(const DatasetRef& ref)
             m.integrity.begin(), m.integrity.end(),
             [&](const IntegrityEntry& e) { return e.path == rel; });
         if (!covered) { failField("integrity", "expected 文件未登记完整性: " + rel); }
+    }
+    // F-017：生成入口及 generate 中全部来源文件均属完整性范围，摘要仍唯一复用 core。
+    const auto requireCovered = [&](const std::string& rel) {
+        if (std::none_of(m.integrity.begin(), m.integrity.end(),
+                         [&](const IntegrityEntry& e) { return e.path == rel; })) {
+            failField("integrity", "generate 文件未登记完整性: " + rel);
+        }
+    };
+    requireCovered(m.generatorScript);
+    const auto generateDir = versionDir / "generate";
+    if (std::filesystem::is_directory(generateDir)) {
+        for (const auto& file : std::filesystem::recursive_directory_iterator(generateDir)) {
+            if (file.is_regular_file()) {
+                requireCovered(file.path().lexically_relative(versionDir).generic_string());
+            }
+        }
     }
     for (const auto& e : m.integrity) {
         const auto filePath = versionDir / e.path;

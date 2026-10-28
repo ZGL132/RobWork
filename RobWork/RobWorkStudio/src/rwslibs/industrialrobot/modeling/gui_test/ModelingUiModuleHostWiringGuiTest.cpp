@@ -56,6 +56,7 @@
 
 #include <sdurws/ird/ui/UiText.hpp>       // ui::resolveText（生产装配序解析值——UX-02）
 #include "plugin/ModelingUiModule.hpp"    // 被测模块（同单元 PRIVATE include 面）
+#include "plugin/ModelingDraftCodec.hpp" // F10：真实草稿持久化保留身份分配历史。
 #include "plugin/ModelingCommandFlows.hpp" // CustomChainDeclaration 完整型（UI-T63——module 前向声明的实现 TU 面）
 #include "plugin/ModelingPanelWidget.hpp" // 面板具体类型（createPanel 返回值下转型——
                                           // 命令按钮对账需要目录序，QWidget 面不够）
@@ -1174,7 +1175,7 @@ TEST(ModelingUiModuleHostWiring, ToolManagerHistoryBodyAndNavigation_MDL13_AT01)
     com->setChecked(true);field(1)->setText("0.1");choice->setCurrentIndex(1);
     body->findChild<QPushButton*>("ird_body_apply")->click();const auto migrated=module.session().draft;
     const auto& inertia=migrated.toolObjects.front().body.inertia.value();
-    EXPECT_DOUBLE_EQ(inertia.ixx,1);EXPECT_DOUBLE_EQ(inertia.iyy,1.025);EXPECT_DOUBLE_EQ(inertia.izz,1.025);
+    EXPECT_DOUBLE_EQ(inertia.ixx,1);EXPECT_DOUBLE_EQ(inertia.iyy,1);EXPECT_DOUBLE_EQ(inertia.izz,1);
     undo->click();EXPECT_EQ(module.session().draft,tensor);redo->click();EXPECT_EQ(module.session().draft,migrated);
     // 禁用父控件仍必须由子页执行端拒绝直接信号，不能只靠灰显测试空转。
     module.setWritable(false);body->findChild<QCheckBox*>("ird_body_mass_edit")->setChecked(true);field(0)->setText("99");
@@ -1335,7 +1336,11 @@ TEST(ModelingUiModuleHostWiring, CompletePendingStateTracksUndoRedo_PM04_AT21)
     auto* add=panel->findChild<QPushButton*>("ird_modeling_struct_add");ASSERT_NE(add,nullptr);
     auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");ASSERT_NE(undo,nullptr);
     auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");ASSERT_NE(redo,nullptr);
+    const auto originalJoints=module.session().draft.design.joints;
     add->click();QApplication::processEvents();EXPECT_TRUE(module.hasPendingDraft());
+    const auto inserted=std::find_if(module.session().draft.design.joints.begin(),module.session().draft.design.joints.end(),
+        [&](const JointEntry& joint){return std::none_of(originalJoints.begin(),originalJoints.end(),[&](const JointEntry& old){return old.objectId==joint.objectId;});});
+    ASSERT_NE(inserted,module.session().draft.design.joints.end());const auto allocated=inserted->objectId;
     undo->click();QApplication::processEvents();EXPECT_FALSE(module.hasPendingDraft());
     ASSERT_TRUE(redo->isEnabled());redo->click();QApplication::processEvents();EXPECT_TRUE(module.hasPendingDraft());
     undo->click();QApplication::processEvents();ASSERT_FALSE(module.hasPendingDraft());
@@ -1349,6 +1354,13 @@ TEST(ModelingUiModuleHostWiring, CompletePendingStateTracksUndoRedo_PM04_AT21)
     tool.tcpList={{"tcp",rw::math::Transform3D<double>::identity(),""}};
     module.session().draft.toolObjects={tool};module.session().draft.design.toolRefs={tool.objectId};
     EXPECT_TRUE(module.hasPendingDraft());module.session().draft=baseline;EXPECT_FALSE(module.hasPendingDraft());
+    add->click();QApplication::processEvents();
+    EXPECT_TRUE(std::none_of(module.session().draft.design.joints.begin(),module.session().draft.design.joints.end(),
+        [&](const JointEntry& joint){return joint.objectId==allocated;})); // F10：不依赖当前树选中位置。
+    const auto document=module.buildDraftDocument();
+    std::string error;const auto restored=decodeModelingDraft(document.payload,{},error);
+    ASSERT_TRUE(restored.has_value())<<error;
+    EXPECT_NE(std::find(restored->allocatedObjectIds.begin(),restored->allocatedObjectIds.end(),allocated),restored->allocatedObjectIds.end());
     propertySnapshot(*panel,"draft-undo-clean-redo-retained");
 }
 

@@ -583,13 +583,10 @@ public:
      * @brief 挂接脱敏服务（§7.3② 步骤②"每条消息强制经过 IRedactionService"
      *        的注入点；DIAG-T08 接线，登记于单元卡 §14.4 v0.9）。
      *
-     * 行为：挂接后，步骤②对**非内部通道**（diag/logging、diag/log-merge、
-     * diag/redaction——管线/脱敏设施自产常量文本行，见 §14.4 v0.9 口径）的
-     * 记录执行 redact(message, LogTier::Dev)——两 Tier 同一脱敏管线
-     * （NFR-SEC-07 全量：凭据/令牌/环境变量/用户名/路径按策略）；Tier-U 文
-     * 件的"额外内部模式过滤"仍由管线呈现层承担（保持 DIAG-T07 v0.8"Tier-D
-     * 保留原文、Tier-U 用过滤呈现"的镜像语义——Tier-U ⊆ Tier-D 需重建时
-     * 不含 Dev 档已脱敏字段之外的回溯差异）。
+     * 行为：挂接后对普通 log/logDev/worker 的 message/channel/code/threadTag
+     * 执行 Dev 档全量脱敏，编码所有自由文本中的行控制字符；用户面再过滤内部模式。
+     * 仅实现内部生成的安全常量携带私有旁路位。同步脱敏失败通知被替换为固定安全
+     * 文本，避免失败回环；普通调用即使使用 diag/* 通道名也必须脱敏。
      *
      * 线程安全：任意线程调用；挂接以 shared_ptr 快照切换——切换后新渲染的
      * 行生效，在途行不回溯（与 §9.5 setPolicy 同款语义）。

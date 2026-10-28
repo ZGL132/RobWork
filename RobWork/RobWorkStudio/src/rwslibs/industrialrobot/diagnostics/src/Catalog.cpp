@@ -9,8 +9,8 @@
  *   - §6.4 去重键派生：task 存在→Task（scopeId＝五元组规范串）；否则
  *     subject→Object（scopeId＝subject 规范串）；否则 None（实现口径——
  *     登记于单元卡 v0.5；DT-DUP-2"不同 subject 绝不同键"由键含 subject 保证）；
- *   - §6.4 稳定序：目录条目按入目录序保存（＝orderKey 升序——entryId 单调），
- *     snapshot 原序输出；
+ *   - §6.4 稳定序：入目录序仅供容量淘汰；snapshot/导出按 orderKey 排序，
+ *     允许工厂先创建的条目迟到，不把并发到达次序冒充稳定序；
  *   - §9.7 append 校验：Dev 拒绝（Usage）、空/重复 entryId 拒绝（Usage）、
  *     链接字段（causedBy/relatedTo/supersedes）指向不存在条目拒绝（Usage
  *     ——指向性校验在目录侧落地：目录持有条目集合，工厂无此知识；单调
@@ -216,9 +216,10 @@ struct DiagCatalog::Impl {
      * 才执行，不在诊断追加热区（§6.2 性能护栏定位，WP-23 校准面）。
      *
      * @param minFreeSlots [in] 需腾出的空位下限（≥1——append 路径恒传 1）
+     * @param incoming [in] 已通过校验的待追加条目；其三类引用在所有淘汰遍内受保护。
      * @return 实际淘汰条数（0＝无可淘汰候选——保留保护，软溢出）
      */
-    std::size_t evictForCapacity(std::size_t minFreeSlots)
+    std::size_t evictForCapacity(std::size_t minFreeSlots, const DiagnosticEntry& incoming)
     {
         std::size_t totalEvicted = 0;
         while (true) {
@@ -230,6 +231,10 @@ struct DiagCatalog::Impl {
             }
             // 本遍引用计数快照：被链接指向的条目不淘汰（链保护——§6.3）。
             std::unordered_map<DiagEntryId, std::size_t> refCount;
+            // 新条目已通过链接校验，也必须参与每遍保护；否则腾位会制造悬挂链接。
+            if (incoming.causedBy) { ++refCount[*incoming.causedBy]; }
+            for (const auto id : incoming.relatedTo) { ++refCount[id]; }
+            if (incoming.supersedes) { ++refCount[*incoming.supersedes]; }
             for (const DiagnosticEntry& e : entries) {
                 if (e.causedBy) {
                     ++refCount[*e.causedBy];
@@ -296,7 +301,7 @@ struct DiagCatalog::Impl {
     }
 
     std::mutex mutex;                          ///< 条目/去重/订阅三表共用锁（短临界区）
-    std::vector<DiagnosticEntry> entries;      ///< 目录条目（入目录序＝orderKey 升序）
+    std::vector<DiagnosticEntry> entries;      ///< 入目录序（容量淘汰用）；输出另按 orderKey 排序
     std::unordered_map<DiagEntryId, std::size_t> idToIndex;  ///< id→entries 下标（链接校验/查找）
     std::map<DedupKey, DiagEntryId> dedupIndex; ///< 去重键→首条目 id（§6.4 折叠计数）
     std::unordered_map<DiagEntryId, std::size_t> occurrences; ///< 首条目 id→命中计数（≥1）
@@ -394,7 +399,7 @@ void DiagCatalog::append(DiagnosticEntry entry)
             if (m_impl->capacity.enabled
                 && m_impl->entries.size() >= m_impl->capacity.maxEntries) {
                 // 腾 1 个空位（分级淘汰自最旧起；返回 0＝无候选——保留保护）。
-                overflow.evicted = m_impl->evictForCapacity(1);
+                overflow.evicted = m_impl->evictForCapacity(1, entry);
                 if (m_impl->entries.size() >= m_impl->capacity.maxEntries) {
                     // 软溢出：无可淘汰候选（Warning/Error/活动关联/未消费/
                     // 链保护全部在场）——仍然追加（护栏不得牺牲证据完整性；
@@ -455,7 +460,13 @@ std::vector<DiagProjectionItem> DiagCatalog::snapshot(DiagQuery query) const
     std::lock_guard<std::mutex> lock(m_impl->mutex);
     std::vector<DiagProjectionItem> result;
     result.reserve(m_impl->entries.size());
-    for (const DiagnosticEntry& entry : m_impl->entries) {
+    std::vector<const DiagnosticEntry*> ordered;
+    for (const auto& entry : m_impl->entries) { ordered.push_back(&entry); }
+    std::sort(ordered.begin(), ordered.end(), [](const auto* a, const auto* b) {
+        return a->orderKey < b->orderKey;
+    });
+    for (const auto* ptr : ordered) {
+        const auto& entry = *ptr;
         // 过滤（§9.7 DiagQuery——各字段等值命中方纳入；全空＝全量）。
         if (query.task.has_value()
             && !(entry.context.task.has_value() && *entry.context.task == *query.task)) {
@@ -519,7 +530,14 @@ std::string DiagCatalog::exportSafeSummary(DiagQuery query, std::size_t maxEntri
     const std::shared_ptr<const IRedactionService> red = m_impl->redaction;
     std::string out;
     std::size_t emitted = 0;
-    for (const DiagnosticEntry& entry : m_impl->entries) {
+    // 必须先排序后限量；不改变容量淘汰的入目录序。
+    std::vector<const DiagnosticEntry*> ordered;
+    for (const auto& entry : m_impl->entries) { ordered.push_back(&entry); }
+    std::sort(ordered.begin(), ordered.end(), [](const auto* a, const auto* b) {
+        return a->orderKey < b->orderKey;
+    });
+    for (const auto* ptr : ordered) {
+        const auto& entry = *ptr;
         if (maxEntries != 0 && emitted >= maxEntries) {
             break;   // maxEntries=0 表示不限（§9.7 签名注释口径）
         }

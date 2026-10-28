@@ -246,6 +246,10 @@ std::vector<RegistrationIssue> validateEvaluatorRegistration(
                           "支持模式集为空（§9.2 要求 Preview/Quick/Verified 子集，≥1）"
                           "——§9.4 注册期验证"});
     } else {
+        for (const auto mode : descriptor.supportedModes) {
+            if (mode != core::EvaluationMode::Preview && mode != core::EvaluationMode::Quick && mode != core::EvaluationMode::Verified)
+                issues.push_back({RegistrationIssueCode::SupportedModeUnknown, "supportedModes", "未知评估模式"});
+        }
         // 重复检测：规模 ≤3（三值词表的子集），平方扫描足够；每对重复只
         // 报首处（确定性——避免三连同值产生噪声清单）。
         for (std::size_t i = 1; i < descriptor.supportedModes.size(); ++i) {

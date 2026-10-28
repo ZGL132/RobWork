@@ -25,7 +25,7 @@
  *   - pTransmission＝f_dir(pJoint)（效率折算后的**传动**功率——口径③，
  *     P_joint＞0 除以 η⁺、＜0 乘以 η⁻、＝0 为零【效率不适用】）；
  *   - pRotor＝J_rotor·θ̈·θ̇（转子功率项——§10.3，分项报告不混写）；
- *   - tauMotor＝tauIdeal＋J_rotor·θ̈（M-12 全量口径——口径④）；
+ *   - tauMotor＝效率折算后的传动转矩＋J_rotor·θ̈（M-12 全量口径——口径④）；
  *   - pMotor＝pTransmission＋pRotor（电机侧总机械功率——§10.3 冻结口径）。
  *   E_loss（传动箱损耗）按 ∫(pTransmission−pJoint)dt 计（恒＞0——两方向
  *   折算均消耗；卡 §10.5 公式记 P_motor−P_joint，与 §10.3 含转子项口径
@@ -114,15 +114,15 @@ struct JointSeriesView {
  * @brief 四象限归属（§10.6 表——ω＝θ̇、P＝τ_motor·θ̇ 的符号组合）。
  *
  * 卡 §10.6：Q1 正转电动（ω＞0 且 P＞0）；Q2 正转再生（ω＞0 且 P＜0）；
- * Q3 反转电动（ω＜0 且 P＜0）；Q4 反转再生（ω＜0 且 P＞0）；零速/零功率
+ * Q3 反转电动（ω＜0 且 P＞0）；Q4 反转再生（ω＜0 且 P＜0）；零速/零功率
  * （ω＝0 或 P＝0）＝驻留/保持——单独计数，不计入象限能量。符号判定为
  * 精确判据（浮点严格比较，无阈值——§10.2 同源纪律）。
  */
 enum class Quadrant : std::uint8_t {
     Q1,        ///< 正转电动（ω＞0，P＞0）
     Q2,        ///< 正转再生（ω＞0，P＜0）
-    Q3,        ///< 反转电动（ω＜0，P＜0）
-    Q4,        ///< 反转再生（ω＜0，P＞0）
+    Q3,        ///< 反转电动（ω＜0，P＞0）
+    Q4,        ///< 反转再生（ω＜0，P＜0）
     ZeroDwell, ///< 零速/零功率（驻留/保持——时间占比单独统计）
 };
 
@@ -140,13 +140,13 @@ struct MotorDriveSample {
     double thetaDot = 0.0;     ///< 电机速度（rad/s）
     double thetaDDot = 0.0;    ///< 电机加速度（rad/s²）
     double tauIdeal = 0.0;     ///< 理想映射电机力矩 c·τ_joint（N·m——口径①）
-    double tauMotor = 0.0;     ///< 含转子项电机力矩 tauIdeal＋J_rotor·θ̈（N·m——M-12 口径④）
+    double tauMotor = 0.0;     ///< 实际电机力矩（按传动功率方向折算效率后再加转子项；零功率保持理想矩）（N·m——M-12 口径④）
     double pJoint = 0.0;       ///< 关节侧机械功率 τ_joint·q̇（W——逐元素）
     double pTransmission = 0.0;///< 效率折算后传动功率 f_dir(pJoint)（W——口径③）
     double pRotor = 0.0;       ///< 转子功率项 J_rotor·θ̈·θ̇（W——§10.3 分项）
     double pMotor = 0.0;       ///< 电机侧总机械功率 pTransmission＋pRotor（W——§10.3）
-    bool efficiencyApplicable = false; ///< 效率是否适用（false＝P_joint 精确零——显式标记）
-    Quadrant quadrant = Quadrant::ZeroDwell; ///< 四象限归属（§10.6；零功率样本恒 ZeroDwell）
+    bool efficiencyApplicable = false; ///< 效率是否适用（false＝P_joint精确零或效率缺失；不表示转子功率为零）
+    Quadrant quadrant = Quadrant::ZeroDwell; ///< 四象限归属（§10.6；实际轴零速/零功率才归ZeroDwell）
 
     bool operator==(const MotorDriveSample& o) const noexcept
     {

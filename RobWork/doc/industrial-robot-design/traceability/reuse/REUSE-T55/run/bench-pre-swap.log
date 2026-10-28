@@ -1,0 +1,32 @@
+# wp3-bench v1 - WP3 stage-1 pre-swap baseline (8 core-swap points)
+# head=220189b2f42ea2a824bf9de3fc23affbd2abfe61
+# kind: oldcore=verbatim pre-swap copies (DhConvert.cpp:169-241,888-910;Sampling.cpp:56-113) upstream=rw::math direct-API reference path=build-tree public entries (op=one call)
+# build=Release x64 /MD /O2 /Ob2 /DNDEBUG _MSC_VER=1942 cpu=Intel64 Family 6 Model 183 Stepping 1, GenuineIntel
+# iter policy: fixed constants (see runGroup calls); 64 input sets rotated by i&63; single thread
+GROUP kind=oldcore name=modeling.rotVec#general iters=300000000 total_ms=476.891 ns_per_op=1.590 checksum=37913858.6
+GROUP kind=oldcore name=modeling.rotVec#edge iters=300000000 total_ms=522.956 ns_per_op=1.743 checksum=2.25e+108
+GROUP kind=oldcore name=modeling.rotMul#general iters=60000000 total_ms=417.096 ns_per_op=6.952 checksum=13232354.7
+GROUP kind=oldcore name=modeling.rotMul#edge iters=60000000 total_ms=417.021 ns_per_op=6.950 checksum=35428631.6
+GROUP kind=oldcore name=modeling.transformMul#general iters=30000000 total_ms=382.961 ns_per_op=12.765 checksum=10139710.1
+GROUP kind=oldcore name=modeling.transformMul#edge iters=30000000 total_ms=354.793 ns_per_op=11.826 checksum=17346939
+GROUP kind=oldcore name=modeling.rotateTranspose#general iters=300000000 total_ms=520.775 ns_per_op=1.736 checksum=-8361002.54
+GROUP kind=oldcore name=modeling.rotateTranspose#edge iters=300000000 total_ms=808.239 ns_per_op=2.694 checksum=2.25e+108
+GROUP kind=oldcore name=modeling.rotateTransposeFrame#general iters=60000000 total_ms=677.481 ns_per_op=11.291 checksum=26591863.3
+GROUP kind=oldcore name=modeling.rotateTransposeFrame#edge iters=60000000 total_ms=677.025 ns_per_op=11.284 checksum=28442418.5
+GROUP kind=oldcore name=kinematics.validateBoxOrientation#general iters=20000000 total_ms=1128.915 ns_per_op=56.446 checksum=20000000
+GROUP kind=oldcore name=kinematics.validateBoxOrientation#near-boundary iters=20000000 total_ms=1037.198 ns_per_op=51.860 checksum=20000000
+GROUP kind=oldcore name=kinematics.validateBoxOrientation#reject iters=300000 total_ms=982.475 ns_per_op=3274.916 checksum=300000
+GROUP kind=oldcore name=kinematics.orientBoxPoint#general iters=100000000 total_ms=767.037 ns_per_op=7.670 checksum=19645516.9
+GROUP kind=oldcore name=kinematics.orientBoxPoint#identity iters=100000000 total_ms=1223.872 ns_per_op=12.239 checksum=15441779.5
+GROUP kind=oldcore name=kinematics.orientSampleRotation#general iters=30000000 total_ms=313.946 ns_per_op=10.465 checksum=6616177.37
+GROUP kind=oldcore name=kinematics.orientSampleRotation#edge iters=30000000 total_ms=323.123 ns_per_op=10.771 checksum=9830501.3
+GROUP kind=upstream name=upstream.Rotation3D-mul#general iters=30000000 total_ms=328.225 ns_per_op=10.941 checksum=6616177.37
+GROUP kind=upstream name=upstream.Rotation3D-vec#general iters=100000000 total_ms=576.917 ns_per_op=5.769 checksum=12637952.9
+GROUP kind=upstream name=upstream.Transform3D-mul#general iters=30000000 total_ms=522.202 ns_per_op=17.407 checksum=10139710.1
+GROUP kind=upstream name=upstream.Rotation3D-inverse#general iters=400000000 total_ms=369.799 ns_per_op=0.924 checksum=436424458
+GROUP kind=upstream name=upstream.Rotation3D-inverse-vec#general iters=50000000 total_ms=389.072 ns_per_op=7.781 checksum=-1393500.42
+GROUP kind=upstream name=upstream.Rotation3D-inverse-frame#general iters=30000000 total_ms=398.931 ns_per_op=13.298 checksum=13295931.6
+GROUP kind=path name=path.kinematics.generateGridPositions#rotated-box iters=100 total_ms=396.608 ns_per_op=3966075.000 checksum=26214461.1
+GROUP kind=path name=path.kinematics.generateSampleSet#rotated-box iters=20 total_ms=386.765 ns_per_op=19338250.000 checksum=2703360
+GROUP kind=path name=path.modeling.dhToExplicit#6r iters=200000 total_ms=359.356 ns_per_op=1796.782 checksum=1200000
+# done g_sinkGuard=4.5e+108

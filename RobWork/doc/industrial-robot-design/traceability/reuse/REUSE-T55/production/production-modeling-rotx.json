@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "modeling.rotX",
+  "target": "sdurws_ird_modeling",
+  "bindings": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+      "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+      "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+      "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+      "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+      "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+      "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+      "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "sha256": "12f83eaba63b990c7818a41b9ca7fb194efca13ed5b3cdc9137bd9eba9423a25"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "sha256": "3497fe78c3d6b7b523409144ce2163849c13bdd9c4b19d13e7dc6199181390ae"
+    }
+  ],
+  "normal": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_filter=MdlDhConvert*:MdlDhEquivalence*:MdlGoldenDhEquivalence* --gtest_output=xml:<production/modeling-normal.xml>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-normal.xml",
+      "sha256": "fb42583cb4ef8e216b535bbd99656ce1c2c5346fe67bee54722fc02d389616a7"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-normal.log",
+      "sha256": "3b5856ac17a0a41e49148d7781386bbc586bbdd92373ef2ce022ce377f6201c5"
+    },
+    "exitCode": 0
+  },
+  "oracle": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_filter=MdlGoldenDhEquivalence* --gtest_output=xml:<production/modeling-oracle.xml>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-oracle.xml",
+      "sha256": "94bca9c57bb18ba9dd768aac8b7a5b3a9ce314d672c7b634a7a42847b6756411"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-oracle.log",
+      "sha256": "c074075110c88ddba485488c4dc527d067a2272637731036cb1b5d2111d6d957"
+    },
+    "exitCode": 0,
+    "note": "V-11 golden FK 等价 oracle（黄金链逐点 1e-9 附录 D 口径）——换核后 DH 链 FK 全链对照"
+  },
+  "disconnected": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_filter=MdlDhConvert*:MdlDhEquivalence*:MdlGoldenDhEquivalence* --gtest_output=xml:<production/modeling-normal.xml>（变异副本下）",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-disconnect.xml",
+      "sha256": "3ee31d907aa9cf88391c940289a28c99dadf66c106e2846c9a2f1297670cbae4"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-disconnect.log",
+      "sha256": "f9a478bf985bf9e83488ba1071d2faea7f71c0272beeac3d68120245d6770541"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "originalSha256": "3497fe78c3d6b7b523409144ce2163849c13bdd9c4b19d13e7dc6199181390ae",
+      "description": "rotMul 委托体 ra*rb → return rb（断开红例：上游委托被短路）"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/mutated-DhConvert.cpp",
+      "sha256": "613007576ebbb219298ae68a230b80689a83bf95835d678e85a3806172c492dc"
+    },
+    "note": "断开变异下 MdlDhEquivalence 3 例＋MdlGoldenDhEquivalence 1 例真实红（exit 1），恢复原字节后 24 例转绿（run/disconnect-modeling-recheck.log）"
+  },
+  "upstreamComparison": {
+    "command": "RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_filter=MdlDhConvert*:MdlDhEquivalence*:MdlGoldenDhEquivalence* --gtest_output=xml:<production/modeling-normal.xml>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-normal.xml",
+      "sha256": "fb42583cb4ef8e216b535bbd99656ce1c2c5346fe67bee54722fc02d389616a7"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/modeling-normal.log",
+      "sha256": "3b5856ac17a0a41e49148d7781386bbc586bbdd92373ef2ce022ce377f6201c5"
+    },
+    "exitCode": 0,
+    "note": "独立直连位模式探针＝traceability/reuse/REUSE-T55/run/probe-swap.log（P1—P7：替身核逐字副本 vs 上游 API 256 例位模式逐位恒等/最大差 0、rotZ/rotX RPY 84 角例数值恒等）；本象限绑定 normal XML——产品测试经真实上游符号路径执行（REUSE-T53 同 XML 绑定先例）"
+  }
+}

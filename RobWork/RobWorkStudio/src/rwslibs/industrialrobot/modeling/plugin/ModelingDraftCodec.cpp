@@ -33,14 +33,19 @@ QString objectHex(const ObjectVariant& value)
         static_cast<qsizetype>(bytes.size())).toHex());
 }
 /** @brief [in] hex严格偶数字符hex，不接受QByteArray::fromHex静默跳过非法字符。 */
-ObjectVariant decodeObject(const std::string& hex)
+Bytes decodeHex(const std::string& hex)
 {
     if(hex.empty()||hex.size()%2!=0){rejectDraft("草稿对象hex为空或长度不完整。");}
     for(const char c:hex){
         if(!((c>='0'&&c<='9')||(c>='a'&&c<='f')||(c>='A'&&c<='F'))){rejectDraft("草稿对象hex含非法字符。");}
     }
     const auto raw=QByteArray::fromHex(QByteArray(hex.data(),static_cast<qsizetype>(hex.size())));
-    const Bytes bytes(raw.begin(),raw.end());
+    return Bytes(raw.begin(),raw.end());
+}
+/** @brief [in] hex为唯一对象Codec字节，严格解码hex后交原对象解码门。 */
+ObjectVariant decodeObject(const std::string& hex)
+{
+    const auto bytes=decodeHex(hex);
     const auto decoded=RobotDesignCodec{}.decode(bytes,kCurrentFormatVersion);
     if(!decoded.ok()){rejectDraft("草稿对象解码失败："+decoded.error().detail);}
     return decoded.get();
@@ -92,6 +97,12 @@ void checkDraftClosure(const ModelingWorkingSet& ws)
         if(value){add(value->objectId);if(*ref!=value->objectId){rejectDraft("草稿单例对象身份错位。");}}
     };
     checkSingle(ws.design.poseSetRef,ws.poseSetObject);checkSingle(ws.design.drivetrainRef,ws.drivetrainObject);
+    for(const auto& resource:ws.importedResources){
+        add(resource.objectId);
+        const auto ref=std::find_if(ws.design.resourceManifest.begin(),ws.design.resourceManifest.end(),[&](const auto& entry){return entry.resourceId==resource.resourceId;});
+        if(ref==ws.design.resourceManifest.end()||ref->state!=ResourceState::Solidified||!ref->solidifiedObject
+            ||ref->solidifiedObject->objectId!=resource.objectId){rejectDraft("草稿资源副本与根清单错位。");}
+    }
     if(ws.design.defaultTcp){
         const auto& ref=*ws.design.defaultTcp;
         const auto tool=std::find_if(ws.toolObjects.begin(),ws.toolObjects.end(),[&](const ToolDefinition& t){return t.objectId==ref.toolOid;});
@@ -127,13 +138,22 @@ std::string encodeModelingDraft(const ModelingWorkingSet& ws)
     const auto array=[](const auto& values){QJsonArray out;for(const auto& value:values){out.append(objectHex(ObjectVariant{value}));}return out;};
     QJsonArray changes;
     for(const auto& change:ws.changes){changes.append(QJsonObject{{"subject",QString::fromStdString(change.subject)},{"summary",QString::fromStdString(change.summary)}});}
+    QJsonArray resources;
+    for(const auto& resource:ws.importedResources){
+        resources.append(QJsonObject{{"resourceId",QString::fromStdString(resource.resourceId)},
+            {"objectId",QString::fromStdString(resource.objectId.toCanonical())},
+            {"bytes",QString::fromLatin1(QByteArray(reinterpret_cast<const char*>(resource.bytes.data()),static_cast<qsizetype>(resource.bytes.size())).toHex())}});
+    }
+    QJsonArray allocated;for(const auto& id:ws.allocatedObjectIds){allocated.append(QString::fromStdString(id.toCanonical()));}
     const QJsonObject document{{"format","ird-modeling-draft"},{"version",1},
         {"rootId",ws.rootObjectId?QJsonValue(QString::fromStdString(ws.rootObjectId->toCanonical())):QJsonValue(QJsonValue::Null)},
         {"root",objectHex(ObjectVariant{ws.design})},{"tools",array(ws.toolObjects)},{"scenes",array(ws.sceneObjects)},
         {"poses",ws.poseSetObject?QJsonValue(objectHex(ObjectVariant{*ws.poseSetObject})):QJsonValue(QJsonValue::Null)},
         {"drivetrain",ws.drivetrainObject?QJsonValue(objectHex(ObjectVariant{*ws.drivetrainObject})):QJsonValue(QJsonValue::Null)},
-        {"changes",changes}};
-    return QJsonDocument(document).toJson(QJsonDocument::Compact).toStdString();
+        {"changes",changes},{"allocatedObjectIds",allocated},{"importedResources",resources}};
+    const auto payload=QJsonDocument(document).toJson(QJsonDocument::Compact).toStdString();
+    if(payload.size()>64U*1024U*1024U){rejectDraft("完整草稿超出64MiB解析预算，不能丢失资源后保存。");}
+    return payload;
 }
 
 std::optional<ModelingWorkingSet> decodeModelingDraft(const std::string& payload,
@@ -166,6 +186,28 @@ std::optional<ModelingWorkingSet> decodeModelingDraft(const std::string& payload
             out.design=typedObject<RobotDesign>(doc.value("root"));
             out.toolObjects=typedArray<ToolDefinition>(doc.value("tools"));out.sceneObjects=typedArray<SceneObject>(doc.value("scenes"));
             out.poseSetObject=optionalObject<PoseSet>(doc.value("poses"));out.drivetrainObject=optionalObject<DrivetrainDesign>(doc.value("drivetrain"));
+            if(doc.contains("importedResources")){
+                if(!doc.value("importedResources").isArray()){rejectDraft("草稿资源副本不是数组。");}
+                std::set<std::string> resourceKeys;
+                for(const auto& value:doc.value("importedResources").toArray()){
+                    if(!value.isObject()){rejectDraft("草稿资源副本不是对象。");}
+                    const auto item=value.toObject();SolidifiedResourceCopy resource;
+                    resource.resourceId=textValue(item.value("resourceId"));
+                    const auto id=core::ObjectId::tryFromCanonical(textValue(item.value("objectId")));
+                    if(!id||!resourceKeys.insert(resource.resourceId).second){rejectDraft("草稿资源身份无效或键重复。");}
+                    resource.objectId=*id;resource.bytes=decodeHex(textValue(item.value("bytes")));
+                    out.importedResources.push_back(std::move(resource));
+                }
+            }
+            if(doc.contains("allocatedObjectIds")){
+                if(!doc.value("allocatedObjectIds").isArray()){rejectDraft("草稿身份分配历史不是数组。");}
+                std::set<std::string> seen;
+                for(const auto& value:doc.value("allocatedObjectIds").toArray()){
+                    const auto id=core::ObjectId::tryFromCanonical(textValue(value));
+                    if(!id||!seen.insert(id->toCanonical()).second){rejectDraft("草稿身份分配历史无效或重复。");}
+                    out.allocatedObjectIds.push_back(*id);
+                }
+            }
             if(!doc.value("changes").isArray()){rejectDraft("草稿未应用摘要缺失。");}
             for(const auto& entry:doc.value("changes").toArray()){
                 if(!entry.isObject()){rejectDraft("草稿变更摘要不是对象。");}

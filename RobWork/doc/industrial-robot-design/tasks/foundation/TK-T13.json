@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "TK-T13",
+  "unit": "testkit",
+  "masterWp": "WP-B",
+  "title": "testkit第一轮评审整改：断言、数据完整性、精确种子与报告边界",
+  "status": "done",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03",
+    "NFR-SEC-05"
+  ],
+  "designRefs": [
+    "units/testkit.md#4",
+    "units/testkit.md#5",
+    "units/testkit.md#6",
+    "units/testkit.md#7",
+    "reuse/policy.md#1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/README.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Report.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/PerfBenchmarkTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/install-scan/ird-install-scan.ps1",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/lsnchild/main.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp",
+    "RobWork/doc/industrial-robot-design/reuse/changes/TK-T13.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/TK-T13.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/testkit-review-r1/**",
+    "RobWork/doc/industrial-robot-design/units/testkit.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "修复实现、正式回归、原始日志/XML/原生报告及逐文件/逐功能凭证；本地提交待所有者另开会话独验"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_testkit_test",
+    "cmake --build build/core-smoke --config Release --target sdurws_ird_testkit_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/TK-T13.json"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "R01/R02假通过反例先红后绿，身份隔离、单次求值、首错位保持core C4及Boost匹配唯一入口；实际身份消费者定向回归",
+    "R04/R05/R09及F015～18的schema/量纲/整数字段/generate完整性/lint字典与引用得到真实正负例；正式expected及容差未改",
+    "经所有者批准R03/R06：完整uint64整数、非有限字符串/缺失null；标准JSON解析器核对真实listener子进程JSON/XML/退出码；locale保留次正规与负零",
+    "R08/R10/R12按环境覆盖、只读分发扫描和既有P95定义修复；相关集成/冒烟/消费者、公共头及门禁据真实结果留痕；不自签独验"
+  ],
+  "note": "所有者明确指定本分支/工作树并要求按第一轮评审修改，覆盖旧只读评审和redesign-main现场要求。起始SHA=6dc1141ae1e4d0db61baf1e7ab8d2ed414669c9f。R03/R06格式问题获明确答复“采用上述方案”；不扩充依赖/容差/批准状态，不修改core及其他单元实现。新增最小契约为既有凭证机器校验所需，状态ready不代表独验通过；旧F015～18保持open待独验。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/TK-T13.json"
+  }
+}

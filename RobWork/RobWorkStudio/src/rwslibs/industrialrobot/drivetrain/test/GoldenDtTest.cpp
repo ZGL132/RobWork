@@ -398,7 +398,7 @@ class DtGoldenMapping : public tk::GoldenFixture
 protected:
     tk::DatasetRef datasetRef() const override
     {
-        return {"dt-mapping-golden", "1.0.0"};
+        return {"dt-mapping-golden", "1.1.0"};
     }
 };
 

@@ -1,0 +1,11 @@
+format=ird-crash-report/1
+writtenEpochMs=1793138027955
+pid=99156
+process=sdurws_ird_studio (industrial-robot-studio, x64)
+exceptionType=seh-access-violation
+exceptionMessage=code=[ADDR] address=00007FF682D31FDD
+project=-
+activeTasks=0
+activeFindings=0
+devLogTail=1
+dev[0]=1 1793138027208 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWorkStudio\\bin\\Release\\ird-ui-plugin-logs）

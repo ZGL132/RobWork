@@ -1,0 +1,59 @@
+{
+  "taskId": "DIAG-T12",
+  "baseCommit": "af375242c7b632d572c8190ee0d954aa149d80dc",
+  "reviewedCommit": "5affd13c12ca",
+  "branch": "codex/core-review-fixes",
+  "verdict": "pass",
+  "admissionGate": {
+    "status": "fail-registered-inherited",
+    "detail": "validate-reuse 本会话复现唯一失败＝REUSE-FRESHNESS runtime/CMakeLists.txt（REUSE-T13/T30/T52/T53 冻结生产报告绑 5ef2e38b vs 当前 23b072f9），先于本批存在（POL-T13 批登记的树级债）。FRESHNESS 之后的阻断项经本会话同口径独立复算：①28 条继承 pending 功能行压在本批已变更文件上（DiagCodes.cpp 24／EntryDetail.hpp 3／Factory.cpp 1，均于基点 af375242c 已存在且未改状态——与实施批申报逐字一致）；②发现 1 行隐藏缺口：Redaction.cpp L237（注释行『累计单次调用的逐类计数…』）无区段归属——实施批『17 文件全覆盖』申报存在 1 行偏差，FRESHNESS 修复后 COVERAGE 将在该行失败。结案路径＝PRJ-T19 dad436e3f 同款准入结案批（补 1 行区段＋28 条 pending 语义收口）＋runtime 生产证据重跑重绑。任务保持 ready。",
+    "log": "ird-gates.log"
+  },
+  "createdAt": "2026-10-28T00:00:00.000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "所有者另开的独立验收会话（ZCode，无子智能体；同会话此前完成 CORE-T12/TK-T13/EV-T13/PRJ-T19/POL-T13/EX-T11 验收及 PRJ-T19 准入结案批）",
+    "authorization": "所有者提交 DIAG-T12 送验并指示本会话独立验收（完成验收）",
+    "constraints": "未参与实施；除本验收产物目录外未修改任何文件；未远程同步、未改写历史、未触碰 main；未实施发现的 1 行矩阵缺口补全（登记留给结案批）；受影响目标增量重建后真实重跑。"
+  },
+  "scope": "独立复验 af375242c..5affd13c12ca（单实施提交，33 路径允许面）：14 项修复——诊断级别权威（工厂/目录双向规范化与级别决定链）、脱敏出口重构（channel 名不再授予原文旁路，改 thread_local 管线身份限定同步脱敏失败区间）、确认通知（Confirmable 关闭/通知路径）、目录与聚合修正、日志收尾（FlushCompletion 共享凭据使 flush 超时返回后仍可安全完成＋shutdownUntil 预算＋exited 防呆＋shutdownDrops 计数）、Unicode 边界（UTF-8 前缀截断单点 utf8PrefixSize、控制字符/DEL/字段空格 \\x 转义、_wfopen_s 原生宽路径）；D10 部分修复如实申报（同步在途 I/O 永久阻塞的退出硬时限缺口保留，取消接缝候选未获批不实施）。",
+  "counts": {
+    "failed": 0,
+    "passed": 195,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "本会话真实重跑：集成 diagnostics 141＋契约 26＋UI 装配契约 1（DiagnosticsAssemblyContract）＋policy 生产码消费者 1（PolicyDiagnosticsRegistryContract）＋独立 smoke 回归 23＋链接契约 3；ird_gates/validate-reuse/scope/commit-lint 另列 checks"
+  },
+  "checks": [
+    "现场：工作树干净、HEAD=5affd13c12ca＝送验 Head＝实施提交；IMPLEMENTATION/VALIDATION/evidence（ZIP 原始字节＋evidence-index 哈希清单）完整；首批红例 12＋3 失败、green-1 中途 2 失败返工、UI 首轮断言误用（空 params 合同为 nullopt 非缺陷）与 red.xml ACP 字节异常的诚实处置（计数经日志/JSON/XML 交叉核对、不声称其 XML 有效）逐一在案。",
+    "测试真实重跑：diagnostics 141/141、契约 26/26（ird-test-report decisive）；UI 装配 1/1、policy registry 1/1（正式 PRJ-LOCK-HELD pid/host 参数真实挂接）；独立 smoke 回归 23/23＋链接 3/3（独立配置树为本树 RobWork_DIR 核对）。",
+    "diff 审查成立：脱敏旁路由通道名白名单改为管线身份区间（消除调用方以 channel 名获原文旁路的面，同时切断脱敏失败回环）；truncateForLog 收敛到 detail::utf8PrefixSize 单点；_wfopen_s 消除活动代码页路径损；escapeLineMessage 增控制字符/DEL/字段空格的 \\x 转义保逐行解析；flush 超时与完成解耦（shared FlushCompletion，超时返回后队列项仍可安全完结）。",
+    "树级债独立复算：validate-reuse 唯一失败仍为 runtime/CMakeLists.txt 冻结生产报告绑定（本批零 runtime 改动，先于本批）；28 条阻断 pending（DiagCodes 24/EntryDetail 3/Factory 1）按『基点已存在＋压在本批变更文件』口径独立复算与申报逐字一致（diagnostics.json 全量 pending 35 条中其余 7 条在不未变更文件上不构成 COVERAGE 阻断）；发现并登记 1 行偏差（Redaction.cpp L237）。",
+    "范围与提交：verify-task-scope 显式 -Base af375242c -Head 5affd13c12ca exit 0（33 路径全在 25 条允许面，3 条禁止面零触碰）；commit-lint 单提交 PASS；ird_gates 红线子阶段 R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（本会话重跑）。"
+  ],
+  "issues": [
+    "非阻断发现①：实施批 binding-audit『17 个变动文件非空行区段覆盖完整』存在 1 行偏差——Redaction.cpp L237（『/// 累计单次调用的逐类计数（relaxed 序——只作观测不作同步）。』）无任何 sources 区段覆盖；gate 口径下为隐藏 COVERAGE 失败点（Redaction.cpp : uncovered line 237）。已在 admissionGate 登记，由 diagnostics 准入结案批随 28 条 pending 一并补全（单行区段登记，分钟级）。"
+  ],
+  "notRun": [
+    "信号安全/堆损坏/断电持久化实验：实施批与验收一致不声称真实崩溃处理器保证",
+    "全库 DeepEvidence、GUI 真实 Widgets、全部无关单元：按增量范围不触发",
+    "28 条继承 pending 的语义收口与 runtime 生产证据重跑：树级登记债，归结案批实施面"
+  ],
+  "commands": [
+    { "name": "diagnostics-full", "command": "sdurws_ird_diagnostics_test.exe（集成全量）", "exitCode": 0, "passed": true, "log": "integration/unit.log", "evidence": "integration/unit.xml＋ird-test-report（141/141 decisive）" },
+    { "name": "diagnostics-contract", "command": "sdurws_ird_diagnostics_contract_test.exe（全量）", "exitCode": 0, "passed": true, "log": "integration/contract.log", "evidence": "26/26 decisive" },
+    { "name": "ui-assembly", "command": "sdurws_ird_ui_contract_test.exe --gtest_filter=DiagnosticsAssemblyContract.*", "exitCode": 0, "passed": true, "log": "consumer/ui-assembly.log", "evidence": "1/1 decisive（真实 PRJ-LOCK-HELD 参数挂接）" },
+    { "name": "policy-registry", "command": "sdurws_ird_policy_contract_test.exe --gtest_filter=PolicyDiagnosticsRegistryContract.*", "exitCode": 0, "passed": true, "log": "consumer/policy-registry.log", "evidence": "1/1 decisive" },
+    { "name": "smoke", "command": "build/diagnostics-fix-20261028/smoke 两目标（DiagnosticsRegression.*:ConfirmableTest.Review_*:DiagnosticsBuild.*＋DiagnosticsLinkage.*）", "exitCode": 0, "passed": true, "log": "smoke/regression.log＋linkage.log", "evidence": "23/23＋3/3 decisive" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/diagnostics-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "红线子阶段全部零命中" },
+    { "name": "validate-reuse", "command": "pwsh validate-reuse.ps1（工作树态）", "exitCode": 1, "passed": false, "log": "ird-gates.log", "evidence": "REUSE-FRESHNESS runtime/CMakeLists.txt＝先于本批的树级债" },
+    { "name": "scope", "command": "pwsh verify-task-scope.ps1 -TaskFile …/DIAG-T12.json -Base af375242c… -Head 5affd13c12ca", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "33 路径全部允许面" },
+    { "name": "commit-lint", "command": "pwsh commit-lint.ps1 -Range af375242c….5affd13c12ca", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "5affd13c PASS" }
+  ],
+  "executionNotes": [
+    "本验收为重跑型：四个集成目标与冒烟两目标增量重建（逐目标 -m:1）后执行；冒烟树 build/diagnostics-fix-20261028/smoke 为实施批所建独立配置，本会话核对其 RobWork_DIR 指向本树后增量复用。",
+    "28 条阻断 pending 的复算口径＝基点 af375242c diagnostics.json 中已 pending 且现仍 pending、且 sources 触及本批变更文件的行（catalog baseline b12e8503c 尚无 diagnostics.json，不适用）；全量 35 条中其余 7 条在未变更文件上不阻断 COVERAGE。",
+    "证据 ZIP 的 ACP 字节 red.xml 异常由实施批以三方交叉核对处置，本会话复核其计数（12 failed）与日志/JSON 一致，未重解无效 XML。"
+  ],
+  "limitations": "PASS 仅覆盖 DIAG-T12 送验范围（af375242c..5affd13c12ca）的 14 项修复实施与回归面。D10 同步在途 I/O 永久阻塞的退出硬时限缺口按申报保留（取消接缝候选未获批不实施）。任务收口条件＝树级门禁转绿（runtime 冻结生产证据重跑重绑＋POL-T13 16 文件矩阵补全＋本批 28 条 pending 与 Redaction.cpp L237 单行区段的准入结案批），在此之前任务保持 ready。Group/真实距离/完整角色等跨单元待裁决与 diagnostics 无关项不受影响。"
+}

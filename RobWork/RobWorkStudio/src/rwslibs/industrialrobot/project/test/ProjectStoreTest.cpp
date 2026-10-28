@@ -896,6 +896,13 @@ TEST_F(ProjectStoreTest, WritableOpen_DegradesToReadOnlyWhenHeld)
         ASSERT_TRUE(writeRaw(m_dir / "revisions" / r0.toCanonical()
                                  / "manifest.json",
                              sdurws::ird::project::codec::dump(manifest)));
+        // PRJ-R1：正式r0必须具备command.json；锁竞争夹具不能依赖恢复漏检。
+        CommandRecord command;
+        command.commandType = "project-create";
+        command.payloadFormatVersion = 1;
+        command.summary = "create degrade fixture";
+        ASSERT_TRUE(writeRaw(m_dir / "revisions" / r0.toCanonical() / "command.json",
+                             sdurws::ird::project::codec::dump(command)));
         ASSERT_TRUE(writeRaw(m_dir / "project.json",
                              sdurws::ird::project::codec::dump(identity)));
         ASSERT_TRUE(writeRaw(m_dir / "HEAD",

@@ -58,7 +58,7 @@ const GoldenRef* goldenRefs()
 {
     static const GoldenRef refs[] = {
         {"sel-catalog-golden", "1.0.0", false, "AT-08"},
-        {"sel-screening-golden", "1.0.0", true, "AT-08"},
+        {"sel-screening-golden", "1.1.0", true, "AT-08"},
         {"sel-combo-golden", "1.0.0", true, "AT-08"},
         {"sel-backfill-golden", "1.0.0", true, "AT-30"},
         // T12 批增登（WP-19-T12——SEL-09-S1 直线传动目录模板与筛选黄金；

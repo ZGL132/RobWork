@@ -33,6 +33,7 @@
  * 只验证 evidence 契约与汇总逻辑）。
  */
 
+#include "FreezeFixture.hpp"
 #include <sdurws/ird/core/DiagData.hpp>
 #include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/core/Evaluation.hpp>
@@ -69,6 +70,7 @@ const char* kHex32C = "cccccccccccccccccccccccccccccccc";
 const char* kHex32D = "dddddddddddddddddddddddddddddddd";
 const char* kHex64A = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 const char* kHex64B = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+const char* kHex64D = "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";
 const char* kHex64C = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
 core::ContentIdentity cid(const char* hex64)
@@ -143,13 +145,14 @@ std::vector<CaseEntry> standardCases()
 
 /// 组装标准冻结快照（各用例共用底座——同 EvidenceTest 风格）。
 /// @param cases 必验工况集（默认 standardCases；P-EV-7 用例注入空集）
-AnalysisSnapshot buildStandardSnapshot(std::vector<CaseEntry> cases = standardCases())
+AnalysisSnapshot buildStandardSnapshot(std::vector<CaseEntry> cases = standardCases(), const char* configHex64 = kHex64C)
 {
     SnapshotBuilder b;
     b.setIdentity(fixedProject(), fixedBranch(), fixedRevision(), 5);
     b.setPolicyRef(PolicyRef{cid(kHex64A)});
     b.setNameMapRef(NameMapRef{cid(kHex64B)});
     b.setReproduction(validReproduction());
+    b.addConfiguration({"ik-solve", std::vector<std::uint8_t>(configHex64,configHex64+64), {}});
     b.addObjectRef(validObjectRef(oid(kHex32A), "robot-design"));
     for (const CaseEntry& c : cases) {
         b.addCase(c);
@@ -315,8 +318,9 @@ InputSlice buildMinimalSlice(const AnalysisSnapshot& snapshot, const char* confi
     entry.kind = DependencyKind::Configuration;
     ConfigurationDependencyPayload payload;
     payload.configKindToken = "ik-solve";
-    payload.canonicalBytes = {std::uint8_t(0x01), std::uint8_t(0x02)};
-    payload.contentIdentity = cid(configHex64);
+    payload.canonicalBytes = std::vector<std::uint8_t>(configHex64,configHex64+64);
+    core::ContentDigester digest; digest.update(payload.canonicalBytes.data(),payload.canonicalBytes.size());
+    payload.contentIdentity.bytes = digest.finalize();
     entry.payload = payload;
     entry.applied = true;
     b.addEntry(entry);
@@ -520,7 +524,7 @@ TEST(VerdictSearchExhausted, SearchExhaustedThenFeasibleAfterReplan_EV_VER_2)
     // 复评场景的输入前提（EV-VER-2 观测点）：配置变→sliceId 变而
     // inputBaselineId 不变（D-04——双身份行为本体见 EV-T04 SliceTest，
     // 此处以最小切片复证该口径）。
-    const InputSlice replannedSlice = buildMinimalSlice(fx.snapshot, kHex64B);
+    const InputSlice replannedSlice = buildMinimalSlice(buildStandardSnapshot(standardCases(),kHex64B), kHex64B);
     EXPECT_EQ(replannedSlice.inputBaselineId, fx.slice.inputBaselineId);
     EXPECT_NE(replannedSlice.sliceId, fx.slice.sliceId);
 }
@@ -776,6 +780,48 @@ TEST(VerdictCoverage, MissingMandatoryExecutionBlocked_EV_COV_1)
 // EV-COV-4 比较基准一致性（EVI-02/RPT-04/C5）
 // =====================================================================
 
+/** DESIGN-T01/EVI-02：方案分支是被比较对象，不能成为相同比较基准的拒绝条件。 */
+TEST(VerdictBaseline, DifferentBranchesCanShareComparisonInputs)
+{
+    ComparisonBaseline a;
+    a.project = fixedProject();
+    a.branch = fixedBranch();
+    a.inputBaselineId = cid(kHex64A);
+    a.requiredCaseSetId = cid(kHex64B);
+    a.sampleSetIds = {cid(kHex64C)};
+    auto b = a;
+    b.branch = core::BranchId::fromCanonical(std::string{"brn-"} + kHex32D);
+    EXPECT_TRUE(checkComparisonBaselinesConsistent({a, b}).consistent);
+}
+
+/** EVI-02/RPT-04：共同输入相同允许模型不同；缺失或变化必须保守拒绝。 */
+TEST(VerdictBaseline, DifferentDesignsRequireExplicitCommonInputs)
+{
+    ComparisonBaseline a;
+    a.project = fixedProject();
+    a.branch = fixedBranch();
+    a.inputBaselineId = cid(kHex64A);
+    a.requiredCaseSetId = cid(kHex64B);
+    a.sampleSetIds = {cid(kHex64C)};
+    a.comparisonInputId = computeComparisonInputId(
+        cid(kHex64A), a.requiredCaseSetId, a.sampleSetIds, cid(kHex64D));
+    auto b = a;
+    b.inputBaselineId = cid(kHex64B);
+    EXPECT_TRUE(checkComparisonBaselinesConsistent({a, b}).consistent);
+    b.comparisonInputId.reset();
+    EXPECT_FALSE(checkComparisonBaselinesConsistent({a, b}).consistent);
+    b.comparisonInputId = core::ContentIdentity{};
+    EXPECT_FALSE(checkComparisonBaselinesConsistent({a, b}).consistent);
+    b.comparisonInputId = cid(kHex64B);
+    EXPECT_FALSE(checkComparisonBaselinesConsistent({a, b}).consistent);
+    b = a;
+    b.requiredCaseSetId = cid(kHex64A);
+    EXPECT_FALSE(checkComparisonBaselinesConsistent({a, b}).consistent);
+    b = a;
+    b.sampleSetIds = {cid(kHex64B)};
+    EXPECT_FALSE(checkComparisonBaselinesConsistent({a, b}).consistent);
+}
+
 /** EV-COV-4：inputBaselineId 不等（采样预算变）→失败并列差异维度；相等→通过。 */
 TEST(VerdictBaseline, InconsistentBaselinesListDimensions_EV_COV_4)
 {
@@ -1001,7 +1047,9 @@ TEST(VerdictRegionCoverage, ZeroSampleAndDowngradedRegionEvidence_EV_COV_3)
     AcceptAllClosureSource source;
     const AnalysisSnapshot planSnapshot = b.build(source);
 
-    fx.snapshot = planSnapshot;
+    auto configured = planSnapshot;
+    configured.configurationRefs = fx.snapshot.configurationRefs;
+    fx.snapshot = testdoubles::refreezeSnapshot(configured);
     fx.slice = buildMinimalSlice(fx.snapshot, kHex64C);
     fx.manifest = standardManifest(fx.snapshot, fx.profile, fx.slice.sliceId);
 
@@ -1146,4 +1194,18 @@ TEST(VerdictDecisionTable, FullySatisfiedInputIsFeasible)
     EXPECT_TRUE(levelRecord(result, VerdictLevel::InfeasibilityProof).evaluated);
     EXPECT_TRUE(levelRecord(result, VerdictLevel::MissingEvidence).evaluated);
     EXPECT_TRUE(levelRecord(result, VerdictLevel::EngineeringJudgement).hit);
+}
+
+/** EVI-02：共同输入构造只依赖权威内容，需求/工况/样本/环境逐一改变均改变摘要。 */
+TEST(VerdictBaseline, CommonInputIdentityBindsAllDeclaredInputs)
+{
+    const auto a = cid(kHex64A), b = cid(kHex64B), c = cid(kHex64C), d = cid(kHex64D);
+    const auto id = computeComparisonInputId(a, b, {c}, d);
+    EXPECT_EQ(id, computeComparisonInputId(a, b, {c}, d));
+    EXPECT_NE(id, computeComparisonInputId(b, b, {c}, d));
+    EXPECT_NE(id, computeComparisonInputId(a, a, {c}, d));
+    EXPECT_NE(id, computeComparisonInputId(a, b, {b}, d));
+    EXPECT_NE(id, computeComparisonInputId(a, b, {c}, a));
+    EXPECT_THROW((void)computeComparisonInputId({}, b, {c}, d), std::invalid_argument);
+    EXPECT_THROW((void)computeComparisonInputId(a, b, {{}}, d), std::invalid_argument);
 }

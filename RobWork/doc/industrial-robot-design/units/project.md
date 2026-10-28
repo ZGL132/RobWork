@@ -1448,3 +1448,16 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | 是否越权重定义需求或其他单元机制 | ✔ 断言/编译/判定/调度/编解码/UI 全部排除（§2.1 N 表/§2.2）；8 项冲突集中登记待裁决（§15.3） | §2.1、§15.3 |
 | 未参与开发者可直接实现 | ✔ 数据类型字段表（§4.4）、接口签名/前置/错误/线程/示例（§5）、七步逐步表（§7.1）、任务卡（§12） | 全文 |
 | 上游输入版本如实登记 | ✔ §1.2 磁盘实测表（含缺失项，未虚构） | §1.2 |
+
+### 15.6 PRJ-T19 评审整改后的实施口径（2026-10-28，独立验收PASS（[验收记录](../traceability/acceptance/PRJ-T19-20261028-r1.json)）；准入矩阵缺口已由 dad436e3f 结案批补全（[admission-closure](../traceability/project-review-r1/admission-closure.md)），任务已于2026-10-28经所有者指示收口done）
+
+本节说明当前实现，不追认历史自审为测试证据。原始命令、红绿回归、环境、未决项及实际门禁结果统一见 [实施记录](../traceability/project-review-r1/IMPLEMENTATION.md)。公共签名与持久化字节格式不变。
+
+- 提交前用既有Codec验证完整command结构；处理器注册即校验冻结token及非零载荷版本。幻影登记守卫覆盖首次登记到HEAD切换。HEAD之后的事件、诊断和暂存清理异常不将真实提交改报Failed；会话权威消费引擎已验证候选，不再次读盘推进。HEAD自校验失败仍是既有极端硬错误，不能等同于明确未提交。
+- 恢复扫描默认只读；只有持OS排他写锁且尚未激活服务的打开者可请求tmp及已知分支.new清理。tryLoad只观察.new；current缺失而.bak有效时，按既有归属校验返回备份，不写回正式文件。
+- 已提交闭包校验parent/元数据谱系序号严格递减、闭包序号唯一、必需command可解析、HEAD与目标清单序号和分支一致。装载采用扫描确认的HEAD和正向闭包集合，扫描后新发布残留不可被误提升。
+- 只读上下文发现HEAD变化时，在writer互斥内复用打开验证构建候选，成功才整体替换唯一索引/权威元数据。失败不安装半视图。branchHistory在同锁内复制完整历史链；tryObject/object先核对已提交引用成员，合法历史对象仍可读。查询刷新不清理磁盘。
+- 归档重投递成功前重算既有manifest自身摘要和实际工件大小/摘要；不同合法清单仍返回ArchiveConflict。Windows保留名manifest.json及.ird-part按ASCII大小写等价拒绝。归档为历史证据不代表evidence接纳为当前工程结论。
+- SDK磁盘满分类使用ERROR_DISK_FULL、ERROR_HANDLE_DISK_FULL、ERROR_DISK_QUOTA_EXCEEDED。createNew同级组装区从canonical路径构造，保留长路径前缀。CTest及_report分别输出每exe原生JSON，避免相互覆盖。
+
+ObjectStore免检集合、诊断GAP提案、listRuns强度及真实policy内容身份仍按既有未决记录处理；本包不关闭这些争议，不自签独验。

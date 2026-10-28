@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "drivetrain.singularValues",
+  "target": "sdurws_ird_drivetrain",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+      "sha256": "ce9b99bc6310a29c21a833cab6375a66ccefe29877aa3626c950dbab9e904fba"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+      "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+      "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/MappingCore.hpp",
+      "sha256": "6a22756cee6c290ebd28daa864b3924ce774a71be6753404147cb2fcc5675a42"
+    }
+  ],
+  "normal": {
+    "command": "VS2022 x64; build/design-fix-t01/run.ps1 -Units drivetrain -Suffix final (恢复原源码后完整执行)",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/drivetrain-final.xml",
+      "sha256": "5354091f3b350035c32e364b0dc80a17ed84bdbc24900c1ea1c1fc2c799bcfa9"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/drivetrain-final.log",
+      "sha256": "0bae642abd09ee5b80239e672a4ff8e06de8ff3a6727f5f668814293f82f90ab"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "VS2022 x64; build/design-fix-t01/disconnect.ps1; sdurws_ird_drivetrain_test.exe --gtest_filter=DtMappingR2Linalg.SingularValuesAnalyticSpectrum_ConditionNumber",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/disconnect-singular.xml",
+      "sha256": "157bd6664a864dd83fb5afb0ad457afa7777111e60f59176a4e722662176f7c0"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/disconnect-singular.log",
+      "sha256": "46e6eb8813e637dc11e7dff40d26a370e2bf5edf78fd154760bc34b5180b8e83"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+      "originalSha256": "ce9b99bc6310a29c21a833cab6375a66ccefe29877aa3626c950dbab9e904fba",
+      "description": "DESIGN-T01：svd真实调用后丢弃sigma置全1；当前树真实重建、运行指定断言失败；最终恢复原字节并重建46/46通过"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/MappingCore-singular.mutated.cpp",
+      "sha256": "4918bb1c32e294566bfe17ff808e33f4bfdb159590c7d3b0d6b1647f17c004e1"
+    }
+  },
+  "oracle": {
+    "command": "VS2022 x64; build/design-fix-t01/run.ps1 -Units drivetrain -Suffix final (恢复原源码后完整执行)",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/drivetrain-final.xml",
+      "sha256": "5354091f3b350035c32e364b0dc80a17ed84bdbc24900c1ea1c1fc2c799bcfa9"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/drivetrain-final.log",
+      "sha256": "0bae642abd09ee5b80239e672a4ff8e06de8ff3a6727f5f668814293f82f90ab"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "DtMappingR2Linalg.SingularValuesAnalyticSpectrum_ConditionNumber",
+      "DtMappingR2Linalg.ThresholdBoundaries_TwoGates",
+      "DtMappingR2Linalg.ScaleExtremes_ConditionInvariant"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS2022 x64; build/design-fix-t01/run.ps1 -Units drivetrain -Suffix final (恢复原源码后完整执行)",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/drivetrain-final.xml",
+      "sha256": "5354091f3b350035c32e364b0dc80a17ed84bdbc24900c1ea1c1fc2c799bcfa9"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/builds/design-fix-t01/drivetrain-final.log",
+      "sha256": "0bae642abd09ee5b80239e672a4ff8e06de8ff3a6727f5f668814293f82f90ab"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "DtMappingR2Linalg.SingularValuesAnalyticSpectrum_ConditionNumber"
+    ]
+  },
+  "note": "DESIGN-T01：本报告为当前修改树的真实正向/断开证据。原2026-10-25报告及日志保留于traceability/reuse/drivetrain-linalg；本包未改SVD/inverse语义，因现有检查绑定整文件而补当前树实证。实施自查，独立验收NOT RUN。"
+}

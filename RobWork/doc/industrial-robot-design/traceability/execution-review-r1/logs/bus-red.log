@@ -1,0 +1,45 @@
+Note: Google Test filter = *EXR09:*EXR14:*UnsubscribeDuringDeliveryDoesNotDeadlock
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from EventBusDeliveryContractTest
+[ RUN      ] EventBusDeliveryContractTest.UnsubscribeDuringDeliveryDoesNotDeadlock
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp(314): error: Value of: finished
+  Actual: true
+Expected: false
+C1：已在投的回调结束前，退订不得承诺 sink 可销毁
+
+[  FAILED  ] EventBusDeliveryContractTest.UnsubscribeDuringDeliveryDoesNotDeadlock (2 ms)
+[ RUN      ] EventBusDeliveryContractTest.UnsubscribeSkipsPendingCallback_EXR09
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp(389): error: Expected equality of these values:
+  second.size()
+    Which is: 1
+  0u
+    Which is: 0
+
+[  FAILED  ] EventBusDeliveryContractTest.UnsubscribeSkipsPendingCallback_EXR09 (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.SubscriptionStartsAtPublishBoundary_EXR14
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp(405): error: Expected equality of these values:
+  second.size()
+    Which is: 1
+  0u
+    Which is: 0
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\EventBusDeliveryContractTest.cpp(408): error: Expected equality of these values:
+  second.size()
+    Which is: 2
+  1u
+    Which is: 1
+
+[  FAILED  ] EventBusDeliveryContractTest.SubscriptionStartsAtPublishBoundary_EXR14 (0 ms)
+[----------] 3 tests from EventBusDeliveryContractTest (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (5 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] EventBusDeliveryContractTest.UnsubscribeDuringDeliveryDoesNotDeadlock
+[  FAILED  ] EventBusDeliveryContractTest.UnsubscribeSkipsPendingCallback_EXR09
+[  FAILED  ] EventBusDeliveryContractTest.SubscriptionStartsAtPublishBoundary_EXR14
+
+ 3 FAILED TESTS
+nativeExit=1

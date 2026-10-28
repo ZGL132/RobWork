@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="49.173" timestamp="2026-10-28T04:21:33.607" name="AllTests">
+  <testsuite name="GoldenProjectOpen" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="49.173" timestamp="2026-10-28T04:21:33.608">
+    <testcase name="HotStartP95_Within3s_DT_PM16" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\perf_test\GoldenProjectBenchmarkTest.cpp" line="617" status="run" result="completed" time="24.85" timestamp="2026-10-28T04:21:33.608" classname="GoldenProjectOpen" />
+    <testcase name="ColdStartP95_SoftTarget_ReportOnly_DT_PM16" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\perf_test\GoldenProjectBenchmarkTest.cpp" line="708" status="run" result="completed" time="24.322" timestamp="2026-10-28T04:21:58.458" classname="GoldenProjectOpen" />
+  </testsuite>
+</testsuites>

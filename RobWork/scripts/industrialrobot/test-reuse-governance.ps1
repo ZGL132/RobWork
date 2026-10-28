@@ -20,9 +20,9 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 157
+$driverFailure = ''; $expectedTests = 175
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
-$copiedValidatorSha256='';$copiedHelperSha256=''
+$copiedValidatorSha256='';$copiedHelperSha256='';$copiedGoldenSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
 function Put([string]$path,[string]$text) {
     $full = Join-Path $sandbox $path
@@ -77,6 +77,52 @@ function ScriptMatrix {
     return [pscustomobject]@{schemaVersion='ird-reuse-functions/1';unit='foundation-governance';functions=@($r)}
 }
 function PutScriptMatrix($m) { PutJson ($reuse+'functions/foundation-governance.json') $m }
+# 脚本结项形态夹具（migration §13.5.4 RC-10 规则批）：入口 dot-source 同目录
+# helper（与 test-golden-assets.ps1 真实形态同构），completionEvidence 为沙箱内
+# 真实落盘的执行记录文件；这是执行关系格式夹具，不冒充脚本语义验收。
+function ScriptClosureMatrix([string]$status='migrated') {
+    $dir='RobWork/scripts/industrialrobot/'
+    $entryPath=$dir+'closure-fixture.ps1'
+    $helperPath=$dir+'closure-helper.ps1'
+    $helperText='# synthetic closure helper fixture only'
+    $entryText="# synthetic governance closure fixture`n. (Join-Path `$PSScriptRoot 'closure-helper.ps1')`nfunction Invoke-ClosureFixtureStep {}"
+    Put $helperPath $helperText
+    Put $entryPath $entryText
+    $log=$design+'traceability/reuse/REUSE-T59-FIXTURE/run.log'
+    Put $log 'synthetic closure execution record fixture'
+    $review=$design+'traceability/reuse/REUSE-T59-FIXTURE/nonoverlap.md'
+    Put $review 'synthetic non-overlap fixture: governance-only script, no upstream primitive'
+    $r=[pscustomobject]@{
+        functionId='fixture.governance.closure';ownerUnit='foundation-governance';requirements=@('H6');
+        sources=@([pscustomobject]@{path=$entryPath;symbol='Invoke-ClosureFixtureStep';startLine=1;endLine=3;sha256=(Hash $entryText)},
+                  [pscustomobject]@{path=$helperPath;symbol='closure';startLine=1;endLine=1;sha256=(Hash $helperText)});
+        targets=@();usageRole='owner';permissionRef='ARCH:3.6.4';capabilityId='NONE';decision='business-specific';status=$status;
+        search=[pscustomobject]@{command='rg fixture';conclusion='脚本结项形态夹具，不冒充语义审计'};
+        differences='无CMake编译target';
+        inputs=@([pscustomobject]@{path=$entryPath;sha256=(Hash $entryText)},[pscustomobject]@{path=$helperPath;sha256=(Hash $helperText)});
+        execution=[pscustomobject]@{kind='governance-script';entry=$entryPath;command=('pwsh -NoProfile -File '+$entryPath)};
+        completionEvidence=[pscustomobject]@{path=$log;sha256=(Hash 'synthetic closure execution record fixture')};
+        nonOverlapEvidence=[pscustomobject]@{path=$review;sha256=(Hash 'synthetic non-overlap fixture: governance-only script, no upstream primitive')}
+    }
+    return [pscustomobject]@{schemaVersion='ird-reuse-functions/1';unit='foundation-governance';functions=@($r)}
+}
+# closed 夹具的冻结序列：先提交 migrated 登记矩阵，再提交验收记录；提交仅在
+# sandbox，Case finally reset＋字节恢复。返回验收引用所需 reviewed/recordPath。
+function CommitClosureFixtureRegistration {
+    $script:caseCommit=(& git -C $sandbox rev-parse HEAD).Trim()
+    PutScriptMatrix (ScriptClosureMatrix 'migrated')
+    & git -C $sandbox add -f -- ($reuse+'functions/foundation-governance.json')
+    & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --quiet -m 'isolated script closure registration'
+    if ($LASTEXITCODE) { throw 'script closure registration commit failed' }
+    return [pscustomobject]@{reviewed=(& git -C $sandbox rev-parse HEAD).Trim();recordPath=($design+'traceability/acceptance/REUSE-T59-fixture.json')}
+}
+function CommitClosureRecord($ref,[string]$taskId,[string]$verdict) {
+    PutJson $ref.recordPath ([pscustomobject]@{taskId=$taskId;verdict=$verdict;reviewedCommit=$ref.reviewed;scope='synthetic script closure fixture only'})
+    & git -C $sandbox add -- $ref.recordPath
+    & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --quiet -m 'isolated script closure record'
+    if ($LASTEXITCODE) { throw 'script closure record commit failed' }
+    return (& git -C $sandbox rev-parse HEAD).Trim()
+}
 function IsolateFinalClosureMatrices {
     # 这两项专测“新增文件缺独立关闭记录”，不能被真实审计中的 pending 抢先截断。
     # 仅清空本 Case 的隔离副本；PutJson 保留原字节并在 finally 恢复。
@@ -240,8 +286,13 @@ try {
     if ($LASTEXITCODE) { throw 'fixture checkout failed' }
     Copy-Item -LiteralPath $validatorSource -Destination $validator
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'reuse-contract.ps1') -Destination (Join-Path $sandbox 'reuse-contract.ps1')
+    # validate-reuse.ps1:49 dot-source 的 golden-assets.ps1 也必须随行进沙箱副本，
+    # 否则门禁在隔离检出加载即断（DESIGN-T01 引入该 dot-source 后的既有断裂，
+    # REUSE-T59 规则批实测修复；拷贝完整性随报告钉哈希）。
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'golden-assets.ps1') -Destination (Join-Path $sandbox 'golden-assets.ps1')
     $copiedValidatorSha256=(Get-FileHash -LiteralPath $validator -Algorithm SHA256).Hash
     $copiedHelperSha256=(Get-FileHash -LiteralPath (Join-Path $sandbox 'reuse-contract.ps1') -Algorithm SHA256).Hash
+    $copiedGoldenSha256=(Get-FileHash -LiteralPath (Join-Path $sandbox 'golden-assets.ps1') -Algorithm SHA256).Hash
     # 不叠加调用方在途数据；全部正反例在下方逐例修改固定夹具并恢复。
     $script:fixtureReviewedCommit=(& git -C $sandbox rev-parse HEAD).Trim()
     PutJson ($design+'traceability/acceptance/GOV-T22-fixture.json') ([pscustomobject]@{taskId='GOV-T22';verdict='pass';reviewedCommit=$script:fixtureReviewedCommit;scope='test fixture only'})
@@ -271,6 +322,61 @@ try {
     Case 'script-audit-require-own-context' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].inputs=@();PutScriptMatrix $m }
     Case 'script-audit-stale-context' 'REUSE-FRESHNESS' { $m=ScriptMatrix;$m.functions[0].inputs[0].sha256='bad';PutScriptMatrix $m }
     Case 'script-audit-reject-production-disguise' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].execution.command='pwsh -File missing.ps1';PutScriptMatrix $m }
+    # 脚本结项形态（RC-10 规则批）：正例 migrated/closed 各一，负例逐一断言精确失败码——
+    # completionEvidence 伪造（缺失/摘要不符/路径不存在）、acceptance 伪造（缺失/假 verdict/
+    # 记录缺席/路径出域/被验 SHA 不可达）、sources 摘要过期、遗漏同目录 helper 区段、
+    # targets 非空、audited 非准入状态。既有 pending/proposal 行为由上方 script-audit 组继续覆盖。
+    Case 'script-closure-migrated-positive' 'PASS' { PutScriptMatrix (ScriptClosureMatrix) }
+    Case 'script-closure-closed-positive' 'PASS' {
+        $ref=CommitClosureFixtureRegistration
+        $recordCommit=CommitClosureRecord $ref 'REUSE-T59' 'pass'
+        $m=ScriptClosureMatrix 'closed'
+        $m.functions[0] | Add-Member acceptance ([pscustomobject]@{commit=$recordCommit;path=$ref.recordPath;reviewedCommit=$ref.reviewed})
+        PutScriptMatrix $m
+    }
+    Case 'script-closure-missing-completion-evidence' 'REUSE-EXECUTION' { $m=ScriptClosureMatrix;$m.functions[0].PSObject.Properties.Remove('completionEvidence');PutScriptMatrix $m }
+    Case 'script-closure-stale-completion-evidence' 'REUSE-FRESHNESS' { $m=ScriptClosureMatrix;$m.functions[0].completionEvidence.sha256='0000';PutScriptMatrix $m }
+    Case 'script-closure-missing-completion-file' 'REUSE-MISSING' { $m=ScriptClosureMatrix;$m.functions[0].completionEvidence.path=($design+'traceability/reuse/REUSE-T59-FIXTURE/absent-run.log');PutScriptMatrix $m }
+    Case 'script-closure-entry-region-unbound' 'REUSE-EXECUTION' {
+        $m=ScriptClosureMatrix;$r=$m.functions[0]
+        $r.sources=@($r.sources | Where-Object { "$($_.path)" -notlike '*closure-fixture.ps1' });PutScriptMatrix $m
+    }
+    Case 'script-closure-missing-helper-region' 'REUSE-EXECUTION' {
+        $m=ScriptClosureMatrix;$r=$m.functions[0]
+        $r.sources=@($r.sources | Where-Object { "$($_.path)" -notlike '*closure-helper.ps1' });PutScriptMatrix $m
+    }
+    Case 'script-closure-stale-source-region' 'REUSE-FRESHNESS' { $m=ScriptClosureMatrix;$m.functions[0].sources[0].sha256='0000';PutScriptMatrix $m }
+    Case 'script-closure-targets-nonempty' 'REUSE-EXECUTION' { $m=ScriptClosureMatrix;$m.functions[0].targets=@('sdurws_ird_core');PutScriptMatrix $m }
+    Case 'script-closure-audited-not-admitted' 'REUSE-EXECUTION' { PutScriptMatrix (ScriptClosureMatrix 'audited') }
+    Case 'script-closure-closed-without-acceptance' 'REUSE-CLOSURE' { PutScriptMatrix (ScriptClosureMatrix 'closed') }
+    Case 'script-closure-forged-acceptance-rejected' 'REUSE-CLOSURE' {
+        $ref=CommitClosureFixtureRegistration
+        $recordCommit=CommitClosureRecord $ref 'REUSE-T59' 'fail'
+        $m=ScriptClosureMatrix 'closed'
+        $m.functions[0] | Add-Member acceptance ([pscustomobject]@{commit=$recordCommit;path=$ref.recordPath;reviewedCommit=$ref.reviewed})
+        PutScriptMatrix $m
+    }
+    Case 'script-closure-acceptance-object-missing' 'REUSE-CLOSURE' {
+        $ref=CommitClosureFixtureRegistration
+        $recordCommit=CommitClosureRecord $ref 'REUSE-T59' 'pass'
+        $m=ScriptClosureMatrix 'closed'
+        $m.functions[0] | Add-Member acceptance ([pscustomobject]@{commit=$recordCommit;path=($design+'traceability/acceptance/REUSE-T59-absent.json');reviewedCommit=$ref.reviewed})
+        PutScriptMatrix $m
+    }
+    Case 'script-closure-acceptance-path-outside' 'REUSE-CLOSURE' {
+        $ref=CommitClosureFixtureRegistration
+        $recordCommit=CommitClosureRecord $ref 'REUSE-T59' 'pass'
+        $m=ScriptClosureMatrix 'closed'
+        $m.functions[0] | Add-Member acceptance ([pscustomobject]@{commit=$recordCommit;path=($reuse+'fixture-production.json');reviewedCommit=$ref.reviewed})
+        PutScriptMatrix $m
+    }
+    Case 'script-closure-acceptance-future-sha-rejected' 'REUSE-CLOSURE' {
+        $ref=CommitClosureFixtureRegistration
+        $recordCommit=CommitClosureRecord $ref 'REUSE-T59' 'pass'
+        $m=ScriptClosureMatrix 'closed'
+        $m.functions[0] | Add-Member acceptance ([pscustomobject]@{commit=$recordCommit;path=$ref.recordPath;reviewedCommit='0000000000000000000000000000000000000000'})
+        PutScriptMatrix $m
+    }
     Case '01-clean' 'PASS' {}
     Case '02-fixed-baseline' 'REUSE-BASELINE' { $j=GetJson ($reuse+'catalog.json'); $j.baselineCommit='HEAD'; PutJson ($reuse+'catalog.json') $j }
     Case '03-all-units' 'REUSE-UNITS' { $j=GetJson ($reuse+'catalog.json'); $j.units=@('kinematics'); PutJson ($reuse+'catalog.json') $j }
@@ -462,6 +568,27 @@ try {
         TestFixtureChange ('#include <rw/models/WorkCell.hpp>'+"`n"+'void probe(){ auto cell = std::make_shared<rw::models::WorkCell>("fixture"); cell->addDevice(nullptr); }'+"`n")
         $p=GetJson ($reuse+'permissions.json');$p.grants=@();PutJson ($reuse+'permissions.json') $p
     }
+    # F-975 解锁（REUSE-T60 治理批，§3.6.2.1 graphics 面登记）：/test/ 路径
+    # test-fixture grant 持 graphics 正例（UI-T78 渲染面分组常量断言消费形态）；
+    # host 类别借测试路径准入与非 test 路径 test-fixture graphics 两个负例——
+    # §3.6.2 封闭清单与 /test/ 目录边界各自不放宽。
+    Case 'fixture-test-fixture-graphics-positive' 'PASS' {
+        TestFixtureChange ('#include <rw/graphics/DrawableNode.hpp>'+"`n"+'void probe(){ auto physical = rw::graphics::DrawableNode::Physical; (void)physical; }'+"`n")
+        ProbeMatrix 'business-specific' 'migrated'
+        $p=GetJson ($reuse+'permissions.json');$g=Grant 'test-fixture' @('query') 'sdurws_ird_kinematics_test'
+        $g.source.path=$script:probePath;$g.source.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.source.path)))
+        $g.categories=@('graphics')
+        $g.build.path=$product+'kinematics/CMakeLists.txt';$g.build.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.build.path)))
+        $p.grants=@($g);PutJson ($reuse+'permissions.json') $p
+    }
+    Case 'fixture-test-fixture-host-category-rejected' 'REUSE-AD' {
+        TestFixtureChange '#include <rws/RobWorkStudio.hpp>'
+        ProbeGrant 'test-fixture' @('host') @('query')
+    }
+    Case 'fixture-graphics-test-fixture-outside-test-rejected' 'REUSE-AD' {
+        FunctionalChange '#include <rw/graphics/DrawableNode.hpp>'
+        ProbeGrant 'test-fixture' @('graphics') @('query')
+    }
     Case 'closure-new-file-no-independent-record' 'REUSE-MIGRATION : new/current file lacks independent closure' { IsolateFinalClosureMatrices;FunctionalChange 'void probe(){}';ProbeMatrix 'business-specific' 'closed' } @('-RequireMigrationComplete')
     Case 'closure-baseline-cannot-use-absent' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].baselineBlob='absent';PutJson ($reuse+'closures.json') $c }
     Case 'closure-new-file-cannot-use-blob' 'REUSE-CLOSURE' { [void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files[1].baselineBlob=$c.files[0].baselineBlob;PutJson ($reuse+'closures.json') $c }
@@ -500,7 +627,7 @@ try {
 } finally {
     $failed=@($script:results | Where-Object { -not $_.passed }).Count
     $notRun = [Math]::Max(0,$expectedTests-$script:results.Count)
-    $report=[ordered]@{schemaVersion='ird-reuse-tests/1';fixtureCommit=$fixtureCommit;validatorSha256=$copiedValidatorSha256;helperSha256=$copiedHelperSha256;driverSha256=$driverSha256;expected=$expectedTests;executed=$script:results.Count;notRun=$notRun;driverFailure=$driverFailure;passed=($script:results.Count-$failed);skipped=0;failed=$failed;complete=($notRun -eq 0 -and -not $driverFailure);tests=$script:results}
+    $report=[ordered]@{schemaVersion='ird-reuse-tests/1';fixtureCommit=$fixtureCommit;validatorSha256=$copiedValidatorSha256;helperSha256=$copiedHelperSha256;goldenAssetsSha256=$copiedGoldenSha256;driverSha256=$driverSha256;expected=$expectedTests;executed=$script:results.Count;notRun=$notRun;driverFailure=$driverFailure;passed=($script:results.Count-$failed);skipped=0;failed=$failed;complete=($notRun -eq 0 -and -not $driverFailure);tests=$script:results}
     $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $OutputDir 'reuse-test-report.json') -Encoding UTF8
     $xml=[xml]'<testsuite name="reuse-governance"/>'
     $xml.DocumentElement.SetAttribute('tests',"$($script:results.Count)"); $xml.DocumentElement.SetAttribute('failures',"$failed"); $xml.DocumentElement.SetAttribute('skipped','0')

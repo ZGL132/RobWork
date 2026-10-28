@@ -64,7 +64,7 @@ EditSubmitOutcome submitJointFieldEdit(ModelingWorkingSet& ws, IPanelEditSink& s
 }
 
 // =====================================================================
-// L-8 平行轴内联二选一
+// L-8 刚体平移/物性覆盖内联二选一
 // =====================================================================
 
 CentroidChoicePreview centroidChoicePreview(const BodyData& body,
@@ -73,8 +73,8 @@ CentroidChoicePreview centroidChoicePreview(const BodyData& body,
 {
     CentroidChoicePreview preview;
 
-    // 分支 (a) 预览：域 dry-run（副本上按 MigrateInertia 执行——平行轴
-    // 迁移数值唯一由计算库产出，面板零推算）。前置违约（缺基准）时域拒绝，
+    // 分支 (a) 预览：域 dry-run（副本上按 MigrateInertia 执行——刚体平移保持COM惯量，
+    // 数值唯一由计算库产出，面板零推算）。前置违约（缺基准）时域拒绝，
     // 预览串保持空——内联只呈现可得数值。
     BodyData dryRun = body;  // 值拷贝——dry-run 不触碰工作集（输入 body 只读）
     if (!applyCentroidEdit(dryRun, newCenterOfMass, CentroidEditResolution::MigrateInertia,

@@ -1931,9 +1931,13 @@ void KinematicsPanelWidget::refreshVisualization()
     if (!m_services.previewSink || !m_services.modelView) { return; }
     ui::View3DPreviewUpdate update;
     std::vector<core::ObjectId> objects;
-    const auto worldTbase = m_services.modelView->worldToBase();
-    // 数据源仍为会话权威产物，世界变换只发生在呈现边界，SI真值不改。
+    // 缝契约：KinSessionModelView 委托未绑定（快照发布前）是合法初始态，
+    // worldToBase()/model() 消费必须以会话快照在场为前置（空态判定挡在
+    // 消费之前——构造期 refreshAll 直达此处，无快照时不得触碰未绑定
+    // 委托）。worldTbase 因此按消费分支就地取值，不提前求值。
     if (m_session.lastWorkspaceRun) {
+        // 数据源仍为会话权威产物，世界变换只发生在呈现边界，SI真值不改。
+        const auto worldTbase = m_services.modelView->worldToBase();
         ui::View3DSampleGrid grid;
         const auto cloud = buildWorkspacePointCloud(*m_session.lastWorkspaceRun);
         for (const auto& p : cloud.points) {
@@ -1954,6 +1958,9 @@ void KinematicsPanelWidget::refreshVisualization()
         if (m_services.batchRender) {
             const auto batch=m_services.batchRender();
             if (batch) {
+                // 失败点/薄弱区均为会话产物——batch 在场即快照在场，此处
+                // 取世界变换不触碰未绑定委托（与上方空态判定同口径）。
+                const auto worldTbase = m_services.modelView->worldToBase();
                 for(const auto& p:batch->failurePoints.points) if(p.targetInBase) {
                     update.frameMarkers.push_back({"失败点 "+p.pointOid.toCanonical(), "WORLD",
                         runtime::transformBasePointToWorld(worldTbase,p.targetInBase->P())});

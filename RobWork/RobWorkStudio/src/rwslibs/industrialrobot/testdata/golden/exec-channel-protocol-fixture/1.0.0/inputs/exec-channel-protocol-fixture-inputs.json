@@ -1,0 +1,196 @@
+{
+  "descriptor": "rc07-byte-baseline-inputs/1",
+  "datasetId": "exec-channel-protocol-fixture",
+  "inputFileRole": "用例语义描述符——caseId 与 expected 输出逐条对应；输入构造细节（固定种子 id/摘要派生、字段值）见 parameters.captureHarness 与 traceability/reuse/REUSE-T58/README.md 的 harness 源码登记",
+  "cases": [
+    {
+      "caseId": "id-block-normal",
+      "input": "五元组固定种子派生（prj-A/brn-A/rev-1/run-1，attempt=1）——encodeIdentityBlock 168 字节定长域＋decodeIdentityBlock 往返"
+    },
+    {
+      "caseId": "id-block-attempt-max",
+      "input": "attempt=2^64-1（\"att-<20位十进制>\"恰 24 字节填满定宽域、无终止 NUL）——定宽域溢出边界：编码成功而 decodeIdentityBlock 按\"填满无终止 NUL\"编码纪律拒绝（decodeRoundtrip=false 为现网实现的既定边界行为，换核须逐位保持）"
+    },
+    {
+      "caseId": "frame-hello-normal",
+      "input": "encodeFrame：Hello 帧 seq=1 flags=0，载荷=encodeHello({1, manifestDigestHex(\"evaluator|1|1\\nworkers|1|1\\n\")})"
+    },
+    {
+      "caseId": "frame-empty-payload",
+      "input": "encodeFrame：Heartbeat 帧 seq=2 空载荷（阶段 A 无载荷编解码对的类型）——空载荷边界"
+    },
+    {
+      "caseId": "frame-seq-max",
+      "input": "encodeFrame：ResultBatch 帧 seq=2^64-1、批次号 2^64-1、载荷 {00 FF 7F 80}——u64 定宽上边界＋字节位模式"
+    },
+    {
+      "caseId": "frame-flags-more",
+      "input": "encodeFrame：DispatchRequest 帧 flags=kFlagFragmentMore(0x01) seq=3 载荷 {DE AD BE EF}"
+    },
+    {
+      "caseId": "hello-normal",
+      "input": "encodeHello({protoVersion=1, 64hex 摘要})"
+    },
+    {
+      "caseId": "hello-empty-digest",
+      "input": "encodeHello({protoVersion=1, 空串})——长度前缀 0 边界"
+    },
+    {
+      "caseId": "hello-version-max",
+      "input": "encodeHello({protoVersion=0xFFFF, \"ab\"})——u16 定宽上边界"
+    },
+    {
+      "caseId": "helloack-accept",
+      "input": "encodeHelloAck({accepted=true, heartbeatIntervalMs=5000, reason=\"\"})"
+    },
+    {
+      "caseId": "helloack-reject-max",
+      "input": "encodeHelloAck({accepted=false, heartbeatIntervalMs=0xFFFFFFFF, reason 非空})——u32 定宽上边界"
+    },
+    {
+      "caseId": "progress-zero",
+      "input": "encodeProgress(ProgressReport::make(0,\"compile\",0,0))——percent 下界＋计数 0"
+    },
+    {
+      "caseId": "progress-max",
+      "input": "encodeProgress(ProgressReport::make(100,\"optimize\",2^64-1,2^64-1))——percent 上界＋u64 计数上边界"
+    },
+    {
+      "caseId": "resultbatch-empty",
+      "input": "encodeResultBatch({batchIndex=1, bytes=空})——空字节段"
+    },
+    {
+      "caseId": "resultbatch-max",
+      "input": "encodeResultBatch({batchIndex=2^64-1, bytes={00,FF}})"
+    },
+    {
+      "caseId": "checkpointbatch-normal",
+      "input": "encodeCheckpointBatch({sequence=1, bytes={DE,AD,BE,EF}})"
+    },
+    {
+      "caseId": "checkpointbatch-empty",
+      "input": "encodeCheckpointBatch({sequence=2^64-1, bytes=空})"
+    },
+    {
+      "caseId": "dispatchrequest-normal",
+      "input": "encodeDispatchRequest：snapshotIdentity=computeContentIdentity(0x00..0xFF 全值域 256B)、modelIdentity=computeContentIdentity(空)、snapshotBytes=全值域 256B、modelBytes=空——putBytes/getBytes 全值域面＋空载荷身份"
+    },
+    {
+      "caseId": "finaloutput-normal",
+      "input": "encodeFinalOutput：双身份＋outputCanon={00,FF,00,FF}"
+    },
+    {
+      "caseId": "errorreport-dev",
+      "input": "encodeErrorReport({dev=true, channel=\"dev-channel\", message=\"assert failed\"})"
+    },
+    {
+      "caseId": "errorreport-stable",
+      "input": "encodeErrorReport({dev=false, code=\"EX-CHANNEL-PROTOCOL-ERROR\", message=\"magic mismatch\"})"
+    },
+    {
+      "caseId": "decode-hello",
+      "input": "decodeHello(encodeHello({1,64hex}))——getStr 成功路径：解码成功＋再编码逐字节相等"
+    },
+    {
+      "caseId": "decode-helloack",
+      "input": "decodeHelloAck(encodeHelloAck({false,0xFFFFFFFF,reason}))——getStr 成功路径往返"
+    },
+    {
+      "caseId": "decode-progress",
+      "input": "decodeProgress(encodeProgress(make(42,\"compile\",3,8)))——getStr＋ProgressReport::make 值域校验路径往返"
+    },
+    {
+      "caseId": "decode-resultbatch",
+      "input": "decodeResultBatch(encodeResultBatch({2^64-1,{00,FF}}))——getBytes 成功路径往返"
+    },
+    {
+      "caseId": "decode-checkpointbatch",
+      "input": "decodeCheckpointBatch(encodeCheckpointBatch({1,{DE,AD,BE,EF}}))——getBytes 成功路径往返"
+    },
+    {
+      "caseId": "decode-dispatchrequest",
+      "input": "decodeDispatchRequest(encodeDispatchRequest(全值域快照+空模型))——getStr/getBytes＋ContentIdentity::fromCanonical 严格解析路径往返"
+    },
+    {
+      "caseId": "decode-finaloutput",
+      "input": "decodeFinalOutput(encodeFinalOutput(双身份))——getStr/getBytes 路径往返"
+    },
+    {
+      "caseId": "decode-errorreport",
+      "input": "decodeErrorReport(encodeErrorReport({true,channel,message}))——getStr 双文本路径往返"
+    },
+    {
+      "caseId": "decode-hello-empty",
+      "input": "decodeHello(空载荷)——:586 end-cursor<2 拒绝（nullopt）"
+    },
+    {
+      "caseId": "decode-helloack-short",
+      "input": "decodeHelloAck(4B)——:613 end-cursor<5 拒绝"
+    },
+    {
+      "caseId": "decode-progress-short",
+      "input": "decodeProgress(3B)——:679 end-cursor<4 拒绝"
+    },
+    {
+      "caseId": "decode-resultbatch-short",
+      "input": "decodeResultBatch(7B)——:718 end-cursor<8 拒绝"
+    },
+    {
+      "caseId": "decode-errorreport-empty",
+      "input": "decodeErrorReport(空载荷)——:805 end-cursor<1 拒绝"
+    },
+    {
+      "caseId": "decode-hello-len-overflow",
+      "input": "decodeHello({protoVersion=1, len=0xFFFFFFFF})——getStr :81/getBytes :103 长度域越出剩余字节拒绝（kMaxFramePayload 上限分支）"
+    },
+    {
+      "caseId": "manifest-digest",
+      "input": "manifestDigestHex(\"evaluator|1|1\\nworkers|1|1\\n\")——core ContentDigester 同源 SHA-256 的 64 hex"
+    },
+    {
+      "caseId": "content-identity-empty",
+      "input": "computeContentIdentity(空字节)——空载荷确定身份"
+    },
+    {
+      "caseId": "content-identity-fullpattern",
+      "input": "computeContentIdentity(0x00..0xFF 256B)"
+    },
+    {
+      "caseId": "content-identity-match",
+      "input": "contentIdentityMatches：匹配 true／失配 false（声明身份比对判定式）"
+    },
+    {
+      "caseId": "fragment-single",
+      "input": "fragmentMessage(DispatchRequest, 10B, fragSize=16)——单片装下 flags=0"
+    },
+    {
+      "caseId": "fragment-multi",
+      "input": "fragmentMessage(DispatchRequest, 10B, fragSize=4)——3 片 flags=1,1,0（More 位面）"
+    },
+    {
+      "caseId": "fragment-empty-message",
+      "input": "fragmentMessage(FinalOutput, 空, fragSize=4)——空消息至少 1 片（16B 分片头 only）"
+    },
+    {
+      "caseId": "fragment-type-reject",
+      "input": "fragmentMessage(Heartbeat, ...)——不可分片类型 accepted=false（调用方违约面）"
+    },
+    {
+      "caseId": "reassemble-two-frag",
+      "input": "MessageReassembler：FinalOutput 6B fragSize=4 两片按序入→完整消息 flags=0"
+    },
+    {
+      "caseId": "assembler-incremental",
+      "input": "FrameAssembler::feed：Progress 帧字节按 7/100/其余 三段喂入——自定界增量解析，重组帧与原帧逐字节相等"
+    },
+    {
+      "caseId": "sequencer-reorder",
+      "input": "FrameSequencer(windowCapacity=4)：seq1 交付（首帧即基线）→seq3 Buffered（乱序入窗口）→seq2 补缺连带吐出 [2,3]"
+    },
+    {
+      "caseId": "sequencer-gap-timeout",
+      "input": "FrameSequencer(windowCapacity=4, gapTimeout=1000ms, 时钟注入固定纪元)：seq1 基线→seq3 越前开缺口→999ms 未断→1000ms 断裂 failed=true"
+    }
+  ],
+  "note": "execution/src/ChannelProtocol.cpp 字节原语基线输入（RC-07，REUSE-T58）"
+}

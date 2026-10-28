@@ -53,6 +53,7 @@
 #include <sdurws/ird/project/StoreTypes.hpp>
 
 #include <sdurws/ird/testkit/Fault.hpp>
+#include <sdurws/ird/testkit/ProcessRunner.hpp>
 
 #include <windows.h>
 
@@ -514,6 +515,35 @@ int runLockContendChild()
 // 分派入口（main 拦截 --ird-wp04-t15-child 后调用——Tx15Child.hpp 契约）
 // =====================================================================
 
+/**
+ * @brief PRJ-R1只读进程：打开后可等待父writer提交，再核对完整一致视图。
+ * @param waitForCommit 为true时以marker.go的continue行作为屏障。
+ * @return 0表示查询成功；非零表示握手或一致性失败，父进程负责超时收尾。
+ */
+int runReadOnlyViewChild(bool waitForCommit)
+{
+    const fs::path marker(envWide(L"IRD_TX15_MARKER"));
+    OpenStoreRequest request;
+    request.path = fs::path(envWide(L"IRD_TX15_DIR"));
+    request.mode = sdurws::ird::project::OpenMode::ReadOnly;
+    auto opened = ProjectStoreFactory::open(request);
+    const auto before = opened.store->query().head();
+    writeMarker(marker, "ready=1\n");
+    if (waitForCommit) {
+        sdurws::ird::testkit::EventWatch watch;
+        if (!watch.awaitLineInFile(marker.wstring() + L".go", "continue",
+                                   std::chrono::milliseconds(15000))) { return 8; }
+    }
+    try {
+        const auto head = opened.store->query().head();
+        const auto metadata = opened.store->query().currentMetadata();
+        if (metadata.record.committedBy != head.id) { return 4; }
+        if (waitForCommit && head.id == before.id) { return 5; }
+        writeMarker(marker, "ready=1\nhead=" + head.id.toCanonical() + "\n");
+        return 0;
+    } catch (const sdurws::ird::project::StoreError&) { return 6; }
+}
+
 int runChild(const char* mode)
 {
     const std::string m = mode;
@@ -521,6 +551,8 @@ int runChild(const char* mode)
     if (m == "archive-inflight") { return runArchiveInflightChild(); }
     if (m == "lock-hold") { return runLockHoldChild(); }
     if (m == "lock-contend") { return runLockContendChild(); }
+    if (m == "reader-open") { return runReadOnlyViewChild(false); }
+    if (m == "reader-view") { return runReadOnlyViewChild(true); }
     return 9;  // 未知模式——分派表违约（LockContractTest 同口径）
 }
 

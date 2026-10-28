@@ -1,0 +1,23 @@
+Note: Google Test filter = WorkflowDesignReview.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkflowDesignReview
+[ RUN      ] WorkflowDesignReview.StaticOptimizationAndReportIgnoreMissingDynamicInputs
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\test\GateAdviceTest.cpp(120): error: Value of: result.decisions[5].unlocked
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\test\GateAdviceTest.cpp(121): error: Value of: result.decisions[6].unlocked
+  Actual: false
+Expected: true
+
+[  FAILED  ] WorkflowDesignReview.StaticOptimizationAndReportIgnoreMissingDynamicInputs (0 ms)
+[----------] 1 test from WorkflowDesignReview (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkflowDesignReview.StaticOptimizationAndReportIgnoreMissingDynamicInputs
+
+ 1 FAILED TEST

@@ -1,0 +1,21 @@
+{
+  "repository": "C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork",
+  "branch": "codex/core-review-fixes",
+  "headAtCloseout": "fd198f54c0b66bc61dd64b29a04e2b1675f42dbc",
+  "caches": {
+    "build/CMakeCache.txt": [
+      "CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "RWS_BUILD_INDUSTRIALROBOT:BOOL=ON",
+      "CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022",
+      "CMAKE_GENERATOR_PLATFORM:INTERNAL=x64",
+      "CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork"
+    ],
+    "build/core-smoke/CMakeCache.txt": [
+      "CMAKE_TOOLCHAIN_FILE:FILEPATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022",
+      "CMAKE_GENERATOR_PLATFORM:INTERNAL=x64",
+      "CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot"
+    ]
+  },
+  "note": "最终测试之后只纠正一条测试注释并同步治理/文档/绑定，没有产品行为变化；未改框架/vcpkg。原生测试report中的空gitCommit保留原貌，不伪造报告身份。"
+}

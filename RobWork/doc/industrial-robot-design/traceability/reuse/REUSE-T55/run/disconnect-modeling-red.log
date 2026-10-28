@@ -1,0 +1,93 @@
+Note: Google Test filter = MdlDhConvert*:MdlDhEquivalence*:MdlGoldenDhEquivalence*
+[==========] Running 24 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 14 tests from MdlDhConvert
+[ RUN      ] MdlDhConvert.DhToExplicitAccumulatesCardFormula_WP13T09_ACC1
+[       OK ] MdlDhConvert.DhToExplicitAccumulatesCardFormula_WP13T09_ACC1 (0 ms)
+[ RUN      ] MdlDhConvert.DhToExplicitZeroAlignment_WP13T09_ACC1
+[       OK ] MdlDhConvert.DhToExplicitZeroAlignment_WP13T09_ACC1 (0 ms)
+[ RUN      ] MdlDhConvert.DhToExplicitRejectsEmptyAndMixedBase_WP13T09_ACC1
+[       OK ] MdlDhConvert.DhToExplicitRejectsEmptyAndMixedBase_WP13T09_ACC1 (0 ms)
+[ RUN      ] MdlDhConvert.ExplicitToDhNotExpressibleTerminal_WP13T09_ACC2
+[       OK ] MdlDhConvert.ExplicitToDhNotExpressibleTerminal_WP13T09_ACC2 (0 ms)
+[ RUN      ] MdlDhConvert.ExplicitToDhExactOnDhDerivedChain_WP13T09_ACC2
+[       OK ] MdlDhConvert.ExplicitToDhExactOnDhDerivedChain_WP13T09_ACC2 (10 ms)
+[ RUN      ] MdlDhConvert.ExplicitToDhNegativeDRecoversFactualValue_P0_1
+[       OK ] MdlDhConvert.ExplicitToDhNegativeDRecoversFactualValue_P0_1 (5 ms)
+[ RUN      ] MdlDhConvert.ExplicitToDhExactNonUniqueCoincidentAxes_WP13T09_ACC2
+[       OK ] MdlDhConvert.ExplicitToDhExactNonUniqueCoincidentAxes_WP13T09_ACC2 (0 ms)
+[ RUN      ] MdlDhConvert.ExplicitToDhExactNonUniqueParallelAxes_WP13T09_ACC3
+[       OK ] MdlDhConvert.ExplicitToDhExactNonUniqueParallelAxes_WP13T09_ACC3 (0 ms)
+[ RUN      ] MdlDhConvert.ExplicitToDhApproximateNotAuthority_WP13T09_ACC3
+[       OK ] MdlDhConvert.ExplicitToDhApproximateNotAuthority_WP13T09_ACC3 (0 ms)
+[ RUN      ] MdlDhConvert.ExplicitToDhAnalysisFailedNotSemantic_WP13T09_ACC3
+[       OK ] MdlDhConvert.ExplicitToDhAnalysisFailedNotSemantic_WP13T09_ACC3 (0 ms)
+[ RUN      ] MdlDhConvert.F631SingleJointGeneralQFkMatchesCascade
+[       OK ] MdlDhConvert.F631SingleJointGeneralQFkMatchesCascade (0 ms)
+[ RUN      ] MdlDhConvert.F631TwoJointGeneralQFkMatchesCascade
+[       OK ] MdlDhConvert.F631TwoJointGeneralQFkMatchesCascade (0 ms)
+[ RUN      ] MdlDhConvert.F631ZeroADriftFreeAgainstPreFixGolden
+[       OK ] MdlDhConvert.F631ZeroADriftFreeAgainstPreFixGolden (0 ms)
+[ RUN      ] MdlDhConvert.F631FlangeOrbitDeviation2aSinHalfQ
+[       OK ] MdlDhConvert.F631FlangeOrbitDeviation2aSinHalfQ (0 ms)
+[----------] 14 tests from MdlDhConvert (17 ms total)
+
+[----------] 6 tests from MdlDhEquivalence
+[ RUN      ] MdlDhEquivalence.VerifyEquivalentAcceptsSameChain_WP13T09_ACC4
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\DhConvertEquivalenceTest.cpp(354): error: Value of: report.equivalent
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\DhConvertEquivalenceTest.cpp(356): error: Expected: (report.maxOrientationDeviation) <= (1e-9), actual: 0.1 vs 1e-09
+附录 D 第 4 项姿态容差
+
+[  FAILED  ] MdlDhEquivalence.VerifyEquivalentAcceptsSameChain_WP13T09_ACC4 (0 ms)
+[ RUN      ] MdlDhEquivalence.VerifyEquivalentRejectsDeviatedChain_WP13T09_ACC4
+[       OK ] MdlDhEquivalence.VerifyEquivalentRejectsDeviatedChain_WP13T09_ACC4 (0 ms)
+[ RUN      ] MdlDhEquivalence.RoundtripDoubleConsistency_WP13T09_ACC4
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\DhConvertEquivalenceTest.cpp(433): error: Value of: report.equivalent
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\DhConvertEquivalenceTest.cpp(435): error: Expected: (report.maxOrientationDeviation) <= (1e-9), actual: 0.1 vs 1e-09
+
+[  FAILED  ] MdlDhEquivalence.RoundtripDoubleConsistency_WP13T09_ACC4 (2 ms)
+[ RUN      ] MdlDhEquivalence.AuthoritySwitchDomainGatePreparesCandidate_WP13T09_ACC5
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\DhConvertEquivalenceTest.cpp(461): error: Value of: decision.allowed
+  Actual: false
+Expected: true
+四道门应全过
+
+[  FAILED  ] MdlDhEquivalence.AuthoritySwitchDomainGatePreparesCandidate_WP13T09_ACC5 (2 ms)
+[ RUN      ] MdlDhEquivalence.AuthoritySwitchDomainGateRefusesPendingEdits_WP13T09_ACC5
+[       OK ] MdlDhEquivalence.AuthoritySwitchDomainGateRefusesPendingEdits_WP13T09_ACC5 (0 ms)
+[ RUN      ] MdlDhEquivalence.AuthoritySwitchRefusedWhenVerificationFails_WP13T09_ACC5
+[       OK ] MdlDhEquivalence.AuthoritySwitchRefusedWhenVerificationFails_WP13T09_ACC5 (1 ms)
+[----------] 6 tests from MdlDhEquivalence (6 ms total)
+
+[----------] 4 tests from MdlGoldenDhEquivalence
+[ RUN      ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3 (1 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3 (13 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp(671): error: Failed
+fk.max-position-deviation: actual=0.15196221858497624 expected=1.0000000000000001e-09 diff=0.15196221758497624
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp(646): zero-anchor
+
+[  FAILED  ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3 (14 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3 (0 ms)
+[----------] 4 tests from MdlGoldenDhEquivalence (29 ms total)
+
+[----------] Global test environment tear-down
+[==========] 24 tests from 3 test suites ran. (53 ms total)
+[  PASSED  ] 20 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] MdlDhEquivalence.VerifyEquivalentAcceptsSameChain_WP13T09_ACC4
+[  FAILED  ] MdlDhEquivalence.RoundtripDoubleConsistency_WP13T09_ACC4
+[  FAILED  ] MdlDhEquivalence.AuthoritySwitchDomainGatePreparesCandidate_WP13T09_ACC5
+[  FAILED  ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3
+
+ 4 FAILED TESTS

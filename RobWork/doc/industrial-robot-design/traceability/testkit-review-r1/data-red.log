@@ -1,0 +1,58 @@
+Note: Google Test filter = *ReviewF015:*ReviewF017:*ReviewF018
+[==========] Running 3 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from DatasetManifest
+[ RUN      ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015
+unknown file: error: C++ exception with description "dataset-invalid: dataset-invalid: parameters: 必填对象字段缺失" thrown in the test body.
+
+[  FAILED  ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015 (15 ms)
+[----------] 1 test from DatasetManifest (15 ms total)
+
+[----------] 1 test from DatasetIntegrity
+[ RUN      ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(168): error: Failed
+必须拒绝: kin-fk-planar-2r/1.0.0
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(168): error: Failed
+必须拒绝: kin-fk-planar-2r/1.0.0
+
+[  FAILED  ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017 (64 ms)
+[----------] 1 test from DatasetIntegrity (64 ms total)
+
+[----------] 1 test from DatasetRejections
+[ RUN      ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(240): error: Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"seed": 1.5
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(240): error: Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"seed": 18446744073709551616
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(240): error: Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"threadCount": 1.5
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(240): error: Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"threadCount": "1"
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(240): error: Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+10.5
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(245): error: Expected: parseSemanticVersion("999999999999999999999.0.0", "version", &major, &minor, &patch) throws an exception of type TestKitError.
+  Actual: it throws std::out_of_range with description "stoi argument out of range".
+
+[  FAILED  ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018 (102 ms)
+[----------] 1 test from DatasetRejections (102 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 3 test suites ran. (182 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015
+[  FAILED  ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017
+[  FAILED  ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018
+
+ 3 FAILED TESTS

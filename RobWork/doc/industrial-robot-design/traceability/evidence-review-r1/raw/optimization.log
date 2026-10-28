@@ -1,0 +1,38 @@
+Note: Google Test filter = OptJointRun.*Checkpoint*:OptJointRun.*Resume*:OptJointRun.PauseAtBatchBoundary*
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from OptJointRun
+[ RUN      ] OptJointRun.CheckpointCodecRoundTripAndRejects_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointCodecRoundTripAndRejects_WP21T04_ACC2 (0 ms)
+[ RUN      ] OptJointRun.CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3
+unknown file: error: C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：opt.config" thrown in the test body.
+
+[  FAILED  ] OptJointRun.CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3 (0 ms)
+[ RUN      ] OptJointRun.CheckpointCorruptRejectedByCoordinator_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointCorruptRejectedByCoordinator_WP21T04_ACC2 (33 ms)
+[ RUN      ] OptJointRun.CheckpointVersionIncompatibleNoMigration_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointVersionIncompatibleNoMigration_WP21T04_ACC2 (4 ms)
+[ RUN      ] OptJointRun.PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229
+unknown file: error: C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：opt.config" thrown in the test body.
+
+[  FAILED  ] OptJointRun.PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229 (0 ms)
+[ RUN      ] OptJointRun.ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230
+unknown file: error: C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：opt.config" thrown in the test body.
+
+[  FAILED  ] OptJointRun.ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230 (0 ms)
+[ RUN      ] OptJointRun.CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231
+unknown file: error: C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：opt.config" thrown in the test body.
+
+[  FAILED  ] OptJointRun.CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231 (0 ms)
+[----------] 7 tests from OptJointRun (39 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (39 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] OptJointRun.CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3
+[  FAILED  ] OptJointRun.PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229
+[  FAILED  ] OptJointRun.ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230
+[  FAILED  ] OptJointRun.CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231
+
+ 4 FAILED TESTS

@@ -403,6 +403,7 @@ add_executable(sdurws_ird_project_test
     test/RevisionIndexTest.cpp
     test/TxEngineTest.cpp
     test/ProjectStoreTest.cpp
+    test/ReviewRegressionTest.cpp
     test/QueryPortTest.cpp
     test/CommandServiceTest.cpp
     test/DraftServiceTest.cpp
@@ -655,13 +656,17 @@ add_custom_command(TARGET sdurws_ird_project_perf_test POST_BUILD
 # （EXCLUDE_FROM_ALL）：跑测试是显式动作，与框架"不随 ordinary build 执行
 # 测试"的约定一致。
 macro(ird_add_gtest target)
-    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+    # PRJ-R1：CTest和报告目标均显式分离每个exe的原生报告，避免覆盖。
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/gtest_reports")
+    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>
+        --ird_report=${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.ird-test-report.json)
     add_custom_target(
         ${target}_report
         COMMAND ${CMAKE_COMMAND} -E make_directory
                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
         COMMAND $<TARGET_FILE:${target}>
                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+                --ird_report=${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.ird-test-report.json
         DEPENDS ${target}
         COMMENT "ird: run ${target} and write gtest XML report")
     set_target_properties(${target}_report PROPERTIES

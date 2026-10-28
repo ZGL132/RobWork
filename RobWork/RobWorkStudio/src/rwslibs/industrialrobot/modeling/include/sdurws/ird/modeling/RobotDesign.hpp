@@ -354,6 +354,26 @@ struct ResourceRef {
 };
 
 /**
+ * @brief Solidified 资源副本（§6.8"Solidified 资源副本"的导入承载）。
+ *
+ * 包内逐字节携带固化资源对象的 canonical 字节（解码非本单元职责——
+ * 资源对象不在建模五对象表，字节对 modeling 不透明）；导入侧经清单哈希
+ * 校验后原样交还调用方，由调用方（向导域/L5）按 ObjectId+ContentVersion
+ * 重新登记进项目闭包（CON-03 固化引用的回读面）。
+ */
+struct SolidifiedResourceCopy {
+    std::string resourceId;              ///< 资源清单键（根对象 resourceManifest 内唯一）
+    core::ObjectId objectId;             ///< 固化 resource 对象身份（SolidifiedRef 同源）
+    std::vector<std::uint8_t> bytes;     ///< resource 对象 canonical 字节（包内原样——digest 已验）
+
+    bool operator==(const SolidifiedResourceCopy& o) const noexcept
+    {
+        return resourceId == o.resourceId && objectId == o.objectId && bytes == o.bytes;
+    }
+    bool operator!=(const SolidifiedResourceCopy& o) const noexcept { return !(*this == o); }
+};
+
+/**
  * @brief modeling 关节原点位姿值类型（T_parent_joint＝"joint 系相对
  *        parent 系"）。
  *
@@ -544,6 +564,10 @@ struct RobotDesign {
     std::vector<JointEntry> joints;
     /// 连杆链（links.size()==joints.size()+1——runtime StructureInvalid 同口径）。
     std::vector<LinkEntry> links;
+
+    /// F01：末关节变量之后到末连杆/法兰的固定段（m/rad），两态均保留；
+    /// DH 自身末静段由展开追加于本段之前，旧格式读回恒等。模型构建归 runtime。
+    rw::math::Transform3D<double> flangeOffset = rw::math::Transform3D<double>::identity();
 
     std::optional<TcpRef> defaultTcp;      ///< 默认 TCP（有 tools 时须已设置——KIN-14/I-MDL-9）
     std::vector<core::ObjectId> toolRefs;  ///< 工具引用表（指向 tool-definition 对象；无重复）

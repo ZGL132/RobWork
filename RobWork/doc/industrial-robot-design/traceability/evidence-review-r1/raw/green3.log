@@ -1,0 +1,44 @@
+Note: Google Test filter = EvidenceSliceBuilder.*:VerdictRegionCoverage.*:EvidenceCurrentness.BudgetChange*:CompatibilityCheckpoint.*
+[==========] Running 13 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from EvidenceSliceBuilder
+[ RUN      ] EvidenceSliceBuilder.FreezeRejections_EV_SLICE
+[       OK ] EvidenceSliceBuilder.FreezeRejections_EV_SLICE (0 ms)
+[ RUN      ] EvidenceSliceBuilder.NotAppliedEntryStaysInIdentity_EV_INV
+[       OK ] EvidenceSliceBuilder.NotAppliedEntryStaysInIdentity_EV_INV (0 ms)
+[----------] 2 tests from EvidenceSliceBuilder (0 ms total)
+
+[----------] 1 test from VerdictRegionCoverage
+[ RUN      ] VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3
+[       OK ] VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3 (0 ms)
+[----------] 1 test from VerdictRegionCoverage (0 ms total)
+
+[----------] 1 test from EvidenceCurrentness
+[ RUN      ] EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05
+[       OK ] EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05 (0 ms)
+[----------] 1 test from EvidenceCurrentness (0 ms total)
+
+[----------] 9 tests from CompatibilityCheckpoint
+[ RUN      ] CompatibilityCheckpoint.ContractVersionMismatch_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.ContractVersionMismatch_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.CheckpointIndependentOfTaskOutcome_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.CheckpointIndependentOfTaskOutcome_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.IntegrityNotVerifiedRejected_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.IntegrityNotVerifiedRejected_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.AlignedCheckpointIsResumeable_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.AlignedCheckpointIsResumeable_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.SliceMismatchRejected_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.SliceMismatchRejected_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.FormatVersionRangeBoundary_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.FormatVersionRangeBoundary_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.MultipleRejectionsCollectedInCheckOrder_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.MultipleRejectionsCollectedInCheckOrder_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.JudgmentIsDeterministic_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.JudgmentIsDeterministic_EV_CPA_3 (0 ms)
+[----------] 9 tests from CompatibilityCheckpoint (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 4 test suites ran. (0 ms total)
+[  PASSED  ] 13 tests.

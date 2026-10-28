@@ -301,8 +301,8 @@ public:
     /**
      * @brief 加载草稿（§5.4 tryLoad；PM-04 恢复/PM-15 横幅的数据面）。
      *
-     * 执行序：①.new 残留处置（存在即删除——§8.4"丢弃 .new、保留
-     * current/.bak 并报告"，删除事实经开发诊断通道）；②读 current：
+     * 执行序：①观察并忽略.new，读取不删除可能在途的保存文件；受权启动
+     * 清理或save/discard处置临时物（PM-07）；②读current：缺失也尝试.bak；
      * 不存在→nullopt（无草稿是常态不是错误）；③解析＋归属三元组校验
      * （projectId＝本上下文/branchId＝参数/moduleId＝参数——§4.4.5
      * "加载时与路径和 project.json 校验"，不一致＝DraftCorruptDetected）；

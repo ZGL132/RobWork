@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.03" timestamp="2026-10-27T20:18:33.237" name="AllTests">
+  <testsuite name="MdlGoldenDhEquivalence" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.03" timestamp="2026-10-27T20:18:33.237">
+    <testcase name="GoldenExpansionClosedForm_V11_WP13T16_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp" line="440" status="run" result="completed" time="0.001" timestamp="2026-10-27T20:18:33.238" classname="MdlGoldenDhEquivalence" />
+    <testcase name="GoldenRoundtripParameters_V11_WP13T16_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp" line="541" status="run" result="completed" time="0.012" timestamp="2026-10-27T20:18:33.239" classname="MdlGoldenDhEquivalence" />
+    <testcase name="GoldenFkEquivalence_V11_WP13T16_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp" line="623" status="run" result="completed" time="0.014" timestamp="2026-10-27T20:18:33.252" classname="MdlGoldenDhEquivalence" />
+    <testcase name="GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\GoldenDhEquivalenceTest.cpp" line="700" status="run" result="completed" time="0.001" timestamp="2026-10-27T20:18:33.267" classname="MdlGoldenDhEquivalence" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="54" failures="2" disabled="0" errors="0" time="0.745" timestamp="2026-10-27T20:55:54.340" name="AllTests">
+  <testsuite name="JsonRoundtrip" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-10-27T20:55:54.340">
+    <testcase name="DecimalParsingIgnoresNumericLocale_ReviewR07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="27" status="run" result="completed" time="0.004" timestamp="2026-10-27T20:55:54.340" classname="JsonRoundtrip" />
+    <testcase name="CanonicalTextRestored_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="62" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonRoundtrip" />
+    <testcase name="InsertionOrderStable_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="82" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonRoundtrip" />
+  </testsuite>
+  <testsuite name="JsonAccess" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.345">
+    <testcase name="KindDiscriminatorsAndFind_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="93" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonAccess" />
+  </testsuite>
+  <testsuite name="JsonRejections" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.345">
+    <testcase name="RejectionMatrix_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="116" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonRejections" />
+    <testcase name="GrammarViolations_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="131" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonRejections" />
+  </testsuite>
+  <testsuite name="JsonErrorLocation" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.345">
+    <testcase name="LineColumnPrecision_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="148" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonErrorLocation" />
+  </testsuite>
+  <testsuite name="JsonUnicode" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.345">
+    <testcase name="EscapesToUtf8_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="156" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonUnicode" />
+  </testsuite>
+  <testsuite name="JsonBoundary" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.345">
+    <testcase name="DumpOutputReparseable_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="170" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.345" classname="JsonBoundary" />
+  </testsuite>
+  <testsuite name="DatasetManifest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.035" timestamp="2026-10-27T20:55:54.345">
+    <testcase name="FullFieldLoad_UT_MAN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="175" status="run" result="completed" time="0.025" timestamp="2026-10-27T20:55:54.345" classname="DatasetManifest" />
+    <testcase name="OptionalParametersHaveObjectDefault_ReviewF015" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="190" status="run" result="completed" time="0.01" timestamp="2026-10-27T20:55:54.370" classname="DatasetManifest" />
+  </testsuite>
+  <testsuite name="DatasetIntegrity" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.05" timestamp="2026-10-27T20:55:54.381">
+    <testcase name="GeneratorCoverageRequired_ReviewF017" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="207" status="run" result="completed" time="0.011" timestamp="2026-10-27T20:55:54.381" classname="DatasetIntegrity" />
+    <testcase name="TamperAndSizeMismatch_UT_INT" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="312" status="run" result="completed" time="0.038" timestamp="2026-10-27T20:55:54.393" classname="DatasetIntegrity" />
+  </testsuite>
+  <testsuite name="DatasetRejections" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.119" timestamp="2026-10-27T20:55:54.431">
+    <testcase name="IntegerFieldsRejectFractionsAndRange_ReviewF018" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="226" status="run" result="completed" time="0.027" timestamp="2026-10-27T20:55:54.431" classname="DatasetRejections" />
+    <testcase name="RejectionMatrixWithFieldPaths_UT_MAN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="250" status="run" result="completed" time="0.091" timestamp="2026-10-27T20:55:54.459" classname="DatasetRejections" />
+  </testsuite>
+  <testsuite name="DatasetLint" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.021" timestamp="2026-10-27T20:55:54.551">
+    <testcase name="DatasetIdDirMismatch_UT_MAN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="343" status="run" result="completed" time="0.021" timestamp="2026-10-27T20:55:54.551" classname="DatasetLint" />
+  </testsuite>
+  <testsuite name="ToleranceProfileLoad" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.068" timestamp="2026-10-27T20:55:54.572">
+    <testcase name="SampleProfileResolveThreeStates_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="61" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.572" classname="ToleranceProfileLoad" />
+    <testcase name="SchemaRequiredAndVersionChecked_ReviewR05" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="90" status="run" result="completed" time="0.005" timestamp="2026-10-27T20:55:54.573" classname="ToleranceProfileLoad" />
+    <testcase name="DeclaredExceedingAllowedMaxRejected_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="112" status="run" result="completed" time="0.01" timestamp="2026-10-27T20:55:54.579" classname="ToleranceProfileLoad" />
+    <testcase name="FixedRequiresAllowedMax_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="142" status="run" result="completed" time="0.016" timestamp="2026-10-27T20:55:54.589" classname="ToleranceProfileLoad" />
+    <testcase name="SourceWhitelistAndKindMismatch_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="175" status="run" result="completed" time="0.035" timestamp="2026-10-27T20:55:54.605" classname="ToleranceProfileLoad" />
+  </testsuite>
+  <testsuite name="ToleranceProfileC7" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.641">
+    <testcase name="CrossCheckWithCore_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="163" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.641" classname="ToleranceProfileC7" />
+  </testsuite>
+  <testsuite name="AssertMacrosBehavior" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.641">
+    <testcase name="MacroExpansionWorks_UT_CMP" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="122" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.641" classname="AssertMacrosBehavior" />
+    <testcase name="FiniteEvaluatesExactlyOnce_ReviewR02" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="134" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="AssertMacrosBehavior" />
+  </testsuite>
+  <testsuite name="SetEquivalent" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.642">
+    <testcase name="OrderIndependentEquivalent_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="66" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetEquivalent" />
+    <testcase name="IdentityValueMismatchLocated_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="80" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetEquivalent" />
+    <testcase name="IdentifiedElementsNeverFallBackToNumerics_ReviewR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetEquivalent" />
+  </testsuite>
+  <testsuite name="StableOrder" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.642">
+    <testcase name="ShorterSequenceReportsEarliestDivergence_ReviewR11" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="112" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="StableOrder" />
+    <testcase name="SameOrderAndFirstDivergence_UT_ORD" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="179" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="StableOrder" />
+  </testsuite>
+  <testsuite name="SetDuplicates" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.642">
+    <testcase name="ActualDuplicateIdentity_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="127" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetDuplicates" />
+    <testcase name="ExpectedDuplicateThrows_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="139" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetDuplicates" />
+  </testsuite>
+  <testsuite name="SetNumeric" tests="8" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:54.642">
+    <testcase name="NumericOnlyMatching_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="149" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+    <testcase name="PairwiseSlipperyCaseStillMatches_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="167" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+    <testcase name="AmbiguityProbeRequiresAlternativePartner_F594" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="219" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+    <testcase name="TrueAmbiguityStillDetected_F594" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="234" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+    <testcase name="GreedyTrapAugmented_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="446" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+    <testcase name="MultiSolutionWitnessDeterministic_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="465" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+    <testcase name="ToleranceCacheIsAssertionLocal_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="484" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+    <testcase name="ToleranceResolutionRemainsLazy_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="500" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.642" classname="SetNumeric" />
+  </testsuite>
+  <testsuite name="SetGuard" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-27T20:55:54.642">
+    <testcase name="ScaleLimitThrows_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="200" status="run" result="completed" time="0.001" timestamp="2026-10-27T20:55:54.642" classname="SetGuard" />
+  </testsuite>
+  <testsuite name="SetMatchCore" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.116" timestamp="2026-10-27T20:55:54.644">
+    <testcase name="ExhaustiveBruteForceAgreement_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="322" status="run" result="completed" time="0.002" timestamp="2026-10-27T20:55:54.644" classname="SetMatchCore" />
+    <testcase name="GridFamilyTemplateSemantics_UT_SET" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="387" status="run" result="completed" time="0.113" timestamp="2026-10-27T20:55:54.646" classname="SetMatchCore" />
+  </testsuite>
+  <testsuite name="ReproBenchmark" tests="5" failures="1" disabled="0" skipped="0" errors="0" time="0.016" timestamp="2026-10-27T20:55:54.760">
+    <testcase name="ThreeLegsEquivalentPassMeasured_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="152" status="run" result="completed" time="0.001" timestamp="2026-10-27T20:55:54.760" classname="ReproBenchmark" />
+    <testcase name="ValueShiftDetectedAsSetViolation_WP23T09_ACC2" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="190" status="run" result="completed" time="0.001" timestamp="2026-10-27T20:55:54.761" classname="ReproBenchmark">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:205&#x0A;Expected equality of these values:&#x0A;  v.missingExpected&#x0A;    Which is: 1&#x0A;  2U&#x0A;    Which is: 2&#x0A;rerun&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:205
+Expected equality of these values:
+  v.missingExpected
+    Which is: 1
+  2U
+    Which is: 2
+rerun
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:206&#x0A;Expected equality of these values:&#x0A;  v.extraActual&#x0A;    Which is: 1&#x0A;  2U&#x0A;    Which is: 2&#x0A;rerun&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:206
+Expected equality of these values:
+  v.extraActual
+    Which is: 1
+  2U
+    Which is: 2
+rerun
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:205&#x0A;Expected equality of these values:&#x0A;  v.missingExpected&#x0A;    Which is: 1&#x0A;  2U&#x0A;    Which is: 2&#x0A;threads-4&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:205
+Expected equality of these values:
+  v.missingExpected
+    Which is: 1
+  2U
+    Which is: 2
+threads-4
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:206&#x0A;Expected equality of these values:&#x0A;  v.extraActual&#x0A;    Which is: 1&#x0A;  2U&#x0A;    Which is: 2&#x0A;threads-4&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp:206
+Expected equality of these values:
+  v.extraActual
+    Which is: 1
+  2U
+    Which is: 2
+threads-4
+]]></failure>
+    </testcase>
+    <testcase name="SwapDetectedAsOrderViolation_WP23T09_ACC3" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="214" status="run" result="completed" time="0.001" timestamp="2026-10-27T20:55:54.762" classname="ReproBenchmark" />
+    <testcase name="ReportJsonRoundtrip_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="240" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.764" classname="ReproBenchmark" />
+    <testcase name="ReportFileWriteRoundtrip_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="264" status="run" result="completed" time="0.012" timestamp="2026-10-27T20:55:54.764" classname="ReproBenchmark" />
+  </testsuite>
+  <testsuite name="PerfBenchmark" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.084" timestamp="2026-10-27T20:55:54.776">
+    <testcase name="NonFinitePercentileRejected_ReviewR12" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\PerfBenchmarkTest.cpp" line="44" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.776" classname="PerfBenchmark" />
+    <testcase name="P95LinearInterpolationKnownVectors_WP23T02_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\PerfBenchmarkTest.cpp" line="67" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.776" classname="PerfBenchmark" />
+    <testcase name="WarmupExcludedAndInvalidSamplesTraced_WP23T02_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\PerfBenchmarkTest.cpp" line="105" status="run" result="completed" time="0.063" timestamp="2026-10-27T20:55:54.776" classname="PerfBenchmark" />
+    <testcase name="SessionReportJsonRoundtrip_WP23T02_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\PerfBenchmarkTest.cpp" line="157" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:54.840" classname="PerfBenchmark" />
+    <testcase name="SessionReportFileWriteRoundtrip_WP23T02_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\PerfBenchmarkTest.cpp" line="237" status="run" result="completed" time="0.02" timestamp="2026-10-27T20:55:54.840" classname="PerfBenchmark" />
+  </testsuite>
+  <testsuite name="ProcessRunnerStart" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.019" timestamp="2026-10-27T20:55:54.861">
+    <testcase name="EnvOverrideIsCaseInsensitive_ReviewR08" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp" line="254" status="run" result="completed" time="0.019" timestamp="2026-10-27T20:55:54.861" classname="ProcessRunnerStart" />
+  </testsuite>
+  <testsuite name="TestdataLint" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.205" timestamp="2026-10-27T20:55:54.881">
+    <testcase name="LoadsProfileAndValidatesAtDictionary_ReviewR09" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp" line="277" status="run" result="completed" time="0.205" timestamp="2026-10-27T20:55:54.881" classname="TestdataLint">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:297&#x0A;Expected equality of these values:&#x0A;  result.kind&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  ProcessExitKind::Exited&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:297
+Expected equality of these values:
+  result.kind
+    Which is: 4-byte object <01-00 00-00>
+  ProcessExitKind::Exited
+    Which is: 4-byte object <00-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:302&#x0A;Expected equality of these values:&#x0A;  run()&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:302
+Expected equality of these values:
+  run()
+    Which is: 0
+  1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:297&#x0A;Expected equality of these values:&#x0A;  result.kind&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  ProcessExitKind::Exited&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:297
+Expected equality of these values:
+  result.kind
+    Which is: 4-byte object <01-00 00-00>
+  ProcessExitKind::Exited
+    Which is: 4-byte object <00-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:312&#x0A;Expected equality of these values:&#x0A;  run()&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:312
+Expected equality of these values:
+  run()
+    Which is: 0
+  1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:297&#x0A;Expected equality of these values:&#x0A;  result.kind&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  ProcessExitKind::Exited&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:297
+Expected equality of these values:
+  result.kind
+    Which is: 4-byte object <01-00 00-00>
+  ProcessExitKind::Exited
+    Which is: 4-byte object <00-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:314&#x0A;Expected equality of these values:&#x0A;  run()&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp:314
+Expected equality of these values:
+  run()
+    Which is: 0
+  1
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

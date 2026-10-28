@@ -1,0 +1,6 @@
+PASS lint-default-dict 0
+PASS lint-missing-profile 1
+PASS lint-unknown-at 1
+PASS lint-optional-parameters 0
+PASS lint-malformed-dictionary 1
+PASS lint-missing-root 2

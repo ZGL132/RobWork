@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T21",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "运动学面板启动崩溃修复——refreshVisualization 快照空态判定前置（宿主未绑定委托消费收敛）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": ["WP-15-T20"],
+  "requirements": ["KIN-07", "NFR-COR-01"],
+  "designRefs": ["units/kinematics.md#9", "units/diagnostics.md#7.6", "reuse/migration.md#13"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/doc/industrial-robot-design/reuse/changes/WP-15-T21.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-15-T21.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/WP-15-T21/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "vcpkg/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "verify": [
+    "cmake --build build --config Release（增量：sdurws_ird_kinematics 库＋sdurws_ird_studio＋gui 测试重链，0 错误）",
+    "真机启动 build/RobWorkStudio/bin/Release/sdurws_ird_studio.exe（QT_QPA_PLATFORM=windows）：主窗口呈现＋六域装配报告全绿＋UIA 菜单/面板操作无崩溃",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_gui_test.exe（34/48＝与未修复基线一致，14 失败为既有 TestAnchor 值面替身夹具问题，本包零回归）",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe 与 sdurws_ird_dynamics_gui_test.exe（全绿）",
+    "cmake --build build --config Release --target ird_gates（本包零新增命中；SA02 全局 2 命中＝RC-04/REUSE-T55 0004 LM 补丁登记在途项，与本包无关）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1（本包逐文件凭证 Digest 口径同步）"
+  ],
+  "outputs": [
+    "根因栈证据（Python 调试循环＋RelWithDebInfo PDB 符号化）：KinSessionModelView::worldToBase()（KinEvaluationChannel.hpp:129）m_delegate 未绑定空指针虚分派；调用链＝KinematicsPanelWidget 构造→refreshAll(:723)→refreshVisualization(:1934) 于 :1936 快照空态判定之前取世界变换",
+    "修复：refreshVisualization 的 worldTbase 取值移入 m_session.lastWorkspaceRun 分支与 batchRender 非空分支就地取值（快照在场⇒委托已绑定），构造期无快照路径不再触碰未绑定委托——与既有空态判定惯例（refreshWsSummary:1542/refreshWsProjectionCanvas:1801）同口径，缝契约注释『快照缺位不取模型』兑现",
+    "证据留痕：traceability/reuse/WP-15-T21/（崩溃栈日志、修复前后启动装配报告、GUI 测试日志/XML、UIA 界面操作记录）"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "根因正确性：崩溃栈（first-chance AV READ target=0x0，RCX=0）符号化指向 worldToBase 未绑定委托虚分派，栈帧链完整（ctor:191→refreshAll:723→refreshVisualization:1934）；修复后真机三次启动零崩溃（修复前 4/4 必崩）",
+    "零回归：kinematics_gui_test 修复树与 stash 基线逐项一致（同 14 失败清单，全部＝TestAnchor 无编译产物 WorkCell 夹具异常，WP-15-T20 审核批 2026-10-21 之后引入的既有问题，本包不扩范围）；ui/dynamics gui_test 全绿",
+    "缝契约语义零弱化：KinEvaluationChannel.hpp 零改动（未绑定调用＝装配缺陷的 fail-fast 契约注释原样保留）；修复落在消费方空态判定顺序，与 FIX-PANEL『修消费方不弱化登记面』同纪律",
+    "治理同步：functions/kinematics.json 两处 Digest 按 reuse-contract.ps1 口径（BOM/CRLF/尾换行归一）重算同步＋endLine 随 +7 行平移；validate-reuse 全量机器核查通过",
+    "独立验收按 §6.4 由所有者另行执行；实施提交不等于独验通过"
+  ],
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/WP-15-T21.json"
+  },
+  "note": "2026-10-28 所有者『全量编译运行软件，对软件界面进行操作，验证功能』任务中发现启动崩溃（2026-10-24 起每次必崩，2026-10-17 会话记录正常——回归窗口与 WP-15-T20 引入 worldToBase 消费吻合）；同会话实施修复并完成真机 GUI 验证。主工作树 redesign-main 串行，起始 SHA=70660c5b2。桌面锁定环境下物理交互受限，UI 操作经 UIA 编程通道完成（菜单枚举/六域面板开关/恢复默认布局），剪贴板类测试失败为锁定桌面 COM 0x800401d0 环境性失败（F-456 同族口径）。遗留（本包不扩范围）：kinematics_gui_test 14 项 TestAnchor 夹具失败（WP-15-T20 后新增用例夹具未接真锚）、requirements/modeling 剪贴板 7 项待解锁桌面复跑定性。"
+}

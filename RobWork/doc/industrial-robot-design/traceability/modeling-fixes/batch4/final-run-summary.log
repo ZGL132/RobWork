@@ -1,0 +1,34 @@
+unit exit=0
+[----------] 4 tests from MdlGoldenDhEquivalence (18 ms total)
+
+[----------] 1 test from LinAlgeTest
+[ RUN      ] LinAlgeTest.LinearAlgebraTest
+[       OK ] LinAlgeTest.LinearAlgebraTest (0 ms)
+[----------] 1 test from LinAlgeTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 493 tests from 61 test suites ran. (685 ms total)
+[  PASSED  ] 493 tests.
+contract exit=0
+[       OK ] MdlGoldenPeerContract.IoPeerImportPipelineMissingLeafContract_WP13T16_ACC5 (1 ms)
+[ RUN      ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5 (0 ms)
+[ RUN      ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5 (1 ms)
+[----------] 3 tests from MdlGoldenPeerContract (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 17 tests from 5 test suites ran. (36 ms total)
+[  PASSED  ] 17 tests.
+ui exit=1
+[       OK ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21 (2233 ms)
+[----------] 22 tests from HostCompilePipelineTest (2281 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 1 test suite ran. (2281 ms total)
+[  PASSED  ] 21 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostCompilePipelineTest.NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15
+
+ 1 FAILED TEST
+behaviorExit=0; headerSyntaxExit=0（当前缺陷版本分别预期 1、2）

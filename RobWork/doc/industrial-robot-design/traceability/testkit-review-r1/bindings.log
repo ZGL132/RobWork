@@ -1,0 +1,1468 @@
+{
+  "changedSources": 27,
+  "addedRegions": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "start": 1,
+      "end": 50,
+      "symbol": "struct CompareDetail {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "start": 51,
+      "end": 58,
+      "symbol": "struct CheckResult {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "start": 59,
+      "end": 73,
+      "symbol": "CheckResult checkCloseWithin(std::string_view fieldPath, double actualSi,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "start": 74,
+      "end": 86,
+      "symbol": "CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "start": 87,
+      "end": 95,
+      "symbol": "CheckResult checkAtMost(std::string_view fieldPath, double actualSi, double boundSi,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "start": 96,
+      "end": 100,
+      "symbol": "CheckResult checkIdentical(std::string_view fieldPath, std::string_view actual,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+      "start": 101,
+      "end": 108,
+      "symbol": "CheckResult checkIdentical(std::string_view fieldPath, std::int64_t actual,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+      "start": 1,
+      "end": 66,
+      "symbol": "class JsonNumber {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+      "start": 67,
+      "end": 117,
+      "symbol": "struct JsonValue {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+      "start": 118,
+      "end": 132,
+      "symbol": "JsonValue parseJson(std::string_view text);"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+      "start": 133,
+      "end": 153,
+      "symbol": "std::string dumpJson(const JsonValue& value, bool pretty);"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 1,
+      "end": 110,
+      "symbol": "inline double percentileLinearInterpolated(const std::vector<double>& samples,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 111,
+      "end": 122,
+      "symbol": "inline const char* p95ConventionToken() noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 123,
+      "end": 136,
+      "symbol": "struct InteractionSample {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 137,
+      "end": 149,
+      "symbol": "struct InteractionGroupSpec {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 150,
+      "end": 196,
+      "symbol": "struct InteractionGroupReport {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 197,
+      "end": 283,
+      "symbol": "InteractionGroupReport runInteractionGroup(const InteractionGroupSpec& spec,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 284,
+      "end": 299,
+      "symbol": "struct PerfThresholdVerdict {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 300,
+      "end": 312,
+      "symbol": "inline JsonValue perfJsonStr(std::string s)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 313,
+      "end": 321,
+      "symbol": "inline JsonValue perfJsonNum(double d)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 322,
+      "end": 331,
+      "symbol": "inline JsonValue perfJsonBool(bool b)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 332,
+      "end": 345,
+      "symbol": "perfReportDirFromEnv"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 346,
+      "end": 375,
+      "symbol": "inline JsonValue interactionGroupToJson(const InteractionGroupReport& g)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 376,
+      "end": 406,
+      "symbol": "struct PerfSessionReport {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 407,
+      "end": 474,
+      "symbol": "inline std::string perfReportToJson(const PerfSessionReport& r)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "start": 475,
+      "end": 498,
+      "symbol": "inline bool writePerfReportJson(const std::filesystem::path& dir,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 1,
+      "end": 76,
+      "symbol": "struct ReproLegMeasurement {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 77,
+      "end": 91,
+      "symbol": "struct ReproLegVerdict {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 92,
+      "end": 121,
+      "symbol": "struct ReproCaseReport {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 122,
+      "end": 134,
+      "symbol": "inline JsonValue jsonStr(std::string s)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 135,
+      "end": 143,
+      "symbol": "inline JsonValue jsonNum(double d)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 144,
+      "end": 153,
+      "symbol": "inline JsonValue jsonBool(bool b)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 154,
+      "end": 171,
+      "symbol": "reproReportDirFromEnv"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 172,
+      "end": 245,
+      "symbol": "inline std::string reproReportToJson(const ReproCaseReport& r)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 246,
+      "end": 265,
+      "symbol": "inline bool writeReproReportJson(const std::filesystem::path& dir,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 266,
+      "end": 310,
+      "symbol": "struct ReproCaseSpec {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "start": 311,
+      "end": 419,
+      "symbol": "ReproCaseReport runReproCase(const ReproCaseSpec& spec,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "start": 1,
+      "end": 46,
+      "symbol": "#define IRD_CHECK_REPORT_(resultExpr)                                                  \\"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "start": 47,
+      "end": 52,
+      "symbol": "#define IRD_EXPECT_CLOSE(fieldPath, actualSi, referenceSi, profile, unitToken)         \\"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "start": 53,
+      "end": 59,
+      "symbol": "#define IRD_EXPECT_ALL_CLOSE(fieldPathTemplate, actualVecSi, referenceVecSi,           \\"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "start": 60,
+      "end": 63,
+      "symbol": "#define IRD_EXPECT_AT_MOST(fieldPath, actualSi, boundSi, unit)                         \\"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "start": 64,
+      "end": 67,
+      "symbol": "#define IRD_EXPECT_IDENTICAL(fieldPath, actualText, expectedText)                      \\"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "start": 68,
+      "end": 76,
+      "symbol": "#define IRD_EXPECT_FINITE(fieldPath, value)                                            \\"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "start": 77,
+      "end": 88,
+      "symbol": "#define IRD_TEST_INFO(...)                                                             \\"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "start": 1,
+      "end": 23,
+      "symbol": "bool nonFinite(double v) noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "start": 24,
+      "end": 43,
+      "symbol": "CompareDetail makeDetail(std::string fieldPath, bool hasElement, std::size_t index,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "start": 141,
+      "end": 155,
+      "symbol": "CheckResult checkIdentical(std::string_view fieldPath, std::int64_t actual,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 1,
+      "end": 32,
+      "symbol": "[[noreturn]] void failField(const std::string& fieldPath, const std::string& reason)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 33,
+      "end": 41,
+      "symbol": "std::uint64_t requireUnsigned(const JsonValue* v, const std::string& path)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 42,
+      "end": 53,
+      "symbol": "std::string requireString(const JsonValue& obj, const std::string& key,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 58,
+      "end": 77,
+      "symbol": "std::vector<std::string> requireStringArray(const JsonValue& obj, const std::string& key,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 78,
+      "end": 87,
+      "symbol": "bool requireBool(const JsonValue& obj, const std::string& key)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 88,
+      "end": 95,
+      "symbol": "bool allCharsIn(std::string_view s, const std::string& allowed)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 96,
+      "end": 108,
+      "symbol": "std::string readFileBytes(const std::filesystem::path& p)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 109,
+      "end": 126,
+      "symbol": "std::string sha256HexOf(const std::string& bytes)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 127,
+      "end": 140,
+      "symbol": "const char* toToken(DatasetKind k) noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "start": 527,
+      "end": 537,
+      "symbol": "std::filesystem::path GoldenDataset::resolveExpected(std::string_view relPath) const"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 1,
+      "end": 42,
+      "symbol": "int currentPid()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 43,
+      "end": 52,
+      "symbol": "std::string randomSuffix()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 53,
+      "end": 64,
+      "symbol": "bool tagSyntaxOk(std::string_view tag)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 65,
+      "end": 100,
+      "symbol": "JsonValue reproToJsonValue(const ReproRecord& r)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 101,
+      "end": 112,
+      "symbol": "const JsonValue& requireField(const JsonValue& obj, const char* key,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 113,
+      "end": 125,
+      "symbol": "std::uint64_t requireIntegral(const JsonValue& obj, const char* key)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 126,
+      "end": 156,
+      "symbol": "TempDir::TempDir(std::string_view tag)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 157,
+      "end": 175,
+      "symbol": "TempDir::~TempDir()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 176,
+      "end": 177,
+      "symbol": "const std::filesystem::path& TempDir::path() const noexcept { return path_; }"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 178,
+      "end": 179,
+      "symbol": "void TempDir::keepOnFailure(bool keep) noexcept { keepOnFailure_ = keep; }"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 180,
+      "end": 180,
+      "symbol": "void TempDir::noteTestFailure(bool failed) noexcept { testFailed_ = failed; }"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 181,
+      "end": 192,
+      "symbol": "bool ReproRecord::operator==(const ReproRecord& o) const noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 193,
+      "end": 198,
+      "symbol": "std::string ReproRecord::toJson() const"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 199,
+      "end": 227,
+      "symbol": "ReproRecord ReproRecord::fromJson(std::string_view text)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 228,
+      "end": 232,
+      "symbol": "DeterministicEnv::DeterministicEnv(ReproRecord r) noexcept : record_(std::move(r)) {}"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Fixture.cpp",
+      "start": 233,
+      "end": 235,
+      "symbol": "const ReproRecord& DeterministicEnv::record() const noexcept { return record_; }"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 1,
+      "end": 42,
+      "symbol": "double parseDecimal(const std::string& token)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 43,
+      "end": 65,
+      "symbol": "struct NumericLocale {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 66,
+      "end": 73,
+      "symbol": "class Parser {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 79,
+      "end": 99,
+      "symbol": "JsonValue run()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 100,
+      "end": 101,
+      "symbol": "bool eof() const noexcept { return pos_ >= text_.size(); }"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 109,
+      "end": 126,
+      "symbol": "void skipWs()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 127,
+      "end": 135,
+      "symbol": "void expect(char c, const char* what)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 136,
+      "end": 144,
+      "symbol": "[[noreturn]] void fail(std::string reason) const"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 145,
+      "end": 184,
+      "symbol": "JsonValue parseValue(std::size_t depth)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 185,
+      "end": 195,
+      "symbol": "void expectLiteral(const char* lit)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 196,
+      "end": 250,
+      "symbol": "JsonValue parseObject(std::size_t depth)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 251,
+      "end": 287,
+      "symbol": "JsonValue parseArray(std::size_t depth)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 288,
+      "end": 330,
+      "symbol": "std::string parseString()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 331,
+      "end": 353,
+      "symbol": "std::string parseUnicodeEscape()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 370,
+      "end": 391,
+      "symbol": "static std::string utf8Encode(unsigned cp)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 392,
+      "end": 462,
+      "symbol": "JsonValue parseNumber()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 463,
+      "end": 492,
+      "symbol": "void dumpEscaped(const std::string& s, std::string* out)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 493,
+      "end": 508,
+      "symbol": "void dumpNumber(const JsonNumber& v, std::string* out)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 509,
+      "end": 515,
+      "symbol": "void dumpValue(const JsonValue& v, std::string* out)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 517,
+      "end": 541,
+      "symbol": "case JsonValue::Kind::String: dumpEscaped(v.text, out); break;"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 542,
+      "end": 555,
+      "symbol": "const JsonValue* JsonValue::find(std::string_view key) const noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 556,
+      "end": 563,
+      "symbol": "JsonNumber::operator double() const noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 564,
+      "end": 569,
+      "symbol": "std::optional<std::uint64_t> JsonNumber::exactUnsigned() const noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 570,
+      "end": 580,
+      "symbol": "std::optional<std::uint64_t> JsonNumber::tryUnsigned() const noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "start": 676,
+      "end": 680,
+      "symbol": "P::go(value, 0, &out);"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 1,
+      "end": 136,
+      "symbol": "std::wstring quoteWindowsArg(const std::wstring& arg)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 137,
+      "end": 158,
+      "symbol": "DWORD toWin32Wait(std::chrono::milliseconds ms) noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 159,
+      "end": 191,
+      "symbol": "std::wstring utf8ToWide(const std::string& s)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 192,
+      "end": 255,
+      "symbol": "std::wstring buildEnvironmentBlock(const std::map<std::string, std::string>& overrides)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 256,
+      "end": 304,
+      "symbol": "struct TestProcessRunner::Impl"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 305,
+      "end": 436,
+      "symbol": "void TestProcessRunner::start(const ProcessSpec& spec, std::filesystem::path workingDir)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 437,
+      "end": 543,
+      "symbol": "ProcessOutcome TestProcessRunner::outcome()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 544,
+      "end": 574,
+      "symbol": "void TestProcessRunner::kill()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 575,
+      "end": 601,
+      "symbol": "TestProcessRunner::~TestProcessRunner()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 602,
+      "end": 632,
+      "symbol": "bool EventWatch::awaitFile(const std::filesystem::path& marker,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "start": 633,
+      "end": 677,
+      "symbol": "bool EventWatch::awaitLineInFile(const std::filesystem::path& log,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Report.cpp",
+      "start": 49,
+      "end": 55,
+      "symbol": "JsonValue comparisonNumber(double value)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 1,
+      "end": 37,
+      "symbol": "std::string requireString(const JsonValue& obj, const std::string& key,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 38,
+      "end": 45,
+      "symbol": "std::string requireString2(const JsonValue& obj, const std::string& key)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 46,
+      "end": 54,
+      "symbol": "bool allCharsIn(std::string_view s, const std::string& allowed)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 55,
+      "end": 68,
+      "symbol": "core::Tolerance parseTolerance(const JsonValue& obj, const std::string& pathPrefix)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 69,
+      "end": 77,
+      "symbol": "std::optional<core::Tolerance> parseOptionalTolerance(const JsonValue& obj,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 78,
+      "end": 83,
+      "symbol": "bool toleranceLeq(const core::Tolerance& a, const core::Tolerance& b) noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 84,
+      "end": 106,
+      "symbol": "std::optional<core::QuantityKind> kindFromToken(std::string_view token) noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 107,
+      "end": 117,
+      "symbol": "const char* toToken(ToleranceSource s) noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 118,
+      "end": 126,
+      "symbol": "std::optional<ToleranceSource> toleranceSourceFromToken(std::string_view token) noexcept"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 127,
+      "end": 243,
+      "symbol": "ToleranceProfile ToleranceProfile::load(const std::filesystem::path& profileVersionJson)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ToleranceProfile.cpp",
+      "start": 244,
+      "end": 286,
+      "symbol": "const ToleranceEntry& ToleranceProfile::resolve(std::string_view concreteFieldPath) const"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 1,
+      "end": 53,
+      "symbol": "TEST(CheckClose, DelegatesToCoreC4Formula_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 54,
+      "end": 62,
+      "symbol": "TEST(CheckClose, NonFiniteFails_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 63,
+      "end": 76,
+      "symbol": "TEST(AllCloseWithin, ElementWiseNotSummed_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 77,
+      "end": 89,
+      "symbol": "TEST(AllCloseWithin, LengthMismatchListed_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 90,
+      "end": 98,
+      "symbol": "TEST(AllCloseWithin, BothEmptyPasses_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 99,
+      "end": 109,
+      "symbol": "TEST(CheckAtMost, BoundAndUnitValidation_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 110,
+      "end": 120,
+      "symbol": "TEST(CheckIdentical, ExactEqualityBothOverloads_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 121,
+      "end": 132,
+      "symbol": "TEST(AssertMacrosBehavior, MacroExpansionWorks_UT_CMP)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+      "start": 133,
+      "end": 147,
+      "symbol": "TEST(AssertMacrosBehavior, FiniteEvaluatesExactlyOnce_ReviewR02)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 1,
+      "end": 47,
+      "symbol": "std::string sha256HexOf(const std::string& bytes)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 48,
+      "end": 83,
+      "symbol": "class FixtureRoot {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 84,
+      "end": 128,
+      "symbol": "std::string validManifest()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 129,
+      "end": 159,
+      "symbol": "void writeDataset(const fs::path& root, const std::string& id,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 160,
+      "end": 174,
+      "symbol": "void expectReject(const std::string& id, const std::string& version,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 175,
+      "end": 189,
+      "symbol": "TEST(DatasetManifest, FullFieldLoad_UT_MAN)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 190,
+      "end": 206,
+      "symbol": "TEST(DatasetManifest, OptionalParametersHaveObjectDefault_ReviewF015)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 207,
+      "end": 225,
+      "symbol": "TEST(DatasetIntegrity, GeneratorCoverageRequired_ReviewF017)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 226,
+      "end": 252,
+      "symbol": "TEST(DatasetRejections, IntegerFieldsRejectFractionsAndRange_ReviewF018)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 253,
+      "end": 316,
+      "symbol": "TEST(DatasetRejections, RejectionMatrixWithFieldPaths_UT_MAN)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 317,
+      "end": 347,
+      "symbol": "TEST(DatasetIntegrity, TamperAndSizeMismatch_UT_INT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+      "start": 348,
+      "end": 361,
+      "symbol": "TEST(DatasetLint, DatasetIdDirMismatch_UT_MAN)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 1,
+      "end": 56,
+      "symbol": "TEST(ReproRecordReview, ExactSeedRoundtrip_ReviewR06)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 57,
+      "end": 82,
+      "symbol": "TEST(ReproRecordReview, RejectsInvalidIntegerFields_ReviewR06)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 83,
+      "end": 97,
+      "symbol": "std::string sha256HexOf(const std::string& bytes)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 98,
+      "end": 134,
+      "symbol": "class EnvRedirectRoot {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 135,
+      "end": 180,
+      "symbol": "std::string validManifest()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 181,
+      "end": 211,
+      "symbol": "void writeDataset(const fs::path& root)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 212,
+      "end": 221,
+      "symbol": "void copyKinFkProfile(const fs::path& root)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 222,
+      "end": 235,
+      "symbol": "struct SixStepEnv {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 236,
+      "end": 240,
+      "symbol": "SixStepEnv& sixStepEnv()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 241,
+      "end": 252,
+      "symbol": "class DemoFixture : public GoldenFixture {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 253,
+      "end": 267,
+      "symbol": "TEST(TempDirLife, ExistsOnConstructGoneOnDestruct_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 268,
+      "end": 275,
+      "symbol": "TEST(TempDirLife, TagSyntaxRejected_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 276,
+      "end": 305,
+      "symbol": "TEST(TempDirLife, ParallelIsolation_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 306,
+      "end": 321,
+      "symbol": "TEST(TempDirKeep, KeepsSceneOnFailureSignal_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 322,
+      "end": 334,
+      "symbol": "TEST(TempDirKeep, DisabledRemovesEvenOnFailure_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 335,
+      "end": 345,
+      "symbol": "TEST(TempDirKeep, NoSignalRemovesByDefault_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 346,
+      "end": 375,
+      "symbol": "TEST(TempDirKeep, DeletionFailureWarnsNotThrows_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 376,
+      "end": 386,
+      "symbol": "TEST(ReproRecordData, DefaultsMatchDesign_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 387,
+      "end": 411,
+      "symbol": "TEST(ReproRecordData, JsonRoundTrip_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 412,
+      "end": 441,
+      "symbol": "TEST(ReproRecordData, FromJsonRejectsInvalid_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 442,
+      "end": 456,
+      "symbol": "TEST(DeterministicEnvData, RecordIsSoleSource_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 457,
+      "end": 479,
+      "symbol": "TEST_F(DemoFixture, SixStepLifecycle_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 480,
+      "end": 483,
+      "symbol": "class PureFixture : public GoldenFixture {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/FixtureTest.cpp",
+      "start": 484,
+      "end": 493,
+      "symbol": "TEST_F(PureFixture, SkipsAssetStepsWhenNoDataset_UT_FIX)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 1,
+      "end": 40,
+      "symbol": "TEST(JsonRoundtrip, DecimalParsingIgnoresNumericLocale_ReviewR07)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 41,
+      "end": 52,
+      "symbol": "TEST(JsonRoundtrip, DecimalRangeAndSignedZeroPreserved_ReviewR07)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 53,
+      "end": 62,
+      "symbol": "TEST(JsonRoundtrip, UnsignedIntegerTextIsExact_ReviewR06)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 63,
+      "end": 82,
+      "symbol": "TEST(JsonAccess, ExactIntegerEqualityAndReplacement_ReviewR06)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 83,
+      "end": 95,
+      "symbol": "TEST(JsonRejections, DumpRejectsNonFiniteNumbers_ReviewR03)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 96,
+      "end": 118,
+      "symbol": "void expectParseFail(const std::string& text, const std::string& lineCol,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 119,
+      "end": 138,
+      "symbol": "TEST(JsonRoundtrip, CanonicalTextRestored_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 139,
+      "end": 149,
+      "symbol": "TEST(JsonRoundtrip, InsertionOrderStable_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 150,
+      "end": 172,
+      "symbol": "TEST(JsonAccess, KindDiscriminatorsAndFind_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 173,
+      "end": 187,
+      "symbol": "TEST(JsonRejections, RejectionMatrix_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 188,
+      "end": 204,
+      "symbol": "TEST(JsonRejections, GrammarViolations_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 205,
+      "end": 212,
+      "symbol": "TEST(JsonErrorLocation, LineColumnPrecision_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 213,
+      "end": 225,
+      "symbol": "TEST(JsonUnicode, EscapesToUtf8_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/JsonLiteTest.cpp",
+      "start": 226,
+      "end": 234,
+      "symbol": "TEST(JsonBoundary, DumpOutputReparseable_UT_JSON)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/PerfBenchmarkTest.cpp",
+      "start": 1,
+      "end": 56,
+      "symbol": "TEST(PerfBenchmark, NonFinitePercentileRejected_ReviewR12)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/PerfBenchmarkTest.cpp",
+      "start": 57,
+      "end": 95,
+      "symbol": "TEST(PerfBenchmark, P95LinearInterpolationKnownVectors_WP23T02_ACC1)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/PerfBenchmarkTest.cpp",
+      "start": 96,
+      "end": 152,
+      "symbol": "TEST(PerfBenchmark, WarmupExcludedAndInvalidSamplesTraced_WP23T02_ACC1)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/PerfBenchmarkTest.cpp",
+      "start": 153,
+      "end": 232,
+      "symbol": "TEST(PerfBenchmark, SessionReportJsonRoundtrip_WP23T02_ACC1)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/PerfBenchmarkTest.cpp",
+      "start": 233,
+      "end": 259,
+      "symbol": "TEST(PerfBenchmark, SessionReportFileWriteRoundtrip_WP23T02_ACC1)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 1,
+      "end": 71,
+      "symbol": "const fs::path& helperExe()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 72,
+      "end": 100,
+      "symbol": "ProcessSpec makeSpec(std::vector<std::string> args,"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 101,
+      "end": 117,
+      "symbol": "TEST(ProcessRunnerOutcome, NormalExitReportsExitedWithZeroCode)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 118,
+      "end": 130,
+      "symbol": "TEST(ProcessRunnerOutcome, NonZeroExitReportsCrashed)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 131,
+      "end": 154,
+      "symbol": "TEST(ProcessRunnerOutcome, KillReportsKilledAndTerminatesWholeTree)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 155,
+      "end": 180,
+      "symbol": "TEST(ProcessRunnerOutcome, TimeoutReportsTerminatedByTimeoutAndKillsTree)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 181,
+      "end": 201,
+      "symbol": "TEST(ProcessRunnerContract, OutcomeOrKillBeforeStartThrowsUsage)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 202,
+      "end": 214,
+      "symbol": "TEST(ProcessRunnerContract, DoubleStartThrowsUsage)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 215,
+      "end": 229,
+      "symbol": "TEST(ProcessRunnerContract, BadSpecOrWorkingDirThrowsUsage)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 230,
+      "end": 252,
+      "symbol": "TEST(ProcessRunnerStart, EnvOverrideReachesChild)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 253,
+      "end": 275,
+      "symbol": "TEST(ProcessRunnerStart, EnvOverrideIsCaseInsensitive_ReviewR08)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 276,
+      "end": 315,
+      "symbol": "TEST(TestdataLint, LoadsProfileAndValidatesAtDictionary_ReviewR09)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 316,
+      "end": 328,
+      "symbol": "TEST(ProcessRunnerStart, WorkingDirIsChildCurrentDirectory)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 329,
+      "end": 339,
+      "symbol": "TEST(ProcessRunnerStart, EmptyWorkingDirFallsBackToOwnedTempDir)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 340,
+      "end": 357,
+      "symbol": "TEST(EventWatchPath, AwaitFileHitsWhenMarkerAppears)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 358,
+      "end": 376,
+      "symbol": "TEST(EventWatchPath, AwaitFileTimesOutAtDeadline)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 377,
+      "end": 393,
+      "symbol": "TEST(EventWatchPath, AwaitLineHitsWhenNeedleLineArrivesLate)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 394,
+      "end": 415,
+      "symbol": "TEST(EventWatchPath, AwaitLineTimesOutWithoutNeedle)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 416,
+      "end": 432,
+      "symbol": "TEST(EventWatchPath, AwaitLineTreatsMissingFileAsTimeout)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 433,
+      "end": 453,
+      "symbol": "TEST(EventWatchPath, ZeroDeadlineChecksCurrentStateOnly)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 454,
+      "end": 472,
+      "symbol": "TEST(EventWatchPath, EmptyNeedleThrowsUsage)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 473,
+      "end": 492,
+      "symbol": "TEST(ProcessRunnerQuote, BackslashQuoteEscapingTwoNPlusOne_F596)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+      "start": 493,
+      "end": 501,
+      "symbol": "TEST(ProcessRunnerQuote, EmptyArgEmitsQuotedEmpty_F595)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 1,
+      "end": 49,
+      "symbol": "rpt::TestRecord recordWith(rpt::Outcome outcome)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 50,
+      "end": 60,
+      "symbol": "TEST(OutcomeTokens, AllSixRegistered_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 61,
+      "end": 88,
+      "symbol": "TEST(ReportAggregation, SixOutcomesCountedAndDecisiveFlag_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 89,
+      "end": 146,
+      "symbol": "TEST(TestRecordJson, MachineReadableFieldTable_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 147,
+      "end": 164,
+      "symbol": "TEST(TestRecordJson, NonFiniteAndMissingValuesStayMachineReadable_ReviewR03)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 165,
+      "end": 194,
+      "symbol": "TEST(ReportWrite, FileRoundTripMachineReadable_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 195,
+      "end": 212,
+      "symbol": "TEST(RecordStore, PresetOutcomeWinsOverComputed_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 213,
+      "end": 229,
+      "symbol": "TEST(RecordStore, IrdTestInfoFillsRecord_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 230,
+      "end": 256,
+      "symbol": "TEST(RecordStore, NestedSessionIsolatesFromListener_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 257,
+      "end": 262,
+      "symbol": "class RptDemoFixture : public GoldenFixture {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReportTest.cpp",
+      "start": 263,
+      "end": 272,
+      "symbol": "TEST_F(RptDemoFixture, FixtureContextBoundToRecord_UT_RPT)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 1,
+      "end": 50,
+      "symbol": "struct FakeCandidate {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 51,
+      "end": 68,
+      "symbol": "inline std::uint64_t splitmix64(std::uint64_t& state)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 69,
+      "end": 106,
+      "symbol": "struct FakeGenerator {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 107,
+      "end": 120,
+      "symbol": "struct SetMatchTraits<FakeCandidate> {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 121,
+      "end": 129,
+      "symbol": "const ToleranceProfile& reproProfile()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 130,
+      "end": 150,
+      "symbol": "ReproCaseSpec makeSpec(Inject inject)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 151,
+      "end": 188,
+      "symbol": "TEST(ReproBenchmark, ThreeLegsEquivalentPassMeasured_WP23T09_ACC1)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 189,
+      "end": 210,
+      "symbol": "TEST(ReproBenchmark, ValueShiftDetectedAsSetViolation_WP23T09_ACC2)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 211,
+      "end": 236,
+      "symbol": "TEST(ReproBenchmark, SwapDetectedAsOrderViolation_WP23T09_ACC3)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 237,
+      "end": 263,
+      "symbol": "TEST(ReproBenchmark, ReportJsonRoundtrip_WP23T09_ACC1)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ReproBenchmarkTest.cpp",
+      "start": 264,
+      "end": 285,
+      "symbol": "TEST(ReproBenchmark, ReportFileWriteRoundtrip_WP23T09_ACC1)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 1,
+      "end": 51,
+      "symbol": "class TempDir {"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 52,
+      "end": 59,
+      "symbol": "fs::path sampleProfilePath()"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 60,
+      "end": 88,
+      "symbol": "TEST(ToleranceProfileLoad, SampleProfileResolveThreeStates_UT_TOL)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 89,
+      "end": 110,
+      "symbol": "TEST(ToleranceProfileLoad, SchemaRequiredAndVersionChecked_ReviewR05)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 111,
+      "end": 140,
+      "symbol": "TEST(ToleranceProfileLoad, DeclaredExceedingAllowedMaxRejected_UT_TOL)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 141,
+      "end": 160,
+      "symbol": "TEST(ToleranceProfileLoad, FixedRequiresAllowedMax_UT_TOL)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 161,
+      "end": 173,
+      "symbol": "TEST(ToleranceProfileC7, CrossCheckWithCore_UT_TOL)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ToleranceProfileTest.cpp",
+      "start": 174,
+      "end": 208,
+      "symbol": "TEST(ToleranceProfileLoad, SourceWhitelistAndKindMismatch_UT_TOL)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/install-scan/ird-install-scan.ps1",
+      "start": 1,
+      "end": 33,
+      "symbol": "param("
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/install-scan/ird-install-scan.ps1",
+      "start": 34,
+      "end": 58,
+      "symbol": "$forbiddenPatterns"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/install-scan/ird-install-scan.ps1",
+      "start": 59,
+      "end": 67,
+      "symbol": "$hits.Count"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp",
+      "start": 1,
+      "end": 66,
+      "symbol": "std::set<std::string> loadIdDict(const fs::path& dictPath)"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp",
+      "start": 67,
+      "end": 154,
+      "symbol": "int main(int argc, char** argv) try"
+    }
+  ],
+  "repins": {
+    "foundation-governance.json": 0,
+    "testkit.json": 277
+  },
+  "functions": 359
+}

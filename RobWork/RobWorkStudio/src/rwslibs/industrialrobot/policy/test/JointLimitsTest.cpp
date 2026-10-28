@@ -506,8 +506,8 @@ TEST(JointLimits, EngineeringRangeInvalidIsDiagnosticLevel_POL_JNT_2)
     EXPECT_TRUE(e.margins.empty()) << "非法工程范围关节必须跳过（不伪造裕量）";
     // 伴随诊断：建议码＋定位；B 的 NaN 端点以 Invalid 态保留原文 "nan"。
     ASSERT_EQ(std::size_t{2}, e.diagnostics.size());
-    EXPECT_EQ("POLICY-JNT-ENGINEERING-RANGE-INVALID", e.diagnostics[0].code);
-    EXPECT_EQ("POLICY-JNT-ENGINEERING-RANGE-INVALID", e.diagnostics[1].code);
+    EXPECT_EQ("POLICY-ENGINEERING-RANGE-INVALID", e.diagnostics[0].code);
+    EXPECT_EQ("POLICY-ENGINEERING-RANGE-INVALID", e.diagnostics[1].code);
     EXPECT_EQ(core::FieldState::Invalid,
               e.diagnostics[1].comparison->actual.quantity.state());
     EXPECT_EQ(std::string("nan"),
@@ -841,4 +841,61 @@ TEST(JointLimits, FactoryInstanceSatisfiesInterfaceContract)
     JointLimitEvaluator direct;
     EXPECT_EQ(viaInterface, direct.evaluate(q, policy, names))
         << "接口形态与直构形态必须等价（唯一实现——ARC-05）";
+}
+
+/** @brief POL-T13：非有限端点仅为硬结构错误，不得降成可确认行程超限。 */
+TEST (JointLimits, NonfiniteEndpointsAreInvalidIntervals_POL_T13)
+{
+    const auto policy = makePolicy (defaultJointThresholds ());
+    for (const auto bounds : {std::make_pair (-std::numeric_limits< double >::infinity (), 1.0),
+                              std::make_pair (0.0, std::numeric_limits< double >::infinity ())}) {
+        auto spec = limitedJoint (0x31, "J1", bounds.first, bounds.second);
+        TestNameContext names;
+        names.byId[spec.jointObject] = "J1";
+        const auto out =
+            JointLimitEvaluator{}.evaluate (singleSampleQuery (spec, {0}), policy, names);
+        EXPECT_EQ (out.status, CollisionEvaluationStatus::Completed);
+        EXPECT_NE (findKind (out, JointLimitFindingKind::IntervalInvalid), nullptr);
+        EXPECT_EQ (findKind (out, JointLimitFindingKind::TravelLimitExceeded), nullptr);
+        EXPECT_FALSE (out.diagnostics.empty ());
+        EXPECT_TRUE (out.margins.empty ());
+    }
+}
+
+/** @brief POL-T13/NFR-COR-03：有限端点差值溢出须 Failed，不能发布无穷行程。 */
+TEST (JointLimits, OverflowingWidthCannotFinalize_POL_T13)
+{
+    const auto spec = limitedJoint (0x31, "J1", -1e308, 1e308);
+    TestNameContext names;
+    names.byId[spec.jointObject] = "J1";
+    const auto out               = JointLimitEvaluator{}.evaluate (
+        singleSampleQuery (spec, {0}), makePolicy (defaultJointThresholds ()), names);
+    EXPECT_EQ (out.status, CollisionEvaluationStatus::Failed);
+    EXPECT_FALSE (out.finalized);
+    EXPECT_FALSE (out.diagnostics.empty ());
+    EXPECT_TRUE (out.margins.empty ());
+    EXPECT_EQ (findKind (out, JointLimitFindingKind::TravelLimitExceeded), nullptr);
+}
+
+/** @brief POL-T13：正次正规区间的端点 r=0、中点 r=1；避免半宽下溢产生 NaN。 */
+TEST (JointLimits, SubnormalWidthRetainsFiniteRatios_POL_T13)
+{
+    const double tiny = std::numeric_limits< double >::denorm_min ();
+    for (double hi : {tiny, 2 * tiny}) {
+        auto spec = limitedJoint (0x31, "J1", 0, hi);
+        TestNameContext names;
+        names.byId[spec.jointObject] = "J1";
+        auto query                   = singleSampleQuery (spec, {0});
+        query.configurations.push_back ({hi});
+        if (hi == 2 * tiny)
+            query.configurations.push_back ({tiny});
+        const auto out =
+            JointLimitEvaluator{}.evaluate (query, makePolicy (defaultJointThresholds ()), names);
+        ASSERT_TRUE (out.finalized);
+        ASSERT_EQ (out.margins.size (), query.configurations.size ());
+        EXPECT_DOUBLE_EQ (out.margins[0].nearLimitRatioValue.value (), 0);
+        EXPECT_DOUBLE_EQ (out.margins[1].nearLimitRatioValue.value (), 0);
+        if (hi == 2 * tiny)
+            EXPECT_DOUBLE_EQ (out.margins[2].nearLimitRatioValue.value (), 1);
+    }
 }

@@ -1170,9 +1170,10 @@ TEST(EvidenceSnapshotMode, ReproductionCompletenessChecked)
 
     const std::vector<SnapshotModeIssue> issues
         = validateSnapshotForMode(handBuilt, core::EvaluationMode::Quick);
-    ASSERT_EQ(issues.size(), static_cast<std::size_t>(1));
-    EXPECT_EQ(issues[0].code, SnapshotModeIssueCode::ReproductionIncomplete);
-    EXPECT_EQ(issues[0].index, SnapshotModeIssue::npos) << "复现块问题非资源条目（npos）";
+    ASSERT_EQ(issues.size(), static_cast<std::size_t>(2));
+    EXPECT_EQ(issues[0].code, SnapshotModeIssueCode::SnapshotInvalid);
+    EXPECT_EQ(issues[1].code, SnapshotModeIssueCode::ReproductionIncomplete);
+    EXPECT_EQ(issues[1].index, SnapshotModeIssue::npos) << "复现块问题非资源条目（npos）";
 }
 
 // =====================================================================

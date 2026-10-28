@@ -1,0 +1,2 @@
+verify-task-scope: DESIGN-T01 base=612143da5436 head=5f7f39147c50 changed=151 allowedRules=18 forbiddenRules=3
+verify-task-scope: PASS DESIGN-T01 —— 151 个路径全部在允许面内

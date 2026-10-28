@@ -168,6 +168,9 @@ struct DhChainJoint {
     // 完整 JointEntry；调用方免二次合并）----
     core::SourcedValue<JointLimits> bounds;        ///< 限位 {qmin,qmax}（rad；透传）
     core::SourcedValue<JointLimits> workingRange;  ///< 工程工作范围（rad；仅 Continuous；透传）
+    /// MDL-01/F04：与几何权威模式无关的速率限制，保持 SI 值、缺失状态及来源。
+    core::SourcedValue<double> maxVelocity;
+    core::SourcedValue<double> maxAcceleration;
 };
 
 /**
@@ -191,7 +194,7 @@ struct DhChain {
 };
 
 // =====================================================================
-// ExpandOutcome——DH→显式展开结果（§9.4.7 dhToExplicit 返回值）
+// dh::ExpandOutcome——DH→显式展开结果（§9.4.7 dhToExplicit 返回值）
 // =====================================================================
 
 /**
@@ -208,11 +211,15 @@ struct DhChain {
  *
  * 线程安全：纯值类型。
  */
+namespace dh {
 struct ExpandOutcome {
     bool ok = false;                 ///< true＝展开成功（joints 有效）
     DhErrorCode errorCode = DhErrorCode::ChainEmpty;  ///< err 态的错误码（ok 态无意义）
     std::vector<JointEntry> joints;  ///< ok 态：显式关节（链序；满足 §9.4.7 @post）
+    /// F01：最后的 Tx(a)Rx(alpha)，在末关节变量之后由 runtime FixedFrame 承接。
+    rw::math::Transform3D<double> flangeOffset = rw::math::Transform3D<double>::identity();
 };
+}  // namespace dh
 
 // =====================================================================
 // 五状态判定（§7.5；MDL-10——两阶段互斥化的结果面）
@@ -430,29 +437,11 @@ public:
      * @brief DH 权威→显式表示（无损展开；§7.4——MDL-10"DH→通用关节必须
      *        无损"、C-5 无条件允许）。
      *
-     * 算法（§7.4 原文逐步；静段拆分＝F-631 增量修订，推导见实现注与
-     *     units/modeling.md §7.4）：
-     *   步① 输入契约检查：链空→ChainEmpty；mixedInBaseTransform 非空→
-     *       DegenerateBase（基座—世界隔离，M-11）；
-     *   步② 拆分装配（origin 为 T_parent_joint 相对变换——F-590 零位
-     *       烘焙纪律：几何只含 θ_offset、zeroOffset 不入几何）：
-     *       origin_i = [Tx(a_{i-1})·Rx(α_{i-1})]        （上一关节静段·头部；
-     *                                                   i=0 无——S_{-1}=I）
-     *                  · Rz(θ_offset,i)·Tz(d_i)          （纯 z 螺旋核心）
-     *                  · [i＝末关：Tx(a_i)·Rx(α_i)]      （链尾静段·尾部）。
-     *       推导：运行时 origin·R(axis, zeroOffset+q) 的转轴过 origin 平移
-     *       后的点，标准 DH 单步转轴 z_{i-1} 过父帧原点——origin 平移必须
-     *       沿转轴本身（Tz 不改轴线），Tx/Rx 静段前移入下一关节头部；链上
-     *       静段槽位 n 个而级联静态因子 n+1 个，链尾静段落末关节尾部使
-     *       零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}（全链 FK 严格
-     *       还原——一般位姿组合序＝各关节 origin·R(axis,ψ) 直乘、末关节
-     *       拆 [纯段]·R(axis,ψ)·[尾段]）；丢弃链尾静段将使 (a,α) 末槽在
-     *       §7.5 目标中结构性不可观测（Exact/V-11 崩塌）——不可丢弃；
-     *   步③ 构造产物：origin_i＝步② 相对变换（core.md §4.6"joint 系相对
-     *       parent 系"读法）；axis_i＝关节系内转轴方向（世界系恒等于
-     *       z_{i-1}）：中间关节＝ez（头部静段 Rx(α_{i-1}) 与累积回拉
-     *       Rx(−α_{i-1}) 相消）；末关节＝Rx(−α_i)·ez＝(0, sinα_i, cosα_i)
-     *       （尾部静段 Rx(α_i) 由 axis 吸收）；单位向量后置（§9.4.7 @post）。
+     * 标准 DH 展开（F01）：origin_i=S_(i-1)·Rz(theta_i)·Tz(d_i)，
+     * S_i=Tx(a_i)·Rx(alpha_i)，S_(-1)=I；所有局部 axis=(0,0,1)。
+     * 最后 S_(n-1) 返回 flangeOffset，由 runtime 在末关节变量之后挂 FixedFrame。
+     * 因此 FK=Π(origin_i·Rz(zeroOffset_i+q_i))·flangeOffset；不前移末段，
+     * 不要求消费者在计算时撤出/重排 origin。偏置与 rates/来源全部透传。
      *
      * 数值纪律：数值误差仅浮点累乘（§7.4——实测远优于第 4 项容差）；
      * 展开不引入迭代、不读环境。
@@ -465,11 +454,11 @@ public:
      *               按 Errors.hpp 阶段纪律"无已登记映射码＝不得产诊断，
      *               错误经值面返回"执行（禁私定/拼码——§9.5 产码纪律）。
      *               参数为 §9.4.7 原文签名形状的契约预留位。
-     * @return 展开结果（两态——见 ExpandOutcome 注）
+     * @return 展开结果（两态——见 dh::ExpandOutcome 注）
      *
      * 纯函数；线程安全；确定性。
      */
-    virtual ExpandOutcome dhToExplicit(const DhChain& chain,
+    virtual dh::ExpandOutcome dhToExplicit(const DhChain& chain,
                                        std::vector<core::DiagnosticRecord>& diags) const = 0;
 
     /**
@@ -563,7 +552,7 @@ public:
  */
 class DhExplicitConverter final : public IDhExplicitConverter {
 public:
-    ExpandOutcome dhToExplicit(const DhChain& chain,
+    dh::ExpandOutcome dhToExplicit(const DhChain& chain,
                                std::vector<core::DiagnosticRecord>& diags) const override;
     DhConversionResult explicitToDh(
         const std::vector<JointEntry>& explicitJoints,

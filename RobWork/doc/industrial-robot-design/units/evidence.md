@@ -2,6 +2,8 @@
 
 > 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
+> EV-T13（2026-10-27，独立验收 PASS，[验收记录](../traceability/acceptance/EV-T13-20261027-r1.json)）：修复首轮审查 E01～E10。当前接口补充见本节与 §4.2/§5.1；完整红绿灯、迁移/回滚及边界见 [实施记录](../traceability/evidence-review-r1/README.md)。REUSE-T47 仍是既有职责审计，不据此关闭或代替。
+
 SA-19 重申本单元是 L2 承重墙：零 Qt、无调度/项目写入副作用；业务保留 EvaluationOutput 的 evidence/proof/searchRecord/verdictInputs/payload/结构化 diagnostics 与 provenance，统一经 aggregateVerdict / ResultEnvelope::make，不另造结果包络或归并语义。
 
 
@@ -285,7 +287,7 @@ SnapshotBuilder 协议（单线程、有限时长）：
  ②逐类录入：对象闭包（含类型 token）、工况集、配置引用、策略/名称映射内容身份、外部资源状态、
     采样计划、复现块
  ③冻结：build() 一次性计算 snapshotId（refs-only canonical 编码摘要）→ 返回不可变 AnalysisSnapshot；
-    此后无任何修改途径（值语义＋无 setter）。冻结时刻＝build() 返回时。
+    值结构仍可被调用方修改；派发时按值传递/持有 const 快照，codec、切片冻结及通用门禁复核内容和导出身份，不把无 setter 当作不可变证明。冻结时刻＝build() 返回时。
  ④完整性验证（两个层级）：
     a. builder 即时验证：修订闭包包含性（防混入）、字段完整性（CON-06 非空）、工况唯一性、
        采样计划参数非负、外部资源状态机合法（Recorded→Solidified 单向）；
@@ -327,10 +329,12 @@ SnapshotBuilder 协议（单线程、有限时长）：
 | 字段 | 类型 | 必填 | 约束 |
 | --- | --- | --- | --- |
 | `evaluationKey / evaluatorContractVersion` | EvaluationKey / uint32 | 是 | 切片绑定的评估器与契约版本（进入身份——同输入不同契约版本＝不同切片，CON-04） |
-| `entries` | std::vector\<DependencyEntry\> | 是（≥1） | 冻结的依赖清单（按 (kind,key) 字典序稳定存储）；每条 Object 条目必须能在快照 objectClosure 中找到（子集校验，防漏声明错配） |
+| `entries` | std::vector\<DependencyEntry\> | 是（≥1） | 冻结的依赖清单（按 (kind,key) 字典序稳定存储）；已消费 Object/Configuration/Policy/NameMap/SampleSet 条目须与同一快照相应引用精确相符；未消费条件条目不强制提供无关引用 |
 | `sliceId` | core::ContentIdentity | 是 | 切片内容身份（§5.1）——缓存键与失效判据（CON-05） |
-| `inputBaselineId` | core::ContentIdentity | 是 | **输入基准身份**（§5.1 D-04）：仅模型/需求/工况集/冻结样本集条目参与，排除求解类配置——"同一冻结输入复评"（C5）与比较基准（EVI-02）的凭据 |
+| `inputBaselineId` | core::ContentIdentity | 是 | **输入基准身份**（§5.1 D-04）：仅模型/需求/工况集/冻结样本集条目参与，排除求解类配置——"同一冻结输入复评"（C5）的完整输入凭据；方案比较另用§6.5共同基准 |
 | `snapshotId` | core::ContentIdentity | 是 | 来源快照（切片 ⊆ 快照内容） |
+
+**EV-T13 身份迁移**：InputSlice.codecVersion 默认 2。full（form=0）保留 snapshotId 作为交换与追溯载体；v2 sliceId 摘要取 form=2 且删除 snapshotId；baseline（form=1）同样不含该锚。v1 full/基准字节、旧 sliceId/inputBaselineId 解码保持不变，旧结果只读，不原地升级或冒充新运行；新旧版本缓存保守隔离。revisionSeq 仍不进快照身份。配置内容身份在 SnapshotBuilder 内由 canonicalBytes 经 core::ContentDigester 计算；codec 拒绝错误申报身份、畸形布尔/集合/重复与非规范序，refs-only 与 materialized 复用同一内容不变量；修订闭包事实验证仍归 project 端口。
 
 #### 4.2.3 声明—解析—冻结协议与条件依赖
 
@@ -373,8 +377,8 @@ SnapshotBuilder 协议（单线程、有限时长）：
 | 身份 | 计算对象 | 算法 | 比较语义 | 用途 |
 | --- | --- | --- | --- | --- |
 | `snapshotId` | SnapshotCodec(refs-only) 规范字节 | SHA-256（core ContentDigester，D-05 同源） | 字节等值（摘要相等） | 快照完整性凭据；通用证据门禁项（§6.2） |
-| `sliceId` | SliceCodec(全部冻结条目含 Environment 版本要素) | 同上 | 字节等值 | **缓存键与失效判据**（CON-05）；运行身份组成部分 |
-| `inputBaselineId` | SliceCodec 的**子集**（Object(task/region/case-set/model 类角色)＋SampleSet＋NameMap＋快照身份块；排除求解类 Configuration 与 Environment 中的非基准版本；`runtime.model-identity`/`runtime.robwork-baseline` 属**基准类要素、进入** inputBaselineId——跨基线/跨编译器比较被 EVI-02 拦截，CR-05） | 同上 | 字节等值 | 比较基准（EVI-02/RPT-04）；"同一冻结输入复评"凭据（C5） |
+| `sliceId` | SliceCodec v2 计算身份投影（form=2，评估键/契约＋全部冻结依赖含 Environment；排除 snapshotId 追溯锚） | 同上 | 字节等值 | **缓存键与失效判据**（CON-05）；运行身份组成部分 |
+| `inputBaselineId` | SliceCodec 的**子集**（Object(task/region/case-set/model 类角色)＋SampleSet＋NameMap；v2 排除 snapshotId 追溯锚，排除求解类 Configuration 与 Environment 中的非基准版本；`runtime.model-identity`/`runtime.robwork-baseline` 属**基准类要素、进入** inputBaselineId——跨基线/跨编译器比较被 EVI-02 拦截，CR-05） | 同上 | 字节等值 | 完整输入复评凭据（C5）；不可直接用作跨设计比较的共同基准 |
 | `evidenceManifest.digest` / `profile.contentIdentity` / `proof` 绑定身份 | 各自 canonical 编码 | 同上 | 字节等值 | 结果追溯与兼容判定（§6、§8.2） |
 
 **三种"等价"的区别（冻结规则）**：
@@ -473,6 +477,8 @@ EvidenceItem 字段：{itemId, status, artifactDigest?（Satisfied 必填）, ca
 
 **Verified 模式前置校验**（快照有效性的一部分，进入通用证据门禁）：`validateForMode(Verified)` 要求——被消费外部资源全部 state==Solidified（CON-03/PM-01：未固化即阻断正式结论，证据不足口径）；复现块版本要素完整。Quick/Preview 不强制固化（其产物本就不支撑正式结论）。
 
+**EV-T13 清单纪律**：按 itemId＋subject＋规范化 caseScope 识别实例；同名不同实例全部核对，逐实例缺失带清单位置，重复实例与未知状态拒绝。Satisfied 须有产物摘要；NotApplicable 须有已登记适用条件和原因；真实条件求值/应产实例集合仍归域，不在 evidence 新建业务求值器。证明共用字段 claimToken/subject/preconditions 必须完整，类别、产生者、版本、快照/切片与覆盖绑定仍逐项验证。搜索未果/零样本/降级/无必验工况的数据不足均带缺失明细，合法 Completed + DataInsufficient 可归档；执行轴与工程轴分别保留。
+
 ### 6.3 确定性不可行证明契约（表 2 ③ / C5 / C8 承载）
 
 ```cpp
@@ -564,15 +570,18 @@ VerdictResult aggregateVerdict(const VerdictInput&, const EvaluatorRegistry&,
 
 ### 6.5 比较基准一致性检查（EVI-02/RPT-04/OPT 纯判定）
 
+**DESIGN-T01（2026-10-27）**：`inputBaselineId`仍保存模型/名称映射/完整输入身份，保持复评、缓存与历史追溯语义。新增`comparisonInputId`由输入组装方对共同需求、工况内容、冻结样本以及共同策略/环境/评估版本的规范内容生成；排除候选模型、名称映射、分支与修订，禁止直接复制完整输入摘要代替共同基准。需求内容不同即必须不同，不能只比较对象ID或必验集合ID。evidence只消费权威规范摘要，不猜领域对象角色。比较允许同项目内不同设计、不同分支；项目边界保留。生成入口为`computeComparisonInputId(requirementsId, caseInputsId, sampleSetIds, environmentId)`，各身份由组装方对权威规范内容求得；编码为`IRDCMP1`＋三个32字节内容身份（需求、工况、环境）＋大端u64样本数量＋按冻结顺序的样本身份；非零前置校验，摘要统一经core::ContentDigester。双方共同摘要均提供且非零时比较该摘要、requiredCaseSetId和sampleSetIds；一侧缺失/零摘要或任一维不一致拒绝。兼容旧调用：双方均未提供共同摘要时，仅允许完整inputBaselineId相同的保守比较。该兼容路径不能放行不同设计。空集/单条仅表示无可比差异，不产生正式比较结论。
+
 ```cpp
 struct ComparisonBaseline {          // 从各结果的 envelope 提取
     core::ProjectId project; core::BranchId branch;
     core::ContentIdentity inputBaselineId;   // 模型/需求/工况集/冻结样本集基准（§5.1）
     core::ContentIdentity requiredCaseSetId; // 必验工况集身份
     std::vector<core::ContentIdentity> sampleSetIds;
+    std::optional<core::ContentIdentity> comparisonInputId; // 共同输入，排除被比较设计
 };
 CheckResult checkComparisonBaselinesConsistent(const std::vector<ComparisonBaseline>&);
-// 全部相等→通过；任何不等→失败并列出差异维度（基准不同的方案/候选/报告变体不得直接比较）
+// 同项目、共同输入、工况与样本一致→通过；设计/分支允许不同，差异逐项列出
 ```
 
 方案比较（RPT-04）、优化候选比较（OPT 内部 Pareto 比较）与报告变体章节共用本检查；样本集身份不等（如采样预算改变）→ 旧覆盖率/候选指标不可与新的直接比较（KIN-04 冻结样本集 + C5 复评规则的联合落地，EV-COV-4）。
@@ -714,6 +723,8 @@ computeCurrentness(result, target, sources):
 | 默认值 | 无默认 Current：未计算/不可判定 → 消费者不得当作 Current 使用 | 任务约束§五.8 |
 
 ### 8.2 缓存复用与检查点兼容（纯判定契约；存储/淘汰/恢复归 execution/project）
+
+**EV-T13 兼容边界**：CacheHitQuery 表尾追加 requestEvaluatorKey（此前聚合四字段顺序保持）。检查点必须显式核对请求键与摘要键及合法非零 slice/契约，不能从摘要自报 sliceId 推断键相等；缺失键拒绝。缓存仅接受 Quick/Verified 且 slice/契约/Profile 有效，不发生模式升降级。
 
 ```cpp
 // Compatibility.hpp —— 四类复用严格区分（任务约束§五.9）

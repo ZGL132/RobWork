@@ -87,6 +87,7 @@ add_executable(sdurws_ird_evidence_test
                                        # （MA-09——gtest_main 固定入口无监听器
                                        # 安装点，--ird_report 不产报告）
     test/BuildRedLineTest.cpp
+    test/ReviewRegressionTest.cpp # EV-T13：需求反例与独立字节回归
     test/ErrorsTest.cpp              # EV-T02：EV-ERR 全表（token/建议码逐值）＋异常轨
     test/DependencyTest.cpp          # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
     test/SnapshotTest.cpp            # EV-T03：EV-ID-1/3＋EV-SNAP builder 不变量＋EV-CASET 工况集＋EV-SNAPC codec
@@ -136,6 +137,7 @@ macro(ird_add_gtest target)
                 ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
         COMMAND $<TARGET_FILE:${target}>
                 --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+                --ird_report=${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.ird-test-report.json
         DEPENDS ${target}
         COMMENT "ird: run ${target} and write gtest XML report")
     set_target_properties(${target}_report PROPERTIES

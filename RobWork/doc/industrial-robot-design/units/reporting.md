@@ -140,7 +140,7 @@
 | RPT-01/RPT-01-B/RPT-01-C（ReviewReport 两级；只读明确 ID；目录追加幂等、冲突拒绝） | ReviewReport 模型与 B/C 章节契约、只读构造（明确修订/快照/结果 ID）、幂等/冲突判定契约（内容摘要判定）；`<report-id>` 分配 | reports/ 磁盘布局与发布（project）；各章节业务内容（域投影） |
 | RPT-02（HTML 首版，可附 JSON/CSV，多格式逐字段一致） | 三格式渲染器、字段矩阵单次投影、逐字段一致性校验、确定性渲染 | 编解码器实现（io）；PDF（附录 B 裁决排除，P-RPT-6） |
 | RPT-03（证据包导出） | EvidenceBundle 格式与组装（快照/结果引用/复现要素） | 复现要素的产生（evidence 复现块）；ZIP 字节封装（io） |
-| RPT-04（方案/设计变体报告，一致基准） | 变体章节模型（variant-diff）＋消费 evidence checkComparisonBaselinesConsistent 的纯检查结果；基准不一致拒绝 | 基准判定的计算（evidence §6.5）；Model Diff 数据实体（modeling MDL-08） |
+| RPT-04（方案/设计变体报告，一致基准） | 变体章节模型（variant-diff）＋消费 evidence checkComparisonBaselinesConsistent 的纯检查结果；基准不一致拒绝；共同输入摘要按evidence §6.5生成，允许不同模型/分支，完整inputBaselineId继续用于复评追溯 | 基准判定的计算（evidence §6.5）；Model Diff 数据实体（modeling MDL-08） |
 | RPT-05（措辞冻结；两类声明） | 渲染规则：限定语保留映射、FormalPass/ReviewRecord 两类声明呈现（消费 evidence 资格检查结果） | 资格判定本身（evidence 纯检查）；界面显示纪律（ui——其 §6.3 同样消费五条件） |
 | RPT-06（报告往返复算，阶段 C） | 复算比对入口与"不一致时报告不可用于正式结论"的标记 | 复算执行（③端口评估器；调用方=workflow/各域）；判定阈值（evidence/附录 D） |
 | NFR-COR-04（结论定位到快照与证据） | 报告内追溯链呈现（envelope→snapshotId→对象引用；证据项绑定） | 追溯链的计算（evidence §7.1） |

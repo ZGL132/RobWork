@@ -1,0 +1,13 @@
+Note: Google Test filter = KinRegionCoverage.FullPlanIdentityAndInvalidRotation*:KinRegionCoverage.OrientedGridRandomAndPose*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinRegionCoverage
+[ RUN      ] KinRegionCoverage.OrientedGridRandomAndPose_REQ03_A21
+[       OK ] KinRegionCoverage.OrientedGridRandomAndPose_REQ03_A21 (0 ms)
+[ RUN      ] KinRegionCoverage.FullPlanIdentityAndInvalidRotation_REQ03_A21
+[       OK ] KinRegionCoverage.FullPlanIdentityAndInvalidRotation_REQ03_A21 (0 ms)
+[----------] 2 tests from KinRegionCoverage (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 2 tests.

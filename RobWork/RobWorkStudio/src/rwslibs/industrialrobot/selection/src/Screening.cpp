@@ -317,6 +317,29 @@ void validateFacts(const std::vector<AxisWorkpointFacts>& facts)
         if (f.motorPowerPeak) { requireFinite(*f.motorPowerPeak, "motorPowerPeak"); }
         if (f.motorPowerRms) { requireFinite(*f.motorPowerRms, "motorPowerRms"); }
         if (f.peakDuration) { requireFinite(*f.peakDuration, "peakDuration"); }
+        // 时序即使未触发过载分支也须校验，防欠报峰值或非有限点绕过硬筛选。
+        double historyPeak = 0.0;
+        for (std::size_t i = 0; i < f.motorTorqueHistory.size(); ++i) {
+            const auto& point = f.motorTorqueHistory[i];
+            requireFinite(point.first, "motorTorqueHistory.time");
+            requireFinite(point.second, "motorTorqueHistory.torque");
+            if (i && !(point.first > f.motorTorqueHistory[i - 1].first)) {
+                throw std::invalid_argument("motorTorqueHistory时间必须严格递增");
+            }
+            if (i) {
+                requireFinite(point.second - f.motorTorqueHistory[i - 1].second,
+                              "motorTorqueHistory.torqueDelta");
+            }
+            historyPeak = std::max(historyPeak, std::abs(point.second));
+        }
+        if (f.motorTorqueHistory.size() > 1) {
+            requireFinite(f.motorTorqueHistory.back().first - f.motorTorqueHistory.front().first,
+                          "motorTorqueHistory.cycleDuration");
+        }
+        if (f.motorTorquePeak && !f.motorTorqueHistory.empty()
+            && exceedsLimit(historyPeak, std::abs(*f.motorTorquePeak), core::QuantityKind::Torque)) {
+            throw std::invalid_argument("motorTorqueHistory峰值超出声明motorTorquePeak");
+        }
         if (f.requiredHoldingTorque) {
             requireFinite(*f.requiredHoldingTorque, "requiredHoldingTorque");
         }
@@ -496,6 +519,7 @@ bool AxisWorkpointFacts::operator==(const AxisWorkpointFacts& o) const
         && motorTorquePeak == o.motorTorquePeak && motorSpeedPeak == o.motorSpeedPeak
         && motorSpeedRms == o.motorSpeedRms && motorPowerPeak == o.motorPowerPeak
         && motorPowerRms == o.motorPowerRms && peakDuration == o.peakDuration
+        && motorTorqueHistory == o.motorTorqueHistory
         && requiredHoldingTorque == o.requiredHoldingTorque
         && externalLoad == o.externalLoad && mountRequirement == o.mountRequirement
         && atTime == o.atTime && segmentId == o.segmentId;
@@ -742,17 +766,66 @@ void screenMotorCase(const MotorCatalogEntry& motor, const AxisWorkpointFacts& f
             gaps.push_back(makeGap("overload-duration",
                                    "峰值工作点超出额定连续转矩（进入过载区），但目录未声明过载能力",
                                    f.jointId, f.caseId));
-        } else if (!f.peakDuration) {
+        } else if (f.motorTorqueHistory.size() < 2) {
             gaps.push_back(makeGap("overload-duration",
-                                   "过载区工作需要峰值段时长事实（轨迹段峰值持续时间）",
+                                   "过载区需要完整循环实际电机转矩时序；精确峰值窗不能代替超额定时长",
                                    f.jointId, f.caseId));
-        } else if (exceedsLimit(*f.peakDuration, motor.overload->duration, core::QuantityKind::Time)) {
-            RejectionReason r = makeReason(
-                ReasonToken::OverloadTimeInsufficient, motor.modelId, f.jointId, f.caseId,
-                f.atTime, f.segmentId, *f.peakDuration, motor.overload->duration, "s",
-                "目录 overload_duration_s（过载持续时间）", catalog);
-            r.suggestion = "缩短峰值段时长或更换过载持续时间更长的电机型号";
-            reasons.push_back(std::move(r));
+        } else {
+            // DESIGN-T01：目录阈值属于本候选，逐段取线性转矩超过
+            // ±额定值的时间区间。保留正负区间，避免跨零反向被当成全段过载。
+            std::vector<std::pair<double, double>> intervals;
+            const auto& history = f.motorTorqueHistory;
+            double tracePeak = 0.0;
+            for (std::size_t i = 0; i < history.size(); ++i) {
+                tracePeak = std::max(tracePeak, std::abs(history[i].second));
+                if (i == 0) { continue; }
+                const auto& left = history[i - 1];
+                const auto& right = history[i];
+                std::vector<std::pair<double, double>> segmentIntervals;
+                for (const double sign : {1.0, -1.0}) {
+                    const double a = sign * left.second;
+                    const double b = sign * right.second;
+                    const double limit = motor.ratedTorque;
+                    if (a <= limit && b <= limit) { continue; }
+                    double start = left.first;
+                    double end = right.first;
+                    if (a <= limit) {
+                        start += (right.first - left.first) * ((limit - a) / (b - a));
+                    } else if (b <= limit) {
+                        end = left.first + (right.first - left.first) * ((a - limit) / (a - b));
+                    }
+                    segmentIntervals.emplace_back(start, end);
+                }
+                std::sort(segmentIntervals.begin(), segmentIntervals.end());
+                for (const auto& interval : segmentIntervals) {
+                    if (!intervals.empty() && intervals.back().second == interval.first) {
+                        intervals.back().second = interval.second;
+                    } else { intervals.push_back(interval); }
+                }
+            }
+            if (exceedsLimit(*f.motorTorquePeak, tracePeak, core::QuantityKind::Torque)) {
+                gaps.push_back(makeGap("overload-duration", "转矩时序未覆盖声明峰值，不能证明完整循环过载时长",
+                                       f.jointId, f.caseId));
+            } else {
+                double duration = 0.0;
+                for (const auto& interval : intervals) {
+                    duration = std::max(duration, interval.second - interval.first);
+                }
+                // 周期首尾同属过载时，应合并环绕边界的连续区间（不漏算跨循环过载）。
+                if (intervals.size() > 1 && intervals.front().first == history.front().first
+                    && intervals.back().second == history.back().first) {
+                    duration = std::max(duration, intervals.front().second - intervals.front().first
+                                                   + intervals.back().second - intervals.back().first);
+                }
+                if (exceedsLimit(duration, motor.overload->duration, core::QuantityKind::Time)) {
+                    RejectionReason r = makeReason(
+                        ReasonToken::OverloadTimeInsufficient, motor.modelId, f.jointId, f.caseId,
+                        f.atTime, f.segmentId, duration, motor.overload->duration, "s",
+                        "目录 overload_duration_s（过载持续时间）", catalog);
+                    r.suggestion = "缩短超额定持续时间或更换过载能力满足要求的电机型号";
+                    reasons.push_back(std::move(r));
+                }
+            }
         }
         // overload.torque 字段在本维度不单独判定：峰值能力已由维度 2 以
         // peak_torque_nm 判定（目录 v1 中 overload_torque_nm 的独立判定

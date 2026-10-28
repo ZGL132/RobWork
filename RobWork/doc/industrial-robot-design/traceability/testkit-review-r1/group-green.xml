@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="11" failures="1" disabled="0" errors="0" time="0.125" timestamp="2026-10-27T20:55:25.216" name="AllTests">
+  <testsuite name="JsonRoundtrip" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-10-27T20:55:25.216">
+    <testcase name="DecimalParsingIgnoresNumericLocale_ReviewR07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="27" status="run" result="completed" time="0.003" timestamp="2026-10-27T20:55:25.216" classname="JsonRoundtrip" />
+  </testsuite>
+  <testsuite name="DatasetManifest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.019" timestamp="2026-10-27T20:55:25.220">
+    <testcase name="OptionalParametersHaveObjectDefault_ReviewF015" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="190" status="run" result="completed" time="0.019" timestamp="2026-10-27T20:55:25.220" classname="DatasetManifest" />
+  </testsuite>
+  <testsuite name="DatasetIntegrity" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.011" timestamp="2026-10-27T20:55:25.239">
+    <testcase name="GeneratorCoverageRequired_ReviewF017" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="207" status="run" result="completed" time="0.011" timestamp="2026-10-27T20:55:25.239" classname="DatasetIntegrity" />
+  </testsuite>
+  <testsuite name="DatasetRejections" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.039" timestamp="2026-10-27T20:55:25.251">
+    <testcase name="IntegerFieldsRejectFractionsAndRange_ReviewF018" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="226" status="run" result="completed" time="0.039" timestamp="2026-10-27T20:55:25.251" classname="DatasetRejections" />
+  </testsuite>
+  <testsuite name="ToleranceProfileLoad" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-10-27T20:55:25.290">
+    <testcase name="SchemaRequiredAndVersionChecked_ReviewR05" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="90" status="run" result="completed" time="0.004" timestamp="2026-10-27T20:55:25.290" classname="ToleranceProfileLoad" />
+  </testsuite>
+  <testsuite name="AssertMacrosBehavior" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:25.294">
+    <testcase name="FiniteEvaluatesExactlyOnce_ReviewR02" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="134" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:25.294" classname="AssertMacrosBehavior" />
+  </testsuite>
+  <testsuite name="SetEquivalent" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:25.295">
+    <testcase name="IdentifiedElementsNeverFallBackToNumerics_ReviewR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:25.295" classname="SetEquivalent" />
+  </testsuite>
+  <testsuite name="StableOrder" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:25.295">
+    <testcase name="ShorterSequenceReportsEarliestDivergence_ReviewR11" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="112" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:25.295" classname="StableOrder" />
+  </testsuite>
+  <testsuite name="PerfBenchmark" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:55:25.295">
+    <testcase name="NonFinitePercentileRejected_ReviewR12" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\PerfBenchmarkTest.cpp" line="44" status="run" result="completed" time="0." timestamp="2026-10-27T20:55:25.295" classname="PerfBenchmark" />
+  </testsuite>
+  <testsuite name="ProcessRunnerStart" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.045" timestamp="2026-10-27T20:55:25.295">
+    <testcase name="EnvOverrideIsCaseInsensitive_ReviewR08" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp" line="254" status="run" result="completed" time="0.045" timestamp="2026-10-27T20:55:25.295" classname="ProcessRunnerStart" />
+  </testsuite>
+  <testsuite name="TestdataLint" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-27T20:55:25.340">
+    <testcase name="LoadsProfileAndValidatesAtDictionary_ReviewR09" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp" line="277" status="run" result="completed" time="0.002" timestamp="2026-10-27T20:55:25.340" classname="TestdataLint">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;copy: 系统找不到指定的文件。: &quot;C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/../testdata\golden\kin-fk-planar-2r&quot;, &quot;C:\Users\zgl18\AppData\Local\Temp\ird-test/80400-lint-contract-239d4540c1aebcbc\data\golden\kin-fk-planar-2r&quot;&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "copy: 系统找不到指定的文件。: "C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/../testdata\golden\kin-fk-planar-2r", "C:\Users\zgl18\AppData\Local\Temp\ird-test/80400-lint-contract-239d4540c1aebcbc\data\golden\kin-fk-planar-2r"" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

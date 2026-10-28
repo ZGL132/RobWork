@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0.244" timestamp="2026-10-28T04:07:49.529" name="AllTests">
+  <testsuite name="Tx7ProcessLock" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.244" timestamp="2026-10-28T04:07:49.529">
+    <testcase name="ReaderOpenPreservesWriterTemporaryFiles" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProcessLockContractTest.cpp" line="170" status="run" result="completed" time="0.083" timestamp="2026-10-28T04:07:49.529" classname="Tx7ProcessLock" />
+    <testcase name="ReaderRefreshesCompleteViewAfterWriterCommit" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProcessLockContractTest.cpp" line="188" status="run" result="completed" time="0.16" timestamp="2026-10-28T04:07:49.613" classname="Tx7ProcessLock" />
+  </testsuite>
+</testsuites>

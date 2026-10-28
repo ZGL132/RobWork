@@ -1,0 +1,94 @@
+Note: Google Test filter = MdlBridgeReview.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from MdlBridgeReview
+[ RUN      ] MdlBridgeReview.PrismaticOffsetAndRatesPreserveSiAndProvenance
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(105): error: Value of: result.ok()
+  Actual: false
+Expected: true
+
+[  FAILED  ] MdlBridgeReview.PrismaticOffsetAndRatesPreserveSiAndProvenance (0 ms)
+[ RUN      ] MdlBridgeReview.DhExpansionKeepsRateValuesAndProvenance
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(130): error: Expected equality of these values:
+  result.get().joints[i].maxVelocity
+    Which is: 144-byte object <01-00 00-00 FB-21 09-C0 00-00 00-00 00-00 00-00 00-00 00-00 19-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 50-01 62-D1 01-00 00-00 50-01 62-D1 97-01 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxVelocity
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 09-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(131): error: Expected equality of these values:
+  result.get().joints[i].maxAcceleration
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 02-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 60-12 00-00 00-00 00-00 F0-45 E9-D1 97-01 00-00 40-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxAcceleration
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 19-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-2D 44-54 FB-21 29-40 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(130): error: Expected equality of these values:
+  result.get().joints[i].maxVelocity
+    Which is: 144-byte object <01-00 00-00 69-74 00-00 00-00 00-00 00-00 00-00 00-00 00-00 19-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 50-01 62-D1 01-00 00-00 50-01 62-D1 97-01 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxVelocity
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 09-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(131): error: Expected equality of these values:
+  result.get().joints[i].maxAcceleration
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 02-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 60-12 00-00 00-00 00-00 F0-45 E9-D1 97-01 00-00 40-00 00-00 00-00 00-00 ... 00-68 2D-74 6F-2D 65-78 70-6C 69-63 69-74 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxAcceleration
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 19-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(130): error: Expected equality of these values:
+  result.get().joints[i].maxVelocity
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 19-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 50-01 62-D1 01-00 00-00 50-01 62-D1 97-01 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxVelocity
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 09-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(131): error: Expected equality of these values:
+  result.get().joints[i].maxAcceleration
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 02-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 60-12 00-00 00-00 00-00 F0-45 E9-D1 97-01 00-00 40-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 6C-3E 47-56 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxAcceleration
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 19-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(130): error: Expected equality of these values:
+  result.get().joints[i].maxVelocity
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 19-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 50-01 62-D1 01-00 00-00 50-01 62-D1 97-01 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxVelocity
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 19-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(131): error: Expected equality of these values:
+  result.get().joints[i].maxAcceleration
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 02-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 60-12 00-00 00-00 00-00 F0-45 E9-D1 97-01 00-00 40-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxAcceleration
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 29-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(130): error: Expected equality of these values:
+  result.get().joints[i].maxVelocity
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 19-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 50-01 62-D1 01-00 00-00 50-01 62-D1 97-01 00-00 00-00 00-00 00-00 00-00 ... 70-6C 69-63 69-74 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxVelocity
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 19-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(131): error: Expected equality of these values:
+  result.get().joints[i].maxAcceleration
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 02-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 60-12 00-00 00-00 00-00 F0-45 E9-D1 97-01 00-00 40-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-DE E7-D1 97-01 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxAcceleration
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 29-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(130): error: Expected equality of these values:
+  result.get().joints[i].maxVelocity
+    Which is: 144-byte object <01-00 00-00 97-01 00-00 00-00 00-00 00-00 00-00 00-00 00-00 19-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 50-01 62-D1 01-00 00-00 50-01 62-D1 97-01 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 04-00 00-00 6C-3E 47-56 00-7F 00-00 99-4E AB-58 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxVelocity
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 19-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(131): error: Expected equality of these values:
+  result.get().joints[i].maxAcceleration
+    Which is: 144-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 02-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 60-12 00-00 00-00 00-00 F0-45 E9-D1 97-01 00-00 40-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  draft.design.joints[i].maxAcceleration
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 18-2D 44-54 FB-21 29-40 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-0F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 13-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+[  FAILED  ] MdlBridgeReview.DhExpansionKeepsRateValuesAndProvenance (0 ms)
+[----------] 2 tests from MdlBridgeReview (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MdlBridgeReview.PrismaticOffsetAndRatesPreserveSiAndProvenance
+[  FAILED  ] MdlBridgeReview.DhExpansionKeepsRateValuesAndProvenance
+
+ 2 FAILED TESTS

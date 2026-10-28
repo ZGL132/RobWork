@@ -897,8 +897,11 @@ std::optional<DrivetrainEditError> applyDrivetrainRatioEdit(ModelingWorkingSet& 
                                                             std::size_t jointIndex,
                                                             double ratio)
 {
-    // ① 确保目标（缺席创建/对齐/越界 fail-fast）。
-    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
+    if(jointIndex>=ws.design.joints.size()){
+        throw std::invalid_argument("modeling/parts/drivetrain-edit-index: 关节下标越界");
+    } // F11：只检查索引，数值合法前绝不构造对象/引用。
+
+    // ① 只校验目标索引；目标创建延后到数值校验成功。
     // ② 有限性（I-MDL-3）＋正值（I-MDL-11：无量纲比有限且 >0）。
     if (!std::isfinite(ratio)) {
         return DrivetrainEditError{DrivetrainEditErrorCode::ValueNotFinite,
@@ -910,6 +913,7 @@ std::optional<DrivetrainEditError> applyDrivetrainRatioEdit(ModelingWorkingSet& 
                                    "joints[" + std::to_string(jointIndex)
                                        + "]：传动比须 >0（I-MDL-11）"};
     }
+    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
     // ③ SourcedValue UserProvided 写入（MDL-05 显式权威一等值）＋恰一条
     // 变更记录（无量纲——SI 系数 1）。
     ws.drivetrainObject->ratioPerJoint[jointIndex] =
@@ -931,8 +935,11 @@ std::optional<DrivetrainEditError> applyDrivetrainFrictionEdit(ModelingWorkingSe
                                                                double coulomb,
                                                                double bias)
 {
-    // ① 确保目标。
-    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
+    if(jointIndex>=ws.design.joints.size()){
+        throw std::invalid_argument("modeling/parts/drivetrain-edit-index: 关节下标越界");
+    } // F11：只检查索引，数值合法前绝不构造对象/引用。
+
+    // ① 索引已检查；数值校验成功前不创建/补齐传动对象。
     // ② 三分量逐项有限性（I-MDL-3——Viscous/Coulomb/Bias 任一非有限即
     // 整组拒绝，不产出半成品三元）。
     const double comps[3] = {viscous, coulomb, bias};
@@ -945,6 +952,7 @@ std::optional<DrivetrainEditError> applyDrivetrainFrictionEdit(ModelingWorkingSe
                     + " 含非有限分量（NaN/Inf）"};
         }
     }
+    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
     // ③ SourcedValue UserProvided 三元写入＋恰一条变更记录（单位随关节
     // 类型：转动 N·m·s/rad＋N·m；移动 N·s/m＋N——SI 真值直写）。
     auto provenance = core::ValueProvenance::make(core::ProvenanceKind::UserProvided,
@@ -967,8 +975,11 @@ std::optional<DrivetrainEditError> applyDrivetrainTorqueLimitEdit(ModelingWorkin
                                                                   double rated,
                                                                   double peak)
 {
-    // ① 确保目标。
-    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
+    if(jointIndex>=ws.design.joints.size()){
+        throw std::invalid_argument("modeling/parts/drivetrain-edit-index: 关节下标越界");
+    } // F11：只检查索引，数值合法前绝不构造对象/引用。
+
+    // ① 索引已检查；数值校验成功前不创建/补齐传动对象。
     // ② 两分量逐项有限性（I-MDL-3）。
     const double comps[2] = {rated, peak};
     const char* names[2] = {"rated", "peak"};
@@ -980,6 +991,7 @@ std::optional<DrivetrainEditError> applyDrivetrainTorqueLimitEdit(ModelingWorkin
                     + " 含非有限分量（NaN/Inf）"};
         }
     }
+    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
     // ③ SourcedValue UserProvided 对写入＋恰一条变更记录（单位随关节
     // 类型：转动 N·m；移动 N——不进 CanonicalModel，消费方 SEL/DYN）。
     auto provenance = core::ValueProvenance::make(core::ProvenanceKind::UserProvided,

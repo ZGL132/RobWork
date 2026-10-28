@@ -1,0 +1,2 @@
+ird-install-scan: FAIL（1 处命中——分发红线违规）
+  HIT  C:\Users\zgl18\AppData\Local\Temp\ird-testkit-tools-li7di_so\library\lib\sdurws_ird_testkit.lib  [命中: (^|/)(lib)?sdurws_ird_testkit([_.][^/]*)?$]

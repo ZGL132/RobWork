@@ -802,6 +802,8 @@ void putRobotDesign(Sink& s, const RobotDesign& d)
         }
     }
     s.string(d.notes);
+    // MDL-CR-2/F01：{1,2} 保留末关节后的固定段；不烘入关节 origin。
+    putTransform3D(s, d.flangeOffset);
 }
 
 bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err,
@@ -955,6 +957,9 @@ bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err,
     }
     if (!r.lengthPrefixed(&d.notes)) { *err = "notes 截断"; return false; }
     if (!validUtf8NoNul(d.notes)) { *err = "notes 非 UTF-8/含 NUL"; return false; }
+    if (streamMinor >= 2 && !getTransform3D(r, &d.flangeOffset)) {
+        *err = "flangeOffset 截断/非有限"; return false;
+    }
     *out = std::move(d);
     return true;
 }

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T60",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T60.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+      "sha256": "5b792c915be11ee500e88cc2a083977d6212ecea2a42d5c607448b1efb86fca1",
+      "mode": "business",
+      "boundary": "UI-T86 F-975 候选补丁逐字落地（UI-T86 README §3）：NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15 本地 View 补 runtimeModelView() 锚覆盖——REUSE-T18 FK 换核后测试期望同步（锚＝同源物化快照本体，RuntimeSnapshot 即 IRuntimeModelView，不经第二包装层伪造）；测试期望迁移非产品回归、非平行实现。UI-T78 渲染面分组常量断言（:72 include/:940 断言）零改动，其 graphics 消费面由 ARCH §3.6.2.1 graphics 面 grant（REUSE-T60-HostCompilePipelineTest.cpp）承载",
+      "verify": "ui_test 全量 345=344P/1F（NamedTcpClosure PASS；唯一失败＝F-560 预存钉扎）——traceability/reuse/REUSE-T60/t60-ui-full-suite.log/.xml＋t60-ui-ird-test-report.json；ui_gui_test 98/98；门禁自测 175/175；validate-reuse PASS",
+      "capabilities": []
+    }
+  ],
+  "note": "RC-09 权限与真实生产 UI 批：产品代码唯一改动＝F-975 修复面（上件）。同批登记面（零产品代码改动）：ui.json 19 行定案（18 business-specific/migrated＋ensureSessionPreviewAnchor 保持 pending 登记 construct-model 死锁）＋新增整文件行 ui.HostCompilePipelineTest；permissions.json +3 grant（两 host-presentation 文件 grant＋一 test-fixture graphics 面 grant，81 行纯新增）；reuse-contract.ps1 test-fixture graphics 面＋test-reuse-governance.ps1 三正负例（治理面，ARCH §3.6.2.1/v0.18 登记，头部文档版本同步 v0.18）；foundation-governance.json 10 处 reuse-contract.ps1 绑定机械级联重钉（T59 同惯例）。findings：F-975 翻牌 fixed（①落地＋测试实证）、F-974 翻牌 fixed（HEAD 冒烟全链 DONE exit 0，归因 WP-15-T21 同链）、F-560 保持 fixed（复跑钉扎②字面锚漂移，缺陷未复活）。独验 NOT RUN 待所有者（acceptance 分列）。工作区残留甄别（本批零触碰、不入 allowedFiles）：traceability/trace-matrix.json 相对 HEAD 存在他批机械改动（\"tasks\" 字符串→数组转换，562 diff 行，内容为 WP-17/25 等他批任务引用、零 T60/T57/T59 内容，scripts 树 grep 零消费方，末次提交 97ec55eb7）——按 migration.md §13.5.5『不暂存他人 trace-matrix』提交前须剥离或由其归属批补声明，本契约已列 forbiddenFiles；『新建文件夹/』『docs/reuse-refactor-plan-explained.md』『.workbuddy/』同属批外未跟踪材料，保持未跟踪不入暂存"
+}

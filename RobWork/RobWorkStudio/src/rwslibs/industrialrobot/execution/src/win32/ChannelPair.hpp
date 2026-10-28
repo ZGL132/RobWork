@@ -168,6 +168,9 @@ public:
     DWORD lastError() const noexcept { return m_lastError; }
 
 private:
+    /** @brief 取消并确认挂起读完成；完成前保留事件、OVERLAPPED 与缓冲存储。 */
+    void cancelReadAndWait() noexcept;
+
     ChannelPair() = default;
 
     HANDLE m_cmdServer = nullptr;   ///< 命令流服务端（主进程写；OUTBOUND）

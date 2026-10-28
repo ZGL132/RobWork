@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T57",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "RC-10 可先行面登记批——TEST-HARNESS 9 行与业务保留面 205 行逐行 business-specific/audited 登记＋7 行 pending 缺口如实登记（零代码改动）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T32",
+    "REUSE-T41"
+  ],
+  "requirements": [
+    "ARC-03",
+    "NFR-COR-01"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.5.4",
+    "reuse/policy.md#1.1",
+    "reuse/audit-contract.md#7.1",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1（全量函数矩阵/绑定/权限/覆盖检查，216 行新 nonOverlapEvidence 绑定逐一 Digest 复核）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T57.json（文档/任务/链接门禁，内含一次全量复用检查）",
+    "绑定 sha256 双运行时实算（Node 与 pwsh 各按 reuse-contract.ps1 Digest 口径：剥 BOM＋CRLF→LF＋尾换行，11 个绑定目标复算一致，命令与输出见 traceability/reuse/REUSE-T57/README.md）",
+    "214 行登记行 sources 区段摘要预校验（登记脚本内逐行重算 region Digest 并与矩阵登记值比对，零失败）",
+    "S1—S4 补强检索（TaskScheduler/WorkerSupervisor/ObjectStore×2/evaluate 行的上游替代排除，2026-10-28 对当前 HEAD 实测，命令与结果登记 nonoverlap-retention.json）"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T57.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T57.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/policy.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/project.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T57/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/closures.json",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "214 行保留面登记（decision=business-specific＋status=audited＋nonOverlapEvidence sha256 实算）：TEST-HARNESS 9（T32 定案口径）、diagnostics 35、core 94（Units 28/b28 42/b32 18/CORE-EVENT 5）、execution 27（Admission 13/EventBus 11/Scheduler 1/WorkerSupervisor 1/CMake 1）、policy 25（PolicyParsing 17/JointLimits 7/CMake 1）、project 27（AtomicFile 16/Archive 5/ObjectStore 2/其余 4）、io 2、kinematics 2、modeling 2",
+    "7 行按『尚未审计不包装』保持 pending 并在 search.conclusion 写明缺口：policy makeJointDiagnostic/makeErrorDiag/domainWindowText/levelText（正式文案收口 diagnostics 权威未核，沿 REUSE-T01 B18 审计 :17 处方）＋execution admissionDiag（稳定码/中文文案同族缺口）＋policy CollisionEvaluationSession.evaluate/CollisionQuery.buildEvaluationHalf（本批登记尝试实测发现 IRD-GATE-AD 权限墙：行脱离 pending 审计豁免即要求精确 grant，permissions.json 无 CollisionQuery.cpp 授权——权限方案归 RC-09，本批不代授）",
+    "本批实施发现（登记为 RC-09 输入）：CollisionQuery.cpp 两行的保留面登记被权限授予前置阻断——validate-reuse 首轮实测 REUSE-AD 失败（policy/src/CollisionQuery.cpp : restricted upstream use needs exact file/target/operation grant），按门禁同款扫描复核 214 行仅此文件带受限类别（model/state/write-state），两行回退 pending；该文件此前一直依赖 pending 审计豁免运行",
+    "T06 登记滞后发现随批处置：36 行 F-967 滞后字样按已 fixed 事实刷新（core.audit-b32.CoreError.inheritedConstructors 不在本批范围保留原文，其登记仍欠）",
+    "traceability/reuse/REUSE-T57/nonoverlap-retention.json：4 个无专项审计文档行（TaskScheduler/WorkerSupervisor/ObjectStore.publishObject/ObjectStore.readVerified）的逐行 nonOverlap 证据（族判定＋行差异引用＋S1—S4 实测复跑检索＋REUSE-T06 分类独验引用）；README.md 登记依据与方法、逐组绑定映射与未触面清单"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "214 行登记已执行并结构核验：每行 decision=business-specific＋status=audited＋nonOverlapEvidence{path,sha256}；登记脚本内对全部登记行 sources 区段重算 Digest 与矩阵登记值逐一相等、symbol 在区段内命中（零失败）；JSON 逐文件重解析通过；块缩进/空行终检零缺陷（214 行绑定 Digest 复核＋块格式逐行核）",
+    "绑定 sha256 已按 reuse-contract.ps1 Digest 口径（剥 BOM＋CRLF→LF＋尾换行）对实际文件实算，Node 与 pwsh 双运行时复算 11 个绑定目标逐一一致（防 T33 双运行时摘要二象教训）；T32 绑定 REUSE-T32-20261025-r1.json（独验 PASS，ird_add_gtest business-specific 定案在其中逐项实测）、EventBus 16 行绑定 REUSE-T41-20261026-r1.json（独验 PASS，含『越界 core::ReferenceEventBus 产品使用点归零』实测）",
+    "validate-reuse.ps1 已执行：首轮暴露 policy/CollisionQuery.cpp IRD-GATE-AD 失败（真实权限墙），两行回退 pending 后复跑 PASS（exit 0，functions=2267，AD-PENDING 信息性行含该文件与 ui/reporting/runtime Snapshot 既有 pending 审计债）；validate-docs.ps1 -TaskFile 本契约已执行 PASS（validate-task PASS 1 tasks＋validate-docs PASS）",
+    "裁量登记（如实分列）：①cap=NONE 行 decision 只能 business-specific/pending/proposal（reuse-contract.ps1:232），本批 cap=NONE 登记行全部 business-specific 合规；②policy 4 行与 execution admissionDiag 因行内自带『文案收口 diagnostics 权威未核』未决标记保持 pending，不把『尚未审计』包装成『应保留』；③CollisionQuery 2 行因 IRD-GATE-AD 权限前置未满足保持 pending（本批不代授权限）；④core Digest 23 行（GAP-DIGEST-01 未批准）、UnitsTest 8 行、CoreError.inheritedConstructors、execution/policy UTIL-BINARCHIVE 42 行（RC-07 字节原语批）未触，行级排除在 outputs 与 README 明示；⑤TEST-HARNESS capability 在 catalog 保持 candidate（本批零 catalog 变更）；⑥S1—S4 为本批对当前 HEAD 的真实复跑检索（S2 上游全源码 CreateProcess/JOB_OBJECT/命名管道零命中）",
+    "NOT RUN：独立验收（所有者另开会话或所有者明确指令的单次验收子智能体执行，实施者不自签——本批 214 行登记与 7 行 pending 裁量均为待独验状态，不冒称通过）；commit-lint/verify-task-scope（本批不执行 git 写命令，随提交批显式 -Base 70660c5b2 -Head <送验SHA> 执行）；C++ 构建/ird_gates/测试执行（零产品代码、CMake、公共接口变更，按 AGENTS §4 增量范围文档门禁即可，无受影响构建目标）",
+    "边界：不触 catalog.json/permissions.json/closures.json、产品源码全树（DhConvert.cpp/Sampling.cpp/RpyMath.hpp/BaseWorldTransform/Snapshot.cpp 待裁决 4 行/requirements 面/ui 权限面均在产品树内零触碰）、core.json 中 Digest 23 行与 UnitsTest 8 行与 CoreError 行的既有内容（core.json 文件在本批授权面内但上述行零改动）；不执行 git push/fetch/commit"
+  ],
+  "note": "migration.md §13.5.4 RC-10（:426）『业务与治理语义结项』可先行面——原文要求对剩余业务值/单位/诊断/事务/策略/worker/总线/独立 oracle 逐行消费既有检索/非重叠证据，准确表达『应保留』与『尚未审计』。本批为其中零产品代码变更的逐行登记面；RC-10 其余面（foundation-governance 106 行脚本结项格式提案与独立验收、通用子功能分流 RC-04～09）不在本批。起始 SHA=70660c5b294dfb669067457a9a7c7fc95c4ed199。查重（2026-10-28 实测）：tasks/ 止于 REUSE-T56、reuse/changes/ 无 REUSE-T57、traceability/reuse/ 无 REUSE-T57 目录——建档成立。授权口径：所有者 2026-10-27 委托『后续所有裁决授权按建议进行』，本批按建议裁决登记；独验不可自签，如实 NOT RUN 待所有者安排。登记先例：RC-06/T56 SVD 面 business-specific/audited＋nonOverlapEvidence 绑定审计记录（f668d5b05）、T32 rotationAngleBetween 同型；T46 先例＝批次自建 nonoverlap 文件承载逐行族判定（本批仅对 4 个无专项审计行使用该形态，其余 210 行绑定行内 auditEvidence 既有专项审计文档/独验记录，不另造证据）。行级裁量依据：行自带未决标记（『不能判已合规』『待真实消费核对』『继续核』类）经证据链复核——被后续独验记录消费的（T40 写协议链、T06 分类、T36 COLLISION review、T32 定案、S1—S4 复跑）刷新结论后登记，未被消费的（diagnostics 文案收口 5 行）保持 pending。本批实施发现＝CollisionQuery.cpp 权限墙：validate-reuse 首轮在该文件实测 REUSE-AD 失败，揭示其两行 pending 登记一直依赖审计豁免而 permissions.json 无 grant——按本批『不代授权限』边界回退 pending 并把权限最小方案列为 RC-09 输入，不借登记批扩权。F-967 滞后字样刷新＝T06 统计快照行明示『留登记批处置』事项（实测分布 37 行 pending，超出 T06 记录的 16 行 CORE-EVENT 面，本批刷新其中 36 行登记行）。status=ready 表示实施完成待独验，不冒称通过。",
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T57.json"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  }
+}

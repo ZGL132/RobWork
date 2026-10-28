@@ -51,7 +51,7 @@ namespace {
 /// DatasetRef 含 std::string——C++17 无 constexpr 字面串构造，以函数承载）。
 tk::DatasetRef goldenRef()
 {
-    return {"dt-mapping-golden", "1.0.0"};
+    return {"dt-mapping-golden", "1.1.0"};
 }
 
 /// 档案引用（manifest.toleranceProfile 指向——契约一致性断言的期望值）。

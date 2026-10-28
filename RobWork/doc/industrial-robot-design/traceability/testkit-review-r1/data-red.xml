@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.182" timestamp="2026-10-27T20:52:32.161" name="AllTests">
+  <testsuite name="DatasetManifest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.015" timestamp="2026-10-27T20:52:32.161">
+    <testcase name="OptionalParametersHaveObjectDefault_ReviewF015" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="191" status="run" result="completed" time="0.015" timestamp="2026-10-27T20:52:32.161" classname="DatasetManifest">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;dataset-invalid: dataset-invalid: parameters: 必填对象字段缺失&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "dataset-invalid: dataset-invalid: parameters: 必填对象字段缺失" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="DatasetIntegrity" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.064" timestamp="2026-10-27T20:52:32.176">
+    <testcase name="GeneratorCoverageRequired_ReviewF017" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="208" status="run" result="completed" time="0.064" timestamp="2026-10-27T20:52:32.176" classname="DatasetIntegrity">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:168&#x0A;Failed&#x0A;必须拒绝: kin-fk-planar-2r/1.0.0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:168
+Failed
+必须拒绝: kin-fk-planar-2r/1.0.0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:168&#x0A;Failed&#x0A;必须拒绝: kin-fk-planar-2r/1.0.0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:168
+Failed
+必须拒绝: kin-fk-planar-2r/1.0.0
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="DatasetRejections" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.102" timestamp="2026-10-27T20:52:32.240">
+    <testcase name="IntegerFieldsRejectFractionsAndRange_ReviewF018" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="227" status="run" result="completed" time="0.102" timestamp="2026-10-27T20:52:32.240" classname="DatasetRejections">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240&#x0A;Expected: GoldenDataset::load({&quot;kin-fk-planar-2r&quot;, &quot;1.0.0&quot;}) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;&quot;seed&quot;: 1.5&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240
+Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"seed": 1.5
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240&#x0A;Expected: GoldenDataset::load({&quot;kin-fk-planar-2r&quot;, &quot;1.0.0&quot;}) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;&quot;seed&quot;: 18446744073709551616&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240
+Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"seed": 18446744073709551616
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240&#x0A;Expected: GoldenDataset::load({&quot;kin-fk-planar-2r&quot;, &quot;1.0.0&quot;}) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;&quot;threadCount&quot;: 1.5&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240
+Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"threadCount": 1.5
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240&#x0A;Expected: GoldenDataset::load({&quot;kin-fk-planar-2r&quot;, &quot;1.0.0&quot;}) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;&quot;threadCount&quot;: &quot;1&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240
+Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"threadCount": "1"
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240&#x0A;Expected: GoldenDataset::load({&quot;kin-fk-planar-2r&quot;, &quot;1.0.0&quot;}) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;10.5&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:240
+Expected: GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+10.5
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:245&#x0A;Expected: parseSemanticVersion(&quot;999999999999999999999.0.0&quot;, &quot;version&quot;, &amp;major, &amp;minor, &amp;patch) throws an exception of type TestKitError.&#x0A;  Actual: it throws std::out_of_range with description &quot;stoi argument out of range&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp:245
+Expected: parseSemanticVersion("999999999999999999999.0.0", "version", &major, &minor, &patch) throws an exception of type TestKitError.
+  Actual: it throws std::out_of_range with description "stoi argument out of range".
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

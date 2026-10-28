@@ -89,9 +89,8 @@ void ExecutionCacheCoordinator::storeModelCache(const CompileCacheKeyView& key,
     const auto now = m_clock ? m_clock() : std::chrono::system_clock::now();
     const auto it = m_modelCache.find(key);
     if (it != m_modelCache.end()) {
-        if (it->second.bytes.size() == bytes.size()) {
-            // 同键同长按幂等刷新处理（内容寻址键同键即同内容——阶段 A
-            // 不做逐字节比对，键即内容身份，CON-05；刷新 LRU 即命中语义）。
+        if (it->second.bytes == bytes) {
+            // EXR-13：只有内容一致才幂等刷新；同长度不能充当内容身份。
             it->second.lastHitAtUtc = now;
             return;
         }
@@ -262,51 +261,55 @@ CacheLookup ExecutionCacheCoordinator::lookup(const CacheLookupQuery& query)
         out.modelVerdict = CacheLookup::ModelVerdict::NotQueried;
         return out;
     }
-    std::optional<CompileCacheKeyView> cachedModelKey;
+    std::vector<CompileCacheKeyView> modelCandidates;
+    const ICompileCacheJudge* judge = nullptr;
+    bool reportJudgeAbsence = false;
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        const auto it = m_modelCache.find(*query.requestedModelKey);
-        if (it != m_modelCache.end()) {
-            // 键相等查表＝存储编址命中——兼容判定仍必须经注入 judge
-            // （键相等≠复用语义：runtime §9.4 判定表含 DWC 有向语义）；
-            // 刷新 LRU 后把登记键交给判定（值拷贝出锁）。
-            it->second.lastHitAtUtc = now;
-            cachedModelKey = it->first;
+        judge = m_compileJudge;
+        const auto exact = m_modelCache.find(*query.requestedModelKey);
+        if (exact != m_modelCache.end()) modelCandidates.push_back(exact->first);
+        // EXR-13：WC 相同只作候选索引；DWC 可否复用完全交 runtime judge。
+        // 完整键优先，其余按既有 map 的字典序，结果不依赖哈希或插入时序。
+        for (const auto& [key, entry] : m_modelCache) {
+            if (key.workCellKey == query.requestedModelKey->workCellKey
+                && key != *query.requestedModelKey) modelCandidates.push_back(key);
+        }
+        if (!modelCandidates.empty() && judge == nullptr && !m_judgeAbsenceReported) {
+            m_judgeAbsenceReported = true;
+            reportJudgeAbsence = true;
         }
     }
-    if (!cachedModelKey.has_value()) {
-        out.modelVerdict = CacheLookup::ModelVerdict::Miss;   // 无条目→需编译
+    if (modelCandidates.empty()) {
+        out.modelVerdict = CacheLookup::ModelVerdict::Miss;
         return out;
     }
-    if (m_compileJudge == nullptr) {
-        // 校验面缺失 fail-closed：无判定器不得声称任何复用（EX-T05 提交
-        // 验证同口径）；一次性开发留痕（避免每次查找重复告警）。
-        std::lock_guard<std::mutex> lock(m_mutex);
-        if (!m_judgeAbsenceReported) {
-            m_judgeAbsenceReported = true;
-            m_diagnostics.reportDev(
-                "execution/cache",
-                "ICompileCacheJudge 未注入——模型缓存面按 Incompatible 保守拒绝");
-        }
+    if (judge == nullptr) {
+        if (reportJudgeAbsence) m_diagnostics.reportDev("execution/cache",
+            "ICompileCacheJudge 未注入——模型缓存面按 Incompatible 保守拒绝");
         out.modelVerdict = CacheLookup::ModelVerdict::Incompatible;
         out.modelReasons.push_back("judge-unavailable");
         return out;
     }
-    // 判定单点消费（P-EX-3：判定规则在注入侧——本单元零复制；verdict/
-    // reasons 原样透传，含 WorkCellOnlyReuse"不得作为完整命中上报"的
-    // 消费义务——本面只报告，复用裁决由 Preparing 编排按三态处置）。
-    const CompileCacheVerdict modelVerdict
-        = m_compileJudge->judge(*query.requestedModelKey, *cachedModelKey);
-    switch (modelVerdict) {
-    case CompileCacheVerdict::FullReuse:
-        out.modelVerdict = CacheLookup::ModelVerdict::FullReuse;
-        break;
-    case CompileCacheVerdict::WorkCellOnlyReuse:
-        out.modelVerdict = CacheLookup::ModelVerdict::WorkCellOnlyReuse;
-        break;
-    case CompileCacheVerdict::Incompatible:
-        out.modelVerdict = CacheLookup::ModelVerdict::Incompatible;
-        break;
+    out.modelVerdict = CacheLookup::ModelVerdict::Incompatible;
+    std::optional<CompileCacheKeyView> selected;
+    for (const auto& candidate : modelCandidates) {
+        // 外部 judge 不在缓存锁内调用；判定不复制，FullReuse 优先于部分复用。
+        const auto verdict = judge->judge(*query.requestedModelKey, candidate);
+        if (verdict == CompileCacheVerdict::FullReuse) {
+            out.modelVerdict = CacheLookup::ModelVerdict::FullReuse;
+            selected = candidate;
+            break;
+        }
+        if (verdict == CompileCacheVerdict::WorkCellOnlyReuse && !selected.has_value()) {
+            out.modelVerdict = CacheLookup::ModelVerdict::WorkCellOnlyReuse;
+            selected = candidate;
+        }
+    }
+    if (selected.has_value()) {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        const auto it = m_modelCache.find(*selected);
+        if (it != m_modelCache.end()) it->second.lastHitAtUtc = now;
     }
     return out;
 }

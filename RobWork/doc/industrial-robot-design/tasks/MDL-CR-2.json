@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "MDL-CR-2",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "modeling专项评审修复第2批",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "MDL-01",
+    "MDL-02",
+    "MDL-06",
+    "MDL-10",
+    "MDL-12"
+  ],
+  "designRefs": [
+    "units/modeling.md#5",
+    "units/modeling.md#7"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/GoldenPeerContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/Codec.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/DhConvert.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingAuthorityFlows.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingFlowsInternal.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPluginAssembly.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingXacroBridge.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CanonicalBridge.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Codec.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/WorkCellReverseImport.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CanonicalBridgeTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CodecTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/DhConvertEquivalenceTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/DhConvertTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenDhEquivalenceTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ModelingCommandFlowsTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Codec.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Compiler.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Description.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CodecTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/MDL-CR-2.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/MDL-CR-2.json",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/*.json",
+    "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/**",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "本批局部修复与真实回归；实施待所有者独立验收"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "pwsh -NoProfile -File build/modeling-review-20261028/reproduce-probes.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/MDL-CR-2.json"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-1"
+  ],
+  "acceptance": [
+    "对应评审反例转PASS且无公差放宽",
+    "保留runtime模型owner及物理单位/来源/失败原子性",
+    "本批真实验证与独立可回滚提交，不自签独验"
+  ],
+  "note": "所有者2026-10-28分批修复指令；本批起点b80043238df28bb83617f985824876c5da37a162，指定C:工作树/codex/core-review-fixes；沿既有H6格式登记，ready不是独验通过；C03求解骨架冻结，仅修输入/检验门，不冒称LM已复用迁移。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/MDL-CR-2.json"
+  }
+}

@@ -254,6 +254,15 @@ IkCollisionVerdict PolicyCollisionSessionAdapter::evaluate(const std::vector<dou
                 verdict.objectIdPairs.push_back(finding.objectA);
                 verdict.objectIdPairs.push_back(finding.objectB);
             }
+            // POL-T13/KIN-05：缺几何导致的未检不能读成无碰撞。已发现
+            // 碰撞仍可据事实淘汰该构型；无发现且覆盖不足只能回报缺证。
+            if (!verdict.inCollision
+                && (evaluation.coverage.pairsWithGeometry < evaluation.coverage.pairsInScope
+                    || evaluation.coverage.pairsEvaluated < evaluation.coverage.pairsInScope)) {
+                verdict.state = IkCollisionEvaluationState::EvidenceMissing;
+                verdict.statusDetail = "碰撞几何覆盖不足（KIN-05：未检对不能视为无碰撞）";
+                break;
+            }
             verdict.state = IkCollisionEvaluationState::Evaluated;
         } else if (evaluation.applicability
                    == policy::ScopeApplicability::EmptyScope) {

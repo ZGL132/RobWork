@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T55",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T55.json",
+  "files": [
+    {
+      "mode": "adapter",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "sha256": "3497fe78c3d6b7b523409144ce2163849c13bdd9c4b19d13e7dc6199181390ae",
+      "capabilities": [
+        "MATH-ROT"
+      ],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/run/probe-swap.log",
+      "boundary": "WP3 阶段一换核（候选，未落地；migration §13 工作包3 五问；阶段〇 FAIL 援引 traceability/reuse/REUSE-T55/README.md §2/§4）：替身核删除清单＝rotVec 逐元素 R·v 三行（消费点 transformMul 并入，函数整体删除）、rotMul 三重循环、transformMul 手工组合、rotateTranspose 逐元素转置、rotateTransposeFrame 三重循环——改调上游直接 API：Transform3D::operator*（Transform3D.hpp:333）、Rotation3D::operator*（Rotation3D.hpp:317→Rotation3D.cpp:112-155）、operator*(Rotation3D,Vector3D)（:358→:106-108）、自由函数 inverse(const Rotation3D&)（:542-557＝逐元素精确转置）；rotZ/rotX 中3 逐项定案换 RPY(ψ,0,0)/RPY(0,0,α).toRotation3D()（RPY.cpp:74；探针 84 角例数值恒等最大差 0、仅 (2,0) 元 +0→−0 零符号差——±0 同义为 canonical 身份面既登记契约）；axisAngleRotation 一行不动（阶段〇 FAIL：EAA::axis() θ<1e-6 零轴，REQUIREMENTS.md:784/:786 第13项仅表示转换不覆盖 FK/DH 1e-9——函数注+矩阵行双登记防误换）；rotationAngleBetween 保留定案（T32 反例直接引用 migration.md:270）＋内联转置注失真冒烟表述订正；文件头实现纪律句、节横幅与原 :178-180 失真注释订正（两建模构建模式实链 sdurw_math）。位模式探针：rotVec/rotMul/transformMul/rotateTranspose/rotateTransposeFrame 各 256 例逐位恒等、最大差 0。矩阵 functions/modeling.json 同批刷新（不入本 manifest——设计区文件由 FRESHNESS 全量机器核查承载）"
+    },
+    {
+      "mode": "adapter",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+      "sha256": "109fa0f14861a8e306b2b5990348028fcacaa99fd5dbd4b2fd7939ba67269ef3",
+      "capabilities": [
+        "MATH-ROT"
+      ],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T55/production/kinematics-normal.log",
+      "boundary": "WP3 阶段一换核（候选，未落地）：validateBoxOrientation SO(3) 判定核改上游 isProperRotation(1e-9)（Rotation3D.hpp:291→LinearAlgebra::isSO→isProperOrthonormal）——语义差异登记：①行正交（R·Rᵀ）替代列点积数学等价阈值同 1e-9（探针 561 例含 ±1.5e-9 边界带扫掠判定映射完全一致）；②上游 bool 不区分失效模式→保留非有限预检＋失败路径 LinearAlgebra::isOrthonormal 细分，非有限/非正交/非右手三分诊断消息集合不变，但双重无效输入的类别优先级变化（探针 P6b 4/4 翻转：基线列序扫描「非正交」先抛→新核全元素预检「非有限」恒先抛；异常类型同为 std::invalid_argument，RegionCoverageTest 仅钉类型不受影响）。orientBoxPoint R·d 改 operator*(Rotation3D,Vector3D)（R·d 部分求和序同原展开、位模式恒等；单位阵快路径保留）——全表达式语义差异登记＝中心加法结合序 c+((t0+t1)+t2) vs 原 ((c+t0)+t1)+t2（探针 P9：768 例中 243 例 ULP 级位差、maxAbsDiff 4.441e-16、maxUlp 160，附录 D 容差内）。orientSampleRotation 改 Rotation3D::operator*（求和序同原三重循环、位模式恒等）。poseFromDirectionRoll 中3 定案：第一段 Rodrigues 轴角与 ±ẑ 双退化分支保留自持（EAA 阶段〇 FAIL 撤出、黄金锁定语义无上游对应），第二段滚转组合改 RPY(roll,0,0).toRotation3D()＋operator*（黄金集 4186 例数值恒等最大差 0、33 例 (0,1) 元零符号差）；原 :366-367/:407-408/:102 失真冒烟注释订正（kinematics 两构建模式实链 sdurw_math）。矩阵 functions/kinematics.json 同批刷新（不入本 manifest——设计区文件由 FRESHNESS 全量机器核查承载）。证据绑定口径（第三轮重钉）：本 manifest 的 sha256 与 stage1-candidate.patch 内 functions/kinematics.json 7 行（4 个 MATH-ROT 行＋3 个采样行）的 startLine/endLine/sha256，均按「HEAD＋stage1-candidate.patch 应用后的修订候选字节」以 validate-reuse Digest 口径（BOM 剥离＋CRLF→LF＋尾换行归一）重钉——实测 Sampling.cpp=109fa0f14861a8e306b2b5990348028fcacaa99fd5dbd4b2fd7939ba67269ef3（与核对方实算一致），7 行重钉值在修订候选字节上 FRESHNESS 模拟 7/7 通过（validateBoxOrientation 72-91、orientBoxPoint 100-112、orientSampleRotation 123-127、poseFromDirectionRoll 373-433、generateDirections 344-358、generateGridPositions 275-319、generateRandomPositions 322-342）"
+    }
+  ]
+}

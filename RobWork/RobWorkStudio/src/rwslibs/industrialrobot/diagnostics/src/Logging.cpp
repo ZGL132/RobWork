@@ -49,6 +49,7 @@
  */
 
 #include <sdurws/ird/diagnostics/Logging.hpp>
+#include "EntryDetail.hpp"
 
 #include <sdurws/ird/diagnostics/Redaction.hpp>  // IRedactionService（§7.3② 步骤②接线——DIAG-T08）
 
@@ -138,24 +139,15 @@ constexpr const char* kChannelLogging = "diag/logging";
 /// 重放合并通道（§7.5 断裂补条行）。
 constexpr const char* kChannelMerge = "diag/log-merge";
 
-/**
- * @brief 是否管线/脱敏设施的内部自省通道（§7.3② 步骤②的旁路清单——
- *        DIAG-T08 接线口径，登记于单元卡 §14.4 v0.9）。
- *
- * 为什么旁路：这三类通道的行由管线/脱敏设施自产，内容为常量文本＋计数
- * （绝不携带调用方原文——写失败行携带的文件面 token "user"/"dev" 是枚举
- * 字面量而非路径）；若再过脱敏，自省行自身的脱敏失败会经 failureSink 回环
- * 入队（脱敏失败→发失败行→失败行再脱敏再失败……）。自省行不走脱敏即
- * 切断该环（与 v0.8 口径⑥"内部行旁路采样/节流"同一设计方向）。DT-LOG-1~3
- * 既有用例断言自省行文本逐字（含 "file=user" 面）——旁路同时保持 v0.8 行
- * 为零回归。
- */
-bool isInternalDiagChannel(const std::string& channel) noexcept
-{
-    return channel == kChannelLogging                     // 日志设施自省行
-        || channel == kChannelMerge                       // 重放断裂补条行
-        || channel.compare(kRedactionInternalChannel) == 0;  // 脱敏降级行（Redaction.hpp）
-}
+/// 同线程、同管线的同步脱敏失败区间；channel 名字不授予原文旁路。
+thread_local const void* activeRedactionPipeline = nullptr;
+
+/// 限定同步脱敏调用区间，嵌套使用时恢复前一个管线身份。
+struct RedactionScope {
+    const void* previous = activeRedactionPipeline;
+    explicit RedactionScope(const void* pipeline) { activeRedactionPipeline = pipeline; }
+    ~RedactionScope() { activeRedactionPipeline = previous; }
+};
 
 /// 截断标注（§7.2"超出截断并标注"）。
 constexpr const char* kTruncMark = "[trunc]";
@@ -181,9 +173,7 @@ bool isDigitChar(char c) noexcept { return c >= '0' && c <= '9'; }
 std::string truncateForLog(const std::string& msg)
 {
     if (msg.size() <= kLogMessageMaxBytes) { return msg; }
-    std::size_t cut = kLogMessageMaxBytes;
-    // 回退续字节：切点若落在多字节序列内部（续字节），向前回退至 lead 字节前。
-    while (cut > 0 && (static_cast<unsigned char>(msg[cut]) & 0xC0) == 0x80) { --cut; }
+    const auto cut = detail::utf8PrefixSize(msg, kLogMessageMaxBytes);
     std::string out = msg.substr(0, cut);
     out += kTruncMark;
     return out;
@@ -196,7 +186,7 @@ std::string truncateForLog(const std::string& msg)
  * 透传（UTF-8 内容不动）。消息是行尾字段（msg= 之后到行尾），转义保证
  * 任何载荷不会产生物理换行、破坏逐行解析。
  */
-std::string escapeLineMessage(std::string_view msg)
+std::string escapeLineMessage(std::string_view msg, bool field = false)
 {
     std::string out;
     out.reserve(msg.size());
@@ -206,7 +196,15 @@ std::string escapeLineMessage(std::string_view msg)
         case '\n': out += "\\n"; break;
         case '\r': out += "\\r"; break;
         case '\t': out += "\\t"; break;
-        default: out += c; break;
+        default:
+            if (static_cast<unsigned char>(c) < 0x20 || c == 0x7f || (field && c == ' ')) {
+                constexpr char hex[] = "0123456789abcdef";
+                const auto value = static_cast<unsigned char>(c);
+                out += "\\x";
+                out += hex[value >> 4];
+                out += hex[value & 15];
+            } else { out += c; }
+            break;
         }
     }
     return out;
@@ -346,7 +344,8 @@ struct FileLogFileOps::Impl {
     {
         std::FILE* f = nullptr;
 #ifdef _MSC_VER
-        if (fopen_s(&f, p.string().c_str(), "ab") != 0) { f = nullptr; }
+        // Windows 原生路径为 UTF-16；禁止经活动代码页转换而丢失中文或非 BMP 字符。
+        if (_wfopen_s(&f, p.c_str(), L"ab") != 0) { f = nullptr; }
 #else
         f = std::fopen(p.string().c_str(), "ab");
 #endif
@@ -481,15 +480,20 @@ namespace {
  * 节流/采样旁路标记（实现口径 6：自产行不被自身机制吞噬；写失败/断裂补条
  * 行保留节流聚合）。
  */
+/// flush 完成凭据由队列与调用者共享；done/ok 只在管线 mtx 下读写。
+struct FlushCompletion { bool done = false; bool ok = false; };
+
 struct LogItem {
-    enum class Kind { Record, Batch, Configure, Shutdown };
+    enum class Kind { Record, Batch, Configure, Flush, Shutdown };
 
     Kind kind = Kind::Record;
     bool applyThrottle = true;    ///< 是否参与节流（§7.4——自产汇总行旁路）
     bool applySampling = true;    ///< 是否参与采样（§7.4——自产行与 Debug/Trace 之外旁路）
+    bool trustedConstant = false; ///< 仅实现内部产生的固定安全文本；公共 channel 无法设置
     LogRecord record;             ///< Record 载荷
     WorkerLogBatch batch;         ///< Batch 载荷
     LogSinkConfig config;         ///< Configure 载荷
+    std::shared_ptr<FlushCompletion> completion; ///< Flush 屏障；超时返回后仍可安全完成
 };
 
 /**
@@ -543,6 +547,8 @@ struct LoggingPipeline::Impl {
     std::deque<LogItem> queue;               ///< 异步队列（§9.6"异步管线——返回即入队确认"）
     bool processing = false;              ///< 日志线程正在锁外处理条目（flush 排空判据）
     bool stopped = false;                 ///< Shutdown 已入队（其后调用方入队防御性丢弃）
+    bool exited = false;                  ///< 线程已退出；flush 不再等待不存在的消费者
+    std::optional<std::chrono::steady_clock::time_point> shutdownUntil; ///< mtx 保护的关闭预算
     std::shared_ptr<const LogSinkConfig> cfg;  ///< 配置快照（configure 切换＝整值替换）
     std::atomic<std::uint32_t> capacity{4096}; ///< 队列容量镜像（入队侧无锁读取——queueCapacity）
     std::thread worker;                   ///< 日志线程（§7.3"串行化于日志线程"）
@@ -601,6 +607,7 @@ struct LoggingPipeline::Impl {
     bool finalizing = false;           ///< 关闭收尾中（自产行改为直接渲染——队列不再消费）
     std::uint64_t writeSeq = 0;        ///< 行序号（实现口径 1：写入序，日志线程私有）
     std::uint64_t threadFaults = 0;    ///< 日志线程逃逸异常计数（runLoop 顶界兜底观测）
+    std::uint64_t shutdownDrops = 0;   ///< 关闭预算到期后的剩余队列/延迟行计数（线程私有）
 
     Impl(IClock& clockRef, ILogFileOps& opsRef)
         : clock{clockRef}
@@ -646,12 +653,14 @@ struct LoggingPipeline::Impl {
 
     /// 日志记录入队（bounded＝受容量约束——§9.6 队列满策略；管线自产行
     /// force 直入不受限——自产行丢失会破坏断裂补条/失败计数语义）。
-    void pushRecord(LogRecord record, bool applyThrottle, bool applySampling, bool bounded)
+    void pushRecord(LogRecord record, bool applyThrottle, bool applySampling, bool bounded,
+                    bool trustedConstant = false)
     {
         LogItem item;
         item.kind = LogItem::Kind::Record;
         item.applyThrottle = applyThrottle;
         item.applySampling = applySampling;
+        item.trustedConstant = trustedConstant;
         item.record = std::move(record);
         pushItem(std::move(item), bounded);
     }
@@ -696,6 +705,7 @@ struct LoggingPipeline::Impl {
         std::lock_guard<std::mutex> lock(mtx);
         if (stopped) { return; }
         stopped = true;
+        shutdownUntil = std::chrono::steady_clock::now() + kLogDefaultFlushDeadline;
         LogItem stop;
         stop.kind = LogItem::Kind::Shutdown;
         queue.push_back(std::move(stop));
@@ -721,6 +731,11 @@ struct LoggingPipeline::Impl {
             std::fputs("[ird-diagnostics] logging thread escaped unknown exception\n",
                        stderr);
         }
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            exited = true;
+        }
+        cv.notify_all();
     }
 
     /// 消费循环。持锁不变量：进入 cv.wait 时**恒已持锁**（wait 仅在阻塞期间
@@ -733,6 +748,14 @@ struct LoggingPipeline::Impl {
             // 不变量：此处持锁。谓词为假时阻塞等待（原子释放/重取）；为真时
             // 立即返回（仍持锁）。
             cv.wait(lock, [this] { return !queue.empty(); });
+            if (shutdownUntil && std::chrono::steady_clock::now() >= *shutdownUntil) {
+                // 不再启动新的同步 I/O；在途操作返回后才到此，借持资源仍由 join 保护。
+                shutdownDrops += queue.size() - 1; // 排除唯一 Shutdown 控制项
+                queue.clear();
+                lock.unlock();
+                abandonDeferred();
+                return;
+            }
             LogItem item = std::move(queue.front());
             queue.pop_front();
             if (item.kind == LogItem::Kind::Shutdown) {
@@ -746,26 +769,31 @@ struct LoggingPipeline::Impl {
             lock.lock();         // 重取（显式恢复不变量——见函数头注释）
             // 排空边界：队列清空且存在丢弃计数→补一条 Dev 计数行（§9.6"丢弃
             // 最旧 Debug/Trace＋Dev 计数诊断"；§7.5 陈旧批计数同面承载）。
-            if (queue.empty() && (overflowDrops > 0 || staleDrops > 0)) {
-                LogItem summary;
-                summary.kind = LogItem::Kind::Record;
-                summary.applyThrottle = false;  // 自产汇总行旁路节流（实现口径 6）
-                summary.applySampling = false;
-                summary.record.tier = LogTier::Dev;
-                summary.record.level = LogLevel::Warning;
-                summary.record.channel = kChannelLogging;
-                summary.record.message = "[log-overflow] 队列满/陈旧批：丢弃 Debug/Trace 行 "
-                                       + std::to_string(overflowDrops) + " 条，陈旧批次 "
-                                       + std::to_string(staleDrops) + " 个（尽力而为降级）";
-                overflowDrops = 0;
-                staleDrops = 0;
-                queue.push_back(std::move(summary));
-            }
+            if (queue.empty()) { enqueueDropSummary(); }
             processing = false;
             lock.unlock();
             cv.notify_all();     // flush() 排空等待者复查
             lock.lock();         // 回 wait 前重取——维持"进入 wait 恒持锁"不变量
         }
+    }
+
+    /// mtx 已持有：把真实丢弃统计转为安全常量行，供排空和 flush 共同消费。
+    void enqueueDropSummary()
+    {
+        if (overflowDrops == 0 && staleDrops == 0) { return; }
+        LogItem summary;
+        summary.kind = LogItem::Kind::Record;
+        summary.applyThrottle = false;  // 自产汇总行旁路节流（实现口径 6）
+        summary.applySampling = false;
+        summary.record.tier = LogTier::Dev;
+        summary.record.level = LogLevel::Warning;
+        summary.record.channel = kChannelLogging;
+        summary.record.message = "[log-overflow] 队列满/陈旧批：丢弃队列项 "
+                               + std::to_string(overflowDrops) + " 条，陈旧批次 "
+                               + std::to_string(staleDrops) + " 个（尽力而为降级）";
+        overflowDrops = 0;
+        staleDrops = 0;
+        queue.push_back(std::move(summary));
     }
 
     void processItem(LogItem& item)
@@ -776,7 +804,8 @@ struct LoggingPipeline::Impl {
             // 注入 IClock——单线程渲染无时钟并发面）。
             auto cfgPtr = currentConfig();
             item.record.timestampUtc = clock.nowUtc();
-            renderRecord(item.record, *cfgPtr, item.applyThrottle, item.applySampling);
+            renderRecord(item.record, *cfgPtr, item.applyThrottle, item.applySampling,
+                         item.trustedConstant);
             break;
         }
         case LogItem::Kind::Batch:
@@ -785,6 +814,46 @@ struct LoggingPipeline::Impl {
         case LogItem::Kind::Configure:
             applyConfig(item.config);
             break;
+        case LogItem::Kind::Flush: {
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                enqueueDropSummary();
+                // 包括此前写入衍生的失败通知；多个 Flush 控制项之间不互相等待。
+                const bool pending = std::any_of(queue.begin(), queue.end(), [](const auto& next) {
+                    return next.kind == LogItem::Kind::Record || next.kind == LogItem::Kind::Batch
+                        || next.kind == LogItem::Kind::Configure;
+                });
+                if (pending) { queue.push_back(std::move(item)); return; }
+            }
+            // 同配置/写入共用一个串行执行面；调用方只等完成凭据，不执行文件 I/O。
+            const auto c = currentConfig();
+            bool ok = true;
+            if (c->enabled) {
+                for (int i = 0; i < 2; ++i) {
+                    if ((i == 0 && !c->userEnabled) || (i == 1 && !c->devEnabled)) continue;
+                    const auto path = filePathFor(*c, i == 0);
+                    if (!path.empty()) ok = guardOpsBool([&] { return ops.flushFile(path); }) && ok;
+                }
+            }
+            if (!ok) {
+                ++writeFailures;
+                LogRecord failure;
+                failure.tier = LogTier::Dev;
+                failure.level = LogLevel::Warning;
+                failure.channel = kChannelLogging;
+                failure.code = kCodeLogWriteFailed;
+                failure.message = "[log-write-failed] flush 文件冲刷失败";
+                failure.timestampUtc = clock.nowUtc();
+                renderRecord(failure, *c, false, false, true);
+            }
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                item.completion->ok = ok;
+                item.completion->done = true;
+            }
+            cv.notify_all();
+            break;
+        }
         case LogItem::Kind::Shutdown:
             break;  // runLoop 已处理（不可达——防御性保留）
         }
@@ -803,8 +872,9 @@ struct LoggingPipeline::Impl {
      * @param applySampling  [in] 是否参与采样（自产行旁路）
      */
     void renderRecord(LogRecord& rec, const LogSinkConfig& c, bool applyThrottle,
-                      bool applySampling)
+                      bool applySampling, bool trustedConstant = false)
     {
+        if (shutdownExpired()) { ++shutdownDrops; return; }
         // ①格式化：message 定长截断（§7.2 ≤4 KiB——关联 ID 为结构化字段，
         // 无需字符串规范化；行编码时统一转义）。
         rec.message = truncateForLog(rec.message);
@@ -813,13 +883,17 @@ struct LoggingPipeline::Impl {
         // 全量脱敏随 DIAG-T08 接线，§14.4 v0.9 登记）：Dev 档全量规则
         // （凭据/令牌/环境变量/用户名/路径按策略）对两 Tier 统一生效——
         // "两 Tier 同一脱敏管线"（§7.1）；Tier-U 文件的"额外内部模式过滤"
-        // 仍由下方呈现层承担（v0.8 口径②镜像语义不变）。内部自省通道旁路
-        // （isInternalDiagChannel——自产常量文本，再过脱敏会形成失败行回环）。
+        // 仍由下方呈现层承担。仅私有可信常量位跳过脱敏；普通 log/worker 载荷
+        // 无法设置该位。channel/code/threadTag 同消息一起脱敏后才进入尾部缓存。
         // 脱敏服务绝不抛出（§9.5）——此处的 noexcept 保证与管线"环境面不抛"
         // 契约一致；未接线（快照为空）＝v0.7 原语义（装配前合法降态）。
         const std::shared_ptr<const IRedactionService> red = redactionSnapshot();
-        if (red != nullptr && !isInternalDiagChannel(rec.channel)) {
+        if (red != nullptr && !trustedConstant) {
+            RedactionScope scope(this);
             rec.message = red->redact(rec.message, LogTier::Dev);
+            rec.channel = red->redact(rec.channel, LogTier::Dev);
+            rec.threadTag = red->redact(rec.threadTag, LogTier::Dev);
+            if (rec.code) { rec.code = red->redact(*rec.code, LogTier::Dev); }
         }
 
         // ③级别过滤（§7.3③）：Tier-U 结构性只收 Error/Warning/Info（入口
@@ -937,6 +1011,7 @@ struct LoggingPipeline::Impl {
         if (it != c.sampleEveryByChannel.end()) { n = it->second; }
         ++st.count;
         if (st.count == 1 || (n != 0 && st.count % n == 0)) {
+            st.tail.reset();  // 最新记录已被选中，先前被采掉的记录不再是流尾。
             return false;  // 首条或第 N 条——落盘
         }
         st.tail = std::move(rec);  // 采掉——最新一条进尾条槽（覆盖上一尾条：只保末条）
@@ -949,11 +1024,11 @@ struct LoggingPipeline::Impl {
     {
         r.message = truncateForLog(r.message);
         if (finalizing) {
-            renderRecord(r, c, /*applyThrottle=*/false, /*applySampling=*/false);
+            renderRecord(r, c, /*applyThrottle=*/false, /*applySampling=*/false, true);
             return;
         }
         pushRecord(std::move(r), /*applyThrottle=*/false, /*applySampling=*/false,
-                   /*bounded=*/false);
+                   /*bounded=*/false, /*trustedConstant=*/true);
     }
 
     // ---- 写入面（⑤——经 ILogFileOps 接缝；轮转与 flush 窗口在此执行）----
@@ -1077,10 +1152,10 @@ struct LoggingPipeline::Impl {
         line += ' ';
         line += logLevelToken(rec.level);
         line += ' ';
-        line += rec.channel;
+        line += escapeLineMessage(masked ? maskUserPatterns(rec.channel) : rec.channel, true);
         if (rec.code.has_value()) {
             line += " code=";
-            line += *rec.code;
+            line += escapeLineMessage(masked ? maskUserPatterns(*rec.code) : *rec.code, true);
         }
         // 关联 ID 块（§7.2 结构化承载；k:v 以 ';' 相连——观测面解析友好）。
         std::string ids;
@@ -1107,7 +1182,8 @@ struct LoggingPipeline::Impl {
             line += " ids=" + ids;
         }
         if (!rec.threadTag.empty()) {
-            line += " tag=" + rec.threadTag;
+            line += " tag=" + escapeLineMessage(
+                masked ? maskUserPatterns(rec.threadTag) : rec.threadTag, true);
         }
         if (rec.workerId.has_value()) {
             line += " wk=" + std::to_string(*rec.workerId);
@@ -1138,8 +1214,13 @@ struct LoggingPipeline::Impl {
             // 全局稳定序——§7.5"按序号重放合并"）。
             acceptBatch(batch, c);
             st.expected = batch.seq + 1;
-            drainReady(st, c);
-            if (batch.final) { st.closed = true; }
+            if (batch.final) {
+                staleDrops += st.pending.size();
+                st.pending.clear();
+                st.closed = true;
+            } else {
+                drainReady(st, c);
+            }
             return;
         }
         // batch.seq > expected：整批缓冲（缺口可能仍在途——不补条不落盘）。
@@ -1223,6 +1304,7 @@ struct LoggingPipeline::Impl {
         // 静默丢失在此补条——不悬挂、不丢弃，§7.5 断裂语义闭合）。
         for (auto& [key, st] : streams) {
             while (!st.pending.empty()) {
+                if (shutdownExpired()) { abandonDeferred(); return; }
                 const auto it = st.pending.begin();
                 const std::uint64_t seq = it->first;
                 for (std::uint64_t s = st.expected; s < seq; ++s) {
@@ -1237,6 +1319,7 @@ struct LoggingPipeline::Impl {
         // ② 节流窗未关闭的聚合行（窗内压制的 occurrences 不能静默消失——
         // §7.4 汇总承诺在关闭路径兑现）。
         for (auto& [key, st] : throttle) {
+            if (shutdownExpired()) { abandonDeferred(); return; }
             if (st.active && st.occurrences > 0) {
                 emitThrottleSummary(key, st, c);
                 st.occurrences = 0;
@@ -1244,6 +1327,7 @@ struct LoggingPipeline::Impl {
         }
         // ③ 采样尾条（"末条"——每通道至多一条，§7.4）。
         for (auto& [channel, st] : samples) {
+            if (shutdownExpired()) { abandonDeferred(); return; }
             if (st.tail.has_value()) {
                 LogRecord tail = std::move(*st.tail);
                 st.tail.reset();
@@ -1253,8 +1337,37 @@ struct LoggingPipeline::Impl {
             }
         }
         // ④ 冲刷（§7.6：崩溃/关闭前保留窗口的最后一道——尽力而为）。
+        if (shutdownExpired()) { abandonDeferred(); return; }
         flushDirty(false, c);
         finalizing = false;
+    }
+
+    /// 在日志线程查询关闭预算；无关闭请求时不限制普通写入。
+    bool shutdownExpired()
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        return shutdownUntil && std::chrono::steady_clock::now() >= *shutdownUntil;
+    }
+
+    /// 放弃延迟观测并保留计数摘要，预算到期后不再开启文件操作。
+    void abandonDeferred()
+    {
+        for (const auto& [key, stream] : streams) {
+            for (const auto& [seq, batch] : stream.pending) shutdownDrops += batch.records.size();
+        }
+        for (const auto& [channel, sample] : samples) if (sample.tail) ++shutdownDrops;
+        streams.clear();
+        samples.clear();
+        throttle.clear();
+        LogRecord summary;
+        summary.tier = LogTier::Dev;
+        summary.level = LogLevel::Warning;
+        summary.channel = kChannelLogging;
+        summary.timestampUtc = clock.nowUtc();
+        summary.message = "[shutdown-timeout] dropped-items=" + std::to_string(shutdownDrops);
+        pushDevTail(formatLine(summary, false));
+        std::fprintf(stderr, "[ird-diagnostics] shutdown timeout: dropped-items=%llu\n",
+                     static_cast<unsigned long long>(shutdownDrops));
     }
 };
 
@@ -1331,9 +1444,9 @@ LoggingPipeline::LoggingPipeline(IClock& clock, ILogFileOps& fileOps)
 LoggingPipeline::~LoggingPipeline()
 {
     // 关闭序列（§9.6 契约表"关闭时 flush 有界——不永久等待"）：
-    // ①入队 Shutdown（强制——关闭信号不受容量约束）；②线程处理完此前全部
-    // 条目后执行 finalize（断裂补条/汇总/尾条/冲刷）并退出；③join。单条目
-    // 处理有界（文件接缝契约：快速返回）→ 排空整体有界。
+    // ①登记排空期限并入队 Shutdown；②到期丢弃尚未处理的观测并计数；③join。
+    // 同步 ILogFileOps 无取消面：join 仍须等在途 I/O 返回以保护借持资源；严格
+    // 的在途硬时限缺口保留交所有者裁决，不能 detach 后访问已析构的 clock/ops。
     m_impl->requestShutdown();
     m_impl->cv.notify_all();
     if (m_impl->worker.joinable()) { m_impl->worker.join(); }
@@ -1362,6 +1475,16 @@ void LoggingPipeline::logDev(std::string_view channel, LogLevel level, std::stri
 
 void LoggingPipeline::logDev(std::string_view channel, std::string message)
 {
+    if (activeRedactionPipeline == m_impl.get() && channel == kRedactionInternalChannel) {
+        // 失败出口只允许固定常量，不能携带回调原文；私有位阻断异步队列中的失败回环。
+        LogRecord safe;
+        safe.tier = LogTier::Dev;
+        safe.level = LogLevel::Warning;
+        safe.channel = kRedactionInternalChannel;
+        safe.message = "DIAG-REDACTION-FAILED [redaction-failed] 字段已保守替换";
+        m_impl->pushRecord(std::move(safe), false, false, false, true);
+        return;
+    }
     // IDevLogSink 双参形态（§9.7 尾注——reportDev 路由面）：级别固定 Debug
     // （开发诊断快记；采样按 §7.4 约束高频行数）。
     logDev(channel, LogLevel::Debug, std::move(message), CorrelationIds{});
@@ -1372,59 +1495,31 @@ bool LoggingPipeline::flush(std::chrono::milliseconds deadline)
     // 有界等待（§9.6"排空：有界等待；超时放弃＋DIAG-LOG-WRITE-FAILED——
     // 不永久等待"）。墙钟计量（steady_clock）——安全属性不依赖注入时钟。
     const auto until = std::chrono::steady_clock::now() + deadline;
-    bool drained = false;
-    {
-        std::unique_lock<std::mutex> lock(m_impl->mtx);
-        m_impl->cv.wait_until(lock, until, [this] {
-            return m_impl->queue.empty() && !m_impl->processing;
-        });
-        drained = m_impl->queue.empty() && !m_impl->processing;
+    auto completion = std::make_shared<FlushCompletion>();
+    std::unique_lock<std::mutex> lock(m_impl->mtx);
+    if (m_impl->stopped || m_impl->exited) { return false; }
+    LogItem barrier;
+    barrier.kind = LogItem::Kind::Flush;
+    barrier.completion = completion;
+    m_impl->queue.push_back(std::move(barrier)); // 控制项覆盖此前在途及入队的文件操作。
+    m_impl->cv.notify_all();
+    const bool completed = m_impl->cv.wait_until(lock, until, [&] {
+        return completion->done || m_impl->exited;
+    });
+    if (!completed) {
+        // 仅入队固定安全摘要；超时凭据由队列继续拥有，调用方不执行文件 I/O。
+        LogItem failure;
+        failure.applyThrottle = failure.applySampling = false;
+        failure.trustedConstant = true;
+        failure.record.tier = LogTier::Dev;
+        failure.record.level = LogLevel::Warning;
+        failure.record.channel = kChannelLogging;
+        failure.record.code = kCodeLogWriteFailed;
+        failure.record.message = "[log-write-failed] flush 等待超时";
+        m_impl->queue.push_back(std::move(failure));
+        m_impl->cv.notify_all();
     }
-    auto cfgPtr = m_impl->currentConfig();
-    if (!drained) {
-        // 超时放弃：补失败行（尽力而为——可能同样写不出）并如实返回 false。
-        LogRecord r;
-        r.timestampUtc = m_impl->clock.nowUtc();
-        r.tier = LogTier::Dev;
-        r.level = LogLevel::Warning;
-        r.channel = kChannelLogging;
-        r.code = std::string{kCodeLogWriteFailed};
-        r.message = "[log-write-failed] flush 排空超时（有界等待放弃——§9.6/PM-03）";
-        m_impl->emitInternal(std::move(r), *cfgPtr);
-        return false;
-    }
-    // 排空成功：冲刷两文件（此窗口内日志线程空闲等待——与 appendLine 的并发
-    // 可能仅来自新调用方入队，接缝实现自行串行化——ILoggFileOps 契约）。
-    bool ok = true;
-    if (cfgPtr->enabled) {
-        for (int i = 0; i < 2; ++i) {
-            const bool user = i == 0;
-            if ((user && !cfgPtr->userEnabled) || (!user && !cfgPtr->devEnabled)) {
-                continue;
-            }
-            const auto path = m_impl->filePathFor(*cfgPtr, user);
-            if (path.empty()) { continue; }
-            // 接缝允许抛异常——屏障消化为 false（DT-LOG-3"无异常逃逸"）。
-            // 先冲刷后与运算：两个文件都尝试冲刷，任一失败即整体 false。
-            ok = guardOpsBool([&] { return m_impl->ops.flushFile(path); }) && ok;
-        }
-    }
-    if (!ok) {
-        LogRecord r;
-        r.timestampUtc = m_impl->clock.nowUtc();
-        r.tier = LogTier::Dev;
-        r.level = LogLevel::Warning;
-        r.channel = kChannelLogging;
-        r.code = std::string{kCodeLogWriteFailed};
-        // F-753：先递增再取数——原实现只做 writeFailures+1 展示、从不递增，
-        // 连续失败永远显示"累计 1 次"，与 928/950/980 路径的自增口径不一致。
-        const std::uint64_t failures = ++m_impl->writeFailures;
-        r.message = "[log-write-failed] flush 文件冲刷失败（累计 "
-                  + std::to_string(failures) + " 次）";
-        m_impl->emitInternal(std::move(r), *cfgPtr);
-        return false;
-    }
-    return true;
+    return completed && completion->done && completion->ok;
 }
 
 void LoggingPipeline::configure(LogSinkConfig config)

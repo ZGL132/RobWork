@@ -119,11 +119,10 @@ std::unique_ptr<ChannelPair> ChannelPair::create(const std::wstring& baseName)
 
 ChannelPair::~ChannelPair()
 {
-    // 关闭顺序无关紧要（worker 侧的对应端随进程终止或已关闭——管道断裂
-    // 是其正常归宿）。挂起读若仍在途，服务端句柄关闭使其完成/失败。
+    // 必须先等本端挂起读完成，再销毁其事件与存储；对端存活也可主动取消。
     if (m_readOverlapped.hEvent != nullptr) {
         if (m_readPending && m_dataServer != nullptr) {
-            ::CancelIoEx(m_dataServer, &m_readOverlapped);
+            cancelReadAndWait();
         }
         ::CloseHandle(m_readOverlapped.hEvent);
     }
@@ -134,6 +133,17 @@ ChannelPair::~ChannelPair()
     if (m_dataServer != nullptr) {
         ::CloseHandle(m_dataServer);
     }
+}
+
+void ChannelPair::cancelReadAndWait() noexcept
+{
+    if (!m_readPending || m_dataServer == nullptr) return;
+    // EXR-08：CancelIoEx 仅请求取消；复用 writeCommand 的完成收敛模式。
+    ::CancelIoEx(m_dataServer, &m_readOverlapped);
+    DWORD transferred = 0;
+    ::GetOverlappedResult(m_dataServer, &m_readOverlapped, &transferred, TRUE);
+    m_readPending = false;
+    m_readAvailable = 0;
 }
 
 void ChannelPair::closeChildEndDuplicates() noexcept
@@ -337,8 +347,7 @@ std::vector<std::uint8_t> ChannelPair::drainAfterExit()
             m_readPending = false;
             m_readAvailable = 0;
         } else {
-            ::CancelIoEx(m_dataServer, &m_readOverlapped);
-            m_readPending = false;
+            cancelReadAndWait();
         }
     }
     m_broken = true;

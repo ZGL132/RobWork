@@ -538,6 +538,18 @@ ValidationReport validateRobotDesignDescription(const RobotDesignDescription& de
     // 关节链 ≥1（§4.3.3 joints 是（≥1）；编译器机械支持 1..N，产品 6/7 轴
     // 口径归 modeling 门控）。
     const std::size_t nJoints = description.joints.size();
+    checkTransform(report, description.flangeOffset, "flangeOffset");
+    // F05：只校验真实引用的局部放置，资源内容/预算仍归既有io/runtime边界。
+    for (const auto& link : description.links) {
+        if (link.visual) { checkTransform(report, link.visual->localTransform, "link.visual.localTransform"); }
+        if (link.collision) { checkTransform(report, link.collision->localTransform, "link.collision.localTransform"); }
+    }
+    for (const auto& tool : description.tools) {
+        if (tool.geometry) { checkTransform(report, tool.geometry->localTransform, "tool.geometry.localTransform"); }
+    }
+    for (const auto& scene : description.scene) {
+        if (scene.geometry) { checkTransform(report, scene.geometry->localTransform, "scene.geometry.localTransform"); }
+    }
     if (nJoints == 0) {
         addError(report, RuntimeErrorCode::StructureInvalid, "joints",
                  "joints：关节链为空——合法链至少 1 个关节（§4.3.3）");

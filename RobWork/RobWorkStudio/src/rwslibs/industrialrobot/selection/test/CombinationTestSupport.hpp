@@ -220,6 +220,7 @@ inline MappingAxisFact makeMappingFact(const DeviceCombinationId& comboId,
     a.motorSpeedRms = ((heavy ? 10.0 : 5.0) / c) * 0.8;  // rad/s
     a.motorPowerPeak = tauPeak * a.motorSpeedPeak.value(); // W（解析：τ·ω）
     a.motorPowerRms = tauRms * a.motorSpeedRms.value();    // W
+    a.motorTorqueHistory = {{0.0, tauPeak}, {heavy ? 2.0 : 1.0, tauPeak}};
     a.peakDuration = heavy ? 2.0 : 1.0;                  // s（过载时间窗口内）
     a.peakAtTime = 1.5;                                   // s
     a.peakSegmentId = "seg-A";

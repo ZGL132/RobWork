@@ -294,18 +294,20 @@ AdmissionOutcome ResultAdmission::admitFinalEnvelope(ArrivalEnvelope&& arrival,
     // 反解成功（绝不用当前映射——项目切换后映射可能已前进）；任一失败
     // ＝结果不可接纳（NameUnresolved）。反解器未装配而到达含名称：同样
     // 拒绝（fail-closed——无反解能力不放行含名称结果）。
-    for (const core::DiagnosticRecord& d : output->diagnostics) {
+    for (core::DiagnosticRecord& d : output->diagnostics) {
         if (!d.runtimeName.has_value()) {
             continue;  // 本条诊断不带运行时名称——不在反解面
         }
-        const bool resolved = m_nameResolver != nullptr
-            && m_nameResolver->tryResolve(record.nameMapIdentity, *d.runtimeName).has_value();
-        if (!resolved) {
+        // EXR-01：名称真值归登记映射；自报 subject 不能覆盖反解结果。
+        const auto resolved = m_nameResolver != nullptr
+            ? m_nameResolver->tryResolve(record.nameMapIdentity, *d.runtimeName)
+            : std::optional<core::ObjectId>{};
+        if (!resolved.has_value() || (d.subject.has_value() && d.subject != resolved)) {
             outcome.decision.verdict = AdmissionDecision::Verdict::Rejected;
             outcome.decision.reason = AdmissionDecision::RejectReason::NameUnresolved;
             outcome.decision.diagnostics.push_back(admissionDiag(
                 "EX-REGISTRY-MISMATCH",
-                "运行时名称在登记绑定的名称映射下无法反解为对象 ID（CON-06：先反解后接纳）"
+                "运行时名称无法反解或与自报对象不一致（CON-06：登记映射为准）"
                     + (*d.runtimeName),
                 "核对运行所绑 RuntimeNameMap 与 worker 使用的映射是否同源；名称漂移请重跑"));
             m_diagnostics.reportDev("EX-REGISTRY-MISMATCH",
@@ -316,6 +318,7 @@ AdmissionOutcome ResultAdmission::admitFinalEnvelope(ArrivalEnvelope&& arrival,
             outcome.archivePhaseAfter = record.archivePhase;
             return outcome;
         }
+        d.subject = *resolved;
     }
 
     // ---- 九步步 9：envelope 组装（evidence 校验器单点复用——acceptance 3）----

@@ -63,6 +63,10 @@ TEST(ToleranceProfileLoad, SampleProfileResolveThreeStates_UT_TOL)
     const auto profile = ToleranceProfile::load(sampleProfilePath());
     EXPECT_EQ(profile.profileId, "kin-fk");
     EXPECT_EQ(profile.version, "1.0.0");
+    // R04：已校验量纲必须写入公开条目；不读取旧实现未初始化值作为失败探针。
+    for (const auto& entry : profile.entries) {
+        EXPECT_EQ(entry.kind, entry.unit.kind());
+    }
 
     // 命中：'*' 模板展开索引（fk[*] ↔ fk[3]）。
     const auto& hit = profile.resolve("fk[3].tcp.position.x");
@@ -79,6 +83,28 @@ TEST(ToleranceProfileLoad, SampleProfileResolveThreeStates_UT_TOL)
         FAIL() << "必须抛出";
     } catch (const TestKitError& e) {
         EXPECT_EQ(std::string(e.what()).find("tolerance-undefined: "), 0u);
+    }
+}
+
+/** 第一轮评审 R05：schema 缺失、类型错与未来版本均拒绝，不能默用当前格式。 */
+TEST(ToleranceProfileLoad, SchemaRequiredAndVersionChecked_ReviewR05)
+{
+    TempDir root;
+    const auto dir = root.path() / "kin-fk";
+    fs::create_directories(dir);
+    std::ifstream input(sampleProfilePath(), std::ios::binary);
+    const std::string original{std::istreambuf_iterator<char>{input}, {}};
+    const std::string schema = "\"schemaVersion\": \"ird-tolerance-profile/1\",";
+    const auto pos = original.find(schema);
+    ASSERT_NE(pos, std::string::npos);
+    for (const auto& replacement : {std::string{},
+             std::string{"\"schemaVersion\": \"ird-tolerance-profile/999\","},
+             std::string{"\"schemaVersion\": 1,"}}) {
+        auto text = original;
+        text.replace(pos, schema.size(), replacement);
+        const auto path = dir / "v1.0.0.json";
+        std::ofstream(path, std::ios::binary) << text;
+        EXPECT_THROW(ToleranceProfile::load(path), TestKitError) << replacement;
     }
 }
 

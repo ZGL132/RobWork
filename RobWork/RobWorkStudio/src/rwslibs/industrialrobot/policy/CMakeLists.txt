@@ -239,6 +239,7 @@ add_custom_command(TARGET sdurws_ird_policy_test POST_BUILD
 #   - 公共头 include：policy/test（替身头 <sdurws/ird/policy/testdouble/…>
 #     ——§11 测试设施行的落位；仅测试目标可见，产品 include 面不变）。
 add_executable(sdurws_ird_policy_contract_test
+    test/PolicyDiagnosticsRegistryContractTest.cpp  # POL-T13：正式诊断端口契约（双模式）。
     test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
                                        # （MA-09——gtest_main 固定入口无监听器
                                        # 安装点，--ird_report 不产报告）
@@ -292,6 +293,7 @@ endif()
 # 都可解析（别名仅集成模式存在——runtime/evidence 测试目标同款取舍）。
 # evidence 证明对齐＝公共头值类型消费（R-2 允许形态）——零链接边。
 target_link_libraries(sdurws_ird_policy_contract_test PRIVATE
+    sdurws_ird_diagnostics  # POL-T13：仅测试侧消费正式注册表，产品依赖面不变。
     sdurws_ird_policy
     sdurws_ird_testkit   # §10.2 policy 行消费面（Dataset/JsonLite/ToleranceProfile/
                          # SetCheck/IRD_TEST_INFO——测试侧依赖，产品库红线面不变）

@@ -1,0 +1,26 @@
+Note: Google Test filter = MdlImport.EmptyNumericAttributesAreInvalid_F12:MdlWorkCellImport.RateSourceUnitsAndInvalidText_C02:MdlModelDiff.RatesAndSameIdentityPartFields_F13:ModelingCommandFlows.PackageImportPreservesCompleteClosure_F07
+[==========] Running 4 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlImport
+[ RUN      ] MdlImport.EmptyNumericAttributesAreInvalid_F12
+[       OK ] MdlImport.EmptyNumericAttributesAreInvalid_F12 (1 ms)
+[----------] 1 test from MdlImport (1 ms total)
+
+[----------] 1 test from MdlWorkCellImport
+[ RUN      ] MdlWorkCellImport.RateSourceUnitsAndInvalidText_C02
+[       OK ] MdlWorkCellImport.RateSourceUnitsAndInvalidText_C02 (0 ms)
+[----------] 1 test from MdlWorkCellImport (0 ms total)
+
+[----------] 1 test from MdlModelDiff
+[ RUN      ] MdlModelDiff.RatesAndSameIdentityPartFields_F13
+[       OK ] MdlModelDiff.RatesAndSameIdentityPartFields_F13 (4 ms)
+[----------] 1 test from MdlModelDiff (4 ms total)
+
+[----------] 1 test from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.PackageImportPreservesCompleteClosure_F07
+[       OK ] ModelingCommandFlows.PackageImportPreservesCompleteClosure_F07 (49 ms)
+[----------] 1 test from ModelingCommandFlows (49 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 4 test suites ran. (56 ms total)
+[  PASSED  ] 4 tests.

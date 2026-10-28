@@ -350,7 +350,7 @@ struct JointLimitEvaluation {
     std::vector<JointMarginRecord> margins;
     /// 检查级显式不适用标记（acceptance 3 载体——JointCheckNotApplicable 注释）。
     std::vector<JointCheckNotApplicable> notApplicableChecks;
-    /// 评估期诊断（POLICY-JNT-TABLE-INVALID/POLICY-JNT-ENGINEERING-RANGE-
+    /// 评估期诊断（POLICY-JNT-TABLE-INVALID/POLICY-ENGINEERING-RANGE-
     /// INVALID 伴随条目＋POLICY-CLL-* 失败定位——§9.6 建议码；码值权威归
     /// diagnostics StableCodeRegistry，PA-1）。
     std::vector<core::DiagnosticRecord> diagnostics;
@@ -434,7 +434,7 @@ public:
  *      T＞L→TravelLimitExceeded——T＝L 不超限，D-08 边界含于合规侧）；逐构
  *      型裕量＋限位违例＋近限位（§7.4 口径见枚举注释）；
  *      continuous 关节——工程范围有限性（已提供但 min≥max/端点非有限→
- *      EngineeringRangeInvalid 发现＋POLICY-JNT-ENGINEERING-RANGE-INVALID
+ *      EngineeringRangeInvalid 发现＋POLICY-ENGINEERING-RANGE-INVALID
  *      伴随诊断＋跳过）；合法者裕量记录以 NotApplicable 显式标记（无限位
  *      可比——不伪造数值）；行程上限检查豁免（§7.4"continuous 关节免除"）；
  *   ⑦ 稳定排序＋终态化（findings/margins/notApplicableChecks 排序契约见

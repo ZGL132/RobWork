@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.001" timestamp="2026-10-27T14:46:40.908" name="AllTests">
+  <testsuite name="SelDesignReview" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-27T14:46:40.908">
+    <testcase name="PeakDurationAloneCannotProveOverloadSafety" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp" line="470" status="run" result="completed" time="0.001" timestamp="2026-10-27T14:46:40.908" classname="SelDesignReview">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp:478&#x0A;Expected equality of these values:&#x0A;  recs[0].verdict&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  VerdictKind::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp:478
+Expected equality of these values:
+  recs[0].verdict
+    Which is: 4-byte object <00-00 00-00>
+  VerdictKind::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp:479&#x0A;Value of: recs[0].gaps.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp:479
+Value of: recs[0].gaps.empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

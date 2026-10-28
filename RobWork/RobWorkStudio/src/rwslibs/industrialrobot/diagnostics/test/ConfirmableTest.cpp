@@ -31,6 +31,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <thread>
 
 #include <sdurws/ird/core/DiagData.hpp>
 #include <sdurws/ird/core/Digest.hpp>
@@ -774,6 +775,56 @@ TEST(ConfirmableTest, DtCfm6_StateTransitionsWriteDevLog)
     EXPECT_NE(rig.devLog.lines()[1].second.find("Invalidated"), std::string::npos);
     EXPECT_NE(rig.devLog.lines()[1].second.find("interaction-lost"), std::string::npos)
         << "原因 token 入行（可追溯——§5.4）：" << rig.devLog.lines()[1].second;
+}
+
+// 专项评审 D06：日志失败不得覆盖已完成的状态转移，也不得从 noexcept 查询逃逸。
+TEST(ConfirmableTest, Review_ThrowingNotificationPreservesOutcomeAndExpiration)
+{
+    ServiceRig rig;
+    struct ThrowingSink final : IDevLogSink {
+        void logDev(std::string_view, std::string) override
+        { throw std::runtime_error("synthetic sink failure"); }
+    } sink;
+    ConfirmableService service(rig.registry, rig.environment, rig.clock, &sink);
+    std::optional<FindingRecord> created;
+    EXPECT_NO_THROW(created = service.create(makeTravelLimitFinding(), "ApplyModel",
+        makePayloadDigest(0xAA), ProjectId::generate(), BranchId::generate(),
+        rig.environment.m_tip, {}, {core::ObjectId::generate()}));
+    ASSERT_TRUE(created);
+    EXPECT_EQ(service.submitConfirmation(created->findingId, created->callbackToken,
+                                         makeCredential("SyntheticReviewer")), ConfirmOutcome::Confirmed);
+    EXPECT_EQ(service.tryFind(created->findingId)->state, FindingState::Confirmed);
+    auto expiring = service.create(makeTravelLimitFinding(), "ApplyModel", makePayloadDigest(0xAA),
+        ProjectId::generate(), BranchId::generate(), rig.environment.m_tip, {}, {core::ObjectId::generate()});
+    service.armExpiration(expiring.findingId, rig.clock.nowUtc());
+    EXPECT_EQ(service.tryFind(expiring.findingId)->state, FindingState::Expired);
+}
+
+// 日志出口允许只读重入；子进程 watchdog 保证死锁反例有界退出。
+TEST(ConfirmableTest, Review_NotificationRunsOutsideStateMutex)
+{
+    ASSERT_EXIT({
+    std::thread([] { std::this_thread::sleep_for(std::chrono::seconds(2)); std::_Exit(87); }).detach();
+    ServiceRig rig;
+    struct Sink final : IDevLogSink {
+        ConfirmableService* service = nullptr;
+        FindingId id;
+        bool reenter = false;
+        void logDev(std::string_view, std::string) override
+        {
+            if (reenter) EXPECT_TRUE(service->tryFind(id).has_value());
+        }
+    } sink;
+    ConfirmableService service(rig.registry, rig.environment, rig.clock, &sink);
+    auto created = service.create(makeTravelLimitFinding(), "ApplyModel", makePayloadDigest(0xAA),
+        ProjectId::generate(), BranchId::generate(), rig.environment.m_tip, {}, {core::ObjectId::generate()});
+    sink.service = &service;
+    sink.id = created.findingId;
+    sink.reenter = true;
+    const auto result = service.submitConfirmation(created.findingId, created.callbackToken,
+        makeCredential("SyntheticReviewer"));
+    std::_Exit(result == ConfirmOutcome::Confirmed ? 0 : 88);
+    }, ::testing::ExitedWithCode(0), "");
 }
 
 }  // namespace

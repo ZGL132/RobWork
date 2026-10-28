@@ -1,0 +1,84 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Compatibility.cpp
+  Currentness.cpp
+  Envelope.cpp
+  Evaluator.cpp
+  Evidence.cpp
+  Slice.cpp
+  Verdict.cpp
+  正在生成代码...
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  DriveTrainCodec.cpp
+  Evaluator.cpp
+  MappingCore.cpp
+  sdurws_ird_drivetrain.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\drivetrain\Release\sdurws_ird_drivetrain.lib
+  GoldenDtTest.cpp
+  MappingGoldenTest.cpp
+  MappingR2GoldenTest.cpp
+  sdurws_ird_drivetrain_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\drivetrain\Release\sdurws_ird_drivetrain_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  CompatibilityTest.cpp
+  CurrentnessTest.cpp
+  EnvelopeTest.cpp
+  EvaluatorPortSuiteTest.cpp
+  EvaluatorTest.cpp
+  EvidenceTest.cpp
+  SliceTest.cpp
+  VerdictTest.cpp
+  正在生成代码...
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\ui\Release\sdurws_ird_ui.lib
+  Backfill.cpp
+  CapabilityCurve.cpp
+  CatalogValidation.cpp
+  CombinationCheck.cpp
+  DiagCodes.cpp
+  FeasibleSet.cpp
+  Preference.cpp
+  Screening.cpp
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\selection\Release\sdurws_ird_selection.lib
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\selection\Release\sdurws_ird_selection_plugin.lib
+  AxisOutOfScopeTest.cpp
+  BackfillTest.cpp
+  CapabilityCurveTest.cpp
+  CatalogImportTest.cpp
+  CombinationBuilderTest.cpp
+  CombinationCheckCodecTest.cpp
+  CombinationCheckEvaluatorTest.cpp
+  CombinationCheckTest.cpp
+  DiagCodesTest.cpp
+  FeasibleSetTest.cpp
+  LinearDriveScreeningTest.cpp
+  PreferenceFilterTest.cpp
+  ReproBenchmarkTest.cpp
+  ScreeningGearboxTest.cpp
+  ScreeningMotorTest.cpp
+  SelGoldenDatasetTest.cpp
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\selection\Release\sdurws_ird_selection_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\sdurws_ird_workflow_plugin.lib
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\workflow\Release\sdurws_ird_workflow_test.exe

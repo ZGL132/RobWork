@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0.005" timestamp="2026-10-28T08:18:01.245" name="AllTests">
+  <testsuite name="WorkerWriterRegressionTest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-10-28T08:18:01.247">
+    <testcase name="HeartbeatCannotReuseFinalFragmentSequence_EXR04" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\WorkerWriterTest.cpp" line="38" status="run" result="completed" time="0.001" timestamp="2026-10-28T08:18:01.247" classname="WorkerWriterRegressionTest" />
+    <testcase name="RejectPauseCommandFromAnotherAttempt_EXR05" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\WorkerWriterTest.cpp" line="46" status="run" result="completed" time="0." timestamp="2026-10-28T08:18:01.250" classname="WorkerWriterRegressionTest" />
+  </testsuite>
+</testsuites>

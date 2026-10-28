@@ -30,6 +30,9 @@
  */
 
 #include "Tx15Child.hpp"
+#include "StubHandlers.hpp"
+#include <sdurws/ird/project/CommandService.hpp>
+#include <sdurws/ird/project/QueryPort.hpp>
 
 #include <sdurws/ird/project/ProjectStore.hpp>
 #include <sdurws/ird/project/StoreTypes.hpp>
@@ -162,6 +165,52 @@ protected:
     std::unique_ptr<TempDir> m_tmp;
     fs::path m_dir;
 };
+
+/// PRJ-R1/PM-07：真实只读进程打开，不得删除父writer的编译临时输入。
+TEST_F(Tx7ProcessLock, ReaderOpenPreservesWriterTemporaryFiles)
+{
+    OpenStoreRequest req;
+    req.path = m_dir;
+    auto parent = ProjectStoreFactory::open(req);
+    const auto pending = m_dir / ".staging" / "tmp" / "active.bin";
+    fs::create_directories(pending.parent_path());
+    { std::ofstream out(pending, std::ios::binary); out << "writer input"; ASSERT_TRUE(out); }
+    TestProcessRunner reader;
+    const auto marker = m_tmp->path() / "reader.marker";
+    startChild(reader, "reader-open", marker);
+    EXPECT_EQ(reader.outcome().exitCode, 0);
+    EXPECT_TRUE(parent.store->writable());
+    ASSERT_TRUE(fs::exists(pending));
+    EXPECT_EQ(readAll(pending), "writer input");
+}
+
+/// PRJ-R1/CON-01：reader先打开h0，writer提交h1，reader须得到完整h1视图。
+TEST_F(Tx7ProcessLock, ReaderRefreshesCompleteViewAfterWriterCommit)
+{
+    using namespace sdurws::ird::project;
+    OpenStoreRequest req;
+    req.path = m_dir;
+    auto parent = ProjectStoreFactory::open(req);
+    parent.store->handlerRegistry().registerHandler(
+        std::make_unique<stub::AppendObjectHandler>());
+    TestProcessRunner reader;
+    const auto marker = m_tmp->path() / "reader.marker";
+    startChild(reader, "reader-view", marker);
+    ASSERT_EQ(awaitMarkerField(marker, "ready"), "1");
+    const auto h = parent.store->query().head();
+    CommandEnvelope e;
+    e.branch = h.branch;
+    e.expectedRevision = h.id;
+    e.commandType = "test-append-object";
+    e.payloadFormatVersion = 1;
+    const auto result = parent.store->commands().submit(e);
+    ASSERT_TRUE(result.committed());
+    { std::ofstream go(marker.wstring() + L".go"); go << "continue\n"; ASSERT_TRUE(go); }
+    const auto outcome = reader.outcome();
+    ASSERT_EQ(outcome.kind, ProcessExitKind::Exited);
+    ASSERT_EQ(outcome.exitCode, 0);
+    EXPECT_EQ(markerField(readAll(marker), "head"), result.newRevision->toCanonical());
+}
 
 /**
  * 锚定：PRJ-TX-7 场景一（第二实例只读＋PID 提示）／PM-07／§9.2。

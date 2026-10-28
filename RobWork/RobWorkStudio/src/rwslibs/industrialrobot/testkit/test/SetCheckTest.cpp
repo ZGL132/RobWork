@@ -88,6 +88,41 @@ TEST(SetEquivalent, IdentityValueMismatchLocated_UT_SET)
     EXPECT_EQ(r.mismatchedPairs[0].fieldPath, "fk[*].tcp.position.x");
 }
 
+/** 第一轮评审 R01：身份不是可被数值相等替代的提示；单侧无身份也不能配对。 */
+TEST(SetEquivalent, IdentifiedElementsNeverFallBackToNumerics_ReviewR01)
+{
+    const std::vector<DemoElem> expected{elem("a", 0.0, 0.0)};
+    for (const auto& other : {elem("b", 0.0, 0.0), elem("", 0.0, 0.0),
+                              elem("a", 1.0, 0.0)}) {
+        const std::vector<DemoElem> actual{other};
+        const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+                                           SetMatchTraits<DemoElem>{});
+        EXPECT_FALSE(r.equivalent) << other.id;
+        EXPECT_TRUE(r.matched.empty());
+        EXPECT_EQ(r.missingExpected, (std::vector<std::size_t>{0}));
+        EXPECT_EQ(r.extraActual, (std::vector<std::size_t>{0}));
+        const auto reverse = checkSetEquivalent(actual, expected, sampleProfile(),
+                                                 SetMatchTraits<DemoElem>{});
+        EXPECT_FALSE(reverse.equivalent);
+        EXPECT_TRUE(reverse.matched.empty());
+    }
+}
+
+/** 第一轮评审 R11：长度失配不能遮住更早的首个位置失配。 */
+TEST(StableOrder, ShorterSequenceReportsEarliestDivergence_ReviewR11)
+{
+    const std::vector<DemoElem> expected{elem("a", 0, 0), elem("b", 0, 0)};
+    for (const auto& actual : {std::vector<DemoElem>{elem("b", 0, 0)},
+                               std::vector<DemoElem>{elem("a", 0, 0)},
+                               std::vector<DemoElem>{}}) {
+        const auto r = checkStableOrder(expected, actual, SetMatchTraits<DemoElem>{},
+                                        sampleProfile());
+        EXPECT_FALSE(r.sameOrder);
+        const auto first = actual.empty() || actual[0].id != "a" ? 0u : 1u;
+        EXPECT_EQ(r.firstDivergence, first);
+    }
+}
+
 /** 阶段 0 反例：actual 身份键重复 → duplicate-identity 逐键列出。 */
 TEST(SetDuplicates, ActualDuplicateIdentity_UT_SET)
 {

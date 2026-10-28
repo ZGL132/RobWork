@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.001" timestamp="2026-10-27T22:53:06.417" name="AllTests">
+  <testsuite name="LsnChild" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-27T22:53:06.417">
+    <testcase name="NonFiniteDetails_ReviewR03" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp" line="88" status="run" result="completed" time="0.001" timestamp="2026-10-27T22:53:06.417" classname="LsnChild">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:93&#x0A;Failed&#x0A;positive: actual=inf expected=0 diff=inf&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:93
+Failed
+positive: actual=inf expected=0 diff=inf
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:94&#x0A;Failed&#x0A;negative: actual=-inf expected=0 diff=inf&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:94
+Failed
+negative: actual=-inf expected=0 diff=inf
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:96&#x0A;Failed&#x0A;nan: actual=nan expected=0 diff=nan&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:96
+Failed
+nan: actual=nan expected=0 diff=nan
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:97&#x0A;Failed&#x0A;overflow: actual=1.7976931348623157e+308 expected=-1.7976931348623157e+308 diff=inf&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp:97
+Failed
+overflow: actual=1.7976931348623157e+308 expected=-1.7976931348623157e+308 diff=inf
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

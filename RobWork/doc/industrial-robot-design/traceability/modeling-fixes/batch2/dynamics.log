@@ -1,0 +1,59 @@
+Note: Google Test filter = DynRnea.*:DynForwardDynamics.*
+[==========] Running 25 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 25 tests from DynRnea
+[ RUN      ] DynRnea.StaticGravityTwoLinkAnalytic
+[       OK ] DynRnea.StaticGravityTwoLinkAnalytic (0 ms)
+[ RUN      ] DynRnea.NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8
+[       OK ] DynRnea.NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8 (0 ms)
+[ RUN      ] DynRnea.PrismaticSlipArmGravityMoment_F580
+[       OK ] DynRnea.PrismaticSlipArmGravityMoment_F580 (0 ms)
+[ RUN      ] DynRnea.InvertedMountGravitySignFlipViaBaseProjection
+[       OK ] DynRnea.InvertedMountGravitySignFlipViaBaseProjection (0 ms)
+[ RUN      ] DynRnea.StaticGravityWithToolAndPayloadComposition
+[       OK ] DynRnea.StaticGravityWithToolAndPayloadComposition (0 ms)
+[ RUN      ] DynRnea.SplitChannelsMatchAnalyticModelAndSumIdentity
+[       OK ] DynRnea.SplitChannelsMatchAnalyticModelAndSumIdentity (0 ms)
+[ RUN      ] DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52
+[       OK ] DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52 (0 ms)
+[ RUN      ] DynRnea.QuasiStaticEnergyBalancePotentialDelta_REUSE_T52
+[       OK ] DynRnea.QuasiStaticEnergyBalancePotentialDelta_REUSE_T52 (10 ms)
+[ RUN      ] DynRnea.FrictionSignConventionAndZeroSpeedCoulomb
+[       OK ] DynRnea.FrictionSignConventionAndZeroSpeedCoulomb (0 ms)
+[ RUN      ] DynRnea.FrictionMissingTriggersDyn06Material
+[       OK ] DynRnea.FrictionMissingTriggersDyn06Material (0 ms)
+[ RUN      ] DynRnea.FrictionViscousProvidedNanRejected_F632
+[       OK ] DynRnea.FrictionViscousProvidedNanRejected_F632 (0 ms)
+[ RUN      ] DynRnea.FrictionCoulombProvidedNanRejected_F632
+[       OK ] DynRnea.FrictionCoulombProvidedNanRejected_F632 (0 ms)
+[ RUN      ] DynRnea.FrictionBiasProvidedNanRejected_F632
+[       OK ] DynRnea.FrictionBiasProvidedNanRejected_F632 (0 ms)
+[ RUN      ] DynRnea.InertiaSymmetryRelativeToleranceAcceptsLargeTensor_F645
+[       OK ] DynRnea.InertiaSymmetryRelativeToleranceAcceptsLargeTensor_F645 (0 ms)
+[ RUN      ] DynRnea.InertiaSymmetryRelativeToleranceRejectsSmallTensor_F645
+[       OK ] DynRnea.InertiaSymmetryRelativeToleranceRejectsSmallTensor_F645 (0 ms)
+[ RUN      ] DynRnea.PayloadEventTimelineVariants
+[       OK ] DynRnea.PayloadEventTimelineVariants (0 ms)
+[ RUN      ] DynRnea.ExternalWrenchConstantlyZeroNotApplicable
+[       OK ] DynRnea.ExternalWrenchConstantlyZeroNotApplicable (0 ms)
+[ RUN      ] DynRnea.DimensionMismatchFailFast
+[       OK ] DynRnea.DimensionMismatchFailFast (0 ms)
+[ RUN      ] DynRnea.NonMonotonicTimeFailFast
+[       OK ] DynRnea.NonMonotonicTimeFailFast (0 ms)
+[ RUN      ] DynRnea.NullModelAndEmptyConditionFailFast
+[       OK ] DynRnea.NullModelAndEmptyConditionFailFast (0 ms)
+[ RUN      ] DynRnea.NonFiniteInputMarkedAndEvaluationContinues
+[       OK ] DynRnea.NonFiniteInputMarkedAndEvaluationContinues (0 ms)
+[ RUN      ] DynRnea.JointSideResultIndependentOfDrivetrain
+[       OK ] DynRnea.JointSideResultIndependentOfDrivetrain (0 ms)
+[ RUN      ] DynRnea.CancelReturnsPartialWithoutError
+[       OK ] DynRnea.CancelReturnsPartialWithoutError (0 ms)
+[ RUN      ] DynRnea.UpstreamDirectComparison_REUSE_T52
+[       OK ] DynRnea.UpstreamDirectComparison_REUSE_T52 (0 ms)
+[ RUN      ] DynRnea.FlangeFixedTranslationPreservesCanonicalComPhysics
+[       OK ] DynRnea.FlangeFixedTranslationPreservesCanonicalComPhysics (0 ms)
+[----------] 25 tests from DynRnea (14 ms total)
+
+[----------] Global test environment tear-down
+[==========] 25 tests from 1 test suite ran. (14 ms total)
+[  PASSED  ] 25 tests.

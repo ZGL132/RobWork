@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "MDL-CR-1",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/MDL-CR-1.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/DhConvert.hpp",
+      "sha256": "d265e950956f9304dc5ffd0cd1ff521614d6345eda05ba5bdfd83ba509a04a0b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第1批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingAuthorityFlows.cpp",
+      "sha256": "c32eb6777430d4e29125360d1b1e3c1c62726293085c1348b733683a1d8d44dd",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第1批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CanonicalBridge.cpp",
+      "sha256": "561f002e3210702575a0dc3b03064661e2621ef68a2a920be733c3299e708308",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第1批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "sha256": "e0c94ec5a6036705bf678434c74ca019107e77c1ca4a5a24d51bf6134b2e2ee2",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第1批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CanonicalBridgeTest.cpp",
+      "sha256": "f8a81423ec16cade84080218ca8675932f09c75047e16d8e88ecccde76802767",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第1批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch1/IMPLEMENTATION.md"
+    }
+  ]
+}

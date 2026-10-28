@@ -45,6 +45,7 @@ namespace {
 std::string canonicalDraftContents(ModelingWorkingSet value)
 {
     value.changes.clear();
+    value.allocatedObjectIds.clear(); // F10：历史占用不是工程内容差异。
     // 外层按身份引用的对象集合不携带编辑顺序语义；对象内部TCP键等集合
     // 完全交给唯一RobotDesignCodec，不能在这里复制物性或位姿编码。
     const auto less=[](const auto& a,const auto& b){return a.objectId.toCanonical()<b.objectId.toCanonical();};
@@ -145,6 +146,11 @@ std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
     for(const auto& value:scenes){append(value,kSceneObjectObjectType);}
     if(m_session.draft.poseSetObject){append(*m_session.draft.poseSetObject,kNamedPoseSetObjectType);}
     if(m_session.draft.drivetrainObject){append(*m_session.draft.drivetrainObject,kRobotDrivetrainObjectType);}
+    for(const auto& resource:m_session.draft.importedResources){
+        PayloadObjectSlot copy;copy.allocateNew=true;copy.objectId=resource.objectId;
+        copy.objectTypeToken="ExternalResource";copy.objectBytes=resource.bytes;
+        payload.objects.push_back(std::move(copy));
+    }
     envelope.payloadCanonical=encodeCommandPayload(payload);
 
     // ⑥面板引用消费说明：组装路径不触面板（面板是呈现半区——命令组装的
@@ -1255,7 +1261,11 @@ bool ModelingUiModule::restoreDraftHistory(bool redo)
     if(!m_writable||from.empty()){return false;} // 空栈/只读由执行端再次防御。
     to.push_back(DraftHistoryFrame{m_session.draft,m_session.importedSelfCollisionCandidates});
     // 两个值从同一帧一起恢复；不靠名称重算候选，不提交策略或项目命令。
+    rememberWorkingSetObjectIds(m_session.draft);
+    auto occupied=std::move(m_session.draft.allocatedObjectIds);
     m_session.draft=std::move(from.back().draft);
+    m_session.draft.allocatedObjectIds.insert(m_session.draft.allocatedObjectIds.end(),occupied.begin(),occupied.end());
+    rememberWorkingSetObjectIds(m_session.draft); // 历史恢复不释放任何曾分配身份。
     m_session.importedSelfCollisionCandidates=std::move(from.back().candidates);from.pop_back();
     m_historyCurrent=DraftHistoryFrame{m_session.draft,m_session.importedSelfCollisionCandidates};
     if(m_panel){m_panel->cancelPendingForHistoryRestore();}

@@ -1,0 +1,16 @@
+Note: Google Test filter = *EXR09:*EXR14:*UnsubscribeDuringDeliveryDoesNotDeadlock
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from EventBusDeliveryContractTest
+[ RUN      ] EventBusDeliveryContractTest.UnsubscribeDuringDeliveryDoesNotDeadlock
+[       OK ] EventBusDeliveryContractTest.UnsubscribeDuringDeliveryDoesNotDeadlock (2015 ms)
+[ RUN      ] EventBusDeliveryContractTest.UnsubscribeSkipsPendingCallback_EXR09
+[       OK ] EventBusDeliveryContractTest.UnsubscribeSkipsPendingCallback_EXR09 (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.SubscriptionStartsAtPublishBoundary_EXR14
+[       OK ] EventBusDeliveryContractTest.SubscriptionStartsAtPublishBoundary_EXR14 (0 ms)
+[----------] 3 tests from EventBusDeliveryContractTest (2018 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (2020 ms total)
+[  PASSED  ] 3 tests.
+nativeExit=0

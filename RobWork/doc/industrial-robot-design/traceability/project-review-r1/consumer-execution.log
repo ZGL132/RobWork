@@ -1,0 +1,24 @@
+Note: Google Test filter = ArchiveCollaborationContractTest.*:WorkerProcessContractTest.WorkerCompletesViaHandshakeAndNineStepAdmission_EX_WKR_1:WorkerProcessContractTest.ResultBatchesStreamInOrderBeforeFinal:WorkerProcessContractTest.TempDirCleanupFailureKeepsTerminalStateAndReportsDev_EX_ARC_3
+[==========] Running 6 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from ArchiveCollaborationContractTest
+[ RUN      ] ArchiveCollaborationContractTest.LateResultArchivesToRegisteredRunDirAfterProjectSwitch_EX_REG_4
+[       OK ] ArchiveCollaborationContractTest.LateResultArchivesToRegisteredRunDirAfterProjectSwitch_EX_REG_4 (74 ms)
+[ RUN      ] ArchiveCollaborationContractTest.BatchContentConflictViaProjectPort_EX_REG_8
+[       OK ] ArchiveCollaborationContractTest.BatchContentConflictViaProjectPort_EX_REG_8 (53 ms)
+[ RUN      ] ArchiveCollaborationContractTest.EnvelopeAssemblyReusesEvidenceValidators
+[       OK ] ArchiveCollaborationContractTest.EnvelopeAssemblyReusesEvidenceValidators (57 ms)
+[----------] 3 tests from ArchiveCollaborationContractTest (185 ms total)
+
+[----------] 3 tests from WorkerProcessContractTest
+[ RUN      ] WorkerProcessContractTest.WorkerCompletesViaHandshakeAndNineStepAdmission_EX_WKR_1
+[       OK ] WorkerProcessContractTest.WorkerCompletesViaHandshakeAndNineStepAdmission_EX_WKR_1 (367 ms)
+[ RUN      ] WorkerProcessContractTest.ResultBatchesStreamInOrderBeforeFinal
+[       OK ] WorkerProcessContractTest.ResultBatchesStreamInOrderBeforeFinal (132 ms)
+[ RUN      ] WorkerProcessContractTest.TempDirCleanupFailureKeepsTerminalStateAndReportsDev_EX_ARC_3
+[       OK ] WorkerProcessContractTest.TempDirCleanupFailureKeepsTerminalStateAndReportsDev_EX_ARC_3 (188 ms)
+[----------] 3 tests from WorkerProcessContractTest (688 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 2 test suites ran. (894 ms total)
+[  PASSED  ] 6 tests.

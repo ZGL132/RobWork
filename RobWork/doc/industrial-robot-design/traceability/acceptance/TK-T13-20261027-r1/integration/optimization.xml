@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0.015" timestamp="2026-10-27T22:52:53.547" name="AllTests">
+  <testsuite name="OptGoldenLhs" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-27T22:52:53.547">
+    <testcase name="SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\optimization\test\OptGoldenDatasetTest.cpp" line="439" status="run" result="completed" time="0.002" timestamp="2026-10-27T22:52:53.547" classname="OptGoldenLhs" />
+  </testsuite>
+  <testsuite name="OptGoldenPareto" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.012" timestamp="2026-10-27T22:52:53.550">
+    <testcase name="OrchestratorRunMatchesGolden_WP20T11_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\optimization\test\OptGoldenDatasetTest.cpp" line="960" status="run" result="completed" time="0.003" timestamp="2026-10-27T22:52:53.560" classname="OptGoldenPareto" />
+  </testsuite>
+</testsuites>

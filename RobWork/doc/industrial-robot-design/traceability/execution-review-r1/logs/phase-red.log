@@ -1,0 +1,24 @@
+Note: Google Test filter = *ProtocolPhase*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkerProcessContractTest
+[ RUN      ] WorkerProcessContractTest.ProtocolPhaseRejectsEarlyOutputAndUnsolicitedAck_EXR05
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(1440): error: Expected equality of these values:
+  m_events.countOf(WorkerEvent::Kind::DispatchAccepted)
+    Which is: 1
+  0u
+    Which is: 0
+
+unknown file: error: C++ exception with description "execution/worker-handle: unknown worker id" thrown in the test body.
+
+[  FAILED  ] WorkerProcessContractTest.ProtocolPhaseRejectsEarlyOutputAndUnsolicitedAck_EXR05 (4079 ms)
+[----------] 1 test from WorkerProcessContractTest (4080 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (4086 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkerProcessContractTest.ProtocolPhaseRejectsEarlyOutputAndUnsolicitedAck_EXR05
+
+ 1 FAILED TEST
+nativeExit=1

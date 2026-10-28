@@ -15,6 +15,7 @@
 #include <fstream>       // std::ofstream（报告写出）
 #include <mutex>
 #include <system_error>  // std::error_code（目录建立）
+#include <cmath>
 
 namespace sdurws::ird::testkit {
 namespace report {
@@ -43,6 +44,14 @@ JsonValue jsonNumber(double d)
     v.kind = JsonValue::Kind::Number;
     v.number = d;
     return v;
+}
+
+/** 比较详情的非有限值用批准的显式字符串表示；有限值仍为 JSON number。 */
+JsonValue comparisonNumber(double value)
+{
+    if (std::isnan(value)) { return jsonString("NaN"); }
+    if (std::isinf(value)) { return jsonString(std::signbit(value) ? "-Inf" : "+Inf"); }
+    return jsonNumber(value);
 }
 
 /// JSON 值构造小工具：字符串数组（空数组照写——键恒在，消费端无双态解析）。
@@ -140,9 +149,10 @@ JsonValue TestRecord::toJson() const
         item.members.emplace_back("hasElement", [&c] {
             JsonValue b; b.kind = JsonValue::Kind::Bool; b.boolean = c.hasElement; return b;
         }());
-        item.members.emplace_back("actual", jsonNumber(c.actual));
-        item.members.emplace_back("expected", jsonNumber(c.expected));
-        item.members.emplace_back("diff", jsonNumber(c.diff));
+        item.members.emplace_back("actual", c.actualPresent ? comparisonNumber(c.actual) : JsonValue{});
+        item.members.emplace_back("expected", c.expectedPresent ? comparisonNumber(c.expected) : JsonValue{});
+        item.members.emplace_back("diff", c.actualPresent && c.expectedPresent
+                                  ? comparisonNumber(c.diff) : JsonValue{});
         item.members.emplace_back("unit", jsonString(c.unit));
         JsonValue tol;
         tol.kind = JsonValue::Kind::Object;

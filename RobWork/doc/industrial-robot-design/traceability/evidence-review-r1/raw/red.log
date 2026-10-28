@@ -1,0 +1,307 @@
+Note: Google Test filter = ReviewR1_*.*
+[==========] Running 32 tests from 16 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ReviewR1_Controls
+[ RUN      ] ReviewR1_Controls.ValidFeasibleAndIncomplete
+[       OK ] ReviewR1_Controls.ValidFeasibleAndIncomplete (0 ms)
+[----------] 1 test from ReviewR1_Controls (0 ms total)
+
+[----------] 4 tests from ReviewR1_Identity
+[ RUN      ] ReviewR1_Identity.UnrelatedRevisionKeepsSlice
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(28): error: Expected equality of these values:
+  slice(a).sliceId
+    Which is: 32-byte object <54-12 DC-17 D5-A9 93-3D 8F-F4 CD-09 BD-C7 63-36 B4-68 5F-A5 34-5D D7-8E 27-3B A4-EE AA-88 C5-D6>
+  slice(b).sliceId
+    Which is: 32-byte object <6F-EC A6-D9 EE-EB 89-23 24-9E 01-9F D0-D2 80-2B 76-B4 A3-E3 16-79 B1-58 E9-C9 5E-ED 20-78 70-D7>
+
+[  FAILED  ] ReviewR1_Identity.UnrelatedRevisionKeepsSlice (0 ms)
+[ RUN      ] ReviewR1_Identity.BudgetChangeKeepsBaseline
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(29): error: Expected equality of these values:
+  slice(a,true).inputBaselineId
+    Which is: 32-byte object <58-A0 83-D3 8E-07 8C-B7 9C-12 24-1F 02-3E 54-50 C0-13 D8-21 60-C5 B3-48 E3-66 DE-CA F4-A3 7A-B5>
+  slice(b,true).inputBaselineId
+    Which is: 32-byte object <18-C7 15-99 0D-F5 BF-4F 30-5C F0-D2 12-90 16-DE B8-16 FB-EC B5-E1 E6-D8 04-E4 18-A3 DB-D7 5B-37>
+
+[  FAILED  ] ReviewR1_Identity.BudgetChangeKeepsBaseline (0 ms)
+[ RUN      ] ReviewR1_Identity.ForgedSnapshotIsRejectedAtSliceBoundary
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(30): error: Expected: slice(s) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ReviewR1_Identity.ForgedSnapshotIsRejectedAtSliceBoundary (0 ms)
+[ RUN      ] ReviewR1_Identity.ForeignPolicyRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(31): error: Expected: b.build(s) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ReviewR1_Identity.ForeignPolicyRejected (0 ms)
+[----------] 4 tests from ReviewR1_Identity (0 ms total)
+
+[----------] 1 test from ReviewR1_Dependency
+[ RUN      ] ReviewR1_Dependency.UnknownEnumsRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(32): error: Value of: validateDependencyDeclarations({d},{}).empty()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(32): error: Value of: validateDependencyEntries({e}).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_Dependency.UnknownEnumsRejected (0 ms)
+[----------] 1 test from ReviewR1_Dependency (0 ms total)
+
+[----------] 1 test from ReviewR1_Profile
+[ RUN      ] ReviewR1_Profile.DuplicateAndCrossDomainRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(33): error: Value of: validateEvidenceProfile(p).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_Profile.DuplicateAndCrossDomainRejected (0 ms)
+[----------] 1 test from ReviewR1_Profile (0 ms total)
+
+[----------] 6 tests from ReviewR1_Verdict
+[ RUN      ] ReviewR1_Verdict.UnconditionalRequiredCannotBeNA
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(34): error: Expected equality of these values:
+  r.status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(34): error: Value of: checkFormalPassEligibility(f.v,f.s,r,f.profiles).eligible
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_Verdict.UnconditionalRequiredCannotBeNA (0 ms)
+[ RUN      ] ReviewR1_Verdict.SatisfiedWithoutArtifactCannotPass
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(35): error: Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+[  FAILED  ] ReviewR1_Verdict.SatisfiedWithoutArtifactCannotPass (0 ms)
+[ RUN      ] ReviewR1_Verdict.ForeignManifestSnapshotCannotPass
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(36): error: Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+[  FAILED  ] ReviewR1_Verdict.ForeignManifestSnapshotCannotPass (0 ms)
+[ RUN      ] ReviewR1_Verdict.DuplicateEvidenceOrderIndependent
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(37): error: Expected equality of these values:
+  a.status
+    Which is: 4-byte object <00-00 00-00>
+  b.status
+    Which is: 4-byte object <02-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(37): error: Expected equality of these values:
+  a.status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+[  FAILED  ] ReviewR1_Verdict.DuplicateEvidenceOrderIndependent (0 ms)
+[ RUN      ] ReviewR1_Verdict.SearchInsufficientCanBeEnveloped
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(38): error: Value of: r.missingItems.empty()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(38): error: Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(38): error: Expected: ResultEnvelope::make(std::move(d)) doesn't throw an exception.
+  Actual: it throws sdurws::ird::evidence::EvidenceError with description "evidence/envelope-illegal-combination: engineeringStatus=DataInsufficient 而 missingItems 为空（表 3 行 1：缺失项全量清单必含——空清单拒绝）".
+
+[  FAILED  ] ReviewR1_Verdict.SearchInsufficientCanBeEnveloped (0 ms)
+[ RUN      ] ReviewR1_Verdict.ProofCannotBypassMissingPolicyIdentity
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(40): error: Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <01-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+[  FAILED  ] ReviewR1_Verdict.ProofCannotBypassMissingPolicyIdentity (0 ms)
+[----------] 6 tests from ReviewR1_Verdict (0 ms total)
+
+[----------] 2 tests from ReviewR1_Envelope
+[ RUN      ] ReviewR1_Envelope.ProfileMismatchRejectedByStrongBoundary
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(41): error: Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_Envelope.ProfileMismatchRejectedByStrongBoundary (0 ms)
+[ RUN      ] ReviewR1_Envelope.TaskRevisionMismatchRejectedByStrongBoundary
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(42): error: Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_Envelope.TaskRevisionMismatchRejectedByStrongBoundary (0 ms)
+[----------] 2 tests from ReviewR1_Envelope (0 ms total)
+
+[----------] 3 tests from ReviewR1_Codec
+[ RUN      ] ReviewR1_Codec.IndependentInvalidSnapshotVectorRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(43): error: Expected: SnapshotCodec::parseRefsOnly(b) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ReviewR1_Codec.IndependentInvalidSnapshotVectorRejected (0 ms)
+[ RUN      ] ReviewR1_Codec.InvalidSliceEntryRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(44): error: Expected: SliceCodec::parse(SliceCodec::encodeFull(sl)) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ReviewR1_Codec.InvalidSliceEntryRejected (0 ms)
+[ RUN      ] ReviewR1_Codec.F64IndependentByteVector
+[       OK ] ReviewR1_Codec.F64IndependentByteVector (0 ms)
+[----------] 3 tests from ReviewR1_Codec (0 ms total)
+
+[----------] 3 tests from ReviewR1_Compatibility
+[ RUN      ] ReviewR1_Compatibility.MissingIdentitiesCannotFullHit
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(46): error: Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0
+
+[  FAILED  ] ReviewR1_Compatibility.MissingIdentitiesCannotFullHit (0 ms)
+[ RUN      ] ReviewR1_Compatibility.PreviewCannotFullHit
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(47): error: Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0
+
+[  FAILED  ] ReviewR1_Compatibility.PreviewCannotFullHit (0 ms)
+[ RUN      ] ReviewR1_Compatibility.CheckpointKeyMustMatchRequestedEvaluator
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(48): error: Expected equality of these values:
+  judgeCheckpointCompatibility(q,s).verdict
+    Which is: \0
+  CheckpointCompatibilityResult::Incompatible
+    Which is: 
+
+[  FAILED  ] ReviewR1_Compatibility.CheckpointKeyMustMatchRequestedEvaluator (0 ms)
+[----------] 3 tests from ReviewR1_Compatibility (0 ms total)
+
+[----------] 2 tests from ReviewR1_AdditionalProfile
+[ RUN      ] ReviewR1_AdditionalProfile.DuplicateSingleDomainRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(52): error: Value of: validateEvidenceProfile(p).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_AdditionalProfile.DuplicateSingleDomainRejected (0 ms)
+[ RUN      ] ReviewR1_AdditionalProfile.RequiredListRejectsSuggestedClass
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(53): error: Value of: validateEvidenceProfile(p).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_AdditionalProfile.RequiredListRejectsSuggestedClass (0 ms)
+[----------] 2 tests from ReviewR1_AdditionalProfile (0 ms total)
+
+[----------] 2 tests from ReviewR1_AdditionalProof
+[ RUN      ] ReviewR1_AdditionalProof.EmptyPreconditionsRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(54): error: Value of: validateProof(p,f.producers,f.s,f.sl.sliceId).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_AdditionalProof.EmptyPreconditionsRejected (0 ms)
+[ RUN      ] ReviewR1_AdditionalProof.EmptyClaimAndSubjectRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(55): error: Value of: validateProof(p,f.producers,f.s,f.sl.sliceId).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_AdditionalProof.EmptyClaimAndSubjectRejected (0 ms)
+[----------] 2 tests from ReviewR1_AdditionalProof (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalSnapshot
+[ RUN      ] ReviewR1_AdditionalSnapshot.ConfigIdentityComputedFromBytes
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(56): error: Expected equality of these values:
+  result.configurationRefs[0].contentIdentity.bytes
+    Which is: { 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63) }
+  digest({5})
+    Which is: { '\xE7' (231), '{' (123, 0x7B), '\x9A' (154), '\x9A' (154), '\xE9' (233), '\xE3' (227), '\v' (11, 0xB), '\r' (13, 0xD), '\xBD' (189), '\xB6' (182), '\xF5' (245), '\x10' (16), '\xA2' (162), 'd' (100, 0x64), '\xEF' (239), '\x9D' (157), '\xE7' (231), '\x81' (129), 'P' (80, 0x50), '\x1D' (29), '{' (123, 0x7B), 'k' (107, 0x6B), '\x92' (146), '\xAE' (174), '\x89' (137), '\xEB' (235), '\x5' (5), '\x9C' (156), 'Z' (90, 0x5A), '\xB7' (183), 'C' (67, 0x43), '\xDB' (219) }
+
+[  FAILED  ] ReviewR1_AdditionalSnapshot.ConfigIdentityComputedFromBytes (0 ms)
+[----------] 1 test from ReviewR1_AdditionalSnapshot (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalSlice
+[ RUN      ] ReviewR1_AdditionalSlice.ConfigurationMustBelongToSnapshot
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(57): error: Expected: b.build(s) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ReviewR1_AdditionalSlice.ConfigurationMustBelongToSnapshot (0 ms)
+[----------] 1 test from ReviewR1_AdditionalSlice (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalEnvelope
+[ RUN      ] ReviewR1_AdditionalEnvelope.UnknownModeRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(58): error: Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_AdditionalEnvelope.UnknownModeRejected (0 ms)
+[----------] 1 test from ReviewR1_AdditionalEnvelope (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalEvaluator
+[ RUN      ] ReviewR1_AdditionalEvaluator.UnknownSupportedModeRejected
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(59): error: Expected: requireValidEvaluatorRegistration(d,f.profiles,{}) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ReviewR1_AdditionalEvaluator.UnknownSupportedModeRejected (0 ms)
+[----------] 1 test from ReviewR1_AdditionalEvaluator (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalVerdict
+[ RUN      ] ReviewR1_AdditionalVerdict.EmptyDomainResultsAreNotComplete
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(60): error: Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+[  FAILED  ] ReviewR1_AdditionalVerdict.EmptyDomainResultsAreNotComplete (0 ms)
+[----------] 1 test from ReviewR1_AdditionalVerdict (0 ms total)
+
+[----------] 2 tests from ReviewR1_ReviewChain
+[ RUN      ] ReviewR1_ReviewChain.MissingProofPreconditionsCannotQualifyAsFormalReview
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(76): error: Expected equality of these values:
+  result.status
+    Which is: 4-byte object <01-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(77): error: Value of: checkReviewRecordEligibility(f.v,f.s,result,f.producers,f.profiles).eligible
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReviewR1_ReviewChain.MissingProofPreconditionsCannotQualifyAsFormalReview (0 ms)
+[ RUN      ] ReviewR1_ReviewChain.InvalidIndependentSnapshotBytesCannotProduceFrozenSlice
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp(90): error: Expected: buildInvalid() throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+
+[  FAILED  ] ReviewR1_ReviewChain.InvalidIndependentSnapshotBytesCannotProduceFrozenSlice (0 ms)
+[----------] 2 tests from ReviewR1_ReviewChain (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 32 tests from 16 test suites ran. (1 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 30 tests, listed below:
+[  FAILED  ] ReviewR1_Identity.UnrelatedRevisionKeepsSlice
+[  FAILED  ] ReviewR1_Identity.BudgetChangeKeepsBaseline
+[  FAILED  ] ReviewR1_Identity.ForgedSnapshotIsRejectedAtSliceBoundary
+[  FAILED  ] ReviewR1_Identity.ForeignPolicyRejected
+[  FAILED  ] ReviewR1_Dependency.UnknownEnumsRejected
+[  FAILED  ] ReviewR1_Profile.DuplicateAndCrossDomainRejected
+[  FAILED  ] ReviewR1_Verdict.UnconditionalRequiredCannotBeNA
+[  FAILED  ] ReviewR1_Verdict.SatisfiedWithoutArtifactCannotPass
+[  FAILED  ] ReviewR1_Verdict.ForeignManifestSnapshotCannotPass
+[  FAILED  ] ReviewR1_Verdict.DuplicateEvidenceOrderIndependent
+[  FAILED  ] ReviewR1_Verdict.SearchInsufficientCanBeEnveloped
+[  FAILED  ] ReviewR1_Verdict.ProofCannotBypassMissingPolicyIdentity
+[  FAILED  ] ReviewR1_Envelope.ProfileMismatchRejectedByStrongBoundary
+[  FAILED  ] ReviewR1_Envelope.TaskRevisionMismatchRejectedByStrongBoundary
+[  FAILED  ] ReviewR1_Codec.IndependentInvalidSnapshotVectorRejected
+[  FAILED  ] ReviewR1_Codec.InvalidSliceEntryRejected
+[  FAILED  ] ReviewR1_Compatibility.MissingIdentitiesCannotFullHit
+[  FAILED  ] ReviewR1_Compatibility.PreviewCannotFullHit
+[  FAILED  ] ReviewR1_Compatibility.CheckpointKeyMustMatchRequestedEvaluator
+[  FAILED  ] ReviewR1_AdditionalProfile.DuplicateSingleDomainRejected
+[  FAILED  ] ReviewR1_AdditionalProfile.RequiredListRejectsSuggestedClass
+[  FAILED  ] ReviewR1_AdditionalProof.EmptyPreconditionsRejected
+[  FAILED  ] ReviewR1_AdditionalProof.EmptyClaimAndSubjectRejected
+[  FAILED  ] ReviewR1_AdditionalSnapshot.ConfigIdentityComputedFromBytes
+[  FAILED  ] ReviewR1_AdditionalSlice.ConfigurationMustBelongToSnapshot
+[  FAILED  ] ReviewR1_AdditionalEnvelope.UnknownModeRejected
+[  FAILED  ] ReviewR1_AdditionalEvaluator.UnknownSupportedModeRejected
+[  FAILED  ] ReviewR1_AdditionalVerdict.EmptyDomainResultsAreNotComplete
+[  FAILED  ] ReviewR1_ReviewChain.MissingProofPreconditionsCannotQualifyAsFormalReview
+[  FAILED  ] ReviewR1_ReviewChain.InvalidIndependentSnapshotBytesCannotProduceFrozenSlice
+
+30 FAILED TESTS

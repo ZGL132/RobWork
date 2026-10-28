@@ -45,6 +45,8 @@ struct CompareDetail {
     double diff = 0.0;                   ///< |a−b|（SI）
     std::string unit;                    ///< SI 规范 token（"m"——比较在 SI 域执行）
     core::Tolerance tolerance;           ///< 采用的容差
+    bool actualPresent = true;           ///< 长度不一致时可缺实际元素；不能与实际 NaN 混淆
+    bool expectedPresent = true;         ///< 长度不一致时可缺期望元素；报告写为 null
 };
 
 /// 断言结果：passed＝全部满足；failures＝逐失败点详情（机器可读——IRD_EXPECT_* 宏

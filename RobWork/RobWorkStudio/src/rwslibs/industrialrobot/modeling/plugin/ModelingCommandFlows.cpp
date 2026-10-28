@@ -9,6 +9,8 @@
  */
 
 #include "ModelingCommandFlows.hpp"
+#include "ModelingDraftCodec.hpp"
+#include <type_traits>
 
 #include <QFileDialog>
 #include <QInputDialog>
@@ -830,7 +832,10 @@ public:
             return encodeObject(std::string(kRobotDrivetrainObjectType),
                                 ObjectVariant{*m_ws.drivetrainObject});
         }
-        return std::nullopt;  // 闭包外身份（固化资源对象不在草稿值视图——如实缺席）
+        for(const auto& resource:m_ws.importedResources){
+            if(resource.objectId==objectId){return ClosureObject{"ExternalResource",resource.bytes};}
+        }
+        return std::nullopt;  // 闭包外身份不回退到其他修订或外部路径。
     }
 
 private:
@@ -1484,9 +1489,23 @@ bool executeModelingCommand(const std::string& commandId,
         // 审核修正（R1——恰一根不变量，语义同 URDF/Xacro 导入侧）：保留
         // 已回填的项目根身份——导入＝同根内容替换，不重复建根。
         const std::optional<core::ObjectId> previousRoot = session.draft.rootObjectId;
-        session.draft = ModelingWorkingSet{};
-        session.draft.rootObjectId = previousRoot;
-        session.draft.design = *design;
+        ModelingWorkingSet candidate;
+        candidate.rootObjectId = previousRoot;
+        candidate.allocatedObjectIds = session.draft.allocatedObjectIds;
+        candidate.design = *design;
+        for(const auto& part:outcome.report.parts){
+            std::visit([&](const auto& value){
+                using Part=std::decay_t<decltype(value)>;
+                if constexpr(std::is_same_v<Part,ToolDefinition>){candidate.toolObjects.push_back(value);}
+                else if constexpr(std::is_same_v<Part,SceneObject>){candidate.sceneObjects.push_back(value);}
+                else if constexpr(std::is_same_v<Part,PoseSet>){candidate.poseSetObject=value;}
+                else if constexpr(std::is_same_v<Part,DrivetrainDesign>){candidate.drivetrainObject=value;}
+            },part);
+        }
+        candidate.importedResources=outcome.report.solidifiedResources;
+        // F07：先验证完整草稿可保存（含字节预算），再一次替换，失败不丢旧草稿。
+        try{(void)encodeModelingDraft(candidate);}catch(const std::exception& failure){summary=failure.what();return false;}
+        session.draft=std::move(candidate);
         ModelingChangeRecord record;
         record.subject = "design";
         record.summary = "导入规范模型包（MDL-20 round-trip 入草稿）";

@@ -1,0 +1,47 @@
+Note: Google Test filter = KinRegionCoverage.*
+[==========] Running 19 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 19 tests from KinRegionCoverage
+[ RUN      ] KinRegionCoverage.FixedCountGoldenReach60_WP15T06_ACC1
+[       OK ] KinRegionCoverage.FixedCountGoldenReach60_WP15T06_ACC1 (0 ms)
+[ RUN      ] KinRegionCoverage.PositionExistenceVsPoseGlobal_WP15T06_ACC1
+[       OK ] KinRegionCoverage.PositionExistenceVsPoseGlobal_WP15T06_ACC1 (0 ms)
+[ RUN      ] KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2
+[       OK ] KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2 (0 ms)
+[ RUN      ] KinRegionCoverage.ZeroSampleEvaluateDiagAndMaterial_WP15T06_ACC2
+[       OK ] KinRegionCoverage.ZeroSampleEvaluateDiagAndMaterial_WP15T06_ACC2 (0 ms)
+[ RUN      ] KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3
+[       OK ] KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3 (0 ms)
+[ RUN      ] KinRegionCoverage.OrientedGridRandomAndPose_REQ03_A21
+[       OK ] KinRegionCoverage.OrientedGridRandomAndPose_REQ03_A21 (0 ms)
+[ RUN      ] KinRegionCoverage.FullPlanIdentityAndInvalidRotation_REQ03_A21
+[       OK ] KinRegionCoverage.FullPlanIdentityAndInvalidRotation_REQ03_A21 (0 ms)
+[ RUN      ] KinRegionCoverage.PerPlanTcpRealSolverAndMissingDefault_REQ01_A21
+[       OK ] KinRegionCoverage.PerPlanTcpRealSolverAndMissingDefault_REQ01_A21 (0 ms)
+[ RUN      ] KinRegionCoverage.IdentityMismatchDropsEvidence_WP15T06_ACC3
+[       OK ] KinRegionCoverage.IdentityMismatchDropsEvidence_WP15T06_ACC3 (0 ms)
+[ RUN      ] KinRegionCoverage.GoldenGeneratorsAndSameOrderRerun_WP15T06_ACC4
+[       OK ] KinRegionCoverage.GoldenGeneratorsAndSameOrderRerun_WP15T06_ACC4 (0 ms)
+[ RUN      ] KinRegionCoverage.SampleIndexAlignsDenominatorBijection_WP15T06_ACC4
+[       OK ] KinRegionCoverage.SampleIndexAlignsDenominatorBijection_WP15T06_ACC4 (0 ms)
+[ RUN      ] KinRegionCoverage.CancellationPartialNotRunRerunSameSet_WP15T06_ACC4
+[       OK ] KinRegionCoverage.CancellationPartialNotRunRerunSameSet_WP15T06_ACC4 (0 ms)
+[ RUN      ] KinRegionCoverage.PerSampleIkWiringPositionVsPose_WP15T06_ACC5
+[       OK ] KinRegionCoverage.PerSampleIkWiringPositionVsPose_WP15T06_ACC5 (0 ms)
+[ RUN      ] KinRegionCoverage.PositionSampleRealSolverDegenerateChain_KIN_P2
+[       OK ] KinRegionCoverage.PositionSampleRealSolverDegenerateChain_KIN_P2 (1 ms)
+[ RUN      ] KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5
+[       OK ] KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5 (0 ms)
+[ RUN      ] KinRegionCoverage.TcpMissingDirectCallZeroMaterialTrack_WP14T12
+[       OK ] KinRegionCoverage.TcpMissingDirectCallZeroMaterialTrack_WP14T12 (0 ms)
+[ RUN      ] KinRegionCoverage.TcpDanglingRefDirectCallZeroMaterialTrack_WP14T12
+[       OK ] KinRegionCoverage.TcpDanglingRefDirectCallZeroMaterialTrack_WP14T12 (0 ms)
+[ RUN      ] KinRegionCoverage.MirrorPlanSamplesIndependent_WP15T06_ACC5
+[       OK ] KinRegionCoverage.MirrorPlanSamplesIndependent_WP15T06_ACC5 (0 ms)
+[ RUN      ] KinRegionCoverage.CollisionFacilityFailureSampleInsufficient_WP15T07_ACC2
+[       OK ] KinRegionCoverage.CollisionFacilityFailureSampleInsufficient_WP15T07_ACC2 (0 ms)
+[----------] 19 tests from KinRegionCoverage (5 ms total)
+
+[----------] Global test environment tear-down
+[==========] 19 tests from 1 test suite ran. (5 ms total)
+[  PASSED  ] 19 tests.

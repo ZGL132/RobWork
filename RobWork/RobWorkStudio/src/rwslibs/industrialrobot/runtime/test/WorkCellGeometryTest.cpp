@@ -953,6 +953,37 @@ TEST(WorkCellGeometryTest, ContentMeshesWithoutPathHint_T30)
     }
 }
 
+/** @brief F05：同一资源的四类引用分别挂局部变换，直接读取真实WC几何载体核验。 */
+TEST(WorkCellGeometryTest, PerReferenceLocalPlacement_F05)
+{
+    const std::string text="v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n";
+    const std::vector<std::uint8_t> bytes(text.begin(),text.end());
+    auto f=threeSpanRichFixture();rebindResource(f,0,digestOfBytes(bytes),"triangle.obj");
+    const rw::math::Transform3D<double> pose(rw::math::Vector3D<double>(.2,-.3,.4),
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    f.chain.links[1].visual=f.manifest[0];f.chain.links[1].visualTransform=pose;
+    f.chain.links[1].collision=f.manifest[0];f.chain.links[1].collisionTransform=pose;
+    f.tools[0].geometry=f.manifest[0];f.tools[0].geometryTransform=pose;
+    f.scene[0].geometry=f.manifest[0];f.scene[0].geometryTransform=pose;
+    InMemoryMeshProvider provider({{f.manifest[0].resourceId,bytes}});
+    const auto model=f.build();const auto map=buildRuntimeNameMap(model);
+    const auto out=compileWorkCell(model,&provider);ASSERT_FALSE(out.workCell.isNull());
+    std::map<std::string,GeometryView> geoms;collectGeometries(*out.workCell,geoms);
+    const auto link=scopedName(map,f.chain.links[1].objectId,NameScope::LinkFrame);
+    std::size_t placed=0;
+    for(const auto& entry:geoms){
+        const auto& g=entry.second;
+        if(g.type!=rw::geometry::GeometryData::PlainTriMesh&&g.type!=rw::geometry::GeometryData::IdxTriMesh){continue;}
+        if(g.frameName==link||g.frameName==scopedName(map,f.tools[0].objectId,NameScope::Tcp)
+            ||g.frameName==scopedName(map,f.scene[0].objectId,NameScope::SceneObject)){
+            ++placed;
+            for(int i=0;i<3;++i){EXPECT_NEAR(g.placement.P()[i],pose.P()[i],1e-9);
+                for(int j=0;j<3;++j){EXPECT_NEAR(g.placement.R()(i,j),pose.R()(i,j),1e-9);}}
+        }
+    }
+    EXPECT_EQ(placed,4U); // 不把代理图元或资源加载失败计为成功。
+}
+
 /**
  * @brief REUSE-T13/MDL-04：同摘要资源并发编译不得相互truncate/remove。
  * 每个任务独占provider、WC与State；共享的只有不可变输入，重复8路×8次，

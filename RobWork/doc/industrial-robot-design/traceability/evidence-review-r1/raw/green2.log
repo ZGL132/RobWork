@@ -1,0 +1,434 @@
+Note: Google Test filter = ReviewR1_*.*:EvidenceSlice*.*:Verdict*.*:EvaluatorPort*.*:EvidenceCurrentness.*:EvidenceCompleteness.*:EvidenceSnapshotMode.*:EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP:Compatibility*.*
+[==========] Running 128 tests from 47 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ReviewR1_Controls
+[ RUN      ] ReviewR1_Controls.ValidFeasibleAndIncomplete
+[       OK ] ReviewR1_Controls.ValidFeasibleAndIncomplete (0 ms)
+[----------] 1 test from ReviewR1_Controls (0 ms total)
+
+[----------] 4 tests from ReviewR1_Identity
+[ RUN      ] ReviewR1_Identity.UnrelatedRevisionKeepsSlice
+[       OK ] ReviewR1_Identity.UnrelatedRevisionKeepsSlice (0 ms)
+[ RUN      ] ReviewR1_Identity.BudgetChangeKeepsBaseline
+[       OK ] ReviewR1_Identity.BudgetChangeKeepsBaseline (0 ms)
+[ RUN      ] ReviewR1_Identity.ForgedSnapshotIsRejectedAtSliceBoundary
+[       OK ] ReviewR1_Identity.ForgedSnapshotIsRejectedAtSliceBoundary (0 ms)
+[ RUN      ] ReviewR1_Identity.ForeignPolicyRejected
+[       OK ] ReviewR1_Identity.ForeignPolicyRejected (0 ms)
+[----------] 4 tests from ReviewR1_Identity (0 ms total)
+
+[----------] 1 test from ReviewR1_Dependency
+[ RUN      ] ReviewR1_Dependency.UnknownEnumsRejected
+[       OK ] ReviewR1_Dependency.UnknownEnumsRejected (0 ms)
+[----------] 1 test from ReviewR1_Dependency (0 ms total)
+
+[----------] 1 test from ReviewR1_Profile
+[ RUN      ] ReviewR1_Profile.DuplicateAndCrossDomainRejected
+[       OK ] ReviewR1_Profile.DuplicateAndCrossDomainRejected (0 ms)
+[----------] 1 test from ReviewR1_Profile (0 ms total)
+
+[----------] 6 tests from ReviewR1_Verdict
+[ RUN      ] ReviewR1_Verdict.UnconditionalRequiredCannotBeNA
+[       OK ] ReviewR1_Verdict.UnconditionalRequiredCannotBeNA (0 ms)
+[ RUN      ] ReviewR1_Verdict.SatisfiedWithoutArtifactCannotPass
+[       OK ] ReviewR1_Verdict.SatisfiedWithoutArtifactCannotPass (0 ms)
+[ RUN      ] ReviewR1_Verdict.ForeignManifestSnapshotCannotPass
+[       OK ] ReviewR1_Verdict.ForeignManifestSnapshotCannotPass (0 ms)
+[ RUN      ] ReviewR1_Verdict.DuplicateEvidenceOrderIndependent
+[       OK ] ReviewR1_Verdict.DuplicateEvidenceOrderIndependent (0 ms)
+[ RUN      ] ReviewR1_Verdict.SearchInsufficientCanBeEnveloped
+[       OK ] ReviewR1_Verdict.SearchInsufficientCanBeEnveloped (0 ms)
+[ RUN      ] ReviewR1_Verdict.ProofCannotBypassMissingPolicyIdentity
+[       OK ] ReviewR1_Verdict.ProofCannotBypassMissingPolicyIdentity (0 ms)
+[----------] 6 tests from ReviewR1_Verdict (0 ms total)
+
+[----------] 2 tests from ReviewR1_Envelope
+[ RUN      ] ReviewR1_Envelope.ProfileMismatchRejectedByStrongBoundary
+[       OK ] ReviewR1_Envelope.ProfileMismatchRejectedByStrongBoundary (0 ms)
+[ RUN      ] ReviewR1_Envelope.TaskRevisionMismatchRejectedByStrongBoundary
+[       OK ] ReviewR1_Envelope.TaskRevisionMismatchRejectedByStrongBoundary (0 ms)
+[----------] 2 tests from ReviewR1_Envelope (0 ms total)
+
+[----------] 3 tests from ReviewR1_Codec
+[ RUN      ] ReviewR1_Codec.IndependentInvalidSnapshotVectorRejected
+[       OK ] ReviewR1_Codec.IndependentInvalidSnapshotVectorRejected (0 ms)
+[ RUN      ] ReviewR1_Codec.InvalidSliceEntryRejected
+[       OK ] ReviewR1_Codec.InvalidSliceEntryRejected (0 ms)
+[ RUN      ] ReviewR1_Codec.F64IndependentByteVector
+[       OK ] ReviewR1_Codec.F64IndependentByteVector (0 ms)
+[----------] 3 tests from ReviewR1_Codec (0 ms total)
+
+[----------] 3 tests from ReviewR1_Compatibility
+[ RUN      ] ReviewR1_Compatibility.MissingIdentitiesCannotFullHit
+[       OK ] ReviewR1_Compatibility.MissingIdentitiesCannotFullHit (0 ms)
+[ RUN      ] ReviewR1_Compatibility.PreviewCannotFullHit
+[       OK ] ReviewR1_Compatibility.PreviewCannotFullHit (0 ms)
+[ RUN      ] ReviewR1_Compatibility.CheckpointKeyMustMatchRequestedEvaluator
+[       OK ] ReviewR1_Compatibility.CheckpointKeyMustMatchRequestedEvaluator (0 ms)
+[----------] 3 tests from ReviewR1_Compatibility (0 ms total)
+
+[----------] 2 tests from ReviewR1_AdditionalProfile
+[ RUN      ] ReviewR1_AdditionalProfile.DuplicateSingleDomainRejected
+[       OK ] ReviewR1_AdditionalProfile.DuplicateSingleDomainRejected (0 ms)
+[ RUN      ] ReviewR1_AdditionalProfile.RequiredListRejectsSuggestedClass
+[       OK ] ReviewR1_AdditionalProfile.RequiredListRejectsSuggestedClass (0 ms)
+[----------] 2 tests from ReviewR1_AdditionalProfile (0 ms total)
+
+[----------] 2 tests from ReviewR1_AdditionalProof
+[ RUN      ] ReviewR1_AdditionalProof.EmptyPreconditionsRejected
+[       OK ] ReviewR1_AdditionalProof.EmptyPreconditionsRejected (0 ms)
+[ RUN      ] ReviewR1_AdditionalProof.EmptyClaimAndSubjectRejected
+[       OK ] ReviewR1_AdditionalProof.EmptyClaimAndSubjectRejected (0 ms)
+[----------] 2 tests from ReviewR1_AdditionalProof (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalSnapshot
+[ RUN      ] ReviewR1_AdditionalSnapshot.ConfigIdentityComputedFromBytes
+[       OK ] ReviewR1_AdditionalSnapshot.ConfigIdentityComputedFromBytes (0 ms)
+[----------] 1 test from ReviewR1_AdditionalSnapshot (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalSlice
+[ RUN      ] ReviewR1_AdditionalSlice.ConfigurationMustBelongToSnapshot
+[       OK ] ReviewR1_AdditionalSlice.ConfigurationMustBelongToSnapshot (0 ms)
+[----------] 1 test from ReviewR1_AdditionalSlice (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalEnvelope
+[ RUN      ] ReviewR1_AdditionalEnvelope.UnknownModeRejected
+[       OK ] ReviewR1_AdditionalEnvelope.UnknownModeRejected (0 ms)
+[----------] 1 test from ReviewR1_AdditionalEnvelope (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalEvaluator
+[ RUN      ] ReviewR1_AdditionalEvaluator.UnknownSupportedModeRejected
+[       OK ] ReviewR1_AdditionalEvaluator.UnknownSupportedModeRejected (0 ms)
+[----------] 1 test from ReviewR1_AdditionalEvaluator (0 ms total)
+
+[----------] 1 test from ReviewR1_AdditionalVerdict
+[ RUN      ] ReviewR1_AdditionalVerdict.EmptyDomainResultsAreNotComplete
+[       OK ] ReviewR1_AdditionalVerdict.EmptyDomainResultsAreNotComplete (0 ms)
+[----------] 1 test from ReviewR1_AdditionalVerdict (0 ms total)
+
+[----------] 2 tests from ReviewR1_ReviewChain
+[ RUN      ] ReviewR1_ReviewChain.MissingProofPreconditionsCannotQualifyAsFormalReview
+[       OK ] ReviewR1_ReviewChain.MissingProofPreconditionsCannotQualifyAsFormalReview (0 ms)
+[ RUN      ] ReviewR1_ReviewChain.InvalidIndependentSnapshotBytesCannotProduceFrozenSlice
+[       OK ] ReviewR1_ReviewChain.InvalidIndependentSnapshotBytesCannotProduceFrozenSlice (0 ms)
+[----------] 2 tests from ReviewR1_ReviewChain (0 ms total)
+
+[----------] 1 test from EvidenceSnapshotBuilder
+[ RUN      ] EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP (1 ms)
+[----------] 1 test from EvidenceSnapshotBuilder (1 ms total)
+
+[----------] 4 tests from EvidenceSliceIdentity
+[ RUN      ] EvidenceSliceIdentity.SameContentDeterministicId_EV_ID_1
+[       OK ] EvidenceSliceIdentity.SameContentDeterministicId_EV_ID_1 (0 ms)
+[ RUN      ] EvidenceSliceIdentity.CodecRoundTrip_EV_ID_1
+[       OK ] EvidenceSliceIdentity.CodecRoundTrip_EV_ID_1 (0 ms)
+[ RUN      ] EvidenceSliceIdentity.DigestViaCoreContentDigesterOnly_CR_02
+[       OK ] EvidenceSliceIdentity.DigestViaCoreContentDigesterOnly_CR_02 (0 ms)
+[ RUN      ] EvidenceSliceIdentity.NoFloatApproximateEquivalence_EV_ID_2
+[       OK ] EvidenceSliceIdentity.NoFloatApproximateEquivalence_EV_ID_2 (0 ms)
+[----------] 4 tests from EvidenceSliceIdentity (0 ms total)
+
+[----------] 2 tests from EvidenceSliceFloat
+[ RUN      ] EvidenceSliceFloat.CanonicalF64BitPatternRoundTrip
+[       OK ] EvidenceSliceFloat.CanonicalF64BitPatternRoundTrip (0 ms)
+[ RUN      ] EvidenceSliceFloat.CanonicalF64NaNInfRejected
+[       OK ] EvidenceSliceFloat.CanonicalF64NaNInfRejected (0 ms)
+[----------] 2 tests from EvidenceSliceFloat (0 ms total)
+
+[----------] 1 test from EvidenceSliceBaseline
+[ RUN      ] EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05
+[       OK ] EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05 (0 ms)
+[----------] 1 test from EvidenceSliceBaseline (0 ms total)
+
+[----------] 3 tests from EvidenceSliceCr05
+[ RUN      ] EvidenceSliceCr05.MandatoryEnvironmentEntries_CR_05
+[       OK ] EvidenceSliceCr05.MandatoryEnvironmentEntries_CR_05 (0 ms)
+[ RUN      ] EvidenceSliceCr05.ValueShapeGate_CR_05
+[       OK ] EvidenceSliceCr05.ValueShapeGate_CR_05 (0 ms)
+[ RUN      ] EvidenceSliceCr05.SharedSampleValuePassThrough_RT_T09
+[       OK ] EvidenceSliceCr05.SharedSampleValuePassThrough_RT_T09 (0 ms)
+[----------] 3 tests from EvidenceSliceCr05 (0 ms total)
+
+[----------] 2 tests from EvidenceSliceBuilder
+[ RUN      ] EvidenceSliceBuilder.FreezeRejections_EV_SLICE
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceTest.cpp(354): error: Expected equality of these values:
+  e.code()
+    Which is: 1-byte object <00>
+  expected
+    Which is: 1-byte object <09>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceTest.cpp(355): error: Expected: (std::string(e.what()).find(token(expected))) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+what() 缺少稳定 token 前缀: evidence/snapshot-incomplete: 身份三元组存在零值（project/branch/revision 均须非零——§4.1.2）
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceTest.cpp(358): error: Expected: (std::string(e.what()).find(needle)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+what() 缺少定位信息: evidence/snapshot-incomplete: 身份三元组存在零值（project/branch/revision 均须非零——§4.1.2）
+
+[  FAILED  ] EvidenceSliceBuilder.FreezeRejections_EV_SLICE (0 ms)
+[ RUN      ] EvidenceSliceBuilder.NotAppliedEntryStaysInIdentity_EV_INV
+[       OK ] EvidenceSliceBuilder.NotAppliedEntryStaysInIdentity_EV_INV (0 ms)
+[----------] 2 tests from EvidenceSliceBuilder (0 ms total)
+
+[----------] 1 test from EvidenceSliceCodec
+[ RUN      ] EvidenceSliceCodec.ParseRejectsStructuralGarbage_EV_SLICEC
+[       OK ] EvidenceSliceCodec.ParseRejectsStructuralGarbage_EV_SLICEC (0 ms)
+[----------] 1 test from EvidenceSliceCodec (0 ms total)
+
+[----------] 1 test from EvidenceCompleteness
+[ RUN      ] EvidenceCompleteness.NotApplicableNotCountedMissing_EV_VER_7
+[       OK ] EvidenceCompleteness.NotApplicableNotCountedMissing_EV_VER_7 (0 ms)
+[----------] 1 test from EvidenceCompleteness (0 ms total)
+
+[----------] 2 tests from EvidenceSnapshotMode
+[ RUN      ] EvidenceSnapshotMode.VerifiedRequiresSolidifiedResources_CON_03
+[       OK ] EvidenceSnapshotMode.VerifiedRequiresSolidifiedResources_CON_03 (0 ms)
+[ RUN      ] EvidenceSnapshotMode.ReproductionCompletenessChecked
+[       OK ] EvidenceSnapshotMode.ReproductionCompletenessChecked (0 ms)
+[----------] 2 tests from EvidenceSnapshotMode (0 ms total)
+
+[----------] 2 tests from VerdictDecisionTable
+[ RUN      ] VerdictDecisionTable.FailedOutcomeIsNotApplicable_TASK_02
+[       OK ] VerdictDecisionTable.FailedOutcomeIsNotApplicable_TASK_02 (0 ms)
+[ RUN      ] VerdictDecisionTable.FullySatisfiedInputIsFeasible
+[       OK ] VerdictDecisionTable.FullySatisfiedInputIsFeasible (0 ms)
+[----------] 2 tests from VerdictDecisionTable (0 ms total)
+
+[----------] 1 test from VerdictGate
+[ RUN      ] VerdictGate.GateBlocksProof_EV_VER_1
+[       OK ] VerdictGate.GateBlocksProof_EV_VER_1 (0 ms)
+[----------] 1 test from VerdictGate (0 ms total)
+
+[----------] 1 test from VerdictSearchExhausted
+[ RUN      ] VerdictSearchExhausted.SearchExhaustedThenFeasibleAfterReplan_EV_VER_2
+[       OK ] VerdictSearchExhausted.SearchExhaustedThenFeasibleAfterReplan_EV_VER_2 (0 ms)
+[----------] 1 test from VerdictSearchExhausted (0 ms total)
+
+[----------] 2 tests from VerdictConfigCollision
+[ RUN      ] VerdictConfigCollision.FilteredSolutionDoesNotBlockFeasible_EV_VER_3
+[       OK ] VerdictConfigCollision.FilteredSolutionDoesNotBlockFeasible_EV_VER_3 (0 ms)
+[ RUN      ] VerdictConfigCollision.AllSolutionsFilteredIsDataInsufficient_EV_VER_4
+[       OK ] VerdictConfigCollision.AllSolutionsFilteredIsDataInsufficient_EV_VER_4 (0 ms)
+[----------] 2 tests from VerdictConfigCollision (0 ms total)
+
+[----------] 1 test from VerdictPathCollision
+[ RUN      ] VerdictPathCollision.ReplannedPathKeepsFeasible_EV_VER_5
+[       OK ] VerdictPathCollision.ReplannedPathKeepsFeasible_EV_VER_5 (0 ms)
+[----------] 1 test from VerdictPathCollision (0 ms total)
+
+[----------] 2 tests from VerdictMandatoryProof
+[ RUN      ] VerdictMandatoryProof.ValidProofGivesInfeasible_EV_VER_6
+[       OK ] VerdictMandatoryProof.ValidProofGivesInfeasible_EV_VER_6 (0 ms)
+[ RUN      ] VerdictMandatoryProof.InvalidProofFallsToDataInsufficient_EV_VER_6
+[       OK ] VerdictMandatoryProof.InvalidProofFallsToDataInsufficient_EV_VER_6 (0 ms)
+[----------] 2 tests from VerdictMandatoryProof (0 ms total)
+
+[----------] 1 test from VerdictNotApplicableItem
+[ RUN      ] VerdictNotApplicableItem.NotApplicableNotCountedMissing_EV_VER_7
+[       OK ] VerdictNotApplicableItem.NotApplicableNotCountedMissing_EV_VER_7 (0 ms)
+[----------] 1 test from VerdictNotApplicableItem (0 ms total)
+
+[----------] 2 tests from VerdictMustShould
+[ RUN      ] VerdictMustShould.MustViolationGivesInfeasible_EV_VER_8
+[       OK ] VerdictMustShould.MustViolationGivesInfeasible_EV_VER_8 (0 ms)
+[ RUN      ] VerdictMustShould.ShouldViolationKeepsFeasibleWithWarning_EV_VER_8
+[       OK ] VerdictMustShould.ShouldViolationKeepsFeasibleWithWarning_EV_VER_8 (0 ms)
+[----------] 2 tests from VerdictMustShould (0 ms total)
+
+[----------] 1 test from VerdictCoverage
+[ RUN      ] VerdictCoverage.MissingMandatoryExecutionBlocked_EV_COV_1
+[       OK ] VerdictCoverage.MissingMandatoryExecutionBlocked_EV_COV_1 (0 ms)
+[----------] 1 test from VerdictCoverage (0 ms total)
+
+[----------] 5 tests from VerdictBaseline
+[ RUN      ] VerdictBaseline.DifferentBranchesCanShareComparisonInputs
+[       OK ] VerdictBaseline.DifferentBranchesCanShareComparisonInputs (0 ms)
+[ RUN      ] VerdictBaseline.DifferentDesignsRequireExplicitCommonInputs
+[       OK ] VerdictBaseline.DifferentDesignsRequireExplicitCommonInputs (0 ms)
+[ RUN      ] VerdictBaseline.InconsistentBaselinesListDimensions_EV_COV_4
+[       OK ] VerdictBaseline.InconsistentBaselinesListDimensions_EV_COV_4 (0 ms)
+[ RUN      ] VerdictBaseline.MultiDimensionDifferencesOrderedAndSingleTrivial
+[       OK ] VerdictBaseline.MultiDimensionDifferencesOrderedAndSingleTrivial (0 ms)
+[ RUN      ] VerdictBaseline.CommonInputIdentityBindsAllDeclaredInputs
+[       OK ] VerdictBaseline.CommonInputIdentityBindsAllDeclaredInputs (0 ms)
+[----------] 5 tests from VerdictBaseline (0 ms total)
+
+[----------] 2 tests from VerdictMissingCompleteness
+[ RUN      ] VerdictMissingCompleteness.GateFailuresListedExhaustively_Acceptance2
+[       OK ] VerdictMissingCompleteness.GateFailuresListedExhaustively_Acceptance2 (0 ms)
+[ RUN      ] VerdictMissingCompleteness.EvidenceGapsListedExhaustively_Acceptance2
+[       OK ] VerdictMissingCompleteness.EvidenceGapsListedExhaustively_Acceptance2 (0 ms)
+[----------] 2 tests from VerdictMissingCompleteness (0 ms total)
+
+[----------] 1 test from VerdictD9
+[ RUN      ] VerdictD9.ProofPresenceNeverTrustedWithoutFieldValidation_D9
+[       OK ] VerdictD9.ProofPresenceNeverTrustedWithoutFieldValidation_D9 (0 ms)
+[----------] 1 test from VerdictD9 (0 ms total)
+
+[----------] 2 tests from VerdictPitfalls
+[ RUN      ] VerdictPitfalls.EmptyRequiredCaseSetIsDataInsufficient_P_EV_7
+[       OK ] VerdictPitfalls.EmptyRequiredCaseSetIsDataInsufficient_P_EV_7 (0 ms)
+[ RUN      ] VerdictPitfalls.AllNotApplicableCasesBlockedAtGate_P_EV_7
+[       OK ] VerdictPitfalls.AllNotApplicableCasesBlockedAtGate_P_EV_7 (0 ms)
+[----------] 2 tests from VerdictPitfalls (0 ms total)
+
+[----------] 1 test from VerdictRegionCoverage
+[ RUN      ] VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3
+unknown file: error: C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：ik-solve-config" thrown in the test body.
+
+[  FAILED  ] VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3 (0 ms)
+[----------] 1 test from VerdictRegionCoverage (0 ms total)
+
+[----------] 2 tests from VerdictEligibility
+[ RUN      ] VerdictEligibility.FormalPassEligibilityFiveConditions_S7_2
+[       OK ] VerdictEligibility.FormalPassEligibilityFiveConditions_S7_2 (0 ms)
+[ RUN      ] VerdictEligibility.ReviewRecordEligibilityRequiresInfeasibleWithBasis_S7_2
+[       OK ] VerdictEligibility.ReviewRecordEligibilityRequiresInfeasibleWithBasis_S7_2 (0 ms)
+[----------] 2 tests from VerdictEligibility (0 ms total)
+
+[----------] 1 test from VerdictDeterminism
+[ RUN      ] VerdictDeterminism.SameInputSameOutputIncludingTrace_NFR_COR_02
+[       OK ] VerdictDeterminism.SameInputSameOutputIncludingTrace_NFR_COR_02 (0 ms)
+[----------] 1 test from VerdictDeterminism (0 ms total)
+
+[----------] 18 tests from EvidenceCurrentness
+[ RUN      ] EvidenceCurrentness.CurrentOnIrrelevantHeadAdvance_EV_CUR_1
+[       OK ] EvidenceCurrentness.CurrentOnIrrelevantHeadAdvance_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.SupersededOnConsumedObjectChange_EV_CUR_1
+[       OK ] EvidenceCurrentness.SupersededOnConsumedObjectChange_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.NewSessionSameContentStaysCurrent_EV_CUR_1
+[       OK ] EvidenceCurrentness.NewSessionSameContentStaysCurrent_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.UnresolvedDependencyNeverDefaultsToCurrent_EV_CUR_2
+[       OK ] EvidenceCurrentness.UnresolvedDependencyNeverDefaultsToCurrent_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.UnresolvedListsAllMissingKeys_EV_CUR_2
+[       OK ] EvidenceCurrentness.UnresolvedListsAllMissingKeys_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.TargetRefreezeFailureIsUnevaluable_EV_CUR_2
+[       OK ] EvidenceCurrentness.TargetRefreezeFailureIsUnevaluable_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.FactSourceEntryMismatchFailsFast_EV_CUR_2
+[       OK ] EvidenceCurrentness.FactSourceEntryMismatchFailsFast_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.SupersededDoesNotTouchArchivedEnvelope_EV_CUR_3
+[       OK ] EvidenceCurrentness.SupersededDoesNotTouchArchivedEnvelope_EV_CUR_3 (0 ms)
+[ RUN      ] EvidenceCurrentness.CurrentnessLivesOnlyInProjectionIndex_EV_CUR_3
+[       OK ] EvidenceCurrentness.CurrentnessLivesOnlyInProjectionIndex_EV_CUR_3 (0 ms)
+[ RUN      ] EvidenceCurrentness.CrossProjectQueryIsUnevaluable_EV_CUR_4
+[       OK ] EvidenceCurrentness.CrossProjectQueryIsUnevaluable_EV_CUR_4 (0 ms)
+[ RUN      ] EvidenceCurrentness.CrossBranchQueryIsUnevaluable_EV_CUR_4
+[       OK ] EvidenceCurrentness.CrossBranchQueryIsUnevaluable_EV_CUR_4 (0 ms)
+[ RUN      ] EvidenceCurrentness.EvaluationKeyMismatchIsCrossContext_I_7
+[       OK ] EvidenceCurrentness.EvaluationKeyMismatchIsCrossContext_I_7 (0 ms)
+[ RUN      ] EvidenceCurrentness.IdentityOnlyFormDegradesConservatively_I_8
+[       OK ] EvidenceCurrentness.IdentityOnlyFormDegradesConservatively_I_8 (0 ms)
+[ RUN      ] EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CurrentnessTest.cpp(864): error: Value of: out.status.has_value()
+  Actual: false
+Expected: true
+
+[  FAILED  ] EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05 (0 ms)
+[ RUN      ] EvidenceCurrentness.ContractVersionChangeSupersedesBeforeRebuild_EV_CUR_1
+[       OK ] EvidenceCurrentness.ContractVersionChangeSupersedesBeforeRebuild_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.ConditionFlipAndVanishedEntryReasons_EV_CUR_1
+[       OK ] EvidenceCurrentness.ConditionFlipAndVanishedEntryReasons_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.IndexStoreFindInvalidateClear
+[       OK ] EvidenceCurrentness.IndexStoreFindInvalidateClear (0 ms)
+[ RUN      ] EvidenceCurrentness.MissingRebuildSourcesFailFast
+[       OK ] EvidenceCurrentness.MissingRebuildSourcesFailFast (0 ms)
+[----------] 18 tests from EvidenceCurrentness (0 ms total)
+
+[----------] 13 tests from CompatibilityCacheHit
+[ RUN      ] CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1
+[       OK ] CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1
+[       OK ] CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.SameModeAlignedPairIsFullHit_EV_CPA_1
+[       OK ] CompatibilityCacheHit.SameModeAlignedPairIsFullHit_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.ContractVersionMismatch_EV_CPA_2
+[       OK ] CompatibilityCacheHit.ContractVersionMismatch_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.CanceledResultIsDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.CanceledResultIsDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.BothResultFaceFailuresListed_EV_ENV_2
+[       OK ] CompatibilityCacheHit.BothResultFaceFailuresListed_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.SliceMismatchIsIncompatible
+[       OK ] CompatibilityCacheHit.SliceMismatchIsIncompatible (0 ms)
+[ RUN      ] CompatibilityCacheHit.ProfileMismatchIsIncompatible
+[       OK ] CompatibilityCacheHit.ProfileMismatchIsIncompatible (0 ms)
+[ RUN      ] CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2
+[       OK ] CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.JudgmentIsDeterministic_EV_CPA_2
+[       OK ] CompatibilityCacheHit.JudgmentIsDeterministic_EV_CPA_2 (0 ms)
+[----------] 13 tests from CompatibilityCacheHit (0 ms total)
+
+[----------] 9 tests from CompatibilityCheckpoint
+[ RUN      ] CompatibilityCheckpoint.ContractVersionMismatch_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.ContractVersionMismatch_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.CheckpointIndependentOfTaskOutcome_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.CheckpointIndependentOfTaskOutcome_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.IntegrityNotVerifiedRejected_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.IntegrityNotVerifiedRejected_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.AlignedCheckpointIsResumeable_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.AlignedCheckpointIsResumeable_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(412): error: Expected equality of these values:
+  std::size_t{1}
+    Which is: 1
+  r.reasons.size()
+    Which is: 2
+
+[  FAILED  ] CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.SliceMismatchRejected_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.SliceMismatchRejected_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.FormatVersionRangeBoundary_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.FormatVersionRangeBoundary_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.MultipleRejectionsCollectedInCheckOrder_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.MultipleRejectionsCollectedInCheckOrder_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.JudgmentIsDeterministic_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.JudgmentIsDeterministic_EV_CPA_3 (0 ms)
+[----------] 9 tests from CompatibilityCheckpoint (0 ms total)
+
+[----------] 9 tests from EvaluatorPortVerdict
+[ RUN      ] EvaluatorPortVerdict.GateBlocksScriptedProof_EV_VER_1
+[       OK ] EvaluatorPortVerdict.GateBlocksScriptedProof_EV_VER_1 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.SearchExhaustedThenFeasibleViaPort_EV_VER_2
+[       OK ] EvaluatorPortVerdict.SearchExhaustedThenFeasibleViaPort_EV_VER_2 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.FilteredSolutionDoesNotBlockFeasibleViaPort_EV_VER_3
+[       OK ] EvaluatorPortVerdict.FilteredSolutionDoesNotBlockFeasibleViaPort_EV_VER_3 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.AllSolutionsFilteredIsDataInsufficientViaPort_EV_VER_4
+[       OK ] EvaluatorPortVerdict.AllSolutionsFilteredIsDataInsufficientViaPort_EV_VER_4 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.ReplannedPathKeepsFeasibleViaPort_EV_VER_5
+[       OK ] EvaluatorPortVerdict.ReplannedPathKeepsFeasibleViaPort_EV_VER_5 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.ValidMandatoryProofInfeasibleViaPort_EV_VER_6
+[       OK ] EvaluatorPortVerdict.ValidMandatoryProofInfeasibleViaPort_EV_VER_6 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.MandatoryProofMissingStateFallsToDataInsufficient_EV_VER_6
+[       OK ] EvaluatorPortVerdict.MandatoryProofMissingStateFallsToDataInsufficient_EV_VER_6 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.MustViolationInfeasibleViaPort_EV_VER_8
+[       OK ] EvaluatorPortVerdict.MustViolationInfeasibleViaPort_EV_VER_8 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.ShouldViolationFeasibleWithWarningViaPort_EV_VER_8
+[       OK ] EvaluatorPortVerdict.ShouldViolationFeasibleWithWarningViaPort_EV_VER_8 (0 ms)
+[----------] 9 tests from EvaluatorPortVerdict (0 ms total)
+
+[----------] 2 tests from EvaluatorPortContext
+[ RUN      ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort
+[       OK ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort (0 ms)
+[ RUN      ] EvaluatorPortContext.ObjectReadAndProgressChannels
+[       OK ] EvaluatorPortContext.ObjectReadAndProgressChannels (0 ms)
+[----------] 2 tests from EvaluatorPortContext (0 ms total)
+
+[----------] 1 test from EvaluatorPortCurrentness
+[ RUN      ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV
+[       OK ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV (0 ms)
+[----------] 1 test from EvaluatorPortCurrentness (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 128 tests from 47 test suites ran. (6 ms total)
+[  PASSED  ] 124 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] EvidenceSliceBuilder.FreezeRejections_EV_SLICE
+[  FAILED  ] VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3
+[  FAILED  ] EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05
+[  FAILED  ] CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3
+
+ 4 FAILED TESTS

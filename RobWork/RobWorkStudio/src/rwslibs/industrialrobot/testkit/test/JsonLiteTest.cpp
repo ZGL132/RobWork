@@ -17,10 +17,82 @@
 #include <sdurws/ird/testkit/JsonLite.hpp>
 
 #include <stdexcept>
+#include <clocale>
+#include <cmath>
+#include <limits>
 #include <string>
 
 namespace {
 using namespace sdurws::ird::testkit;
+
+/** 第一轮评审 R07：数值 locale 不能改变 JSON 的小数点语法；退出时恢复全局状态。 */
+TEST(JsonRoundtrip, DecimalParsingIgnoresNumericLocale_ReviewR07)
+{
+    const std::string previous = std::setlocale(LC_NUMERIC, nullptr);
+    struct RestoreLocale {
+        std::string value;
+        ~RestoreLocale() { std::setlocale(LC_NUMERIC, value.c_str()); }
+    } restore{previous};
+    ASSERT_NE(std::setlocale(LC_NUMERIC, "German_Germany.1252"), nullptr);
+    EXPECT_DOUBLE_EQ(parseJson("1.5").number, 1.5);
+    EXPECT_EQ(dumpJson(parseJson("-0.25"), false), "-0.25");
+}
+
+/** R07：locale 修正保留极小数舍入、负零与次正规值，避免转换原语改变合法边界。 */
+TEST(JsonRoundtrip, DecimalRangeAndSignedZeroPreserved_ReviewR07)
+{
+    EXPECT_DOUBLE_EQ(parseJson("4.9406564584124654e-324").number,
+                     std::numeric_limits<double>::denorm_min());
+    EXPECT_EQ(parseJson("1e-999").number, 0.0);
+    EXPECT_TRUE(std::signbit(parseJson("-1e-999").number));
+    EXPECT_EQ(parseJson("1.7976931348623157e308").number,
+              std::numeric_limits<double>::max());
+    EXPECT_THROW(parseJson("1e309"), TestKitError);
+}
+
+/** R06：十进制 uint64 字面量必须逐位保留，不能先经 double 舍入再写回。 */
+TEST(JsonRoundtrip, UnsignedIntegerTextIsExact_ReviewR06)
+{
+    for (const std::string text : {"9007199254740991", "9007199254740992",
+            "9007199254740993", "9223372036854775807", "9223372036854775808",
+            "18446744073709551615"}) {
+        EXPECT_EQ(dumpJson(parseJson(text), false), text);
+    }
+}
+
+/** R06：整数/连续量只有精确同值可相等；替换载荷后不得残留原种子。 */
+TEST(JsonAccess, ExactIntegerEqualityAndReplacement_ReviewR06)
+{
+    auto exact = parseJson("9007199254740993");
+    EXPECT_FALSE(exact.deepEquals(parseJson("9007199254740992")));
+    EXPECT_FALSE(exact.deepEquals(parseJson("9007199254740993.0")));
+    EXPECT_TRUE(parseJson("12").deepEquals(parseJson("12.0")));
+    EXPECT_TRUE(parseJson("12.0").deepEquals(parseJson("12")));
+    EXPECT_FALSE(parseJson("0").deepEquals(parseJson("-0")));
+    EXPECT_FALSE(parseJson("18446744073709551615").deepEquals(parseJson("18446744073709551616")));
+    exact.number = 1.5;
+    EXPECT_FALSE(exact.number.exactUnsigned().has_value());
+    EXPECT_EQ(dumpJson(exact, false), "1.5");
+    exact.number.setUnsigned(std::numeric_limits<std::uint64_t>::max());
+    auto copied = exact;
+    exact.number = 0.0;
+    EXPECT_EQ(dumpJson(copied, false), "18446744073709551615");
+    EXPECT_EQ(dumpJson(exact, false), "0");
+}
+
+/** R03：通用 JSON writer 必须拒绝非法数；报告边界负责明确标记其业务含义。 */
+TEST(JsonRejections, DumpRejectsNonFiniteNumbers_ReviewR03)
+{
+    for (const double value : {std::numeric_limits<double>::quiet_NaN(),
+                              std::numeric_limits<double>::infinity(),
+                              -std::numeric_limits<double>::infinity()}) {
+        JsonValue v;
+        v.kind = JsonValue::Kind::Number;
+        v.number = value;
+        EXPECT_THROW(dumpJson(v, false), TestKitError);
+        EXPECT_THROW(dumpJson(v, true), TestKitError);
+    }
+}
 
 /// 解析失败断言辅助：必须抛 TestKitError，且消息含指定行:列与路径片段。
 /// lineCol 形如 "3:8"（行:列）——内部转换为错误消息的 "line 3, column 8" 口径。

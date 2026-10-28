@@ -1,0 +1,50 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T57",
+ "unit": "cross-unit（RC-10 可先行面登记批：execution/project 无专项审计文档的 4 行）",
+ "description": "RC-10 保留面登记批（零产品代码变更）为 4 个无专项 audit .md 的 pending 行建立的 nonOverlap 证据：族判定＋行差异引用＋本批实测复跑检索（S1—S4，2026-10-28 对当前 HEAD 执行）＋REUSE-T06 保留分类（独立验收 PASS）。不新增上游扩展提案、不授源码修改权；状态登记为 business-specific/audited，独立验收由所有者安排（本批 NOT RUN）。",
+ "searches": [
+  {
+   "id": "S1",
+   "command": "rg -n \"class ThreadPool|addWork|stop \\\\(|waitForEmptyQueue|class ThreadSafeQueue|push \\\\(|pop \\\\(|while.*empty\" RobWork/RobWork/src/rw/common/ThreadPool.hpp RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+   "result": "命中即上游全部线程池原语面：rw::common::ThreadPool（单队列 WorkFunction 线程池，无优先级通道）与 ThreadSafeQueue（互斥队列）。exit=0。",
+   "date": "2026-10-28"
+  },
+  {
+   "id": "S2",
+   "command": "rg -ln \"CreateProcess|JOB_OBJECT|CreateNamedPipe|ConnectNamedPipe|WaitNamedPipe\" RobWork/RobWork/src RobWork/RobWorkSim/src",
+   "result": "零命中（exit=1）——上游 RobWork/RobWorkSim 全源码无 Win32 进程创建/作业对象/命名管道设施，进程级隔离与 IPC 五元组无上游同义物。",
+   "date": "2026-10-28"
+  },
+  {
+   "id": "S3",
+   "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+   "result": "IOUtil 仅 readFile/getFilesInFolder/getFileSize 等底层读写工具，无原子发布协议、无 fsync 防覆盖、无内容摘要核验契约。exit=0。",
+   "date": "2026-10-28"
+  },
+  {
+   "id": "S4",
+   "command": "rg -n \"inCollision \\\\(|distance \\\\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+   "result": "上游提供 inCollision/distance/createModel 策略 API（ProximityStrategyRW 仅继承 CollisionStrategy，距离能力须 dynamic_cast 探测）——产品消费的正是这些结果；策略选择/过滤/覆盖事实与会话编排为 policy 域语义，上游无对应物。exit=0。",
+   "date": "2026-10-28"
+  }
+ ],
+ "entries": [
+  {
+   "functionId": "execution.TaskScheduler.submit",
+   "conclusion": "族判定：上游 rw::common::ThreadPool/ThreadSafeQueue 为通用线程池原语（S1 复跑在案，无优先级通道/受理预算），产品双优先级受理调度、Controller 唯一写者/取消/终态为 execution 编排权威——通用原语不替代业务编排（REUSE-T06 pending-retention-classification.json execution NONE 12 行组 class A：worker物化/受理预算/登记编排，独验 REUSE-T06-20261026-r1 PASS）。行差异：双优先级、受理预算、状态机与身份属于execution编排；ThreadPool仅候选执行原语，不能抹掉Controller唯一写者/取消/终态。"
+  },
+  {
+   "functionId": "execution.WorkerSupervisor.spawnNewWorker",
+   "conclusion": "族判定：上游全源码无进程创建/作业对象/命名管道设施（S2 零命中），ThreadPool 亦无进程隔离能力（S1）——Win32 受控进程/作业对象隔离与命名管道五元组为 execution 权威且无可替代上游（REUSE-T06 分类 execution UTIL-THREAD 4 行组 class A：双优先级调度/Win32作业对象隔离/命名管道五元组——ThreadPool无进程隔离能力非可替代，独验 PASS）。行差异：当前使用Win32受控进程/作业对象及命名管道五元组；ThreadPool不提供这些隔离能力，不是可直接替代。T01 行结论『继续核底层启动和IPC工具』的替代排除缺口由 S2 全上游零命中收口。"
+  },
+  {
+   "functionId": "project.ObjectStore.publishObject",
+   "conclusion": "族判定：不可变 CAS 发布/同内容共享/冲突复验为 project 写协议权威；上游 IOUtil 仅底层读写工具、不提供 publishNew 原子协议（S3 复跑在案；REUSE-T06 分类 project 27 行组 class A：CAS发布/摘要核验/原子协议/fsync防覆盖——IOUtil仅底层工具不提供契约，独验 PASS）。写协议链经 REUSE-T40 落地批实链实测（project 287/287＋contract 32/32＋B20 三反例，独立验收 PASS＝REUSE-T40-20261026-r1）。行差异：不可变CAS发布/同内容共享/冲突复验是project写权威；IOUtil仅底层工具候选，不提供publishNew原子协议，不能放宽fsync和防覆盖。"
+  },
+  {
+   "functionId": "project.ObjectStore.readVerified",
+   "conclusion": "族判定：按内容身份核摘要/缓存/预算的读取为 project 写协议权威消费面；IOUtil::readFile 只读全部字节、不提供该契约（S3 复跑在案；摘要继续单源 core，不自写摘要——GAP-DIGEST-01 边界不变）；REUSE-T06 分类 class A（独验 PASS）与 REUSE-T40 实链证据同上。行差异：读取需按内容身份核摘要、缓存和预算；IOUtil::readFile只读全部字节，不提供这些契约。摘要继续单源core。"
+  }
+ ]
+}

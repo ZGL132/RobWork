@@ -1,0 +1,12 @@
+Note: Google Test filter = GoldenProjectOpen.ColdStartP95_SoftTarget_ReportOnly_DT_PM16
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from GoldenProjectOpen
+[ RUN      ] GoldenProjectOpen.ColdStartP95_SoftTarget_ReportOnly_DT_PM16
+[b04-golden] disk-facts headRefs=1001 history=101 oidDirs=1101
+[       OK ] GoldenProjectOpen.ColdStartP95_SoftTarget_ReportOnly_DT_PM16 (22173 ms)
+[----------] 1 test from GoldenProjectOpen (22173 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (22173 ms total)
+[  PASSED  ] 1 test.

@@ -1,0 +1,276 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWork/src/rw/core/CMakeLists.txt
+  Extension.cpp
+  ExtensionPoint.cpp
+  ExtensionRegistry.cpp
+  Log.cpp
+  LogStreamWriter.cpp
+  Message.cpp
+  RobWork.cpp
+  Property.cpp
+  PropertyBase.cpp
+  PropertyMap.cpp
+  PropertyValue.cpp
+  PropertyValueBase.cpp
+  AnyPtr.cpp
+  PropertyType.cpp
+  Event.cpp
+  Exception.cpp
+  LogWriter.cpp
+  IOUtil.cpp
+  Plugin.cpp
+  StringUtil.cpp
+  DOMElem.cpp
+  DOMParser.cpp
+  DOMCorePropertyMapLoader.cpp
+  DOMCorePropertyMapSaver.cpp
+  DOMCoreBasisTypes.cpp
+  DOMPropertyMapFormat.cpp
+  BoostXMLParser.cpp
+  os.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_core.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_core.exp
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_filesystem-vc143-mt-x64-1_92.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\boost_filesystem-vc143-mt-x64-1_92.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_program_options-vc143-mt-x64-1_92.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\boost_program_options-vc143-mt-x64-1_92.dll done
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWork/src/rw/common/CMakeLists.txt
+  Archive.cpp
+  BINArchive.cpp
+  Cache.cpp
+  ConcatVectorIterator.cpp
+  FileCache.cpp
+  INIArchive.cpp
+  InputArchive.cpp
+  LogBufferedChar.cpp
+  LogBufferedMsg.cpp
+  LogFileWriter.cpp
+  LogMultiWriter.cpp
+  OutputArchive.cpp
+  PairMap.cpp
+  ProgramOptions.cpp
+  Serializable.cpp
+  ThreadPool.cpp
+  ThreadSafeQueue.cpp
+  ThreadSafeStack.cpp
+  ThreadSafeVariable.cpp
+  ThreadTask.cpp
+  Timer.cpp
+  TimerUtil.cpp
+  VectorIterator.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_common.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_common.exp
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_thread-vc143-mt-x64-1_92.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\boost_thread-vc143-mt-x64-1_92.dll done
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWork/src/rw/math/CMakeLists.txt
+  CameraMatrix.cpp
+  EAA.cpp
+  EigenDecomposition.cpp
+  InertiaMatrix.cpp
+  Jacobian.cpp
+  Line2D.cpp
+  Line2DPolar.cpp
+  LinearAlgebra.cpp
+  Math.cpp
+  Metric.cpp
+  MetricFactory.cpp
+  MetricUtil.cpp
+  PerspectiveTransform2D.cpp
+  Polynomial.cpp
+  PolynomialND.cpp
+  PolynomialSolver.cpp
+  Pose2D.cpp
+  Pose6D.cpp
+  ProjectionMatrix.cpp
+  Q.cpp
+  Quaternion.cpp
+  RPY.cpp
+  Random.cpp
+  Rotation2D.cpp
+  Rotation3D.cpp
+  Rotation3DVector.cpp
+  Statistics.cpp
+  Transform2D.cpp
+  Transform3D.cpp
+  Transform3DVector.cpp
+  Vector.cpp
+  Vector2D.cpp
+  Vector3D.cpp
+  VectorND.cpp
+  VelocityScrew6D.cpp
+  Wrench6D.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(629,56):
+          查看对正在编译的 类 模板 实例化“rw::math::Quaternion<float>”的引用
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.cpp(61,1):
+          在编译 类 模板 成员函数“rw::math::Quaternion<float> rw::math::Quaternion<float>::pow(double) const”时
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244: “初始化”: 从“T”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         and [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/Quaternion.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(540,26):
+          在编译 类 模板 成员函数“rw::math::Quaternion<float> &rw::math::Quaternion<float>::operator =(const rw::math::Rotation3D<double> &)”时
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(542,19):
+          查看对正在编译的函数 模板 实例化“void rw::math::Quaternion<float>::setRotation<double>(const rw::math::Rotation3D<double> &)”的引用
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244: “初始化”: 从“T”转换到“const T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         and [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/Quaternion.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\VectorND.hpp(444,21): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/VectorND.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\VectorND.hpp(444,21):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\VectorND.hpp(764,57):
+          查看对正在编译的 类 模板 实例化“rw::math::VectorND<2,float>”的引用
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\VectorND.hpp(442,27):
+          在编译 类 模板 成员函数“rw::math::VectorND<2,float> &rw::math::VectorND<2,float>::operator /=(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\VectorND.hpp(435,21): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/VectorND.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\VectorND.hpp(435,21):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rw\math\VectorND.hpp(433,27):
+          在编译 类 模板 成员函数“rw::math::VectorND<2,float> &rw::math::VectorND<2,float>::operator *=(double)”时
+  
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_math.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_math.exp
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(179,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Length>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Length>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(180,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Angle>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Angle>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(181,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Mass>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Mass>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(182,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Time>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Time>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(183,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Force>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Force>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(184,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Torque>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Torque>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(185,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Inertia>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Inertia>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(186,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Power>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Power>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(187,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearVelocity>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearVelocity>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(188,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularVelocity>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularVelocity>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(189,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearAcceleration>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearAcceleration>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(190,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularAcceleration>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularAcceleration>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(191,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Voltage>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Voltage>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(192,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Dimensionless>”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Dimensionless>”的声明
+  
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_testkit
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  SetCheckMatch.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_core_test
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  IdentityTest.cpp
+  DigestTest.cpp
+  ConventionValueSemanticsTest.cpp
+  ProvenanceTest.cpp
+  UnitsTest.cpp
+  CompareTest.cpp
+  EvaluationTest.cpp
+  DiagDataTest.cpp
+  EventsTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_core_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\gtest.dll done

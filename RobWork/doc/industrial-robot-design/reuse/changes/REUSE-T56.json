@@ -1,0 +1,7 @@
+{
+ "schemaVersion": "ird-reuse-change/1",
+ "taskId": "REUSE-T56",
+ "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T56.json",
+ "files": [],
+ "note": "零产品代码改动批（migration.md §13.5.3 RC-06 Snapshot 面定案）：RuntimeSnapshot 四访问器（workCell/workCellHandle/tryDynamicWorkCell/makeState）实测定案＝已合规保留——受控视图转发／任务私有 State 转发／ARCH §3.6.1 既有非 const 借持登记，既有机制即为可消费形态，无薄适配缺口、无平行实现、无权限越面。本批无变动产品文件，files 留空为如实登记；runtime/src/Snapshot.cpp 定案时点全文件摘要（reuse-contract.ps1 Digest 口径：BOM 剥离＋CRLF→LF＋尾换行规整）= 756c110afc4c2b8f265ab6dbf8ba58eadc607fe0a65d8774a5a6181d13735004，与 HEAD 逐字节一致（git diff 零产品改动）。四访问器区段摘要实测与 functions/runtime.json 登记值逐一相等（753-756=6c7afba0…、758-766=527e41a9…、768-784=1d7153ea…、811-816=76031e32…）。定案证据与验证记录见 traceability/reuse/REUSE-T56/README.md。"
+}

@@ -47,6 +47,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -74,12 +75,12 @@ namespace sdurws::ird::testkit {
  * @param samples [in] 原始样本序列（任意序——函数内部升序排序副本，不入参
  *                序列不被修改）；空序列属调用方契约违约（无样本无从谈
  *                分位数——fail-fast 抛出，不返回伪值）
- * @param q       [in] 分位位次 ∈ [0,1]（0.95＝P95；越界抛 std::out_of_range
+ * @param q       [in] 有限分位位次 ∈ [0,1]（0.95＝P95；非有限或越界抛 std::out_of_range
  *                ——调用方错误 fail-fast）
  * @return 分位数值（与样本同单位——本库调用面统一毫秒）
  *
  * @throws std::invalid_argument samples 为空
- * @throws std::out_of_range q 越界
+ * @throws std::out_of_range q 非有限或越界
  *
  * 复杂度：O(n log n)（排序主导——基准样本量 10⁰~10² 量级，微秒级）。
  * 分位数约定登记串：p95Convention 常量（见下）——报告与实现同源。
@@ -91,7 +92,7 @@ inline double percentileLinearInterpolated(const std::vector<double>& samples,
         throw std::invalid_argument(
             "percentileLinearInterpolated: 空样本序列（无样本无从谈分位数）");
     }
-    if (q < 0.0 || q > 1.0) {
+    if (!std::isfinite(q) || q < 0.0 || q > 1.0) {
         throw std::out_of_range(
             "percentileLinearInterpolated: 分位位次 q 越界（须 ∈ [0,1]）");
     }

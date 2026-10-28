@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.001" timestamp="2026-10-27T14:40:47.232" name="AllTests">
+  <testsuite name="DtDesignReview" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T14:40:47.232">
+    <testcase name="EfficiencyChangesShaftTorqueAndReverseQuadrants" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp" line="1309" status="run" result="completed" time="0." timestamp="2026-10-27T14:40:47.232" classname="DtDesignReview">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324&#x0A;The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 1, which exceeds 1e-12, where&#x0A;sample.tauMotor evaluates to 1,&#x0A;driving ? torque * 0.2 : torque * 0.05 evaluates to 2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324
+The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 1, which exceeds 1e-12, where
+sample.tauMotor evaluates to 1,
+driving ? torque * 0.2 : torque * 0.05 evaluates to 2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325&#x0A;The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 20, which exceeds 1e-12, where&#x0A;sample.pMotor evaluates to 40,&#x0A;sample.tauMotor * sample.thetaDot evaluates to 20, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325
+The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 20, which exceeds 1e-12, where
+sample.pMotor evaluates to 40,
+sample.tauMotor * sample.thetaDot evaluates to 20, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324&#x0A;The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 0.5, which exceeds 1e-12, where&#x0A;sample.tauMotor evaluates to -1,&#x0A;driving ? torque * 0.2 : torque * 0.05 evaluates to -0.5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324
+The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 0.5, which exceeds 1e-12, where
+sample.tauMotor evaluates to -1,
+driving ? torque * 0.2 : torque * 0.05 evaluates to -0.5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325&#x0A;The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 10, which exceeds 1e-12, where&#x0A;sample.pMotor evaluates to -10,&#x0A;sample.tauMotor * sample.thetaDot evaluates to -20, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325
+The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 10, which exceeds 1e-12, where
+sample.pMotor evaluates to -10,
+sample.tauMotor * sample.thetaDot evaluates to -20, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324&#x0A;The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 0.5, which exceeds 1e-12, where&#x0A;sample.tauMotor evaluates to 1,&#x0A;driving ? torque * 0.2 : torque * 0.05 evaluates to 0.5, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324
+The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 0.5, which exceeds 1e-12, where
+sample.tauMotor evaluates to 1,
+driving ? torque * 0.2 : torque * 0.05 evaluates to 0.5, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325&#x0A;The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 10, which exceeds 1e-12, where&#x0A;sample.pMotor evaluates to -10,&#x0A;sample.tauMotor * sample.thetaDot evaluates to -20, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325
+The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 10, which exceeds 1e-12, where
+sample.pMotor evaluates to -10,
+sample.tauMotor * sample.thetaDot evaluates to -20, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  sample.quadrant&#x0A;    Which is: 1-byte object &lt;04&gt;&#x0A;  driving ? dt::Quadrant::Q3 : dt::Quadrant::Q4&#x0A;    Which is: 1-byte object &lt;03&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1328
+Expected equality of these values:
+  sample.quadrant
+    Which is: 1-byte object <04>
+  driving ? dt::Quadrant::Q3 : dt::Quadrant::Q4
+    Which is: 1-byte object <03>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1329&#x0A;Expected equality of these values:&#x0A;  driving ? point.q3.timeShare : point.q4.timeShare&#x0A;    Which is: 0&#x0A;  1.0&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1329
+Expected equality of these values:
+  driving ? point.q3.timeShare : point.q4.timeShare
+    Which is: 0
+  1.0
+    Which is: 1
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324&#x0A;The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 1, which exceeds 1e-12, where&#x0A;sample.tauMotor evaluates to -1,&#x0A;driving ? torque * 0.2 : torque * 0.05 evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1324
+The difference between sample.tauMotor and driving ? torque * 0.2 : torque * 0.05 is 1, which exceeds 1e-12, where
+sample.tauMotor evaluates to -1,
+driving ? torque * 0.2 : torque * 0.05 evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325&#x0A;The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 20, which exceeds 1e-12, where&#x0A;sample.pMotor evaluates to 40,&#x0A;sample.tauMotor * sample.thetaDot evaluates to 20, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1325
+The difference between sample.pMotor and sample.tauMotor * sample.thetaDot is 20, which exceeds 1e-12, where
+sample.pMotor evaluates to 40,
+sample.tauMotor * sample.thetaDot evaluates to 20, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  sample.quadrant&#x0A;    Which is: 1-byte object &lt;04&gt;&#x0A;  driving ? dt::Quadrant::Q3 : dt::Quadrant::Q4&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1328
+Expected equality of these values:
+  sample.quadrant
+    Which is: 1-byte object <04>
+  driving ? dt::Quadrant::Q3 : dt::Quadrant::Q4
+    Which is: 1-byte object <02>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1329&#x0A;Expected equality of these values:&#x0A;  driving ? point.q3.timeShare : point.q4.timeShare&#x0A;    Which is: 0&#x0A;  1.0&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingGoldenTest.cpp:1329
+Expected equality of these values:
+  driving ? point.q3.timeShare : point.q4.timeShare
+    Which is: 0
+  1.0
+    Which is: 1
+]]></failure>
+    </testcase>
+    <testcase name="LoadInertiaMotorSideUsesForwardMapping" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp" line="880" status="run" result="completed" time="0." timestamp="2026-10-27T14:40:47.233" classname="DtDesignReview">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp:893&#x0A;The difference between *result.axes[0].inertiaRatio and 0.04 is 399.95999999999998, which exceeds 1e-12, where&#x0A;*result.axes[0].inertiaRatio evaluates to 400,&#x0A;0.04 evaluates to 0.040000000000000001, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp:893
+The difference between *result.axes[0].inertiaRatio and 0.04 is 399.95999999999998, which exceeds 1e-12, where
+*result.axes[0].inertiaRatio evaluates to 400,
+0.04 evaluates to 0.040000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp:894&#x0A;The difference between *result.axes[1].inertiaRatio and 0.3636 is 233.63640000000001, which exceeds 1e-12, where&#x0A;*result.axes[1].inertiaRatio evaluates to 234,&#x0A;0.3636 evaluates to 0.36359999999999998, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp:894
+The difference between *result.axes[1].inertiaRatio and 0.3636 is 233.63640000000001, which exceeds 1e-12, where
+*result.axes[1].inertiaRatio evaluates to 234,
+0.3636 evaluates to 0.36359999999999998, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

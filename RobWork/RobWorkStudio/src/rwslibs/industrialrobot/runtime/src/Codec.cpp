@@ -766,6 +766,7 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
     w.raw16(chain.robotObjectId.bytes);
     w.str(chain.robotLocalName);
     w.str(chain.deviceName);
+    writeTransform(w, chain.flangeOffset);  // canonical 1.4：F01 固定段参与内容身份。
     w.u32(static_cast<std::uint32_t>(chain.joints.size()));
     for (const CanonicalJoint& j : chain.joints) {
         w.raw16(j.objectId.bytes);
@@ -795,9 +796,9 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         w.raw16(l.objectId.bytes);
         w.str(l.localName);
         w.presence(l.visual.has_value());
-        if (l.visual) { writeResourceRef(w, *l.visual, identityDomain); }
+        if (l.visual) { writeResourceRef(w, *l.visual, identityDomain); writeTransform(w, l.visualTransform); }
         w.presence(l.collision.has_value());
-        if (l.collision) { writeResourceRef(w, *l.collision, identityDomain); }
+        if (l.collision) { writeResourceRef(w, *l.collision, identityDomain); writeTransform(w, l.collisionTransform); }
         writeSourcedDouble(w, l.mass);
         writeSourcedVec3(w, l.centerOfMass);
         writeSourcedInertia(w, l.inertia);
@@ -810,7 +811,7 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         w.raw16(t.objectId.bytes);
         w.str(t.localName);
         w.presence(t.geometry.has_value());
-        if (t.geometry) { writeResourceRef(w, *t.geometry, identityDomain); }
+        if (t.geometry) { writeResourceRef(w, *t.geometry, identityDomain); writeTransform(w, t.geometryTransform); }
         writeSourcedDouble(w, t.mass);
         writeSourcedVec3(w, t.centerOfMass);
         writeSourcedInertia(w, t.inertia);
@@ -832,7 +833,7 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         writeTransform(w, s.worldPose);
         // canonical1.3：显式有无状态参与两种编码域，nullopt与任意资源字节不同。
         w.presence(s.geometry.has_value());
-        if (s.geometry) { writeResourceRef(w, *s.geometry, identityDomain); }
+        if (s.geometry) { writeResourceRef(w, *s.geometry, identityDomain); writeTransform(w, s.geometryTransform); }
     }
 
     // ---- 传动块（§4.3.4）----
@@ -973,6 +974,7 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
             || !r.str(chain.deviceName)) {
             return failed();
         }
+        if (!readTransform(r, chain.flangeOffset)) { return failed(); }
         if (!r.u32(n)) { return failed(); }
         chain.joints.resize(n);
         for (CanonicalJoint& j : chain.joints) {
@@ -1013,12 +1015,14 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
                 ResourceRef ref;
                 if (!readResourceRef(r, ref)) { return failed(); }
                 l.visual = std::move(ref);
+                if (!readTransform(r, l.visualTransform)) { return failed(); }
             }
             if (!r.presence(has)) { return failed(); }
             if (has) {
                 ResourceRef ref;
                 if (!readResourceRef(r, ref)) { return failed(); }
                 l.collision = std::move(ref);
+                if (!readTransform(r, l.collisionTransform)) { return failed(); }
             }
             if (!readSourcedDouble(r, l.mass) || !readSourcedVec3(r, l.centerOfMass)
                 || !readSourcedInertia(r, l.inertia)) {
@@ -1036,6 +1040,7 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
                 ResourceRef ref;
                 if (!readResourceRef(r, ref)) { return failed(); }
                 t.geometry = std::move(ref);
+                if (!readTransform(r, t.geometryTransform)) { return failed(); }
             }
             if (!readSourcedDouble(r, t.mass) || !readSourcedVec3(r, t.centerOfMass)
                 || !readSourcedInertia(r, t.inertia) || !readTransform(r, t.tcpOffset)) {
@@ -1081,6 +1086,7 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
                 ResourceRef ref;
                 if (!readResourceRef(r, ref)) { return failed(); }
                 s.geometry = std::move(ref);
+                if (!readTransform(r, s.geometryTransform)) { return failed(); }
             }
         }
 

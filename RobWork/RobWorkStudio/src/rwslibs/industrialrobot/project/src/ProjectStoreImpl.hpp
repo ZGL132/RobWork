@@ -472,6 +472,11 @@ private:
     std::unique_ptr<tx::TxEngine> m_engine;  ///< 事务引擎（T07）
 
     HeadRecord m_head;  ///< 会话 HEAD（成功提交后更新为 newHead）
+    /** @brief writer锁内重读HEAD；只读实例完整验证后原子安装新闭包。
+     * 无磁盘写入；失败保留原会话视图。可写实例的外部HEAD变化视为损坏。
+     * @throws StoreError 数据损坏或环境读取失败，不安装部分索引。
+     */
+    void refreshCommittedViewLocked();
     ProjectMetadataRecord m_authoritative;  ///< 权威元数据（D-5 底本）
     ObjectRefPair m_authoritativeRef;  ///< 权威元数据注册键
 

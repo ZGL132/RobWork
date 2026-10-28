@@ -1,0 +1,62 @@
+Note: Google Test filter = DiagnosticsRegression.*:ConfirmableTest.Review_*:DiagnosticsBuild.*
+[==========] Running 23 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from DiagnosticsBuild
+[ RUN      ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD
+[       OK ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD (1 ms)
+[ RUN      ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (9 ms)
+[ RUN      ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (11 ms)
+[ RUN      ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (10 ms)
+[ RUN      ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2 (1 ms)
+[----------] 5 tests from DiagnosticsBuild (34 ms total)
+
+[----------] 2 tests from ConfirmableTest
+[ RUN      ] ConfirmableTest.Review_ThrowingNotificationPreservesOutcomeAndExpiration
+[       OK ] ConfirmableTest.Review_ThrowingNotificationPreservesOutcomeAndExpiration (1 ms)
+[ RUN      ] ConfirmableTest.Review_NotificationRunsOutsideStateMutex
+[       OK ] ConfirmableTest.Review_NotificationRunsOutsideStateMutex (20 ms)
+[----------] 2 tests from ConfirmableTest (22 ms total)
+
+[----------] 16 tests from DiagnosticsRegression
+[ RUN      ] DiagnosticsRegression.DescriptorEnumsRejectAtomically
+[       OK ] DiagnosticsRegression.DescriptorEnumsRejectAtomically (0 ms)
+[ RUN      ] DiagnosticsRegression.FactoryUsesAuthoritativeLevelWithoutMutatingInput
+[       OK ] DiagnosticsRegression.FactoryUsesAuthoritativeLevelWithoutMutatingInput (0 ms)
+[ RUN      ] DiagnosticsRegression.TranslationTruncatesAtUtf8Boundary
+[       OK ] DiagnosticsRegression.TranslationTruncatesAtUtf8Boundary (0 ms)
+[ RUN      ] DiagnosticsRegression.IncomingRelationsProtectConsumedRoot
+[       OK ] DiagnosticsRegression.IncomingRelationsProtectConsumedRoot (0 ms)
+[ RUN      ] DiagnosticsRegression.CatalogSortsBeforeSnapshotAndExportLimit
+[       OK ] DiagnosticsRegression.CatalogSortsBeforeSnapshotAndExportLimit (0 ms)
+[ RUN      ] DiagnosticsRegression.CauseGroupsRemainPartitionedByTask
+[       OK ] DiagnosticsRegression.CauseGroupsRemainPartitionedByTask (0 ms)
+[ RUN      ] DiagnosticsRegression.JsonAndBareKeysRedactIdempotently
+[       OK ] DiagnosticsRegression.JsonAndBareKeysRedactIdempotently (0 ms)
+[ RUN      ] DiagnosticsRegression.InternalNamesAndMetadataCannotBypassRedaction
+[       OK ] DiagnosticsRegression.InternalNamesAndMetadataCannotBypassRedaction (1 ms)
+[ RUN      ] DiagnosticsRegression.FinalBatchDiscardsBufferedLaterRecords
+[       OK ] DiagnosticsRegression.FinalBatchDiscardsBufferedLaterRecords (0 ms)
+[ RUN      ] DiagnosticsRegression.RedactionFailureNotificationCannotFeedItself
+[       OK ] DiagnosticsRegression.RedactionFailureNotificationCannotFeedItself (0 ms)
+[ RUN      ] DiagnosticsRegression.ConcurrentFlushesCompleteAfterQueuedWrites
+[       OK ] DiagnosticsRegression.ConcurrentFlushesCompleteAfterQueuedWrites (0 ms)
+[ RUN      ] DiagnosticsRegression.SelectedSampleClearsEarlierTail
+[       OK ] DiagnosticsRegression.SelectedSampleClearsEarlierTail (0 ms)
+[ RUN      ] DiagnosticsRegression.FileAndCrashWriterAcceptNativeUnicodePaths
+[       OK ] DiagnosticsRegression.FileAndCrashWriterAcceptNativeUnicodePaths (2 ms)
+[ RUN      ] DiagnosticsRegression.FlushDeadlineIncludesFileOperation
+[       OK ] DiagnosticsRegression.FlushDeadlineIncludesFileOperation (511 ms)
+[ RUN      ] DiagnosticsRegression.ShutdownStopsQueuedWorkAtDrainBudget
+[ird-diagnostics] shutdown timeout: dropped-items=108
+[       OK ] DiagnosticsRegression.ShutdownStopsQueuedWorkAtDrainBudget (3017 ms)
+[ RUN      ] DiagnosticsRegression.OverflowSummaryDoesNotMisclassifyHighPriorityDrops
+[       OK ] DiagnosticsRegression.OverflowSummaryDoesNotMisclassifyHighPriorityDrops (0 ms)
+[----------] 16 tests from DiagnosticsRegression (3535 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 3 test suites ran. (3593 ms total)
+[  PASSED  ] 23 tests.

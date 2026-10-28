@@ -1,0 +1,60 @@
+实施收口环境采集（status为收口时工作区，非启动快照）
+C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork
+codex/core-review-fixes
+412e173b9079fa43a1f0ef50fe07d38e852b1940
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/DraftService.hpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/DraftServiceImpl.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.hpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.hpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/RevisionIndex.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/RevisionIndex.hpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/StoreClone.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProcessLockContractTest.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProjectStoreTest.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/Tx15Child.cpp
+ M RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp
+ M RobWork/doc/industrial-robot-design/reuse/functions/execution.json
+ M RobWork/doc/industrial-robot-design/reuse/functions/project.json
+ M RobWork/doc/industrial-robot-design/units/project.md
+?? RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ReviewRegressionTest.cpp
+?? RobWork/doc/industrial-robot-design/reuse/changes/PRJ-T19.json
+?? RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T19.json
+?? RobWork/doc/industrial-robot-design/traceability/project-review-r1/
+
+build\CMakeCache.txt:526:CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake
+build\CMakeCache.txt:763:RWS_BUILD_INDUSTRIALROBOT:BOOL=ON
+build\CMakeCache.txt:1539:CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022
+build\CMakeCache.txt:1543:CMAKE_GENERATOR_PLATFORM:INTERNAL=x64
+build\CMakeCache.txt:1554:CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork
+build\core-smoke\CMakeCache.txt:220:CMAKE_TOOLCHAIN_FILE:FILEPATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake
+build\core-smoke\CMakeCache.txt:618:CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022
+build\core-smoke\CMakeCache.txt:622:CMAKE_GENERATOR_PLATFORM:INTERNAL=x64
+build\core-smoke\CMakeCache.txt:633:CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+
+
+Name                      : 13th Gen Intel(R) Core(TM) i9-13950HX
+NumberOfCores             : 24
+NumberOfLogicalProcessors : 32
+
+
+Caption                : Microsoft Windows 11 专业版
+Version                : 10.0.26200
+TotalVisibleMemorySize : 66634028
+
+
+DriveLetter   : C
+FileSystem    : NTFS
+Size          : 1080352043008
+SizeRemaining : 392922370048
+
+电源方案 GUID: fb5220ff-7e1a-47aa-9a42-50ffbf45c673  (HP Optimized (Modern Standby))

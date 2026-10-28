@@ -380,12 +380,10 @@ set(IRD_R3_EXCEPTION_TARGETS "sdurws_ird_ui"
 #   - policy 产品实现（碰撞唯一实现，WP-07-T01 起生效）
 #   - runtime 场景装配若需 proximity 类型（仅限构造 WorkCell 几何挂载）
 #     另行登记——当前无条目。
-#   - 2026-10-21 起新增：runtime 真实碰撞设施（MA-02 所有者立项——
-#     CollisionSession/CollisionDetector；判定权威仍归 policy 规则面，
-#     runtime 只承载场景几何级判定执行；登记册 DTB §4.5 对应行）。
+#   - POL-T13：删除 runtime 重复碰撞设施后撤销其豁免，收回到 policy。
 # 语义：IRD_R5_EXEMPT_TARGETS 中的目标名豁免 R-5 扫描。
 # ---------------------------------------------------------------------
-set(IRD_R5_EXEMPT_TARGETS "sdurws_ird_policy" "sdurws_ird_runtime")
+set(IRD_R5_EXEMPT_TARGETS "sdurws_ird_policy")
 
 # ---------------------------------------------------------------------
 # T-1/T-2 —— testkit 分发/依赖红线（testkit.md §2.4）：无例外（DTB §4.5）。
@@ -523,6 +521,9 @@ set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint"
 # 不变——本表仅属测试目标）。
 # ---------------------------------------------------------------------
 set(IRD_TEST_TARGET_EDGES
+    # POL-T13/ERR-01：逐生产码核对正式 registry/factory；只增加此测试边，
+    # 不改变 policy 产品库依赖；用户已授权按专项评审建议修复（DTB §4.5）。
+    "sdurws_ird_policy_contract_test->sdurws_ird_diagnostics"
     # WP-01-T05 回填既有性能契约的逐目标测试边。只准登记的消费端，
     # 不向产品库开放业务域互链；出处分别为 wp23-t02/t04/t08-gate-registrations.md。
     "sdurws_ird_ui_perf_test->sdurws_ird_execution"

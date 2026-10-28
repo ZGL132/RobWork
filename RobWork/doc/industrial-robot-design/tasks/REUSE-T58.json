@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T58",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "RC-07 字节三件套②——execution/runtime/policy 三文件字节原语旧实现基线捕获（52 行 UTIL-BINARCHIVE 绑定面，纯捕获零实现改动）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T57"
+  ],
+  "requirements": [
+    "NFR-COR-02",
+    "CON-05"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.5.4",
+    "reuse/audit-contract.md#7.1",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T58.json（文档/任务/链接门禁，内含一次全量复用检查——Test-DeclaredGoldenJson 对新增/变更 golden JSON 的机器核查在其内）",
+    "捕获确定性自检：harness 重建→连跑两次（out1/out2）diff -r 逐字节一致（已实测 PASS）→与入库 golden expected 逐字节比对（cmp 实测一致；命令与输出见 traceability/reuse/REUSE-T58/README.md）",
+    "Test-DeclaredGoldenJson 实测（golden-assets.ps1 同一实现，真实树 stub）：新增/变更 9 处 golden JSON 全部 PASS（12/12 含 pol 既有 4 处回归复核）",
+    "testkit::GoldenDataset::load C++ 侧全量链实测（解析→schema→完整性→交叉校验）：exec-channel-protocol-fixture@1.0.0、rt-codec-fixture@1.0.0、pol-policy-codec-fixture@1.0.0 全部 PASS（rc07_dataset_check.exe）",
+    "既有消费者回归：sdurws_ird_policy_contract_test PolPolicyCodecFixture 5/5 PASSED（pol 家族 manifest 增量后既有装载/身份对照面零破坏）"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T58.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T58.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/exec-channel-protocol-fixture/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-codec-fixture/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/manifest.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/inputs/policy-input-rc07-baseline.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/expected/policy-output-rc07-baseline.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T58/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/*/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/generate/make_pol_policy_fixture.mjs",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/closures.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "golden 家族 exec-channel-protocol-fixture/1.0.0（kind=regression，47 用例）：execution/src/ChannelProtocol.cpp 字节原语（functions/execution.json UTIL-BINARCHIVE 36 条绑定）经 encodeIdentityBlock/decodeIdentityBlock/encodeFrame/八对载荷编解码 encode*/decode*（decode 侧含 6 例截断/长度域越界拒绝边界——getStr/getBytes 绑定全调用点在 decode 体内随其执行，36 条绑定无一遗漏）/fragmentMessage/MessageReassembler/FrameAssembler/FrameSequencer（时钟注入）/manifestDigestHex/computeContentIdentity 真实公共入口的现网期望字节",
+    "golden 家族 rt-codec-fixture/1.0.0（kind=regression，10 用例）：runtime/src/Codec.cpp 字节原语（10 条绑定）经 rtcodec::encode/encodeIdentityDomain/computeContentIdentity（minimal＋rich 模型，携 identityMatchesIdentityDomainDigest 严格重演布尔＝SHA-256(身份域编码) 与摘要逐一相等）/parse 往返/encodeNameMap/parseNameMap/computeNameMapContentIdentity（携 identityMatchesEncodedDigest 同口径重演，§7.6）的现网期望字节",
+    "golden 家族 pol-policy-codec-fixture/1.0.0 增量（既有家族追加不覆盖，+2 资产 23 用例）：policy/src/PolicyInput.cpp 字节原语（6 条绑定）经 PolicyCodec::encode/decode/encodeSemanticProjection/contentIdentity/canonicalF64/parseCanonicalF64——canonicalF64 位模式 15 值（含 -0.0/DBL_MIN/DBL_MAX/次正规 5e-324）＋full 最小/承载面＋投影/缺席面编码与身份；既有 canonical/variant 条目与 node 独立生成器零改动",
+    "确定性验证与三重校验实测：同输入双运行逐字节一致（diff -r 零差异）；Test-DeclaredGoldenJson 12/12 PASS；GoldenDataset::load 三家族 C++ 侧 PASS；PolPolicyCodecFixture 5/5 PASSED",
+    "traceability/reuse/REUSE-T58/README.md：捕获方法与绑定映射、magic/位模式/行为面健全性核对记录（IRDCHN1 小端帧头、IRDCANO/IRDNAME/IRDPOL1 编码头、f64 标准位模式、seq 序控基线/缺口行为、attempt 2^64-1 定宽域溢出边界——解码按编码纪律拒绝的既实现行为如实登记）、附录 A harness 源码全文（会话工具不入库的可复现登记）",
+    "migration.md §13.5.4 RC-07 行追加基线捕获完成注记（并入 RC-10 批遗留的 migration.md 工作树改动，其内容保留）"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "三文件基线齐备且经真实运行捕获：捕获面＝主构建树 Release 静态库（build/RobWorkStudio/libs/Release，构建时间 2026-10-27 晚于三源文件最后修改——现网实现核对实测）；只经产品公共入口消费，不复制原语实现、不改任何 .cpp/.hpp/CMake",
+    "确定性自检已执行：rc07_capture.exe 连跑两次 diff -r 逐字节一致（DETERMINISM-PASS 实测）；重建→捕获→与入库 expected 逐字节比对的复核命令在 traceability README §4 与两新家族 manifest generator.invocation 内联登记（generate/ 不落盘——committed=false，避免新产品树文件触发复用门禁 UNDECLARED），供换核批与独验复用",
+    "golden 结构三重校验已执行：①Test-DeclaredGoldenJson（ird-golden-manifest/1＋kind 枚举＋inputs/expected/integrity＋size/sha256 逐资产）12/12 PASS；②testkit::GoldenDataset::load（含 generator/history/producer/referenceSource 必填与原始字节完整性）三家族 PASS；③Test-DeclaredGoldenJson 负例面由实现路径保证（sha256 失配即 Fail，本批以篡改字节哈希差异旁证）",
+    "pol 增量为纯追加：既有 4 资产（policy-input/policy-input-variant/identity/make_pol_policy_fixture.mjs）字节零改动（integrity 原值保留），manifest 仅追加 inputs/expected/integrity/parameters.rc07ByteBaseline/history 条目；既有消费者 PolPolicyCodecFixture 5/5 PASSED 实测",
+    "NOT RUN：独立验收（所有者另开会话执行，实施者不自签——三家族登记与逐位探针判定均待独验）；commit-lint/verify-task-scope（本批不执行 git 写命令，随提交批显式 -Base e428cd0cf -Head <送验SHA> 执行）；逐位探针＋断开红转绿（字节三件套③，属换核批）；C++ 全量构建/ird_gates（零产品代码与 CMake 变更，按 AGENTS §4 增量范围文档门禁＋上述定向测试即可）",
+    "边界：零 .cpp/.hpp 实现改动；不触 catalog.json（T44 锁）/functions 绑定/permissions/closures；runtime/src/Snapshot.cpp 8 条字节行随 T56 裁决后另批追加捕获（本批不代裁）；ReportCodec.cpp 64 行（reporting）本轮不动（工作量最大、需新建家族，留换核批前置追加——State 借用先由 RC-09 解阻）；他人工作树改动（trace-matrix.json、新建文件夹等）不入本批暂存；不执行 git push/fetch/commit"
+  ],
+  "note": "migration.md §13.5.4 RC-07（:423）字节原语能力批三件套之②（顺序敏感——必须在换核前捕获）：①渠道批准已获（byte-primitives-decision.md §6，Boost.Endian/JSON vcpkg 渠道——本批不重复申请）；③逐位探针＋断开红转绿属换核批。本批＝旧实现字节基线：execution/src/ChannelProtocol.cpp（36 行）→runtime/src/Codec.cpp（10 行）→policy/src/PolicyInput.cpp（6 行），以 functions/*.json 反查的 52 条 UTIL-BINARCHIVE pending 绑定面为准（60 条 pending 的其余 8 条＝Snapshot.cpp 随 T56 裁决追加；reporting 64 行留换核批前置）。golden 家族规则＝Test-DeclaredGoldenJson（golden-assets.ps1:3-4）：testdata/golden/<datasetId>/<semver>/manifest.json＋inputs|expected/*.json，schema ird-golden-manifest/1，kind 枚举含 regression——datasetId 沿既有命名风格（pol-policy-codec-fixture 先例）。查重（2026-10-28 实测）：tasks/ 止于 REUSE-T57、reuse/changes/ 无 REUSE-T58、traceability/reuse/ 无 REUSE-T58 目录——建档成立。授权口径：所有者 2026-10-27 委托『后续所有裁决授权按建议进行』，本批按建议裁决（kind=regression 新家族×2＋pol 增量追加）；独验不可自签，如实 NOT RUN 待所有者安排。捕获纪律：期望字节只能来自现网实现真实运行（不用独立重实现冒充——与 pol 既有 node 生成器双轨并存、互不覆盖）；确定性来源＝固定种子 id/摘要派生＋时钟注入＋无环境量；边界面覆盖常规值/空载荷/定宽上界/浮点位模式/定宽域溢出（attempt 2^64-1 填满身份块 attempt 域——encode 成功而 decode 按编码纪律拒绝，为现网既实现行为，如实捕获不修正）。toleranceProfile 引用说明：schema 必填字段，execution 域无既有档案，exec 家族引用 ev-slice（零容差字节等值语义最接近）并在 parameters.framesNote/参数中明示『字节等值断言不经容差通道』；rt 家族引用 rt-runtime（runtime 域既有档案，rt-namemap-roundtrip 先例）。status=ready 表示实施完成待独验，不冒称通过。起始 SHA=e428cd0cf28f0927602fbeaf2db764d8deb7194c。",
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T58.json"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  }
+}

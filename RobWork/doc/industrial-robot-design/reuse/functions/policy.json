@@ -13,9 +13,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
           "symbol": "RobWorkCollisionEvaluator::createSession",
           "qualifiedSymbol": "sdurws::ird::policy::RobWorkCollisionEvaluator::createSession",
-          "startLine": 82,
-          "endLine": 93,
-          "sha256": "e65147ffd54cd184e50eb3238970fbfb95a89292111fabf27b7cb6760fe89811"
+          "startLine": 77,
+          "endLine": 86,
+          "sha256": "ddbbc62f7a4935066068aec71f49545022ef5fb6e7a306a47bc57c4ffeb4944a"
         }
       ],
       "targets": [
@@ -30,11 +30,11 @@
         "command": "rg -n \"inCollision \\(|distance \\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
         "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
       },
-      "differences": "已有策略/互斥会话构造不是重复碰撞核心；继续审Scene来源、借持生命周期、State隔离与内置后端距离能力，保留唯一policy入口",
+      "differences": "已有策略/互斥会话构造不是重复碰撞核心；继续审Scene来源、借持生命周期、State隔离与内置后端距离能力，保留唯一policy入口；POL-T13：evaluator仅持描述符，各createSession独立构造上游后端和会话锁，不再共享几何缓存。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合",
@@ -54,9 +54,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
           "symbol": "CollisionEvaluationSession::evaluate",
           "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::evaluate",
-          "startLine": 372,
-          "endLine": 712,
-          "sha256": "10dd0281be62e601bf09ce21702c26ffea8a87171c56baa7cbda95e72bce0f70"
+          "startLine": 381,
+          "endLine": 766,
+          "sha256": "629465e43dd0bfc69a2128ec7bc6b9ce84b9a2c30a563f1f5e8df4d22941a160"
         }
       ],
       "targets": [
@@ -69,13 +69,13 @@
       "status": "pending",
       "search": {
         "command": "rg -n \"inCollision \\(|distance \\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
-        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+        "conclusion": "上游 inCollision/distance/ProximityStrategyRW 消费面已核（S4 复跑在案）；策略过滤/覆盖事实与会话编排归 policy（REUSE-T01 B18 审计第 27 行＋T36 COLLISION capability review 独验 PASS）——保留面登记，未授源码修改权；RC-10 登记批缺口：本行脱离 pending 审计豁免即触发 IRD-GATE-AD（policy/src/CollisionQuery.cpp 携带 rw/proximity 受限消费且 permissions.json 无精确 grant——登记扫描实测 categories=state/operations=write-state），权限最小方案归 RC-09 逐文件审查，本批不代授——保持 pending"
       },
       "differences": "已有inCollision/distance结果消费，策略过滤与覆盖事实归policy；内置二值后端无distance时诚实Failed，需对照可用距离后端，不另写几何距离",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
@@ -113,7 +113,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
@@ -169,7 +169,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
@@ -225,7 +225,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
@@ -281,7 +281,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
@@ -337,7 +337,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
@@ -393,7 +393,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
@@ -449,7 +449,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditEvidence": [
@@ -491,8 +491,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
           "symbol": "ird_add_gtest",
           "qualifiedSymbol": "ird_add_gtest",
-          "startLine": 316,
-          "endLine": 328,
+          "startLine": 318,
+          "endLine": 330,
           "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
         }
       ],
@@ -503,17 +503,21 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T32-20261025-r1.json",
+       "sha256": "b77e059bd7b09e7595638f05825eef662a442671fb5ca7f7f0e49d2ff7958ea5"
+      },
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+        "conclusion": "REUSE-T32 定案保留（独验 PASS 在案：上游 ADD_RW_GTEST 非 CONFIG 导出、20 单元同形薄宏为既有形态；TEST-HARNESS capability 保持 candidate；只共享必要产品 CMake include、不搬运上游未导出宏）——薄入口不等于平行测试内核"
       },
       "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         }
       ],
       "auditEvidence": [
@@ -565,8 +569,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -575,15 +583,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -603,7 +611,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -647,8 +655,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -657,15 +669,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -685,7 +697,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -729,8 +741,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -739,15 +755,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -767,7 +783,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -815,21 +831,21 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：context/cause/action 中文文案与 diagnostics 正式模板职责（SA-12/19）未核——保持 pending 不包装"
       },
       "differences": "登记码通过policyDiagCode引用、记录经core DiagnosticRecord::make；context/cause/action为本TU中文文本，按SA-12/19须核与diagnostics正式模板职责，不能判已合规",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -849,7 +865,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -893,8 +909,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -903,15 +923,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -931,7 +951,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -975,8 +995,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -985,15 +1009,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1013,7 +1037,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -1047,8 +1071,8 @@
           "symbol": "JointLimitEvaluator::evaluate",
           "qualifiedSymbol": "sdurws::ird::policy::JointLimitEvaluator::evaluate",
           "startLine": 266,
-          "endLine": 589,
-          "sha256": "ef37bb0c84d69e35170756839e0f7c230963aa0fb93803b99760658651e3ba3c"
+          "endLine": 608,
+          "sha256": "26e8c283fd354f7914e5d5d5beb5c63d03b1c531de637046b852c1dbd90f4183"
         }
       ],
       "targets": [
@@ -1057,8 +1081,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MODEL-BOUNDS",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1067,15 +1095,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1095,7 +1123,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -1128,8 +1156,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
           "symbol": "makeJointLimitEvaluator",
           "qualifiedSymbol": "sdurws::ird::policy::makeJointLimitEvaluator",
-          "startLine": 595,
-          "endLine": 598,
+          "startLine": 614,
+          "endLine": 617,
           "sha256": "08cf6416d86388457b096036f4948ae38440c1a95bf1eb8cc910ed4e867eab72"
         }
       ],
@@ -1139,8 +1167,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1149,15 +1181,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1177,7 +1209,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
-          "sha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511"
+          "sha256": "b97327add528462f3855b079c93adb156b296bfbf539fed676f389e8d0b0636d"
         }
       ],
       "auditEvidence": [
@@ -1221,8 +1253,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1231,15 +1267,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1259,7 +1295,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1307,21 +1343,21 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：正式中文文案收口 diagnostics 权威未核——保持 pending 不包装"
       },
       "differences": "registryCode+core DiagnosticRecord::make单一数据构造；正式中文文案仍由调用点注入，需与diagnostics权威分清",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1341,7 +1377,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1385,8 +1421,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1395,15 +1435,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1423,7 +1463,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1467,8 +1507,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1477,15 +1521,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1505,7 +1549,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1549,8 +1593,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1559,15 +1607,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1587,7 +1635,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1631,8 +1679,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1641,15 +1693,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1669,7 +1721,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1717,21 +1769,21 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：域窗文案收口 diagnostics 渲染未核——保持 pending 不包装"
       },
       "differences": "重复域窗中文描述；应保留结构化domain/界值由diagnostics渲染，非上游数学核心",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1751,7 +1803,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1795,8 +1847,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1805,15 +1861,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1833,7 +1889,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1877,8 +1933,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1887,15 +1947,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1915,7 +1975,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -1959,8 +2019,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -1969,15 +2033,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -1997,7 +2061,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2041,8 +2105,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2051,15 +2119,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2079,7 +2147,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2123,8 +2191,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2133,15 +2205,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2161,7 +2233,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2205,8 +2277,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2215,15 +2291,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2243,7 +2319,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2291,21 +2367,21 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：级别文案收口与真实消费核对未做——保持 pending 不包装"
       },
       "differences": "中文级别文本在policy本地，SA-12要求正式文案收口，待真实消费核对",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2325,7 +2401,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2369,8 +2445,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2379,15 +2459,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2407,7 +2487,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2451,8 +2531,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2461,15 +2545,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2489,7 +2573,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2523,8 +2607,8 @@
           "symbol": "runParsePipeline",
           "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::runParsePipeline",
           "startLine": 489,
-          "endLine": 844,
-          "sha256": "dbda61a854efa29ed909e9ad05ae64ff86057dbe59bfd5f2ebc58483bac9a7f8"
+          "endLine": 854,
+          "sha256": "f31160dade553ae6d7cd8360c6cfd6ddda5c70e59ca2839e63a4ba99dedd2fcf"
         }
       ],
       "targets": [
@@ -2533,8 +2617,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2543,15 +2631,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2571,7 +2659,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2604,8 +2692,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
           "symbol": "resolvePolicy",
           "qualifiedSymbol": "sdurws::ird::policy::resolvePolicy",
-          "startLine": 852,
-          "endLine": 863,
+          "startLine": 862,
+          "endLine": 873,
           "sha256": "5f6191b833c4606bc1f80c4b53477bb8493c77bf17ac5ded164a9b2e7ad4bf51"
         }
       ],
@@ -2615,8 +2703,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2625,15 +2717,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2653,7 +2745,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2686,8 +2778,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
           "symbol": "PolicyValidator::validate",
           "qualifiedSymbol": "sdurws::ird::policy::PolicyValidator::validate",
-          "startLine": 865,
-          "endLine": 872,
+          "startLine": 875,
+          "endLine": 882,
           "sha256": "d4960869ab9e44b86e3f85bcede5bab52d29a2ecb0938eec899c91069324e63a"
         }
       ],
@@ -2697,8 +2789,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2707,15 +2803,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2735,7 +2831,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2768,8 +2864,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
           "symbol": "sceneObjectRoleTokens",
           "qualifiedSymbol": "sdurws::ird::policy::sceneObjectRoleTokens",
-          "startLine": 874,
-          "endLine": 877,
+          "startLine": 884,
+          "endLine": 887,
           "sha256": "769dc436d2b18c86df1b150cb6ca1a5b77cce1c24a15dc028edd5a01fdcb8a57"
         }
       ],
@@ -2779,8 +2875,12 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
+      "nonOverlapEvidence": {
+       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/policy-boundary-audit.md",
+       "sha256": "0ced21540e885251e3a0e0e5f1693eb9a951438d6c8313f977fda79b41e68822"
+      },
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2789,15 +2889,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2817,7 +2917,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
-          "sha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+          "sha256": "9852883e59a7ff9451084185f70c3b09c5753d49f97633b1a4add7440d336b35"
         }
       ],
       "auditEvidence": [
@@ -2870,15 +2970,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -2955,15 +3055,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3040,15 +3140,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3125,15 +3225,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3210,15 +3310,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3295,15 +3395,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3380,15 +3480,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3465,15 +3565,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3550,15 +3650,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3635,15 +3735,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3720,15 +3820,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3805,15 +3905,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3890,15 +3990,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -3975,15 +4075,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -4047,8 +4147,8 @@
           "symbol": "RobWorkCollisionEvaluator::RobWorkCollisionEvaluator",
           "qualifiedSymbol": "sdurws::ird::policy::RobWorkCollisionEvaluator::RobWorkCollisionEvaluator",
           "startLine": 53,
-          "endLine": 72,
-          "sha256": "e7b21e9704b11d313556e0eac5b7aaef09726fd560f462e8a4164eb8d78f6336"
+          "endLine": 67,
+          "sha256": "53347aec2537c795749afe3e8583d2773ec6aa1c5d6876472f6d0ce0d9a69742"
         }
       ],
       "targets": [
@@ -4067,15 +4167,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -4095,7 +4195,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
-          "sha256": "9c6dac0001316f6dddabcf9a2858fd5a413a26f219aca71305b0d39895a82d09"
+          "sha256": "0675aa5af37b9e37bf4b4cb84c468ad2fef20d630bdcdb12659a26351c722ad5"
         }
       ],
       "auditEvidence": [
@@ -4138,8 +4238,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
           "symbol": "RobWorkCollisionEvaluator::backend",
           "qualifiedSymbol": "sdurws::ird::policy::RobWorkCollisionEvaluator::backend",
-          "startLine": 74,
-          "endLine": 79,
+          "startLine": 69,
+          "endLine": 74,
           "sha256": "499f44555d15ce5b7c3673d60dd5b0c901e7aa07474b879e7149603e4643ebb5"
         }
       ],
@@ -4159,15 +4259,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -4187,7 +4287,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
-          "sha256": "9c6dac0001316f6dddabcf9a2858fd5a413a26f219aca71305b0d39895a82d09"
+          "sha256": "0675aa5af37b9e37bf4b4cb84c468ad2fef20d630bdcdb12659a26351c722ad5"
         }
       ],
       "auditEvidence": [
@@ -4224,8 +4324,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
           "symbol": "makeRobWorkCollisionEvaluator",
           "qualifiedSymbol": "sdurws::ird::policy::makeRobWorkCollisionEvaluator",
-          "startLine": 95,
-          "endLine": 101,
+          "startLine": 88,
+          "endLine": 94,
           "sha256": "8650130f12e3530a016906d518e4cdf4f89a115accaa3b82711494ae1d133441"
         }
       ],
@@ -4245,15 +4345,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -4273,7 +4373,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
-          "sha256": "9c6dac0001316f6dddabcf9a2858fd5a413a26f219aca71305b0d39895a82d09"
+          "sha256": "0675aa5af37b9e37bf4b4cb84c468ad2fef20d630bdcdb12659a26351c722ad5"
         }
       ],
       "auditEvidence": [
@@ -4310,9 +4410,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
           "symbol": "CollisionEvaluationSession::buildEvaluationHalf",
           "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::buildEvaluationHalf",
-          "startLine": 222,
-          "endLine": 365,
-          "sha256": "3f8c644a12f0691e4276940f21b5db4e82619750c111ab64e5b00a19541c4fd8"
+          "startLine": 225,
+          "endLine": 374,
+          "sha256": "c4b837195f23c5e63e05df8161b0257c50eb95f80c18cc215221e75ae28575e2"
         }
       ],
       "targets": [
@@ -4325,21 +4425,21 @@
       "status": "pending",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
-        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
+        "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心；RC-10 登记批缺口：同 CollisionQuery.cpp 权限墙（登记扫描实测 categories=model,state 无 grant，归 RC-09）——保持 pending"
       },
-      "differences": "真实WC findDevice/findFrame/getObjects只读，按scope固化帧、hasModel/addModel共享锁注册、几何缺失显式coverage、dynamic_cast探distance；每条对象只索引首个base Object需核多Object模型，直构共享backend未共锁有风险，未实测并发错",
+      "differences": "真实WC findDevice/findFrame/getObjects只读，按scope固化帧、hasModel/addModel共享锁注册、几何缺失显式coverage、dynamic_cast探distance；每条对象只索引首个base Object需核多Object模型，直构共享backend未共锁有风险，未实测并发错；POL-T13：改为会话私有后端、逐几何addModel真实返回值决定完整覆盖；同帧多Object与距离能力边界仍待独验，不将摘要刷新视为关闭。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
-          "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+          "sha256": "1a33521b8f64bf4271b650a95e5187076624403461499dfe53c44689e0d1aa42"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
-          "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+          "sha256": "548bddfc2643ac0460b3d6cbe2888cba3e76e50bca4a75def0ada1917329de8e"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
@@ -4359,7 +4459,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
-          "sha256": "7ae1a949e31437b506359835d97e17d9df46eccef4ef9b8605497010950953ac"
+          "sha256": "2fcd7cc891fe700fed1f070e5dea9eb43cb60bc6b598aed1e517e86126df780e"
         }
       ],
       "auditEvidence": [
@@ -4409,7 +4509,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4453,7 +4553,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4497,7 +4597,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4541,7 +4641,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4585,7 +4685,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4629,7 +4729,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4673,7 +4773,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4717,7 +4817,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
@@ -4761,7 +4861,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -4805,7 +4905,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -4849,7 +4949,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -4893,7 +4993,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -4937,7 +5037,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -4981,7 +5081,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5025,7 +5125,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5069,7 +5169,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5113,7 +5213,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5157,7 +5257,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5201,7 +5301,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5245,7 +5345,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5289,7 +5389,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5333,7 +5433,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
@@ -5345,6 +5445,906 @@
         "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
       },
       "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.POL_T13.KnownDomain",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicySet.hpp",
+          "symbol": "isKnownCollisionDomain",
+          "startLine": 350,
+          "endLine": 360,
+          "sha256": "df6d7e24484d711dd264cb89759d08af2e12b86eca12ac3787bbf5ebd0298365"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "共享策略域词表检查；复用同一枚举，解析与字段工厂均拒绝表外值，无上游等价业务词表"
+      },
+      "differences": "POL-T13：共享策略域词表检查；复用同一枚举，解析与字段工厂均拒绝表外值，无上游等价业务词表；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicySet.hpp",
+          "sha256": "4bd2556f99205d7b16d668ef9280cd9b10cccab8395b6eefec29cff8df01d40c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1275",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "namespace {",
+          "startLine": 1275,
+          "endLine": 1346,
+          "sha256": "c7b96c3d4d0f5cac567f36afe25ac8b4cc2fc9fc4220718a052b5d7e9ca6f8b9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1347",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, CrossSceneGeometryMustNotReuseFrameIds_POL_T13)",
+          "startLine": 1347,
+          "endLine": 1366,
+          "sha256": "779dd598d380cf2357cdc8df2d0901c0fc7ae1370456e59e89173883b5201257"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1367",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, RealBackendContactSeparationAndPairExclusion_POL_T13)",
+          "startLine": 1367,
+          "endLine": 1392,
+          "sha256": "047b9011862f1dc82a9477f740994611003e4a7264cf0d69ba792e5895bf1421"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1393",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, NonfiniteConfigurationsCannotFinalize_POL_T13)",
+          "startLine": 1393,
+          "endLine": 1408,
+          "sha256": "215cd5d6b0e03fa6917a65109a5f72f8d489e52b791379255b1c28c10af727a9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1409",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, InvalidQueryEnumCannotBecomeCompleted_POL_T13)",
+          "startLine": 1409,
+          "endLine": 1421,
+          "sha256": "23f8aaf24ad3999f837c7754d96d2ee9b3ae2f5122ce34cab84ea6a89ac97144"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1422",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, ContextExpiredDuringBackendCannotFinalize_POL_T13)",
+          "startLine": 1422,
+          "endLine": 1436,
+          "sha256": "df40b933d964769610a0c37e3bb131bc3aaa07807619fee948565211513b0474"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1437",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, FirstMarginFindingRetainsMeasuredMinimum_POL_T13)",
+          "startLine": 1437,
+          "endLine": 1456,
+          "sha256": "6f681c8525f8bc5292185023c92ddf4797fdb174b8b3669c5eb79e8c15fd00bf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1457",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, CoverageCarriesActuallyAppliedFilters_POL_T13)",
+          "startLine": 1457,
+          "endLine": 1473,
+          "sha256": "3778cad8ac961a34e9ed6e899817a61de873f21b8b21ad5808778db745e4afc2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1474",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, InvalidDomainCannotPublishAnEmptySafeScope_POL_T13)",
+          "startLine": 1474,
+          "endLine": 1483,
+          "sha256": "7d3b2f5717ec92e2e980fef748feee45b52c4e00e54c4f6676ec3d95e9ad422c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1484",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, EmptyBackendMeshCannotCountAsValidGeometry_POL_T13)",
+          "startLine": 1484,
+          "endLine": 1513,
+          "sha256": "1883360e03cbe6b02de85d7eeec2cd0abd4ec94deb4c543a3cbdd3ac93be1725"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1514",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, DirectCollisionRulesRejectUnknownDomain_POL_T13)",
+          "startLine": 1514,
+          "endLine": 1527,
+          "sha256": "f0f95019fc19dbf4c506f0d86526532a2f5c06a3a86cf3a107fb7bd97843f943"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L1528",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "symbol": "TEST (PolicyReviewRegression, NonfinitePathParameterCannotEnterFinalizedFinding_POL_T13)",
+          "startLine": 1528,
+          "endLine": 1542,
+          "sha256": "a47bb985790fbfc6d2a35d439c0bf561120e37ee29556f405c538c8e3de81f8c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionEvaluationTest.cpp",
+          "sha256": "92ce218df0c8026618da6153c8b7444c78a8dec9df8799353cf7108d579c072b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L845",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "symbol": "/** @brief POL-T13：非有限端点仅为硬结构错误，不得降成可确认行程超限。 */",
+          "startLine": 845,
+          "endLine": 846,
+          "sha256": "197604c0131d476929f2dfbd26db07f0cb8a55abd393016e7e95bdad697739e9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "sha256": "99d781c95ca6dfe67f2599fee77e8177b3c7d24815ae1f964cd94bc434878122"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L847",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "symbol": "TEST (JointLimits, NonfiniteEndpointsAreInvalidIntervals_POL_T13)",
+          "startLine": 847,
+          "endLine": 865,
+          "sha256": "86d96c3e023f72961f457bdb6215e95d6914b36145652140db31d1f77dcc5c86"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "sha256": "99d781c95ca6dfe67f2599fee77e8177b3c7d24815ae1f964cd94bc434878122"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L866",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "symbol": "TEST (JointLimits, OverflowingWidthCannotFinalize_POL_T13)",
+          "startLine": 866,
+          "endLine": 880,
+          "sha256": "d6dc020f5d560d0da6a0baad6d06175a799f7b39958c63bf8a4d821c32dd5784"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "sha256": "99d781c95ca6dfe67f2599fee77e8177b3c7d24815ae1f964cd94bc434878122"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.Regression.L881",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "symbol": "TEST (JointLimits, SubnormalWidthRetainsFiniteRatios_POL_T13)",
+          "startLine": 881,
+          "endLine": 901,
+          "sha256": "a500d95a841c59e998f5e85d4f7ab82db3d9a4f02b632304f8bbd59e5d1a3eab"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心"
+      },
+      "differences": "POL-T13：评审反例回归及任务私有测试夹具，断言策略/覆盖/诊断语义；上游直接提供几何，测试不实现碰撞核心；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/JointLimitsTest.cpp",
+          "sha256": "99d781c95ca6dfe67f2599fee77e8177b3c7d24815ae1f964cd94bc434878122"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
+    },
+    {
+      "functionId": "policy.POL_T13.DiagnosticRegistryContract",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyDiagnosticsRegistryContractTest.cpp",
+          "symbol": "EveryEmittedCodeIsAccepted_POL_T13",
+          "startLine": 1,
+          "endLine": 48,
+          "sha256": "035935b528b219f2ece194c45cb52ace805f75c8724a9c6ba097a815fe1d347d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_contract_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见traceability/policy-review-r1/IMPLEMENTATION.md定向检索",
+        "conclusion": "逐生产诊断码经正式registry/factory创建；只验证对端码表闭包，不复制注册表"
+      },
+      "differences": "POL-T13：逐生产诊断码经正式registry/factory创建；只验证对端码表闭包，不复制注册表；不关闭原pending，不替代独立验收。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyDiagnosticsRegistryContractTest.cpp",
+          "sha256": "035935b528b219f2ece194c45cb52ace805f75c8724a9c6ba097a815fe1d347d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+          "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
+        "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
+      }
     }
   ]
 }

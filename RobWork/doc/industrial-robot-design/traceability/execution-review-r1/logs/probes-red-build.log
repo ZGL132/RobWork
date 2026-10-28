@@ -1,0 +1,38 @@
+MemoryFailureProbe.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/WorkerProcessContractTest.cpp(72): warning C4005: “NOMINMAX”: 宏重定义
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/WorkerProcessContractTest.cpp(72): note: 之前在命令行上声明的“NOMINMAX”
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/WorkerProcessContractTest.cpp(73): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/WorkerProcessContractTest.cpp(73): note: 之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709): note: 模板实例化上下文(最早的实例化上下文)为
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\baseline/WorkerSupervisor.cpp(308): note: 查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+        with
+        [
+            _Elem=wchar_t,
+            _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+            _Alloc=std::allocator<char>
+        ]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\baseline/WorkerSupervisor.cpp(306): note: 请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793): note: 查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+        with
+        [
+            _Size_type=unsigned __int64,
+            _Iter=const wchar_t *,
+            _Sent=const wchar_t *,
+            _Size=unsigned __int64
+        ]
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949): note: 查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+        with
+        [
+            _OutIt=char *,
+            _Size=unsigned __int64,
+            _InIt=const wchar_t *,
+            _SizeTy=unsigned __int64
+        ]
+OverlappedReadProbe.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp(5): warning C4005: “NOMINMAX”: 宏重定义
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp(5): note: 之前在命令行上声明的“NOMINMAX”
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp(6): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\fix-execution-20261028\OverlappedReadProbe.cpp(6): note: 之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+TestMainReport.cpp
+正在生成代码...

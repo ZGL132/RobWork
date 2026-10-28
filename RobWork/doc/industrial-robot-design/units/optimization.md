@@ -342,7 +342,7 @@ optimization/
 | `samplingPlans` | 区域覆盖评估的采样计划（KIN-04 冻结样本集；优化复评不得增删更换样本） |
 | `snapshotId` | 快照内容身份（SHA-256，builder 计算非申报） |
 
-**不混用规则**：一次优化运行绑定唯一修订、唯一需求/工况基准、唯一策略与评估器版本集合；方案比较（含基线 vs 候选、候选 vs 候选）必须使用同一需求与工况基准——Pareto 比较前经 evidence `checkComparisonBaselinesConsistent`（inputBaselineId/requiredCaseSetId/样本集身份全等，evidence §6.5；EV-COV-4：采样预算改变→样本基准改变→不可直接比较）。
+**不混用规则**：一次优化运行绑定唯一修订、唯一需求/工况基准、唯一策略与评估器版本集合；方案比较（含基线 vs 候选、候选 vs 候选）必须使用同一需求与工况基准——Pareto 比较前经 evidence `checkComparisonBaselinesConsistent`（comparisonInputId/requiredCaseSetId/样本集身份一致；候选模型与分支允许不同，完整inputBaselineId仅追溯与复评，evidence §6.5；EV-COV-4：采样预算改变→样本基准改变→不可直接比较）。
 
 ### 4.2 身份体系（六层身份与承载类型）
 
@@ -874,7 +874,7 @@ flowchart TB
 | 当前阶段允许（StageB：仅 MetricId 1～3；StageD：全部八项） | 研究定义校验 | `OPT-STAGE-LOCKED` |
 | 已注册合法评估器（指标来源评估键在 EvaluatorSetId 中且契约版本匹配） | Preflight #7 | `OPT-EVALUATOR-MISSING` |
 | 具备完整证据（该指标 Profile 证据项可产出；如节拍需 `trj.path-and-time-record` 适用） | 评估期 | 该候选该指标"—"，候选若因缺失而不完整→DataInsufficient（§7.5） |
-| 输入快照、工况、策略和版本一致（checkComparisonBaselinesConsistent） | Pareto 前置 | 拒绝比较＋定位不一致项（EV-COV-4） |
+| 共同需求/工况/样本/策略与比较环境版本一致，候选模型允许不同（checkComparisonBaselinesConsistent，evidence §6.5） | Pareto 前置 | 拒绝比较＋定位不一致项（EV-COV-4） |
 
 默认激活：StageB＝{包络, 结构质量, 最小关节裕量}；StageD＝{节拍, 结构质量, 器件成本}（OPT-07/§15.0）。用户显式激活按上表四条件；**不引入未经需求批准的目标**（八项之外无目标；"局部改进"等过程性能力不设独立目标词表）。
 

@@ -1,0 +1,58 @@
+Microsoft (R) COFF/PE Dumper Version 14.42.34433.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Image has the following dependencies:
+
+    gtest.dll
+    sdurwsim.dll
+    sdurw_invkin.dll
+    boost_json-vc143-mt-x64-1_92.dll
+    libexpat.dll
+    Qt6OpenGLWidgets.dll
+    Qt6Widgets.dll
+    Qt6Gui.dll
+    Qt6Core.dll
+    sdurw_opengl.dll
+    sdurw_proximitystrategies.dll
+    sdurw_loaders.dll
+    sdurw_proximity.dll
+    sdurw_graphics.dll
+    sdurw_models.dll
+    sdurw_geometry.dll
+    sdurw_kinematics.dll
+    sdurw_math.dll
+    sdurw_common.dll
+    sdurw_core.dll
+    boost_filesystem-vc143-mt-x64-1_92.dll
+    python313.dll
+    OPENGL32.dll
+    KERNEL32.dll
+    ADVAPI32.dll
+    MSVCP140.dll
+    VCOMP140.DLL
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-filesystem-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+
+  Summary
+
+       3B000 .data
+       37000 .pdata
+      209000 .rdata
+        9000 .reloc
+        1000 .rsrc
+      6B9000 .text

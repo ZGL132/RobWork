@@ -502,23 +502,21 @@ std::optional<DraftDocument> DraftServiceImpl::tryLoad(
     const std::filesystem::path newFile = current.wstring() + L".new";
     const std::filesystem::path bakFile = current.wstring() + L".bak";
 
-    // ---- .new 残留处置（§8.4"`.new` 残留＝保存崩溃现场→丢弃 .new、
-    // 保留 current/.bak 并报告"）：存在即删除——它是失败保存的半成品，
-    // 不参与恢复候选；删除事实（成败）经开发诊断保留可见性（用户级
-    // 无对应收编码——CR-08 不私造；current 损坏时另有用户级诊断）。
+    // PRJ-R1/PM-07：读取不能辨别.new是残留还是writer正在发布，故仅报告，
+    // 不删除、不提升它为正式草稿；受权save/discard负责自己的临时文件。
     std::error_code ec;
     if (std::filesystem::exists(newFile, ec) && !ec) {
-        const bool removed = std::filesystem::remove(newFile, ec);
         reportDev("project/draft",
-                  std::string{"stale .new residue "}
-                      + (removed && !ec ? "discarded" : "discard-failed")
+                  std::string{"unpublished .new observed; preserved"}
                       + " file=" + newFile.string()
                       + (ec ? " osError=" + std::to_string(ec.value()) : ""));
     }
 
     // ---- 读 current：不存在＝无草稿（常态，nullopt 且无诊断——try 轨
     // 对"没有"返回空，§4.6 存在性语义）。
-    if (!std::filesystem::exists(current, ec) || ec) {
+    const bool currentExists = std::filesystem::exists(current, ec) && !ec;
+    const bool backupExists = std::filesystem::exists(bakFile, ec) && !ec;
+    if (!currentExists && !backupExists) {
         return std::nullopt;
     }
     const core::ProjectId contextProject = m_host.projectId();

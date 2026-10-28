@@ -173,13 +173,14 @@ public:
 };
 
 /// 组装标准冻结快照（端口场景事实——确定性：同调用恒同身份，EV-ID-1）。
-AnalysisSnapshot buildStandardSnapshot()
+AnalysisSnapshot buildStandardSnapshot(const char* configHex64 = kHex64C)
 {
     SnapshotBuilder b;
     b.setIdentity(fixedProject(), fixedBranch(), fixedRevision(), 5);
     b.setPolicyRef(PolicyRef{cid(kHex64A)});
     b.setNameMapRef(NameMapRef{cid(kHex64B)});
     b.setReproduction(validReproduction());
+    b.addConfiguration({"ik-solve", std::vector<std::uint8_t>(configHex64,configHex64+64), {}});
     b.addObjectRef(validObjectRef(oid(kHex32A), "robot-design"));
     for (const CaseEntry& c : standardCases()) {
         b.addCase(c);
@@ -243,8 +244,9 @@ InputSlice buildMinimalSlice(const AnalysisSnapshot& snapshot, const char* confi
     entry.kind = DependencyKind::Configuration;
     ConfigurationDependencyPayload payload;
     payload.configKindToken = "ik-solve";
-    payload.canonicalBytes = {std::uint8_t(0x01), std::uint8_t(0x02)};
-    payload.contentIdentity = cid(configHex64);
+    payload.canonicalBytes = std::vector<std::uint8_t>(configHex64,configHex64+64);
+    core::ContentDigester digest; digest.update(payload.canonicalBytes.data(),payload.canonicalBytes.size());
+    payload.contentIdentity.bytes = digest.finalize();
     entry.payload = payload;
     entry.applied = true;
     b.addEntry(entry);
@@ -528,7 +530,8 @@ TEST(EvaluatorPortVerdict, SearchExhaustedThenFeasibleViaPort_EV_VER_2)
     // 复评场景的输入前提：配置身份 c→b（扩大初值＝改求解配置——新 sliceId、
     // 同 inputBaselineId，D-04 双层身份）。
     const InputSlice firstSlice = port.slice;
-    const InputSlice secondSlice = buildMinimalSlice(port.snapshot, kHex64B);
+    const AnalysisSnapshot secondSnapshot = buildStandardSnapshot(kHex64B);
+    const InputSlice secondSlice = buildMinimalSlice(secondSnapshot, kHex64B);
     ASSERT_EQ(secondSlice.inputBaselineId, firstSlice.inputBaselineId);
     ASSERT_NE(secondSlice.sliceId, firstSlice.sliceId);
 
@@ -549,6 +552,7 @@ TEST(EvaluatorPortVerdict, SearchExhaustedThenFeasibleViaPort_EV_VER_2)
     EXPECT_TRUE(hasDiagCode(firstResult.diagnostics, kDiagSearchExhausted));
 
     // ---- 第二次评估（有效解）→Feasible；无搜索未果输出 ----
+    port.snapshot = secondSnapshot; // 新请求绑定新冻结配置，首轮请求已按值留存。
     const EvaluationRequest secondRequest = port.makeRequest(secondSlice);
     const EvaluationOutput secondOut
         = port.evaluator->evaluate(secondRequest, port.context);

@@ -54,7 +54,7 @@
       "id": "REUSE-T13-WorkCellCompiler.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
-        "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046"
+        "sha256": "63d88f4c5af24cc8e6bcc2581846a215d7e51b130b25c37e977c1fcbfd364b55"
       },
       "targets": [
         "sdurws_ird_runtime"
@@ -77,7 +77,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
@@ -106,14 +106,14 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
       "id": "REUSE-T13-WorkCellGeometryTest.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-        "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+        "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
       },
       "targets": [
         "sdurws_ird_runtime_test"
@@ -133,7 +133,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
@@ -160,14 +160,14 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
       "id": "REUSE-T17-KinEvaluationChannelTest.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-        "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811"
+        "sha256": "e50106264165cf251f349c8b2a23e827c7794218b9f0abde916b59e5ee0d1f99"
       },
       "targets": [
         "sdurws_ird_ui_test"
@@ -185,7 +185,7 @@
       "usageRole": "adapter",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
       }
     },
     {
@@ -289,7 +289,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
@@ -318,7 +318,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
@@ -369,7 +369,7 @@
       "permissionRef": "ARCH:3.6",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
       }
     },
     {
@@ -377,7 +377,7 @@
       "usageRole": "adapter",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
-        "sha256": "9c6dac0001316f6dddabcf9a2858fd5a413a26f219aca71305b0d39895a82d09"
+        "sha256": "0675aa5af37b9e37bf4b4cb84c468ad2fef20d630bdcdb12659a26351c722ad5"
       },
       "targets": [
         "sdurws_ird_policy"
@@ -393,7 +393,7 @@
       "permissionRef": "ARCH:3.6",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
       }
     },
     {
@@ -421,7 +421,7 @@
       "permissionRef": "ARCH:3.6",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
-        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        "sha256": "13021d4d14fe7a2f261e9b6f50949e6722528ee25fca7e35d8d050241d32b9b5"
       }
     },
     {
@@ -447,7 +447,7 @@
       "permissionRef": "ARCH:3.6.2",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
       }
     },
     {
@@ -455,7 +455,7 @@
       "usageRole": "adapter",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
-        "sha256": "75fe95cea890c3e6b206474ea4a4dc2fde398e7041df2f06c265a22ea672b834"
+        "sha256": "335f2cb8483b2ad06b61bf5667ece90677d916415b99d27b63b8f43f98cdec78"
       },
       "targets": [
         "sdurws_ird_ui_plugin"
@@ -475,7 +475,7 @@
       "permissionRef": "ARCH:3.6.2",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
       }
     },
     {
@@ -534,7 +534,7 @@
       "id": "REUSE-T52-InverseDynamics.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
-        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f"
+        "sha256": "ec4a7b3d743ed7ce72312027f89e6356d87edddfc25c55363c8b216d5e203141"
       },
       "targets": [
         "sdurws_ird_dynamics"
@@ -561,7 +561,7 @@
       "id": "REUSE-T52-RneConsumptionDevice.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
-        "sha256": "6c284faa7234ccd632e501de06fc9eeeaeec7b78f16ac8d6d70bfa477accd1d4"
+        "sha256": "1467d61201f31e261f693cf27a7939a4ab0c3d6356b6eb2d9cf115e763d2dcd9"
       },
       "targets": [
         "sdurws_ird_runtime"
@@ -582,14 +582,14 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
       "id": "REUSE-T52-RneConsumptionDevice.hpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
-        "sha256": "27d1b17a72611ce4bded8939f1ab92b5a124dc5e1d088009b00c6f3a3c868f84"
+        "sha256": "5fd3a18b6f99201d7b90693f153c2f0aa7e561fee8844399b5b530682524d974"
       },
       "targets": [
         "sdurws_ird_runtime"
@@ -608,14 +608,14 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
       "id": "REUSE-T52-RneaTest.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
-        "sha256": "39b298bba8bd1e55a8d91af869f332cfcfdba326a61423a724fd992d2ba6af04"
+        "sha256": "1ff4caf3fb6929755cefe81e870caccec3850257e0ecc4dad283a2935566637b"
       },
       "targets": [
         "sdurws_ird_dynamics_test"
@@ -693,7 +693,7 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
       }
     },
     {
@@ -719,7 +719,88 @@
       "usageRole": "owner",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
+      }
+    },
+    {
+      "id": "REUSE-T60-HostView3DPreviewBackend.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+        "sha256": "0f99e2f64fc86a672c06adb53090c5a45efe04587b277dc06c8b2b5a1e86a366"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "graphics",
+        "host",
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "render"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-RENDER",
+      "lifetime": "宿主三维会话预览渲染后端实现面（ARCH §3.6.2 HOST-RENDER 表行，RC-09 权限批 REUSE-T60 逐文件登记；2026-10-28）：graphics＝rw/graphics WorkCellScene/Render/SceneViewer/DrawableNode 与 rwlibs/opengl 固定管线 GL 呈现原语（自绘 StationMarkerRender/RegionOutlineRender/SampleGridRender/PreviewColorScope＋QtTextBillboard 标签）；host＝rws RobWorkStudio/RWStudioView3D 公开 API 场景与视图现取；model＝发布链 WorkCell 借持与 getWorldFrame/findFrame 只读查询（节点名清单挂接/移除，零模型结构触碰）；state＝Frame 挂接面。render＝GL 绘制回调，query＝场景挂接与帧解析查询。未授 construct-model：ensureSessionPreviewAnchor 的空场景锚 WorkCell 构造（仅场景层「ird-session-preview」，studio 模型层零触碰）被门禁模型所有权规则（runtime-owner/test-fixture 限定）机器拦阻，该行保持 pending 如实登记（T57 CollisionQuery 同族；ARCH §3.6.2「不建计算模型」语义与机械规则的缺口归所有者裁决）。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
+      }
+    },
+    {
+      "id": "REUSE-T60-HostView3DGateway.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+        "sha256": "fc6f24b83dfcd460c5fb5aebaa040f7efa3ce3ce725c8edfe366cb63b50b9c6d"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-GATEWAY",
+      "lifetime": "宿主三维网关实现面（ARCH §3.6.2 HOST-GATEWAY 表行，RC-09 权限批 REUSE-T60 逐文件登记；2026-10-28）：state＝受控会话态只读借持——currentTcpPose（:119-135 KIN-FK 行）经 Deps 回调借持 const Frame*/const State*（保活归来源装配体），Kinematics::worldTframe 只读查询宿主会话 TCP 位姿（KIN-06：零修订、不写设计模型、不把宿主视图回灌为工程计算真值）；handleViewDoubleClick 上行拾取的 Frame 借持同为只读（帧名→NameMap 反解→域分发→选中汇聚）。零 State 构造/写入、零模型类别。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
+      }
+    },
+    {
+      "id": "REUSE-T60-HostCompilePipelineTest.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+        "sha256": "9c3c85ffd2073b9022d759c5d2a383fc6123b617e3c586b00850683838a956e7"
+      },
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "categories": [
+        "graphics",
+        "model",
+        "state"
+      ],
+      "operations": [
+        "borrow"
+      ],
+      "origin": "test-fixture",
+      "lifetime": "测试夹具例外 graphics 面（ARCH §3.6.2.1 2026-10-28 扩登；F-975①解锁＝REUSE-T60 治理批，所有者 2026-10-27 委托按建议裁决）：仅测试目标 sdurws_ird_ui_test（集成门控块）。graphics＝UI-T78 渲染面分组常量断言对 DrawableNode::Physical 的只读甄别消费（文件头 rw/graphics include 与分组常量断言——宿主呈现分组不漂移的守卫面）；model/state＝宿主编译管线用例经 runtime 编译快照受控视图的只读消费（NamedTcpClosure 等 A-15 真实 FK/IK 链）；borrow＝本地 View 借用已发布不可变物化快照本体（UI-T86 修复候选落地——runtimeModelView 锚覆盖，RuntimeSnapshot 即 IRuntimeModelView，不经第二包装层伪造）。零构造/零 State 写/零 host 类别（rws 头不在 include 面）；非测试路径冒用 test-fixture 或测试路径携带 host 类别均被门禁拒绝（REUSE-T60 正负例实测）。任务输入装配与断言消费，非模型所有权主张；仅测试目标，无生产权限扩散",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
       }
     }
   ]

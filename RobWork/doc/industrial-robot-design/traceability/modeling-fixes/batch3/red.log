@@ -1,0 +1,72 @@
+Note: Google Test filter = StructureEditTest.RepeatedInsertAfterDeletionPreservesUniqueIdentity:StructureEditTest.ReorderPermutesNamedPosesAndJointValues:MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlPropertyEstimation
+[ RUN      ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(588): error: Expected equality of these values:
+  body.inertia
+    Which is: 184-byte object <00-00 00-00 00-00 00-00 9A-99 99-99 99-99 A9-3F 28-5C 8F-C2 F5-28 BC-3F 38-B4 C8-76 BE-9F BA-3F 2A-87 16-D9 CE-F7 A3-BF 7B-14 AE-47 E1-7A A4-BF 3C-DF 4F-8D 97-6E 92-BF 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 16-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-6B AC-58 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  before.inertia
+    Which is: 184-byte object <00-00 00-00 FF-7F 00-00 7B-14 AE-47 E1-7A 84-3F 7B-14 AE-47 E1-7A 84-3F FC-A9 F1-D2 4D-62 70-3F FC-A9 F1-D2 4D-62 50-3F 00-00 00-00 00-00 00-00 FC-A9 F1-D2 4D-62 60-3F 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 16-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-F8 E1-2C 6C-02 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+[  FAILED  ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3 (0 ms)
+[----------] 1 test from MdlPropertyEstimation (0 ms total)
+
+[----------] 2 tests from StructureEditTest
+[ RUN      ] StructureEditTest.RepeatedInsertAfterDeletionPreservesUniqueIdentity
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(261): error: Expected: (ws.design.joints[1].objectId) != (allocated), actual: 16-byte object <DE-5F 85-AA 0A-6A F5-01 0A-29 D7-A1 62-AD 47-F4> vs 16-byte object <DE-5F 85-AA 0A-6A F5-01 0A-29 D7-A1 62-AD 47-F4>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(262): error: Value of: checkInvariants(ws.design).empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] StructureEditTest.RepeatedInsertAfterDeletionPreservesUniqueIdentity (0 ms)
+[ RUN      ] StructureEditTest.ReorderPermutesNamedPosesAndJointValues
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(279): error: Expected equality of these values:
+  ws.poseSetObject->entries[0].jointConfiguration[1]
+    Which is: 0.20000000000000001
+  .1
+    Which is: 0.10000000000000001
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(280): error: Expected equality of these values:
+  ws.poseSetObject->entries[1].jointConfiguration[1]
+    Which is: 0.40000000000000002
+  .3
+    Which is: 0.29999999999999999
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(281): error: Expected equality of these values:
+  ws.drivetrainObject->ratioPerJoint[1]
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 36-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  drive.ratioPerJoint[0]
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 26-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(282): error: Expected equality of these values:
+  ws.drivetrainObject->frictionPerJoint[1]
+    Which is: 432-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  drive.frictionPerJoint[0]
+    Which is: 432-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(283): error: Expected equality of these values:
+  ws.drivetrainObject->torqueLimitsPerJoint[1]
+    Which is: 288-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  drive.torqueLimitsPerJoint[0]
+    Which is: 288-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 14-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp(284): error: Expected equality of these values:
+  ws.drivetrainObject->coupling->c
+    Which is: { 1, 2, 3, 4 }
+  (std::vector<double>{3.,4.,1.,2.})
+    Which is: { 3, 4, 1, 2 }
+
+[  FAILED  ] StructureEditTest.ReorderPermutesNamedPosesAndJointValues (0 ms)
+[----------] 2 tests from StructureEditTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3
+[  FAILED  ] StructureEditTest.RepeatedInsertAfterDeletionPreservesUniqueIdentity
+[  FAILED  ] StructureEditTest.ReorderPermutesNamedPosesAndJointValues
+
+ 3 FAILED TESTS

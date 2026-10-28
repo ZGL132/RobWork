@@ -1,5 +1,7 @@
 # 工业机械臂设计软件 · execution 单元详细设计（阶段 A）
 
+> EV-T13（2026-10-27，实施待独验）：ResumeQuery 与 CheckpointRestoreRequest 表尾追加 requestEvaluatorKey，查询/恢复必须透传实际请求评估键；缺失或与检查点键错配时 evidence 返回 Incompatible，不从检查点头反推请求事实。未改检查点磁盘格式、恢复调度或归档 owner。验证见 [evidence 实施记录](../traceability/evidence-review-r1/README.md)。
+
 > 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 SA-19 重申 worker 边界：通道传冻结输入/物化数据、值与身份，不传 WC/DWC/State 指针或借持句柄；runtime 在各进程按同一规则物化，execution 管调度/取消/结果接纳；不链接宿主呈现/Widgets。任务私有 State/solver/engine 不跨任务共享写。
@@ -649,6 +651,8 @@ MsgType := Hello | HelloAck | DispatchRequest | DispatchAccept |
 | 内存采样 | `GlobalMemoryStatusEx`（系统）＋作业对象内存信息 `QueryInformationJobObject`（JobMemory） | 系统与作业级内存占用查询 | ResourceController 汇总"主进程＋全部工作进程"（主进程经自身 Job 或工作集查询；NFR-PERF-04 口径） |
 | 临时目录 | `%TEMP%\ird-worker-\<pid\>-\<run\>-\<attempt\>`（每尝试独立） | — | worker 副产物（评估器中间文件）隔离；尝试终结 best-effort 清理；清理失败→开发诊断（不影响任务终态与已提交检查点——EX-ARC-3 用例）；主进程崩溃残留由下次启动恢复扫描清理（PM-08 通道） |
 
+EXR-10（2026-10-28 所有者批准局部签名修订）：`WorkerSupervisor::aggregateJobMemoryBytes()` 返回 `optional<uint64_t>` 字节数。合法零/空池为有值的 0，任一在途 Job 探测失败或加总溢出为 `nullopt`；`SupervisorMemorySampler` 传播整体无数据，`ResourceController` 保留最近治理等级，不把失采当零。计量指标及 65%/70% 阈值保持既有值；混合指标口径 C3 尚待裁决。
+
 断电/崩溃语义声明：worker 崩溃只失败当前任务（NFR-REL-02）；主进程崩溃经 Job 限杀联动 worker；**本文不对管道缓冲与作业终止的断电中间态作超出文档的承诺**（残留唯一落点＝归档预留目录无 manifest＝"未完成"，project §4.1 已定义其语义）。
 
 ---
@@ -990,6 +994,8 @@ public:
 ### 10.4 EventBus（core IDomainEventBus 参考实现）与事件发布
 
 `EventBus.hpp` 提供 `DomainEventBusImpl`：`publish` 线程安全；**同一发布者 FIFO**（调度线程发布的 TaskStatusChanged 序＝状态机转移序；ResultArchived 在归档 finalize 后）；`subscribe` 返回 RAII 句柄、退订幂等不与投递死锁；事件不持久化（core D-09）。execution 发布的事件：`TaskStatusChanged{task:五元组, newState}`（每次转移；进度**不**入事件——core Events 契约）与 `ResultArchived{task}`（finalize 成功后）。UI 线程 marshaling 投递由 ui 侧扩展/包装（§13 交接；execution 不引 Qt）。
+
+2026-10-28 所有者批准 C1（EXR-09/14）：发布时冻结接收订阅位，新订阅不补收此前积压事件；退订先使精确订阅位失效，跳过尚未开始的回调，并等待该位已开始的回调结束后返回，随后 sink 可立即销毁。等待释放总线锁，其他发布与订阅可前进；回调仍在锁外串行执行。调用方不得在持有回调完成所需锁时退订，`onEvent` 不得回调总线。每次订阅独立，旧句柄重复退订不影响同 sink 的新订阅；句柄不得晚于总线析构。此裁决替代历史“退订永不等待”说明；`waitForIdle` 仍用于整个队列排空，UI 生产装配保持原 execution 总线。
 
 ### 10.5 IRunRegistry / IResultAdmission
 

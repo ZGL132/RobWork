@@ -106,3 +106,5 @@ evidence 的 EvaluationOutput/aggregateVerdict/ResultEnvelope 与 diagnostics �
 首轮冻结64ef0fd独立验收失败：CI干净检出夹具无变更可提交、.c与脚本/页面后缀遗漏。保留全部失败证据；返工扩大同一文件谓词与固定基线库存（原1370条不删除，补31条至1401）。自测夹具允许空提交，报告必须列expected/executed/notRun/driverFailure/complete；部分用例通过不能等同驱动或矩阵通过，JUnit驱动异常用error，不伪报skip。修复后冻结新SHA全量重验。
 
 新产品文件若不属于已登记源码发现类型（含未知后缀、无后缀），默认REUSE-UNDECLARED；必须先通过治理变更登记类型和复用契约，不能将未知后缀当作豁免。基线非代码资产仍受既有文档/数据门禁和独立审查约束。
+
+DESIGN-T01新增登记的数据资产类型：仅 testdata/golden/<datasetId>/<major.minor.patch>/manifest.json 及清单显式列出的 inputs/expected 下 JSON。golden-assets.ps1 校验路径、清单 schema/身份/类型、登记唯一性、字节大小和 SHA-256（文本仅 CRLF→LF），并解析 JSON；manifest 还核对其声明的 JSON 资产。损坏、未登记、路径穿越与未知类型仍拒绝；脚本/页面/编译源码仍经原源码发现和逐功能复用检查，不获得数据资产豁免。正反例入口 test-golden-assets.ps1；数据内容的领域语义仍由独立黄金参考、真实产品测试与独立审查核对。

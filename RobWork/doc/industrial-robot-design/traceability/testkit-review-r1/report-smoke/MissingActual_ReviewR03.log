@@ -1,0 +1,18 @@
+Note: Google Test filter = LsnChild.MissingActual_ReviewR03
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.MissingActual_ReviewR03
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(104): error: Failed
+values[*][0]: actual=nan expected=1 diff=1
+
+[  FAILED  ] LsnChild.MissingActual_ReviewR03 (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] LsnChild.MissingActual_ReviewR03
+
+ 1 FAILED TEST
