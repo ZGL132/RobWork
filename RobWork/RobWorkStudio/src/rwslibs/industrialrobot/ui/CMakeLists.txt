@@ -505,6 +505,8 @@ add_executable(sdurws_ird_ui_contract_test
 # WP-24-T02 增列：被测 TU 同源编入（捕获发射核心与产品同一翻译单元——
 # 子进程装捕获走产品真实路径；零 Qt，两模式可跑）。绝对锚定同 ui_test 段。
 target_sources(sdurws_ird_ui_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/contract_test/DiagnosticsAssemblyContractTest.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/app/DiagnosticsAssembly.cpp # 安全接线：与产品共用原装配 TU
     ${CMAKE_CURRENT_SOURCE_DIR}/studio/CrashCapture.cpp)
 
 # ---- R3-A16/C3 返工批增列（O-12——2026-10-16，B-1 契约同步随批）----

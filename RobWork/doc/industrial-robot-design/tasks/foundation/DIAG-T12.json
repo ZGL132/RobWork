@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T12",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "diagnostics专项评审整改：权威、安全投影、确认通知、目录和日志生命周期",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "ERR-01",
+    "NFR-SEC-07",
+    "NFR-REL-05",
+    "NFR-MNT-03"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#4",
+    "units/diagnostics.md#6",
+    "units/diagnostics.md#7",
+    "units/diagnostics.md#9",
+    "reuse/policy.md#1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Confirmable.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Logging.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Aggregation.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Catalog.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Confirmable.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Redaction.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/ConfirmableTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/DiagnosticsRegressionTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/DiagnosticsAssembly.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/DiagnosticsAssemblyContractTest.cpp",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T12.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/DIAG-T12.json",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "已确认缺陷的局部修复、正式回归及原始证据；D10在途I/O硬时限与契约冲突保留；实施待所有者独验"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test sdurws_ird_diagnostics_contract_test",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T12.json"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-1"
+  ],
+  "acceptance": [
+    "按实施表逐根因核对；不改工程判定、确认绑定、去重键、轮转边界、owner或预算",
+    "真实UI装配原TU及文件、正式生产码供体回归；stub不冒充真实project/worker接线",
+    "passed/skipped/failed分列；全局既有阻断如实报告，不自签独验、不关闭旧任务"
+  ],
+  "note": "所有者指定C:工作树并要求按照评审建议修改，起点af375242c7b632d572c8190ee0d954aa149d80dc。最小任务文件只供现有H6凭证/范围检查，ready不代表独验通过；不改旧任务状态。D10同步在途I/O取消接缝候选未获精确公共方案批准，不实施。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/DIAG-T12.json"
+  }
+}

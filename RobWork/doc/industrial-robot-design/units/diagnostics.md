@@ -1360,3 +1360,11 @@ public:
 | POLICY-CLL-QUERY-INVALID | input-invalid | Error |
 
 工程范围记录使用既有正式拼写 POLICY-ENGINEERING-RANGE-INVALID；枚举名保留，旧错误拼写不再作为新记录输出，不改写历史证据。policy契约测试逐码通过正式StableCodeRegistry/DiagnosticsFactory创建条目，产品policy库不反链diagnostics。见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。
+
+## 专项修正（DIAG-T12，2026-10-28，实施待独验）
+
+本轮按 F-618 明确工厂正式条目的 `record.level` 取自 descriptor，输入记录本身不变；其他 core 字段保持值拷贝。注册期拒绝 category/severity/retryable 表外值。目录容量保护含待追加条目的三种引用，输出按 orderKey 排序后限量；容量淘汰仍用入目录序。cause-root 聚合与 code 聚合一致按 TaskIdentity 分区。
+
+生产装配的 pipeline/factory/catalog 统一挂接脱敏服务。凭据规则覆盖引号键及 key；普通 log/logDev/worker 记录不能通过 channel 名字取得旁路；消息及 channel/code/threadTag 在写盘和尾部缓存前脱敏并转义控制字符。同步脱敏失败通知只输出固定安全常量，私有来源位阻断回环。确认状态锁内不调用日志出口，日志异常不覆盖确认结果。
+
+flush 通过日志线程完成文件冲刷，调用者按期限等待完成凭据；关闭预算到期停止剩余排队/延迟观测并计数。同步在途 ILogFileOps 仍不可取消，析构 join 的严格硬时限缺口未关闭，不能据此降低 §7.6/§9.6 要求。Windows 文件使用原生宽路径；UTF-8 切点复用单元私有 helper，各出口标记预算不变。详见 [实施与边界](../traceability/diagnostics-review-r1/IMPLEMENTATION.md)；原契约冲突与未验证疑点保留待裁决。

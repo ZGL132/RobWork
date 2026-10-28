@@ -185,7 +185,7 @@
       "usageRole": "adapter",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
       }
     },
     {
@@ -447,7 +447,7 @@
       "permissionRef": "ARCH:3.6.2",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
       }
     },
     {
@@ -475,7 +475,7 @@
       "permissionRef": "ARCH:3.6.2",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+        "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
       }
     },
     {

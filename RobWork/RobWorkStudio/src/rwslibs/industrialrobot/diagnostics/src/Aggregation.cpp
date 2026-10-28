@@ -164,8 +164,8 @@ using GroupKey = std::tuple<int,             ///< 键类（0=code+scope，1=caus
                             DiagEntryId,     ///< cause-root/单成员：条目身份；code 组：0
                             std::string,     ///< code 组：聚合码；其余：空
                             std::uint8_t,    ///< code 组：scopeKind 枚举值；其余：0
-                            bool,            ///< code 组：是否有任务分区；其余：false
-                            core::TaskIdentity>;  ///< code 组：任务五元组（无任务时为默认值，
+                            bool,            ///< code/cause-root 组：是否有任务分区
+                            core::TaskIdentity>;  ///< code/cause-root 组：任务五元组（无任务时为默认值，
                                                   ///  比较语义由前一 bool 分量隔离：false 时该
                                                   ///  分量恒为默认值——同键比较结果稳定）
 
@@ -185,7 +185,9 @@ GroupKey groupKeyOf(const DiagnosticEntry& entry, const EntryIndex& index, bool 
     if (causeRootOn && entry.causedBy.has_value()) {
         // 容差遍历至集内可达最深祖先（断链停断点——walkToReachableAncestor）。
         const DiagEntryId rootId = walkToReachableAncestor(index, entry.entryId);
-        return GroupKey{1, rootId, std::string{}, std::uint8_t{0}, false, core::TaskIdentity{}};
+        // 原因关联允许跨任务导航，但呈现分组仍须按成员所属 TaskIdentity 分区。
+        return GroupKey{1, rootId, std::string{}, std::uint8_t{0}, entry.context.task.has_value(),
+                        entry.context.task.value_or(core::TaskIdentity{})};
     }
     // 键二：同 code＋同 scopeKind（条目码与去重键的作用域类别——工厂已赋值），
     // 并按任务五元组分区（跨任务不聚合——§6.4；无任务条目同属"无任务域"）。

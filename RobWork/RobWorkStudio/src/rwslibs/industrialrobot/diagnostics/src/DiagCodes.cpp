@@ -647,6 +647,14 @@ void StableCodeRegistry::registerCode(const CodeDescriptor& descriptor)
                 + descriptor.ownerUnit + "）");
     }
 
+    // 闭合词表先验证，禁止未知枚举落入 token 函数的兜底分支后进入正式 manifest。
+    if (descriptor.category > DiagnosticCategory::SecurityOrRedaction
+        || descriptor.severity > DiagnosticSeverity::Dev
+        || descriptor.retryable > RetryKind::AutoRetry) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 category/severity/retryable 含未登记的枚举值");
+    }
+
     // ③paramSchema：必填＋受限 JSON 形＋参数名词形＋无重复（"非空且参数名
     // 合法"——空数组 "[]" 是合法的显式"无参数"声明；完全缺省/空串＝违约，
     // 因实例占位一致性校验（§9.2）需要明确的模式边界）。

@@ -46,6 +46,20 @@ namespace sdurws::ird::diagnostics {
 
 namespace {
 
+/// 通知晚于状态锁释放；日志失败只能损失观测，不能覆盖确认结果或进入 noexcept 查询。
+struct TransitionNotifications {
+    IDevLogSink* sink;
+    std::vector<std::string> lines;
+    ~TransitionNotifications() noexcept
+    {
+        if (!sink) { return; }
+        for (auto& line : lines) {
+            try { sink->logDev("diag.confirmable", std::move(line)); }
+            catch (...) { /* 日志非正式事实；禁止回写同一故障出口。 */ }
+        }
+    }
+};
+
 // ---------------------------------------------------------------------
 // canonical 编码原语（编码表见文件头——与 DiagCodes.cpp 同模式、小端同约定）
 // ---------------------------------------------------------------------
@@ -488,9 +502,10 @@ FindingRecord ConfirmableService::create(
     // 转移日志：create 入口（Pending 初态）同样可追溯（§5.4"每次状态转移写入
     // 开发级日志"——初态分配记一行，后续转移各有其行）。
     if (m_devLog != nullptr) {
-        m_devLog->logDev("diag.confirmable",
+        try { m_devLog->logDev("diag.confirmable",
                          "finding created: " + record.findingId.toCanonical()
-                             + " state=Pending code=" + code);
+                              + " state=Pending code=" + code); }
+        catch (...) { /* 创建已完成；观测失败不得伪装为创建失败。 */ }
     }
     return record;
 }
@@ -499,6 +514,7 @@ ConfirmOutcome ConfirmableService::submitConfirmation(FindingId findingId,
                                                       std::uint64_t callbackToken,
                                                       core::ConfirmationCredential credential)
 {
+    TransitionNotifications notifications{m_devLog};
     std::lock_guard<std::mutex> lock(m_mutex);
 
     // ①存在性（§9.3 结果枚举：UnknownFinding——查询类前置走返回值不抛）。
@@ -511,7 +527,7 @@ ConfirmOutcome ConfirmableService::submitConfirmation(FindingId findingId,
     // ②惰性过期（§5.4：expiresAtUtc 显式设置且到达——Expired 为终态，提交随
     // 之无效；默认 nullopt 恒不触发，P-DIAG-6）。返回值取 InvalidState（当前
     // 状态已不允许确认——契约结果枚举无 Expired 值，口径登记于单元卡）。
-    expireIfDue(record);
+    expireIfDue(record, notifications.lines);
     if (record.state != FindingState::Pending) {
         // §9.3 非法调用行："Confirmed 后 submitConfirmation（InvalidState）"；
         // Invalidated/Expired 同理——终态一律 InvalidState。
@@ -534,7 +550,7 @@ ConfirmOutcome ConfirmableService::submitConfirmation(FindingId findingId,
         // 沿用旧确认（§9.3 后置：不一致→Invalidated(binding-mismatch)——按不符
         // 成员归类 reason：revision-changed/policy-changed/binding-mismatch，
         // DT-CFM-4/5 观测点）。
-        finishTransition(record, FindingState::Invalidated, reason);
+        finishTransition(record, FindingState::Invalidated, reason, notifications.lines);
         return ConfirmOutcome::BindingMismatch;
     }
 
@@ -542,13 +558,14 @@ ConfirmOutcome ConfirmableService::submitConfirmation(FindingId findingId,
     // （core C-2：Confirmed ⇔ 凭据在场——core confirm 自持不变量校验）。
     record.finding.confirm(credential);
     record.confirmation = credential;
-    finishTransition(record, FindingState::Confirmed, {});
+    finishTransition(record, FindingState::Confirmed, {}, notifications.lines);
     return ConfirmOutcome::Confirmed;
 }
 
 void ConfirmableService::submitRejection(FindingId findingId, std::uint64_t callbackToken,
                                          std::string_view reasonToken)
 {
+    TransitionNotifications notifications{m_devLog};
     std::lock_guard<std::mutex> lock(m_mutex);
 
     // 存在性：void 方法的失败只能经异常轨表达（§9.0——调用方契约违约 fail-fast）。
@@ -566,7 +583,7 @@ void ConfirmableService::submitRejection(FindingId findingId, std::uint64_t call
     }
 
     // 惰性过期：已过期 finding 不可再走拒绝路径（Expired 已是终态）。
-    expireIfDue(record);
+    expireIfDue(record, notifications.lines);
 
     // 状态/令牌前置（Pending＋token 匹配——同 submitConfirmation 的校验序；
     // §9.3 错误面 InvalidState）。§5.3"用户拒绝"行：回调返回 rejected →
@@ -587,11 +604,12 @@ void ConfirmableService::submitRejection(FindingId findingId, std::uint64_t call
     // core 投影同步：用户拒绝→core reject()（Pending→Rejected——阻止应用，
     // MDL-06④；core C-2：Rejected 不携带凭据，由 core reject 自持清理）。
     record.finding.reject();
-    finishTransition(record, FindingState::Invalidated, reasonToken);
+    finishTransition(record, FindingState::Invalidated, reasonToken, notifications.lines);
 }
 
 void ConfirmableService::invalidate(FindingId findingId, std::string_view reasonToken)
 {
+    TransitionNotifications notifications{m_devLog};
     std::lock_guard<std::mutex> lock(m_mutex);
 
     // 存在性（Usage fail-fast——失效通知方持 stale id 属调用方契约违约）。
@@ -609,7 +627,7 @@ void ConfirmableService::invalidate(FindingId findingId, std::string_view reason
     }
 
     // 惰性过期先行（已到期的 finding 直接 Expired——后续 invalidate 命中终态）。
-    expireIfDue(record);
+    expireIfDue(record, notifications.lines);
 
     // §5.4 转移约束：Invalidated/Expired 为不可逆终态——再次失效拒绝。
     // Pending 与 Confirmed 均可失效：Pending 是 §5.3 失效条件表的主路径；
@@ -627,11 +645,12 @@ void ConfirmableService::invalidate(FindingId findingId, std::string_view reason
     // Pending→Invalidated(reasonToken)（§5.3 失效条件的服务端入口——write-lost/
     // interaction-lost/canceled 等由 project 信号驱动；core 投影保持 Pending，
     // 见 coreProjection——非用户拒绝的失效不伪造 core 终局）。
-    finishTransition(record, FindingState::Invalidated, reasonToken);
+    finishTransition(record, FindingState::Invalidated, reasonToken, notifications.lines);
 }
 
 std::optional<FindingRecord> ConfirmableService::tryFind(FindingId findingId) const noexcept
 {
+    TransitionNotifications notifications{m_devLog};
     // noexcept 契约（§9.3 签名原文）：查询＋惰性过期都可能发生——加锁。
     // 值返回的拷贝在极端内存压力下可能抛 bad_alloc：契约 noexcept 意味着该
     // 极端场景 terminate 而非异常传播（§9.3 签名原文优先——实现照签）。
@@ -644,12 +663,13 @@ std::optional<FindingRecord> ConfirmableService::tryFind(FindingId findingId) co
     // const 语境下执行转移：记录内容的状态字段演进属于"状态字段按状态机转移"
     // （§5.2 表头），不违反查询的只读语义（不新增/删除记录）。
     auto& record = const_cast<FindingRecord&>(it->second);
-    expireIfDue(record);
+    expireIfDue(record, notifications.lines);
     return record;
 }
 
 std::vector<FindingRecord> ConfirmableService::pendingFor(core::RevisionId baseRevisionId) const
 {
+    TransitionNotifications notifications{m_devLog};
     std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<FindingRecord> pending;
     // 惰性过期会执行状态转移（expireIfDue 演进记录的状态字段）——const 方法
@@ -660,7 +680,7 @@ std::vector<FindingRecord> ConfirmableService::pendingFor(core::RevisionId baseR
     // 遍历序＝findingId 字典序（std::map 序——同集合同序，输出确定性）。
     for (auto& [id, record] : records) {
         // 惰性过期（逐记录——到期者先转移 Expired，不再出现在 Pending 结果中）。
-        expireIfDue(record);
+        expireIfDue(record, notifications.lines);
         if (record.state == FindingState::Pending && record.baseRevisionId == baseRevisionId) {
             pending.push_back(record);
         }
@@ -692,7 +712,7 @@ void ConfirmableService::armExpiration(FindingId findingId,
 // 私有辅助（须在互斥锁内调用——见头文件契约）
 // ---------------------------------------------------------------------
 
-void ConfirmableService::expireIfDue(FindingRecord& record) const
+void ConfirmableService::expireIfDue(FindingRecord& record, std::vector<std::string>& notices) const
 {
     // 触发条件三要素：仍处 Pending（终态不可逆）；expiresAtUtc 显式设置
     // （默认 nullopt 恒不触发——P-DIAG-6，DT-CFM-3"默认实例恒 Pending"）；
@@ -706,7 +726,7 @@ void ConfirmableService::expireIfDue(FindingRecord& record) const
     // Pending→Expired（§5.4 状态图："expiresAtUtc 到期（默认不启用）→Expired"）。
     // Expired 无 rejectionReason token（§5.4 词表未定义过期原因——状态本身表意；
     // rejectionReason 保持 nullopt，不私造词表值）。
-    finishTransition(record, FindingState::Expired, {});
+    finishTransition(record, FindingState::Expired, {}, notices);
 }
 
 bool ConfirmableService::verifyBinding(const FindingRecord& record,
@@ -755,7 +775,8 @@ bool ConfirmableService::verifyBinding(const FindingRecord& record,
 }
 
 void ConfirmableService::finishTransition(FindingRecord& record, FindingState to,
-                                          std::optional<std::string_view> reason) const
+                                           std::optional<std::string_view> reason,
+                                           std::vector<std::string>& notices) const
 {
     // 状态字段演进（§5.2 表头——仅状态字段按状态机转移）＋原因登记。
     record.state = to;
@@ -776,7 +797,7 @@ void ConfirmableService::finishTransition(FindingRecord& record, FindingState to
         if (reason.has_value()) {
             line += " reason=" + std::string(*reason);
         }
-        m_devLog->logDev("diag.confirmable", std::move(line));
+        notices.push_back(std::move(line)); // 调用者局部通知对象在状态锁释放后派发。
     }
 }
 

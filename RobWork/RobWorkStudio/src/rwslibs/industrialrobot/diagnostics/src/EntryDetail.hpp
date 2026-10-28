@@ -1,7 +1,7 @@
 /**
  * @file   EntryDetail.hpp
  * @brief  私有实现头：条目组装共用原语——码小写形、五元组规范串、去重键
- *         派生（§6.4）。
+ *         派生（§6.4）、日志/摘要共用的 UTF-8 前缀边界（§7.2/7.7）。
  *
  * 设计依据：
  *   - units/diagnostics.md §4.2（dedupKey"构造时计算"——计算点＝工厂）、
@@ -26,6 +26,20 @@
 #include <sdurws/ird/diagnostics/Catalog.hpp>
 
 namespace sdurws::ird::diagnostics::detail {
+
+/**
+ * @brief 计算既有 UTF-8 文本在字节预算内的完整字符前缀；不分配、不附加标记。
+ * @param text [in] UTF-8 原文；本函数只处理切点，不承担非法编码修复。
+ * @param maxBytes [in] 前缀字节预算（0 返回空前缀）。
+ * @return 不超过 text.size()/maxBytes 的完整字符边界；标记预算由各调用方保持。
+ */
+inline std::size_t utf8PrefixSize(std::string_view text, std::size_t maxBytes) noexcept
+{
+    if (text.size() <= maxBytes) { return text.size(); }
+    std::size_t cut = maxBytes;
+    while (cut > 0 && (static_cast<unsigned char>(text[cut]) & 0xC0) == 0x80) { --cut; }
+    return cut;
+}
 
 /// 码小写形（文案键材料——P-DIAG-9 冻结约定 diag.<code-lower>.title/detail）。
 /// 注册边界拒绝偏离约定的键（Usage）——凡已注册码，按本函数派生必与其登记

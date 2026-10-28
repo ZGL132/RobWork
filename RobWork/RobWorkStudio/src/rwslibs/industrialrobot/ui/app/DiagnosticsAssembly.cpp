@@ -35,7 +35,7 @@ void assembleDiagnostics(const std::filesystem::path& devlogDir, DiagnosticsStac
     logConfig.directory = devlogDir;
     stack.pipeline->configure(logConfig);
 
-    // ② 稳定码表：内置 87 码全量收编（§4.6——各单元 PRJ-*/EX-*/… 的码值
+    // ② 稳定码表：内置码全量收编（§4.6——各单元 PRJ-*/EX-*/… 的码值
     //    权威）＋ui 侧描述符供体（IWorkbenchShell::uiDiagnosticCodeDescriptors
     //    ——ui.md §3.5 十码），注册全部完成后 seal（装配期单线程约定）。
     stack.registry = std::make_shared<diagnostics::StableCodeRegistry>();
@@ -57,6 +57,9 @@ void assembleDiagnostics(const std::filesystem::path& devlogDir, DiagnosticsStac
     //    （非 owning——栈对象填充后不移动，地址稳定）。
     stack.redaction = std::make_shared<diagnostics::RedactionService>(
         diagnostics::RedactionPolicy{}, stack.pipeline.get());
+    // 发布诊断栈前接齐所有安全出口：磁盘/尾部缓存、工厂快照和目录导出。
+    stack.pipeline->attachRedactionService(stack.redaction);
+    stack.factory->attachRedactionService(stack.redaction);
     stack.catalog = std::make_shared<diagnostics::DiagCatalog>();
     stack.catalog->attachRedactionService(stack.redaction);
 }

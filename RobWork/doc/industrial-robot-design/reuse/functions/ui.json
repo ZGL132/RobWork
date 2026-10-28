@@ -36,7 +36,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -102,7 +102,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -167,7 +167,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -231,7 +231,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -290,7 +290,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -349,7 +349,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -408,7 +408,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -467,7 +467,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -527,7 +527,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -586,7 +586,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -649,7 +649,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -712,7 +712,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "nonOverlapEvidence": {
@@ -775,7 +775,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "nonOverlapEvidence": {
@@ -838,7 +838,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -905,7 +905,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -970,7 +970,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1035,7 +1035,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1100,7 +1100,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1165,7 +1165,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1230,7 +1230,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1295,7 +1295,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1360,7 +1360,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1425,7 +1425,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1490,7 +1490,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
@@ -1556,7 +1556,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -1622,7 +1622,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -1688,7 +1688,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -1754,7 +1754,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -1820,7 +1820,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -1886,7 +1886,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -1952,7 +1952,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
@@ -2018,7 +2018,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
@@ -2088,7 +2088,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
@@ -2158,7 +2158,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
@@ -2228,7 +2228,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
@@ -2298,7 +2298,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
@@ -2467,7 +2467,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/units/execution.md",
@@ -2534,7 +2534,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditBoundary": "仅本测试文件的锚语义用例；替身不授予生产模型权限",
@@ -2555,8 +2555,8 @@
           "symbol": "sdurws_ird_ui_plugin",
           "qualifiedSymbol": "sdurws_ird_ui_plugin",
           "startLine": 1,
-          "endLine": 1311,
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "endLine": 1313,
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "targets": [
@@ -2575,7 +2575,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
@@ -2646,7 +2646,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -2697,7 +2697,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -2747,7 +2747,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -2797,7 +2797,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-          "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
         }
       ],
       "auditEvidence": [
@@ -2810,6 +2810,162 @@
         "path": "RobWork/doc/industrial-robot-design/traceability/policy-review-r1/IMPLEMENTATION.md",
         "sha256": "3a0cd4df3e116003c748667b2966e6d7e9fed11f16ff3fb5d5a334e47a9a11e4"
       }
+    },
+    {
+      "functionId": "ui.DIAG_T12.DiagnosticsAssemblyContractTest.support",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ERR-01",
+        "NFR-SEC-07",
+        "NFR-MNT-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/DiagnosticsAssemblyContractTest.cpp",
+          "symbol": "#include",
+          "startLine": 1,
+          "endLine": 10,
+          "sha256": "b8aeb86d23b3392a61a867c4f15d6c021392146ea10d91a3de605e3c325d0c6f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_contract_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.3",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"class Log|class LogWriter|class LogStreamWriter|class Exception|UTF.?8\" RobWork/RobWork/src/rw/core RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+        "conclusion": "上游通用日志无稳定码、两级脱敏、确认绑定及worker收尾语义；沿现有设施和标准库/Windows CRT薄适配。UTF-8仅合并既有私有切点，无新核心。"
+      },
+      "differences": "DIAG-T12：DiagnosticsAssemblyContractTest.support；具体安全/事务/期限边界与独立预期见实施记录，不扩大owner/接口/性能标准。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/DiagnosticsAssemblyContractTest.cpp",
+          "sha256": "618047091c9e82d2e9ae8fe441962bd4674152fe7b48874a56cc9f3567e34a26"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md",
+          "sha256": "494b64381962493ca8e2789542324505a3e323ecf8b46ad6ded1662a6fee80f6"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md",
+        "sha256": "494b64381962493ca8e2789542324505a3e323ecf8b46ad6ded1662a6fee80f6"
+      },
+      "auditBoundary": "本包实施与自查；不关闭旧pending/proposal，不自签独立验收。"
+    },
+    {
+      "functionId": "ui.DIAG_T12.DiagnosticsAssemblyContractTest.RedactsPipelineTailDiskAndFactorySnapshot",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ERR-01",
+        "NFR-SEC-07",
+        "NFR-MNT-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/DiagnosticsAssemblyContractTest.cpp",
+          "symbol": "TEST(DiagnosticsAssemblyContract, RedactsPipelineTailDiskAndFactorySnapshot)",
+          "startLine": 11,
+          "endLine": 48,
+          "sha256": "ff784b49ba923a83e145639f905f57518041214a309ce3cc6c70703cce71f840"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_contract_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.3",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"class Log|class LogWriter|class LogStreamWriter|class Exception|UTF.?8\" RobWork/RobWork/src/rw/core RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+        "conclusion": "上游通用日志无稳定码、两级脱敏、确认绑定及worker收尾语义；沿现有设施和标准库/Windows CRT薄适配。UTF-8仅合并既有私有切点，无新核心。"
+      },
+      "differences": "DIAG-T12：DiagnosticsAssemblyContractTest.RedactsPipelineTailDiskAndFactorySnapshot；具体安全/事务/期限边界与独立预期见实施记录，不扩大owner/接口/性能标准。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/DiagnosticsAssemblyContractTest.cpp",
+          "sha256": "618047091c9e82d2e9ae8fe441962bd4674152fe7b48874a56cc9f3567e34a26"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md",
+          "sha256": "494b64381962493ca8e2789542324505a3e323ecf8b46ad6ded1662a6fee80f6"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md",
+        "sha256": "494b64381962493ca8e2789542324505a3e323ecf8b46ad6ded1662a6fee80f6"
+      },
+      "auditBoundary": "本包实施与自查；不关闭旧pending/proposal，不自签独立验收。"
+    },
+    {
+      "functionId": "ui.DIAG_T12.DiagnosticsAssembly.void_assembleDiagnostics",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ERR-01",
+        "NFR-SEC-07",
+        "NFR-MNT-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/DiagnosticsAssembly.cpp",
+          "symbol": "void assembleDiagnostics(const std::filesystem::path& devlogDir, DiagnosticsStack& stack)",
+          "startLine": 1,
+          "endLine": 70,
+          "sha256": "3f14bcfcb9df1a11e089a01a45bf27be0189d69e3d60dc47acc8bd054d89432e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.3",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"class Log|class LogWriter|class LogStreamWriter|class Exception|UTF.?8\" RobWork/RobWork/src/rw/core RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+        "conclusion": "上游通用日志无稳定码、两级脱敏、确认绑定及worker收尾语义；沿现有设施和标准库/Windows CRT薄适配。UTF-8仅合并既有私有切点，无新核心。"
+      },
+      "differences": "DIAG-T12：DiagnosticsAssembly.void_assembleDiagnostics；具体安全/事务/期限边界与独立预期见实施记录，不扩大owner/接口/性能标准。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/DiagnosticsAssembly.cpp",
+          "sha256": "3f14bcfcb9df1a11e089a01a45bf27be0189d69e3d60dc47acc8bd054d89432e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md",
+          "sha256": "494b64381962493ca8e2789542324505a3e323ecf8b46ad6ded1662a6fee80f6"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md",
+        "sha256": "494b64381962493ca8e2789542324505a3e323ecf8b46ad6ded1662a6fee80f6"
+      },
+      "auditBoundary": "本包实施与自查；不关闭旧pending/proposal，不自签独立验收。"
     }
   ]
 }
