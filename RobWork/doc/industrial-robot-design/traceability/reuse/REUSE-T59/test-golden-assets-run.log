@@ -1,0 +1,28 @@
+REUSE-T59 completionEvidence —— foundation-governance.designGolden.test-golden-assets 真实执行记录
+command: pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1
+cwd: D:\10_Source_Repos\21_robot\RobWork （分支 redesign-main，串行主工作树）
+HEAD: 0d1c27bf29a0cacba873fe230c00c6446a54a7f3
+date: 2026-10-28
+exitCode: 0
+说明: 脚本夹具写入 build/design-fix-t01/golden-assets（本地合成根，脚本内 SafePath/ReadText 均指向该根），
+不触碰 testdata/golden 真实黄金资产与治理数据；执行面为 golden-assets.ps1 的 Test-DeclaredGoldenJson 17 项正反例。
+--- stdout ---
+PASS registered manifest
+PASS registered input
+PASS registered expected
+PASS CRLF normalization
+PASS tampered content
+PASS unlisted asset
+PASS wrong manifest identity
+PASS unknown manifest schema
+PASS wrong size
+PASS missing integrity entry
+PASS manifest self reference
+PASS no source exemption inputs/input.cpp
+PASS no source exemption inputs/input.json.ps1
+PASS no source exemption inputs/input.mjs
+PASS no source exemption inputs/input.txt
+PASS outside golden folder
+PASS path traversal
+test-golden-assets: PASS passed=17 skipped=0 failed=0
+--- stdout end ---

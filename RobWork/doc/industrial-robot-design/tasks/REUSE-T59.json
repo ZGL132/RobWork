@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T59",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "RC-10 规则批——106 行脚本结项格式/校验提出（reuse-contract.ps1 结项分支＋正例单行登记＋负例 15 Case；106 行逐行关闭留规则独验后另批）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T57"
+  ],
+  "requirements": [
+    "ARC-03",
+    "NFR-COR-01"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.5.4",
+    "reuse/policy.md#1.1",
+    "reuse/audit-contract.md#7.1",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1（172 例全量：既有 157 例回归＋结项正例 migrated/closed 各一＋15 个结项负例逐一真实执行并断言精确失败码；沙箱基建修复后全绿）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1（全量函数矩阵/绑定/权限/覆盖检查；正例行 completionEvidence/nonOverlapEvidence/双 sources 区段 Digest 复核；PASS governance only）",
+    "completionEvidence 真实执行：pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-golden-assets.ps1 于 HEAD 0d1c27bf2 实跑 exit 0（17/17 PASS），stdout 全量落 traceability/reuse/REUSE-T59/test-golden-assets-run.log，Digest 口径（剥 BOM＋CRLF→LF＋尾换行）实算入绑定",
+    "nonOverlap 检索实测：rg 上游 RobWork/RobWork/src 与 RobWork/RobWorkSim/src 对 ird-golden-manifest 与 declaredgolden|golden.?manifest 全部零命中（S1/S2 exit 1）、Test-DeclaredGoldenJson 仅 3 个治理脚本命中（S3），命令与结果登记 README.md §3",
+    "正例两脚本 sha256 现值实算与原登记值逐一相等（test-golden-assets.ps1=2ff51394…、golden-assets.ps1=32a1af18…）：零代码改动，仅行内 decision/status 与结项字段变更"
+  ],
+  "allowedFiles": [
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T59.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T59.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T59/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/closures.json",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "reuse-contract.ps1 scriptAudit 结项分支：允许 decision=business-specific＋status=migrated/closed；结项必备 completionEvidence{path,sha256}（CheckBinding）＋business-specific 必备 nonOverlapEvidence（:284 自动适用）＋closed 时行内 acceptance 引用（沿 closures 协议：traceability/acceptance/*.json 冻结对象、verdict=pass、taskId=REUSE-*、被验提交 tip 祖先、验收后行除 status 推进与 acceptance 补记外逐字段一致）；既有约束锚点 :232/:240/:244-245/:249-253/:257/:265-272/:284 全部保留不放宽，另两处只加严（entry 区段必须被 sources 覆盖、检出 dot-source 引用必须登记为同目录 helper 区段——检测为下界）；audited 非脚本行准入状态",
+    "正例单行登记：foundation-governance.designGolden.test-golden-assets → business-specific/migrated，sources 补 dot-source helper golden-assets.ps1 全文区段（1-43），inputs 同步补绑定，completionEvidence 绑真实执行日志（REUSE-T59/test-golden-assets-run.log），nonOverlapEvidence 绑 REUSE-T59/README.md；其余 105 行 governance-script 行 decision/status/语义登记零改动（保持 pending）——其中 10 行因本批授权修改 reuse-contract.ps1 而对它的 input 绑定 sha256 机械刷新（validate-task.{root,Test-AnchorExists,Test-AnchorRequired,index-and-contract,reuse-gate}、verify-task.{preflight-and-dryrun,execute-and-count}、test-governance-lite.{environment,Invoke-Probe,fixtures-and-report}，唯一变化＝哈希 7ffa6694…→780a4b1d… 新 Digest 实算值，无任何 decision/status/来源/语义字段变化）",
+    "test-reuse-governance.ps1 新增 15 Case（172 例）：script-closure-migrated-positive/closed-positive（PASS）＋missing-completion-evidence（REUSE-EXECUTION）/stale-completion-evidence（REUSE-FRESHNESS）/missing-completion-file（REUSE-MISSING）/entry-region-unbound（REUSE-EXECUTION）/missing-helper-region（REUSE-EXECUTION）/stale-source-region（REUSE-FRESHNESS）/targets-nonempty（REUSE-EXECUTION）/audited-not-admitted（REUSE-EXECUTION）/closed-without-acceptance（REUSE-CLOSURE）/forged-acceptance-rejected（REUSE-CLOSURE）/acceptance-object-missing（REUSE-CLOSURE）/acceptance-path-outside（REUSE-CLOSURE）/acceptance-future-sha-rejected（REUSE-CLOSURE）",
+    "沙箱基建修复（本批实施发现）：validate-reuse.ps1:49 dot-source golden-assets.ps1 未进沙箱副本＝DESIGN-T01 起 harness 全例加载即断（HEAD 157 例全红实测复现）——test-reuse-governance.ps1 补 Copy-Item＋报告钉 goldenAssetsSha256；此修复是本批负例可真实执行的前提",
+    "traceability/reuse/REUSE-T59/：README.md（规则形态定义、正例登记说明、nonOverlap 论证＋S1—S3 检索证据、负例清单、NOT RUN 分列、独验核验点清单）＋test-golden-assets-run.log（真实执行记录）"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "规则分支已实现并自测：结项形态仅对 decision=business-specific＋status∈{migrated,closed} 激活，pending/proposal 行为逐字节不变（既有 script-audit 组 Case 继续覆盖）；负例 15 例全部真实执行且断言精确失败码，正例 migrated/closed 各一真实通过",
+    "正例行已按结项形态登记：sources 两条全文区段 Digest 实算与登记值相等、symbol 在区段内命中；completionEvidence/nonOverlapEvidence 按 CheckBinding 实算；validate-reuse.ps1 全量 PASS（governance only）",
+    "边界如实分列：①106 行逐行关闭未启动（规则未独验前不据其关闭债务，RC-10 :426 原文），正例状态停在 migrated 非 closed；②未伪造任何 acceptance 引用（closed 形态仅在沙箱夹具内验证）；③黄金 .mjs 19 条为无 execution 绑定的产品路径行、不在 106 行内，结项走既有产品路径，本批零触碰；④golden-assets.ps1 自身行（designGolden.golden-assets）保持 pending 零改动",
+    "NOT RUN：规则独立验收（所有者另开会话执行，实施者不自签——本批负例＋正例真实执行仅构成初验）；commit-lint/verify-task-scope（本批不执行 git 写命令，随提交批显式 -Base 0d1c27bf2 -Head <送验SHA> 执行）；C++ 构建/ird_gates/测试执行（零产品代码、CMake、公共接口变更，按 AGENTS §4 增量范围为治理脚本正负例＋文档门禁）",
+    "边界：不触 catalog.json/permissions.json/closures.json、产品源码全树、testdata/golden 真实黄金资产（执行夹具仅写 build/design-fix-t01 合成根）；106 行其余 105 行 decision/status/语义登记零改动（10 行 input 绑定 sha256 机械刷新见 outputs）；不执行 git push/fetch/commit"
+  ],
+  "note": "migration.md §13.5.4 RC-10（:426）规则面：『先提出并独立验收与既有 closures/acceptance 一致的脚本结项格式/校验，再收这 106 行』——本批即该格式/校验的提出批；『新增规则未独验前不据其关闭债务』由正例停在 migrated、关闭批不启动如实执行。起始 SHA=0d1c27bf29a0cacba873fe230c00c6446a54a7f3。查重（2026-10-28 实测）：changes/、tasks/、traceability/reuse/ 均无 REUSE-T59——建档成立。授权口径：所有者 2026-10-27 委托『后续所有裁决授权按建议进行』，本批按建议裁决登记；独验不可自签，如实 NOT RUN 待所有者安排。规则设计要点：结项证据三件套＝completionEvidence（真实执行记录，CheckBinding 口径）＋nonOverlapEvidence（business-specific 由 :284 既有规则自动适用）＋acceptance（closed 必备，沿 closures 协议六项核对）；结项分支同时加严两处（entry 区段覆盖、检出 dot-source helper 必须登记）——都是后续关闭批不可绕过的最小机检面。helper 检测是下界（仅 $PSScriptRoot/./.\\ 三形态；build-context-pack.ps1 等的 $scriptDir 别名形态不检出），未检出调用链仍由独立语义验收核对，沿 :251 既有注释口径。closed 行验收后冻结采用『除 status 推进与 acceptance 补记外逐字段一致』：acceptance 引用无法在 migrated 登记时预先存在（记录提交晚于被验提交），与 closures.json 由独立文件承载验收引用同构。本批实施发现＝沙箱基建断裂：validate-reuse.ps1:49 dot-source golden-assets.ps1（DESIGN-T01 起）而 test-reuse-governance.ps1 沙箱只复制 validator＋reuse-contract.ps1，全例加载即断——HEAD 实测 157 例全红复现（.cache/reuse-tests/*.log 均为该错）；修复＝补 Copy-Item＋报告钉 goldenAssetsSha256，属负例真实执行的前提修复，不放宽任何门禁。黄金 .mjs 19 条（make_dyn_two_link_golden 5＋make_opt_pareto_golden 14）为无 execution 绑定的产品路径行（targets 绑 CMake 测试目标），不在 106 行内、不受新规则影响，同文件 3 条 business-specific/migrated 先例（conditionIdHex/import_expectations 两行）所示产品路径即其结项形态。status=ready 表示实施完成待独验，不冒称通过。",
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T59.json"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  }
+}
