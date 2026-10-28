@@ -26,28 +26,34 @@ param(
 $ErrorActionPreference = 'Stop'
 
 if (-not (Test-Path -LiteralPath $InstallRoot -PathType Container)) {
-    Write-Error "安装树根目录不存在或不是目录: $InstallRoot"
+    [Console]::Error.WriteLine("安装树根目录不存在或不是目录: $InstallRoot")
     exit 2
 }
 
 # ---- 排除清单（§3.6 原文三项；正则大小写不敏感，覆盖目标名/目录名两种形态）----
 $forbiddenPatterns = @(
-    'sdurws_ird_testkit',   # testkit 库与其测试/工具目标（_test/_testdata_lint 等派生名一并命中）
-    'testdata',             # 黄金数据集目录（含随包复制的容差档案/数据集实体）
-    [regex]::Escape('tools\testdata'),  # 数据集校验工具目录（Windows 路径形态）
-    [regex]::Escape('tools/testdata')   # 数据集校验工具目录（正斜杠形态）
+    '(^|/)(lib)?sdurws_ird_testkit([_.][^/]*)?$', # 库/测试/工具产物名
+    '(^|/)testdata(/|$)',                       # 黄金数据或工具目录组件
+    '(^|/)include/sdurws/ird/testkit(/|$)'       # 公共测试头同属禁止分发面
 )
 
 # 扫描范围：安装树内全部文件与目录名（内容扫描不在此列——分发红线针对
 # "产物存在性"，文件内容审读归代码审查）。
 $hits = New-Object System.Collections.Generic.List[string]
 
-Get-ChildItem -LiteralPath $InstallRoot -Recurse -Force | ForEach-Object {
+try {
+$scanRoot = (Get-Item -LiteralPath $InstallRoot).FullName
+Get-ChildItem -LiteralPath $scanRoot -Recurse -Force | ForEach-Object {
+    $relative = [IO.Path]::GetRelativePath($scanRoot, $_.FullName).Replace('\', '/')
     foreach ($pattern in $forbiddenPatterns) {
-        if ($_.Name -match $pattern) {
+        if ($relative -match $pattern) {
             $hits.Add("$($_.FullName)  [命中: $pattern]") | Out-Null
         }
     }
+}
+} catch {
+    [Console]::Error.WriteLine("安装树扫描失败: $($_.Exception.Message)")
+    exit 2
 }
 
 # ---- 结论输出（机器可判读：命中清单逐行 + 汇总行）----

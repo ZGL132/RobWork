@@ -1,0 +1,2 @@
+verify-task-scope: EV-T13 base=4c5e4301f629 head=4afdc201a40c changed=109 allowedRules=41 forbiddenRules=3
+verify-task-scope: PASS EV-T13 —— 109 个路径全部在允许面内

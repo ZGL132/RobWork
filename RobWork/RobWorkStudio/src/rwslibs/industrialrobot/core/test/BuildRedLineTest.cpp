@@ -110,10 +110,10 @@ TEST(BuildRedLine, SourceTreeReachable_UT_BUILD)
 {
     ASSERT_TRUE(fs::exists(coreSourceDir()))
         << "IRD_CORE_SOURCE_DIR 不存在: " << coreSourceDir().string();
-    // 产品实现占位文件是已知锚点：它必须在扫描集内（core/src 随 CORE-T01 建立）
+    // CORE-T12：core已有真实实现，扫描集必须非空；不依赖无符号占位翻译单元。
     const auto srcFiles = collectCppFiles(coreSourceDir() / "src");
     ASSERT_FALSE(srcFiles.empty())
-        << "core/src 扫描为空——路径配置错误（占位实现 Core.cpp 应存在）";
+        << "core/src 扫描为空——路径配置错误（身份/摘要等真实实现应存在）";
 }
 
 /**

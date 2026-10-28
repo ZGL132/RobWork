@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "DIAG-T12",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T12.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+      "sha256": "ad630e6f4c56465bfc5f9e9967df03c11254e75a1dc03ccae7c01ed7ce754d0e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Confirmable.hpp",
+      "sha256": "f30e7140574f8f815f715af2332f6279b9b09729f53515bc24f9c3345f052461",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp",
+      "sha256": "681a328119e870fa36da9946c15d925ff5cc22d871f1d6e0b5da387869a83eeb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Logging.hpp",
+      "sha256": "2e0b7838326337242053c37bd540462f36ed2c8b4caeb6404d2d9b8e1b72b327",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Aggregation.cpp",
+      "sha256": "e24e8ecc09d53724a98a224ebfa7411a985ec4c09076f1f1c2a9f5875bc12b3a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Catalog.cpp",
+      "sha256": "ef1c2bc3936f2467a93848a0666a3073172d645e8ae28af369222c55a6fe1ea3",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Confirmable.cpp",
+      "sha256": "a243474c897361bcea8fbfa26dd06097b2d30900c362f6eacdfbecdfc456ccd9",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+      "sha256": "dc00906259794e7af4a7fb438e87453fb6534a3d7ba1c84b4e9a49e6bab1587c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp",
+      "sha256": "d6d2897a40d6e9a1a0dea7adc0148983e205f5b6baf548f2f2b67999d74fd9f8",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp",
+      "sha256": "4e350572a0a06cf9abf369b4bde0bc86f382504a2a3381314bca03d5fe36708e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp",
+      "sha256": "2b358110d463b838ba0ceb548267ef3ef2d84ea0ce4fb5870e25094d859844af",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Redaction.cpp",
+      "sha256": "ac34d9636b0d405d631185656e54469be3effe2d59db1e91baae7d1222fc713b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/ConfirmableTest.cpp",
+      "sha256": "46d89479868422028097707a6f69b91fa52b92ac2f4fcacf105bf0cf3159eb35",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/DiagnosticsRegressionTest.cpp",
+      "sha256": "2ed669472142d3d903a4124db44836c2b47f0f06696907d31936cf52bd60faf3",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+      "sha256": "5b56b7c3332b573598f2ba7ee90f76b544cdb2c56852947a83c09dc164d86432",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/DiagnosticsAssembly.cpp",
+      "sha256": "3f14bcfcb9df1a11e089a01a45bf27be0189d69e3d60dc47acc8bd054d89432e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/DiagnosticsAssemblyContractTest.cpp",
+      "sha256": "618047091c9e82d2e9ae8fe441962bd4674152fe7b48874a56cc9f3567e34a26",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "DIAG-T12：沿唯一注册/目录/确认/两级安全日志设施修复；标准库和Windows CRT薄适配，无新核心/上游修改/权限或owner扩大；根因、保留与回滚见实施表",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/diagnostics-review-r1/IMPLEMENTATION.md"
+    }
+  ]
+}

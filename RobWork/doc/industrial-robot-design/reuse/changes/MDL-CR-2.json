@@ -1,0 +1,343 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "MDL-CR-2",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/MDL-CR-2.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+      "sha256": "ec4a7b3d743ed7ce72312027f89e6356d87edddfc25c55363c8b216d5e203141",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
+      "sha256": "1ff4caf3fb6929755cefe81e870caccec3850257e0ecc4dad283a2935566637b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
+      "sha256": "65c90bd1116e25bbc0a655e8852d13c26adedbd014ffa6b6ebe94b1c156e3dc7",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/GoldenPeerContractTest.cpp",
+      "sha256": "6e942a4b43ce33e1d75bc6e88c9b8d275da8f42f69dcf010ebe1f39e338c611e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/Codec.hpp",
+      "sha256": "2bd9ca8cca55a3a6b5aa605980dd0333914ba7effa846e877980e68968faabe2",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/DhConvert.hpp",
+      "sha256": "7806ab299683fab5b23e4b733b0cf97fe152422cd338e19a454c30cbf240c059",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
+      "sha256": "e854f376bce53967492f1ecbea570e112c519923a40b1bdd3eec89bf1710765d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+      "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingAuthorityFlows.cpp",
+      "sha256": "285c27008fca55769ae0fb3e9f086ca5c138d65f0e9cee18f6521e705f6b5754",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingFlowsInternal.hpp",
+      "sha256": "1d68550a5171f2a34221fb803496775d57f652b4339b9b4a908ba997bc9f9c6c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPluginAssembly.cpp",
+      "sha256": "49671ee7cad807dc52acbf3bf4c67629c55e36ddd0c7e767ed2b729edf64a2bd",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.hpp",
+      "sha256": "4733ba9f143c98abd1e6baa050bebb87a452b6dcd5bd7b5ec1d5339489ee458b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingXacroBridge.hpp",
+      "sha256": "6722205dda07647d783a1a6e7d49295d44b90055fb0721353722d7d581beaafc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CanonicalBridge.cpp",
+      "sha256": "fd293d5de8907a4fa6e9ced3a169d47b72c39e05b3a6632f59ffba0a285fdfaa",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Codec.cpp",
+      "sha256": "d3ee312b62978cc859314a78b835a7d08ffd680ac9746b7075496c7ce3be0de0",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+      "sha256": "c0d0d28a1099c3d6fed15ebe4796c7f825208d8f3707ef1f7987a440950b13ed",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
+      "sha256": "a3e967c56874bcd43dab82f2f89c2f1d3a5e16fb8681f023118c3bba249309ca",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/WorkCellReverseImport.cpp",
+      "sha256": "7509bf253a00c41818f54e786bff8faac08e2d581e699296a3376f309a4b2282",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+      "sha256": "42ffb26143c85de56c8bc47ac9d516f0c314faeb43ed48ab6a6d634617692ffe",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CanonicalBridgeTest.cpp",
+      "sha256": "3e1c5d2026989f60e48571fc975e9a0b4eecdd0dedd67d7c851f895b8b146a61",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CodecTest.cpp",
+      "sha256": "7b564c3db063b9b4f6cb7fb3371db54c788c16725bba34c4322ff8d45eec09cc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/DhConvertEquivalenceTest.cpp",
+      "sha256": "dc125505093feb614863ee5541fb3f038d1139dfd3a7d95e66a94147c6c1431c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/DhConvertTest.cpp",
+      "sha256": "ca266113425d7f3743d52dfa7eb514273188503ac9a472cf852e3ed54ebf6a4c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenDhEquivalenceTest.cpp",
+      "sha256": "d59ab383a35a417ea75bb9a7b6ddbbfe4ba6ca524f2adf10ee14ceb4e5c0ab79",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp",
+      "sha256": "8022638d56c5a84a4d671a899224a463b329e4ab04589183f5e3659ccd0bf0ed",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ModelingCommandFlowsTest.cpp",
+      "sha256": "ab97a6bdc100ee2b2b670ef438e0a09b72ef9ef6f1ca93414d67388a3e13aa0b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+      "sha256": "799ff8fe7f2e5b29fcd3c4ee79ee5bb538a3a38a57e4fc7cb6123d7a9c125217",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Codec.hpp",
+      "sha256": "2510ff09cc9bfb1445597a34f38267552167bbf551afbba49724686ee1b66252",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Compiler.hpp",
+      "sha256": "26a237f724dad93c72b013441773dc98357e945505536c629692d361396c64eb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Description.hpp",
+      "sha256": "260cd8be2c0f60515f9958c62387f225ec8a0ebd1f46af3dab0ed6b465b858a2",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
+      "sha256": "5fd3a18b6f99201d7b90693f153c2f0aa7e561fee8844399b5b530682524d974",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+      "sha256": "7561b5b7bbd985c2cba9289871d68eac1be327bba839118745635ec5b83087f2",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+      "sha256": "9f603958d961c4aa7a219ced9bb02dc24a05f5618a09686f3b8f2503a91614cd",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
+      "sha256": "490927e5733b0c6826a0a263b2c472f3ec7401cf5af441ce327bc83a2dea5dcf",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp",
+      "sha256": "8f0588b35ff8ddfeb444e61249866ae3400d6bd52a69e163c072cf5f71091c0c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
+      "sha256": "1467d61201f31e261f693cf27a7939a4ab0c3d6356b6eb2d9cf115e763d2dcd9",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+      "sha256": "5c5386025703263ad98ed1df3921cf553f8128f1a9410a206d41af674b5e40fc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CodecTest.cpp",
+      "sha256": "0cc737c54e9b8e44118e606d38f284aa46eb491fb5010f020249a3863884f9fe",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp",
+      "sha256": "c4beae915dabe3c2a2a64cf677d97a6f27019128598202160e5cf2509b3a5b4a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "sha256": "335f2cb8483b2ad06b61bf5667ece90677d916415b99d27b63b8f43f98cdec78",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "所有者 modeling 评审修复第2批：保留工程schema、来源与runtime唯一owner，局部适配已有上游值API；不新增核心/不扩权限；见实施记录。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch2/IMPLEMENTATION.md"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="35" failures="0" disabled="0" errors="0" time="0.3" timestamp="2026-10-27T21:00:37.553" name="AllTests">
+  <testsuite name="JsonRoundtrip" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-10-27T21:00:37.553">
+    <testcase name="DecimalParsingIgnoresNumericLocale_ReviewR07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="29" status="run" result="completed" time="0.003" timestamp="2026-10-27T21:00:37.553" classname="JsonRoundtrip" />
+    <testcase name="DecimalRangeAndSignedZeroPreserved_ReviewR07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="42" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonRoundtrip" />
+    <testcase name="CanonicalTextRestored_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="76" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonRoundtrip" />
+    <testcase name="InsertionOrderStable_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="96" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonRoundtrip" />
+  </testsuite>
+  <testsuite name="JsonAccess" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.556">
+    <testcase name="KindDiscriminatorsAndFind_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="107" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonAccess" />
+  </testsuite>
+  <testsuite name="JsonRejections" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.556">
+    <testcase name="RejectionMatrix_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="130" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonRejections" />
+    <testcase name="GrammarViolations_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="145" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonRejections" />
+  </testsuite>
+  <testsuite name="JsonErrorLocation" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.556">
+    <testcase name="LineColumnPrecision_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="162" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonErrorLocation" />
+  </testsuite>
+  <testsuite name="JsonUnicode" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.556">
+    <testcase name="EscapesToUtf8_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="170" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.556" classname="JsonUnicode" />
+  </testsuite>
+  <testsuite name="JsonBoundary" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.557">
+    <testcase name="DumpOutputReparseable_UT_JSON" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="184" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.557" classname="JsonBoundary" />
+  </testsuite>
+  <testsuite name="DatasetManifest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.018" timestamp="2026-10-27T21:00:37.557">
+    <testcase name="FullFieldLoad_UT_MAN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="176" status="run" result="completed" time="0.007" timestamp="2026-10-27T21:00:37.557" classname="DatasetManifest" />
+    <testcase name="OptionalParametersHaveObjectDefault_ReviewF015" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="191" status="run" result="completed" time="0.01" timestamp="2026-10-27T21:00:37.564" classname="DatasetManifest" />
+  </testsuite>
+  <testsuite name="DatasetIntegrity" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.037" timestamp="2026-10-27T21:00:37.575">
+    <testcase name="GeneratorCoverageRequired_ReviewF017" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="208" status="run" result="completed" time="0.028" timestamp="2026-10-27T21:00:37.575" classname="DatasetIntegrity" />
+    <testcase name="TamperAndSizeMismatch_UT_INT" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="318" status="run" result="completed" time="0.009" timestamp="2026-10-27T21:00:37.603" classname="DatasetIntegrity" />
+  </testsuite>
+  <testsuite name="DatasetRejections" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.069" timestamp="2026-10-27T21:00:37.613">
+    <testcase name="IntegerFieldsRejectFractionsAndRange_ReviewF018" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="227" status="run" result="completed" time="0.027" timestamp="2026-10-27T21:00:37.613" classname="DatasetRejections" />
+    <testcase name="RejectionMatrixWithFieldPaths_UT_MAN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="256" status="run" result="completed" time="0.042" timestamp="2026-10-27T21:00:37.640" classname="DatasetRejections" />
+  </testsuite>
+  <testsuite name="DatasetLint" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.008" timestamp="2026-10-27T21:00:37.683">
+    <testcase name="DatasetIdDirMismatch_UT_MAN" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="349" status="run" result="completed" time="0.008" timestamp="2026-10-27T21:00:37.683" classname="DatasetLint" />
+  </testsuite>
+  <testsuite name="ToleranceProfileLoad" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.02" timestamp="2026-10-27T21:00:37.691">
+    <testcase name="SampleProfileResolveThreeStates_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="61" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.691" classname="ToleranceProfileLoad" />
+    <testcase name="SchemaRequiredAndVersionChecked_ReviewR05" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="90" status="run" result="completed" time="0.004" timestamp="2026-10-27T21:00:37.691" classname="ToleranceProfileLoad" />
+    <testcase name="DeclaredExceedingAllowedMaxRejected_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="112" status="run" result="completed" time="0.002" timestamp="2026-10-27T21:00:37.696" classname="ToleranceProfileLoad" />
+    <testcase name="FixedRequiresAllowedMax_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="142" status="run" result="completed" time="0.004" timestamp="2026-10-27T21:00:37.699" classname="ToleranceProfileLoad" />
+    <testcase name="SourceWhitelistAndKindMismatch_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="175" status="run" result="completed" time="0.008" timestamp="2026-10-27T21:00:37.703" classname="ToleranceProfileLoad" />
+  </testsuite>
+  <testsuite name="ToleranceProfileC7" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.711">
+    <testcase name="CrossCheckWithCore_UT_TOL" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="163" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.711" classname="ToleranceProfileC7" />
+  </testsuite>
+  <testsuite name="ReproRecordData" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.711">
+    <testcase name="DefaultsMatchDesign_UT_FIX" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp" line="343" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.711" classname="ReproRecordData" />
+    <testcase name="JsonRoundTrip_UT_FIX" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp" line="354" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.711" classname="ReproRecordData" />
+    <testcase name="FromJsonRejectsInvalid_UT_FIX" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp" line="379" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.711" classname="ReproRecordData" />
+  </testsuite>
+  <testsuite name="DemoFixture" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-10-27T21:00:37.717">
+    <testcase name="SixStepLifecycle_UT_FIX" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp" line="424" status="run" result="completed" time="0.004" timestamp="2026-10-27T21:00:37.717" classname="DemoFixture" />
+  </testsuite>
+  <testsuite name="ReproBenchmark" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.021" timestamp="2026-10-27T21:00:37.721">
+    <testcase name="ThreeLegsEquivalentPassMeasured_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="152" status="run" result="completed" time="0.001" timestamp="2026-10-27T21:00:37.721" classname="ReproBenchmark" />
+    <testcase name="ValueShiftDetectedAsSetViolation_WP23T09_ACC2" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="190" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.723" classname="ReproBenchmark" />
+    <testcase name="SwapDetectedAsOrderViolation_WP23T09_ACC3" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="212" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.723" classname="ReproBenchmark" />
+    <testcase name="ReportJsonRoundtrip_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="238" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.724" classname="ReproBenchmark" />
+    <testcase name="ReportFileWriteRoundtrip_WP23T09_ACC1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReproBenchmarkTest.cpp" line="262" status="run" result="completed" time="0.018" timestamp="2026-10-27T21:00:37.725" classname="ReproBenchmark" />
+  </testsuite>
+  <testsuite name="ReportAggregation" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:00:37.743">
+    <testcase name="SixOutcomesCountedAndDecisiveFlag_UT_RPT" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReportTest.cpp" line="62" status="run" result="completed" time="0." timestamp="2026-10-27T21:00:37.743" classname="ReportAggregation" />
+  </testsuite>
+  <testsuite name="ReportWrite" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-27T21:00:37.743">
+    <testcase name="FileRoundTripMachineReadable_UT_RPT" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReportTest.cpp" line="148" status="run" result="completed" time="0.002" timestamp="2026-10-27T21:00:37.743" classname="ReportWrite" />
+  </testsuite>
+  <testsuite name="TestdataLint" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.107" timestamp="2026-10-27T21:00:37.746">
+    <testcase name="LoadsProfileAndValidatesAtDictionary_ReviewR09" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp" line="278" status="run" result="completed" time="0.107" timestamp="2026-10-27T21:00:37.746" classname="TestdataLint" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,15 @@
+Note: Google Test filter = OptRunTimeBenchmark.SameVersionCheckpointRecovery_WP23T08_B07
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OptRunTimeBenchmark
+[ RUN      ] OptRunTimeBenchmark.SameVersionCheckpointRecovery_WP23T08_B07
+[perf-b07] 启动段：参照全量运行 Completed——quick=10000 verified=100 批=2525/2525 检查点产出=2525 工作汇增量=5457410620696191368
+[perf-b07] 中断腿：查询计数 31000 后 Canceled——检查点 phase=Quick completedUnits=1244/2500 完成批=1244 审计基点 quick=4976
+[perf-b07] 检查点段：真协调器 Published（seq=1，磁盘三文件，magic=IRDOPTC1 codecVersion=1）
+[perf-b07] 恢复段：Restored（同版本 contractVersion=1）→ 续跑 AttemptId=2 Completed——resumedBatchesSkipped=1244 审计＝参照全量 （AT-35）结论面 records=10100 metrics=80800 maxRelDiff=0.000e+00 bitwise=true 工作汇增量=5457410620696191368＝参照
+[       OK ] OptRunTimeBenchmark.SameVersionCheckpointRecovery_WP23T08_B07 (24840 ms)
+[----------] 1 test from OptRunTimeBenchmark (24840 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (24840 ms total)
+[  PASSED  ] 1 test.

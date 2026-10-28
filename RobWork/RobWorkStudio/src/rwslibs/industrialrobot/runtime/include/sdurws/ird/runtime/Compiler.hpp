@@ -342,6 +342,18 @@ public:
  */
 std::unique_ptr<ICanonicalModelCompiler> createCanonicalModelCompiler();
 
+/**
+ * @brief F03：通过正式 S6 编译器和上游 setQ/worldTframe 采样链/工具位姿。
+ * @param model [in] 不可变规范模型；调用期存活。
+ * @param configurations [in] 按活动关节顺序的 SI 构型，各行长度必须为 DOF。
+ * @return 每构型的连杆/TCP世界位姿（链序后接工具序）；失败返回 runtime 错误。
+ * WorkCell/State 仅在 runtime 调用栈内创建和释放，不发布/持久化或交给 modeling。
+ * 集成与独立冒烟均链接同一正式 S6 实现；无共享状态、可重入，不另建 FK 核心。
+ */
+Expected<std::vector<std::vector<rw::math::Transform3D<double>>>, RuntimeError>
+sampleCompiledChain(const CanonicalModel& model,
+                    const std::vector<std::vector<double>>& configurations);
+
 }  // namespace sdurws::ird::runtime
 
 #endif  // SDURWS_IRD_RUNTIME_COMPILER_HPP

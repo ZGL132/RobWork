@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="8.235" timestamp="2026-10-28T09:23:38.860" name="AllTests">
+  <testsuite name="CancelTimingBenchmark" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="8.234" timestamp="2026-10-28T09:23:38.861">
+    <testcase name="NormalCancelSettleRealWorkerThresholds_WP23T03_B02" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\perf_test\CancelTimingBenchmarkTest.cpp" line="987" status="run" result="completed" time="8.234" timestamp="2026-10-28T09:23:38.861" classname="CancelTimingBenchmark" />
+  </testsuite>
+</testsuites>

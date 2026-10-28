@@ -1,0 +1,18 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_testkit
+  JsonLite.cpp
+  ProcessRunner.cpp
+  正在生成代码...
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\src\ProcessRunner.cpp(204,18): error C2039: "CompareStringOrdinal": 不是 "`global namespace'" 的成员 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\testkit\sdurws_ird_testkit.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\src\ProcessRunner.cpp(204,18): error C3861: “CompareStringOrdinal”: 找不到标识符 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\testkit\sdurws_ird_testkit.vcxproj]
+  Automatic MOC for target sdurws_ird_testkit_prochelper
+  sdurws_ird_testkit_prochelper.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_prochelper.exe

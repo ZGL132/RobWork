@@ -1,0 +1,180 @@
+Note: Google Test filter = PolicyReviewRegression.*:JointLimits.*POL_T13
+[==========] Running 13 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 10 tests from PolicyReviewRegression
+[ RUN      ] PolicyReviewRegression.CrossSceneGeometryMustNotReuseFrameIds_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1331): error: Expected equality of these values:
+  br.findings.size()
+    Which is: 0
+  1u
+    Which is: 1
+轴向间隔0.3 < 两大立方体半宽和0.8，必须相交
+
+[  FAILED  ] PolicyReviewRegression.CrossSceneGeometryMustNotReuseFrameIds_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.RealBackendContactSeparationAndPairExclusion_POL_T13
+[       OK ] PolicyReviewRegression.RealBackendContactSeparationAndPairExclusion_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.NonfiniteConfigurationsCannotFinalize_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1351): error: Value of: out.finalized
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1351): error: Expected: (out.status) != (CollisionEvaluationStatus::Completed), actual: 4-byte object <00-00 00-00> vs 4-byte object <00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1351): error: Value of: out.finalized
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1351): error: Expected: (out.status) != (CollisionEvaluationStatus::Completed), actual: 4-byte object <00-00 00-00> vs 4-byte object <00-00 00-00>
+
+[  FAILED  ] PolicyReviewRegression.NonfiniteConfigurationsCannotFinalize_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.InvalidQueryEnumCannotBecomeCompleted_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1359): error: Expected: s->evaluate(q,ctx) throws an exception of type PolicyError.
+  Actual: it throws nothing.
+
+[  FAILED  ] PolicyReviewRegression.InvalidQueryEnumCannotBecomeCompleted_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.ContextExpiredDuringBackendCannotFinalize_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1367): error: Value of: out.finalized
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1367): error: Expected equality of these values:
+  out.status
+    Which is: 4-byte object <00-00 00-00>
+  CollisionEvaluationStatus::Failed
+    Which is: 4-byte object <02-00 00-00>
+
+[  FAILED  ] PolicyReviewRegression.ContextExpiredDuringBackendCannotFinalize_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.FirstMarginFindingRetainsMeasuredMinimum_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1376): error: Expected equality of these values:
+  out.minDistances->front().minDistance
+    Which is: (nullopt)
+  std::optional<double>(.01)
+    Which is: (0.01)
+
+[  FAILED  ] PolicyReviewRegression.FirstMarginFindingRetainsMeasuredMinimum_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.CoverageCarriesActuallyAppliedFilters_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1385): error: Expected equality of these values:
+  out.coverage.excluded
+    Which is: {}
+  out.appliedFilters
+    Which is: { 64-byte object <21-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 22-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 E0-D1 71-D4 C7-02 00-00 00-00 00-00 00-00 00-00 2B-00 00-00 00-00 00-00 2F-00 00-00 00-00 00-00> }
+
+[  FAILED  ] PolicyReviewRegression.CoverageCarriesActuallyAppliedFilters_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.InvalidDomainCannotPublishAnEmptySafeScope_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1392): error: Value of: parsed.policy.has_value()
+  Actual: true
+Expected: false
+
+[  FAILED  ] PolicyReviewRegression.InvalidDomainCannotPublishAnEmptySafeScope_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.EmptyBackendMeshCannotCountAsValidGeometry_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1409): error: Expected equality of these values:
+  out.coverage.pairsWithGeometry
+    Which is: 1
+  0u
+    Which is: 0
+空mesh被后端拒收，不应计作双端有效几何
+
+[  FAILED  ] PolicyReviewRegression.EmptyBackendMeshCannotCountAsValidGeometry_POL_T13 (0 ms)
+[ RUN      ] PolicyReviewRegression.NonfinitePathParameterCannotEnterFinalizedFinding_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1422): error: Value of: out.finalized
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(1422): error: Expected: (out.status) != (CollisionEvaluationStatus::Completed), actual: 4-byte object <00-00 00-00> vs 4-byte object <00-00 00-00>
+
+[  FAILED  ] PolicyReviewRegression.NonfinitePathParameterCannotEnterFinalizedFinding_POL_T13 (0 ms)
+[----------] 10 tests from PolicyReviewRegression (2 ms total)
+
+[----------] 3 tests from JointLimits
+[ RUN      ] JointLimits.NonfiniteEndpointsAreInvalidIntervals_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(856): error: Expected: (findKind(out, JointLimitFindingKind::IntervalInvalid)) != (nullptr), actual: NULL vs (nullptr)
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(857): error: Expected equality of these values:
+  findKind(out, JointLimitFindingKind::TravelLimitExceeded)
+    Which is: 000002C7D47073A0
+  nullptr
+    Which is: (nullptr)
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(858): error: Value of: out.diagnostics.empty()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(859): error: Value of: out.margins.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(856): error: Expected: (findKind(out, JointLimitFindingKind::IntervalInvalid)) != (nullptr), actual: NULL vs (nullptr)
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(857): error: Expected equality of these values:
+  findKind(out, JointLimitFindingKind::TravelLimitExceeded)
+    Which is: 000002C7D4707670
+  nullptr
+    Which is: (nullptr)
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(858): error: Value of: out.diagnostics.empty()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(859): error: Value of: out.margins.empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] JointLimits.NonfiniteEndpointsAreInvalidIntervals_POL_T13 (0 ms)
+[ RUN      ] JointLimits.OverflowingWidthCannotFinalize_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(870): error: Expected equality of these values:
+  out.status
+    Which is: 4-byte object <00-00 00-00>
+  CollisionEvaluationStatus::Failed
+    Which is: 4-byte object <02-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(871): error: Value of: out.finalized
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(872): error: Value of: out.diagnostics.empty()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(873): error: Value of: out.margins.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(874): error: Expected equality of these values:
+  findKind(out, JointLimitFindingKind::TravelLimitExceeded)
+    Which is: 000002C7D47073A0
+  nullptr
+    Which is: (nullptr)
+
+[  FAILED  ] JointLimits.OverflowingWidthCannotFinalize_POL_T13 (0 ms)
+[ RUN      ] JointLimits.SubnormalWidthRetainsFiniteRatios_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(890): error: Expected equality of these values:
+  out.margins[0].nearLimitRatioValue.value()
+    Which is: -nan(ind)
+  0
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\JointLimitsTest.cpp(891): error: Expected equality of these values:
+  out.margins[1].nearLimitRatioValue.value()
+    Which is: -nan(ind)
+  0
+
+[  FAILED  ] JointLimits.SubnormalWidthRetainsFiniteRatios_POL_T13 (0 ms)
+[----------] 3 tests from JointLimits (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 2 test suites ran. (2 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 12 tests, listed below:
+[  FAILED  ] PolicyReviewRegression.CrossSceneGeometryMustNotReuseFrameIds_POL_T13
+[  FAILED  ] PolicyReviewRegression.NonfiniteConfigurationsCannotFinalize_POL_T13
+[  FAILED  ] PolicyReviewRegression.InvalidQueryEnumCannotBecomeCompleted_POL_T13
+[  FAILED  ] PolicyReviewRegression.ContextExpiredDuringBackendCannotFinalize_POL_T13
+[  FAILED  ] PolicyReviewRegression.FirstMarginFindingRetainsMeasuredMinimum_POL_T13
+[  FAILED  ] PolicyReviewRegression.CoverageCarriesActuallyAppliedFilters_POL_T13
+[  FAILED  ] PolicyReviewRegression.InvalidDomainCannotPublishAnEmptySafeScope_POL_T13
+[  FAILED  ] PolicyReviewRegression.EmptyBackendMeshCannotCountAsValidGeometry_POL_T13
+[  FAILED  ] PolicyReviewRegression.NonfinitePathParameterCannotEnterFinalizedFinding_POL_T13
+[  FAILED  ] JointLimits.NonfiniteEndpointsAreInvalidIntervals_POL_T13
+[  FAILED  ] JointLimits.OverflowingWidthCannotFinalize_POL_T13
+[  FAILED  ] JointLimits.SubnormalWidthRetainsFiniteRatios_POL_T13
+
+12 FAILED TESTS

@@ -27,10 +27,12 @@
 #include <cstddef>
 #include <cstdint>
 #include <iomanip>
+#include <map>
 #include <locale>
 #include <sstream>
 #include <string>
 #include <utility>
+#include <type_traits>
 #include <vector>
 
 #include <rw/math/Rotation3D.hpp>
@@ -587,6 +589,8 @@ void diffJoints(const RobotDesign& a, const RobotDesign& c,
                    kJointZeroOffset, prefix + ".zeroOffset", "zeroOffset", true, false,
                    fmtDouble(ja.zeroOffset), fmtDouble(jc.zeroOffset));
         }
+        emitSourced(b,ModelDiffGroup::Parameters,oid,kJointBounds,prefix+".maxVelocity","maxVelocity",ja.maxVelocity,jc.maxVelocity);
+        emitSourced(b,ModelDiffGroup::Parameters,oid,kJointBounds,prefix+".maxAcceleration","maxAcceleration",ja.maxAcceleration,jc.maxAcceleration);
         emitSourced(b, ModelDiffGroup::Parameters, oid, kJointBounds,
                     prefix + ".bounds", "bounds", ja.bounds, jc.bounds);  // rad/m
         emitSourced(b, ModelDiffGroup::Parameters, oid, kJointWorkingRange,
@@ -829,6 +833,119 @@ void diffReferencesAndResources(const RobotDesign& a, const RobotDesign& c, Diff
     }
 }
 
+/** @brief F13：部件递归字段差异，仅比较输入值，不构造模型/对象身份或写入项目。 */
+void diffParts(const ModelingWorkingSet& a,const ModelingWorkingSet& c,DiffBuilder& b)
+{
+    const auto text=[&](ModelDiffGroup group,const core::ObjectId& id,const std::string& path,
+        const std::string& before,const std::string& after){
+        if(before!=after){b.push(group,ModelDiffChangeKind::Modified,id,kNotes,path,path,true,false,before,after);}
+    };
+    const auto body=[&](const core::ObjectId& id,const std::string& path,const BodyData& old,const BodyData& now){
+        emitSourced(b,ModelDiffGroup::Properties,id,kLinkMass,path+".mass","mass",old.mass,now.mass);
+        emitSourced(b,ModelDiffGroup::Properties,id,kLinkCenterOfMass,path+".centerOfMass","centerOfMass",old.centerOfMass,now.centerOfMass);
+        emitSourced(b,ModelDiffGroup::Properties,id,kLinkInertia,path+".inertia","inertia",old.inertia,now.inertia);
+        if(optionalDiffers(old.material,now.material)){
+            bool valueChanged=true,provenanceChanged=false;
+            if(old.material&&now.material){
+                const auto flags=compareSourced(old.material->density,now.material->density);
+                valueChanged=old.material->materialId!=now.material->materialId||flags.valueChanged;
+                provenanceChanged=flags.provenanceChanged;
+            }
+            b.push(ModelDiffGroup::Properties,ModelDiffChangeKind::Modified,id,kLinkMaterial,path+".material","material",valueChanged,provenanceChanged,
+                old.material?renderMaterial(*old.material):"",now.material?renderMaterial(*now.material):"");
+        }
+    };
+    const auto geometry=[&](const core::ObjectId& id,const std::string& path,const auto& old,const auto& now){
+        if(optionalDiffers(old,now)){text(ModelDiffGroup::Structure,id,path,old?renderGeometry(*old):"absent",now?renderGeometry(*now):"absent");}
+    };
+    // 对象由稳定ID匹配；集合行序不作对象身份，TCP/pose再按各自稳定键匹配。
+    const auto match=[&](const auto& before,const auto& after,const std::string& kind,const auto& fields){
+        for(const auto& now:after){
+            const auto found=std::find_if(before.begin(),before.end(),[&](const auto& old){return old.objectId==now.objectId;});
+            if(found!=before.end()){fields(*found,now,kind+"["+now.objectId.toCanonical()+"]");}
+        }
+    };
+    match(a.toolObjects,c.toolObjects,"tool",[&](const ToolDefinition& old,const ToolDefinition& now,const std::string& path){
+        const auto id=now.objectId;
+        text(ModelDiffGroup::Structure,id,path+".schemaVersion",fmtUint(old.schemaVersion),fmtUint(now.schemaVersion));
+        text(ModelDiffGroup::Structure,id,path+".localName",old.localName,now.localName);
+        text(ModelDiffGroup::Structure,id,path+".displayName",old.displayName,now.displayName);
+        text(ModelDiffGroup::Properties,id,path+".payloadAttributes.present",old.payloadAttributes?"true":"false",now.payloadAttributes?"true":"false");
+        if(old.payloadAttributes||now.payloadAttributes){
+            text(ModelDiffGroup::Properties,id,path+".payloadAttributes.ratedLoad",old.payloadAttributes?fmtDouble(old.payloadAttributes->ratedLoad):"absent",now.payloadAttributes?fmtDouble(now.payloadAttributes->ratedLoad):"absent");
+        }
+        text(ModelDiffGroup::Parameters,id,path+".mountInterface",renderPose(old.mountInterface),renderPose(now.mountInterface));
+        geometry(id,path+".geometry",old.geometry,now.geometry);body(id,path+".body",old.body,now.body);
+        std::map<std::string,const TcpEntry*> before,after;
+        for(const auto& tcp:old.tcpList){before.emplace(tcp.key,&tcp);}for(const auto& tcp:now.tcpList){after.emplace(tcp.key,&tcp);}
+        for(const auto& entry:before){if(!after.count(entry.first)){
+            b.push(ModelDiffGroup::Parameters,ModelDiffChangeKind::Removed,id,kNotes,path+".tcp["+entry.first+"]","tcp",true,false,renderPose(entry.second->offset),"");}}
+        for(const auto& entry:after){const auto found=before.find(entry.first);const auto tcpPath=path+".tcp["+entry.first+"]";
+            if(found==before.end()){b.push(ModelDiffGroup::Parameters,ModelDiffChangeKind::Added,id,kNotes,tcpPath,"tcp",true,false,"",renderPose(entry.second->offset));}
+            else{text(ModelDiffGroup::Parameters,id,tcpPath+".offset",renderPose(found->second->offset),renderPose(entry.second->offset));
+                text(ModelDiffGroup::Parameters,id,tcpPath+".displayName",found->second->displayName,entry.second->displayName);}
+        }
+    });
+    match(a.sceneObjects,c.sceneObjects,"scene",[&](const SceneObject& old,const SceneObject& now,const std::string& path){
+        const auto id=now.objectId;
+        text(ModelDiffGroup::Structure,id,path+".schemaVersion",fmtUint(old.schemaVersion),fmtUint(now.schemaVersion));
+        text(ModelDiffGroup::Structure,id,path+".localName",old.localName,now.localName);
+        text(ModelDiffGroup::Parameters,id,path+".worldPose",renderPose(old.worldPose),renderPose(now.worldPose));
+        text(ModelDiffGroup::Structure,id,path+".role",std::string(sceneObjectRoleToken(old.role)),std::string(sceneObjectRoleToken(now.role)));
+        geometry(id,path+".geometry",old.geometry,now.geometry);
+        text(ModelDiffGroup::Structure,id,path+".collisionProfileHint",old.collisionProfileHint?"provided:"+*old.collisionProfileHint:"absent",now.collisionProfileHint?"provided:"+*now.collisionProfileHint:"absent");
+    });
+    if(a.poseSetObject&&c.poseSetObject&&a.poseSetObject->objectId==c.poseSetObject->objectId){
+        const auto& old=*a.poseSetObject;const auto& now=*c.poseSetObject;const auto id=now.objectId;
+        const auto path="poseSet["+id.toCanonical()+"]";
+        text(ModelDiffGroup::Parameters,id,path+".schemaVersion",fmtUint(old.schemaVersion),fmtUint(now.schemaVersion));
+        std::map<std::string,const PoseSetEntry*> before,after;
+        for(const auto& pose:old.entries){before.emplace(pose.key,&pose);}for(const auto& pose:now.entries){after.emplace(pose.key,&pose);}
+        const auto config=[](const std::vector<double>& values){std::string out;for(const auto value:values){out+=fmtDouble(value)+",";}return out;};
+        for(const auto& entry:before){if(!after.count(entry.first)){b.push(ModelDiffGroup::Parameters,ModelDiffChangeKind::Removed,id,kNotes,path+".entries["+entry.first+"]","pose",true,false,config(entry.second->jointConfiguration),"");}}
+        for(const auto& entry:after){const auto found=before.find(entry.first);const auto posePath=path+".entries["+entry.first+"]";
+            if(found==before.end()){b.push(ModelDiffGroup::Parameters,ModelDiffChangeKind::Added,id,kNotes,posePath,"pose",true,false,"",config(entry.second->jointConfiguration));}
+            else{text(ModelDiffGroup::Parameters,id,posePath+".jointConfiguration",config(found->second->jointConfiguration),config(entry.second->jointConfiguration));
+                text(ModelDiffGroup::Parameters,id,posePath+".note",found->second->note,entry.second->note);}
+        }
+    }
+    if(a.drivetrainObject&&c.drivetrainObject&&a.drivetrainObject->objectId==c.drivetrainObject->objectId){
+        const auto& old=*a.drivetrainObject;const auto& now=*c.drivetrainObject;const auto id=now.objectId;
+        const auto path="drivetrain["+id.toCanonical()+"]";
+        text(ModelDiffGroup::Parameters,id,path+".schemaVersion",fmtUint(old.schemaVersion),fmtUint(now.schemaVersion));
+        const auto array=[&](const auto& before,const auto& after,const std::string& name,const auto& fields){
+            using Value=typename std::decay_t<decltype(before)>::value_type;
+            const Value missing{};
+            for(std::size_t i=0;i<std::max(before.size(),after.size());++i){
+                fields(i<before.size()?before[i]:missing,i<after.size()?after[i]:missing,path+"."+name+"["+fmtUint(i)+"]");
+            }
+            text(ModelDiffGroup::Parameters,id,path+"."+name+".size",fmtUint(before.size()),fmtUint(after.size()));
+        };
+        array(old.ratioPerJoint,now.ratioPerJoint,"ratioPerJoint",[&](const auto& before,const auto& after,const std::string& field){emitSourced(b,ModelDiffGroup::Parameters,id,kNotes,field,"ratio",before,after);});
+        array(old.frictionPerJoint,now.frictionPerJoint,"frictionPerJoint",[&](const auto& before,const auto& after,const std::string& field){
+            emitSourced(b,ModelDiffGroup::Properties,id,kNotes,field+".viscous","viscous",before.viscous,after.viscous);
+            emitSourced(b,ModelDiffGroup::Properties,id,kNotes,field+".coulomb","coulomb",before.coulomb,after.coulomb);
+            emitSourced(b,ModelDiffGroup::Properties,id,kNotes,field+".bias","bias",before.bias,after.bias);});
+        array(old.torqueLimitsPerJoint,now.torqueLimitsPerJoint,"torqueLimitsPerJoint",[&](const auto& before,const auto& after,const std::string& field){
+            emitSourced(b,ModelDiffGroup::Parameters,id,kNotes,field+".rated","rated",before.rated,after.rated);
+            emitSourced(b,ModelDiffGroup::Parameters,id,kNotes,field+".peak","peak",before.peak,after.peak);});
+        const auto coupling=[](const auto& value){std::string out;if(!value){return std::string("absent");}
+            out=fmtUint(value->rows)+"x"+fmtUint(value->cols)+" ["+fmtUint(value->jointRangeFirst)+","+fmtUint(value->jointRangeLast)+"] ";
+            for(const auto x:value->c){out+=fmtDouble(x)+",";}return out+" condition="+fmtDouble(value->conditionNumber);};
+        text(ModelDiffGroup::Parameters,id,path+".coupling",coupling(old.coupling),coupling(now.coupling));
+        if(optionalDiffers(old.catalogBackfill,now.catalogBackfill)){
+            text(ModelDiffGroup::Parameters,id,path+".catalogBackfill.present",old.catalogBackfill?"true":"false",now.catalogBackfill?"true":"false");
+            const CatalogBackfill absent{};
+            const auto& before=old.catalogBackfill?*old.catalogBackfill:absent;
+            const auto& after=now.catalogBackfill?*now.catalogBackfill:absent;
+            text(ModelDiffGroup::Parameters,id,path+".catalogBackfill.catalogVersion",before.catalogVersion,after.catalogVersion);
+            text(ModelDiffGroup::Parameters,id,path+".catalogBackfill.motorKey",before.motorKey,after.motorKey);
+            text(ModelDiffGroup::Parameters,id,path+".catalogBackfill.reducerKey",before.reducerKey,after.reducerKey);
+            text(ModelDiffGroup::Parameters,id,path+".catalogBackfill.mounting",before.mounting,after.mounting);
+        }
+    }
+}
+
 }  // namespace
 
 ModelDiffReport ModelDiffService::diff(const ModelingWorkingSet& baseline,
@@ -851,6 +968,11 @@ ModelDiffReport ModelDiffService::diff(const ModelingWorkingSet& baseline,
     diffJoints(baseline.design, candidate.design, authorityBothExplicit, builder);
     diffLinks(baseline.design, candidate.design, builder);
     diffReferencesAndResources(baseline.design, candidate.design, builder);
+    diffParts(baseline,candidate,builder);
+    if(baseline.design.flangeOffset!=candidate.design.flangeOffset){
+        builder.push(ModelDiffGroup::Parameters,ModelDiffChangeKind::Modified,candidate.rootObjectId.value_or(core::ObjectId{}),kNotes,
+            "flangeOffset","flangeOffset",true,false,renderPose(baseline.design.flangeOffset),renderPose(candidate.design.flangeOffset));
+    }
     builder.finalize(report);
     return report;
 }

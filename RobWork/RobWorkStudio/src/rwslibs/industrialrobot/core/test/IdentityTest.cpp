@@ -98,15 +98,14 @@ TEST(IdentityGenerate, NonZeroAndUnique_UT_ID_T)
     ASSERT_TRUE(g.isValid());                        // 非零保证（保留值重取）
 
     constexpr int kN = 1000000;                      // §8 明文 1e6 次
-    std::unordered_set<std::size_t> seen;
+    std::unordered_set<ObjectId> seen;
     seen.reserve(kN * 2);
     for (int i = 0; i < kN; ++i) {
         const ObjectId id = ObjectId::generate();
         ASSERT_TRUE(id.isValid());
-        seen.insert(std::hash<ObjectId>{}(id));      // 128 位→64 位哈希去重（哈希碰撞远低于 1 分辨率——见下）
+        seen.insert(id);   // 完整身份相等判重；容器hash碰撞不等于对象身份重复。
     }
-    // 注意：size_t 只有 64 位，1e6 个 128 位随机值的 64 位指纹碰撞概率 ≈ 1e12/2^64 ≈ 5e-8，
-    // 若确发生指纹碰撞属统计正常——断言按去重计数容差 0（实测概率可忽略，出现即复核）。
+    // 抽样补充实际入口检查；独立流熵消费由固定输入回归钉住，不只依赖随机未碰撞。
     EXPECT_EQ(seen.size(), static_cast<std::size_t>(kN));
 }
 
@@ -205,3 +204,37 @@ TEST(IdentityFnv, PublicTypesAndContainer_UT_ID_T)
       std::unordered_set<EventId> ids; ids.insert(id); EXPECT_EQ(ids.count(id),1u); }
 }
 }  // namespace
+
+// CORE-T12：首个熵字相同而后续熵不同的独立流必须参与播种，不能退回32位空间。
+#include "../src/IdentityRandom.hpp"
+namespace {
+/// 固定32位均匀源：只供验证真实播种边界，不替代生产random_device。
+struct FixedIdentityEntropy {
+    using result_type = std::uint32_t;
+    std::array<result_type,4> words;
+    std::size_t used = 0;
+    static constexpr result_type min() { return 0; }
+    static constexpr result_type max() { return UINT32_MAX; }
+    result_type operator()() { return words.at(used++); }
+};
+/** CORE-T12：固定输入钉住128位熵消费，每个熵字均须影响引擎流。 */
+TEST(IdentityGenerate, EveryEntropyWordAffectsStream_CORE_T12)
+{
+    FixedIdentityEntropy first{{7, 11, 13, 17}}, same{first};
+    auto a = sdurws::ird::core::detail::makeIdentityEngine(first);
+    auto b = sdurws::ird::core::detail::makeIdentityEngine(same);
+    EXPECT_EQ(first.used, 4u);
+    EXPECT_EQ(same.used, 4u);
+    const std::array<std::uint64_t, 2> expected{a(), a()}, repeated{b(), b()};
+    EXPECT_EQ(expected, repeated);  // 固定同熵输入确定性一致。
+    for (std::size_t i = 0; i < first.words.size(); ++i) {
+        SCOPED_TRACE(i);
+        FixedIdentityEntropy changed{first.words};
+        ++changed.words[i];
+        auto engine = sdurws::ird::core::detail::makeIdentityEngine(changed);
+        EXPECT_EQ(changed.used, 4u);
+        const std::array<std::uint64_t, 2> actual{engine(), engine()};
+        EXPECT_NE(actual, expected);  // 逐字反例防止丢弃任意32位熵。
+    }
+}
+} // namespace

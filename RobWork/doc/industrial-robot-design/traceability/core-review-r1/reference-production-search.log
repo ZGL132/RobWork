@@ -1,0 +1,17 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:597:    core::ReferenceEventBus m_bus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\EventBus.hpp:145:     *             不同：core ReferenceEventBus::removeSink 删除该 sink 的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\ArchiveContractTest.cpp:22: *   1. 事件总线＝core ReferenceEventBus（core.md §5.8"测试内参考总线"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\ArchiveContractTest.cpp:67:using sdurws::ird::core::ReferenceEventBus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\ArchiveContractTest.cpp:243:        m_bus = std::make_unique<ReferenceEventBus>();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\ArchiveContractTest.cpp:263:    ReferenceEventBus& bus() { return *m_bus; }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\ArchiveContractTest.cpp:272:    std::unique_ptr<ReferenceEventBus> m_bus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\Tx15Child.cpp:73:using sdurws::ird::core::ReferenceEventBus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\Tx15Child.cpp:350:    ReferenceEventBus bus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\StubHandlers.hpp:702:    core::ReferenceEventBus bus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\SolidifyStubs.hpp:41:#include "StubHandlers.hpp"  // stub::StubSink／core::ReferenceEventBus 复用
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\SolidifyStubs.hpp:206:    core::ReferenceEventBus bus; ///< 参考总线（提交事件观察）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\PackageStubs.hpp:350:    core::ReferenceEventBus bus;       ///< 参考总线（新上下文打开注入）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\test\CommandServiceTest.cpp:37: *   3. 事件观测经 core ReferenceEventBus（测试内参考总线——生产总线归
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.hpp:625:    /// 者 FIFO、RAII 退订、drain on close；core::ReferenceEventBus 是"非生产
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:106:                                              // core::ReferenceEventBus 非生产组件，2026-10-25 起本插件不再装配）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:760:    // 句柄、析构 drain on close。core::ReferenceEventBus 是测试语义钉子

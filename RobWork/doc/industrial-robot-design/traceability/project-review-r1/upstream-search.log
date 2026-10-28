@@ -1,0 +1,20 @@
+56:        static void readFile (const std::string& file_name, std::vector< char >& result);
+122:        static std::vector< std::string > getFilesInFolder (const std::string& path, bool recursive,
+134:        static void getFilesInFolder (const std::string& path, const std::string& fileMask,
+143:        static size_t getFileSize (const std::string& filename);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.hpp:32: *   （本单元唯一哈希入口，内部即 core::ContentDigester）计算；文件名 hex
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.hpp:94: * core 提供，二者组合——组合式见 ObjectKeyHash）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.hpp:117:struct ObjectKeyHash {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.hpp:383:        std::shared_ptr<const std::vector<std::uint8_t>>>>::iterator, ObjectKeyHash> m_index;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.hpp:388:    std::unordered_set<ObjectKey, ObjectKeyHash> m_verified;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:121:    // 摘要半边：只经 core ContentDigester（CR-02 唯一哈希入口）——对读回
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:466:    // 重算比对，切换后自校验因此可复现（CR-02：摘要只经 core ContentDigester）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:880:TxRecoveryScan TxEngine::scanForRecovery(bool cleanupTemporaryFiles)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:1096:        closure = loader.committedClosure(head.revisionId);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp:1151:        std::unordered_set<objstore::ObjectKey, objstore::ObjectKeyHash> seenObjects;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:15: *     只经 core ContentDigester——本文件除 contentVersionOf 外无任何哈希
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1334:bool isCommandTypeToken(std::string_view token) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1360:        if (!isCommandTypeToken(t)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1376:        if (!isCommandTypeToken(i.commandType)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1542:    // 唯一哈希路径：core ContentDigester（SHA-256，FIPS 180-2——CORE-T02
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp:1545:    core::ContentDigester digester;

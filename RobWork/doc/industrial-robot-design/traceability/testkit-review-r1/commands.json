@@ -1,0 +1,906 @@
+{
+  "cwd": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork",
+  "commands": [
+    {
+      "source": "integration\\results.json",
+      "name": "testkit-final",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_test.exe",
+        "--gtest_filter=CheckClose.*:AllCloseWithin.*:CheckAtMost.*:CheckIdentical.*:AssertMacrosBehavior.*:Set*.*:StableOrder.*:ToleranceProfile*.*:Dataset*.*:TempDir*.*:ReproRecord*.*:DeterministicEnv*.*:DemoFixture.*:PureFixture.*:Json*.*:PerfBenchmark.*:ReproBenchmark.*:TestRecordJson.*:Report*.*:RecordStore.*:RptDemoFixture.*:ListenerOwnership.*:ProcessRunner*.*:TestdataLint.*",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\testkit-final.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\testkit-final.ird-test-report.json"
+      ],
+      "actualExit": 0,
+      "status": "PASS",
+      "passed": 106,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "source": "integration\\results.json",
+      "name": "optimization",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_optimization_test.exe",
+        "--gtest_filter=OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1:OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\optimization.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\optimization.ird-test-report.json"
+      ],
+      "actualExit": 0,
+      "status": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "source": "integration\\results.json",
+      "name": "policy",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_policy_test.exe",
+        "--gtest_filter=PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs:PolicyContractDoubles.At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\policy.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\policy.ird-test-report.json"
+      ],
+      "actualExit": 0,
+      "status": "FAIL",
+      "error": "AssertionError('过滤必须命中真实用例')"
+    },
+    {
+      "source": "integration\\results.json",
+      "name": "project",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_project_contract_test.exe",
+        "--gtest_filter=Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\project.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\integration\\project.ird-test-report.json"
+      ],
+      "actualExit": 0,
+      "status": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "source": "policy-final\\results.json",
+      "name": "policy",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_policy_contract_test.exe",
+        "--gtest_filter=PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs:PolicyContractDoubles.At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\policy-final\\policy.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\policy-final\\policy.ird-test-report.json"
+      ],
+      "actualExit": 0,
+      "status": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "source": "report-smoke\\results.json",
+      "name": "Passes",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\core-smoke\\testkit\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.Passes",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\Passes.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\Passes.json"
+      ],
+      "actualExit": 0,
+      "expected": "passed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-smoke\\results.json",
+      "name": "Fails",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\core-smoke\\testkit\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.Fails",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\Fails.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\Fails.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-smoke\\results.json",
+      "name": "Skips",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\core-smoke\\testkit\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.Skips",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\Skips.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\Skips.json"
+      ],
+      "actualExit": 0,
+      "expected": "skipped",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 1,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-smoke\\results.json",
+      "name": "NonFiniteDetails_ReviewR03",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\core-smoke\\testkit\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.NonFiniteDetails_ReviewR03",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\NonFiniteDetails_ReviewR03.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\NonFiniteDetails_ReviewR03.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-smoke\\results.json",
+      "name": "MissingActual_ReviewR03",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\core-smoke\\testkit\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.MissingActual_ReviewR03",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\MissingActual_ReviewR03.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\MissingActual_ReviewR03.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-smoke\\results.json",
+      "name": "MissingExpected_ReviewR03",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\core-smoke\\testkit\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.MissingExpected_ReviewR03",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\MissingExpected_ReviewR03.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\MissingExpected_ReviewR03.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-smoke\\results.json",
+      "name": "ExactSeed_ReviewR06",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\core-smoke\\testkit\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.ExactSeed_ReviewR06",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\ExactSeed_ReviewR06.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-smoke\\ExactSeed_ReviewR06.json"
+      ],
+      "actualExit": 0,
+      "expected": "passed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-integration\\results.json",
+      "name": "Passes",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.Passes",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Passes.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Passes.json"
+      ],
+      "actualExit": 0,
+      "expected": "passed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-integration\\results.json",
+      "name": "Fails",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.Fails",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Fails.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Fails.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-integration\\results.json",
+      "name": "Skips",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.Skips",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Skips.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\Skips.json"
+      ],
+      "actualExit": 0,
+      "expected": "skipped",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 1,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-integration\\results.json",
+      "name": "NonFiniteDetails_ReviewR03",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.NonFiniteDetails_ReviewR03",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\NonFiniteDetails_ReviewR03.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\NonFiniteDetails_ReviewR03.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-integration\\results.json",
+      "name": "MissingActual_ReviewR03",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.MissingActual_ReviewR03",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingActual_ReviewR03.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingActual_ReviewR03.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-integration\\results.json",
+      "name": "MissingExpected_ReviewR03",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.MissingExpected_ReviewR03",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingExpected_ReviewR03.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\MissingExpected_ReviewR03.json"
+      ],
+      "actualExit": 1,
+      "expected": "failed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "report-integration\\results.json",
+      "name": "ExactSeed_ReviewR06",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testkit_lsnchild.exe",
+        "--gtest_filter=LsnChild.ExactSeed_ReviewR06",
+        "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\ExactSeed_ReviewR06.xml",
+        "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\report-integration\\ExactSeed_ReviewR06.json"
+      ],
+      "actualExit": 0,
+      "expected": "passed",
+      "status": "PASS",
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      }
+    },
+    {
+      "source": "headers\\results.json",
+      "header": "Check.hpp",
+      "command": [
+        "cl.exe",
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/utf-8",
+        "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+        "/Zs",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\Check.cpp"
+      ],
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "headers\\results.json",
+      "header": "JsonLite.hpp",
+      "command": [
+        "cl.exe",
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/utf-8",
+        "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+        "/Zs",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\JsonLite.cpp"
+      ],
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "headers\\results.json",
+      "header": "PerfBenchmark.hpp",
+      "command": [
+        "cl.exe",
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/utf-8",
+        "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+        "/Zs",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\PerfBenchmark.cpp"
+      ],
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "headers\\results.json",
+      "header": "ReproBenchmark.hpp",
+      "command": [
+        "cl.exe",
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/utf-8",
+        "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+        "/Zs",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\ReproBenchmark.cpp"
+      ],
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "headers\\results.json",
+      "header": "SetCheck.hpp",
+      "command": [
+        "cl.exe",
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/utf-8",
+        "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+        "/Zs",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\SetCheck.cpp"
+      ],
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "headers\\results.json",
+      "header": "gtest/AssertMacros.hpp",
+      "command": [
+        "cl.exe",
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/utf-8",
+        "/DGTEST_LINKED_AS_SHARED_LIBRARY=1",
+        "/Zs",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include",
+        "/IC:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWork\\src",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include",
+        "/ID:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3",
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-fixes\\headers\\AssertMacros.cpp"
+      ],
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-clean",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\clean"
+      ],
+      "expectedExit": 0,
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-library",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\library"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-header",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\header"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-dataset",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\dataset"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-near-name",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\near-name"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-near-directory",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\near-directory"
+      ],
+      "expectedExit": 0,
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-near-library",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\near-library"
+      ],
+      "expectedExit": 0,
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "scan-missing-root",
+      "command": [
+        "C:/Users/zgl18/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+        "-InstallRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\missing-root"
+      ],
+      "expectedExit": 2,
+      "actualExit": 2,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "lint-default-dict",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+      ],
+      "expectedExit": 0,
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "lint-missing-profile",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "lint-unknown-at",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "lint-optional-parameters",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+      ],
+      "expectedExit": 0,
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "lint-malformed-dictionary",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\data"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "tools\\tool-results.json",
+      "name": "lint-missing-root",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-li7di_so\\absent-data"
+      ],
+      "expectedExit": 2,
+      "actualExit": 2,
+      "status": "PASS"
+    },
+    {
+      "source": "lint-final\\tool-results.json",
+      "name": "lint-default-dict",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+      ],
+      "expectedExit": 0,
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "lint-final\\tool-results.json",
+      "name": "lint-missing-profile",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "lint-final\\tool-results.json",
+      "name": "lint-unknown-at",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "lint-final\\tool-results.json",
+      "name": "lint-optional-parameters",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+      ],
+      "expectedExit": 0,
+      "actualExit": 0,
+      "status": "PASS"
+    },
+    {
+      "source": "lint-final\\tool-results.json",
+      "name": "lint-malformed-dictionary",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+      ],
+      "expectedExit": 1,
+      "actualExit": 1,
+      "status": "PASS"
+    },
+    {
+      "source": "lint-final\\tool-results.json",
+      "name": "lint-missing-root",
+      "command": [
+        "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+        "--root",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\absent-data"
+      ],
+      "expectedExit": 2,
+      "actualExit": 2,
+      "status": "PASS"
+    },
+    {
+      "name": "最终集成增量构建",
+      "command": [
+        "cmake",
+        "--build",
+        "build",
+        "--config",
+        "Release",
+        "--target",
+        "sdurws_ird_testkit_test",
+        "sdurws_ird_optimization_test",
+        "sdurws_ird_policy_test",
+        "sdurws_ird_project_contract_test",
+        "--",
+        "/m:1"
+      ],
+      "log": "build-integration-final.log",
+      "actualExit": 0
+    },
+    {
+      "name": "policy真实契约目标补建",
+      "command": [
+        "cmake",
+        "--build",
+        "build",
+        "--config",
+        "Release",
+        "--target",
+        "sdurws_ird_policy_contract_test",
+        "--",
+        "/m:1"
+      ],
+      "log": "build-policy-contract.log",
+      "actualExit": 0
+    },
+    {
+      "name": "独立冒烟增量构建",
+      "command": [
+        "cmake",
+        "--build",
+        "build/core-smoke",
+        "--config",
+        "Release",
+        "--target",
+        "sdurws_ird_testkit_test",
+        "--",
+        "/m:1"
+      ],
+      "log": "build-smoke-final.log",
+      "actualExit": 0
+    },
+    {
+      "name": "ird_gates及自测",
+      "command": [
+        "cmake",
+        "-DIRD_ROOT=C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot",
+        "-DIRD_SELFTEST_DIR=C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\testkit-review-gates",
+        "-P",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake"
+      ],
+      "log": "ird-gates.log",
+      "actualExit": 0
+    }
+  ],
+  "earlierLogs": [
+    {
+      "log": "assertions-red.log",
+      "filterEvidence": "Note: Google Test filter = *ReviewR01:*ReviewR02:*ReviewR05:*ReviewR11",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "io-red.log",
+      "filterEvidence": "Note: Google Test filter = *ReviewR07:*ReviewR08",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "data-red.log",
+      "filterEvidence": "Note: Google Test filter = *ReviewF015:*ReviewF017:*ReviewF018",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "format-red.log",
+      "filterEvidence": "Note: Google Test filter = *ReviewR03:*ReviewR06",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "group-green3.log",
+      "filterEvidence": "Note: Google Test filter = *ReviewR*:*ReviewF*:Set*:StableOrder*:AssertMacrosBehavior.*:Json*:Dataset*:ToleranceProfile*:PerfBenchmark.*:ReproBenchmark.*",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "testkit.log",
+      "filterEvidence": "Note: Google Test filter = LsnChild.Passes",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "json-final.log",
+      "filterEvidence": "Note: Google Test filter = Json*:Dataset*:ToleranceProfile*:Repro*:Report*:DemoFixture.*:Bad*.*:TestdataLint.*",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "format-green.log",
+      "filterEvidence": "Note: Google Test filter = *ReviewR03*:*ReviewR06*",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    },
+    {
+      "log": "smoke-final.log",
+      "filterEvidence": "Note: Google Test filter = Json*:ReproRecordReview.*:ReproBenchmark.*:TestRecordJson.*:ListenerOwnership.*:*ReviewR01*:*ReviewR02*:*ReviewR04*:*ReviewR05*:*ReviewR11*:*ReviewR12*",
+      "commandEvidence": "过滤参数保留于原输出；此前完整shell调用未另存命令JSON，不据此伪造完整参数。最终覆盖命令见上方独立驱动结果。"
+    }
+  ]
+}

@@ -228,6 +228,12 @@ ProjectMetadataRecord parseMetadataRecord(std::string_view text);
  */
 CommandRecord parseCommandRecord(std::string_view text);
 
+/** @brief §4.4.4命令token的唯一词法判据；注册、写入和解析共用。
+ * @param token [in] ASCII命令身份，须满足[a-z0-9-]{3,64}。
+ * @return 是否符合冻结语法；无副作用，不解释领域载荷。
+ */
+bool isCommandTypeToken(std::string_view token) noexcept;
+
 /**
  * @brief canonical JSON → DraftDocument（*.draft.json 读取）。版本判定同
  *        parseStaticIdentity（schemaVersion＝草稿格式版本，随整体联动）。

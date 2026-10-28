@@ -1,0 +1,263 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "EV-T13",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/EV-T13.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+      "sha256": "641327234d0256f1bce2886454414680cb6fff44e62e622524ed283b23e34df0",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Compatibility.hpp",
+      "sha256": "58d0b7e130244292cfa479acdb83f27ad72b7f3c6ce4e0a9a6e07b81a7b94984",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Dependency.hpp",
+      "sha256": "852871019d451e153ecfbbcf11cfa91e2cadadea466f832db7a8cb47b0253f43",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Envelope.hpp",
+      "sha256": "9433261f2f2ec986fab155573a24f24fb0bb92e68dac659821784bcaac24857a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
+      "sha256": "b940badd9ce5e3f8b286b5f6cde1e1bc6ed2ad51e65c7245225ddf34d7894a04",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evidence.hpp",
+      "sha256": "3e93699961ca64a8860e0d5821f9d90a5b2317bec31b24f2f12b4c887cefefbb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Slice.hpp",
+      "sha256": "1fe8efc4fdf0afffad87f88cf3fac5a5693f2c18e915a14bdfec4477822cf8db",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Snapshot.hpp",
+      "sha256": "c540eb39903e9856a226a25d294720588b5113a6ab66532e2aa729ffd7513ed7",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Compatibility.cpp",
+      "sha256": "900a3e76cd4cf2d48b306305070c09f8c4f469a56567520ecaa7d7718618766a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Envelope.cpp",
+      "sha256": "a11b078367945142efe9d4da2cfb70b877500f3aa4642c7e0ba516996a814412",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "sha256": "7adb2c1ce5eaa75bda04d738c3d88b4ec3cfd1ffea34dc22a24ac439de1b3f9d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp",
+      "sha256": "8aab2f30d6c0cfc90f86ff96de7f78215ea870976cf02763411fd767d69fd524",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+      "sha256": "0207f4a3b74849585e7f8e3525956aeffb433ae29dd9db3bfffbe71fcd0bf39d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+      "sha256": "93e5952f75a837ca1b3c5156414046499e036bf5ef96672203221e70a54c714a",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
+      "sha256": "db222aa1f78c4b1a78f732d57d63ca25aab0930b025fc588d5df07a44b995c0e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/CompatibilityTest.cpp",
+      "sha256": "6040f738f50d9a89fb1820f7ec78a2ff0711eec75b5938672b8572b87b62058f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/CurrentnessTest.cpp",
+      "sha256": "7ea189f7a79846d7a6e669ea708b0f927fe0ede546b6889927350f199475b19b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/EvaluatorPortSuiteTest.cpp",
+      "sha256": "ea5486a61e5cb1d25b3d10c66bdc2d585fdb035b572e1b4d101a8beac0d9f178",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/EvidenceTest.cpp",
+      "sha256": "e5eaa1e679ba360900f93e4c808285e16f1ae4ad473f50dcb4a0fe32a32774ef",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/SliceFixtureContractTest.cpp",
+      "sha256": "7086e96b3b2b2d559a8a4937cda63fb83b6ac347a5d337a17ac63403c5639cd9",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/SliceTest.cpp",
+      "sha256": "9b3d7c4227327ce2b6209f1481ac8d3ee106cb80b404f3271090f0fd11166a14",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/SnapshotTest.cpp",
+      "sha256": "0ae98d0374ed19db198248ed56f0272799e2d498960ad39ed039b7bc6787f0bc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/VerdictTest.cpp",
+      "sha256": "a75a139db416c07d50f3c8df9bce47a5defb0ac7724a91be3c9e84b2798c92ad",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/CacheJudgeContractTest.cpp",
+      "sha256": "c4c280a53fa6bab134936862158ba1bc1500e7effa8bd3e3b11ed9ae1b87cafc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/Checkpoint.hpp",
+      "sha256": "0316e32adddd3274890e462bdf7b537b60674a238d57e2a111dd028b824dd2ec",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Checkpoint.cpp",
+      "sha256": "cbbe5eccd9ef0829da6b9d6354b313e265a755fe005157377c68e0fb868891c4",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/CheckpointCacheTest.cpp",
+      "sha256": "6f95dd3d6f1834dd84d18fdc2e60a54b614b4805d2d6dbaabe6bee7104d211c3",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+      "sha256": "4d30eaded1c1622ea719907e533cb4ddd27731e185c942f28db3b5019fb9d81b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/OptRunTimeBenchmarkTest.cpp",
+      "sha256": "f985ab0c553b19e738d44e34ab0827630d281f03d6d0deaf6fb74697f3dc06bb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/JointRunTest.cpp",
+      "sha256": "bd87215466176a10e64470b5193b105d9b82a62c5777713e642d670a2b727c84",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/ReviewRegressionTest.cpp",
+      "sha256": "0a9f9d4dbc209e512711bdf2bae4dede32987dfbfa1b4ece268cd20b2ad00828",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/FreezeFixture.hpp",
+      "sha256": "6d21bb68794a8db7b73a552d9a8a91f18457519ca38bc48e1e45f3f655afea0c",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EV-T13：复用core摘要、evidence唯一构造/校验契约及既有端口；不新增模型/算法owner或外部依赖，保留历史版本。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md"
+    }
+  ]
+}

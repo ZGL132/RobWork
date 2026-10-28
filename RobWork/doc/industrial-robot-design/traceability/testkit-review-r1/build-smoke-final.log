@@ -1,0 +1,27 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\core\Release\sdurws_ird_core.lib
+  Dataset.cpp
+  Fixture.cpp
+  JsonLite.cpp
+  Report.cpp
+  ToleranceProfile.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\testkit\Release\sdurws_ird_testkit.lib
+  main.cpp
+  sdurws_ird_testdata_lint.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\testkit\Release\sdurws_ird_testdata_lint.exe
+  main.cpp
+  sdurws_ird_testkit_lsnchild.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\testkit\Release\sdurws_ird_testkit_lsnchild.exe
+  sdurws_ird_testkit_prochelper.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\testkit\Release\sdurws_ird_testkit_prochelper.exe
+  CheckTest.cpp
+  CoreIntegrationExampleTest.cpp
+  DatasetTest.cpp
+  FixtureTest.cpp
+  JsonLiteTest.cpp
+  ListenerOwnershipTest.cpp
+  PerfBenchmarkTest.cpp
+  ReportTest.cpp
+  ReproBenchmarkTest.cpp
+  TestMain.cpp
+  正在生成代码...
+  sdurws_ird_testkit_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\core-smoke\testkit\Release\sdurws_ird_testkit_test.exe

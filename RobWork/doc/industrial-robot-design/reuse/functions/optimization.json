@@ -1,1511 +1,1597 @@
 {
- "schemaVersion": "ird-reuse-functions/1",
- "unit": "optimization",
- "functions": [
-  {
-   "functionId": "optimization.generateSeededLhsCandidates",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "symbol": "generateSeededLhsCandidates",
-     "qualifiedSymbol": "sdurws::ird::optimization::generateSeededLhsCandidates",
-     "startLine": 404,
-     "endLine": 528,
-     "sha256": "4fd10f4f6fd33672c080888e4e450304025f557348530cd60e9c7386b2adeac5"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"generateSeededLhsCandidates|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5/S6（QSampler种子面、LHS词边界反证、sandbox构建注册、math采样器清单，命令与输出见REUSE-T36/random-lhs-search.md）",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：rw全库无LHS/拉丁超立方/分层采样（S4r词边界检索零有效命中），QSampler为无种子均匀采样（QSampler.cpp:104），RobWorkSim sandbox无优化目标注册（src/CMakeLists.txt无sandbox）——LHS无上游直接等价入口"
-   },
-   "differences": "自持SplitMix64与Fisher-Yates/LHS；继续查sandbox优化/采样能力，保留基线首位、变量授权/量化和候选身份；REUSE-T36复核保留理由：LHS分层正交空间填充（均匀QSampler不等价）、种子确定性唯一随机源、变量授权/量化/候选身份产品语义——sandbox待实测不外推，维持pending，实施归WP-19/后续精确子任务",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
-     "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
-     "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.nextU64",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
-     "symbol": "nextU64",
-     "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextU64",
-     "startLine": 161,
-     "endLine": 168,
-     "sha256": "90783e32d23e1c882f6725fd38b060d63be7d4e2f422d080cfab2e488e668878"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
-    "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
-   },
-   "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.nextUnit",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
-     "symbol": "nextUnit",
-     "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextUnit",
-     "startLine": 172,
-     "endLine": 175,
-     "sha256": "c5cf87634d97bf263a98549f71668e79468361fdb694e3214b54bdc2d7b34541"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
-    "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
-   },
-   "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.makeLayerPermutation",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
-     "symbol": "makeLayerPermutation",
-     "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::makeLayerPermutation",
-     "startLine": 183,
-     "endLine": 196,
-     "sha256": "87b91341a3887978074c2400b582ada1e530d3897a000ea469e9058fb093c2e5"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
-    "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
-   },
-   "differences": "自持Fisher-Yates取模洗牌，随机消耗n-1及偏差和任务种子是既有契约；候选上游Random及已有标准算法，不能改序列而沿用旧身份",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.generateStageDJointCandidates",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
-     "symbol": "generateStageDJointCandidates",
-     "qualifiedSymbol": "sdurws::ird::optimization::generateStageDJointCandidates",
-     "startLine": 704,
-     "endLine": 909,
-     "sha256": "475ae2d98bd82c056f9f2a66730edf3f50e6a1cd2795424b307444acda74db8d"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
-    "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
-   },
-   "differences": "阶段D组合规范化/轮转是业务编排；内部连续维LHS随机小核需对照StageB及上游采样工具，不整函数business-specific",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.contract_test.ContractTestMain.main",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp",
-     "symbol": "main",
-     "qualifiedSymbol": "::main",
-     "startLine": 1,
-     "endLine": 39,
-     "sha256": "6bc2a31705a58a50156e8cfe82adbc1123072f463c3bdc6d06a2e55e6e5270ef"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_contract_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-   },
-   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
-    "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
-   },
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-  },
-  {
-   "functionId": "optimization.perf_test.TestMainPerf.main",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/TestMainPerf.cpp",
-     "symbol": "main",
-     "qualifiedSymbol": "::main",
-     "startLine": 1,
-     "endLine": 32,
-     "sha256": "30d5fa68e1a1a1b279fac8dc6875d176e05d239ce6e5b217c8d046507b2691d0"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_perf_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-   },
-   "differences": "GTest薄入口＋基线性能采样main；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境（F-958协调批注释订正，整文件行覆盖登记）",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
-    "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
-   },
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元；本包实审/实施后待独立验收，非closed"
-  },
-  {
-   "functionId": "optimization.test.TestMainReport.main",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp",
-     "symbol": "main",
-     "qualifiedSymbol": "::main",
-     "startLine": 1,
-     "endLine": 40,
-     "sha256": "9474c49a0383f6030313987274c1cce2cf781ff5f820635aa69588e7c5fc8b59"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-   },
-   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
-    "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
-   },
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-  },
-  {
-   "functionId": "optimization.CMake.ird_add_gtest",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "symbol": "ird_add_gtest",
-     "qualifiedSymbol": "ird_add_gtest",
-     "startLine": 458,
-     "endLine": 470,
-     "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_test",
-    "sdurws_ird_optimization_contract_test",
-    "sdurws_ird_optimization_perf_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "TEST-HARNESS",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-   },
-   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Pareto.slotValue",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-07"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
-     "symbol": "slotValue",
-     "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::slotValue",
-     "startLine": 30,
-     "endLine": 33,
-     "sha256": "0838bb522d1d123ea57b703528b1ed1c3a1056d78bcc86e58690ab0275a09c45"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"slotValue|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Pareto.notWorse",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-07"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
-     "symbol": "notWorse",
-     "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::notWorse",
-     "startLine": 37,
-     "endLine": 46,
-     "sha256": "c76dbbdea86f3c92d59588c05c0f3791997a0ad8adda2b0136104eae88839471"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"notWorse|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Pareto.strictlyBetter",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-07"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
-     "symbol": "strictlyBetter",
-     "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::strictlyBetter",
-     "startLine": 50,
-     "endLine": 57,
-     "sha256": "0d533a54a2bf7815f20745a964aa1e3da0ef4d56b6d6c3fa8a2cfa10733cddc8"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"strictlyBetter|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Pareto.dominates",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-07"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
-     "symbol": "dominates",
-     "qualifiedSymbol": "sdurws::ird::optimization::dominates",
-     "startLine": 65,
-     "endLine": 88,
-     "sha256": "efeac905c714124cc6e5ac3d2f1eed428d53fd7289eddc98d342984e6c23d1d7"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"dominates|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-07"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
-     "symbol": "ParetoFrontBuilder::buildFront",
-     "qualifiedSymbol": "sdurws::ird::optimization::ParetoFrontBuilder::buildFront",
-     "startLine": 94,
-     "endLine": 291,
-     "sha256": "23c7211028ed5b0df7a2c6e1f5d34c8f26c4a2eefb1d113eb56a3824eaebd47b"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"buildFront|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
-     "symbol": "SeededLhsGenerator::strategyId",
-     "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::strategyId",
-     "startLine": 32,
-     "endLine": 37,
-     "sha256": "33b99579bf94db476d3a2e9d7564ad625eee4ca0d93644e6e2d80369742f4589"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"strategyId|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5（QSampler种子面、LHS词边界反证、sandbox注册，命令与输出见REUSE-T36/random-lhs-search.md）",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项；REUSE-T36定向复核：均匀QSampler不等价结论成立（无种子/无分层，QSampler.cpp:104），上游无LHS等价物"
-   },
-   "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：LHS分层/种子确定性/封闭词表无上游等价，实施归WP-19/后续精确子任务",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
-     "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
-     "symbol": "SeededLhsGenerator::generateNextBatch",
-     "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::generateNextBatch",
-     "startLine": 39,
-     "endLine": 61,
-     "sha256": "f1f3b5c3e4f412a1b0ff6dde82edf2b85f02f97112f4a8f7faf54aa8d9c97def"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"generateNextBatch|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5/S7（QSampler种子面、LHS词边界反证、sandbox注册、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项；REUSE-T36定向复核：批次生成依赖Fisher-Yates层序置换＋层内均匀（EvaluatorPorts.cpp:404-528），上游无分层采样/批次生成等价入口"
-   },
-   "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：换均匀QSampler破坏LHS正交性与候选确定性身份，实施归WP-19/后续精确子任务",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
-     "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Generator.validateBaselinePerturbParams",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
-     "symbol": "validateBaselinePerturbParams",
-     "qualifiedSymbol": "sdurws::ird::optimization::validateBaselinePerturbParams",
-     "startLine": 67,
-     "endLine": 98,
-     "sha256": "802e1e638596b1f204f38d974a941c74f99a194720335999e9f2adfa0a898410"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"validateBaselinePerturbParams|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
-     "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
-     "symbol": "BaselinePerturbGenerator::strategyId",
-     "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::strategyId",
-     "startLine": 105,
-     "endLine": 108,
-     "sha256": "4d1eb64e120ab80196fe13a2590b1b9b5ec69d2cf8b1e52072978e439a25c0fd"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"strategyId|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
-     "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
-     "symbol": "BaselinePerturbGenerator::generateNextBatch",
-     "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::generateNextBatch",
-     "startLine": 110,
-     "endLine": 229,
-     "sha256": "53ad38d647ce0f8b86c3cee88ce4a98dcf44d196f5a675ed6857e9a4090313cb"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"generateNextBatch|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
-     "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Generator.builtInStrategyIds",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
-     "symbol": "builtInStrategyIds",
-     "qualifiedSymbol": "sdurws::ird::optimization::builtInStrategyIds",
-     "startLine": 235,
-     "endLine": 246,
-     "sha256": "8312569da3ce2337abfdcf94b569e0348baa6358e5715d9acd9796552c9d750e"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"builtInStrategyIds|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
-     "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.Generator.generateWithBuiltInStrategy",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-06"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
-     "symbol": "generateWithBuiltInStrategy",
-     "qualifiedSymbol": "sdurws::ird::optimization::generateWithBuiltInStrategy",
-     "startLine": 248,
-     "endLine": 280,
-     "sha256": "ce8a2931cba1b24857c9ad39c6c7562e2485f3836260b55fffcc8dc6ebd4cd54"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"generateWithBuiltInStrategy|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
-     "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
-     "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.ParetoTest.makeCid",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "symbol": "makeCid",
-     "qualifiedSymbol": "(global anonymous namespace)::makeCid",
-     "startLine": 68,
-     "endLine": 73,
-     "sha256": "66021aec4508062218551d680a485124ff27bdc3aabfb1faca68eb32113a0861"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-    "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-   },
-   "differences": "测试身份以种子填非零字节，不是ContentDigest算法；限Pareto单测输入，不能当真实内容寻址生产身份",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-     "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-     "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-     "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-    }
-   ],
-   "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.ParetoTest.makeCandidate",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "symbol": "makeCandidate",
-     "qualifiedSymbol": "(global anonymous namespace)::makeCandidate",
-     "startLine": 78,
-     "endLine": 88,
-     "sha256": "2b64fd9a557f298fb9f83c808cd3d7efd262b05dc0f3ed3996c24478aa1126cf"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-    "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-   },
-   "differences": "两目标槽DTO装配，其余nullopt；实际调用生产Pareto接口，不含第二支配核心",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-     "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-     "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-     "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-    }
-   ],
-   "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.ParetoTest.makeTwoObjectives",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "symbol": "makeTwoObjectives",
-     "qualifiedSymbol": "(global anonymous namespace)::makeTwoObjectives",
-     "startLine": 91,
-     "endLine": 95,
-     "sha256": "bc1c9f29968f2bf448feb7fe149f5b7cf35500222ee7fbab46180c007286861e"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-    "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-   },
-   "differences": "复用生产makeObjectiveSet，只装配min包络/max裕量零容差",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-     "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-     "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-     "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-    }
-   ],
-   "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  },
-  {
-   "functionId": "optimization.ParetoTest.idsOf",
-   "ownerUnit": "optimization",
-   "requirements": [
-    "OPT-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "symbol": "idsOf",
-     "qualifiedSymbol": "(global anonymous namespace)::idsOf",
-     "startLine": 98,
-     "endLine": 106,
-     "sha256": "1c04082a980a616d201f5d8578a6e2959561bf516a958c9fb3e88550b0ee4fef"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_optimization_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-    "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-   },
-   "differences": "遍历实际entries投影ID供断言，不排序、不重建前沿",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
-     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
-     "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
-    },
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
-     "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-     "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-     "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-    },
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-     "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-    }
-   ],
-   "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
-    "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
-   }
-  }
- ]
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "optimization",
+  "functions": [
+    {
+      "functionId": "optimization.generateSeededLhsCandidates",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "symbol": "generateSeededLhsCandidates",
+          "qualifiedSymbol": "sdurws::ird::optimization::generateSeededLhsCandidates",
+          "startLine": 404,
+          "endLine": 528,
+          "sha256": "4fd10f4f6fd33672c080888e4e450304025f557348530cd60e9c7386b2adeac5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"generateSeededLhsCandidates|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5/S6（QSampler种子面、LHS词边界反证、sandbox构建注册、math采样器清单，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：rw全库无LHS/拉丁超立方/分层采样（S4r词边界检索零有效命中），QSampler为无种子均匀采样（QSampler.cpp:104），RobWorkSim sandbox无优化目标注册（src/CMakeLists.txt无sandbox）——LHS无上游直接等价入口"
+      },
+      "differences": "自持SplitMix64与Fisher-Yates/LHS；继续查sandbox优化/采样能力，保留基线首位、变量授权/量化和候选身份；REUSE-T36复核保留理由：LHS分层正交空间填充（均匀QSampler不等价）、种子确定性唯一随机源、变量授权/量化/候选身份产品语义——sandbox待实测不外推，维持pending，实施归WP-19/后续精确子任务",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
+          "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+          "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.nextU64",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "nextU64",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextU64",
+          "startLine": 161,
+          "endLine": 168,
+          "sha256": "90783e32d23e1c882f6725fd38b060d63be7d4e2f422d080cfab2e488e668878"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.nextUnit",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "nextUnit",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextUnit",
+          "startLine": 172,
+          "endLine": 175,
+          "sha256": "c5cf87634d97bf263a98549f71668e79468361fdb694e3214b54bdc2d7b34541"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.makeLayerPermutation",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "makeLayerPermutation",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::makeLayerPermutation",
+          "startLine": 183,
+          "endLine": 196,
+          "sha256": "87b91341a3887978074c2400b582ada1e530d3897a000ea469e9058fb093c2e5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "自持Fisher-Yates取模洗牌，随机消耗n-1及偏差和任务种子是既有契约；候选上游Random及已有标准算法，不能改序列而沿用旧身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.generateStageDJointCandidates",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "generateStageDJointCandidates",
+          "qualifiedSymbol": "sdurws::ird::optimization::generateStageDJointCandidates",
+          "startLine": 704,
+          "endLine": 909,
+          "sha256": "475ae2d98bd82c056f9f2a66730edf3f50e6a1cd2795424b307444acda74db8d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "阶段D组合规范化/轮转是业务编排；内部连续维LHS随机小核需对照StageB及上游采样工具，不整函数business-specific",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.contract_test.ContractTestMain.main",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 1,
+          "endLine": 39,
+          "sha256": "6bc2a31705a58a50156e8cfe82adbc1123072f463c3bdc6d06a2e55e6e5270ef"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "optimization.perf_test.TestMainPerf.main",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/TestMainPerf.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 1,
+          "endLine": 32,
+          "sha256": "30d5fa68e1a1a1b279fac8dc6875d176e05d239ce6e5b217c8d046507b2691d0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_perf_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest薄入口＋基线性能采样main；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境（F-958协调批注释订正，整文件行覆盖登记）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元；本包实审/实施后待独立验收，非closed"
+    },
+    {
+      "functionId": "optimization.test.TestMainReport.main",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 1,
+          "endLine": 40,
+          "sha256": "9474c49a0383f6030313987274c1cce2cf781ff5f820635aa69588e7c5fc8b59"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "optimization.CMake.ird_add_gtest",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "symbol": "ird_add_gtest",
+          "qualifiedSymbol": "ird_add_gtest",
+          "startLine": 458,
+          "endLine": 470,
+          "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_test",
+        "sdurws_ird_optimization_contract_test",
+        "sdurws_ird_optimization_perf_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Pareto.slotValue",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-07"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "symbol": "slotValue",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::slotValue",
+          "startLine": 30,
+          "endLine": 33,
+          "sha256": "0838bb522d1d123ea57b703528b1ed1c3a1056d78bcc86e58690ab0275a09c45"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"slotValue|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Pareto.notWorse",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-07"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "symbol": "notWorse",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::notWorse",
+          "startLine": 37,
+          "endLine": 46,
+          "sha256": "c76dbbdea86f3c92d59588c05c0f3791997a0ad8adda2b0136104eae88839471"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"notWorse|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Pareto.strictlyBetter",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-07"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "symbol": "strictlyBetter",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::strictlyBetter",
+          "startLine": 50,
+          "endLine": 57,
+          "sha256": "0d533a54a2bf7815f20745a964aa1e3da0ef4d56b6d6c3fa8a2cfa10733cddc8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"strictlyBetter|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Pareto.dominates",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-07"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "symbol": "dominates",
+          "qualifiedSymbol": "sdurws::ird::optimization::dominates",
+          "startLine": 65,
+          "endLine": 88,
+          "sha256": "efeac905c714124cc6e5ac3d2f1eed428d53fd7289eddc98d342984e6c23d1d7"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"dominates|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-07"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+          "symbol": "ParetoFrontBuilder::buildFront",
+          "qualifiedSymbol": "sdurws::ird::optimization::ParetoFrontBuilder::buildFront",
+          "startLine": 94,
+          "endLine": 291,
+          "sha256": "23c7211028ed5b0df7a2c6e1f5d34c8f26c4a2eefb1d113eb56a3824eaebd47b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"buildFront|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "symbol": "SeededLhsGenerator::strategyId",
+          "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::strategyId",
+          "startLine": 32,
+          "endLine": 37,
+          "sha256": "33b99579bf94db476d3a2e9d7564ad625eee4ca0d93644e6e2d80369742f4589"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"strategyId|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5（QSampler种子面、LHS词边界反证、sandbox注册，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项；REUSE-T36定向复核：均匀QSampler不等价结论成立（无种子/无分层，QSampler.cpp:104），上游无LHS等价物"
+      },
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：LHS分层/种子确定性/封闭词表无上游等价，实施归WP-19/后续精确子任务",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+          "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "symbol": "SeededLhsGenerator::generateNextBatch",
+          "qualifiedSymbol": "sdurws::ird::optimization::SeededLhsGenerator::generateNextBatch",
+          "startLine": 39,
+          "endLine": 61,
+          "sha256": "f1f3b5c3e4f412a1b0ff6dde82edf2b85f02f97112f4a8f7faf54aa8d9c97def"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"generateNextBatch|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5/S7（QSampler种子面、LHS词边界反证、sandbox注册、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项；REUSE-T36定向复核：批次生成依赖Fisher-Yates层序置换＋层内均匀（EvaluatorPorts.cpp:404-528），上游无分层采样/批次生成等价入口"
+      },
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：换均匀QSampler破坏LHS正交性与候选确定性身份，实施归WP-19/后续精确子任务",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+          "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Generator.validateBaselinePerturbParams",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "symbol": "validateBaselinePerturbParams",
+          "qualifiedSymbol": "sdurws::ird::optimization::validateBaselinePerturbParams",
+          "startLine": 67,
+          "endLine": 98,
+          "sha256": "802e1e638596b1f204f38d974a941c74f99a194720335999e9f2adfa0a898410"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"validateBaselinePerturbParams|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+          "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "symbol": "BaselinePerturbGenerator::strategyId",
+          "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::strategyId",
+          "startLine": 105,
+          "endLine": 108,
+          "sha256": "4d1eb64e120ab80196fe13a2590b1b9b5ec69d2cf8b1e52072978e439a25c0fd"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"strategyId|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+          "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "symbol": "BaselinePerturbGenerator::generateNextBatch",
+          "qualifiedSymbol": "sdurws::ird::optimization::BaselinePerturbGenerator::generateNextBatch",
+          "startLine": 110,
+          "endLine": 229,
+          "sha256": "53ad38d647ce0f8b86c3cee88ce4a98dcf44d196f5a675ed6857e9a4090313cb"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"generateNextBatch|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+          "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Generator.builtInStrategyIds",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "symbol": "builtInStrategyIds",
+          "qualifiedSymbol": "sdurws::ird::optimization::builtInStrategyIds",
+          "startLine": 235,
+          "endLine": 246,
+          "sha256": "8312569da3ce2337abfdcf94b569e0348baa6358e5715d9acd9796552c9d750e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"builtInStrategyIds|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+          "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+          "symbol": "generateWithBuiltInStrategy",
+          "qualifiedSymbol": "sdurws::ird::optimization::generateWithBuiltInStrategy",
+          "startLine": 248,
+          "endLine": 280,
+          "sha256": "ce8a2931cba1b24857c9ad39c6c7562e2485f3836260b55fffcc8dc6ebd4cd54"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"generateWithBuiltInStrategy|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Generator.hpp",
+          "sha256": "62520da0369aae6aa53d5c0e12676d349c8f70229a77abc06c78b78a19bfb179"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "sha256": "cade0e44d97cb2e3c1828bcbf6347936e72f0f14383656e71c3abb3f10c8cea1"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.makeCid",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "symbol": "makeCid",
+          "qualifiedSymbol": "(global anonymous namespace)::makeCid",
+          "startLine": 68,
+          "endLine": 73,
+          "sha256": "66021aec4508062218551d680a485124ff27bdc3aabfb1faca68eb32113a0861"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+      },
+      "differences": "测试身份以种子填非零字节，不是ContentDigest算法；限Pareto单测输入，不能当真实内容寻址生产身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+        }
+      ],
+      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.makeCandidate",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "symbol": "makeCandidate",
+          "qualifiedSymbol": "(global anonymous namespace)::makeCandidate",
+          "startLine": 78,
+          "endLine": 88,
+          "sha256": "2b64fd9a557f298fb9f83c808cd3d7efd262b05dc0f3ed3996c24478aa1126cf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+      },
+      "differences": "两目标槽DTO装配，其余nullopt；实际调用生产Pareto接口，不含第二支配核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+        }
+      ],
+      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.makeTwoObjectives",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "symbol": "makeTwoObjectives",
+          "qualifiedSymbol": "(global anonymous namespace)::makeTwoObjectives",
+          "startLine": 91,
+          "endLine": 95,
+          "sha256": "bc1c9f29968f2bf448feb7fe149f5b7cf35500222ee7fbab46180c007286861e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+      },
+      "differences": "复用生产makeObjectiveSet，只装配min包络/max裕量零容差",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+        }
+      ],
+      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.ParetoTest.idsOf",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "symbol": "idsOf",
+          "qualifiedSymbol": "(global anonymous namespace)::idsOf",
+          "startLine": 98,
+          "endLine": 106,
+          "sha256": "1c04082a980a616d201f5d8578a6e2959561bf516a958c9fb3e88550b0ee4fef"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+      },
+      "differences": "遍历实际entries投影ID供断言，不排序、不重建前沿",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
+          "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+        }
+      ],
+      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
+        "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
+      }
+    },
+    {
+      "functionId": "optimization.EV_T13.perf.test.OptRunTimeBenchmarkTest.cpp",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "CON-01",
+        "CON-02",
+        "CON-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/OptRunTimeBenchmarkTest.cpp",
+          "symbol": "StandardRunTimeLimit",
+          "startLine": 1,
+          "endLine": 2216,
+          "sha256": "f985ab0c553b19e738d44e34ab0827630d281f03d6d0deaf6fb74697f3dc06bb"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_perf_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"AnalysisSnapshot|InputSlice|RequiredEvidenceProfile|ContentDigester|BINArchive\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+        "conclusion": "快照/切片/证据是产品协议；摘要复用core唯一供给；BINArchive格式不兼容冻结字节。未引入新算法/依赖。"
+      },
+      "differences": "EV-T13：合法输入经真实builder重冻结；反例oracle来自需求/独立字节，替身仅在既有查询端口。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本行覆盖该文件的既有契约/实现或测试夹具，保留原逐符号行；它是本轮实施凭证，不是T47独验、全项目算法验收或权限批准。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md",
+        "sha256": "1b22e416daf855e894aa33880b5a9be0ffb9afe745630a031ccc2cf0b934414c"
+      }
+    },
+    {
+      "functionId": "optimization.EV_T13.test.JointRunTest.cpp",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "CON-01",
+        "CON-02",
+        "CON-05",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/JointRunTest.cpp",
+          "symbol": "OptJointRun",
+          "startLine": 1,
+          "endLine": 1651,
+          "sha256": "bd87215466176a10e64470b5193b105d9b82a62c5777713e642d670a2b727c84"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"AnalysisSnapshot|InputSlice|RequiredEvidenceProfile|ContentDigester|BINArchive\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+        "conclusion": "快照/切片/证据是产品协议；摘要复用core唯一供给；BINArchive格式不兼容冻结字节。未引入新算法/依赖。"
+      },
+      "differences": "EV-T13：合法输入经真实builder重冻结；反例oracle来自需求/独立字节，替身仅在既有查询端口。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本行覆盖该文件的既有契约/实现或测试夹具，保留原逐符号行；它是本轮实施凭证，不是T47独验、全项目算法验收或权限批准。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md",
+        "sha256": "1b22e416daf855e894aa33880b5a9be0ffb9afe745630a031ccc2cf0b934414c"
+      }
+    }
+  ]
 }

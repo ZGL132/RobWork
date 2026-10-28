@@ -1,0 +1,2 @@
+verify-task-scope: TK-T13 base=6dc1141ae1e4 head=7a941b988a83 changed=211 allowedRules=35 forbiddenRules=3
+verify-task-scope: PASS TK-T13 —— 211 个路径全部在允许面内

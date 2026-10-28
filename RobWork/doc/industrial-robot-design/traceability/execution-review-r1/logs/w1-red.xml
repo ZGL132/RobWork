@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.091" timestamp="2026-10-28T08:09:26.060" name="AllTests">
+  <testsuite name="RunRegistryAdmissionTest" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.078" timestamp="2026-10-28T08:09:26.062">
+    <testcase name="ResolvedNamePopulatesSubject_EXR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp" line="1387" status="run" result="completed" time="0.038" timestamp="2026-10-28T08:09:26.062" classname="RunRegistryAdmissionTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1402&#x0A;Expected equality of these values:&#x0A;  result.envelope-&gt;diagnostics.front().subject&#x0A;    Which is: (nullopt)&#x0A;  std::optional&lt;core::ObjectId&gt;{target}&#x0A;    Which is: (16-byte object &lt;AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA&gt;)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1402
+Expected equality of these values:
+  result.envelope->diagnostics.front().subject
+    Which is: (nullopt)
+  std::optional<core::ObjectId>{target}
+    Which is: (16-byte object <AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA AA-AA>)
+]]></failure>
+    </testcase>
+    <testcase name="ResolvedNameRejectsConflictingSubject_EXR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp" line="1406" status="run" result="completed" time="0.038" timestamp="2026-10-28T08:09:26.102" classname="RunRegistryAdmissionTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1418&#x0A;Expected equality of these values:&#x0A;  result.decision.verdict&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  AdmissionDecision::Verdict::Rejected&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1418
+Expected equality of these values:
+  result.decision.verdict
+    Which is: 4-byte object <00-00 00-00>
+  AdmissionDecision::Verdict::Rejected
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1419&#x0A;Value of: result.envelope&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1419
+Value of: result.envelope
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1420&#x0A;Value of: fs::exists(m_dir / &quot;results&quot; / task.run.toCanonical() / &quot;manifest.json&quot;)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp:1420
+Value of: fs::exists(m_dir / "results" / task.run.toCanonical() / "manifest.json")
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="CheckpointCoordinatorTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-10-28T08:09:26.147">
+    <testcase name="CheckpointIdBelongsToTaskRun_EXR03" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp" line="1132" status="run" result="completed" time="0.003" timestamp="2026-10-28T08:09:26.147" classname="CheckpointCoordinatorTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp:1136&#x0A;Value of: request.record.isValid()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp:1136
+Value of: request.record.isValid()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp:1137&#x0A;Expected: m_coordinator-&gt;writeCheckpoint(std::move(request)) throws an exception of type ExecutionError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp:1137
+Expected: m_coordinator->writeCheckpoint(std::move(request)) throws an exception of type ExecutionError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

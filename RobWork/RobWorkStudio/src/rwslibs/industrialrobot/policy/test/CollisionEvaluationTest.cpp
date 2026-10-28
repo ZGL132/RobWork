@@ -40,6 +40,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <rw/geometry/PlainTriMesh.hpp>
 
 #include <sdurws/ird/core/DiagData.hpp>
 #include <sdurws/ird/core/Identity.hpp>
@@ -1270,4 +1271,272 @@ TEST(CollisionEvaluation, StopAtFirstFindingTerminatesEarlyWithCoverage)
     EXPECT_EQ(result.findings.front().objectB, rig.ids.env1);
     EXPECT_EQ(result.coverage.pairsEvaluated, std::uint64_t{1});
     EXPECT_EQ(result.coverage.pairsInScope, std::uint64_t{2});
+}
+
+namespace {
+/** @brief POL-T13：独立场景双立方体夹具；边长/轴向间隔单位 m，q=0 的预期由轴向区间直接推导。 */
+CollisionRig makeSizedReviewRig (double edge, double z, unsigned char identity)
+{
+    CollisionRig r;
+    r.workcell = std::make_shared< rw::models::WorkCell > ("IndependentSizedRig");
+    auto base  = rw::core::ownedPtr (
+        new rw::kinematics::FixedFrame ("Base", rw::math::Transform3D<>::identity ()));
+    r.workcell->addFrame (base);
+    auto joint = rw::core::ownedPtr (
+        new rw::models::RevoluteJoint ("J1", rw::math::Transform3D<>::identity ()));
+    r.workcell->addFrame (joint, base);
+    auto tool = rw::core::ownedPtr (new rw::kinematics::FixedFrame (
+        "Tool", rw::math::Transform3D<> (rw::math::Vector3D<> (0.5, 0, 0))));
+    r.workcell->addFrame (tool, joint);
+    auto env = rw::core::ownedPtr (new rw::kinematics::FixedFrame (
+        "EnvBox1", rw::math::Transform3D<> (rw::math::Vector3D<> (0.5, 0, z))));
+    r.workcell->addFrame (env);
+    r.workcell->addDevice (rw::core::ownedPtr (
+        new rw::models::SerialDevice (base, tool, "Robot", r.workcell->getDefaultState ())));
+    for (const rw::kinematics::Frame::Ptr f :
+         {rw::kinematics::Frame::Ptr (tool), rw::kinematics::Frame::Ptr (env)}) {
+        auto o = rw::core::ownedPtr (new rw::models::RigidObject (f));
+        o->addGeometry (rw::core::ownedPtr (new rw::geometry::Geometry (
+            rw::core::ownedPtr (new rw::geometry::Box (edge, edge, edge)))));
+        r.workcell->add (o);
+    }
+    r.scene.workcell             = r.workcell;
+    r.scene.primaryDevice        = r.ids.device;
+    r.scene.objects              = {{r.ids.toolBox, "Tool", SceneObjectRole::RobotLink, true},
+                                    {r.ids.env1, "Env", SceneObjectRole::EnvironmentObject, true}};
+    r.scene.sceneContentIdentity = taggedContentIdentity (identity);
+    r.names.byId = {{r.ids.device, "Robot"}, {r.ids.toolBox, "Tool"}, {r.ids.env1, "EnvBox1"}};
+    r.names.mapIdentity          = taggedContentIdentity (0x6E);
+    r.validation.existingObjects = {
+        {r.ids.device, true}, {r.ids.toolBox, true}, {r.ids.env1, true}};
+    r.validation.roles = {{r.ids.toolBox, "RobotLink"}, {r.ids.env1, "EnvironmentObject"}};
+    return r;
+}
+/** @brief POL-T13：单旋转关节构型（rad）；用于正常及非有限输入边界。 */
+CollisionQuery makeReviewQuery (double value = 0)
+{
+    CollisionQuery q;
+    q.configurations.push_back (rw::math::Q (1, value));
+    return q;
+}
+/** @brief POL-T13：仅环境域、零间距策略输入；不隐含相邻或必检裁决。 */
+RawPolicyInput makeReviewPolicyInput ()
+{
+    RawPolicyInput v;
+    v.policyObject              = taggedObjectId (0x20);
+    v.collision.enabledDomains  = {CollisionDomain::Environment};
+    v.collision.safetyClearance = RawThresholdInput{0.0, "m"};
+    return v;
+}
+/** @brief POL-T13：后端接口替身，在查询中使非拥有的调用上下文失效；仅测试单线程使用。 */
+class ExpireContextBackend final : public ScriptedCollisionBackend
+{
+  public:
+    ScriptedCallContext* context = nullptr;
+    bool doInCollision (rw::proximity::ProximityModel::Ptr, const rw::math::Transform3D<>&,
+                        rw::proximity::ProximityModel::Ptr, const rw::math::Transform3D<>&,
+                        rw::proximity::ProximityStrategyData&) override
+    {
+        context->aliveFlag = false;
+        return false;
+    }
+};
+}    // namespace
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, CrossSceneGeometryMustNotReuseFrameIds_POL_T13)
+{
+    auto small = makeSizedReviewRig (.2, .3, 0xA1), big = makeSizedReviewRig (.8, .3, 0xA2);
+    auto p         = publishRigPolicy (small, 0);
+    auto evaluator = makeRobWorkCollisionEvaluator ();
+    ScriptedCallContext ctx;
+    auto a     = evaluator->createSession (p, small.scene, small.names);
+    auto ar    = a->evaluate (makeReviewQuery (), ctx);
+    auto b     = evaluator->createSession (p, big.scene, big.names);
+    auto br    = b->evaluate (makeReviewQuery (), ctx);
+    auto fresh = makeRobWorkCollisionEvaluator ();
+    auto f     = fresh->createSession (p, big.scene, big.names);
+    auto fr    = f->evaluate (makeReviewQuery (), ctx);
+
+    EXPECT_EQ (ar.findings.size (), 0u);
+    EXPECT_EQ (fr.findings.size (), 1u);
+    EXPECT_EQ (br.findings.size (), 1u) << "轴向间隔0.3 < 两大立方体半宽和0.8，必须相交";
+}
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, RealBackendContactSeparationAndPairExclusion_POL_T13)
+{
+    ScriptedCallContext ctx;
+    for (double z : {.2, .20001}) {
+        auto r   = makeSizedReviewRig (.2, z, 0xB1);
+        auto p   = publishRigPolicy (r, 0);
+        auto e   = makeRobWorkCollisionEvaluator ();
+        auto out = e->createSession (p, r.scene, r.names)->evaluate (makeReviewQuery (), ctx);
+        EXPECT_EQ (out.findings.size (), z == .2 ? 1u : 0u);
+    }
+    auto r                        = makeSizedReviewRig (.2, 0, 0xB2);
+    auto input                    = makeReviewPolicyInput ();
+    input.collision.excludedPairs = {PairRule::make (ScopeTarget::makeObject (r.ids.toolBox),
+                                                     ScopeTarget::makeObject (r.ids.env1),
+                                                     PolicyRuleLevel::Should,
+                                                     "工艺接触")};
+    auto p                        = resolvePolicy (input, r.validation);
+    ASSERT_TRUE (p.policy);
+    auto e   = makeRobWorkCollisionEvaluator ();
+    auto out = e->createSession (*p.policy, r.scene, r.names)->evaluate (makeReviewQuery (), ctx);
+    EXPECT_TRUE (out.findings.empty ());
+    EXPECT_EQ (out.coverage.pairsEvaluated, 0u);
+    EXPECT_EQ (out.appliedFilters.size (), 1u);
+}
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, NonfiniteConfigurationsCannotFinalize_POL_T13)
+{
+    auto r = makeSizedReviewRig (.2, .3, 0xC1);
+    auto p = publishRigPolicy (r, 0);
+    auto e = makeRobWorkCollisionEvaluator ();
+    auto s = e->createSession (p, r.scene, r.names);
+    ScriptedCallContext ctx;
+    for (double v : {std::numeric_limits< double >::quiet_NaN (),
+                     std::numeric_limits< double >::infinity ()}) {
+        auto out = s->evaluate (makeReviewQuery (v), ctx);
+        EXPECT_FALSE (out.finalized);
+        EXPECT_NE (out.status, CollisionEvaluationStatus::Completed);
+    }
+}
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, InvalidQueryEnumCannotBecomeCompleted_POL_T13)
+{
+    auto r = makeSizedReviewRig (.2, .3, 0xC2);
+    auto p = publishRigPolicy (r, 0);
+    auto e = makeRobWorkCollisionEvaluator ();
+    auto s = e->createSession (p, r.scene, r.names);
+    ScriptedCallContext ctx;
+    auto q = makeReviewQuery ();
+    q.kind = static_cast< CollisionQueryKind > (99);
+    EXPECT_THROW (s->evaluate (q, ctx), PolicyError);
+}
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, ContextExpiredDuringBackendCannotFinalize_POL_T13)
+{
+    auto r = makeRig (false);
+    auto p = publishRigPolicy (r, 0);
+    ScriptedCallContext ctx;
+    auto backend     = std::make_shared< ExpireContextBackend > ();
+    backend->context = &ctx;
+    CollisionEvaluationSession session (
+        p, r.scene, r.names, detail::makeBuiltinBackendDescriptor ("probe"), backend);
+    auto out = session.evaluate (makeReviewQuery (), ctx);
+    EXPECT_FALSE (out.finalized);
+    EXPECT_EQ (out.status, CollisionEvaluationStatus::Failed);
+}
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, FirstMarginFindingRetainsMeasuredMinimum_POL_T13)
+{
+    auto r                   = makeRig (false);
+    auto p                   = publishRigPolicy (r, .02);
+    auto backend             = std::make_shared< ScriptedDistanceBackend > ();
+    backend->defaultDistance = .01;
+    CollisionEvaluationSession s (
+        p, r.scene, r.names, detail::makeBuiltinBackendDescriptor ("probe"), backend);
+    ScriptedCallContext ctx;
+    auto q               = makeReviewQuery ();
+    q.stopAtFirstFinding = true;
+    q.requestMinDistance = true;
+    auto out             = s.evaluate (q, ctx);
+    ASSERT_EQ (out.findings.size (), 1u);
+    ASSERT_TRUE (out.minDistances);
+    ASSERT_EQ (out.minDistances->size (), 1u);
+    EXPECT_EQ (out.minDistances->front ().minDistance, std::optional< double > (.01));
+}
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, CoverageCarriesActuallyAppliedFilters_POL_T13)
+{
+    auto r                        = makeRig (false);
+    auto input                    = makeReviewPolicyInput ();
+    input.collision.excludedPairs = {PairRule::make (ScopeTarget::makeObject (r.ids.toolBox),
+                                                     ScopeTarget::makeObject (r.ids.env1),
+                                                     PolicyRuleLevel::Should,
+                                                     "工艺接触")};
+    auto p                        = resolvePolicy (input, r.validation);
+    ASSERT_TRUE (p.policy);
+    auto e = makeRobWorkCollisionEvaluator ();
+    ScriptedCallContext ctx;
+    auto out = e->createSession (*p.policy, r.scene, r.names)->evaluate (makeReviewQuery (), ctx);
+    EXPECT_EQ (out.coverage.excluded, out.appliedFilters);
+}
+
+/** @brief POL-T13：评审确认缺陷的回归断言，保留真实几何与脚本后端的边界。 */
+TEST (PolicyReviewRegression, InvalidDomainCannotPublishAnEmptySafeScope_POL_T13)
+{
+    auto r                         = makeRig (false);
+    auto input                     = makeReviewPolicyInput ();
+    input.collision.enabledDomains = {static_cast< CollisionDomain > (99)};
+    auto parsed                    = resolvePolicy (input, r.validation);
+    EXPECT_FALSE (parsed.policy.has_value ());
+}
+
+/** @brief POL-T13：真实后端拒收几何/路径数值边界不可伪装正式碰撞证据。 */
+TEST (PolicyReviewRegression, EmptyBackendMeshCannotCountAsValidGeometry_POL_T13)
+{
+    auto r      = makeSizedReviewRig (.2, 0, 0xD1);
+    auto object = r.workcell->findObject ("Tool").cast< rw::models::RigidObject > ();
+    ASSERT_TRUE (object);
+    const auto old = object->getGeometry ();
+    for (auto g : old)
+        object->removeGeometry (g);
+    auto mesh =
+        rw::core::ownedPtr (new rw::geometry::PlainTriMesh< rw::geometry::Triangle< double > > ());
+    object->addGeometry (rw::core::ownedPtr (new rw::geometry::Geometry (mesh)));
+    auto p         = publishRigPolicy (r, 0);
+    auto evaluator = makeRobWorkCollisionEvaluator ();
+    ScriptedCallContext ctx;
+    auto out = evaluator->createSession (p, r.scene, r.names)->evaluate (makeReviewQuery (), ctx);
+
+    EXPECT_EQ (out.coverage.pairsWithGeometry, 0u) << "空mesh被后端拒收，不应计作双端有效几何";
+    EXPECT_EQ (out.coverage.pairsEvaluated, 0u);
+    EXPECT_FALSE (out.diagnostics.empty ());
+    // 部分拒收也不完整：空 mesh 后再补实体盒，不得继续算已检。
+    const auto box = rw::core::ownedPtr (
+        new rw::geometry::Geometry (rw::core::ownedPtr (new rw::geometry::Box (.2, .2, .2))));
+    object->addGeometry (box);
+    const auto partial =
+        evaluator->createSession (p, r.scene, r.names)->evaluate (makeReviewQuery (), ctx);
+    EXPECT_EQ (partial.coverage.pairsWithGeometry, 0u);
+    EXPECT_EQ (partial.coverage.pairsEvaluated, 0u);
+}
+
+/** @brief POL-T13：直接字段工厂也拒绝未知域，不仅依赖字节解码入口。 */
+TEST (PolicyReviewRegression, DirectCollisionRulesRejectUnknownDomain_POL_T13)
+{
+    EXPECT_THROW (CollisionRules::make (
+                      true,
+                      {static_cast< CollisionDomain > (99)},
+                      PolicyThreshold::make (
+                          0.0, PolicyValueOrigin::Explicit, PolicyThresholdDomain::SafetyClearance),
+                      true,
+                      {},
+                      {}),
+                  PolicyError);
+}
+
+/** @brief POL-T13：真实后端拒收几何/路径数值边界不可伪装正式碰撞证据。 */
+TEST (PolicyReviewRegression, NonfinitePathParameterCannotEnterFinalizedFinding_POL_T13)
+{
+    auto r         = makeSizedReviewRig (.2, 0, 0xD2);
+    auto p         = publishRigPolicy (r, 0);
+    auto evaluator = makeRobWorkCollisionEvaluator ();
+    ScriptedCallContext ctx;
+    auto session     = evaluator->createSession (p, r.scene, r.names);
+    auto q           = makeReviewQuery ();
+    q.kind           = CollisionQueryKind::PathSequence;
+    q.pathParameters = {std::numeric_limits< double >::quiet_NaN ()};
+    const auto out   = session->evaluate (q, ctx);
+    EXPECT_FALSE (out.finalized);
+    EXPECT_EQ (out.status, CollisionEvaluationStatus::Failed);
+    EXPECT_FALSE (out.diagnostics.empty ());
 }

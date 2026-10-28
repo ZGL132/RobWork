@@ -24,7 +24,7 @@
  *    v0.5 变更记录同步登记，DTB §5.4）==
  *   D-1 inputBaselineId 投影的参与集机械口径：进入＝全部 Object＋全部
  *       SampleSet＋全部 NameMap＋Environment 中基准类保留 token 条目
- *       （CR-05 二条目，isBaselineEnvironmentToken）＋快照身份块；排除＝
+ *       （CR-05 二条目，isBaselineEnvironmentToken）；v2 不含快照锚，排除＝
  *       Configuration（求解类——KIN-13/D-04）、Policy（§4.2.2"仅模型/
  *       需求/工况集/冻结样本集条目参与"的"仅"字＋§5.1 参与清单未列——
  *       策略属消费机制，经 sliceId 失效但不构成输入基准差异）、
@@ -57,20 +57,22 @@
  *       词形闸门＝§8.2 EvaluationKey 原文语法）——EvaluationKey 类型化
  *       归 Evaluator.hpp（EV-T10），落地后按需替换，公共契约不变。
  *
- * == SliceCodec 字节布局（版本 1；定宽整型一律大端）==
+ * == SliceCodec 字节布局（版本 1/2；定宽整型一律大端）==
  *   [0..7]  magic "IRDSLCE1"（§5.2 原文）
- *   [8]     codec 版本（=1）
- *   [9]     形态字节：0=full、1=baseline-projection（D-2：两形态均为身份
- *           摘要对象；parse 仅接受 full——投影非往返载体）
- *   ---- full 体（sliceId 的摘要对象）----
+ *   [8]     codec 版本（1=历史、2=新切片）
+ *   [9]     形态字节：0=full、1=baseline-projection、2=v2 identity-projection
+ *           （parse 仅接受 full；v1 对 full 摘要，v2 对形态 2 摘要）
+ *   ---- full 体（交换载体；v2 身份投影删除 snapshotId）----
  *   [2 len] evaluationKey
  *   [4]     evaluatorContractVersion
  *   [32]    snapshotId（来源快照身份——§4.2.2）
  *   [4]     条目数 N；每条（(kind,key) 字典序）：见下方"条目编码"
  *   ---- baseline-projection 体（inputBaselineId 的摘要对象）----
- *   [32]    snapshotId（"快照身份块"——§5.1 参与清单）
+ *   [32]    snapshotId（仅 v1 含此字段，v2 排除整个快照锚）
  *   [4]     基准条目数 M；每条：同"条目编码"（字节级同构——"SliceCodec
  *           的子集"字面成立，D-1 排除面在条目选择层实现）
+ *   ---- v2 identity-projection 体（sliceId 的摘要对象）----
+ *   与 full 体相同，但删除其中的 32 字节 snapshotId。
  *   ---- 条目编码（两形态共用——单点实现不漂移）----
  *   [1] kind（枚举声明序值——Dependency.hpp 权威序）
  *   [2 len] key
@@ -521,14 +523,14 @@ DependencyEntry readEntry(Reader& r)
 // =====================================================================
 
 /// full 形态体编码（不含 10 字节头——头由 encodeFull 统一写）。
-void writeFullBody(std::vector<std::uint8_t>& out, const InputSlice& slice)
+void writeFullBody(std::vector<std::uint8_t>& out, const InputSlice& slice, bool traceSnapshot = true)
 {
     // 评估面：评估键＋契约版本（进 sliceId——同输入不同契约版本＝不同
     // 切片，CON-04）。
     appendLengthString(out, slice.evaluationKey);
     appendU32(out, slice.evaluatorContractVersion);
     // 来源快照身份（§4.2.2 snapshotId 行——切片溯源锚）。
-    appendRaw32(out, slice.snapshotId.bytes);
+    if (traceSnapshot) appendRaw32(out, slice.snapshotId.bytes);
     // 条目段：条数前缀＋冻结序逐条（builder 已规范化排序——同内容同字节）。
     appendU32(out, static_cast<std::uint32_t>(slice.entries.size()));
     for (const DependencyEntry& e : slice.entries) {
@@ -536,11 +538,11 @@ void writeFullBody(std::vector<std::uint8_t>& out, const InputSlice& slice)
     }
 }
 
-/// baseline-projection 形态体编码（D-1 参与集——快照身份块＋基准类条目）。
+/// baseline-projection 形态体编码（D-1 参与集；v2 不含整个快照锚）。
 void writeBaselineProjectionBody(std::vector<std::uint8_t>& out, const InputSlice& slice)
 {
     // 快照身份块（§5.1 inputBaselineId 参与清单原文）。
-    appendRaw32(out, slice.snapshotId.bytes);
+    if (slice.codecVersion == 1) appendRaw32(out, slice.snapshotId.bytes);
     // 基准类条目子集：Object/SampleSet/NameMap 全量＋Environment 基准类
     // 保留 token 条目；Configuration/Policy/UpstreamResult/非基准 Environment
     // 排除（口径推导见实现头注释 D-1）。冻结序保持——投影条目相对顺序
@@ -579,6 +581,18 @@ bool isAsciiWhitespace(char c) noexcept
     return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r';
 }
 
+/** @brief EV-T13：v2 计算身份不含来源快照溯源锚；v1 保持冻结字节身份。 */
+core::Digest256 identityDigest(const InputSlice& slice)
+{
+    if (slice.codecVersion == 1) return computeSliceDigest(SliceCodec::encodeFull(slice));
+    std::vector<std::uint8_t> bytes;
+    appendRaw(bytes, reinterpret_cast<const std::uint8_t*>(SliceCodec::kMagic.data()), SliceCodec::kMagic.size());
+    appendU8(bytes, slice.codecVersion);
+    appendU8(bytes, 0x02u); // 独立身份投影域，不能与 full/baseline 交换载体混用。
+    writeFullBody(bytes, slice, false);
+    return computeSliceDigest(bytes);
+}
+
 }  // namespace
 
 // =====================================================================
@@ -614,6 +628,11 @@ InputSlice SliceBuilder::build(const AnalysisSnapshot& snapshot) const
                             "evaluationKey 语法非法（应为 [a-z][a-z0-9-]{1,63}）");
     }
 
+    try { SnapshotCodec::validate(snapshot); }
+    catch (const EvidenceError& error) {
+        throw EvidenceError(EvidenceErrorCode::SliceIncomplete, std::string{"snapshotId/内容不满足冻结不变量："}+error.what());
+    } // EV-T13：值传递冻结承诺在消费边界再次核对。
+    if (m_contractVersion == 0) throw EvidenceError(EvidenceErrorCode::SliceIncomplete, "契约版本为零");
     // ---- 第 2 步：来源快照冻结性（snapshotId 非零＝SnapshotBuilder 产出；
     // 手工拼装的未冻结快照没有身份承诺，切片溯源锚失效）。
     if (!snapshot.snapshotId.isValid()) {
@@ -679,6 +698,27 @@ InputSlice SliceBuilder::build(const AnalysisSnapshot& snapshot) const
         }
     }
 
+    // EV-T13：非 Object 的快照引用也须精确来自同一冻结事实面。
+    for (const auto& e : entries) {
+        if (!e.applied) continue; // 未消费条件项不强制要求无关引用。
+        bool bound = true;
+        if (e.kind == DependencyKind::Policy)
+            bound = std::get<PolicyDependencyPayload>(e.payload).policyContentIdentity == snapshot.policyRef.policyContentIdentity;
+        else if (e.kind == DependencyKind::NameMap)
+            bound = std::get<NameMapDependencyPayload>(e.payload).nameMapContentIdentity == snapshot.nameMapRef.nameMapContentIdentity;
+        else if (e.kind == DependencyKind::Configuration) {
+            const auto& p = std::get<ConfigurationDependencyPayload>(e.payload);
+            bound = std::any_of(snapshot.configurationRefs.begin(), snapshot.configurationRefs.end(), [&p](const ConfigEntry& v) {
+                return v.configKindToken == p.configKindToken && v.canonicalBytes == p.canonicalBytes && v.contentIdentity == p.contentIdentity;
+            });
+        } else if (e.kind == DependencyKind::SampleSet) {
+            const auto& p = std::get<SampleSetDependencyPayload>(e.payload);
+            bound = std::any_of(snapshot.samplingPlans.begin(), snapshot.samplingPlans.end(), [&p](const SamplingPlanRef& v) {
+                return v.regionObjectId == p.regionObjectId && v.sampleSetIdentity == p.sampleSetIdentity;
+            });
+        }
+        if (!bound) throw EvidenceError(EvidenceErrorCode::SliceIncomplete, "依赖不属于来源快照：" + e.key);
+    }
     // ---- 第 5 步：CR-05 值形态闸门（D-3：凡以保留 token 命名的
     // Environment 条目恒久校验，不论必填开关——值形态是跨单元身份可比的
     // 前提，与"谁必填"无关）。同时为第 6 步收集保留条目的在在性。
@@ -747,7 +787,7 @@ InputSlice SliceBuilder::build(const AnalysisSnapshot& snapshot) const
     slice.evaluatorContractVersion = m_contractVersion;
     slice.entries = std::move(entries);
     slice.snapshotId = snapshot.snapshotId;
-    slice.sliceId.bytes = computeSliceDigest(SliceCodec::encodeFull(slice));
+    slice.sliceId.bytes = identityDigest(slice);
     slice.inputBaselineId.bytes
         = computeSliceDigest(SliceCodec::encodeBaselineProjection(slice));
     return slice;
@@ -759,10 +799,12 @@ InputSlice SliceBuilder::build(const AnalysisSnapshot& snapshot) const
 
 std::vector<std::uint8_t> SliceCodec::encodeFull(const InputSlice& slice)
 {
+    if (slice.codecVersion != 1 && slice.codecVersion != kCodecVersion)
+        throw EvidenceError(EvidenceErrorCode::SliceIncomplete, "未知切片编码版本");
     std::vector<std::uint8_t> out;
     // 头：magic＋版本＋形态字节（§5.2 版本化行——升版＝全体切片身份变化）。
     appendRaw(out, reinterpret_cast<const std::uint8_t*>(kMagic.data()), kMagic.size());
-    appendU8(out, kCodecVersion);
+    appendU8(out, slice.codecVersion);
     appendU8(out, 0x00u);  // 形态：full。
     writeFullBody(out, slice);
     return out;
@@ -770,9 +812,11 @@ std::vector<std::uint8_t> SliceCodec::encodeFull(const InputSlice& slice)
 
 std::vector<std::uint8_t> SliceCodec::encodeBaselineProjection(const InputSlice& slice)
 {
+    if (slice.codecVersion != 1 && slice.codecVersion != kCodecVersion)
+        throw EvidenceError(EvidenceErrorCode::SliceIncomplete, "未知切片编码版本");
     std::vector<std::uint8_t> out;
     appendRaw(out, reinterpret_cast<const std::uint8_t*>(kMagic.data()), kMagic.size());
-    appendU8(out, kCodecVersion);
+    appendU8(out, slice.codecVersion);
     appendU8(out, 0x01u);  // 形态：baseline-projection（非往返载体）。
     writeBaselineProjectionBody(out, slice);
     return out;
@@ -790,7 +834,7 @@ InputSlice SliceCodec::parse(const std::vector<std::uint8_t>& encoding)
     }
     r.pos = kMagic.size();
     const std::uint8_t version = r.readU8();
-    if (version != kCodecVersion) {
+    if (version != 1 && version != kCodecVersion) {
         throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
                             "codec 版本不符（期望 " + std::to_string(kCodecVersion)
                                 + "，实际 " + std::to_string(version) + "）");
@@ -804,6 +848,7 @@ InputSlice SliceCodec::parse(const std::vector<std::uint8_t>& encoding)
     }
 
     InputSlice slice;
+    slice.codecVersion = version;
     // full 体：评估面＋快照身份＋条目段（与 writeFullBody 严格互逆）。
     slice.evaluationKey = r.readLengthString();
     slice.evaluatorContractVersion = r.readU32();
@@ -815,14 +860,19 @@ InputSlice SliceCodec::parse(const std::vector<std::uint8_t>& encoding)
         throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
                             "条目数超出防御上限（" + std::to_string(entryCount) + "）");
     }
+    if (entryCount > (encoding.size() - r.pos) / 8) throw EvidenceError(EvidenceErrorCode::SliceIncomplete, "条目数超过编码剩余长度");
     slice.entries.reserve(entryCount);
     for (std::uint32_t i = 0; i < entryCount; ++i) {
         slice.entries.push_back(readEntry(r));
     }
     r.expectEnd();
 
+    if (!isValidEvaluationKey(slice.evaluationKey) || slice.evaluatorContractVersion == 0
+        || !slice.snapshotId.isValid() || !validateDependencyEntries(slice.entries).empty()
+        || !std::is_sorted(slice.entries.begin(), slice.entries.end(), entryLess))
+        throw EvidenceError(EvidenceErrorCode::SliceIncomplete, "切片解码不满足冻结不变量");
     // 双身份重算（D-2：身份是编码的函数——解析结果必与内容自洽）。
-    slice.sliceId.bytes = computeSliceDigest(encodeFull(slice));
+    slice.sliceId.bytes = identityDigest(slice);
     slice.inputBaselineId.bytes = computeSliceDigest(encodeBaselineProjection(slice));
     return slice;
 }

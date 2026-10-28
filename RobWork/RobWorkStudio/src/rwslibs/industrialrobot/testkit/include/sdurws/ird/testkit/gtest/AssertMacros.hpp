@@ -22,6 +22,7 @@
 #define SDURWS_IRD_TESTKIT_GTEST_ASSERTMACROS_HPP
 
 #include <gtest/gtest.h>
+#include <cmath>
 
 #include <sdurws/ird/testkit/Check.hpp>
 #include <sdurws/ird/testkit/Dataset.hpp>
@@ -68,8 +69,8 @@
 /// 非有限守卫（前置检查——NaN/Inf 出现即断言失败，防下游静默传播）。
 #define IRD_EXPECT_FINITE(fieldPath, value)                                            \
     do {                                                                               \
-        if (std::isnan(static_cast<double>(value))                                     \
-            || std::isinf(static_cast<double>(value))) {                               \
+        const double irdFiniteValue_ = static_cast<double>(value);                     \
+        if (!std::isfinite(irdFiniteValue_)) {                                         \
             ADD_FAILURE() << fieldPath << ": 非有限值（NaN/±Inf）——NFR-COR-03";       \
         }                                                                              \
     } while (false)

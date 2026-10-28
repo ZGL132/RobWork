@@ -50,7 +50,7 @@ using sdurws::ird::io::ResourceEdge;
 using sdurws::ird::io::ResourceEdgeKind;
 using sdurws::ird::io::ResourceNode;
 using sdurws::ird::io::ResourceSnapshot;
-using sdurws::ird::modeling::ExpandOutcome;
+using sdurws::ird::modeling::xacro::ExpandOutcome;
 using sdurws::ird::modeling::IXacroExpandService;
 using sdurws::ird::modeling::ImportOptions;
 using sdurws::ird::modeling::ImportOutcome;

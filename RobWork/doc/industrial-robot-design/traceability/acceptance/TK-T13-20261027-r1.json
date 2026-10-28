@@ -1,0 +1,77 @@
+{
+  "taskId": "TK-T13",
+  "baseCommit": "6dc1141ae1e4d0db61baf1e7ab8d2ed414669c9f",
+  "reviewedCommit": "7a941b988a834e96a35b120058614088cbbee784",
+  "implementationCommit": "e7b9546b8e1f755bb8e2cd0676deeb0594307b59",
+  "branch": "codex/core-review-fixes",
+  "verdict": "pass",
+  "createdAt": "2026-10-27T00:00:00.000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "所有者另开的独立验收会话（ZCode，无子智能体；同会话此前完成 CORE-T12 独验）",
+    "authorization": "所有者指定本工作树/分支按 testkit 第一轮评审整改，并指示本会话独立验收；R03/R06 表示方案经所有者批复'采用上述方案'",
+    "constraints": "未参与实施；除本验收产物目录、任务状态收口与记录指针更新及其引发的绑定摘要刷新外未修改任何文件；未远程同步、未改写历史、未触碰 main；受影响目标增量重建后真实重跑。"
+  },
+  "scope": "独立复验 6dc1141ae..7a941b988（实施 e7b9546b8＋证据 7a941b988，211 路径）：R01/R11 SetCheck 身份隔离与首错位、R02 断言宏单次求值、R03/R06/R07 JsonNumber 精确 uint64 与非有限/缺失报告表示（所有者批准方案）、R04/R05 容差档案 schema/量纲、F-015/F-017/F-018 数据集装载边界与完整性链、R08 进程环境序数合并、R09/F-016 lint 字典与真实档案装载、R10 安装扫描、R12 分位数有限性；治理凭证（functions/testkit.json、changes/TK-T13.json、foundation-governance.json）与单元卡事实同步。",
+  "counts": {
+    "failed": 0,
+    "passed": 150,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "本会话实际重跑：集成 testkit 106＋optimization 2＋policy contract 2＋project contract 1＋独立冒烟 32＝143 个 gtest 用例（ird-test-report 全部 decisive），另加 lsnchild 真实子进程 7 项交叉核对（3 passed 态＋4 受控 failed 态按预期退出码核对）；ird_gates/validate-docs/verify-task-scope/commit-lint 另列 checks"
+  },
+  "checks": [
+    "现场：工作树干净、HEAD=7a941b988＝送验 Head；实施 e7b9546b8 单提交承载全部产品与测试改动，7a941b988 仅补送验记录；DELIVERY/README/commands.json 完整，红→绿与首次基线原始记录逐一在案。",
+    "集成 testkit 相关用例 106/106、optimization 2/2、policy contract 2/2（真实 _contract_test 目标）、project contract 1/1（真实子进程锁）、独立冒烟 32/32：本会话按 commands.json 同过滤重跑，ird-test-report 全部 decisive＝0 failed/0 skipped；实施批首次完整基线 132 PASS＋1 FAIL（JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07 转换原语不兼容）与 policy 首次零命中 NOT RUN 记录原样保留，未清洗。",
+    "R03/R06 批准表示经真实 listener 子进程实测：lsnchild 七项交叉核对退出码全部符合预期（Passes/Skips/ExactSeed exit 0；Fails/NonFiniteDetails/MissingActual/MissingExpected exit 1）；报告 JSON 实测 'actual' 非有限为 \"+Inf\"/\"-Inf\"/\"NaN\" 字符串、缺失侧 'actual'/'expected' 为 null、'seed' 为完整精度整数 18446744073709551615——与批准方案逐字一致，真实 NaN 与缺失分别表示、失败未变成功。",
+    "JsonNumber 设计核对：variant<double,uint64_t> 单载荷无陈旧缓存；operator=(double) 整体替换；整数 token 经 from_chars 直接进 uint64 轨，小数/指数记法仅兼容 [0,2^53) 整数（tryUnsigned 拒绝 2^53 及以上），9007199254740993.0 类舍入冒充被阻断；dumpJson 拒绝非有限 number（Usage）；deepEquals 整数精确/混合含精确性守卫/double 按位（-0.0 与 0.0 仍不同）。",
+    "R01/R11 SetCheck：已有身份未配对元素各登记一次 missing/extra 且不进入数值回退（身份失配不再双重计数）；最近数值对详情限无身份元素；checkStableOrder 首错位不被长度或先前 sameOrder 状态掩盖；Boost.Graph 匹配接缝、traits、独立穷举 oracle、规模与歧义规则未动（T20 已接受性能范围未重开，O(n²) 查找为如实登记非行为变化）。",
+    "R02/R12：IRD_EXPECT_FINITE 表达式捕获一次再 isfinite（无重复求值副作用），保留 GoogleTest 非致命失败接线；percentileLinearInterpolated 先核有限性再范围（非有限 q 明确 out_of_range），P95 线性插值公式与登记约定未变。",
+    "R04/R05：档案强制 schemaVersion=ird-tolerance-profile/1；量纲解析一次并保存（e.kind），删除重复 14 单位探测与反向量纲表；token→kind 与 core 单位表交叉校验保留；附录 D 数值/单位/EAA 批准范围未动。",
+    "F-015/F-017/F-018/F-016：parameters 缺省 {}、显式错类型拒绝；seed/threadCount/sizeBytes 先 tryUnsigned 校验再转换（无截断/超界浮点转整数 UB），threadCount 上界 INT_MAX；语义化版本/schemaMajor 改 from_chars 带范围检查；generatorScript 与 generate/ 全部来源纳入完整性链，摘要仍唯一复用 core；failField 重复前缀、恒真条件与陈旧说明删除；lint 缺省字典改 <root>/requirements-ids.json（与显式路径同一文件），字典 schema/ID 结构校验、真实装载容差档案、coveredAt 入字典校验、异常分类退出码。",
+    "R08/R10：环境键 CompareStringOrdinal(…,TRUE) 大小写不敏感合并（不染 locale），_WIN32_WINNT 提升至 Vista 仅限本 TU 不传播；安装扫描改相对路径组件匹配（库/测试工具产物、testdata 目录、testkit 公共头三面），缺根与扫描异常稳定 exit2、只读不删文件、未自行接入正式门禁。",
+    "消费者与布局变化处置：JsonNumber/CompareDetail 布局变化下 optimization/policy/project 消费者均以源码增量重建并通过，未声明旧二进制兼容；公共头自包含、lint/scan 正负例由实施批独立驱动留痕（commands.json 原件核对），本会话复核其参数与退出码记录完整。",
+    "红线与复用合规：ird_gates R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（本会话重跑）；testkit 零 Qt、无新增第三方依赖或第二解析器（Boost.JSON 渠道获批但本包未迁移，提案与独验前置不变）；strtod 转换显式 C locale（_strtod_l/strtod_l RAII），次正规/下溢/负零行为保留；core 数值比较/单位/摘要权威未动，正式 testdata/expected 未改。",
+    "范围与提交：verify-task-scope 显式 -Base 6dc1141ae -Head 7a941b988 exit 0（changed=211 全部在 35 条允许面，3 条禁止面零触碰——含证据提交）；commit-lint 6dc1141ae..7a941b988 两提交全 PASS。",
+    "治理门禁：validate-docs -TaskFile TK-T13.json exit 0（validate-task PASS；validate-reuse PASS governance only changed=197 DEBT=16 UNRESOLVED=1399；validate-docs PASS 433 task files）；复用输出仍为治理检查，全库深证据审计按增量范围不触发。"
+  ],
+  "issues": [],
+  "notRun": [
+    "全库测试、GUI、core 全套、正式安装包扫描、全部历史黄金生成器：不在本包受影响面（与实施批 NOT RUN 口径一致）",
+    "全库证据索引深审（validate-docs -DeepEvidence）：按 §4 增量范围不触发",
+    "原评审未决的并发 ReportStore 生命周期、suite/global setup 进程级报告、repeat/disabled 规划、TempDir 碰撞所有权等契约裁决与竞态探针：本包未涉及，维持未决登记",
+    "lsnchild legacy 非法 delete 模式与旧 UB 转换分支：按记录不再执行"
+  ],
+  "commands": [
+    { "name": "testkit-integration", "command": "sdurws_ird_testkit_test.exe（增量重建后按 commands.json 同过滤）", "exitCode": 0, "passed": true, "log": "integration/testkit-final.log", "evidence": "integration/testkit-final.xml＋ird-test-report（106/106 decisive）" },
+    { "name": "optimization", "command": "sdurws_ird_optimization_test.exe --gtest_filter=OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1:OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1", "exitCode": 0, "passed": true, "log": "integration/optimization.log", "evidence": "2/2 decisive（SetCheck 身份消费者黄金回归）" },
+    { "name": "policy-contract", "command": "sdurws_ird_policy_contract_test.exe --gtest_filter=PolicyContractDoubles.*（两项）", "exitCode": 0, "passed": true, "log": "integration/policy.log", "evidence": "2/2 decisive（真实 _contract_test 目标；实施批首次零命中记录保留）" },
+    { "name": "project-contract", "command": "sdurws_ird_project_contract_test.exe --gtest_filter=Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid", "exitCode": 0, "passed": true, "log": "integration/project.log", "evidence": "1/1 decisive（真实子进程进程锁）" },
+    { "name": "smoke", "command": "build/core-smoke/testkit/Release/sdurws_ird_testkit_test.exe（commands.json 同过滤）", "exitCode": 0, "passed": true, "log": "smoke/smoke-final.log", "evidence": "smoke/smoke-final.xml（32/32 decisive）" },
+    { "name": "lsnchild-cross-check", "command": "sdurws_ird_testkit_lsnchild.exe 逐用例（Passes/Fails/Skips/NonFiniteDetails_ReviewR03/MissingActual_ReviewR03/MissingExpected_ReviewR03/ExactSeed_ReviewR06）", "exitCode": 0, "passed": true, "log": "lsnchild/*.log", "evidence": "退出码 0/1/0/1/1/1/0 全符合预期；lsnchild/*.json 实测 \"+Inf\"/\"-Inf\"/\"NaN\"、缺失 null、seed=18446744073709551615 精确整数" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/testkit-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "全部检查零命中" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/TK-T13.json", "exitCode": 0, "passed": true, "log": "validate-docs.log", "evidence": "validate-task/validate-reuse/validate-docs 三段 PASS" },
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile …/TK-T13.json -Base 6dc1141ae… -Head 7a941b988…", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "211 路径全部允许面（范围含证据提交，符合 DELIVERY 终局范围要求）" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 6dc1141ae…..7a941b988…", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "e7b9546b8＋7a941b988 两提交 PASS" }
+  ],
+  "executionNotes": [
+    "本验收为重跑型：六个集成目标与冒烟 testkit 目标增量重建（逐目标 -m:1）后执行；构建缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 确认。",
+    "policy 消费者按 DELIVERY 教训直接使用 sdurws_ird_policy_contract_test 目标（实施批曾误用 sdurws_ird_policy_test 致零命中，原始记录保留并已补正确目标验证）。",
+    "受控失败/跳过子进程（Fails/Skips/NonFinite/Missing）按真实退出状态核对，驱动预期＝失败形态本身；不将其记为算法验收 PASS。"
+  ],
+  "limitations": "PASS 仅覆盖 TK-T13 送验范围（6dc1141ae..7a941b988）。不关闭 F-015～F-018 的 findings 台账状态（保持 open，关口归所有者）；不解除原评审未决的并发/规划/极值等契约事项；不重做 T20 性能接受、T49 生成器独验、core 全套或 GUI；Boost.JSON 迁移提案与其独验前置保持原状。lint/scan 为建议稿工具验证，不构成正式产品安装包验收。报告格式可读、JSON 可解析或 decisive=true 本身不构成执行成功/确定性证明，归档消费者仍须核对非零命中、退出码与真实来源绑定。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/testkit-final.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/testkit-final.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/testkit-final.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/optimization.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/optimization.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/optimization.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/policy.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/policy.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/policy.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/project.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/project.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/integration/project.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/smoke/smoke-final.log", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/smoke/smoke-final.xml", "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/smoke/smoke-final.ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/lsnchild/*.log|xml|json（7 项）",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/TK-T13-20261027-r1/refresh-bindings.py"
+  ]
+}

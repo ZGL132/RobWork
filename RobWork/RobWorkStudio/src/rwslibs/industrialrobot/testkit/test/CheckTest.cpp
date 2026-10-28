@@ -11,6 +11,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <gtest/gtest-spi.h>
 
 #include <sdurws/ird/core/Errors.hpp>
 #include <sdurws/ird/testkit/Check.hpp>
@@ -127,5 +128,20 @@ TEST(AssertMacrosBehavior, MacroExpansionWorks_UT_CMP)
     // IRD_EXPECT_FINITE 守卫。
     IRD_EXPECT_FINITE("x", 1.0);
     EXPECT_NO_THROW({ IRD_EXPECT_FINITE("x", 1.0); });
+}
+
+/** 第一轮评审 R02：有副作用的表达式只求值一次，首个非法数必须令 gtest 失败。 */
+TEST(AssertMacrosBehavior, FiniteEvaluatesExactlyOnce_ReviewR02)
+{
+    int calls = 0;
+    auto next = [&] { return ++calls == 1 ? inf : 0.0; };
+    EXPECT_NONFATAL_FAILURE(IRD_EXPECT_FINITE("computed", next()), "computed");
+    EXPECT_EQ(calls, 1);
+
+    calls = 0;
+    auto finiteFirst = [&] { return ++calls == 1 ? 0.0 : inf; };
+    IRD_EXPECT_FINITE("computed", finiteFirst());
+    EXPECT_EQ(calls, 1);
+    EXPECT_NONFATAL_FAILURE(IRD_EXPECT_FINITE("nan", qnan), "nan");
 }
 }  // namespace

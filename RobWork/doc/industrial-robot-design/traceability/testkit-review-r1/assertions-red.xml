@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="4" disabled="0" errors="0" time="0.03" timestamp="2026-10-27T20:47:45.767" name="AllTests">
+  <testsuite name="ToleranceProfileLoad" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.03" timestamp="2026-10-27T20:47:45.767">
+    <testcase name="SchemaRequiredAndVersionChecked_ReviewR05" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="86" status="run" result="completed" time="0.03" timestamp="2026-10-27T20:47:45.767" classname="ToleranceProfileLoad">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp:103&#x0A;Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp:103
+Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp:103&#x0A;Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;&quot;schemaVersion&quot;: &quot;ird-tolerance-profile/999&quot;,&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp:103
+Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"schemaVersion": "ird-tolerance-profile/999",
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp:103&#x0A;Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.&#x0A;  Actual: it throws nothing.&#x0A;&quot;schemaVersion&quot;: 1,&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp:103
+Expected: ToleranceProfile::load(path) throws an exception of type TestKitError.
+  Actual: it throws nothing.
+"schemaVersion": 1,
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="AssertMacrosBehavior" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:47:45.797">
+    <testcase name="FiniteEvaluatesExactlyOnce_ReviewR02" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="134" status="run" result="completed" time="0." timestamp="2026-10-27T20:47:45.797" classname="AssertMacrosBehavior">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src/gtest.cc:1090&#x0A;Expected: 1 non-fatal failure&#x0A;  Actual: 0 failures&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src/gtest.cc:1090
+Expected: 1 non-fatal failure
+  Actual: 0 failures
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp:139&#x0A;Expected equality of these values:&#x0A;  calls&#x0A;    Which is: 2&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp:139
+Expected equality of these values:
+  calls
+    Which is: 2
+  1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp:143&#x0A;Failed&#x0A;computed: 非有限值（NaN/±Inf）——NFR-COR-03&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp:143
+Failed
+computed: 非有限值（NaN/±Inf）——NFR-COR-03
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp:144&#x0A;Expected equality of these values:&#x0A;  calls&#x0A;    Which is: 2&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp:144
+Expected equality of these values:
+  calls
+    Which is: 2
+  1
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="SetEquivalent" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:47:45.797">
+    <testcase name="IdentifiedElementsNeverFallBackToNumerics_ReviewR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-27T20:47:45.797" classname="SetEquivalent">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:100&#x0A;Value of: r.equivalent&#x0A;  Actual: true&#x0A;Expected: false&#x0A;b&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:100
+Value of: r.equivalent
+  Actual: true
+Expected: false
+b
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:101&#x0A;Value of: r.matched.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:101
+Value of: r.matched.empty()
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:102&#x0A;Expected equality of these values:&#x0A;  r.missingExpected&#x0A;    Which is: {}&#x0A;  (std::vector&lt;std::size_t&gt;{0})&#x0A;    Which is: { 0 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:102
+Expected equality of these values:
+  r.missingExpected
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:103&#x0A;Expected equality of these values:&#x0A;  r.extraActual&#x0A;    Which is: {}&#x0A;  (std::vector&lt;std::size_t&gt;{0})&#x0A;    Which is: { 0 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:103
+Expected equality of these values:
+  r.extraActual
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:106&#x0A;Value of: reverse.equivalent&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:106
+Value of: reverse.equivalent
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:107&#x0A;Value of: reverse.matched.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:107
+Value of: reverse.matched.empty()
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:100&#x0A;Value of: r.equivalent&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:100
+Value of: r.equivalent
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:101&#x0A;Value of: r.matched.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:101
+Value of: r.matched.empty()
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:102&#x0A;Expected equality of these values:&#x0A;  r.missingExpected&#x0A;    Which is: {}&#x0A;  (std::vector&lt;std::size_t&gt;{0})&#x0A;    Which is: { 0 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:102
+Expected equality of these values:
+  r.missingExpected
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:103&#x0A;Expected equality of these values:&#x0A;  r.extraActual&#x0A;    Which is: {}&#x0A;  (std::vector&lt;std::size_t&gt;{0})&#x0A;    Which is: { 0 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:103
+Expected equality of these values:
+  r.extraActual
+    Which is: {}
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:106&#x0A;Value of: reverse.equivalent&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:106
+Value of: reverse.equivalent
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:107&#x0A;Value of: reverse.matched.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:107
+Value of: reverse.matched.empty()
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:102&#x0A;Expected equality of these values:&#x0A;  r.missingExpected&#x0A;    Which is: { 0, 0 }&#x0A;  (std::vector&lt;std::size_t&gt;{0})&#x0A;    Which is: { 0 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:102
+Expected equality of these values:
+  r.missingExpected
+    Which is: { 0, 0 }
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:103&#x0A;Expected equality of these values:&#x0A;  r.extraActual&#x0A;    Which is: { 0, 0 }&#x0A;  (std::vector&lt;std::size_t&gt;{0})&#x0A;    Which is: { 0 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:103
+Expected equality of these values:
+  r.extraActual
+    Which is: { 0, 0 }
+  (std::vector<std::size_t>{0})
+    Which is: { 0 }
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="StableOrder" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T20:47:45.798">
+    <testcase name="ShorterSequenceReportsEarliestDivergence_ReviewR11" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="112" status="run" result="completed" time="0." timestamp="2026-10-27T20:47:45.798" classname="StableOrder">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:122&#x0A;Expected equality of these values:&#x0A;  r.firstDivergence&#x0A;    Which is: 1&#x0A;  first&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp:122
+Expected equality of these values:
+  r.firstDivergence
+    Which is: 1
+  first
+    Which is: 0
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

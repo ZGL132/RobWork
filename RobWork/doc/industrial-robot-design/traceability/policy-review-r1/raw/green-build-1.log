@@ -1,0 +1,1429 @@
+CMake is re-running because C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeFiles/generate.stamp is out-of-date.
+  the file 'C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt'
+  is newer than 'C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- RobWork: Build configuration: none
+-- RobWork: Version 26.10.28
+-- RobWork: ROOT - C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWork
+-- RobWork: Boost version 1.92.0 found!
+-- RobWork: OpenGL and GLUT ENABLED! FOUND!
+-- RobWork: XERCES ENABLED! FOUND!
+-- RobWork: Yaobi ENABLED! NOT FOUND! Using RobWork native Yaobi.
+-- RobWork: PQP ENABLED! Using RobWork native PQP.
+-- Eigen3 version .. found in D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3, but at least version 2.91.0 is required
+-- Eigen3 version .. found in D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3, but at least version 2.91.0 is required
+-- RobWork: EIGEN3 .. Found w. Hunter
+-- RobWork: Qhull Found
+-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+-- USE_FCL ON : FCL not Found
+-- USE_CSGJS ON: Enabled by default
+-- USE_Bullet OFF : Disable Hard Coded
+-- USE_SWIG OFF : Swig not Found
+-- USE_LUA OFF : Swig not found
+-- USE_ASSIMP OFF : Assimp not found and is now DISABLED!
+-- USE_Python ON : Python  Found
+-- USE_numpy OFF : Python Not Found
+-- USE_gtest  OFF : Disabled by default
+-- USE_Mathematica OFF : Disabled by default
+-- USE_RW_ASSERT ON : Enabled by Default
+-- USE_OpenMP ON : OpenMP 2.0 CXX FOUND! - Specification date 200203
+-- RobWork: RW C flags: 
+-- RobWork: RW CXX flags: -EHa -bigobj /MP -openmp
+-- RobWork: RW definitions: -DNOMINMAX;-DBIND_FORTRAN_LOWERCASE_UNDERSCORE;-DWIN32_LEAN_AND_MEAN;-D_WIN32_WINNT=0x0501;-D_SCL_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_DEPRECATE;-DMSVC_AMD64
+-- RobWork: RW linker flags: 
+CMake Warning (dev) at RobWork/cmake/RobWorkMacros.cmake:497 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+Call Stack (most recent call first):
+  RobWork/ext/csgjs/src/CMakeLists.txt:13 (rw_add_includes)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- BUILD_sdurw_core  ON : Enabled by default.
+-- BUILD_sdurw_plugin  ON : Enabled by default.
+-- BUILD_sdurw_common  ON : Enabled by default.
+-- BUILD_sdurw_math  ON : Enabled by default.
+-- BUILD_sdurw_kinematics  ON : Enabled by default.
+-- BUILD_sdurw_geometry  ON : Enabled by default.
+-- BUILD_sdurw_sensor  ON : Enabled by default.
+-- BUILD_sdurw_graspplanning  ON : Enabled by default.
+-- BUILD_sdurw_models  ON : Enabled by default.
+-- BUILD_sdurw_trajectory  ON : Enabled by default.
+-- BUILD_sdurw_proximity  ON : Enabled by default.
+-- BUILD_sdurw_graphics  ON : Enabled by default.
+-- BUILD_sdurw_invkin  ON : Enabled by default.
+-- BUILD_sdurw_pathplanning  ON : Enabled by default.
+-- BUILD_sdurw_loaders  ON : Enabled by default.
+-- BUILD_sdurw  ON : Enabled by default.
+-- BUILD_sdurw_algorithms  ON : Enabled by default.
+-- BUILD_sdurw_task  ON : Enabled by default.
+-- BUILD_sdurw_assembly  ON : Enabled by default.
+-- BUILD_sdurw_calibration  ON : Enabled by default.
+-- BUILD_sdurw_control  ON : Enabled by default.
+-- BUILD_sdurw_opengl  ON : Enabled by default.
+-- BUILD_sdurw_mathematica  OFF : Disabled by default.
+-- BUILD_sdurw_proximitystrategies  ON : Enabled by default.
+-- sdurw_proximitystrategies: Not building Bullet interface since Bullet is disabled!
+-- sdurw_proximitystrategies: Not building FCL interface since FCL is disabled!
+-- BUILD_sdurw_proximitystrategies.rwplugin  ON : Enabled by default.
+-- BUILD_sdurw_pathoptimization  ON : Enabled by default.
+-- BUILD_sdurw_pathplanners  ON : Enabled by default.
+-- BUILD_sdurw_simulation  ON : Enabled by default.
+-- BUILD_sdurw_java  OFF : SWIG not found!
+-- BUILD_sdurw_python  OFF : SWIG not found!
+-- BUILD_sdurw_lua  OFF : Lua not found!
+-- BUILD_sdurw_softbody  OFF : Disabled by default.
+-- BUILD_sdurw_csg  ON : Enabled by default.
+-- BUILD_sdurw_analytic_geometry  ON : Enabled by default.
+-- BUILD_sdurw_simplefinger  ON : Enabled by default.
+-- BUILD_sdurw_sandbox  OFF : Disabled by default.
+-- RobWork: system id= 
+-- RobWork tests ENABLED!
+-- RobWork example DISABLED!
+-- Current Git revision is fd198f54c-dirty
+-- RobWorkStudio: Build configuration: none
+-- RobWorkStudio: Version 26.10.28
+-- RobWorkStudio: ROOT dir: C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkStudio/cmake/RobWorkStudioSetup.cmake:50 (find_package)
+  RobWorkStudio/CMakeLists.txt:89 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkStudio/cmake/RobWorkStudioSetup.cmake:51 (find_package)
+  RobWorkStudio/CMakeLists.txt:89 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- 
+-- Found Python interpreter 3.13.11
+-- Found Python libraries 3.13.11
+-- RobWorkStudio: Using Qt 6.11.1.
+-- RobWork: OpenGL and GLUT ENABLED! FOUND!
+-- RobWorkStudio: SWIG 3+ not found!
+-- RobWorkStudio: Lua DISABLED!
+-- QCodeEditor not found building internal target
+-- RobWorkStudio: Adding RWS CXX flags:  -EHa -bigobj /MP -openmp
+-- RobWorkStudio: Addubg RWS definitions: -DNOMINMAX;-DBIND_FORTRAN_LOWERCASE_UNDERSCORE;-DWIN32_LEAN_AND_MEAN;-D_WIN32_WINNT=0x0501;-D_SCL_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_DEPRECATE;-DMSVC_AMD64;-DQT_DEBUG
+-- RobWorkStudio: Using static linking of default plugins!
+CMake Warning (dev) at RobWorkStudio/ext/qtpropertybrowser/CMakeLists.txt:66 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Deprecation Warning at RobWorkStudio/ext/QCodeEditor/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- BUILD_sdurws  ON : Enabled by default.
+-- BUILD_sdurws_plugin.rwplugin  ON : Enabled by default.
+-- BUILD_sdurws_atask  ON : Enabled by default.
+-- BUILD_sdurws_gtask  ON : Enabled by default.
+-- BUILD_sdurws_jog  ON : Enabled by default.
+-- BUILD_sdurws_log  ON : Enabled by default.
+-- BUILD_sdurws_playback  ON : Enabled by default.
+-- BUILD_sdurws_propertyview  ON : Enabled by default.
+-- BUILD_sdurws_treeview  ON : Enabled by default.
+-- BUILD_sdurws_planning  ON : Enabled by default.
+-- BUILD_sdurws_pythoneditor  ON : Enabled by default.
+-- BUILD_sdurws_sensors  ON : Enabled by default.
+-- BUILD_sdurws_workcelleditor  ON : Enabled by default.
+-- BUILD_sdurws_workcelleditorplugin  ON : Enabled by default.
+-- USE STATIC PLUGINS
+-- BUILD_sdurws_robworkstudioapp  ON : Enabled by default.
+-- BUILD_sdurws_lua  OFF : SWIG not found!
+-- BUILD_sdurws_java  OFF : SWIG not found!
+-- BUILD_sdurws_python  OFF : SWIG not found!
+-- BUILD_sdurws_luaeditor  OFF : Disabled by default.
+-- BUILD_sdurws_luapl  OFF : Disabled by default.
+-- BUILD_RobWorkStudio  ON : Enabled by default.
+-- RobWorkStudio: platform  
+-- RobWorkStudio: tests DISABLED!
+-- Current Git revision is fd198f54c-dirty
+-- RobWorkSim: Build configuration: none
+-- RobWorkSim: Version 26.10.28
+-- RobWorkSim: ROOT dir: C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkSim
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:34 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:35 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:41 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- RobWorkSim: Python interpreter 3.13.11 Found
+-- RobWorkSim: Python libraries 3.13.11 Found
+-- RobWorkSim: SWIG 3+ not found!
+-- RobWorkSim: Lua DISABLED!
+-- RobWorkSim: Bullet enabled
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
+  Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  CMake variable ODE_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/ode
+
+  For compatibility, CMake is ignoring the variable.
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:181 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- RobWorkSim: ODE enabled and found. Using DOUBLE
+-- RobWorkSim: RobWorkPhysicsEngine enabled.
+-- RobWorkSim: RWPhysics enabled.
+-- RobWorkSim: Adding RWSIM CXX flags: -EHa -bigobj /MP -openmp 
+-- BUILD_sdurwsim  ON : Enabled by default.
+-- BUILD_sdurwsim_gui  ON : Enabled by default.
+-- BUILD_sdurwsim_ode  ON : Enabled by default.
+-- ODE threading_impl.h detected - assuming version 0.13 and later.
+CMake Warning (dev) at RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt:87 (elseif):
+  ELSEIF called with no arguments, it will be skipped.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- BUILD_ode_plugin.rwplugin  ON : Enabled by default.
+-- BUILD_sdurwsim_bullet  ON : Enabled by default.
+-- Bullet will be compiled with single precision.
+-- BUILD_sdurwsim_lua  OFF : SWIG not found!
+-- BUILD_sdurwsim_java  OFF : SWIG not found!
+-- BUILD_sdurwsim_python  OFF : SWIG not found!
+-- BUILD_SimulatorLogViewer  ON : Enabled by default.
+-- BUILD_sdurwsim_test  ON : Enabled by default.
+-- BUILD_RWSimulatorPlugin  ON : Enabled by default.
+-- BUILD_SimUtilityPlugin  ON : Enabled by default.
+-- BUILD_GraspTableGeneratorPlugin  ON : Enabled by default.
+-- BUILD_RWSimPlugin  ON : Enabled by default.
+-- BUILD_SimTaskPlugin  ON : Enabled by default.
+-- BUILD_EngineTestPlugin  ON : Enabled by default.
+-- RobWork tests DISABLED!
+-- Configuring done (4.9s)
+-- Generating done (23.6s)
+-- Build files have been written to: C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_policy
+  CollisionQuery.cpp
+  Compatibility.cpp
+  Diagnostics.cpp
+  Errors.cpp
+  JointLimits.cpp
+  PolicyParsing.cpp
+  PolicyPort.cpp
+  SystemDefaultPolicy.cpp
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_policy_test
+  CollisionEvaluationTest.cpp
+  CollisionSessionTest.cpp
+  CompatibilityTest.cpp
+  DiagnosticsTest.cpp
+  JointLimitsTest.cpp
+  PolicyInputTest.cpp
+  PolicyParsingTest.cpp
+  PolicyPortTest.cpp
+  PolicySetTest.cpp
+  SystemDefaultPolicyTest.cpp
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::createModel” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(207,40):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::createModel”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::destroyModel” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(212,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::destroyModel”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::addGeometry” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(219,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::addGeometry”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(228,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(233,30):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(239,5):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(279,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::clear” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(244,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::clear”的声明
+  
+  sdurws_ird_policy_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  Aggregation.cpp
+  Catalog.cpp
+  Confirmable.cpp
+  CrashReport.cpp
+  DiagCodes.cpp
+  Factory.cpp
+  Logging.cpp
+  Redaction.cpp
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_policy_contract_test
+  PolicyContractDoublesTest.cpp
+  PolicyDiagnosticsRegistryContractTest.cpp
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(232,40):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(237,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(244,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(253,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(258,30):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(264,5):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(269,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear”的声明
+  
+  sdurws_ird_policy_contract_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Model3DFactory.cpp
+  XMLRWLoader.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_loaders.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_loaders.exp
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  TaskLoader.cpp
+  TaskSaver.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_task.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_task.exp
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  RenderText.cpp
+  SceneOpenGL.cpp
+  #include <rwlibs/os/glext_win32.hpp> is deprecated, use #include <rwlibs/opengl/glext_win32.hpp> instead
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_opengl.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_opengl.exp
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\libs\Release\yaobi.lib
+  ProximityStrategyFactory.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_proximitystrategies.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWork/libs/Release/sdurw_proximitystrategies.exp
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  ContactDetector.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkSim/libs/Release/sdurwsim.lib 和对象 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkSim/libs/Release/sdurwsim.exp
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC and UIC for target sdurwsim_ode
+  Auto build dll exports
+  sdurwsim_ode.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkSim\bin\Release\sdurwsim_ode.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  Errors.cpp
+  DiagCodes.cpp
+  Fk.cpp
+  Evaluators.cpp
+  Evidence.cpp
+  KinTypes.cpp
+  Bounds.cpp
+  Ik.cpp
+  SolutionSet.cpp
+  Sampling.cpp
+  Workspace.cpp
+  PoseReach.cpp
+  Collision.cpp
+  Commands.cpp
+  Export.cpp
+  Recompute.cpp
+  AnalysisConfig.cpp
+  Render.cpp
+  Envelope.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  CommandInteractionBridge.cpp
+  CommandPalette.cpp
+  CommandRegistry.cpp
+  DiagnosticPresentation.cpp
+  DraftController.cpp
+  GlobalShortcutRegistry.cpp
+  HostController.cpp
+  IndustrialProjectTree.cpp
+  PluginUiRegistrar.cpp
+  PolicySummaryCard.cpp
+  PropertyInspector.cpp
+  RuntimePublishBridge.cpp
+  SelectionService.cpp
+  ShellSupport.cpp
+  StageNavigationModel.cpp
+  StatusProjection.cpp
+  TaskPresentation.cpp
+  UiSessionController.cpp
+  View3DPlaceholder.cpp
+  WorkbenchContent.cpp
+  WorkbenchShell.cpp
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  KinPanelUnits.cpp
+  KinPanelCommandCatalog.cpp
+  KinPanelModel.cpp
+  KinPanelFlows.cpp
+  KinPanelRotation.cpp
+  KinematicsPanelWidget.cpp
+  KinematicsUiModule.cpp
+  KinHostMigrationProviders.cpp
+  KinematicsPluginAssembly.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(437,8): warning C4099: “sdurws::ird::kinematics::KinModuleSessionState”: 类型名称以前使用“class”现在使用的是“struct” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_plugin.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPluginAssembly.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(437,8):
+      参见“sdurws::ird::kinematics::KinModuleSessionState”的声明
+  
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_kinematics_test
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  TestMainReport.cpp
+  GoldenKinTest.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  IkTest.cpp
+  TaskPointsBatchTest.cpp
+  ReproBenchmarkTest.cpp
+  RegionCoverageTest.cpp
+  CommandsTest.cpp
+  SolutionSetViewTest.cpp
+  ExportTest.cpp
+  RecomputeTest.cpp
+  AnalysisConfigTest.cpp
+  RenderTest.cpp
+  WorkspaceTest.cpp
+  EnvelopeTest.cpp
+  PoseReachTest.cpp
+  PluginPanelTest.cpp
+  HostMigrationTest.cpp
+  CollisionPortTest.cpp
+  FkTest.cpp
+  KinP4FlowsTest.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\CommandsTest.cpp(590,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\CommandsTest.cpp(611,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp(1218,45): warning C4804: “>”: 在操作中使用类型“bool”不安全 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(437,8): warning C4099: “sdurws::ird::kinematics::KinModuleSessionState”: 类型名称以前使用“class”现在使用的是“struct” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/HostMigrationTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(437,8):
+      参见“sdurws::ird::kinematics::KinModuleSessionState”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\assembly\sdurws\ird\kinematics\KinematicsPluginAssembly.hpp(56,7): warning C4099: “sdurws::ird::kinematics::KinModuleSessionState”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/PluginPanelTest.cpp”)
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(437,8):
+      参见“sdurws::ird::kinematics::KinModuleSessionState”的声明
+  
+  sdurws_ird_kinematics_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\xerces-c_3_3.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\xerces-c_3_3.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\freeglut.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target qtpropertybrowser
+  Generating qrc_qtpropertybrowser.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/ext/qtpropertybrowser/CMakeLists.txt
+  qtpropertybrowser.cpp
+  qtpropertymanager.cpp
+  qteditorfactory.cpp
+  qtvariantproperty.cpp
+  qttreepropertybrowser.cpp
+  qtbuttonpropertybrowser.cpp
+  qtgroupboxpropertybrowser.cpp
+  qtpropertybrowserutils.cpp
+  qrc_qtpropertybrowser.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(397,26): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(401,26): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(403,26): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(966,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(967,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(967,99): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(968,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(968,99): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(969,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(969,102): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(970,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(970,100): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(971,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(971,57): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(980,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(981,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(982,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(983,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(984,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(985,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(986,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(987,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(988,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(989,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(990,19): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(991,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(991,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1002,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1003,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1003,104): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1004,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1004,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1011,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1012,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1012,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1013,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1014,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1015,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1016,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1017,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1018,19): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1031,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1032,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1032,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1033,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1034,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1035,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1036,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1043,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1044,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1044,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1049,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1050,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1050,62): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1055,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1056,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1056,65): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1061,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1062,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1062,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1067,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1068,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1068,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1079,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1080,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1080,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1091,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1092,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1092,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1093,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1094,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1107,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1108,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1108,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1109,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1110,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1111,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1112,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1127,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1128,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1128,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1129,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1130,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1131,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1132,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1133,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1134,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1151,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1152,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1152,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1153,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1154,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1169,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1170,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1170,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1171,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1172,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1173,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1174,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1191,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1192,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1192,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1205,50): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1207,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1218,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1219,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1219,64): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1237,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1238,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1238,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1258,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1259,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1259,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1266,50): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1268,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1283,51): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1632,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1632,37): warning C4996: 'QVariant::canConvert': 被声明为已否决 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1736,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1736,24): warning C4996: 'QVariant::canConvert': 被声明为已否决 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(430,39): warning C4996: 'QLocale::countryToString': Use territoryToString(Territory) instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2014,65): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2015,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2018,71): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2019,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2022,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2023,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2026,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2027,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2030,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2031,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2034,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2035,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2038,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2039,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2042,75): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2043,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2046,68): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2047,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2050,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2051,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2054,69): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2055,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2058,68): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2059,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(455,30): warning C4996: 'QLocale::countriesForLanguage': Query territory() on each entry from matchingLocales() instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(457,33): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(469,42): warning C4996: 'QLocale::countryToString': Use territoryToString(Territory) instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2464,43): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2471,43): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2587,59): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2616,59): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2638,59): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qteditorfactory.cpp(1736,14): warning C4996: 'QString::count': Use size() or length() instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(357,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(358,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(359,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(360,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+  qtpropertybrowser.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws
+  Generating ui_AboutBox.h
+  Generating ui_PropertyViewEditor.h
+  Generating ui_PropertyViewDialog.h
+  Generating qrc_rwstudio_resources.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rws/CMakeLists.txt
+  ArcBallController.cpp
+  RWSImageLoaderPlugin.cpp
+  ImageUtil.cpp
+  RobWorkStudio.cpp
+  RWStudioView3D.cpp
+  SceneOpenGLViewer.cpp
+  RobWorkStudioPlugin.cpp
+  AboutBox.cpp
+  HelpAssistant.cpp
+  RWSSpinBox.cpp
+  ImageView.cpp
+  PropertyViewEditor.cpp
+  PropertyViewDialog.cpp
+  PyPlugin.cpp
+  PythonRunner.cpp
+  qrc_rwstudio_resources.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\pythonpluginloader\PythonRunner.cpp(105,9): warning C4996: 'Py_SetProgramName': deprecated in 3.11 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\RWSSpinBox.cpp(22,31): warning C4996: 'QString::count': Use size() or length() instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(133,77): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(141,71): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(152,72): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(162,69): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(173,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rws\RobWorkStudio.cpp(484,22): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+  sdurws.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws.lib
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  Budget.cpp
+  Csv.cpp
+  IoDiagnostics.cpp
+  Json.cpp
+  Package.cpp
+  ResourceIo.cpp
+  SafePath.cpp
+  ZipChannel.cpp
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC and UIC for target sdurwsim_ode
+  Auto build dll exports
+  sdurwsim_ode.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkSim\bin\Release\sdurwsim_ode.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_modeling
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  ObjectTypes.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  RobotDesign.cpp
+  Parts.cpp
+  Codec.cpp
+  PropertyEstimation.cpp
+  Import.cpp
+  WorkCellReverseImport.cpp
+  XacroExpand.cpp
+  Template.cpp
+  StructureEdit.cpp
+  GeometryLinkEdit.cpp
+  Readiness.cpp
+  CommandHandlers.cpp
+  WorkingSetCommand.cpp
+  DhConvert.cpp
+  CanonicalBridge.cpp
+  Package.cpp
+  ModelDiff.cpp
+  PackageWorkCell.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  PanelModel.cpp
+  PanelEditFlow.cpp
+  GeometryResourceFlow.cpp
+  PanelCommandCatalog.cpp
+  HostMigrationProviders.cpp
+  JointFormSession.cpp
+  JointGroupedForm.cpp
+  ModelingPanelWidget.cpp
+  ModelingUiModule.cpp
+  ModelingCommandFlows.cpp
+  ModelingDiffDialog.cpp
+  ModelingPropertyDialog.cpp
+  ModelingBodyEditor.cpp
+  ModelingSceneEditor.cpp
+  ModelingToolEditor.cpp
+  ModelingDraftCodec.cpp
+  ModelingAuthorityFlows.cpp
+  ModelingXacroBridge.cpp
+  ModelingPluginAssembly.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_requirements
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  ObjectTypes.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  RequirementTypes.cpp
+  Codec.cpp
+  Editor.cpp
+  Services.cpp
+  Sampling.cpp
+  Import.cpp
+  Readiness.cpp
+  CommandHandlers.cpp
+  OrientationResolution.cpp
+  Capture.cpp
+  TemplateArray.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui_test
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  ShellModelTest.cpp
+  StatusWordModelTest.cpp
+  View3DContractTest.cpp
+  CommandRegistryModelTest.cpp
+  ShortcutRegistryModelTest.cpp
+  PolicySummaryCardTest.cpp
+  FormEditModelTest.cpp
+  StageNavigationModelTest.cpp
+  AboutDialogModelTest.cpp
+  SessionControllerModelTest.cpp
+  DraftControllerModelTest.cpp
+  DiagPresentationModelTest.cpp
+  TaskPresentationModelTest.cpp
+  CommandInteractionBridgeTest.cpp
+  HostControllerModelTest.cpp
+  RuntimePublishBridgeTest.cpp
+  SelectionServiceTest.cpp
+  IndustrialProjectTreeModelTest.cpp
+  PropertyInspectorModelTest.cpp
+  CrashCaptureTest.cpp
+  DefectPinningTest.cpp
+  CrashCapture.cpp
+  HostCompilePipelineTest.cpp
+  KinEvaluationChannelTest.cpp
+  KinHostServicesAssemblyTest.cpp
+  View3DPreviewMarkerPositionTest.cpp
+  SampleHighlightTest.cpp
+  HostCompilePort.cpp
+  HostPresentationAdapters.cpp
+  QtTextBillboard.cpp
+  KinEvaluationChannel.cpp
+  KinHostServicesAssembly.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe

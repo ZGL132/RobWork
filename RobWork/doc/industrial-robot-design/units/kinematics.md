@@ -1107,3 +1107,7 @@ B3g实施验证：18套件2599通过、0失败、3既有占位跳过，双模式
 ## GOV-T21 迁移约束与旧规则勘误
 
 O-40 / WP-15-T03 的“rw::math 无 SVD”已被上游 rw/math/LinearAlgebra.hpp::svd/pseudoInverse 源码反证，不再是实现依据。历史任务事实保留；自持 FK/Jacobian/DLS 迁移见 REUSE-T02/T03。
+
+## 专项修正（POL-T13，2026-10-28）
+
+真实 policy 会话完成后，适配器只有无碰撞发现且几何/实检覆盖完整时才返回 Evaluated；覆盖不足返回 EvidenceMissing，已发现碰撞仍可用于淘汰构型。宿主统一复用既有 makeCollisionSession 场景投影和策略展开。配置回归的每份切片绑定其对应冻结快照，不能将新配置塞入旧快照。实现与验证见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。

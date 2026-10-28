@@ -1,0 +1,54 @@
+Note: Google Test filter = ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen:ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed:ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically:SaveAs*.*:CommandSubmitS6.*:ArchiveContractTest.*
+[==========] Running 15 tests from 6 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from ProjectStoreTest
+[ RUN      ] ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen
+[       OK ] ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen (36 ms)
+[ RUN      ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically
+[       OK ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically (119 ms)
+[ RUN      ] ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed
+[       OK ] ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed (82 ms)
+[----------] 3 tests from ProjectStoreTest (239 ms total)
+
+[----------] 8 tests from CommandSubmitS6
+[ RUN      ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents
+[       OK ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents (66 ms)
+[ RUN      ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+[       OK ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit (118 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08
+[       OK ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08 (249 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04
+[       OK ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04 (260 ms)
+[ RUN      ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips
+[       OK ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips (108 ms)
+[ RUN      ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen
+[       OK ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen (131 ms)
+[ RUN      ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible
+[       OK ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible (131 ms)
+[ RUN      ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload
+[       OK ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload (28 ms)
+[----------] 8 tests from CommandSubmitS6 (1095 ms total)
+
+[----------] 1 test from SaveAsRewire
+[ RUN      ] SaveAsRewire.ThreeRewritePointsOnly_IdsPreserved
+[       OK ] SaveAsRewire.ThreeRewritePointsOnly_IdsPreserved (189 ms)
+[----------] 1 test from SaveAsRewire (189 ms total)
+
+[----------] 1 test from SaveAsSelectiveCopy
+[ RUN      ] SaveAsSelectiveCopy.ReportReferenceIntegrity_SelectiveTrees
+[       OK ] SaveAsSelectiveCopy.ReportReferenceIntegrity_SelectiveTrees (266 ms)
+[----------] 1 test from SaveAsSelectiveCopy (266 ms total)
+
+[----------] 1 test from SaveAsFailureCleanup
+[ RUN      ] SaveAsFailureCleanup.InjectedFailures_LeaveNoTargetNoResidue
+[       OK ] SaveAsFailureCleanup.InjectedFailures_LeaveNoTargetNoResidue (168 ms)
+[----------] 1 test from SaveAsFailureCleanup (168 ms total)
+
+[----------] 1 test from SaveAsContract
+[ RUN      ] SaveAsContract.CallerErrorsFailFast_ClosedContextViaResult
+[       OK ] SaveAsContract.CallerErrorsFailFast_ClosedContextViaResult (111 ms)
+[----------] 1 test from SaveAsContract (111 ms total)
+
+[----------] Global test environment tear-down
+[==========] 15 tests from 6 test suites ran. (2080 ms total)
+[  PASSED  ] 15 tests.

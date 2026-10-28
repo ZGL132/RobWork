@@ -1,0 +1,2 @@
+verify-task-scope: MDL-CR-1 base=a32c040d41b1 head=b80043238df2 changed=39 allowedRules=11 forbiddenRules=3
+verify-task-scope: PASS MDL-CR-1 —— 39 个路径全部在允许面内

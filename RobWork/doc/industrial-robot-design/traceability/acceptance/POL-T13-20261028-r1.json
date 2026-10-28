@@ -1,0 +1,74 @@
+{
+  "taskId": "POL-T13",
+  "baseCommit": "fd198f54c0b66bc61dd64b29a04e2b1675f42dbc",
+  "reviewedCommit": "b0ac978d9aa12a7f62829d8e362ddb2715ba8fba",
+  "implementationCommit": "a167f4d4d9435b565a1dea3217b8fa7935333451",
+  "branch": "codex/core-review-fixes",
+  "verdict": "pass",
+  "admissionGate": {
+    "status": "fail-registered",
+    "detail": "validate-reuse 复现实施批登记的 REUSE-FRESHNESS：runtime/CMakeLists.txt 当前 23b072f9 vs REUSE-T13/T30/T52/T53 冻结生产报告绑定的 5ef2e38b（活跃矩阵 runtime.json 全部 193 处绑定已新鲜，失败全部来自 CheckProductionEvidence 对冻结报告 bindings 的当前盘核对）。其后另有隐藏 COVERAGE 失败：16 个已变更文件共 7,420 个非空行无区段归属（与实施批 binding-audit.json 一致）＋59 项未决功能行。两项结案债＝①按四象限协议对受影响 runtime 行重跑生产证据并重绑（约 9 份报告）；②按 PRJ-T19 dad436e3f 同款生成器补全 16 文件逐功能矩阵。任务保持 ready，validate-reuse 全绿后收口。",
+    "log": "ird-gates.log"
+  },
+  "createdAt": "2026-10-28T00:00:00.000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "所有者另开的独立验收会话（ZCode，无子智能体；同会话此前完成 CORE-T12/TK-T13/EV-T13/PRJ-T19 验收与 PRJ-T19 准入结案批）",
+    "authorization": "所有者提交 POL-T13 送验并指示本会话独立验收",
+    "constraints": "未参与实施；除本验收产物目录外未修改任何文件；未远程同步、未改写历史、未触碰 main、未处置 POL-T13 登记的生产证据重跑债与覆盖缺口债；受影响目标增量重建后真实重跑。"
+  },
+  "scope": "独立复验 fd198f54c..b0ac978d9（实施 a167f4d4d 108 路径＋证据 b0ac978d9，共 110 路径允许面）：12 项评审整改——会话隔离（后端与查询互斥改会话私有，消除跨场景 Frame ID 串用）、宿主碰撞唯一入口（kinematics 适配器 EvidenceMissing 显式缺证、runtime CollisionSession 三文件 478 行删除、R-5 runtime 豁免撤销、sdurw_proximity/loaders/proximitystrategies 依赖移除）、数值守卫（碰撞查询全量非有限扫描、JointLimits 端点有限性/宽度溢出/比值下溢）、几何逐件接收与覆盖同源（coverage.excluded=appliedFilters、逐几何 addModel 接收核验）、上下文失效三重核对（样本边界/终态化前/短路前记距）、域词表与查询 kind 防御、正式诊断注册（DiagCodes 88→94 六码）、最小距离短路前记录次序修正、policy_contract_test→diagnostics 测试边登记。",
+  "counts": {
+    "failed": 2,
+    "passed": 1386,
+    "notRun": 0,
+    "skipped": 1,
+    "unit": "本会话真实重跑 gtest 实例：policy 228＋policy contract 24＋diagnostics 123＋runtime 相关 97（实施批同过滤）＋kinematics 全量 298（297 过＋1 既有占位跳过 PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1）＋ui 全量 346（344 过＋2 既有登记失败）＋冒烟 policy 141/contract 9/diagnostics 123；2 项失败均为 UI-T86 独验（2026-10-26）已在主线定格的登记既有失败（DefectPinning F-560 钉扎回归＋NamedTcpClosure blocked/F-975），非本批引入；ird_gates/validate-reuse/scope/commit-lint 另列 checks"
+  },
+  "checks": [
+    "现场：工作树干净（本验收前）、HEAD=ab54c2b14 含送验两提交；VALIDATION.md/IMPLEMENTATION.md/verification.json（逐命令退出码）与 raw/ 原始红绿记录完整；首批红例（policy 1/12 失败、registry 0/1）与中途失败（kinematics 首轮 2 失败、UI 启动 -1073741515 NOT RUN）如实保留。",
+    "diff 审查成立：12 项修正逐一对应实现；会话隔离消除共享后端的跨场景 Frame ID 串用（描述符仍取自 evaluator 保持 sessionIdentity 同源）；runtime 碰撞设施删除后 proximity 豁免撤销且 ird_gates R-5 零命中实证无残留；kinematics 适配器对缺几何未检对显式 EvidenceMissing（KIN-05 不把未检读成无碰撞）；JointLimits 三层数值守卫与比值先归一后乘 2 防次正规下溢；诊断六码分类依据在案（registryVersion 词表不扩、码值重排为零）。",
+    "测试真实重跑：policy 228/228、contract 24/24、diagnostics 123/123（ird-test-report decisive）；runtime 按实施批同过滤 97/97；kinematics 全量 297/297＋1 既有占位跳过（与实施批登记逐项一致）；冒烟 141/9/123 全绿。",
+    "UI 全量独立核验（实施批仅过滤 30 项通道用例）：本会话亲跑全量 346 项＝344 过＋2 失败；失败集与 UI-T86 独验（2026-10-26，主线 HEAD e536adc10）定格的 343/2 逐项一致——DefectPinning F-560 钉扎回归（F-973 登记、migration §13.1『字符串钉扎历史失败保留』，涉事文件 HostView3DPreviewBackend.cpp/DefectPinningTest.cpp 分别止于 10-20/10-16，本批未触碰）与 NamedTcpClosure（WP-18 第 13 项 blocked、F-975 open 待所有者三选一裁决、候选补丁留档不入树）；本批净增用例通过，零新增失败。",
+    "UI python313.dll 环境处置按 ird-python313-dll 技能：仅当前进程 PATH 前置 D:/software/Miniconda3，未复制 DLL、未改持久环境。",
+    "红线与豁免处置：ird_gates R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（本会话重跑，exit 0）——R-5 runtime 豁免撤销后无残留 proximity 消费；白名单净变化恰为撤销 runtime 豁免＋新增一条测试边（policy_contract_test→diagnostics，ERR-01 逐码核对契约），无门禁放宽。",
+    "生产证据绑定冲突独立定性：validate-reuse 失败唯一来源＝CheckProductionEvidence 对 REUSE-T13×6/T30×2/T52×2/T53×1 冻结 runtime 生产报告 bindings 的当前盘核对（runtime/CMakeLists.txt 5ef2e38b vs 23b072f9）；活跃矩阵 runtime.json 193 处绑定全部新鲜（本会话逐一复算）——实施批『只刷新活跃绑定、不改写历史报告』的边界声明属实；失败性质＝删除重复设施后按协议须对受影响 runtime 行重跑四象限生产证据，属登记债而非 12 项修正缺陷。",
+    "范围与提交：verify-task-scope 显式 -Base fd198f54c -Head b0ac978d9 exit 0（110 路径全在 43 条允许面，3 条禁止面零触碰）；commit-lint 两提交 PASS；whitespace 核查与实施批口径一致。",
+    "结案债量化（FRESHNESS 之后的隐藏失败，本会话以门禁同口径独立计算）：16 个已变更文件 7,420 个非空行无功能矩阵区段归属（清单与实施批 binding-audit.json 一致）＋59 项未决功能行——FRESHNESS 修复后 COVERAGE 必然失败；两项债的处置路径已在 admissionGate 登记，不由本验收越权实施。"
+  ],
+  "issues": [],
+  "notRun": [
+    "生产证据四象限重跑（REUSE-T13/T30/T52/T53 受影响 runtime 行）：登记债，属后续结案批实施面",
+    "16 文件逐功能矩阵补全：登记债，同上",
+    "真实 Widgets 人工点验与完整生产场景碰撞/GUI 验收：实施批与验收同为 QCoreApplication 模型测试口径，未声称扩大",
+    "Group schema、真实距离后端、完整 Workpiece/Payload 角色供给、bool 严格编码：维持原裁决待决，本包未扩大",
+    "全库 DeepEvidence、无关单元完整测试、远程同步：按增量范围不触发"
+  ],
+  "commands": [
+    { "name": "policy-full", "command": "sdurws_ird_policy_test.exe（增量重建后全量）", "exitCode": 0, "passed": true, "log": "integration/policy.log", "evidence": "integration/policy.xml＋ird-test-report（228/228 decisive）" },
+    { "name": "policy-contract", "command": "sdurws_ird_policy_contract_test.exe（全量）", "exitCode": 0, "passed": true, "log": "integration/policy-contract.log", "evidence": "24/24 decisive" },
+    { "name": "diagnostics-full", "command": "sdurws_ird_diagnostics_test.exe（全量）", "exitCode": 0, "passed": true, "log": "integration/diagnostics.log", "evidence": "123/123 decisive" },
+    { "name": "runtime-relevant", "command": "sdurws_ird_runtime_test.exe --gtest_filter=*NameMap*:*Snapshot*:*WorkCell*:*HostPresentation*（实施批同过滤）", "exitCode": 0, "passed": true, "log": "integration/runtime.log", "evidence": "97/97 decisive" },
+    { "name": "kinematics-full", "command": "sdurws_ird_kinematics_test.exe（全量）", "exitCode": 0, "passed": true, "log": "integration/kinematics.log", "evidence": "297/297＋1 既有占位跳过，ird-report envUnavailable=1 decisive=false 如实登记" },
+    { "name": "ui-full", "command": "sdurws_ird_ui_test.exe（全量，QT_QPA_PLATFORM=windows）", "exitCode": 1, "passed": false, "log": "integration/ui.log", "evidence": "344/346；2 失败＝登记既有（F-560 钉扎＋NamedTcpClosure blocked），与 UI-T86 定格逐项一致" },
+    { "name": "smoke", "command": "build/core-smoke policy/policy-contract/diagnostics 三目标", "exitCode": 0, "passed": true, "log": "smoke/*.log", "evidence": "141/9/123 全部 decisive" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=… -DIRD_SELFTEST_DIR=…/build/policy-review-gates -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "ird-gates.log", "evidence": "红线引擎全部零命中（R-5 撤销实证）" },
+    { "name": "validate-reuse", "command": "pwsh validate-reuse.ps1（工作树态）", "exitCode": 1, "passed": false, "log": "ird-gates.log（实施批 raw/ird-gates-final.log 同面）", "evidence": "REUSE-FRESHNESS runtime/CMakeLists.txt＝冻结生产报告绑定，登记债" },
+    { "name": "scope", "command": "pwsh verify-task-scope.ps1 -TaskFile …/POL-T13.json -Base fd198f54c… -Head b0ac978d9…", "exitCode": 0, "passed": true, "log": "scope.log", "evidence": "110 路径全部允许面" },
+    { "name": "commit-lint", "command": "pwsh commit-lint.ps1 -Range fd198f54c….b0ac978d9…", "exitCode": 0, "passed": true, "log": "commit-lint.log", "evidence": "a167f4d4d＋b0ac978d9 PASS" }
+  ],
+  "executionNotes": [
+    "本验收为重跑型：六个集成目标与冒烟三目标增量重建（逐目标 -m:1）后执行；构建缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 确认。",
+    "实施批的 UI 验证为过滤 30 项通道用例（其 VALIDATION.md 明示范围）；本验收主动扩至全量 346 项，两失败经 UI-T86 独验记录与文件历史三方核对定性为既有登记失败——本批零新增失败，亦不冒称全量绿。",
+    "kinematics 1 项跳过为既有 GUI 占位（envUnavailable），原生报告 decisive=false 如实呈现，未计 PASS。"
+  ],
+  "limitations": "PASS 仅覆盖 POL-T13 送验范围（fd198f54c..b0ac978d9）的 12 项修正实施与回归面。任务收口被两项登记债阻断：①受影响 runtime 行的四象限生产证据重跑与重绑（冻结报告不改写原则下须以当前树真实重跑）；②16 文件 7,420 行的逐功能矩阵补全＋59 项未决功能处置（PRJ-T19 dad436e3f 同款结案批模式）。两项均为治理凭证实施面，不由独验签发。UI 两项既有失败（F-560 钉扎归类、NamedTcpClosure/F-975 三选一）继续归所有者裁决链，不因本验收改变。Group/真实距离/完整角色/bool 严格编码维持原裁决待决。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/POL-T13-20261028-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/POL-T13-20261028-r1/integration/*.log|xml|ird-test-report.json（policy/policy-contract/diagnostics/runtime/kinematics/ui 共 6 组）",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/POL-T13-20261028-r1/smoke/*.log|xml|ird-test-report.json（policy/policy-contract/diagnostics 共 3 组）",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/POL-T13-20261028-r1/ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/POL-T13-20261028-r1/scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/POL-T13-20261028-r1/commit-lint.log"
+  ]
+}

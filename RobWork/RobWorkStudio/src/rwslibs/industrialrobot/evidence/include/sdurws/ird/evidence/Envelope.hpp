@@ -279,6 +279,9 @@ enum class EnvelopeIssueCode : std::uint8_t {
     CaseScopeNotInSnapshot,             ///< caseScope 含快照冻结必验工况集外的工况（§7.1 caseScope 注释）
     CompletedManifestBindingInvalid,    ///< 清单对快照绑定校验失败（validateEvidenceManifestBinding——§6.2）
     ProofInvalidAgainstSnapshot,        ///< "有效证明"面不成立：validateProof 对快照/切片核对未通过（表 3 行 1；D-09 存在性≠有效性）
+    VocabularyInvalid, ///< EV-T13：模式/执行/工程状态词表外
+    SnapshotBindingMismatch, ///< task 与快照/快照身份不对应
+    ProfileBindingMismatch, ///< 包络与清单的 Profile 三元组不对应
 };
 
 /**

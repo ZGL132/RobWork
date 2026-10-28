@@ -1,0 +1,13 @@
+Note: Google Test filter = Tx7ProcessLock.Reader*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from Tx7ProcessLock
+[ RUN      ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles
+[       OK ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles (83 ms)
+[ RUN      ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit
+[       OK ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit (160 ms)
+[----------] 2 tests from Tx7ProcessLock (244 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (244 ms total)
+[  PASSED  ] 2 tests.

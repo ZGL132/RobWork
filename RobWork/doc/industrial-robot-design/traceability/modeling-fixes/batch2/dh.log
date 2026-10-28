@@ -1,0 +1,11 @@
+Note: Google Test filter = MdlDh*
+[==========] Running 26 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 14 tests from MdlDhConvert
+[ RUN      ] MdlDhConvert.DhToExplicitAccumulatesCardFormula_WP13T09_ACC1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\DhConvertTest.cpp(324): error: Expected equality of these values:
+  out.joints.size()
+    Which is: 18446744072010483285
+  chain.joints.size()
+    Which is: 3
+

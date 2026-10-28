@@ -1340,10 +1340,11 @@ TEST(ModelingManualBody, ExplicitMigrationAndCompleteOverride_MDL05_V17)
     EXPECT_FALSE(evaluateManualBodyEdit(body,edit,error));EXPECT_FALSE(error.empty());
     edit.resolution=CentroidEditResolution::MigrateInertia;
     out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out)<<error;
-    // 使用已确认质量4kg：I'=I+4((d·d)E-ddᵀ)，独立逐分量参考。
+    // 质量4kg为用户整体物性覆盖；COM安装平移另按C01保持原张量。
     const auto& t=out->body.inertia.value();
-    EXPECT_DOUBLE_EQ(t.ixx,55);EXPECT_DOUBLE_EQ(t.iyy,44);EXPECT_DOUBLE_EQ(t.izz,25);
-    EXPECT_DOUBLE_EQ(t.ixy,-7.9);EXPECT_DOUBLE_EQ(t.ixz,-11.8);EXPECT_DOUBLE_EQ(t.iyz,-23.7);
+    // C01：刚体整体平移，关于其实际COM的张量不膨胀。
+    EXPECT_DOUBLE_EQ(t.ixx,3);EXPECT_DOUBLE_EQ(t.iyy,4);EXPECT_DOUBLE_EQ(t.izz,5);
+    EXPECT_DOUBLE_EQ(t.ixy,0.1);EXPECT_DOUBLE_EQ(t.ixz,0.2);EXPECT_DOUBLE_EQ(t.iyz,0.3);
     EXPECT_EQ(out->body.inertia.provenance(),source);
     EXPECT_EQ(out->body.centerOfMass.provenance().kind,core::ProvenanceKind::UserProvided);
     EXPECT_NE(out->summary.find("migrate-inertia"),std::string::npos);

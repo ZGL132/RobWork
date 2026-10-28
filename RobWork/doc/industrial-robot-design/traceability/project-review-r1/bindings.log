@@ -1,0 +1,18 @@
+warning: in the working copy of 'RobWork/doc/industrial-robot-design/reuse/functions/execution.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'RobWork/doc/industrial-robot-design/units/project.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'RobWork/doc/industrial-robot-design/reuse/functions/execution.json', LF will be replaced by CRLF the next time Git touches it
+source files: 22 input repins: {'project.json': 938}
+preserved unresolved:
+11
+project.ArchiveServiceImpl.ArchiveServiceImpl.endSession
+project.ArchiveServiceImpl.ArchiveServiceImpl.finalize
+project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived
+project.ArchiveServiceImpl.mapOsError
+project.ArchiveServiceImpl.readSmallFile
+project.CommandServiceImpl.CommandServiceImpl.submit
+project.ObjectStore.publishObject
+project.ObjectStore.readVerified
+project.ProjectStoreImpl.loadCommittedState
+project.QueryPortImpl.QueryPortImpl.branchHistory
+project.QueryPortImpl.QueryPortImpl.branchTips
+files with uncovered lines: 14

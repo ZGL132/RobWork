@@ -186,7 +186,7 @@ std::string CanonicalModelCompiler::implementationVersion() const noexcept
     // 实现版本（非空约定——§9.1 合法列；实现内部演进标识，"契约或实现
     // 变化＝新键"（§9.4）中的实现侧分量：算法修正/装配规则调整时递增）。
     // REUSE-T13：移动关节偏置/轴对齐修正会改变WC，必须失效旧1.0缓存。
-    return std::string{"ird-runtime-canonical-compiler/1.1"};
+    return std::string{"ird-runtime-canonical-compiler/1.3"};
 }
 
 // =====================================================================
@@ -494,6 +494,7 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
 
     // ---- 机器人链块（§4.3.3）——Description 逐字段 → Canonical 部件。
     RobotChain chain;
+    chain.flangeOffset = d.flangeOffset;
     chain.robotObjectId = robotEntry->objectId;   // S2② 定位的 robot-design 对象
     chain.robotLocalName = d.robotLocalName;
     // deviceName＝名称端口生成物（§4.3.3"＝§7 生成规则输出"）——顶层 Device
@@ -537,9 +538,11 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
         // §4.3.3"引用须命中 resourceManifest"由 builder 复核）。
         if (l.visual.has_value()) {
             cl.visual = l.visual->resource;
+            cl.visualTransform = l.visual->localTransform;
         }
         if (l.collision.has_value()) {
             cl.collision = l.collision->resource;
+            cl.collisionTransform = l.collision->localTransform;
         }
         cl.mass = l.mass;               // NotProvided＝能力缺失（DYN-06 降级面）
         cl.centerOfMass = l.centerOfMass;
@@ -558,6 +561,7 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
         ct.localName = t.localName;
         if (t.geometry.has_value()) {
             ct.geometry = t.geometry->resource;
+            ct.geometryTransform = t.geometry->localTransform;
         }
         ct.mass = t.mass;
         ct.centerOfMass = t.centerOfMass;
@@ -583,7 +587,7 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
         cs.localName = s.localName;
         cs.worldPose = s.worldPose;     // 世界系固连（禁止预乘安装旋转——§6.4 禁止项 3）
         // MDL-15：无几何是世界固定帧，不伪造资源；存在的引用仍由builder核对清单。
-        if(s.geometry){cs.geometry=s.geometry->resource;}
+        if(s.geometry){cs.geometry=s.geometry->resource;cs.geometryTransform=s.geometry->localTransform;}
         scene.push_back(std::move(cs));
     }
 

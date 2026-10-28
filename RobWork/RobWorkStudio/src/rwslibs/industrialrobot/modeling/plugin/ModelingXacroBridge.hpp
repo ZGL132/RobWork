@@ -1,12 +1,6 @@
-﻿/**
- * @file   ModelingXacroBridge.hpp
- * @brief  Xacro 受控展开桥（UI-T41）——命令流 TU 与 XacroExpand 的隔离面。
- *
- * 背景：DhConvert.hpp 与 XacroExpand.hpp 在 modeling 命名空间各定义一个
- * 同名值类型 ExpandOutcome（两套域语义，头文件层面不可共 TU）；命令流 TU
- * 经 ModelingUiModule 链已含 DhConvert——Xacro 展开须独立编译单元承载。
- * 本桥把"字节入→URDF 形态字节出"的最小展开面出线（io 快照随行——来源
- * 身份保持）；WP-13-T24补齐离线输入冻结与显式用户参数。
+/**
+ * @file 建模命令流内部适配；DH 与 Xacro 结果分别位于 dh/xacro 子命名空间。
+ * 仅作 UI 编排，模型编译与生命周期由 runtime 持有（F14）。
  */
 #ifndef IRD_MODELING_PLUGIN_MODELINGXACROBRIDGE_HPP
 #define IRD_MODELING_PLUGIN_MODELINGXACROBRIDGE_HPP

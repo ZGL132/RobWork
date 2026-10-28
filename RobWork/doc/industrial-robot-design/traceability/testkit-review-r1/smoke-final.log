@@ -1,0 +1,162 @@
+Note: Google Test filter = Json*:ReproRecordReview.*:ReproBenchmark.*:TestRecordJson.*:ListenerOwnership.*:*ReviewR01*:*ReviewR02*:*ReviewR04*:*ReviewR05*:*ReviewR11*:*ReviewR12*
+[==========] Running 32 tests from 15 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07
+[       OK ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07 (4 ms)
+[ RUN      ] JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07
+[       OK ] JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07 (0 ms)
+[ RUN      ] JsonRoundtrip.UnsignedIntegerTextIsExact_ReviewR06
+[       OK ] JsonRoundtrip.UnsignedIntegerTextIsExact_ReviewR06 (0 ms)
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 5 tests from JsonRoundtrip (4 ms total)
+
+[----------] 2 tests from JsonAccess
+[ RUN      ] JsonAccess.ExactIntegerEqualityAndReplacement_ReviewR06
+[       OK ] JsonAccess.ExactIntegerEqualityAndReplacement_ReviewR06 (0 ms)
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 2 tests from JsonAccess (0 ms total)
+
+[----------] 3 tests from JsonRejections
+[ RUN      ] JsonRejections.DumpRejectsNonFiniteNumbers_ReviewR03
+[       OK ] JsonRejections.DumpRejectsNonFiniteNumbers_ReviewR03 (0 ms)
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 3 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+[       OK ] JsonErrorLocation.LineColumnPrecision_UT_JSON (0 ms)
+[----------] 1 test from JsonErrorLocation (0 ms total)
+
+[----------] 1 test from JsonUnicode
+[ RUN      ] JsonUnicode.EscapesToUtf8_UT_JSON
+[       OK ] JsonUnicode.EscapesToUtf8_UT_JSON (0 ms)
+[----------] 1 test from JsonUnicode (0 ms total)
+
+[----------] 1 test from JsonBoundary
+[ RUN      ] JsonBoundary.DumpOutputReparseable_UT_JSON
+[       OK ] JsonBoundary.DumpOutputReparseable_UT_JSON (0 ms)
+[----------] 1 test from JsonBoundary (0 ms total)
+
+[----------] 1 test from ToleranceProfileLoad
+[ RUN      ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05
+[       OK ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05 (23 ms)
+[----------] 1 test from ToleranceProfileLoad (23 ms total)
+
+[----------] 1 test from AssertMacrosBehavior
+[ RUN      ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02
+[       OK ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02 (0 ms)
+[----------] 1 test from AssertMacrosBehavior (0 ms total)
+
+[----------] 1 test from SetEquivalent
+[ RUN      ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01
+[       OK ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01 (0 ms)
+[----------] 1 test from SetEquivalent (0 ms total)
+
+[----------] 1 test from StableOrder
+[ RUN      ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11
+[       OK ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11 (0 ms)
+[----------] 1 test from StableOrder (0 ms total)
+
+[----------] 2 tests from ReproRecordReview
+[ RUN      ] ReproRecordReview.ExactSeedRoundtrip_ReviewR06
+[       OK ] ReproRecordReview.ExactSeedRoundtrip_ReviewR06 (0 ms)
+[ RUN      ] ReproRecordReview.RejectsInvalidIntegerFields_ReviewR06
+[       OK ] ReproRecordReview.RejectsInvalidIntegerFields_ReviewR06 (0 ms)
+[----------] 2 tests from ReproRecordReview (0 ms total)
+
+[----------] 5 tests from ReproBenchmark
+[ RUN      ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1
+[       OK ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1 (1 ms)
+[ RUN      ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2
+[       OK ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2 (0 ms)
+[ RUN      ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3
+[       OK ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3 (0 ms)
+[ RUN      ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1 (0 ms)
+[ RUN      ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1 (24 ms)
+[----------] 5 tests from ReproBenchmark (27 ms total)
+
+[----------] 1 test from PerfBenchmark
+[ RUN      ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12
+[       OK ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12 (0 ms)
+[----------] 1 test from PerfBenchmark (0 ms total)
+
+[----------] 2 tests from TestRecordJson
+[ RUN      ] TestRecordJson.MachineReadableFieldTable_UT_RPT
+[       OK ] TestRecordJson.MachineReadableFieldTable_UT_RPT (0 ms)
+[ RUN      ] TestRecordJson.NonFiniteAndMissingValuesStayMachineReadable_ReviewR03
+[       OK ] TestRecordJson.NonFiniteAndMissingValuesStayMachineReadable_ReviewR03 (0 ms)
+[----------] 2 tests from TestRecordJson (0 ms total)
+
+[----------] 5 tests from ListenerOwnership
+[ RUN      ] ListenerOwnership.AppendTakesOwnershipAndDestroysOnce_UT_LSN
+[       OK ] ListenerOwnership.AppendTakesOwnershipAndDestroysOnce_UT_LSN (0 ms)
+[ RUN      ] ListenerOwnership.ReleaseReturnsOwnershipToCaller_UT_LSN
+[       OK ] ListenerOwnership.ReleaseReturnsOwnershipToCaller_UT_LSN (0 ms)
+[ RUN      ] ListenerOwnership.ChildPassReportAndExitZero_UT_LSN
+Note: Google Test filter = LsnChild.Passes
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Passes
+[       OK ] LsnChild.Passes (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+[       OK ] ListenerOwnership.ChildPassReportAndExitZero_UT_LSN (57 ms)
+[ RUN      ] ListenerOwnership.ChildFailReportAndNonZeroExit_UT_LSN
+Note: Google Test filter = LsnChild.Fails
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Fails
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(78): error: Expected equality of these values:
+  1
+  2
+lsnchild 预期失败样本（F-958 失败态载体）
+
+[  FAILED  ] LsnChild.Fails (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] LsnChild.Fails
+
+ 1 FAILED TEST
+[       OK ] ListenerOwnership.ChildFailReportAndNonZeroExit_UT_LSN (18 ms)
+[ RUN      ] ListenerOwnership.ChildSkipReportAndExitZero_UT_LSN
+Note: Google Test filter = LsnChild.Skips
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Skips
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(84): Skipped
+lsnchild 显式跳过样本（F-958 skip 态载体）
+
+[  SKIPPED ] LsnChild.Skips (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] LsnChild.Skips
+[       OK ] ListenerOwnership.ChildSkipReportAndExitZero_UT_LSN (18 ms)
+[----------] 5 tests from ListenerOwnership (95 ms total)
+
+[----------] Global test environment tear-down
+[==========] 32 tests from 15 test suites ran. (152 ms total)
+[  PASSED  ] 32 tests.

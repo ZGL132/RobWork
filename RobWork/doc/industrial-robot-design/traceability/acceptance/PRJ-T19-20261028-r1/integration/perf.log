@@ -1,0 +1,30 @@
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from GoldenProjectOpen
+[ RUN      ] GoldenProjectOpen.HotStartP95_Within3s_DT_PM16
+[b04-golden] disk-facts headRefs=1001 history=101 oidDirs=1101
+[b04-hot] sample (excluded=1 valid=1): 997.431 ms
+[b04-hot] sample (excluded=0 valid=1): 1014.448 ms
+[b04-hot] sample (excluded=0 valid=1): 930.559 ms
+[b04-hot] sample (excluded=0 valid=1): 990.472 ms
+[b04-hot] sample (excluded=0 valid=1): 989.947 ms
+[b04-hot] sample (excluded=0 valid=1): 973.003 ms
+[b04-hot] sample (excluded=0 valid=1): 962.290 ms
+[b04-hot] sample (excluded=0 valid=1): 956.459 ms
+[b04-hot] sample (excluded=0 valid=1): 994.289 ms
+[b04-hot] sample (excluded=0 valid=1): 961.481 ms
+[b04-hot] sample (excluded=0 valid=1): 1003.080 ms
+[b04-hot] sample (excluded=0 valid=1): 1006.188 ms
+[b04-hot] sample (excluded=0 valid=1): 989.104 ms
+[b04-hot] sample (excluded=0 valid=1): 955.433 ms
+[b04-hot] sample (excluded=0 valid=1): 981.938 ms
+[b04-hot] sample (excluded=0 valid=1): 1015.858 ms
+[       OK ] GoldenProjectOpen.HotStartP95_Within3s_DT_PM16 (28331 ms)
+[ RUN      ] GoldenProjectOpen.ColdStartP95_SoftTarget_ReportOnly_DT_PM16
+[b04-golden] disk-facts headRefs=1001 history=101 oidDirs=1101
+[       OK ] GoldenProjectOpen.ColdStartP95_SoftTarget_ReportOnly_DT_PM16 (24885 ms)
+[----------] 2 tests from GoldenProjectOpen (53217 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (53217 ms total)
+[  PASSED  ] 2 tests.

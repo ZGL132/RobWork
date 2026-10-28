@@ -97,9 +97,6 @@ if(TARGET sdurw_kinematics)
     # 的 rw models/kinematics 头不影响"目标注册＋include 路径"的冒烟口径）。
     # 分阶段落位已按 DTB §5.4 登记 units/runtime.md §15.4（RT-T07 条目）。
     target_sources(sdurws_ird_runtime PRIVATE
-        src/CollisionSession.cpp        # MA-02：运行时真实碰撞设施（PQP 检测器＋
-                                        # 规则过滤——sdurwsim PUBLIC 传递
-                                        # sdurw_proximity(_strategies) 可达，L1 清单不扩）
         src/WorkCellCompiler.cpp        # §5.2 S6（CanonicalModel→WorkCell 确定性
                                         # 编译：Frame 树/SerialDevice/Joint/限位/
                                         # BaseMount 唯一写入＋S9 自检）＋§8.3
@@ -193,11 +190,8 @@ if(TARGET sdurw_kinematics)
         sdurwsim
         sdurwsim_ode               # REUSE-T53：ODE 物理引擎（FdEngineSession 消费面
                                    # ——sdurwsim_ode 为增登 L1，见 P-RT-3 登记行）
-        sdurw_loaders               # MA-01：STL/OBJ 解析器（STLFile/LoaderOBJ——
-                                    # 网格资源通道消费面）
-        sdurw_proximity             # MA-02：碰撞检测编排（CollisionDetector）
-        sdurw_proximitystrategies)  # MA-02：PQP 窄相策略（ProximityStrategyPQP）
-    set(IRL_BASELINE_LIBS "sdurw_kinematics, sdurw_models, sdurwsim, sdurwsim_ode, sdurw_loaders, sdurw_proximity, sdurw_proximitystrategies")
+        sdurw_loaders)              # MA-01：STL/OBJ 解析；POL-T13 删除重复碰撞设施及其专属直接依赖。
+    set(IRL_BASELINE_LIBS "sdurw_kinematics, sdurw_models, sdurwsim, sdurwsim_ode, sdurw_loaders")
 else()
     # 冒烟分支：rw 源码树头路径（模板头；本目录相对仓库根 RobWork/RobWork/src
     # 的固定布局）＋Eigen（vcpkg 提供 Eigen3 配置包；rw 头以 <Eigen/Core> 引用）。
@@ -275,7 +269,12 @@ else()
         include("${IRL_RWSIM_ODE_TARGETS_FILE}")
         add_library(sdurwsim_ode ALIAS RWSIM::sdurwsim_ode)
     endif()
+    # F03：冒烟同样链接正式 WorkCell 编译与采样；不提供零位/替身 FK。
+    if(NOT TARGET sdurw_loaders)
+        add_library(sdurw_loaders ALIAS RW::sdurw_loaders)
+    endif()
     target_sources(sdurws_ird_runtime PRIVATE
+        src/WorkCellCompiler.cpp
         src/RneConsumptionDevice.cpp   # REUSE-T52：工厂 TU 双模式编译（同上）
         src/FdEngineSession.cpp)       # REUSE-T53：FD 受控引擎会话工厂（公共头
                                        # FdEngineSession.hpp）——CanonicalModel→
@@ -285,6 +284,7 @@ else()
                                        # ＝WP-09 dynamics ForwardDynamics（已落位）
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_math
+        sdurw_loaders
         sdurw_models
         sdurwsim
         sdurwsim_ode)                  # REUSE-T53：ODE 引擎导入目标（上方守卫）
@@ -338,8 +338,6 @@ if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_runtime_test PRIVATE
         test/WorkCellCompilerTest.cpp
         test/WorkCellGeometryTest.cpp   # RT-T15：RT-GEO 族（图元挂接存在性/位姿
-        test/CollisionSessionTest.cpp   # MA-02：真实碰撞设施（装配三轨＋自由度守卫＋诚实降级——
-                                        # 带摆位场景的正反例归统一验收批，见 TU 头登记）
                                         # 随帧同源/单位正确性/派生确定性/诚实
                                         # 跳过〔manifest 空/provider 缺位零虚构
                                         # 零阻塞零资源消费〕/S6 既有产物与映射

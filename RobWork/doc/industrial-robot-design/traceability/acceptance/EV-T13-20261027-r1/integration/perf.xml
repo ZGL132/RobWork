@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="24.84" timestamp="2026-10-28T03:42:19.154" name="AllTests">
+  <testsuite name="OptRunTimeBenchmark" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="24.84" timestamp="2026-10-28T03:42:19.154">
+    <testcase name="SameVersionCheckpointRecovery_WP23T08_B07" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\optimization\perf_test\OptRunTimeBenchmarkTest.cpp" line="1949" status="run" result="completed" time="24.84" timestamp="2026-10-28T03:42:19.154" classname="OptRunTimeBenchmark" />
+  </testsuite>
+</testsuites>

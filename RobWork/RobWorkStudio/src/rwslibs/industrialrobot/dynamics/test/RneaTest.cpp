@@ -1287,3 +1287,19 @@ TEST(DynRnea, UpstreamDirectComparison_REUSE_T52)
             << "关节 " << i << " 上游直接对照（全量通道逐位一致）";
     }
 }
+
+/** @brief F01：末关节后的固定平移改变重力臂；惯量仍关于真实COM。 */
+TEST(DynRnea, FlangeFixedTranslationPreservesCanonicalComPhysics)
+{
+    auto model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    // 沿既有跨版本载体测试缝注入合法固定段，隔离末端坐标交接。
+    auto& chain = const_cast<sdurws::ird::runtime::RobotChain&>(model.chain());
+    chain.flangeOffset = rw::math::Transform3D<double>(rw::math::Vector3D<double>(.2,0,0));
+    auto req = makeRequest(model, idFrom<ObjectId>("cond-flange"),
+        {sampleAt(0., {0.,0.}, {0.,0.}, {0.,0.})});
+    FakeContext ctx;
+    const auto out = InverseDynamicsEvaluator{}.evaluate(req, ctx);
+    ASSERT_EQ(out.samples.size(), 2u);
+    expectNearRel(out.samples[0].tauGravity, -kG*(kM1*kC1+kM2*(kL1+.2+kC2)), "固定末段关节1");
+    expectNearRel(out.samples[1].tauGravity, -kG*kM2*(.2+kC2), "固定末段关节2");
+}

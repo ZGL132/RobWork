@@ -110,20 +110,19 @@ struct DataWriter {
     }
 
     /// 发送一帧（序号与身份的读取/推进都在锁内——与心跳线程的竞争面）。
-    bool send(ChannelMsgType type, std::vector<std::uint8_t> payload)
+    bool send(ChannelMsgType type, std::vector<std::uint8_t> payload,
+              std::uint64_t* sentSequence = nullptr)
     {
-        std::vector<std::uint8_t> bytes;
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            ChannelFrame frame;
-            frame.type = type;
-            frame.seq = seq++;
-            frame.identity = identity;
-            frame.payload = std::move(payload);
-            bytes = encodeFrame(frame);
-        }
+        // EXR-04：分配序号与写完整帧共用临界区，心跳不能插入两者之间。
         std::lock_guard<std::mutex> lock(mutex);
-        return writeBytesLocked(bytes);
+        ChannelFrame frame;
+        frame.type = type;
+        frame.seq = seq++;
+        frame.identity = identity;
+        frame.payload = std::move(payload);
+        if (!writeBytesLocked(encodeFrame(frame))) return false;
+        if (sentSequence != nullptr) *sentSequence = frame.seq;
+        return true;
     }
 
     /// 以指定 seq 发送一帧（序号异常注入——EX-CHN-1 用例的动作面；正常
@@ -131,18 +130,13 @@ struct DataWriter {
     bool sendWithSeq(ChannelMsgType type, std::uint64_t seqValue,
                      std::vector<std::uint8_t> payload)
     {
-        std::vector<std::uint8_t> bytes;
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            ChannelFrame frame;
-            frame.type = type;
-            frame.seq = seqValue;
-            frame.identity = identity;
-            frame.payload = std::move(payload);
-            bytes = encodeFrame(frame);
-        }
         std::lock_guard<std::mutex> lock(mutex);
-        return writeBytesLocked(bytes);
+        ChannelFrame frame;
+        frame.type = type;
+        frame.seq = seqValue; // 仅故障脚本使用的显式序号，不推进正常序列。
+        frame.identity = identity;
+        frame.payload = std::move(payload);
+        return writeBytesLocked(encodeFrame(frame));
     }
 
     /**
@@ -151,28 +145,23 @@ struct DataWriter {
      */
     bool sendFragmented(ChannelMsgType type, const std::vector<std::uint8_t>& message)
     {
-        // 分片在锁外拼装（序号段预留＋身份快照各取一次锁）；写面提交在
-        // 第二段锁内，全部片写毕才推进 seq——失败重发场景序号不空洞。
         std::vector<ChannelFrame> frames;
-        std::uint64_t cursor = 0;
-        core::TaskIdentity binding;
-        {
+        std::uint64_t cursor = 1; // 分片只生成载荷形状，实际线路序号在每帧写入时分配。
+        if (!fragmentMessage(type, identity, cursor, message, 64 * 1024, frames)) return false;
+        for (ChannelFrame& frame : frames) {
             std::lock_guard<std::mutex> lock(mutex);
-            cursor = seq;
-            binding = identity;
+            frame.seq = seq++;
+            if (!writeBytesLocked(encodeFrame(frame))) return false;
+            // 每帧放锁允许大结果之间继续发心跳；不回写过期 cursor。
         }
-        if (!fragmentMessage(type, binding, cursor, message, 64 * 1024, frames)) {
-            return false;
-        }
-        std::lock_guard<std::mutex> lock(mutex);
-        for (const ChannelFrame& frame : frames) {
-            const std::vector<std::uint8_t> bytes = encodeFrame(frame);
-            if (!writeBytesLocked(bytes)) {
-                return false;  // 断裂——seq 不推进（进程即将终结，无重发）
-            }
-        }
-        seq = cursor;
         return true;
+    }
+
+    /** @brief 故障脚本读取下一序号；仅观测，不授权普通路径无锁访问。 */
+    std::uint64_t nextSequence() const
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        return seq;
     }
 };
 
@@ -210,9 +199,10 @@ struct CommandQueue {
 
 /// 命令读线程主体（阻塞 ReadFile——主进程不写时挂起；主进程终结/关管道
 /// 时以断裂返回）。
-void commandReaderLoop(HANDLE cmdRead, CommandQueue& queue)
+void commandReaderLoop(HANDLE cmdRead, CommandQueue& queue, core::TaskIdentity identity)
 {
     FrameAssembler assembler;
+    std::uint64_t nextSequence = 1; // 命令写入由调度线程串行，管道不会自行重排。
     std::vector<std::uint8_t> buffer(4 * 1024);
     std::vector<ChannelFrame> frames;
     for (;;) {
@@ -231,6 +221,13 @@ void commandReaderLoop(HANDLE cmdRead, CommandQueue& queue)
             return;
         }
         for (ChannelFrame& frame : frames) {
+            if (!(frame.identity == identity) || frame.seq == 0 || frame.seq > nextSequence) {
+                std::lock_guard<std::mutex> lock(queue.mutex);
+                queue.broken = true;
+                return;
+            }
+            if (frame.seq < nextSequence) continue; // 重复命令无副作用。
+            ++nextSequence;
             queue.push(std::move(frame));
         }
         frames.clear();
@@ -380,6 +377,8 @@ struct ScriptContext {
 void pollCommands(ScriptContext& ctx)
 {
     for (ChannelFrame& frame : ctx.commands.drain()) {
+        // EXR-05：命令只作用于当前尝试；即使绕过读线程注入也不能换绑。
+        if (!(frame.identity == ctx.writer.identity)) continue;
         switch (frame.type) {
         case ChannelMsgType::CancelRequest:
             ctx.cancelSeen = true;    // 置位后不回退（取消单向——Controller.hpp 纪律）
@@ -486,9 +485,7 @@ int runScript(const std::string& script, ScriptContext& ctx)
                 static_cast<std::uint64_t>(std::stoull(tokens[3])),
                 static_cast<std::uint64_t>(std::stoull(tokens[4])));
             const std::vector<std::uint8_t> payload = encodeProgress(report);
-            const std::uint64_t seq = ctx.writer.seq;
-            if (ctx.writer.send(ChannelMsgType::Progress, payload)) {
-                lastSeqSent = seq;  // duplicate 注入的参照（同 seq 同载荷）
+            if (ctx.writer.send(ChannelMsgType::Progress, payload, &lastSeqSent)) {
                 lastType = ChannelMsgType::Progress;
                 lastPayload = payload;
             }
@@ -505,9 +502,7 @@ int runScript(const std::string& script, ScriptContext& ctx)
                 batch.batchIndex = static_cast<std::uint64_t>(i);
                 batch.bytes = batchBytes(batch.batchIndex);
                 const std::vector<std::uint8_t> payload = encodeResultBatch(batch);
-                const std::uint64_t seq = ctx.writer.seq;
-                if (ctx.writer.send(ChannelMsgType::ResultBatch, payload)) {
-                    lastSeqSent = seq;
+                if (ctx.writer.send(ChannelMsgType::ResultBatch, payload, &lastSeqSent)) {
                     lastType = ChannelMsgType::ResultBatch;
                     lastPayload = payload;
                 }
@@ -517,9 +512,7 @@ int runScript(const std::string& script, ScriptContext& ctx)
             cp.sequence = static_cast<std::uint64_t>(std::stoull(tokens[1]));
             cp.bytes = batchBytes(cp.sequence);
             const std::vector<std::uint8_t> payload = encodeCheckpointBatch(cp);
-            const std::uint64_t seq = ctx.writer.seq;
-            if (ctx.writer.send(ChannelMsgType::CheckpointBatch, payload)) {
-                lastSeqSent = seq;
+            if (ctx.writer.send(ChannelMsgType::CheckpointBatch, payload, &lastSeqSent)) {
                 lastType = ChannelMsgType::CheckpointBatch;
                 lastPayload = payload;
             }
@@ -573,7 +566,7 @@ int runScript(const std::string& script, ScriptContext& ctx)
             // 序号越前注入（EX-CHN-1）：跳 +1000 发一条 Progress——接收侧
             // 窗口溢出→协议错误（fatal）。
             const ProgressReport report = ProgressReport::make(77, "misorder", 1, 2);
-            ctx.writer.sendWithSeq(ChannelMsgType::Progress, ctx.writer.seq + 1000,
+            ctx.writer.sendWithSeq(ChannelMsgType::Progress, ctx.writer.nextSequence() + 1000,
                                    encodeProgress(report));
         } else if (op == "duplicate") {
             // 重复注入（EX-CHN-1）：以最近 seq 原样重发——接收侧去重＋
@@ -584,7 +577,7 @@ int runScript(const std::string& script, ScriptContext& ctx)
         } else if (op == "gap") {
             // 缺口注入（EX-CHN-1）：序号跳 3 发心跳——接收侧缓冲＋缺口
             // 超时（断裂）判定。
-            ctx.writer.sendWithSeq(ChannelMsgType::Heartbeat, ctx.writer.seq + 3, {});
+            ctx.writer.sendWithSeq(ChannelMsgType::Heartbeat, ctx.writer.nextSequence() + 3, {});
             {
                 std::lock_guard<std::mutex> lock(ctx.writer.mutex);
                 ctx.writer.seq += 4;
@@ -625,7 +618,7 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
 
     // ---- 命令读线程启动（阻塞读——主进程终结/关管道时退出）----
     CommandQueue commands;
-    std::thread reader(commandReaderLoop, args->cmdRead, std::ref(commands));
+    std::thread reader(commandReaderLoop, args->cmdRead, std::ref(commands), args->identity);
 
     // ---- 心跳停止标志（线程启动前声明——收尾路径统一可先置位）----
     std::atomic<bool> heartbeatOffHint{false};
@@ -696,12 +689,9 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
         if (frame.type != ChannelMsgType::DispatchRequest || dispatch.has_value()) {
             return false;  // 派发前的其他命令帧阶段 A 无消费语义；已派发后忽略
         }
-        // 池化复用换绑：派发帧头身份即新绑定（此后全部帧携带它——
-        // worker 侧不持第二账本，绑定以主进程派发为准）。
-        {
-            std::lock_guard<std::mutex> lock(writer.mutex);
-            writer.identity = frame.identity;
-        }
+        // EXR-05：派发消息必须属于启动时绑定的同一尝试。
+        if (!(frame.identity == args->identity)) return true;
+        // 阶段 A 一派发一进程，启动绑定终生不变，不接受未来池化的换绑。
         bool broken = false;
         std::vector<ChannelFrame> messages = reassembler.accept(std::move(frame), &broken);
         for (ChannelFrame& message : messages) {

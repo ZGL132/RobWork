@@ -1,0 +1,30 @@
+Note: Google Test filter = Tx7ProcessLock.Reader*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from Tx7ProcessLock
+[ RUN      ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProcessLockContractTest.cpp(183): error: Value of: fs::exists(pending)
+  Actual: false
+Expected: true
+
+[  FAILED  ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles (76 ms)
+[ RUN      ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit
+ird-tempdir-kept: C:\Users\zgl18\AppData\Local\Temp\ird-test/93240-tx15-tx7-37dee073bfb8bfd3
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProcessLockContractTest.cpp(210): error: Expected equality of these values:
+  outcome.kind
+    Which is: 4-byte object <01-00 00-00>
+  ProcessExitKind::Exited
+    Which is: 4-byte object <00-00 00-00>
+
+ird-tempdir-kept: C:\Users\zgl18\AppData\Local\Temp\ird-test/93240-tx15-tx7-eed6a798ed2427a1
+[  FAILED  ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit (127 ms)
+[----------] 2 tests from Tx7ProcessLock (204 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (204 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] Tx7ProcessLock.ReaderOpenPreservesWriterTemporaryFiles
+[  FAILED  ] Tx7ProcessLock.ReaderRefreshesCompleteViewAfterWriterCommit
+
+ 2 FAILED TESTS

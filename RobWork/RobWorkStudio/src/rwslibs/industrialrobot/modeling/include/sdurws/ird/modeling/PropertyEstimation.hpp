@@ -13,7 +13,7 @@
  *     唯一公式表 mdl-property-formula/1 在 MDL-05 授权范围内）、§14.4 第 3 项
  *     （材料密度默认表＝设计默认值，D-MDL-7，黄金数据集锁定随 WP-13-T16）
  *   - 需求 MDL-05（几何物性估算层：实心/空心圆截面、矩形截面；惯量基准
- *     M-2；质心修改的平行轴确认——不允许质心与惯量基准静默脱钩）、
+ *     M-2；质心修改的刚体平移确认——不允许质心与惯量基准静默脱钩）、
  *     MDL-16（动力学参数与限值层——来源标记；缺失标记 DataInsufficient）、
  *     DYN-06（物性/摩擦数据不足→可信等级判定与降级——**判定权归
  *     dynamics/evidence，本单元只提供来源标记与 NotProvided 事实**）
@@ -286,9 +286,9 @@ public:
                                          std::vector<core::DiagnosticRecord>& diags) const = 0;
 
     /**
-     * @brief 平行轴迁移（质心修改确认流选项 a；§5.3 规则 2 的实现）。
+     * @brief 平行轴参考点转换工具（仅COM惯量→其他参考点；不用于COM编辑）。
      *
-     * 数学（卡 §5.3 规则 2 原文式）：I' = I + m((d·d)E − ddᵀ)，d＝质心位移
+     * 数学（标准平行轴参考点转换）：I' = I + m((d·d)E − ddᵀ)，d＝新参考点相对COM的位移
      * （新参考点相对原质心的位移，单位 m）。分量展开：
      *   Ixx' = ixx + m(dy²+dz²)、Iyy' = iyy + m(dx²+dz²)、Izz' = izz + m(dx²+dy²)；
      *   Ixy' = ixy − m·dx·dy、Ixz' = ixz − m·dx·dz、Iyz' = iyz − m·dy·dz。
@@ -298,9 +298,9 @@ public:
      *
      * @param atCom  [in] 原质心基准下的张量（kg·m²；六分量，须有限）
      * @param massKg [in] 质量（kg，>0——0 质量下迁移项恒零，属调用方错误，
-     *               本函数 noexcept 不校验，前置由 applyCentroidEdit 把关）
-     * @param deltaM [in] 质心位移 d（新参考点−原质心），单位 m，连杆系下表示
-     * @return 迁移后的张量（对新参考点的质心系张量；kg·m²）
+     *               本函数 noexcept 不校验，前置由调用方把关）
+     * @param deltaM [in] 参考点位移 d（新参考点−原质心），单位 m，连杆系下表示
+     * @return 迁移后的张量（关于新参考点、仍在原坐标轴表达的张量；kg·m²）
      *
      * 纯函数；noexcept（纯算术无失败路径）；确定性。
      */
@@ -343,7 +343,7 @@ public:
  * 其他持久化契约面枚举。
  */
 enum class CentroidEditResolution {
-    /// "migrate-inertia"——分支 (a)：惯量按平行轴定理迁移（d＝质心位移）
+    /// "migrate-inertia"——分支 (a)：刚体安装平移，关于实际COM的惯量及来源不变（保留历史token）
     MigrateInertia,
     /// "overwrite-inertia"——分支 (b)：强制覆盖完整张量（用户输入全部六分量）
     OverwriteInertia,
@@ -359,7 +359,7 @@ std::string_view centroidEditResolutionToken(CentroidEditResolution resolution) 
  * @brief 应用一次质心修改（§5.3 规则 2 的域级判定点；V-17 三分支的实现）。
  *
  * ★ 域规则（MDL-05/M-2，DTB 禁止项原文"不静默脱钩质心与惯量基准"）：
- *   - 分支 (a) MigrateInertia：惯量按平行轴迁移 I'=I+m((d·d)E−ddᵀ)，
+ *   - 分支 (a) MigrateInertia：刚体安装平移，关于实际COM的惯量数值不变，
  *     d＝newCom−旧 com；接受。
  *   - 分支 (b) OverwriteInertia：replacementTensor 整体覆盖（InertiaTensor
  *     六分量即"完整张量"——表示层面不可只覆盖主项）；接受。
@@ -369,7 +369,7 @@ std::string_view centroidEditResolutionToken(CentroidEditResolution resolution) 
  *
  * 接受后的 provenance（§5.3 规则 1"用户直接修改物性→UserProvided 覆盖"）：
  *   - com：UserProvided（用户改的就是它）；
- *   - (a) 分支 inertia：保留原 provenance（迁移是基准点移动，不改变张量
+ *   - (a) 分支 inertia：保留原 provenance（刚体平移不改变实际COM处张量
  *     数值的来源事实——估算衍生物仍是估算衍生物）；
  *   - (b) 分支 inertia：UserProvided（用户输入的新张量）。
  *

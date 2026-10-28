@@ -1,0 +1,194 @@
+{
+  "baseCommit": "cdd0eae9bdba3d5c7acd049d5ad405f4446f0ceb",
+  "branch": "codex/core-review-fixes",
+  "evidenceRole": "implementation self-check, independent acceptance NOT RUN",
+  "tests": [
+    {
+      "name": "red",
+      "status": "FAIL",
+      "counts": {
+        "total": 3,
+        "passed": 0,
+        "failed": 3,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "red.xml",
+      "nativeReport": "red.ird-test-report.json"
+    },
+    {
+      "name": "green",
+      "status": "PASS",
+      "counts": {
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "green.xml",
+      "nativeReport": "green.ird-test-report.json"
+    },
+    {
+      "name": "core",
+      "status": "PASS",
+      "counts": {
+        "total": 79,
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "core.xml",
+      "nativeReport": "core.ird-test-report.json"
+    },
+    {
+      "name": "entropy-word",
+      "status": "PASS",
+      "counts": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "entropy-word.xml",
+      "nativeReport": "entropy-word.ird-test-report.json"
+    },
+    {
+      "name": "smoke",
+      "status": "PASS",
+      "counts": {
+        "total": 76,
+        "passed": 76,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "smoke.xml",
+      "nativeReport": "smoke.ird-test-report.json"
+    },
+    {
+      "name": "project",
+      "status": "PASS",
+      "counts": {
+        "total": 15,
+        "passed": 15,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "project.xml",
+      "nativeReport": "project.ird-test-report.json"
+    },
+    {
+      "name": "project-contract",
+      "status": "PASS",
+      "counts": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "project-contract.xml",
+      "nativeReport": "project-contract.ird-test-report.json"
+    },
+    {
+      "name": "execution",
+      "status": "PASS",
+      "counts": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "execution.xml",
+      "nativeReport": "execution.ird-test-report.json"
+    },
+    {
+      "name": "real-identity",
+      "status": "PASS",
+      "counts": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "real-identity.xml",
+      "nativeReport": "real-identity.ird-test-report.json"
+    }
+  ],
+  "finalCoreSources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "rawSha256": "5304c2657ffac79015b34cb3365052e55d6e5c2aefb0fd8eb000316a20ea4795",
+      "normalizedSha256": "5304c2657ffac79015b34cb3365052e55d6e5c2aefb0fd8eb000316a20ea4795"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/README.md",
+      "rawSha256": "afea2a6187147a0e7bfc88214124d10fddf9596fb16d50d7eee0fe8b91d5f689",
+      "normalizedSha256": "afea2a6187147a0e7bfc88214124d10fddf9596fb16d50d7eee0fe8b91d5f689"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "rawSha256": "2d2731c8e6ffdb6dfbc55fa841d93fa7d3b493c00cfe2e76e73f9db3d9e8e274",
+      "normalizedSha256": "2d2731c8e6ffdb6dfbc55fa841d93fa7d3b493c00cfe2e76e73f9db3d9e8e274"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "rawSha256": "2bc7c5832dbc5eb835a474c3456f7cd0fa811f397f5acfe561a17508a25506c0",
+      "normalizedSha256": "2bc7c5832dbc5eb835a474c3456f7cd0fa811f397f5acfe561a17508a25506c0"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/BuildRedLineTest.cpp",
+      "rawSha256": "3cde219ed22bb4082dc4dfa517089c302d5d96d6415a78e2ec88a25e396ea805",
+      "normalizedSha256": "3cde219ed22bb4082dc4dfa517089c302d5d96d6415a78e2ec88a25e396ea805"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/EventsTest.cpp",
+      "rawSha256": "8fbf92078f6076d42fae1736b7e9599901e3458a41f49bf063faf865e886d3a8",
+      "normalizedSha256": "8fbf92078f6076d42fae1736b7e9599901e3458a41f49bf063faf865e886d3a8"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/IdentityTest.cpp",
+      "rawSha256": "aaac1eb327ce3b337695b24bd7960a3da1415de9f5f1f45b9241571ddaea05fc",
+      "normalizedSha256": "aaac1eb327ce3b337695b24bd7960a3da1415de9f5f1f45b9241571ddaea05fc"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/IdentityRandom.hpp",
+      "rawSha256": "6e46a83b23b66d41e7567e09391f7fb0459d8aba45cf71c047e4800bc4d2ab2b",
+      "normalizedSha256": "6e46a83b23b66d41e7567e09391f7fb0459d8aba45cf71c047e4800bc4d2ab2b"
+    }
+  ],
+  "note": "core完整79、冒烟76之后只增强固定熵测试，单独1项通过；最后CMake仅更正冒烟说明注释，无额外构建语义变化。"
+}

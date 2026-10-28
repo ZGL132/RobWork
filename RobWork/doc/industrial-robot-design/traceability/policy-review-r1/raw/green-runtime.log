@@ -1,0 +1,263 @@
+Note: Google Test filter = *NameMap*:*Snapshot*:*WorkCell*:*HostPresentation*
+[==========] Running 97 tests from 21 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from RuntimeNameMapTest
+[ RUN      ] RuntimeNameMapTest.FixedFrameHasObjectButNoGeometryName_MDL15_AT28
+[       OK ] RuntimeNameMapTest.FixedFrameHasObjectButNoGeometryName_MDL15_AT28 (0 ms)
+[----------] 1 test from RuntimeNameMapTest (0 ms total)
+
+[----------] 5 tests from NameMapBuildTest
+[ RUN      ] NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1
+[       OK ] NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1 (0 ms)
+[ RUN      ] NameMapBuildTest.DeviceEntryHasNoPrefix_R4
+[       OK ] NameMapBuildTest.DeviceEntryHasNoPrefix_R4 (0 ms)
+[ RUN      ] NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1
+[       OK ] NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1 (0 ms)
+[ RUN      ] NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1
+[       OK ] NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1 (0 ms)
+[ RUN      ] NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1
+[       OK ] NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1 (0 ms)
+[----------] 5 tests from NameMapBuildTest (0 ms total)
+
+[----------] 7 tests from NameMapRoundtripTest
+[ RUN      ] NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1
+[       OK ] NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1
+[       OK ] NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.BijectionCounts_RT_NM_1
+[       OK ] NameMapRoundtripTest.BijectionCounts_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1
+[       OK ] NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1
+[       OK ] NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.ParseRejectsNonAdjacentDuplicateFullName_F_806_RT_NM_1
+[       OK ] NameMapRoundtripTest.ParseRejectsNonAdjacentDuplicateFullName_F_806_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.EmptyMapEncodeRejected
+[       OK ] NameMapRoundtripTest.EmptyMapEncodeRejected (0 ms)
+[----------] 7 tests from NameMapRoundtripTest (0 ms total)
+
+[----------] 1 test from NameMapResolveErrorTest
+[ RUN      ] NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3
+[       OK ] NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3 (0 ms)
+[----------] 1 test from NameMapResolveErrorTest (0 ms total)
+
+[----------] 5 tests from NameMapDisambiguationTest
+[ RUN      ] NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2
+[       OK ] NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2
+[       OK ] NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2
+[       OK ] NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2
+[       OK ] NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2
+[       OK ] NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2 (0 ms)
+[----------] 5 tests from NameMapDisambiguationTest (0 ms total)
+
+[----------] 1 test from NameMapCrossProjectTest
+[ RUN      ] NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4
+[       OK ] NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4 (0 ms)
+[----------] 1 test from NameMapCrossProjectTest (0 ms total)
+
+[----------] 1 test from NameMapRenameTest
+[ RUN      ] NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5
+[       OK ] NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5 (0 ms)
+[----------] 1 test from NameMapRenameTest (0 ms total)
+
+[----------] 2 tests from NameMapCrossCheckTest
+[ RUN      ] NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6
+[       OK ] NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6 (0 ms)
+[ RUN      ] NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6
+[       OK ] NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6 (0 ms)
+[----------] 2 tests from NameMapCrossCheckTest (0 ms total)
+
+[----------] 3 tests from NameMapIdentityTest
+[ RUN      ] NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7
+[       OK ] NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7 (0 ms)
+[ RUN      ] NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4
+[       OK ] NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4 (0 ms)
+[ RUN      ] NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06
+[       OK ] NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06 (0 ms)
+[----------] 3 tests from NameMapIdentityTest (0 ms total)
+
+[----------] 1 test from NameMapR4SourceScan
+[ RUN      ] NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4
+[       OK ] NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4 (14 ms)
+[----------] 1 test from NameMapR4SourceScan (14 ms total)
+
+[----------] 17 tests from WorkCellCompilerTest
+[ RUN      ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2
+[       OK ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2 (0 ms)
+[ RUN      ] WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2
+[       OK ] WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2 (0 ms)
+[ RUN      ] WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2
+[       OK ] WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07
+[       OK ] WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1
+[       OK ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ
+[       OK ] WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ (0 ms)
+[ RUN      ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4
+[       OK ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4
+[       OK ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4
+[       OK ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37
+[       OK ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37 (0 ms)
+[ RUN      ] WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1
+[       OK ] WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1
+[       OK ] WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1
+[       OK ] WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07
+[       OK ] WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07 (0 ms)
+[ RUN      ] WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07
+[       OK ] WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07 (0 ms)
+[ RUN      ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1
+[       OK ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1 (4 ms)
+[ RUN      ] WorkCellCompilerTest.RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1
+[       OK ] WorkCellCompilerTest.RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1 (1 ms)
+[----------] 17 tests from WorkCellCompilerTest (8 ms total)
+
+[----------] 2 tests from WorkCellConstViewTest
+[ RUN      ] WorkCellConstViewTest.ViewQueries_RT_T07
+[       OK ] WorkCellConstViewTest.ViewQueries_RT_T07 (0 ms)
+[ RUN      ] WorkCellConstViewTest.NullHandleRejected_RT_T07
+[       OK ] WorkCellConstViewTest.NullHandleRejected_RT_T07 (0 ms)
+[----------] 2 tests from WorkCellConstViewTest (0 ms total)
+
+[----------] 13 tests from WorkCellGeometryTest
+[ RUN      ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1
+[       OK ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1 (0 ms)
+[ RUN      ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1
+[       OK ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1 (0 ms)
+[ RUN      ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2
+[       OK ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2 (0 ms)
+[ RUN      ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3
+[       OK ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3 (0 ms)
+[ RUN      ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4
+[       OK ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4 (0 ms)
+[ RUN      ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5
+[       OK ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7 (41 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshObjAttachedEndToEnd_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshObjAttachedEndToEnd_RT_GEO_7 (13 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshDigestMismatchSkipped_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshDigestMismatchSkipped_RT_GEO_7 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshUnsupportedFormatSkipped_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshUnsupportedFormatSkipped_RT_GEO_7 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30
+[       OK ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30 (32 ms)
+[ RUN      ] WorkCellGeometryTest.ConcurrentSameMeshCompiles_REUSE_T13
+[       OK ] WorkCellGeometryTest.ConcurrentSameMeshCompiles_REUSE_T13 (52 ms)
+[ RUN      ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13
+[       OK ] WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13 (56 ms)
+[----------] 13 tests from WorkCellGeometryTest (198 ms total)
+
+[----------] 13 tests from DynamicWorkCellCompilerTest
+[ RUN      ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2
+[       OK ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2
+[       OK ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6
+[       OK ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2
+[       OK ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1
+[       OK ] DynamicWorkCellCompilerTest.DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcFixedSegmentCompositeRigidBody_REUSE_T30
+[       OK ] DynamicWorkCellCompilerTest.DwcFixedSegmentCompositeRigidBody_REUSE_T30 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcProductConsumableByUpstreamRne_REUSE_T30
+[       OK ] DynamicWorkCellCompilerTest.DwcProductConsumableByUpstreamRne_REUSE_T30 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1
+[       OK ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3
+[       OK ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3 (0 ms)
+[----------] 13 tests from DynamicWorkCellCompilerTest (2 ms total)
+
+[----------] 1 test from DynamicWorkCellConstView
+[ RUN      ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08
+[       OK ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08 (0 ms)
+[----------] 1 test from DynamicWorkCellConstView (0 ms total)
+
+[----------] 14 tests from SnapshotTest
+[ RUN      ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09
+[       OK ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1
+[       OK ] SnapshotTest.SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1 (0 ms)
+[ RUN      ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09
+[       OK ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1
+[       OK ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1 (3 ms)
+[ RUN      ] SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2
+[       OK ] SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2 (0 ms)
+[ RUN      ] SnapshotTest.WorkerIdentityMismatchRejected_D_13
+[       OK ] SnapshotTest.WorkerIdentityMismatchRejected_D_13 (0 ms)
+[ RUN      ] SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5
+[       OK ] SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5 (0 ms)
+[ RUN      ] SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3
+[       OK ] SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3 (0 ms)
+[ RUN      ] SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4
+[       OK ] SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4 (0 ms)
+[ RUN      ] SnapshotTest.CancelAtStageBoundary_RT_CPX_4
+[       OK ] SnapshotTest.CancelAtStageBoundary_RT_CPX_4 (0 ms)
+[ RUN      ] SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4
+[       OK ] SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4 (0 ms)
+[ RUN      ] SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09
+[       OK ] SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.DwcStateBothCauses_RT_T09
+[       OK ] SnapshotTest.DwcStateBothCauses_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05
+[       OK ] SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05 (0 ms)
+[----------] 14 tests from SnapshotTest (7 ms total)
+
+[----------] 1 test from RuntimeSnapshotTest
+[ RUN      ] RuntimeSnapshotTest.FactoryRetainsRequestedMeshResources_T30
+[       OK ] RuntimeSnapshotTest.FactoryRetainsRequestedMeshResources_T30 (4 ms)
+[----------] 1 test from RuntimeSnapshotTest (4 ms total)
+
+[----------] 1 test from CacheKeyTest
+[ RUN      ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2
+[       OK ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2 (0 ms)
+[----------] 1 test from CacheKeyTest (0 ms total)
+
+[----------] 1 test from CompilerTest
+[ RUN      ] CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity
+[       OK ] CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity (0 ms)
+[----------] 1 test from CompilerTest (0 ms total)
+
+[----------] 2 tests from ContractSuite
+[ RUN      ] ContractSuite.NumericExampleThroughSnapshotView_RT_BW_1
+[       OK ] ContractSuite.NumericExampleThroughSnapshotView_RT_BW_1 (0 ms)
+[ RUN      ] ContractSuite.GoldenNameMapRoundtripDataset_RT_NM_1
+[       OK ] ContractSuite.GoldenNameMapRoundtripDataset_RT_NM_1 (0 ms)
+[----------] 2 tests from ContractSuite (1 ms total)
+
+[----------] 5 tests from HostPresentationViewTest
+[ RUN      ] HostPresentationViewTest.IdentityBindingsVerifiable_RT_PRES_1
+[       OK ] HostPresentationViewTest.IdentityBindingsVerifiable_RT_PRES_1 (0 ms)
+[ RUN      ] HostPresentationViewTest.ViewLifecycleDoesNotTouchSnapshotIdentity_RT_PRES_2
+[       OK ] HostPresentationViewTest.ViewLifecycleDoesNotTouchSnapshotIdentity_RT_PRES_2 (0 ms)
+[ RUN      ] HostPresentationViewTest.PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3
+[       OK ] HostPresentationViewTest.PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3 (0 ms)
+[ RUN      ] HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4
+[       OK ] HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4 (0 ms)
+[ RUN      ] HostPresentationViewTest.FactoryFailsFastOnInvalidInput_RT_PRES_5
+[       OK ] HostPresentationViewTest.FactoryFailsFastOnInvalidInput_RT_PRES_5 (0 ms)
+[----------] 5 tests from HostPresentationViewTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 97 tests from 21 test suites ran. (241 ms total)
+[  PASSED  ] 97 tests.

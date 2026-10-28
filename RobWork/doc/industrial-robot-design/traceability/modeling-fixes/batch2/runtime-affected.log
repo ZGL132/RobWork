@@ -1,0 +1,206 @@
+Note: Google Test filter = Codec*:*Compiler*:*WorkCell*:-WorkCellGeometryTest.LoaderRestoresThreadLocale_REUSE_T13
+[==========] Running 85 tests from 10 test suites.
+[----------] Global test environment set-up.
+[----------] 9 tests from CodecRoundtripTest
+[ RUN      ] CodecRoundtripTest.FixedSceneFramePresenceAndVersion_MDL15_AT28
+[       OK ] CodecRoundtripTest.FixedSceneFramePresenceAndVersion_MDL15_AT28 (0 ms)
+[ RUN      ] CodecRoundtripTest.NamedTcpRoundtripTamperAndOldMinor_REQ01_A15
+[       OK ] CodecRoundtripTest.NamedTcpRoundtripTamperAndOldMinor_REQ01_A15 (0 ms)
+[ RUN      ] CodecRoundtripTest.MinimalModelRoundtripsExactly
+[       OK ] CodecRoundtripTest.MinimalModelRoundtripsExactly (0 ms)
+[ RUN      ] CodecRoundtripTest.NonCoordinateAxisRoundtripsExactly_R3_A3
+[       OK ] CodecRoundtripTest.NonCoordinateAxisRoundtripsExactly_R3_A3 (0 ms)
+[ RUN      ] CodecRoundtripTest.RichModelPreservesIdentityExcludedFields
+[       OK ] CodecRoundtripTest.RichModelPreservesIdentityExcludedFields (0 ms)
+[ RUN      ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618
+[       OK ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618 (0 ms)
+[ RUN      ] CodecRoundtripTest.OldMinorVersionBytesRejected_F626
+[       OK ] CodecRoundtripTest.OldMinorVersionBytesRejected_F626 (0 ms)
+[ RUN      ] CodecRoundtripTest.SparseOptionalsRoundtripAsAbsent
+[       OK ] CodecRoundtripTest.SparseOptionalsRoundtripAsAbsent (0 ms)
+[ RUN      ] CodecRoundtripTest.FlangeFixedSegmentRoundtripAndIdentity
+[       OK ] CodecRoundtripTest.FlangeFixedSegmentRoundtripAndIdentity (0 ms)
+[----------] 9 tests from CodecRoundtripTest (1 ms total)
+
+[----------] 2 tests from CodecNegativeTest
+[ RUN      ] CodecNegativeTest.RejectsMalformedEncodings
+[       OK ] CodecNegativeTest.RejectsMalformedEncodings (0 ms)
+[ RUN      ] CodecNegativeTest.DetectsContentIdentityMismatch
+[       OK ] CodecNegativeTest.DetectsContentIdentityMismatch (0 ms)
+[----------] 2 tests from CodecNegativeTest (0 ms total)
+
+[----------] 17 tests from WorkCellCompilerTest
+[ RUN      ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2
+[       OK ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2 (0 ms)
+[ RUN      ] WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2
+[       OK ] WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2 (0 ms)
+[ RUN      ] WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2
+[       OK ] WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07
+[       OK ] WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1
+[       OK ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ
+[       OK ] WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ (0 ms)
+[ RUN      ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4
+[       OK ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4
+[       OK ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4
+[       OK ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37
+[       OK ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37 (0 ms)
+[ RUN      ] WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1
+[       OK ] WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1
+[       OK ] WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1
+[       OK ] WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1 (0 ms)
+[ RUN      ] WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07
+[       OK ] WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07 (0 ms)
+[ RUN      ] WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07
+[       OK ] WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07 (0 ms)
+[ RUN      ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1
+[       OK ] WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1 (4 ms)
+[ RUN      ] WorkCellCompilerTest.RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1
+[       OK ] WorkCellCompilerTest.RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1 (1 ms)
+[----------] 17 tests from WorkCellCompilerTest (7 ms total)
+
+[----------] 2 tests from WorkCellConstViewTest
+[ RUN      ] WorkCellConstViewTest.ViewQueries_RT_T07
+[       OK ] WorkCellConstViewTest.ViewQueries_RT_T07 (0 ms)
+[ RUN      ] WorkCellConstViewTest.NullHandleRejected_RT_T07
+[       OK ] WorkCellConstViewTest.NullHandleRejected_RT_T07 (0 ms)
+[----------] 2 tests from WorkCellConstViewTest (0 ms total)
+
+[----------] 12 tests from WorkCellGeometryTest
+[ RUN      ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1
+[       OK ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1 (0 ms)
+[ RUN      ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1
+[       OK ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1 (0 ms)
+[ RUN      ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2
+[       OK ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2 (0 ms)
+[ RUN      ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3
+[       OK ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3 (0 ms)
+[ RUN      ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4
+[       OK ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4 (0 ms)
+[ RUN      ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5
+[       OK ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshStlAttachedEndToEnd_RT_GEO_7 (20 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshObjAttachedEndToEnd_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshObjAttachedEndToEnd_RT_GEO_7 (5 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshDigestMismatchSkipped_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshDigestMismatchSkipped_RT_GEO_7 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ResourceMeshUnsupportedFormatSkipped_RT_GEO_7
+[       OK ] WorkCellGeometryTest.ResourceMeshUnsupportedFormatSkipped_RT_GEO_7 (0 ms)
+[ RUN      ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30
+[       OK ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30 (13 ms)
+[ RUN      ] WorkCellGeometryTest.ConcurrentSameMeshCompiles_REUSE_T13
+[       OK ] WorkCellGeometryTest.ConcurrentSameMeshCompiles_REUSE_T13 (49 ms)
+[----------] 12 tests from WorkCellGeometryTest (90 ms total)
+
+[----------] 13 tests from DynamicWorkCellCompilerTest
+[ RUN      ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2
+[       OK ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2
+[       OK ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6
+[       OK ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2
+[       OK ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1
+[       OK ] DynamicWorkCellCompilerTest.DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcFixedSegmentCompositeRigidBody_REUSE_T30
+[       OK ] DynamicWorkCellCompilerTest.DwcFixedSegmentCompositeRigidBody_REUSE_T30 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcProductConsumableByUpstreamRne_REUSE_T30
+[       OK ] DynamicWorkCellCompilerTest.DwcProductConsumableByUpstreamRne_REUSE_T30 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1
+[       OK ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3
+[       OK ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3 (0 ms)
+[----------] 13 tests from DynamicWorkCellCompilerTest (2 ms total)
+
+[----------] 1 test from DynamicWorkCellConstView
+[ RUN      ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08
+[       OK ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08 (0 ms)
+[----------] 1 test from DynamicWorkCellConstView (0 ms total)
+
+[----------] 1 test from SnapshotTest
+[ RUN      ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09
+[       OK ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09 (0 ms)
+[----------] 1 test from SnapshotTest (0 ms total)
+
+[----------] 2 tests from CacheKeyTest
+[ RUN      ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2
+[       OK ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2 (0 ms)
+[ RUN      ] CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3
+[       OK ] CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3 (0 ms)
+[----------] 2 tests from CacheKeyTest (0 ms total)
+
+[----------] 26 tests from CompilerTest
+[ RUN      ] CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3
+[       OK ] CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3 (0 ms)
+[ RUN      ] CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity
+[       OK ] CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity (0 ms)
+[ RUN      ] CompilerTest.FactoryWithProductCompilerPublishes_ViaSegmentEntrance
+[       OK ] CompilerTest.FactoryWithProductCompilerPublishes_ViaSegmentEntrance (0 ms)
+[ RUN      ] CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly
+[       OK ] CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly (0 ms)
+[ RUN      ] CompilerTest.DefaultTcpStaysDescriptionFirstAfterToolSort_F584
+[       OK ] CompilerTest.DefaultTcpStaysDescriptionFirstAfterToolSort_F584 (0 ms)
+[ RUN      ] CompilerTest.ReaderFailureFailsWithLocationThenRetrySucceeds
+[       OK ] CompilerTest.ReaderFailureFailsWithLocationThenRetrySucceeds (0 ms)
+[ RUN      ] CompilerTest.ObjectOutsideClosureRejected_RT_CONT_1
+[       OK ] CompilerTest.ObjectOutsideClosureRejected_RT_CONT_1 (0 ms)
+[ RUN      ] CompilerTest.ObjectBytesDigestMismatchRejected_CM0ByteFace
+[       OK ] CompilerTest.ObjectBytesDigestMismatchRejected_CM0ByteFace (0 ms)
+[ RUN      ] CompilerTest.MassProvidedNegativeFailsLocated_RT_CPX_3
+[       OK ] CompilerTest.MassProvidedNegativeFailsLocated_RT_CPX_3 (0 ms)
+[ RUN      ] CompilerTest.MassNotProvidedPublishesDegraded_RT_CPX_2
+[       OK ] CompilerTest.MassNotProvidedPublishesDegraded_RT_CPX_2 (0 ms)
+[ RUN      ] CompilerTest.JointObjectIdOutsideRefsAllowedAtS5_O36
+[       OK ] CompilerTest.JointObjectIdOutsideRefsAllowedAtS5_O36 (0 ms)
+[ RUN      ] CompilerTest.CancelAtStageBoundaryReturnsCancelledThenRetry_RT_CPX_4
+[       OK ] CompilerTest.CancelAtStageBoundaryReturnsCancelledThenRetry_RT_CPX_4 (0 ms)
+[ RUN      ] CompilerTest.BadAllocTranslatedToResourceBudget_RT_CPX_4
+[       OK ] CompilerTest.BadAllocTranslatedToResourceBudget_RT_CPX_4 (0 ms)
+[ RUN      ] CompilerTest.NoTokenCompilesToPublish_NoInternalTimeout_D11_ACC2
+[       OK ] CompilerTest.NoTokenCompilesToPublish_NoInternalTimeout_D11_ACC2 (0 ms)
+[ RUN      ] CompilerTest.CancelPollsEveryStageBoundary_D11PollDensity
+[       OK ] CompilerTest.CancelPollsEveryStageBoundary_D11PollDensity (0 ms)
+[ RUN      ] CompilerTest.ResourceMissingFailsLocated_RT_RES_1
+[       OK ] CompilerTest.ResourceMissingFailsLocated_RT_RES_1 (0 ms)
+[ RUN      ] CompilerTest.ResourceDigestMismatchAtS4Fails_RT_RES_1
+[       OK ] CompilerTest.ResourceDigestMismatchAtS4Fails_RT_RES_1 (0 ms)
+[ RUN      ] CompilerTest.ResourceBudgetFails_RT_RES_1
+[       OK ] CompilerTest.ResourceBudgetFails_RT_RES_1 (0 ms)
+[ RUN      ] CompilerTest.ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2
+[       OK ] CompilerTest.ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2 (0 ms)
+[ RUN      ] CompilerTest.SolidifiedResourceSkipsRecheck_RT_RES_2
+[       OK ] CompilerTest.SolidifiedResourceSkipsRecheck_RT_RES_2 (0 ms)
+[ RUN      ] CompilerTest.RecordedResourceWarnsNotBlocked
+[       OK ] CompilerTest.RecordedResourceWarnsNotBlocked (0 ms)
+[ RUN      ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+[       OK ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593 (0 ms)
+[ RUN      ] CompilerTest.CompileLeavesObjectStoreUnchanged_RT_CONT_2
+[       OK ] CompilerTest.CompileLeavesObjectStoreUnchanged_RT_CONT_2 (0 ms)
+[ RUN      ] CompilerTest.UnknownRevisionFailsFast_UnknownObject
+[       OK ] CompilerTest.UnknownRevisionFailsFast_UnknownObject (0 ms)
+[ RUN      ] CompilerTest.MissingProjectContextRejected
+[       OK ] CompilerTest.MissingProjectContextRejected (0 ms)
+[ RUN      ] CompilerTest.TransactionRollbackIsIdempotentAndPublishIsTerminal
+[       OK ] CompilerTest.TransactionRollbackIsIdempotentAndPublishIsTerminal (0 ms)
+[----------] 26 tests from CompilerTest (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 85 tests from 10 test suites ran. (105 ms total)
+[  PASSED  ] 85 tests.

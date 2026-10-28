@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="2" disabled="0" errors="0" time="0.003" timestamp="2026-10-27T23:23:04.376" name="AllTests">
+  <testsuite name="SliceFixtureContract" tests="5" failures="2" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-10-27T23:23:04.376">
+    <testcase name="DatasetLoadsAndPassesManifest_EV_T11_ACC4" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceFixtureContractTest.cpp" line="303" status="run" result="completed" time="0." timestamp="2026-10-27T23:23:04.376" classname="SliceFixtureContract" />
+    <testcase name="ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceFixtureContractTest.cpp" line="327" status="run" result="completed" time="0." timestamp="2026-10-27T23:23:04.377" classname="SliceFixtureContract" />
+    <testcase name="RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceFixtureContractTest.cpp" line="348" status="run" result="completed" time="0.001" timestamp="2026-10-27T23:23:04.377" classname="SliceFixtureContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;evidence/slice-incomplete: 依赖不属于来源快照：policy.collision-guard&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：policy.collision-guard" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="RebuildTwiceGivesIdenticalIdentity_EV_ID_1" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceFixtureContractTest.cpp" line="416" status="run" result="completed" time="0." timestamp="2026-10-27T23:23:04.378" classname="SliceFixtureContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;evidence/slice-incomplete: 依赖不属于来源快照：policy.collision-guard&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：policy.collision-guard" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="ConfigPayloadIdentityMatchesContentDigest" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceFixtureContractTest.cpp" line="451" status="run" result="completed" time="0." timestamp="2026-10-27T23:23:04.379" classname="SliceFixtureContract" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,23 @@
+Note: Google Test filter = OptJointRun.*Checkpoint*:OptJointRun.*Resume*:OptJointRun.PauseAtBatchBoundary*
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from OptJointRun
+[ RUN      ] OptJointRun.CheckpointCodecRoundTripAndRejects_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointCodecRoundTripAndRejects_WP21T04_ACC2 (0 ms)
+[ RUN      ] OptJointRun.CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3
+[       OK ] OptJointRun.CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3 (7 ms)
+[ RUN      ] OptJointRun.CheckpointCorruptRejectedByCoordinator_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointCorruptRejectedByCoordinator_WP21T04_ACC2 (5 ms)
+[ RUN      ] OptJointRun.CheckpointVersionIncompatibleNoMigration_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointVersionIncompatibleNoMigration_WP21T04_ACC2 (5 ms)
+[ RUN      ] OptJointRun.PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229
+[       OK ] OptJointRun.PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229 (0 ms)
+[ RUN      ] OptJointRun.ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230
+[       OK ] OptJointRun.ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230 (6 ms)
+[ RUN      ] OptJointRun.CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231
+[       OK ] OptJointRun.CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231 (7 ms)
+[----------] 7 tests from OptJointRun (32 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (32 ms total)
+[  PASSED  ] 7 tests.

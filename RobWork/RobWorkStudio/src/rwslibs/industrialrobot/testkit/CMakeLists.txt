@@ -207,6 +207,10 @@ if(MSVC)
     target_compile_options(sdurws_ird_testdata_lint PRIVATE /utf-8)
 endif()
 target_link_libraries(sdurws_ird_testdata_lint PRIVATE sdurws_ird_testkit)
+# R09：元测试通过真实 CLI 核对默认字典/档案/AT；不把 lint 接入产品运行链。
+set_target_properties(sdurws_ird_testdata_lint PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:sdurws_ird_testkit_test>")
+add_dependencies(sdurws_ird_testkit_test sdurws_ird_testdata_lint)
 
 # ---- 进程测试辅助子进程（TK-T11：tools/prochelper）----
 # 四态 outcome 用例的"可控行为"载体（exit/延迟写标记/进程树场景）——不用

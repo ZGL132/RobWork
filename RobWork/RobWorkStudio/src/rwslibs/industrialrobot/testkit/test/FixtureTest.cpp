@@ -41,6 +41,40 @@
 #endif
 
 namespace fs = std::filesystem;
+
+/** R06：先用安全的 int64 内反例复现舍入，不执行旧实现的超界浮点转整数。 */
+TEST(ReproRecordReview, ExactSeedRoundtrip_ReviewR06)
+{
+    sdurws::ird::testkit::ReproRecord record;
+    for (const auto seed : {0ULL, 9007199254740991ULL, 9007199254740992ULL,
+             9007199254740993ULL, 9223372036854775808ULL, 18446744073709551615ULL}) {
+        record.seed = seed;
+        EXPECT_NE(record.toJson().find(std::to_string(seed)), std::string::npos);
+        EXPECT_EQ(sdurws::ird::testkit::ReproRecord::fromJson(record.toJson()).seed, seed);
+    }
+}
+
+/** R06/F-018：完整整数轨不允许溢出/小数经舍入成为种子，线程数须可表示。 */
+TEST(ReproRecordReview, RejectsInvalidIntegerFields_ReviewR06)
+{
+    using namespace sdurws::ird::testkit;
+    const auto json = ReproRecord{}.toJson();
+    // 保留原始 token；先 parse/dump 会将浮点记法规范化，不能验证入口拒绝原文。
+    const auto replaceField = [&json](const std::string& field, const std::string& token) {
+        auto text = json;
+        const auto begin = text.find(':', text.find('"' + field + '"')) + 1;
+        const auto end = text.find(',', begin);
+        text.replace(begin, end - begin, token);
+        return text;
+    };
+    for (const std::string token : {"-1", "1.5", "18446744073709551616",
+                                   "9007199254740993.0", "1e30", "\"1\""}) {
+        EXPECT_THROW(ReproRecord::fromJson(replaceField("seed", token)), TestKitError) << token;
+    }
+    for (const std::string token : {"0", "-1", "1.5", "2147483648", "18446744073709551615"}) {
+        EXPECT_THROW(ReproRecord::fromJson(replaceField("threadCount", token)), TestKitError) << token;
+    }
+}
 namespace {
 using namespace sdurws::ird::testkit;
 namespace core = sdurws::ird::core;  // 别名：sha256HexOf 消费 core ContentDigester（R-2 公共头）
@@ -136,7 +170,8 @@ std::string validManifest()
   },
   "integrity": [
     { "path": "inputs/in.json", "sha256": "__IN_SHA__", "sizeBytes": __IN_SIZE__ },
-    { "path": "expected/out.json", "sha256": "__OUT_SHA__", "sizeBytes": __OUT_SIZE__ }
+    { "path": "expected/out.json", "sha256": "__OUT_SHA__", "sizeBytes": __OUT_SIZE__ },
+    { "path": "generate/make_fk.py", "sha256": "__GEN_SHA__", "sizeBytes": __GEN_SIZE__ }
   ],
   "generator": { "script": "generate/make_fk.py", "invocation": "python make_fk.py", "committed": true },
   "history": [ { "version": "1.0.0", "date": "2026-09-11", "change": "首版",
@@ -150,6 +185,9 @@ void writeDataset(const fs::path& root)
     const auto dir = root / "golden" / "kin-fk-planar-2r" / "1.0.0";
     fs::create_directories(dir / "inputs");
     fs::create_directories(dir / "expected");
+    fs::create_directories(dir / "generate");
+    const std::string generator = "# test fixture metadata; never executed\n";
+    std::ofstream(dir / "generate" / "make_fk.py", std::ios::binary) << generator;
     const std::string inContent = "{\"q1\":0.0}";
     const std::string outContent = "{\"tcp\":{\"x\":0.5}}";
     std::ofstream(dir / "inputs" / "in.json", std::ios::binary) << inContent;
@@ -167,6 +205,8 @@ void writeDataset(const fs::path& root)
     swap("__OUT_SHA__", sha256HexOf(outContent));
     swap("__IN_SIZE__", std::to_string(inContent.size()));
     swap("__OUT_SIZE__", std::to_string(outContent.size()));
+    swap("__GEN_SHA__", sha256HexOf(generator));
+    swap("__GEN_SIZE__", std::to_string(generator.size()));
     std::ofstream(dir / "manifest.json", std::ios::binary) << manifest;
 }
 

@@ -185,6 +185,8 @@ std::optional<core::UnitToken> siUnitToken(core::QuantityKind kind)
         case core::QuantityKind::Inertia:             return core::UnitToken::find("kg*m^2");
         case core::QuantityKind::AngularVelocity:     return core::UnitToken::find("rad/s");
         case core::QuantityKind::AngularAcceleration: return core::UnitToken::find("rad/s^2");
+        case core::QuantityKind::LinearVelocity:      return core::UnitToken::find("m/s");
+        case core::QuantityKind::LinearAcceleration:  return core::UnitToken::find("m/s^2");
         case core::QuantityKind::Dimensionless:       return core::UnitToken::find("1");
         default: return std::nullopt;  // 摩擦系数族（N·m·s/rad）等无 R1 量纲行——走有限性门
     }
@@ -461,9 +463,15 @@ runtime::Expected<runtime::JointDescription, ModelingError>
         }
         const rw::math::Vector3D<double> foldAxis(
             jd.axis(0) / foldNorm, jd.axis(1) / foldNorm, jd.axis(2) / foldNorm);
-        const rw::math::Rotation3D<double> folded =
-            rotMul(originModel.R(), axisAngleRotation(foldAxis, src.zeroOffset));
-        jd.origin = rw::math::Transform3D<double>(originModel.P(), folded);
+        // F02：offset 的量纲随类型变化；移动量在关节局部轴上，由上游乘法投到父系。
+        if (src.type == JointType::Prismatic) {
+            jd.origin = originModel * rw::math::Transform3D<double>(foldAxis * src.zeroOffset);
+        } else if (src.type == JointType::Fixed) {
+            jd.origin = originModel;
+        } else {
+            jd.origin = originModel * rw::math::Transform3D<double>(
+                axisAngleRotation(foldAxis, src.zeroOffset));
+        }
     } else {
         return runtime::Expected<runtime::JointDescription, ModelingError>::err(
             refMissing(src.objectId.toCanonical(), field + ".origin",
@@ -590,8 +598,7 @@ runtime::Expected<runtime::JointDescription, ModelingError>
  *   - accessVersion 取 io::kAccessVersion 单点（P-RT-6 裁决值，不私写 1）。
  *
  * @param geometryRef [in] modeling 几何引用（resourceRefId＋局部位姿——
- *                    局部位姿不入 runtime GeometryRef：runtime 几何引用以
- *                    资源为粒度，位姿语义由几何资源自身承载/编译链处理）
+ *                    保留所挂帧到网格的局部位姿，资源字节不预烘焙）
  * @param design      [in] 根对象（resourceManifest 查找域）
  * @param field       [in] 定位字段（引用方——错误 params）
  * @return ok＝runtime 几何引用；err＝ModelingError
@@ -635,6 +642,7 @@ runtime::Expected<runtime::GeometryRef, ModelingError>
             deriveRecordedResourceObjectId(entry->resourceId);
         out.resource.state = runtime::ResourceState::Recorded;
     }
+    out.localTransform = geometryRef.localTransform; // F05：保留每次引用的局部位姿。
     out.resource.contentDigest = entry->contentDigest;  // 内容摘要透传（CON-05——不自算）
     out.resource.sourcePathHint = std::nullopt;         // 路径不入 Description＝不入身份
     out.resource.accessVersion = io::kAccessVersion;    // 读取契约版本单点（P-RT-6）
@@ -750,7 +758,8 @@ std::optional<ModelingError> mapBodyData(const BodyData& body,
 runtime::Expected<std::vector<JointEntry>, ModelingError>
     expandStandardDhGeometry(const RobotDesign& root,
                              const IDhExplicitConverter& converter,
-                             std::vector<core::DiagnosticRecord>& diags)
+                             std::vector<core::DiagnosticRecord>& diags,
+                             rw::math::Transform3D<double>& flangeOffset)
 {
     DhChain chain;
     chain.joints.reserve(root.joints.size());
@@ -789,11 +798,13 @@ runtime::Expected<std::vector<JointEntry>, ModelingError>
         entry.localName = joint.localName;
         entry.bounds = joint.bounds;        // 两态均权威字段透传（§7.2）
         entry.workingRange = joint.workingRange;
+        entry.maxVelocity = joint.maxVelocity;
+        entry.maxAcceleration = joint.maxAcceleration;
         chain.joints.push_back(std::move(entry));
     }
     // §7.4 无损展开（权威展开，C-5）——空链/基座混入在此不可达（解码门
     // 保证 joints≥1；builder 恒不混入基座变换），错误分支为防御面。
-    const ExpandOutcome expanded = converter.dhToExplicit(chain, diags);
+    const dh::ExpandOutcome expanded = converter.dhToExplicit(chain, diags);
     if (!expanded.ok) {
         return runtime::Expected<std::vector<JointEntry>, ModelingError>::err(
             bridgeError(
@@ -801,6 +812,7 @@ runtime::Expected<std::vector<JointEntry>, ModelingError>
                 {{"detail", std::string(dhErrorCodeToken(expanded.errorCode))}},
                 "DH 权威链展开失败（§7.4——消费方不得到达 Description 构造）"));
     }
+    flangeOffset = expanded.flangeOffset * flangeOffset;
     return runtime::Expected<std::vector<JointEntry>, ModelingError>::ok(
         expanded.joints);
 }
@@ -822,6 +834,7 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
                      std::vector<core::DiagnosticRecord>& diags)
 {
     runtime::RobotDesignDescription desc;
+    desc.flangeOffset = root.flangeOffset;
 
     // ---- ①descriptionContractVersion（§9.1 行 1：建模 schemaVersion——
     // 同源演进 R-MDL-3；解码门已保证主版本受支持，此处防御 0 值）。
@@ -855,7 +868,7 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         // StandardDH 权威：dhDerived 为权威（D-MDL-5——axis/origin 不在
         // 字节内、解码后为 NotProvided 待重算）。展开失败→错误侧携带
         // DhExpandFailed（定位到对象/字段）。
-        auto expanded = expandStandardDhGeometry(root, converter, diags);
+        auto expanded = expandStandardDhGeometry(root, converter, diags, desc.flangeOffset);
         if (!expanded.ok()) {
             return runtime::Expected<runtime::RobotDesignDescription,
                                      ModelingError>::err(expanded.error());
@@ -1036,6 +1049,10 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         const rw::math::Rotation3D<double> r =
             rotMul(tool.mountInterface.R(), chosen->offset.R());
         td.tcpOffset = rw::math::Transform3D<double>(p, r);
+        if (td.geometry) {
+            // T_tcp_mesh = inverse(T_tool_tcp) * T_tool_mesh；mount已在TCP帧上。
+            td.geometry->localTransform = rw::math::inverse(chosen->offset) * tool.geometry->localTransform;
+        }
         // A-15/MDL-13：保留每个原始tcpKey，安装接口必须参与所有偏移的复合，
         // 否则非默认TCP会在编译边界丢失。这里仅做描述映射，排序与身份归runtime。
         for (const auto& entry : tool.tcpList) {

@@ -1,0 +1,512 @@
+[==========] Running 133 tests from 58 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from TestPaths
+[ RUN      ] TestPaths.EnvVarOverridesDefault_NFR_COR_01
+[       OK ] TestPaths.EnvVarOverridesDefault_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01
+[       OK ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01 (2 ms)
+[ RUN      ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01
+[       OK ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01
+[       OK ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01
+[       OK ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01
+[       OK ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01
+[       OK ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01 (0 ms)
+[----------] 7 tests from TestPaths (3 ms total)
+
+[----------] 4 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07
+[       OK ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07 (3 ms)
+[ RUN      ] JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07
+unknown file: error: C++ exception with description "dataset-invalid: json-parse: line 1, column 1: 数字超出 IEEE double 可表示范围（结果非有限）（路径 $）" thrown in the test body.
+
+[  FAILED  ] JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07 (0 ms)
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 4 tests from JsonRoundtrip (3 ms total)
+
+[----------] 1 test from JsonAccess
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 1 test from JsonAccess (0 ms total)
+
+[----------] 2 tests from JsonRejections
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 2 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+[       OK ] JsonErrorLocation.LineColumnPrecision_UT_JSON (0 ms)
+[----------] 1 test from JsonErrorLocation (0 ms total)
+
+[----------] 1 test from JsonUnicode
+[ RUN      ] JsonUnicode.EscapesToUtf8_UT_JSON
+[       OK ] JsonUnicode.EscapesToUtf8_UT_JSON (0 ms)
+[----------] 1 test from JsonUnicode (0 ms total)
+
+[----------] 1 test from JsonBoundary
+[ RUN      ] JsonBoundary.DumpOutputReparseable_UT_JSON
+[       OK ] JsonBoundary.DumpOutputReparseable_UT_JSON (0 ms)
+[----------] 1 test from JsonBoundary (0 ms total)
+
+[----------] 3 tests from FaultOccurrence
+[ RUN      ] FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT
+[       OK ] FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT (0 ms)
+[ RUN      ] FaultOccurrence.EmptyPlanAndBeyondPlan_UT_FAULT
+[       OK ] FaultOccurrence.EmptyPlanAndBeyondPlan_UT_FAULT (0 ms)
+[ RUN      ] FaultOccurrence.MultiplePointsIndependentCounting_UT_FAULT
+[       OK ] FaultOccurrence.MultiplePointsIndependentCounting_UT_FAULT (0 ms)
+[----------] 3 tests from FaultOccurrence (0 ms total)
+
+[----------] 1 test from FaultScenario
+[ RUN      ] FaultScenario.DiskFullDrivesErrorPath_UT_FAULT
+[       OK ] FaultScenario.DiskFullDrivesErrorPath_UT_FAULT (0 ms)
+[----------] 1 test from FaultScenario (0 ms total)
+
+[----------] 2 tests from FaultWiring
+[ RUN      ] FaultWiring.RealAccessorDelegation_UT_FAULT
+[       OK ] FaultWiring.RealAccessorDelegation_UT_FAULT (0 ms)
+[ RUN      ] FaultWiring.NullRealRejected_UT_FAULT
+[       OK ] FaultWiring.NullRealRejected_UT_FAULT (0 ms)
+[----------] 2 tests from FaultWiring (0 ms total)
+
+[----------] 1 test from ProcessRunnerHeader
+[ RUN      ] ProcessRunnerHeader.FrozenDeclarationsPresent_UT_FAULT
+[       OK ] ProcessRunnerHeader.FrozenDeclarationsPresent_UT_FAULT (0 ms)
+[----------] 1 test from ProcessRunnerHeader (0 ms total)
+
+[----------] 1 test from ProductBoundary
+[ RUN      ] ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT
+[       OK ] ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT (131 ms)
+[----------] 1 test from ProductBoundary (131 ms total)
+
+[----------] 2 tests from DatasetManifest
+[ RUN      ] DatasetManifest.FullFieldLoad_UT_MAN
+[       OK ] DatasetManifest.FullFieldLoad_UT_MAN (16 ms)
+[ RUN      ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015
+[       OK ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015 (10 ms)
+[----------] 2 tests from DatasetManifest (26 ms total)
+
+[----------] 2 tests from DatasetIntegrity
+[ RUN      ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017
+[       OK ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017 (10 ms)
+[ RUN      ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT
+[       OK ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT (10 ms)
+[----------] 2 tests from DatasetIntegrity (20 ms total)
+
+[----------] 2 tests from DatasetRejections
+[ RUN      ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018
+[       OK ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018 (46 ms)
+[ RUN      ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN
+[       OK ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN (35 ms)
+[----------] 2 tests from DatasetRejections (81 ms total)
+
+[----------] 1 test from DatasetLint
+[ RUN      ] DatasetLint.DatasetIdDirMismatch_UT_MAN
+[       OK ] DatasetLint.DatasetIdDirMismatch_UT_MAN (9 ms)
+[----------] 1 test from DatasetLint (9 ms total)
+
+[----------] 5 tests from ToleranceProfileLoad
+[ RUN      ] ToleranceProfileLoad.SampleProfileResolveThreeStates_UT_TOL
+[       OK ] ToleranceProfileLoad.SampleProfileResolveThreeStates_UT_TOL (0 ms)
+[ RUN      ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05
+[       OK ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05 (6 ms)
+[ RUN      ] ToleranceProfileLoad.DeclaredExceedingAllowedMaxRejected_UT_TOL
+[       OK ] ToleranceProfileLoad.DeclaredExceedingAllowedMaxRejected_UT_TOL (14 ms)
+[ RUN      ] ToleranceProfileLoad.FixedRequiresAllowedMax_UT_TOL
+[       OK ] ToleranceProfileLoad.FixedRequiresAllowedMax_UT_TOL (3 ms)
+[ RUN      ] ToleranceProfileLoad.SourceWhitelistAndKindMismatch_UT_TOL
+[       OK ] ToleranceProfileLoad.SourceWhitelistAndKindMismatch_UT_TOL (4 ms)
+[----------] 5 tests from ToleranceProfileLoad (29 ms total)
+
+[----------] 1 test from ToleranceProfileC7
+[ RUN      ] ToleranceProfileC7.CrossCheckWithCore_UT_TOL
+[       OK ] ToleranceProfileC7.CrossCheckWithCore_UT_TOL (0 ms)
+[----------] 1 test from ToleranceProfileC7 (0 ms total)
+
+[----------] 2 tests from CheckClose
+[ RUN      ] CheckClose.DelegatesToCoreC4Formula_UT_CMP
+[       OK ] CheckClose.DelegatesToCoreC4Formula_UT_CMP (0 ms)
+[ RUN      ] CheckClose.NonFiniteFails_UT_CMP
+[       OK ] CheckClose.NonFiniteFails_UT_CMP (0 ms)
+[----------] 2 tests from CheckClose (0 ms total)
+
+[----------] 3 tests from AllCloseWithin
+[ RUN      ] AllCloseWithin.ElementWiseNotSummed_UT_CMP
+[       OK ] AllCloseWithin.ElementWiseNotSummed_UT_CMP (0 ms)
+[ RUN      ] AllCloseWithin.LengthMismatchListed_UT_CMP
+[       OK ] AllCloseWithin.LengthMismatchListed_UT_CMP (0 ms)
+[ RUN      ] AllCloseWithin.BothEmptyPasses_UT_CMP
+[       OK ] AllCloseWithin.BothEmptyPasses_UT_CMP (0 ms)
+[----------] 3 tests from AllCloseWithin (0 ms total)
+
+[----------] 1 test from CheckAtMost
+[ RUN      ] CheckAtMost.BoundAndUnitValidation_UT_CMP
+[       OK ] CheckAtMost.BoundAndUnitValidation_UT_CMP (0 ms)
+[----------] 1 test from CheckAtMost (0 ms total)
+
+[----------] 1 test from CheckIdentical
+[ RUN      ] CheckIdentical.ExactEqualityBothOverloads_UT_CMP
+[       OK ] CheckIdentical.ExactEqualityBothOverloads_UT_CMP (0 ms)
+[----------] 1 test from CheckIdentical (0 ms total)
+
+[----------] 2 tests from AssertMacrosBehavior
+[ RUN      ] AssertMacrosBehavior.MacroExpansionWorks_UT_CMP
+[       OK ] AssertMacrosBehavior.MacroExpansionWorks_UT_CMP (0 ms)
+[ RUN      ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02
+[       OK ] AssertMacrosBehavior.FiniteEvaluatesExactlyOnce_ReviewR02 (0 ms)
+[----------] 2 tests from AssertMacrosBehavior (0 ms total)
+
+[----------] 2 tests from ContractDiagRecord
+[ RUN      ] ContractDiagRecord.ValidComparativeRecordPasses_UT_CTR
+[       OK ] ContractDiagRecord.ValidComparativeRecordPasses_UT_CTR (0 ms)
+[ RUN      ] ContractDiagRecord.RejectionsWithViolations_UT_CTR
+[       OK ] ContractDiagRecord.RejectionsWithViolations_UT_CTR (0 ms)
+[----------] 2 tests from ContractDiagRecord (0 ms total)
+
+[----------] 1 test from ContractComparative
+[ RUN      ] ContractComparative.KindMismatchFails_UT_CTR
+[       OK ] ContractComparative.KindMismatchFails_UT_CTR (0 ms)
+[----------] 1 test from ContractComparative (0 ms total)
+
+[----------] 1 test from ContractTaskIdentity
+[ RUN      ] ContractTaskIdentity.FiveFieldValidation_UT_CTR
+[       OK ] ContractTaskIdentity.FiveFieldValidation_UT_CTR (0 ms)
+[----------] 1 test from ContractTaskIdentity (0 ms total)
+
+[----------] 1 test from ContractIds
+[ RUN      ] ContractIds.StableIdsUnique_UT_CTR
+[       OK ] ContractIds.StableIdsUnique_UT_CTR (0 ms)
+[----------] 1 test from ContractIds (0 ms total)
+
+[----------] 1 test from ContractFileIntegrity
+[ RUN      ] ContractFileIntegrity.ShaCompare_UT_CTR
+[       OK ] ContractFileIntegrity.ShaCompare_UT_CTR (14 ms)
+[----------] 1 test from ContractFileIntegrity (14 ms total)
+
+[----------] 1 test from ContractEnvelope
+[ RUN      ] ContractEnvelope.CombinationRules_UT_CTR
+[       OK ] ContractEnvelope.CombinationRules_UT_CTR (0 ms)
+[----------] 1 test from ContractEnvelope (0 ms total)
+
+[----------] 3 tests from SetEquivalent
+[ RUN      ] SetEquivalent.OrderIndependentEquivalent_UT_SET
+[       OK ] SetEquivalent.OrderIndependentEquivalent_UT_SET (0 ms)
+[ RUN      ] SetEquivalent.IdentityValueMismatchLocated_UT_SET
+[       OK ] SetEquivalent.IdentityValueMismatchLocated_UT_SET (0 ms)
+[ RUN      ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01
+[       OK ] SetEquivalent.IdentifiedElementsNeverFallBackToNumerics_ReviewR01 (0 ms)
+[----------] 3 tests from SetEquivalent (0 ms total)
+
+[----------] 2 tests from StableOrder
+[ RUN      ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11
+[       OK ] StableOrder.ShorterSequenceReportsEarliestDivergence_ReviewR11 (0 ms)
+[ RUN      ] StableOrder.SameOrderAndFirstDivergence_UT_ORD
+[       OK ] StableOrder.SameOrderAndFirstDivergence_UT_ORD (0 ms)
+[----------] 2 tests from StableOrder (0 ms total)
+
+[----------] 2 tests from SetDuplicates
+[ RUN      ] SetDuplicates.ActualDuplicateIdentity_UT_SET
+[       OK ] SetDuplicates.ActualDuplicateIdentity_UT_SET (0 ms)
+[ RUN      ] SetDuplicates.ExpectedDuplicateThrows_UT_SET
+[       OK ] SetDuplicates.ExpectedDuplicateThrows_UT_SET (0 ms)
+[----------] 2 tests from SetDuplicates (0 ms total)
+
+[----------] 8 tests from SetNumeric
+[ RUN      ] SetNumeric.NumericOnlyMatching_UT_SET
+[       OK ] SetNumeric.NumericOnlyMatching_UT_SET (0 ms)
+[ RUN      ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET
+[       OK ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET (0 ms)
+[ RUN      ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594
+[       OK ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594 (0 ms)
+[ RUN      ] SetNumeric.TrueAmbiguityStillDetected_F594
+[       OK ] SetNumeric.TrueAmbiguityStillDetected_F594 (0 ms)
+[ RUN      ] SetNumeric.GreedyTrapAugmented_UT_SET
+[       OK ] SetNumeric.GreedyTrapAugmented_UT_SET (0 ms)
+[ RUN      ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET
+[       OK ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET (0 ms)
+[ RUN      ] SetNumeric.ToleranceCacheIsAssertionLocal_UT_SET
+[       OK ] SetNumeric.ToleranceCacheIsAssertionLocal_UT_SET (0 ms)
+[ RUN      ] SetNumeric.ToleranceResolutionRemainsLazy_UT_SET
+[       OK ] SetNumeric.ToleranceResolutionRemainsLazy_UT_SET (0 ms)
+[----------] 8 tests from SetNumeric (0 ms total)
+
+[----------] 1 test from SetGuard
+[ RUN      ] SetGuard.ScaleLimitThrows_UT_SET
+[       OK ] SetGuard.ScaleLimitThrows_UT_SET (1 ms)
+[----------] 1 test from SetGuard (1 ms total)
+
+[----------] 2 tests from SetMatchCore
+[ RUN      ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET
+[       OK ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET (2 ms)
+[ RUN      ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET
+[       OK ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET (128 ms)
+[----------] 2 tests from SetMatchCore (130 ms total)
+
+[----------] 3 tests from TempDirLife
+[ RUN      ] TempDirLife.ExistsOnConstructGoneOnDestruct_UT_FIX
+[       OK ] TempDirLife.ExistsOnConstructGoneOnDestruct_UT_FIX (1 ms)
+[ RUN      ] TempDirLife.TagSyntaxRejected_UT_FIX
+[       OK ] TempDirLife.TagSyntaxRejected_UT_FIX (0 ms)
+[ RUN      ] TempDirLife.ParallelIsolation_UT_FIX
+[       OK ] TempDirLife.ParallelIsolation_UT_FIX (6 ms)
+[----------] 3 tests from TempDirLife (7 ms total)
+
+[----------] 4 tests from TempDirKeep
+[ RUN      ] TempDirKeep.KeepsSceneOnFailureSignal_UT_FIX
+ird-tempdir-kept: C:\Users\zgl18\AppData\Local\Temp\ird-test/83848-keep-148dfa22b615c6fb
+[       OK ] TempDirKeep.KeepsSceneOnFailureSignal_UT_FIX (1 ms)
+[ RUN      ] TempDirKeep.DisabledRemovesEvenOnFailure_UT_FIX
+[       OK ] TempDirKeep.DisabledRemovesEvenOnFailure_UT_FIX (0 ms)
+[ RUN      ] TempDirKeep.NoSignalRemovesByDefault_UT_FIX
+[       OK ] TempDirKeep.NoSignalRemovesByDefault_UT_FIX (0 ms)
+[ RUN      ] TempDirKeep.DeletionFailureWarnsNotThrows_UT_FIX
+ird-tempdir-remove-failed: C:\Users\zgl18\AppData\Local\Temp\ird-test/83848-locked-e20ca6c79f9a20b3: ��һ����������ʹ�ô��ļ��������޷����ʡ�
+[       OK ] TempDirKeep.DeletionFailureWarnsNotThrows_UT_FIX (1 ms)
+[----------] 4 tests from TempDirKeep (4 ms total)
+
+[----------] 3 tests from ReproRecordData
+[ RUN      ] ReproRecordData.DefaultsMatchDesign_UT_FIX
+[       OK ] ReproRecordData.DefaultsMatchDesign_UT_FIX (0 ms)
+[ RUN      ] ReproRecordData.JsonRoundTrip_UT_FIX
+[       OK ] ReproRecordData.JsonRoundTrip_UT_FIX (0 ms)
+[ RUN      ] ReproRecordData.FromJsonRejectsInvalid_UT_FIX
+[       OK ] ReproRecordData.FromJsonRejectsInvalid_UT_FIX (0 ms)
+[----------] 3 tests from ReproRecordData (0 ms total)
+
+[----------] 1 test from DeterministicEnvData
+[ RUN      ] DeterministicEnvData.RecordIsSoleSource_UT_FIX
+[       OK ] DeterministicEnvData.RecordIsSoleSource_UT_FIX (0 ms)
+[----------] 1 test from DeterministicEnvData (0 ms total)
+
+[----------] 1 test from DemoFixture
+[ RUN      ] DemoFixture.SixStepLifecycle_UT_FIX
+[       OK ] DemoFixture.SixStepLifecycle_UT_FIX (10 ms)
+[----------] 1 test from DemoFixture (10 ms total)
+
+[----------] 1 test from PureFixture
+[ RUN      ] PureFixture.SkipsAssetStepsWhenNoDataset_UT_FIX
+[       OK ] PureFixture.SkipsAssetStepsWhenNoDataset_UT_FIX (0 ms)
+[----------] 1 test from PureFixture (0 ms total)
+
+[----------] 5 tests from ReproBenchmark
+[ RUN      ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1
+[       OK ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1 (1 ms)
+[ RUN      ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2
+[       OK ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2 (0 ms)
+[ RUN      ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3
+[       OK ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3 (0 ms)
+[ RUN      ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1 (0 ms)
+[ RUN      ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1 (14 ms)
+[----------] 5 tests from ReproBenchmark (17 ms total)
+
+[----------] 5 tests from PerfBenchmark
+[ RUN      ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12
+[       OK ] PerfBenchmark.NonFinitePercentileRejected_ReviewR12 (0 ms)
+[ RUN      ] PerfBenchmark.P95LinearInterpolationKnownVectors_WP23T02_ACC1
+[       OK ] PerfBenchmark.P95LinearInterpolationKnownVectors_WP23T02_ACC1 (0 ms)
+[ RUN      ] PerfBenchmark.WarmupExcludedAndInvalidSamplesTraced_WP23T02_ACC1
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=1): meta: injected failure
+[       OK ] PerfBenchmark.WarmupExcludedAndInvalidSamplesTraced_WP23T02_ACC1 (68 ms)
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=2): meta: injected failure
+[ RUN      ] PerfBenchmark.SessionReportJsonRoundtrip_WP23T02_ACC1
+[       OK ] PerfBenchmark.SessionReportJsonRoundtrip_WP23T02_ACC1 (0 ms)
+[ RUN      ] PerfBenchmark.SessionReportFileWriteRoundtrip_WP23T02_ACC1
+[       OK ] PerfBenchmark.SessionReportFileWriteRoundtrip_WP23T02_ACC1 (3 ms)
+[----------] 5 tests from PerfBenchmark (72 ms total)
+
+[----------] 1 test from OutcomeTokens
+[ RUN      ] OutcomeTokens.AllSixRegistered_UT_RPT
+[       OK ] OutcomeTokens.AllSixRegistered_UT_RPT (0 ms)
+[----------] 1 test from OutcomeTokens (0 ms total)
+
+[----------] 1 test from ReportAggregation
+[ RUN      ] ReportAggregation.SixOutcomesCountedAndDecisiveFlag_UT_RPT
+[       OK ] ReportAggregation.SixOutcomesCountedAndDecisiveFlag_UT_RPT (0 ms)
+[----------] 1 test from ReportAggregation (0 ms total)
+
+[----------] 1 test from TestRecordJson
+[ RUN      ] TestRecordJson.MachineReadableFieldTable_UT_RPT
+[       OK ] TestRecordJson.MachineReadableFieldTable_UT_RPT (0 ms)
+[----------] 1 test from TestRecordJson (0 ms total)
+
+[----------] 1 test from ReportWrite
+[ RUN      ] ReportWrite.FileRoundTripMachineReadable_UT_RPT
+[       OK ] ReportWrite.FileRoundTripMachineReadable_UT_RPT (7 ms)
+[----------] 1 test from ReportWrite (7 ms total)
+
+[----------] 3 tests from RecordStore
+[ RUN      ] RecordStore.PresetOutcomeWinsOverComputed_UT_RPT
+[       OK ] RecordStore.PresetOutcomeWinsOverComputed_UT_RPT (0 ms)
+[ RUN      ] RecordStore.IrdTestInfoFillsRecord_UT_RPT
+[       OK ] RecordStore.IrdTestInfoFillsRecord_UT_RPT (0 ms)
+[ RUN      ] RecordStore.NestedSessionIsolatesFromListener_UT_RPT
+[       OK ] RecordStore.NestedSessionIsolatesFromListener_UT_RPT (0 ms)
+[----------] 3 tests from RecordStore (0 ms total)
+
+[----------] 1 test from RptDemoFixture
+[ RUN      ] RptDemoFixture.FixtureContextBoundToRecord_UT_RPT
+[       OK ] RptDemoFixture.FixtureContextBoundToRecord_UT_RPT (0 ms)
+[----------] 1 test from RptDemoFixture (0 ms total)
+
+[----------] 5 tests from ListenerOwnership
+[ RUN      ] ListenerOwnership.AppendTakesOwnershipAndDestroysOnce_UT_LSN
+[       OK ] ListenerOwnership.AppendTakesOwnershipAndDestroysOnce_UT_LSN (0 ms)
+[ RUN      ] ListenerOwnership.ReleaseReturnsOwnershipToCaller_UT_LSN
+[       OK ] ListenerOwnership.ReleaseReturnsOwnershipToCaller_UT_LSN (0 ms)
+[ RUN      ] ListenerOwnership.ChildPassReportAndExitZero_UT_LSN
+Note: Google Test filter = LsnChild.Passes
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Passes
+[       OK ] LsnChild.Passes (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+[       OK ] ListenerOwnership.ChildPassReportAndExitZero_UT_LSN (223 ms)
+[ RUN      ] ListenerOwnership.ChildFailReportAndNonZeroExit_UT_LSN
+Note: Google Test filter = LsnChild.Fails
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Fails
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(75): error: Expected equality of these values:
+  1
+  2
+lsnchild 预期失败样本（F-958 失败态载体）
+
+[  FAILED  ] LsnChild.Fails (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] LsnChild.Fails
+
+ 1 FAILED TEST
+[       OK ] ListenerOwnership.ChildFailReportAndNonZeroExit_UT_LSN (32 ms)
+[ RUN      ] ListenerOwnership.ChildSkipReportAndExitZero_UT_LSN
+Note: Google Test filter = LsnChild.Skips
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Skips
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(81): Skipped
+lsnchild 显式跳过样本（F-958 skip 态载体）
+
+[  SKIPPED ] LsnChild.Skips (0 ms)
+[----------] 1 test from LsnChild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] LsnChild.Skips
+[       OK ] ListenerOwnership.ChildSkipReportAndExitZero_UT_LSN (30 ms)
+[----------] 5 tests from ListenerOwnership (287 ms total)
+
+[----------] 4 tests from ProcessRunnerOutcome
+[ RUN      ] ProcessRunnerOutcome.NormalExitReportsExitedWithZeroCode
+[       OK ] ProcessRunnerOutcome.NormalExitReportsExitedWithZeroCode (29 ms)
+[ RUN      ] ProcessRunnerOutcome.NonZeroExitReportsCrashed
+[       OK ] ProcessRunnerOutcome.NonZeroExitReportsCrashed (18 ms)
+[ RUN      ] ProcessRunnerOutcome.KillReportsKilledAndTerminatesWholeTree
+[       OK ] ProcessRunnerOutcome.KillReportsKilledAndTerminatesWholeTree (8019 ms)
+[ RUN      ] ProcessRunnerOutcome.TimeoutReportsTerminatedByTimeoutAndKillsTree
+[       OK ] ProcessRunnerOutcome.TimeoutReportsTerminatedByTimeoutAndKillsTree (8539 ms)
+[----------] 4 tests from ProcessRunnerOutcome (16608 ms total)
+
+[----------] 3 tests from ProcessRunnerContract
+[ RUN      ] ProcessRunnerContract.OutcomeOrKillBeforeStartThrowsUsage
+[       OK ] ProcessRunnerContract.OutcomeOrKillBeforeStartThrowsUsage (0 ms)
+[ RUN      ] ProcessRunnerContract.DoubleStartThrowsUsage
+[       OK ] ProcessRunnerContract.DoubleStartThrowsUsage (18 ms)
+[ RUN      ] ProcessRunnerContract.BadSpecOrWorkingDirThrowsUsage
+[       OK ] ProcessRunnerContract.BadSpecOrWorkingDirThrowsUsage (1 ms)
+[----------] 3 tests from ProcessRunnerContract (20 ms total)
+
+[----------] 4 tests from ProcessRunnerStart
+[ RUN      ] ProcessRunnerStart.EnvOverrideReachesChild
+[       OK ] ProcessRunnerStart.EnvOverrideReachesChild (35 ms)
+[ RUN      ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08
+[       OK ] ProcessRunnerStart.EnvOverrideIsCaseInsensitive_ReviewR08 (19 ms)
+[ RUN      ] ProcessRunnerStart.WorkingDirIsChildCurrentDirectory
+[       OK ] ProcessRunnerStart.WorkingDirIsChildCurrentDirectory (32 ms)
+[ RUN      ] ProcessRunnerStart.EmptyWorkingDirFallsBackToOwnedTempDir
+[       OK ] ProcessRunnerStart.EmptyWorkingDirFallsBackToOwnedTempDir (16 ms)
+[----------] 4 tests from ProcessRunnerStart (104 ms total)
+
+[----------] 1 test from TestdataLint
+[ RUN      ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/83848-lint-contract-946f6261970c5df9\data\requirements-ids.json）
+lint-ok: pol-collision-analytic/1.0.0
+lint: 扫描 1 个数据集版本，违规 0
+lint-fail: pol-collision-analytic/1.0.0: dataset-invalid: dataset-invalid: 档案文件不存在: C:\Users\zgl18\AppData\Local\Temp\ird-test/83848-lint-contract-946f6261970c5df9\data\tolerance\pol-analytic\v1.0.0.json
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/83848-lint-contract-946f6261970c5df9\data\requirements-ids.json）
+lint: 扫描 1 个数据集版本，违规 1
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/83848-lint-contract-946f6261970c5df9\data\requirements-ids.json）
+lint-fail: pol-collision-analytic/1.0.0: coveredAt ID 不在字典: AT-999
+lint: 扫描 1 个数据集版本，违规 1
+lint-fail: dataset-invalid: lint 字典 schemaVersion/ids 非法
+[       OK ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09 (167 ms)
+[----------] 1 test from TestdataLint (167 ms total)
+
+[----------] 7 tests from EventWatchPath
+[ RUN      ] EventWatchPath.AwaitFileHitsWhenMarkerAppears
+[       OK ] EventWatchPath.AwaitFileHitsWhenMarkerAppears (239 ms)
+[ RUN      ] EventWatchPath.AwaitFileTimesOutAtDeadline
+[       OK ] EventWatchPath.AwaitFileTimesOutAtDeadline (162 ms)
+[ RUN      ] EventWatchPath.AwaitLineHitsWhenNeedleLineArrivesLate
+[       OK ] EventWatchPath.AwaitLineHitsWhenNeedleLineArrivesLate (357 ms)
+[ RUN      ] EventWatchPath.AwaitLineTimesOutWithoutNeedle
+[       OK ] EventWatchPath.AwaitLineTimesOutWithoutNeedle (156 ms)
+[ RUN      ] EventWatchPath.AwaitLineTreatsMissingFileAsTimeout
+[       OK ] EventWatchPath.AwaitLineTreatsMissingFileAsTimeout (109 ms)
+[ RUN      ] EventWatchPath.ZeroDeadlineChecksCurrentStateOnly
+[       OK ] EventWatchPath.ZeroDeadlineChecksCurrentStateOnly (1 ms)
+[ RUN      ] EventWatchPath.EmptyNeedleThrowsUsage
+[       OK ] EventWatchPath.EmptyNeedleThrowsUsage (0 ms)
+[----------] 7 tests from EventWatchPath (1027 ms total)
+
+[----------] 2 tests from ProcessRunnerQuote
+[ RUN      ] ProcessRunnerQuote.BackslashQuoteEscapingTwoNPlusOne_F596
+[       OK ] ProcessRunnerQuote.BackslashQuoteEscapingTwoNPlusOne_F596 (0 ms)
+[ RUN      ] ProcessRunnerQuote.EmptyArgEmitsQuotedEmpty_F595
+[       OK ] ProcessRunnerQuote.EmptyArgEmitsQuotedEmpty_F595 (0 ms)
+[----------] 2 tests from ProcessRunnerQuote (0 ms total)
+
+[----------] 1 test from UnitsTolerance
+[ RUN      ] UnitsTolerance.MmToDegRoundtrip_AppendixD_Item9
+[       OK ] UnitsTolerance.MmToDegRoundtrip_AppendixD_Item9 (0 ms)
+[----------] 1 test from UnitsTolerance (0 ms total)
+
+[----------] 3 tests from TkBuild
+[ RUN      ] TkBuild.SourceTreeReachable_TK_BUILD
+[       OK ] TkBuild.SourceTreeReachable_TK_BUILD (3 ms)
+[ RUN      ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3
+[       OK ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3 (17 ms)
+[ RUN      ] TkBuild.ProductSourcesZeroTestkitInclude_T1
+[       OK ] TkBuild.ProductSourcesZeroTestkitInclude_T1 (519 ms)
+[----------] 3 tests from TkBuild (540 ms total)
+
+[----------] Global test environment tear-down
+[==========] 133 tests from 58 test suites ran. (19338 ms total)
+[  PASSED  ] 132 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07
+
+ 1 FAILED TEST

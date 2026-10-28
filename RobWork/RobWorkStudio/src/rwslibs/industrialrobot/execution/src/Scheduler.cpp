@@ -1074,7 +1074,11 @@ std::optional<MemoryReading> SupervisorMemorySampler::sample()
     if (!win32::queryCurrentProcessWorkingSetBytes(reading.mainProcessBytes)) {
         return std::nullopt;
     }
-    reading.workerBytes = m_supervisor != nullptr ? m_supervisor->aggregateJobMemoryBytes() : 0;
+    if (m_supervisor != nullptr) {
+        const auto workerBytes = m_supervisor->aggregateJobMemoryBytes();
+        if (!workerBytes.has_value()) return std::nullopt;
+        reading.workerBytes = *workerBytes;
+    }
     return reading;
 }
 

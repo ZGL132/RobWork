@@ -101,11 +101,16 @@ inline constexpr char kModuleHandle[] = "modeling";
  * module 的具体对象——随 module 生存，消费方不解引用）。可移动（装配层
  * 转移持有）；不可拷贝。
  */
+class CompileProbe;
+
 struct ModelingPluginAssembly {
     std::unique_ptr<ui::IPluginUiModule> module;  ///< 模块（接口面——三方法契约）
     ui::PluginUiDescriptor descriptor;            ///< 装配描述符（§10.9 形状直通）
 
     /// 命令提交出口绑定（转发模块内部——面板创建前后皆可）。
+    /// 借用宿主编译探针；调用期须存活，仅 UI 线程，nullptr 时切换保持原草稿。
+    void bindCompileProbe(const CompileProbe* probe);
+
     void bindCommandSubmit(std::function<void(const ui::CommandId&)> submit);
     void bindCommandAvailability(std::function<ui::CommandAvailability(const ui::CommandId&)> availability);
 

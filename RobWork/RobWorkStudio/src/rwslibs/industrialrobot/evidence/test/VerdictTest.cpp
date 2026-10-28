@@ -33,6 +33,7 @@
  * 只验证 evidence 契约与汇总逻辑）。
  */
 
+#include "FreezeFixture.hpp"
 #include <sdurws/ird/core/DiagData.hpp>
 #include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/core/Evaluation.hpp>
@@ -144,13 +145,14 @@ std::vector<CaseEntry> standardCases()
 
 /// 组装标准冻结快照（各用例共用底座——同 EvidenceTest 风格）。
 /// @param cases 必验工况集（默认 standardCases；P-EV-7 用例注入空集）
-AnalysisSnapshot buildStandardSnapshot(std::vector<CaseEntry> cases = standardCases())
+AnalysisSnapshot buildStandardSnapshot(std::vector<CaseEntry> cases = standardCases(), const char* configHex64 = kHex64C)
 {
     SnapshotBuilder b;
     b.setIdentity(fixedProject(), fixedBranch(), fixedRevision(), 5);
     b.setPolicyRef(PolicyRef{cid(kHex64A)});
     b.setNameMapRef(NameMapRef{cid(kHex64B)});
     b.setReproduction(validReproduction());
+    b.addConfiguration({"ik-solve", std::vector<std::uint8_t>(configHex64,configHex64+64), {}});
     b.addObjectRef(validObjectRef(oid(kHex32A), "robot-design"));
     for (const CaseEntry& c : cases) {
         b.addCase(c);
@@ -316,8 +318,9 @@ InputSlice buildMinimalSlice(const AnalysisSnapshot& snapshot, const char* confi
     entry.kind = DependencyKind::Configuration;
     ConfigurationDependencyPayload payload;
     payload.configKindToken = "ik-solve";
-    payload.canonicalBytes = {std::uint8_t(0x01), std::uint8_t(0x02)};
-    payload.contentIdentity = cid(configHex64);
+    payload.canonicalBytes = std::vector<std::uint8_t>(configHex64,configHex64+64);
+    core::ContentDigester digest; digest.update(payload.canonicalBytes.data(),payload.canonicalBytes.size());
+    payload.contentIdentity.bytes = digest.finalize();
     entry.payload = payload;
     entry.applied = true;
     b.addEntry(entry);
@@ -521,7 +524,7 @@ TEST(VerdictSearchExhausted, SearchExhaustedThenFeasibleAfterReplan_EV_VER_2)
     // 复评场景的输入前提（EV-VER-2 观测点）：配置变→sliceId 变而
     // inputBaselineId 不变（D-04——双身份行为本体见 EV-T04 SliceTest，
     // 此处以最小切片复证该口径）。
-    const InputSlice replannedSlice = buildMinimalSlice(fx.snapshot, kHex64B);
+    const InputSlice replannedSlice = buildMinimalSlice(buildStandardSnapshot(standardCases(),kHex64B), kHex64B);
     EXPECT_EQ(replannedSlice.inputBaselineId, fx.slice.inputBaselineId);
     EXPECT_NE(replannedSlice.sliceId, fx.slice.sliceId);
 }
@@ -1044,7 +1047,9 @@ TEST(VerdictRegionCoverage, ZeroSampleAndDowngradedRegionEvidence_EV_COV_3)
     AcceptAllClosureSource source;
     const AnalysisSnapshot planSnapshot = b.build(source);
 
-    fx.snapshot = planSnapshot;
+    auto configured = planSnapshot;
+    configured.configurationRefs = fx.snapshot.configurationRefs;
+    fx.snapshot = testdoubles::refreezeSnapshot(configured);
     fx.slice = buildMinimalSlice(fx.snapshot, kHex64C);
     fx.manifest = standardManifest(fx.snapshot, fx.profile, fx.slice.sliceId);
 

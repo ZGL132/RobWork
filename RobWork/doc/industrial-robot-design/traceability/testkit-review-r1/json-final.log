@@ -1,0 +1,140 @@
+Note: Google Test filter = Json*:Dataset*:ToleranceProfile*:Repro*:Report*:DemoFixture.*:Bad*.*:TestdataLint.*
+[==========] Running 35 tests from 18 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07
+[       OK ] JsonRoundtrip.DecimalParsingIgnoresNumericLocale_ReviewR07 (3 ms)
+[ RUN      ] JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07
+[       OK ] JsonRoundtrip.DecimalRangeAndSignedZeroPreserved_ReviewR07 (0 ms)
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 4 tests from JsonRoundtrip (3 ms total)
+
+[----------] 1 test from JsonAccess
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 1 test from JsonAccess (0 ms total)
+
+[----------] 2 tests from JsonRejections
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 2 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+[       OK ] JsonErrorLocation.LineColumnPrecision_UT_JSON (0 ms)
+[----------] 1 test from JsonErrorLocation (0 ms total)
+
+[----------] 1 test from JsonUnicode
+[ RUN      ] JsonUnicode.EscapesToUtf8_UT_JSON
+[       OK ] JsonUnicode.EscapesToUtf8_UT_JSON (0 ms)
+[----------] 1 test from JsonUnicode (0 ms total)
+
+[----------] 1 test from JsonBoundary
+[ RUN      ] JsonBoundary.DumpOutputReparseable_UT_JSON
+[       OK ] JsonBoundary.DumpOutputReparseable_UT_JSON (0 ms)
+[----------] 1 test from JsonBoundary (0 ms total)
+
+[----------] 2 tests from DatasetManifest
+[ RUN      ] DatasetManifest.FullFieldLoad_UT_MAN
+[       OK ] DatasetManifest.FullFieldLoad_UT_MAN (7 ms)
+[ RUN      ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015
+[       OK ] DatasetManifest.OptionalParametersHaveObjectDefault_ReviewF015 (10 ms)
+[----------] 2 tests from DatasetManifest (18 ms total)
+
+[----------] 2 tests from DatasetIntegrity
+[ RUN      ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017
+[       OK ] DatasetIntegrity.GeneratorCoverageRequired_ReviewF017 (28 ms)
+[ RUN      ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT
+[       OK ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT (9 ms)
+[----------] 2 tests from DatasetIntegrity (37 ms total)
+
+[----------] 2 tests from DatasetRejections
+[ RUN      ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018
+[       OK ] DatasetRejections.IntegerFieldsRejectFractionsAndRange_ReviewF018 (27 ms)
+[ RUN      ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN
+[       OK ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN (42 ms)
+[----------] 2 tests from DatasetRejections (69 ms total)
+
+[----------] 1 test from DatasetLint
+[ RUN      ] DatasetLint.DatasetIdDirMismatch_UT_MAN
+[       OK ] DatasetLint.DatasetIdDirMismatch_UT_MAN (8 ms)
+[----------] 1 test from DatasetLint (8 ms total)
+
+[----------] 5 tests from ToleranceProfileLoad
+[ RUN      ] ToleranceProfileLoad.SampleProfileResolveThreeStates_UT_TOL
+[       OK ] ToleranceProfileLoad.SampleProfileResolveThreeStates_UT_TOL (0 ms)
+[ RUN      ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05
+[       OK ] ToleranceProfileLoad.SchemaRequiredAndVersionChecked_ReviewR05 (4 ms)
+[ RUN      ] ToleranceProfileLoad.DeclaredExceedingAllowedMaxRejected_UT_TOL
+[       OK ] ToleranceProfileLoad.DeclaredExceedingAllowedMaxRejected_UT_TOL (2 ms)
+[ RUN      ] ToleranceProfileLoad.FixedRequiresAllowedMax_UT_TOL
+[       OK ] ToleranceProfileLoad.FixedRequiresAllowedMax_UT_TOL (4 ms)
+[ RUN      ] ToleranceProfileLoad.SourceWhitelistAndKindMismatch_UT_TOL
+[       OK ] ToleranceProfileLoad.SourceWhitelistAndKindMismatch_UT_TOL (8 ms)
+[----------] 5 tests from ToleranceProfileLoad (20 ms total)
+
+[----------] 1 test from ToleranceProfileC7
+[ RUN      ] ToleranceProfileC7.CrossCheckWithCore_UT_TOL
+[       OK ] ToleranceProfileC7.CrossCheckWithCore_UT_TOL (0 ms)
+[----------] 1 test from ToleranceProfileC7 (0 ms total)
+
+[----------] 3 tests from ReproRecordData
+[ RUN      ] ReproRecordData.DefaultsMatchDesign_UT_FIX
+[       OK ] ReproRecordData.DefaultsMatchDesign_UT_FIX (0 ms)
+[ RUN      ] ReproRecordData.JsonRoundTrip_UT_FIX
+[       OK ] ReproRecordData.JsonRoundTrip_UT_FIX (0 ms)
+[ RUN      ] ReproRecordData.FromJsonRejectsInvalid_UT_FIX
+[       OK ] ReproRecordData.FromJsonRejectsInvalid_UT_FIX (0 ms)
+[----------] 3 tests from ReproRecordData (0 ms total)
+
+[----------] 1 test from DemoFixture
+[ RUN      ] DemoFixture.SixStepLifecycle_UT_FIX
+[       OK ] DemoFixture.SixStepLifecycle_UT_FIX (4 ms)
+[----------] 1 test from DemoFixture (4 ms total)
+
+[----------] 5 tests from ReproBenchmark
+[ RUN      ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1
+[       OK ] ReproBenchmark.ThreeLegsEquivalentPassMeasured_WP23T09_ACC1 (1 ms)
+[ RUN      ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2
+[       OK ] ReproBenchmark.ValueShiftDetectedAsSetViolation_WP23T09_ACC2 (0 ms)
+[ RUN      ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3
+[       OK ] ReproBenchmark.SwapDetectedAsOrderViolation_WP23T09_ACC3 (0 ms)
+[ RUN      ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportJsonRoundtrip_WP23T09_ACC1 (0 ms)
+[ RUN      ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1
+[       OK ] ReproBenchmark.ReportFileWriteRoundtrip_WP23T09_ACC1 (18 ms)
+[----------] 5 tests from ReproBenchmark (21 ms total)
+
+[----------] 1 test from ReportAggregation
+[ RUN      ] ReportAggregation.SixOutcomesCountedAndDecisiveFlag_UT_RPT
+[       OK ] ReportAggregation.SixOutcomesCountedAndDecisiveFlag_UT_RPT (0 ms)
+[----------] 1 test from ReportAggregation (0 ms total)
+
+[----------] 1 test from ReportWrite
+[ RUN      ] ReportWrite.FileRoundTripMachineReadable_UT_RPT
+[       OK ] ReportWrite.FileRoundTripMachineReadable_UT_RPT (2 ms)
+[----------] 1 test from ReportWrite (2 ms total)
+
+[----------] 1 test from TestdataLint
+[ RUN      ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/83564-lint-contract-36632c9339d12a0e\data\requirements-ids.json）
+lint-ok: pol-collision-analytic/1.0.0
+lint: 扫描 1 个数据集版本，违规 0
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/83564-lint-contract-36632c9339d12a0e\data\requirements-ids.json）
+lint-fail: pol-collision-analytic/1.0.0: dataset-invalid: dataset-invalid: 档案文件不存在: C:\Users\zgl18\AppData\Local\Temp\ird-test/83564-lint-contract-36632c9339d12a0e\data\tolerance\pol-analytic\v1.0.0.json
+lint: 扫描 1 个数据集版本，违规 1
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-test/83564-lint-contract-36632c9339d12a0e\data\requirements-ids.json）
+lint-fail: pol-collision-analytic/1.0.0: coveredAt ID 不在字典: AT-999
+lint: 扫描 1 个数据集版本，违规 1
+lint-fail: dataset-invalid: lint 字典 schemaVersion/ids 非法
+[       OK ] TestdataLint.LoadsProfileAndValidatesAtDictionary_ReviewR09 (107 ms)
+[----------] 1 test from TestdataLint (107 ms total)
+
+[----------] Global test environment tear-down
+[==========] 35 tests from 18 test suites ran. (300 ms total)
+[  PASSED  ] 35 tests.

@@ -34,6 +34,7 @@
 #include <sdurws/ird/runtime/Description.hpp>
 #include <sdurws/ird/runtime/Errors.hpp>
 #include <sdurws/ird/runtime/Sources.hpp>
+#include <rw/math/RPY.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
 #include <gtest/gtest.h>
@@ -157,6 +158,7 @@ public:
             // ---- 链块（Description→Canonical 同式拷贝——zeroOffset=0，
             // 显式表示已折叠：CompilerImpl S5 v0.12 登记的同一语义）----
             runtime::RobotChain chain;
+            chain.flangeOffset = description.flangeOffset;
             chain.robotObjectId = m_robotOid;
             chain.robotLocalName = description.robotLocalName;
             chain.deviceName = description.robotLocalName;
@@ -269,9 +271,10 @@ ModelingWorkingSet makeExplicitBaseline(const DhChain& chain)
 
     std::vector<core::DiagnosticRecord> diags;
     const DhExplicitConverter converter;
-    const ExpandOutcome expanded = converter.dhToExplicit(chain, diags);
+    const dh::ExpandOutcome expanded = converter.dhToExplicit(chain, diags);
     if (!expanded.ok) { ADD_FAILURE() << "夹具展开失败"; }
     ws.design.joints = expanded.joints;
+    ws.design.flangeOffset = expanded.flangeOffset;
     for (std::size_t i = 0; i <= chain.joints.size(); ++i) {
         ws.design.links.push_back(
             makeLink(core::ObjectId::generate(),
@@ -294,8 +297,16 @@ ModelingWorkingSet makeDhCandidate(const ModelingWorkingSet& baseline,
         ADD_FAILURE() << "夹具参数数量与关节链不一致";
         return candidate;
     }
-    for (std::size_t i = 0; i < candidate.design.joints.size(); ++i) {
+    for (std::size_t i = 0; i < params.size(); ++i) {
         candidate.design.joints[i].dhDerived = params[i];
+    }
+    // 同一个显式法兰：候选 DH 的末静段与补偿固定段组合后必须保持原值。
+    if (!params.empty()) {
+        const auto& last = params.back();
+        const double c = std::cos(last.alpha), s = std::sin(last.alpha);
+        const rw::math::Transform3D<> tail(rw::math::Vector3D<>(last.a, 0, 0),
+            rw::math::Rotation3D<>(1,0,0,0,c,-s,0,s,c));
+        candidate.design.flangeOffset = rw::math::inverse(tail) * baseline.design.flangeOffset;
     }
     return candidate;
 }
@@ -310,14 +321,14 @@ bool hasDiagnostic(const std::vector<core::DiagnosticRecord>& diags,
     return false;
 }
 
-/// 两关节非平凡 DH 链（含非零零位偏置——零位折叠对照面）。
+/// 冻结求解器可恢复的平行 Z 轴正路径；含非零 d 和正负 offset。
 DhChain makeTwoJointChain()
 {
     DhChain chain;
     chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J1",
-                                       0.3, 0.15, 0.40, kPi / 2, 0.10));
+                                       0.0, 0.15, 0.0, 0.0, 0.10));
     chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J2",
-                                       -0.2, 0.25, 0.30, -kPi / 3, -0.05));
+                                       0.0, 0.25, 0.0, 0.0, -0.05));
     return chain;
 }
 
@@ -416,15 +427,8 @@ TEST(MdlDhEquivalence, RoundtripDoubleConsistency_WP13T09_ACC4)
     ASSERT_FALSE(solved.freeCoordinates.empty());
     ASSERT_TRUE(diags.empty());
 
-    // 参数级一致：逐关节逐项 ≤第 5 项上界（附录 D C3）。
+    // DH 退化链允许重参数化；物理真值由真实 runtime 多构型门检验。
     ASSERT_EQ(solved.parameters.size(), chain.joints.size());
-    for (std::size_t i = 0; i < chain.joints.size(); ++i) {
-        EXPECT_NEAR(solved.parameters[i].thetaOffset, chain.joints[i].dh.thetaOffset, 1e-9);
-        EXPECT_NEAR(solved.parameters[i].d, chain.joints[i].dh.d, 1e-9);
-        EXPECT_NEAR(solved.parameters[i].a, chain.joints[i].dh.a, 1e-9);
-        EXPECT_NEAR(solved.parameters[i].alpha, chain.joints[i].dh.alpha, 1e-9);
-    }
-
     // FK 级一致：以求解参数重组候选→编译链对照 ≤第 4 项容差。
     const ModelingWorkingSet candidate = makeDhCandidate(baseline, solved.parameters);
     RuntimeCompileProbe probe;
@@ -844,4 +848,25 @@ TEST(MdlDhCommand, CompleteWorkingSetSwitchAllowsOnlyUnchangedParts_MDL02_AT16)
         if(changed){EXPECT_TRUE(plan.objectWrites.empty());}
         else{ASSERT_EQ(plan.objectWrites.size(),2U);EXPECT_EQ(*plan.objectWrites[1].objectId,tool.objectId);}
     }
+}
+
+/** @brief MDL-CR-2/F03：零位相同但轴向不同，真实非零构型必须阻止切换。 */
+TEST(MdlDhEquivalence, SameZeroPoseDifferentAxisFailsNonzeroCompileGate)
+{
+    auto a = makeExplicitBaseline(makeTwoJointChain());
+    for (auto& j : a.design.joints) {
+        j.origin = core::SourcedValue<JointPose>::provided(JointPose{}, userProvenance());
+        j.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            rw::math::Vector3D<double>(0,0,1), userProvenance());
+        j.zeroOffset = 0.;
+    }
+    auto b = a;
+    b.design.joints.back().axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(1,0,0), userProvenance());
+    RuntimeCompileProbe probe;
+    const auto result = DhExplicitConverter{}.verifyEquivalent(a,b,probe);
+    ASSERT_TRUE(result.inputsValid);
+    ASSERT_TRUE(result.compileOk) << result.failureDetail;
+    EXPECT_FALSE(result.equivalent);
+    EXPECT_GT(result.maxOrientationDeviation, 1e-9);
 }

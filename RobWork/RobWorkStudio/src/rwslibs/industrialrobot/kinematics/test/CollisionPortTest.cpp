@@ -655,7 +655,8 @@ TEST(KinCollisionPort, RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3)
     EXPECT_TRUE(envInPairs) << "碰撞对象对应含环境盒端（ObjectId 明细）";
 
     const kin::IkCollisionVerdict clean = wired.session->evaluate({kClearQ});
-    EXPECT_EQ(clean.state, kin::IkCollisionEvaluationState::Evaluated);
+    // POL-T13：盒对虽分离，本夹具基座/工具缺碰撞几何，完整作用域仍缺证。
+    EXPECT_EQ(clean.state, kin::IkCollisionEvaluationState::EvidenceMissing);
     EXPECT_FALSE(clean.inCollision);
     EXPECT_TRUE(clean.objectIdPairs.empty());
 
@@ -757,4 +758,20 @@ TEST(KinCollisionPort, DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2)
     EXPECT_EQ(verdict.state, kin::IkCollisionEvaluationState::EvidenceMissing);
     EXPECT_FALSE(verdict.inCollision);
     EXPECT_FALSE(verdict.statusDetail.empty());
+}
+
+/** @brief POL-T13/KIN-05：真实会话完成不等于几何已检，适配器须保留缺证语义。 */
+TEST (CollisionPort, MissingGeometryCannotBecomeEvaluated_POL_T13)
+{
+    auto rig   = makeRig ();
+    auto scene = assembleRigScene (rig);
+    for (auto& object : scene.objects)
+        object.hasCollisionGeometry = false;
+    const auto resolved  = publishPolicy (rig.validation, true);
+    const auto evaluator = policy::makeRobWorkCollisionEvaluator ();
+    kin::PolicyCollisionSessionAdapter adapter (
+        evaluator->createSession (resolved, scene, rig.source.names));
+    const auto verdict = adapter.evaluate ({0});
+    EXPECT_EQ (verdict.state, kin::IkCollisionEvaluationState::EvidenceMissing);
+    EXPECT_FALSE (verdict.inCollision);
 }

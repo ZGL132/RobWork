@@ -1,0 +1,4 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\EventBus.hpp:145:     *             不同：core ReferenceEventBus::removeSink 删除该 sink 的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.hpp:625:    /// 者 FIFO、RAII 退订、drain on close；core::ReferenceEventBus 是"非生产
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:106:                                              // core::ReferenceEventBus 非生产组件，2026-10-25 起本插件不再装配）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:760:    // 句柄、析构 drain on close。core::ReferenceEventBus 是测试语义钉子

@@ -9,7 +9,8 @@
 
 #include "KinEvaluationChannel.hpp"
 #include <sdurws/ird/policy/SystemDefaultPolicy.hpp>
-#include <sdurws/ird/runtime/CollisionSession.hpp>  // MA-02：真实碰撞设施
+#include <sdurws/ird/kinematics/Collision.hpp>
+#include <sdurws/ird/policy/CollisionEvaluator.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -43,11 +44,6 @@ namespace ui {
 
 namespace {
 
-// MA-02：真实碰撞会话装配自由函数前置声明（定义在适配器段——执行器
-// 成员 makeRealCollisionSessionIfAvailable 于本段先引用）。
-std::shared_ptr<kinematics::IKinCollisionSession> makeRuntimeCollisionSession(
-    const std::shared_ptr<const runtime::RuntimeSnapshot>& snapshot,
-    const std::shared_ptr<const policy::EngineeringPolicySet>& policy);
 /**
  * @brief 发布快照的 IKinRuntimeView 包裹器（attachSnapshot 的产品路径
  *        ——RuntimeSnapshot→视图接口的逐字转发薄壳；UI-T64 执行器内部
@@ -58,7 +54,8 @@ std::shared_ptr<kinematics::IKinCollisionSession> makeRuntimeCollisionSession(
  * 同 runtime::IRuntimeModelView::model()"）。线程约束：并发只读安全
  * （快照构造后只读——runtime §8.3）。
  */
-class SnapshotViewAdapter final : public kinematics::IKinRuntimeView {
+class SnapshotViewAdapter final : public kinematics::IKinRuntimeView,
+                                  public kinematics::IKinCollisionSceneSource {
 public:
     explicit SnapshotViewAdapter(
         std::shared_ptr<const runtime::RuntimeSnapshot> snapshot)
@@ -79,6 +76,55 @@ public:
     std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
     {
         return m_snapshot;
+    }
+
+    /** @brief POL-T13：只读 WorkCell 别名共享快照生命周期，模型所有权仍归 runtime。 */
+    std::shared_ptr<const rw::models::WorkCell> sharedWorkCell() const override
+    {
+        return {m_snapshot, &m_snapshot->workCell().workCell()};
+    }
+    /** @brief 碰撞编译身份逐字转发，不另计算场景身份。 */
+    core::ContentIdentity workCellCompileIdentity() const override
+    {
+        return m_snapshot->workCellCompileIdentity();
+    }
+    /** @brief 完整运行时名精确解析；失败返回空，不拼剥名称。 */
+    std::optional<core::ObjectId> tryObjectId(const std::string& name) const override
+    {
+        const auto result = m_snapshot->nameMap().resolveRuntimeName(name);
+        return result.ok() ? std::optional<core::ObjectId>(result.get().objectId) : std::nullopt;
+    }
+    /** @brief 对象身份反解完整名；不持有映射临时引用。 */
+    std::optional<std::string> tryRuntimeName(const core::ObjectId& object) const override
+    {
+        const auto result = m_snapshot->nameMap().resolveObjectId(object);
+        if (!result.ok()) {
+            return std::nullopt;
+        }
+        // POL-T13：身份默认条目可能是逻辑 LinkFrame；编译产物的首末
+        // 连杆实际使用 BaseFrame/Flange 别名。按公开规范模型和名称表
+        // 精确选择对应范围，不能把逻辑名猜成物理帧名或自行拼剥前缀。
+        auto scope = result.get().scope;
+        const auto& links = m_snapshot->model().chain().links;
+        for (std::size_t i = 0; i < links.size(); ++i) {
+            if (links[i].objectId == object) {
+                scope = i == 0 ? runtime::NameScope::BaseFrame
+                    : i + 1 == links.size() ? runtime::NameScope::Flange
+                                           : runtime::NameScope::LinkFrame;
+                break;
+            }
+        }
+        for (const auto& entry : m_snapshot->nameMap().entries()) {
+            if (entry.objectId == object && entry.scope == scope) {
+                return entry.fullName;
+            }
+        }
+        return std::nullopt;
+    }
+    /** @brief 返回快照名称表身份，供 policy 会话绑定使用。 */
+    core::ContentIdentity nameMapIdentity() const override
+    {
+        return m_snapshot->nameMap().contentIdentity();
     }
 
 private:
@@ -599,105 +645,29 @@ namespace {
 /** @brief 缺失碰撞设施的端口应答；不是碰撞算法，任何构型均保持证据不足。 */
 class MissingPolicyCollisionSession final : public kinematics::IKinCollisionSession {
 public:
-    /** @brief q[in]为rad/m构型；设施未装配返回EvidenceMissing，不给无碰撞结论。 */
+    /** @brief 构型单位 rad/m；设施未装配返回 EvidenceMissing。 */
     kinematics::IkCollisionVerdict evaluate(const std::vector<double>&) const override
     {
         kinematics::IkCollisionVerdict result;
-        result.state=kinematics::IkCollisionEvaluationState::EvidenceMissing;
-        result.statusDetail="当前策略要求碰撞检查，但宿主碰撞设施未装配";
+        result.state = kinematics::IkCollisionEvaluationState::EvidenceMissing;
+        result.statusDetail = "当前策略要求碰撞检查，但宿主碰撞设施未装配";
         return result;
     }
 };
+}  // namespace
 
-/**
- * @brief 运行时真实碰撞会话→kinematics ④端口适配器（MA-02——宿主装配
- *        层的域接口翻译；R-1：runtime 不 include kinematics，翻译归 L5）。
- *
- * 生命周期：持有 RuntimeCollisionSession shared_ptr——调用方随任务闭包
- * 捕获本适配器的 shared_ptr，覆盖评估全程（碰撞会话在评估期必须存活）。
- * 判定映射：runtime Verdict.evaluated=false → FacilityFailed（自由度
- * 失配/设施异常轨，KIN-05 同语义）；否则 Evaluated＋inCollision＋对象
- * 对展平（成对 push——objectIdPairs 契约语义）。
- */
-class RuntimeRealCollisionSessionAdapter final : public kinematics::IKinCollisionSession {
-public:
-    explicit RuntimeRealCollisionSessionAdapter(
-        std::shared_ptr<const runtime::RuntimeCollisionSession> session)
-        : m_session(std::move(session)) {}
-
-    kinematics::IkCollisionVerdict evaluate(const std::vector<double>& q) const override
-    {
-        kinematics::IkCollisionVerdict result;
-        const auto verdict = m_session->evaluate(q);
-        if (!verdict.evaluated) {
-            result.state = kinematics::IkCollisionEvaluationState::FacilityFailed;
-            result.statusDetail = "碰撞设施异常：自由度失配或检测失败";
-            return result;
-        }
-        result.inCollision = verdict.inCollision;
-        result.state = kinematics::IkCollisionEvaluationState::Evaluated;
-        for (const auto& pair : verdict.objectIdPairs) {
-            result.objectIdPairs.push_back(pair.first);
-            result.objectIdPairs.push_back(pair.second);
-        }
-        return result;
-    }
-
-private:
-    std::shared_ptr<const runtime::RuntimeCollisionSession> m_session;  ///< 会话（make 产物）
-};
-
-/**
- * @brief 真实碰撞会话装配（MA-02——快照＋策略→④端口会话；多处安装位
- *        共用的单一翻译点）。
- *
- * 装配语义：策略启用碰撞且快照在位才装配；规则投影＝相邻过滤开关＋
- * PairRule（ScopeTarget.Object 直映 ObjectId——非 Object 类别目标本批
- * 不映射，如实保留开放面）；safetyClearance>0 的容差判定未实机化——
- * 不装配（调用方回落 EvidenceMissing，不产生伪间距证据）。
- *
- * @param snapshot [in] 换绑拍快照副本（可空＝设施不可用）
- * @param policy [in] 提交拍策略（可空/未启用＝不装配）
- * @return 适配器会话；null＝回落 missing 桩
- */
-std::shared_ptr<kinematics::IKinCollisionSession> makeRuntimeCollisionSession(
+std::shared_ptr<const kinematics::IKinCollisionSession> makePolicyCollisionSession(
     const std::shared_ptr<const runtime::RuntimeSnapshot>& snapshot,
-    const std::shared_ptr<const policy::EngineeringPolicySet>& policy)
+    const std::shared_ptr<const policy::EngineeringPolicySet>& resolvedPolicy)
 {
-    if (snapshot == nullptr || policy == nullptr || !policy->collision.enabled) {
+    if (!snapshot || !resolvedPolicy || !resolvedPolicy->collision.enabled) {
         return nullptr;
     }
-    if (policy->collision.safetyClearance.has_value()
-        && policy->collision.safetyClearance->siValue() > 0.0) {
-        return nullptr;  // 容差判定未实机化——不产生伪间距证据（诚实回落）
-    }
-    runtime::RuntimeCollisionRules rules;
-    rules.excludeAdjacentLinksByDefault =
-        policy->collision.excludeAdjacentLinksByDefault;
-    auto mapPair = [](const policy::PairRule& rule)
-        -> std::optional<runtime::RuntimeCollisionPairRule> {
-        if (rule.first.kind == policy::ScopeTargetKind::Object
-            && rule.second.kind == policy::ScopeTargetKind::Object
-            && rule.first.object.isValid() && rule.second.object.isValid()) {
-            runtime::RuntimeCollisionPairRule out;
-            out.first = rule.first.object;
-            out.second = rule.second.object;
-            return out;
-        }
-        return std::nullopt;  // 非 Object 类别目标——本批不映射（开放面）
-    };
-    for (const auto& rule : policy->collision.excludedPairs) {
-        if (auto mapped = mapPair(rule)) { rules.excludedPairs.push_back(*mapped); }
-    }
-    for (const auto& rule : policy->collision.mandatoryPairs) {
-        if (auto mapped = mapPair(rule)) { rules.mandatoryPairs.push_back(*mapped); }
-    }
-    auto session = runtime::RuntimeCollisionSession::make(snapshot, rules);
-    if (session == nullptr) {
-        return nullptr;  // 设施不可用（无设备/映射失实）——诚实回落
-    }
-    return std::make_shared<RuntimeRealCollisionSessionAdapter>(std::move(session));
-}
+    // POL-T13/ARC-05：宿主共享唯一判定器，几何后端和缓存归各任务会话。
+    // C++ 静态初始化线程安全；判定器只读，退出时无快照/会话反向引用。
+    static const auto evaluator = policy::makeRobWorkCollisionEvaluator();
+    const SnapshotViewAdapter source(snapshot);
+    return kinematics::makeCollisionSession(source, source, *resolvedPolicy, evaluator.get()).session;
 }
 
 namespace {
@@ -714,10 +684,10 @@ public:
         const auto policy=m_source();
         auto bound=request;
         MissingPolicyCollisionSession missing;
-        std::shared_ptr<kinematics::IKinCollisionSession> realCollision;
+        std::shared_ptr<const kinematics::IKinCollisionSession> realCollision;
         if (!policy || policy->collision.enabled) {
             if (policy) {
-                realCollision = makeRuntimeCollisionSession(
+                realCollision = makePolicyCollisionSession(
                     m_runtimeSnapshot ? m_runtimeSnapshot() : nullptr, policy);
             }
             bound.collisionSession = realCollision ? realCollision.get() : &missing;
@@ -778,11 +748,11 @@ void KinEvaluationExecutor::launchCoverageTask(
         MissingPolicyCollisionSession missingCollision;
         // MA-02：策略启用碰撞时优先真实设施（快照/规则可建——适配器
         // 存活至本 lambda 结束＝覆盖后台评估全程）；不可用回落桩（KIN-05）。
-        std::shared_ptr<kinematics::IKinCollisionSession> realCollision =
+        std::shared_ptr<const kinematics::IKinCollisionSession> realCollision =
             (policyAtSubmit && policyAtSubmit->collision.enabled)
-                ? makeRuntimeCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
+                ? makePolicyCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
                 : nullptr;
-        kinematics::IKinCollisionSession* collisionSession =
+        const kinematics::IKinCollisionSession* collisionSession =
             realCollision ? realCollision.get() : &missingCollision;
         if (policyAtSubmit && policyAtSubmit->collision.enabled) { query.collisionSession=collisionSession; }
         if (!policyAtSubmit) { query.collisionSession=&missingCollision; }
@@ -919,11 +889,11 @@ void KinEvaluationExecutor::launchSolveTask(
             bound.modelView = view.get();
             MissingPolicyCollisionSession missingCollision;
             // MA-02：真实设施优先（同覆盖位语义——适配器存活至 solve 返回）。
-            std::shared_ptr<kinematics::IKinCollisionSession> realCollision =
+            std::shared_ptr<const kinematics::IKinCollisionSession> realCollision =
                 (policyAtSubmit && policyAtSubmit->collision.enabled)
-                    ? makeRuntimeCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
+                    ? makePolicyCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
                     : nullptr;
-            kinematics::IKinCollisionSession* collisionSession =
+            const kinematics::IKinCollisionSession* collisionSession =
                 realCollision ? realCollision.get() : &missingCollision;
             if (!policyAtSubmit || policyAtSubmit->collision.enabled) { bound.collisionSession=collisionSession; }
             bound.cancellationProbe = [cancelFlag] {
@@ -1008,11 +978,11 @@ void KinEvaluationExecutor::launchBatchTask(
         // 求解探针：换绑/解绑置位后批量早停，未派发项如实 NotRun）。
         MissingPolicyCollisionSession missingCollision;
         // MA-02：真实设施优先（同覆盖位语义——适配器存活至批量计算返回）。
-        std::shared_ptr<kinematics::IKinCollisionSession> realCollision =
+        std::shared_ptr<const kinematics::IKinCollisionSession> realCollision =
             (!policyAtSubmit || policyAtSubmit->collision.enabled)
-                ? makeRuntimeCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
+                ? makePolicyCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
                 : nullptr;
-        kinematics::IKinCollisionSession* collisionSession =
+        const kinematics::IKinCollisionSession* collisionSession =
             realCollision ? realCollision.get() : &missingCollision;
         if (!policyAtSubmit || policyAtSubmit->collision.enabled) { query.collisionSession=collisionSession; }
         CancelableEvaluationContext context(cancelFlag);

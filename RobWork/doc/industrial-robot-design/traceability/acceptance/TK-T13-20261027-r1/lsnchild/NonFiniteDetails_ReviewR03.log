@@ -1,0 +1,27 @@
+Note: Google Test filter = LsnChild.NonFiniteDetails_ReviewR03
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.NonFiniteDetails_ReviewR03
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(93): error: Failed
+positive: actual=inf expected=0 diff=inf
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(94): error: Failed
+negative: actual=-inf expected=0 diff=inf
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(96): error: Failed
+nan: actual=nan expected=0 diff=nan
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(97): error: Failed
+overflow: actual=1.7976931348623157e+308 expected=-1.7976931348623157e+308 diff=inf
+
+[  FAILED  ] LsnChild.NonFiniteDetails_ReviewR03 (1 ms)
+[----------] 1 test from LsnChild (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] LsnChild.NonFiniteDetails_ReviewR03
+
+ 1 FAILED TEST

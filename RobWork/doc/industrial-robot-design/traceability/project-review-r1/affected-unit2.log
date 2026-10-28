@@ -1,0 +1,367 @@
+Note: Google Test filter = ArchiveServiceTest.*:BindingVerify.*:Closure.*:CommandConfirmLifecycle.*:CommandConfirmPersistence.*:CommandConfirmTx2.*:CommandRegistry.*:CommandSlot.*:CommandSubmitS1.*:CommandSubmitS3.*:CommandSubmitS4.*:CommandSubmitS6.*:CommandSubmitS7.*:CoreContract.*:Derive.*:DraftServiceTest.*:ProjectStoreTest.*:PublishValidation.*:QueryPortTest.*:Registration.*:SeqAllocation.*:TxEngineTest.*:Walkthrough.*
+[==========] Running 146 tests from 23 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from Walkthrough
+[ RUN      ] Walkthrough.SevenSteps_BranchTipsPreserved_Acc1
+[       OK ] Walkthrough.SevenSteps_BranchTipsPreserved_Acc1 (0 ms)
+[ RUN      ] Walkthrough.BranchBaseRevisionReferencesWithoutCopyingObjects_Acc1
+[       OK ] Walkthrough.BranchBaseRevisionReferencesWithoutCopyingObjects_Acc1 (0 ms)
+[----------] 2 tests from Walkthrough (0 ms total)
+
+[----------] 4 tests from Closure
+[ RUN      ] Closure.DualChannelCoversAllCommittedRevisions_NoIsland_Acc2
+[       OK ] Closure.DualChannelCoversAllCommittedRevisions_NoIsland_Acc2 (0 ms)
+[ RUN      ] Closure.ResidueOutsideClosure_AfterPublishBeforeHeadSwitch_Acc2
+[       OK ] Closure.ResidueOutsideClosure_AfterPublishBeforeHeadSwitch_Acc2 (0 ms)
+[ RUN      ] Closure.DanglingReferencesRejectedAsCorrupt_Acc2
+[       OK ] Closure.DanglingReferencesRejectedAsCorrupt_Acc2 (0 ms)
+[ RUN      ] Closure.DeterministicOrdering_Acc2
+[       OK ] Closure.DeterministicOrdering_Acc2 (0 ms)
+[----------] 4 tests from Closure (0 ms total)
+
+[----------] 10 tests from PublishValidation
+[ RUN      ] PublishValidation.ParentMetadataRebuildRejected_Acc2
+[       OK ] PublishValidation.ParentMetadataRebuildRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.TipRegressionRejected_Acc2
+[       OK ] PublishValidation.TipRegressionRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.ForeignBranchTipChangeRejected_Acc2
+[       OK ] PublishValidation.ForeignBranchTipChangeRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.LabelRenameRejected_Acc2_PPR8
+[       OK ] PublishValidation.LabelRenameRejected_Acc2_PPR8 (0 ms)
+[ RUN      ] PublishValidation.BaseRewriteRejected_Acc2
+[       OK ] PublishValidation.BaseRewriteRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.InvM1_DuplicateBranchAndUnknownTipRejected_Acc2
+[       OK ] PublishValidation.InvM1_DuplicateBranchAndUnknownTipRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.CommittedByAndLineageAnchorRejected_Acc2
+[       OK ] PublishValidation.CommittedByAndLineageAnchorRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.LineageCycleInjectionRejected_Acc2
+[       OK ] PublishValidation.LineageCycleInjectionRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.LineageMonotonicityInjectionRejected_Acc2
+[       OK ] PublishValidation.LineageMonotonicityInjectionRejected_Acc2 (0 ms)
+[ RUN      ] PublishValidation.CallerContractViolationsFailFast
+[       OK ] PublishValidation.CallerContractViolationsFailFast (0 ms)
+[----------] 10 tests from PublishValidation (0 ms total)
+
+[----------] 1 test from SeqAllocation
+[ RUN      ] SeqAllocation.MonotonicAllocationAndHeadAdoption_Acc3
+[       OK ] SeqAllocation.MonotonicAllocationAndHeadAdoption_Acc3 (0 ms)
+[----------] 1 test from SeqAllocation (0 ms total)
+
+[----------] 3 tests from Derive
+[ RUN      ] Derive.CopiesAuthoritativeVerbatim_UpdatesOnlyDeclared_Acc3
+[       OK ] Derive.CopiesAuthoritativeVerbatim_UpdatesOnlyDeclared_Acc3 (0 ms)
+[ RUN      ] Derive.TipUpdateAppliesToDeclaredBranchOnly_Acc3
+[       OK ] Derive.TipUpdateAppliesToDeclaredBranchOnly_Acc3 (0 ms)
+[ RUN      ] Derive.ConstructorViolationsFailFast_Acc3
+[       OK ] Derive.ConstructorViolationsFailFast_Acc3 (0 ms)
+[----------] 3 tests from Derive (0 ms total)
+
+[----------] 1 test from Registration
+[ RUN      ] Registration.IdempotentDuplicateConflictingAndImmutability
+[       OK ] Registration.IdempotentDuplicateConflictingAndImmutability (0 ms)
+[----------] 1 test from Registration (0 ms total)
+
+[----------] 3 tests from CoreContract
+[ RUN      ] CoreContract.IdentityCanonicalRoundTripViaCoreApi_Acc4
+[       OK ] CoreContract.IdentityCanonicalRoundTripViaCoreApi_Acc4 (0 ms)
+[ RUN      ] CoreContract.BranchTipQuerySemantics
+[       OK ] CoreContract.BranchTipQuerySemantics (0 ms)
+[ RUN      ] CoreContract.TryQueriesReturnNulloptWhenAbsent
+[       OK ] CoreContract.TryQueriesReturnNulloptWhenAbsent (0 ms)
+[----------] 3 tests from CoreContract (0 ms total)
+
+[----------] 24 tests from TxEngineTest
+[ RUN      ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01
+[       OK ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01 (68 ms)
+[ RUN      ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01
+[       OK ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01 (82 ms)
+[ RUN      ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned
+[       OK ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned (65 ms)
+[ RUN      ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester
+[       OK ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester (55 ms)
+[ RUN      ] TxEngineTest.F1_PrepareFails_StagingDirCreate
+[       OK ] TxEngineTest.F1_PrepareFails_StagingDirCreate (20 ms)
+[ RUN      ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag
+[       OK ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag (27 ms)
+[ RUN      ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish
+[       OK ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish (54 ms)
+[ RUN      ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes
+[       OK ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes (42 ms)
+[ RUN      ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted
+[       OK ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted (55 ms)
+[ RUN      ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands
+[       OK ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands (71 ms)
+[ RUN      ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands
+[       OK ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands (65 ms)
+[ RUN      ] TxEngineTest.F7_CleanupFails_CommittedStateIntact
+[       OK ] TxEngineTest.F7_CleanupFails_CommittedStateIntact (74 ms)
+[ RUN      ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant (23 ms)
+[ RUN      ] TxEngineTest.F8_AfterStage_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterStage_OldStateByteInvariant (44 ms)
+[ RUN      ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant (69 ms)
+[ RUN      ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir
+[       OK ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir (59 ms)
+[ RUN      ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean
+[       OK ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean (78 ms)
+[ RUN      ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites
+[       OK ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites (25 ms)
+[ RUN      ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast
+[       OK ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast (32 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings
+[       OK ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings (72 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt (43 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt (33 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt (15 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen
+[       OK ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen (41 ms)
+[----------] 24 tests from TxEngineTest (1224 ms total)
+
+[----------] 19 tests from ProjectStoreTest
+[ RUN      ] ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen
+[       OK ] ProjectStoreTest.CreateNew_SkeletonIdentityAndReopen (30 ms)
+[ RUN      ] ProjectStoreTest.Open_ReopenClosedProject_IdentityPreserved
+[       OK ] ProjectStoreTest.Open_ReopenClosedProject_IdentityPreserved (44 ms)
+[ RUN      ] ProjectStoreTest.Tx9_ClosedLateWrite_RejectedWithStableDiag
+[       OK ] ProjectStoreTest.Tx9_ClosedLateWrite_RejectedWithStableDiag (61 ms)
+[ RUN      ] ProjectStoreTest.Tx9_DrainingRejectsWrite_ThenDrainsInFlight
+[       OK ] ProjectStoreTest.Tx9_DrainingRejectsWrite_ThenDrainsInFlight (24 ms)
+[ RUN      ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen
+[       OK ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen (80 ms)
+[ RUN      ] ProjectStoreTest.Tx9_OpenFailure_DoesNotTouchCurrentProject
+[       OK ] ProjectStoreTest.Tx9_OpenFailure_DoesNotTouchCurrentProject (103 ms)
+[ RUN      ] ProjectStoreTest.LegacyFormat_StableReadOnlyRejection
+[       OK ] ProjectStoreTest.LegacyFormat_StableReadOnlyRejection (47 ms)
+[ RUN      ] ProjectStoreTest.SchemaFuture_RejectedWithUpgradeGuidance
+[       OK ] ProjectStoreTest.SchemaFuture_RejectedWithUpgradeGuidance (32 ms)
+[ RUN      ] ProjectStoreTest.RecoveryReport_StagingResidueAndOrphanDrafts
+[       OK ] ProjectStoreTest.RecoveryReport_StagingResidueAndOrphanDrafts (94 ms)
+[ RUN      ] ProjectStoreTest.RecoveryReport_HeadIntegrityFailure_StopsOpen
+[       OK ] ProjectStoreTest.RecoveryReport_HeadIntegrityFailure_StopsOpen (43 ms)
+[ RUN      ] ProjectStoreTest.ReadOnlyOpen_ProvidesQueriesAndRejectsWrites
+[       OK ] ProjectStoreTest.ReadOnlyOpen_ProvidesQueriesAndRejectsWrites (47 ms)
+[ RUN      ] ProjectStoreTest.WritableOpen_DegradesToReadOnlyWhenHeld
+[       OK ] ProjectStoreTest.WritableOpen_DegradesToReadOnlyWhenHeld (39 ms)
+[ RUN      ] ProjectStoreTest.InProcessSecondWritableOpen_Rejected
+[       OK ] ProjectStoreTest.InProcessSecondWritableOpen_Rejected (35 ms)
+[ RUN      ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected
+[       OK ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected (46 ms)
+[ RUN      ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically
+[       OK ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically (107 ms)
+[ RUN      ] ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed
+[       OK ] ProjectStoreTest.Ppr1_CoreIdentityBaselineConsumed (64 ms)
+[ RUN      ] ProjectStoreTest.Ppr6_SinkInjectionOptionalWithSameCodes
+[       OK ] ProjectStoreTest.Ppr6_SinkInjectionOptionalWithSameCodes (108 ms)
+[ RUN      ] ProjectStoreTest.CreateNew_NonEmptyTarget_FailsFast
+[       OK ] ProjectStoreTest.CreateNew_NonEmptyTarget_FailsFast (13 ms)
+[ RUN      ] ProjectStoreTest.Open_NotAProject_MissingPathOrManifest
+[       OK ] ProjectStoreTest.Open_NotAProject_MissingPathOrManifest (0 ms)
+[----------] 19 tests from ProjectStoreTest (1026 ms total)
+
+[----------] 14 tests from QueryPortTest
+[ RUN      ] QueryPortTest.RevisionView_HeadAndRevision_FieldsAssembled
+[       OK ] QueryPortTest.RevisionView_HeadAndRevision_FieldsAssembled (53 ms)
+[ RUN      ] QueryPortTest.MetadataAndBranchViews_AuthoritativeDiscipline
+[       OK ] QueryPortTest.MetadataAndBranchViews_AuthoritativeDiscipline (112 ms)
+[ RUN      ] QueryPortTest.BranchHistory_WalksParentChainWithLimit
+[       OK ] QueryPortTest.BranchHistory_WalksParentChainWithLimit (150 ms)
+[ RUN      ] QueryPortTest.ObjectRead_TryTrackAndStrongTrack
+[       OK ] QueryPortTest.ObjectRead_TryTrackAndStrongTrack (71 ms)
+[ RUN      ] QueryPortTest.ObjectCacheBudget_EnforcedThroughQueryPort
+[       OK ] QueryPortTest.ObjectCacheBudget_EnforcedThroughQueryPort (160 ms)
+[ RUN      ] QueryPortTest.ClosureOutsideRevision_InvisibleToQueryPort
+[       OK ] QueryPortTest.ClosureOutsideRevision_InvisibleToQueryPort (94 ms)
+[ RUN      ] QueryPortTest.TryTrack_MissingReturnsNullopt_NoThrow
+[       OK ] QueryPortTest.TryTrack_MissingReturnsNullopt_NoThrow (31 ms)
+[ RUN      ] QueryPortTest.ContextClosed_AllMethodsRejected
+[       OK ] QueryPortTest.ContextClosed_AllMethodsRejected (97 ms)
+[ RUN      ] QueryPortTest.ReadOnlyInstance_QueriesFullyServed
+[       OK ] QueryPortTest.ReadOnlyInstance_QueriesFullyServed (110 ms)
+[ RUN      ] QueryPortTest.ConcurrentReadOnly_ThreadSafeWithConcurrentCommits
+[       OK ] QueryPortTest.ConcurrentReadOnly_ThreadSafeWithConcurrentCommits (414 ms)
+[ RUN      ] QueryPortTest.ViewIsValueCopy_ImmutableAfterReturn
+[       OK ] QueryPortTest.ViewIsValueCopy_ImmutableAfterReturn (141 ms)
+[ RUN      ] QueryPortTest.DraftListing_CurrentOnly_StaleAndOrder
+[       OK ] QueryPortTest.DraftListing_CurrentOnly_StaleAndOrder (175 ms)
+[ RUN      ] QueryPortTest.RunListing_OnlyFinalizedFiltered_runDir
+[       OK ] QueryPortTest.RunListing_OnlyFinalizedFiltered_runDir (186 ms)
+[ RUN      ] QueryPortTest.Ppr1_ViewIdentityTypes_AreCoreContractTypes
+[       OK ] QueryPortTest.Ppr1_ViewIdentityTypes_AreCoreContractTypes (103 ms)
+[----------] 14 tests from QueryPortTest (1903 ms total)
+
+[----------] 2 tests from CommandRegistry
+[ RUN      ] CommandRegistry.RegisteredTypes_ListsSortedTokens
+[       OK ] CommandRegistry.RegisteredTypes_ListsSortedTokens (0 ms)
+[ RUN      ] CommandRegistry.DuplicateRegistration_RejectedInvalidArgument
+[       OK ] CommandRegistry.DuplicateRegistration_RejectedInvalidArgument (0 ms)
+[----------] 2 tests from CommandRegistry (0 ms total)
+
+[----------] 5 tests from CommandSubmitS1
+[ RUN      ] CommandSubmitS1.UnknownCommandType_RejectedNoRevision
+[       OK ] CommandSubmitS1.UnknownCommandType_RejectedNoRevision (40 ms)
+[ RUN      ] CommandSubmitS1.PayloadVersionMismatch_RejectedInvalidPayload
+[       OK ] CommandSubmitS1.PayloadVersionMismatch_RejectedInvalidPayload (37 ms)
+[ RUN      ] CommandSubmitS1.UnknownBranch_RejectedInvalidPayload
+[       OK ] CommandSubmitS1.UnknownBranch_RejectedInvalidPayload (43 ms)
+[ RUN      ] CommandSubmitS1.ReadOnlyContext_RejectedNotWritableWithLockHeldDiag
+[       OK ] CommandSubmitS1.ReadOnlyContext_RejectedNotWritableWithLockHeldDiag (55 ms)
+[ RUN      ] CommandSubmitS1.ClosedContext_RejectedNotWritableWithAuthorityDiag
+[       OK ] CommandSubmitS1.ClosedContext_RejectedNotWritableWithAuthorityDiag (51 ms)
+[----------] 5 tests from CommandSubmitS1 (230 ms total)
+
+[----------] 2 tests from CommandSubmitS3
+[ RUN      ] CommandSubmitS3.HardAssertFailed_RejectedWithDiagnosticsNoRevision
+[       OK ] CommandSubmitS3.HardAssertFailed_RejectedWithDiagnosticsNoRevision (39 ms)
+[ RUN      ] CommandSubmitS3.PrepareInvalidInput_RejectedWithDiagnostics
+[       OK ] CommandSubmitS3.PrepareInvalidInput_RejectedWithDiagnostics (36 ms)
+[----------] 2 tests from CommandSubmitS3 (75 ms total)
+
+[----------] 5 tests from CommandSubmitS4
+[ RUN      ] CommandSubmitS4.FindingsWithoutInteraction_RejectedConfirmationsUnresolved
+[       OK ] CommandSubmitS4.FindingsWithoutInteraction_RejectedConfirmationsUnresolved (40 ms)
+[ RUN      ] CommandSubmitS4.InteractionRejects_RejectedConfirmationsRejected
+[       OK ] CommandSubmitS4.InteractionRejects_RejectedConfirmationsRejected (48 ms)
+[ RUN      ] CommandSubmitS4.InteractionDead_AbortedInteractionLost
+[       OK ] CommandSubmitS4.InteractionDead_AbortedInteractionLost (43 ms)
+[ RUN      ] CommandSubmitS4.InteractionThrows_AbortedInteractionLost
+[       OK ] CommandSubmitS4.InteractionThrows_AbortedInteractionLost (42 ms)
+[ RUN      ] CommandSubmitS4.InteractionConfirms_Committed
+[       OK ] CommandSubmitS4.InteractionConfirms_Committed (76 ms)
+[----------] 5 tests from CommandSubmitS4 (251 ms total)
+
+[----------] 8 tests from CommandSubmitS6
+[ RUN      ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents
+[       OK ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents (103 ms)
+[ RUN      ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+[       OK ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit (174 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08
+[       OK ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08 (317 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04
+[       OK ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04 (289 ms)
+[ RUN      ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips
+[       OK ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips (94 ms)
+[ RUN      ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen
+[       OK ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen (122 ms)
+[ RUN      ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible
+[       OK ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible (121 ms)
+[ RUN      ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload
+[       OK ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload (35 ms)
+[----------] 8 tests from CommandSubmitS6 (1259 ms total)
+
+[----------] 1 test from CommandSubmitS7
+[ RUN      ] CommandSubmitS7.EventPublishFailure_DoesNotRollbackRevision
+[       OK ] CommandSubmitS7.EventPublishFailure_DoesNotRollbackRevision (84 ms)
+[----------] 1 test from CommandSubmitS7 (84 ms total)
+
+[----------] 2 tests from CommandSlot
+[ RUN      ] CommandSlot.SecondSubmitWaitsWhileFirstInPrepare
+[       OK ] CommandSlot.SecondSubmitWaitsWhileFirstInPrepare (478 ms)
+[ RUN      ] CommandSlot.DualCompileWithoutPort_FailsFastInvalidArgument
+[       OK ] CommandSlot.DualCompileWithoutPort_FailsFastInvalidArgument (39 ms)
+[----------] 2 tests from CommandSlot (517 ms total)
+
+[----------] 4 tests from CommandConfirmTx2
+[ RUN      ] CommandConfirmTx2.Path1_HardAssert_NoRevisionNoCommandRecord
+[       OK ] CommandConfirmTx2.Path1_HardAssert_NoRevisionNoCommandRecord (41 ms)
+[ RUN      ] CommandConfirmTx2.Path2_NoInteraction_NoRevisionNoCommandRecord
+[       OK ] CommandConfirmTx2.Path2_NoInteraction_NoRevisionNoCommandRecord (34 ms)
+[ RUN      ] CommandConfirmTx2.Path3_InteractionRejects_NoRevisionNoCommandRecord
+[       OK ] CommandConfirmTx2.Path3_InteractionRejects_NoRevisionNoCommandRecord (33 ms)
+[ RUN      ] CommandConfirmTx2.Path4_BindingMismatch_RejectedUnresolvedNoRevision
+[       OK ] CommandConfirmTx2.Path4_BindingMismatch_RejectedUnresolvedNoRevision (34 ms)
+[----------] 4 tests from CommandConfirmTx2 (143 ms total)
+
+[----------] 1 test from BindingVerify
+[ RUN      ] BindingVerify.EachMemberMismatch_DetectedAndClassified
+[       OK ] BindingVerify.EachMemberMismatch_DetectedAndClassified (0 ms)
+[----------] 1 test from BindingVerify (0 ms total)
+
+[----------] 5 tests from CommandConfirmLifecycle
+[ RUN      ] CommandConfirmLifecycle.ConfirmWait_HoldsSlot_SecondSubmitQueued
+[       OK ] CommandConfirmLifecycle.ConfirmWait_HoldsSlot_SecondSubmitQueued (453 ms)
+[ RUN      ] CommandConfirmLifecycle.ConfirmWait_ZeroTransactionResources
+[       OK ] CommandConfirmLifecycle.ConfirmWait_ZeroTransactionResources (100 ms)
+[ RUN      ] CommandConfirmLifecycle.SessionClose_CancelsConfirmWait_NoPermanentWait
+[       OK ] CommandConfirmLifecycle.SessionClose_CancelsConfirmWait_NoPermanentWait (51 ms)
+[ RUN      ] CommandConfirmLifecycle.SuspendThenUserCancel_RejectedContextUnharmed
+[       OK ] CommandConfirmLifecycle.SuspendThenUserCancel_RejectedContextUnharmed (96 ms)
+[ RUN      ] CommandConfirmLifecycle.Callback_SynchronousOnSubmitterThread
+[       OK ] CommandConfirmLifecycle.Callback_SynchronousOnSubmitterThread (78 ms)
+[----------] 5 tests from CommandConfirmLifecycle (779 ms total)
+
+[----------] 3 tests from CommandConfirmPersistence
+[ RUN      ] CommandConfirmPersistence.Confirmations_PersistedToCommandJson_RoundTrip
+[       OK ] CommandConfirmPersistence.Confirmations_PersistedToCommandJson_RoundTrip (83 ms)
+[ RUN      ] CommandConfirmPersistence.NoFindings_ConfirmationsFieldOmitted
+[       OK ] CommandConfirmPersistence.NoFindings_ConfirmationsFieldOmitted (93 ms)
+[ RUN      ] CommandConfirmPersistence.Callback_ReceivesComparativeData_Ux03
+[       OK ] CommandConfirmPersistence.Callback_ReceivesComparativeData_Ux03 (65 ms)
+[----------] 3 tests from CommandConfirmPersistence (242 ms total)
+
+[----------] 15 tests from DraftServiceTest
+[ RUN      ] DraftServiceTest.SaveThenLoadRoundTripProducesNoRevision
+[       OK ] DraftServiceTest.SaveThenLoadRoundTripProducesNoRevision (34 ms)
+[ RUN      ] DraftServiceTest.DomainVersionInputNormalizedReadableBackRoundtripPin
+[       OK ] DraftServiceTest.DomainVersionInputNormalizedReadableBackRoundtripPin (47 ms)
+[ RUN      ] DraftServiceTest.CorruptCurrentRecoversFromBakAfterReopen
+[       OK ] DraftServiceTest.CorruptCurrentRecoversFromBakAfterReopen (48 ms)
+[ RUN      ] DraftServiceTest.StaleNewResidueDiscardedCurrentKeptOnReopen
+[       OK ] DraftServiceTest.StaleNewResidueDiscardedCurrentKeptOnReopen (40 ms)
+[ RUN      ] DraftServiceTest.DiscardRemovesCurrentAndBakIdempotent
+[       OK ] DraftServiceTest.DiscardRemovesCurrentAndBakIdempotent (38 ms)
+[ RUN      ] DraftServiceTest.ApplyCommittedExactlyOneRevisionFromDraft
+[       OK ] DraftServiceTest.ApplyCommittedExactlyOneRevisionFromDraft (57 ms)
+[ RUN      ] DraftServiceTest.StaleBaselineRejectedAndDraftRetained
+[       OK ] DraftServiceTest.StaleBaselineRejectedAndDraftRetained (65 ms)
+[ RUN      ] DraftServiceTest.SummarizeProjectsMultiModuleWithStaleAndSortOrder
+[       OK ] DraftServiceTest.SummarizeProjectsMultiModuleWithStaleAndSortOrder (73 ms)
+[ RUN      ] DraftServiceTest.DraftOverwriteVsRevisionAppendOnly
+[       OK ] DraftServiceTest.DraftOverwriteVsRevisionAppendOnly (99 ms)
+[ RUN      ] DraftServiceTest.ReadOnlyOpenRejectsSaveAndDiscardAllowsRead
+[       OK ] DraftServiceTest.ReadOnlyOpenRejectsSaveAndDiscardAllowsRead (46 ms)
+[ RUN      ] DraftServiceTest.ClosedContextRejectsDraftWritesAndReads
+[       OK ] DraftServiceTest.ClosedContextRejectsDraftWritesAndReads (32 ms)
+[ RUN      ] DraftServiceTest.AutosaveAndManualShareSingleSavePath
+[       OK ] DraftServiceTest.AutosaveAndManualShareSingleSavePath (34 ms)
+[ RUN      ] DraftServiceTest.PayloadWithSourcedValuePassthroughUnexplained
+[       OK ] DraftServiceTest.PayloadWithSourcedValuePassthroughUnexplained (49 ms)
+[ RUN      ] DraftServiceTest.ModuleIdWhitelistRejectsUnsafeTokens
+[       OK ] DraftServiceTest.ModuleIdWhitelistRejectsUnsafeTokens (36 ms)
+[ RUN      ] DraftServiceTest.SaveRejectsForeignProjectDocument
+[       OK ] DraftServiceTest.SaveRejectsForeignProjectDocument (21 ms)
+[----------] 15 tests from DraftServiceTest (726 ms total)
+
+[----------] 12 tests from ArchiveServiceTest
+[ RUN      ] ArchiveServiceTest.F9_FinalizeManifestIsCompletenessJudge
+[       OK ] ArchiveServiceTest.F9_FinalizeManifestIsCompletenessJudge (60 ms)
+[ RUN      ] ArchiveServiceTest.D14_RedeliveryIdempotentAndConflictRejected
+[       OK ] ArchiveServiceTest.D14_RedeliveryIdempotentAndConflictRejected (57 ms)
+[ RUN      ] ArchiveServiceTest.D14_BatchLevelRedeliverySkipOrConflict
+[       OK ] ArchiveServiceTest.D14_BatchLevelRedeliverySkipOrConflict (37 ms)
+[ RUN      ] ArchiveServiceTest.F9_FinalizeVerifiesManifestAgainstDisk
+[       OK ] ArchiveServiceTest.F9_FinalizeVerifiesManifestAgainstDisk (46 ms)
+[ RUN      ] ArchiveServiceTest.SessionRef_LifecycleAndOwnership
+[       OK ] ArchiveServiceTest.SessionRef_LifecycleAndOwnership (51 ms)
+[ RUN      ] ArchiveServiceTest.Abandon_FullPathTerminationNoPermanentWait
+[       OK ] ArchiveServiceTest.Abandon_FullPathTerminationNoPermanentWait (39 ms)
+[ RUN      ] ArchiveServiceTest.RelPath_WhitelistFailFast
+[       OK ] ArchiveServiceTest.RelPath_WhitelistFailFast (37 ms)
+[ RUN      ] ArchiveServiceTest.Begin_RejectionMatrix
+[       OK ] ArchiveServiceTest.Begin_RejectionMatrix (45 ms)
+[ RUN      ] ArchiveServiceTest.Task03_ArchiveBoundToOriginalRevisionIgnoreHeadAdvance
+[       OK ] ArchiveServiceTest.Task03_ArchiveBoundToOriginalRevisionIgnoreHeadAdvance (111 ms)
+[ RUN      ] ArchiveServiceTest.Begin_ReadOnlyContextRejected
+[       OK ] ArchiveServiceTest.Begin_ReadOnlyContextRejected (39 ms)
+[ RUN      ] ArchiveServiceTest.Draining_RejectsNewBeginButServesExistingSession
+[       OK ] ArchiveServiceTest.Draining_RejectsNewBeginButServesExistingSession (32 ms)
+[ RUN      ] ArchiveServiceTest.AbandonFinalizeEndgameExclusive_F805
+[       OK ] ArchiveServiceTest.AbandonFinalizeEndgameExclusive_F805 (106 ms)
+[----------] 12 tests from ArchiveServiceTest (666 ms total)
+
+[----------] Global test environment tear-down
+[==========] 146 tests from 23 test suites ran. (9377 ms total)
+[  PASSED  ] 146 tests.

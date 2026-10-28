@@ -1,0 +1,153 @@
+{
+  "method": "Python standard library; independently parse 16 printed samples and interpolate sorted 15 valid values; log rounding is 0.001ms",
+  "groups": {
+    "beforeDedupAfter13Fixes": {
+      "source": "perf-project.log",
+      "warmupCount": 1,
+      "validCount": 15,
+      "p95MsFromRoundedLog": 8939.7257,
+      "thresholdMs": 3000,
+      "pass": false,
+      "samples": [
+        {
+          "excluded": true,
+          "durationMs": 8668.771
+        },
+        {
+          "excluded": false,
+          "durationMs": 8203.668
+        },
+        {
+          "excluded": false,
+          "durationMs": 7863.738
+        },
+        {
+          "excluded": false,
+          "durationMs": 7780.568
+        },
+        {
+          "excluded": false,
+          "durationMs": 8100.911
+        },
+        {
+          "excluded": false,
+          "durationMs": 8909.09
+        },
+        {
+          "excluded": false,
+          "durationMs": 8111.179
+        },
+        {
+          "excluded": false,
+          "durationMs": 8029.555
+        },
+        {
+          "excluded": false,
+          "durationMs": 7798.49
+        },
+        {
+          "excluded": false,
+          "durationMs": 8422.743
+        },
+        {
+          "excluded": false,
+          "durationMs": 9011.209
+        },
+        {
+          "excluded": false,
+          "durationMs": 7907.082
+        },
+        {
+          "excluded": false,
+          "durationMs": 7967.9
+        },
+        {
+          "excluded": false,
+          "durationMs": 8670.718
+        },
+        {
+          "excluded": false,
+          "durationMs": 8623.364
+        },
+        {
+          "excluded": false,
+          "durationMs": 8552.548
+        }
+      ]
+    },
+    "afterDedup": {
+      "source": "perf-project-after.log",
+      "warmupCount": 1,
+      "validCount": 15,
+      "p95MsFromRoundedLog": 917.3756999999999,
+      "thresholdMs": 3000,
+      "pass": true,
+      "samples": [
+        {
+          "excluded": true,
+          "durationMs": 918.528
+        },
+        {
+          "excluded": false,
+          "durationMs": 925.509
+        },
+        {
+          "excluded": false,
+          "durationMs": 801.095
+        },
+        {
+          "excluded": false,
+          "durationMs": 801.523
+        },
+        {
+          "excluded": false,
+          "durationMs": 720.571
+        },
+        {
+          "excluded": false,
+          "durationMs": 890.923
+        },
+        {
+          "excluded": false,
+          "durationMs": 849.626
+        },
+        {
+          "excluded": false,
+          "durationMs": 732.162
+        },
+        {
+          "excluded": false,
+          "durationMs": 770.703
+        },
+        {
+          "excluded": false,
+          "durationMs": 853.121
+        },
+        {
+          "excluded": false,
+          "durationMs": 896.352
+        },
+        {
+          "excluded": false,
+          "durationMs": 844.178
+        },
+        {
+          "excluded": false,
+          "durationMs": 736.726
+        },
+        {
+          "excluded": false,
+          "durationMs": 711.97
+        },
+        {
+          "excluded": false,
+          "durationMs": 827.659
+        },
+        {
+          "excluded": false,
+          "durationMs": 913.89
+        }
+      ]
+    }
+  }
+}

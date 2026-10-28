@@ -1,0 +1,35 @@
+unit exit=1
+
+[----------] Global test environment tear-down
+[==========] 493 tests from 61 test suites ran. (821 ms total)
+[  PASSED  ] 490 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] MdlDiagCodes.DescriptorFieldsMatchSection95Row_WP13T02_ACC4
+[  FAILED  ] MdlImport.NameConflictAndIllegalValue_Preserved_WP13T05_ACC2
+[  FAILED  ] ModelingCommandFlows.PackageImportPreservesCompleteClosure_F07
+
+ 3 FAILED TESTS
+contract exit=0
+[       OK ] MdlGoldenPeerContract.IoPeerImportPipelineMissingLeafContract_WP13T16_ACC5 (3 ms)
+[ RUN      ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5 (0 ms)
+[ RUN      ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5 (1 ms)
+[----------] 3 tests from MdlGoldenPeerContract (5 ms total)
+
+[----------] Global test environment tear-down
+[==========] 17 tests from 5 test suites ran. (43 ms total)
+[  PASSED  ] 17 tests.
+gui exit=0
+[ RUN      ] ModelingUiModuleHostWiring.GroupedTreeAnd3DPickUseOneLeaveGuard_UX07_T30
+[gf-guard] 参数与当前草稿一致；选择与显示操作不写项目。
+[       OK ] ModelingUiModuleHostWiring.GroupedTreeAnd3DPickUseOneLeaveGuard_UX07_T30 (929 ms)
+[ RUN      ] ModelingUiModuleHostWiring.GroupedExternalRevisionPreservesUnconfirmedInput_MDL07_T30
+[       OK ] ModelingUiModuleHostWiring.GroupedExternalRevisionPreservesUnconfirmedInput_MDL07_T30 (734 ms)
+[----------] 34 tests from ModelingUiModuleHostWiring (25148 ms total)
+
+[----------] Global test environment tear-down
+[==========] 124 tests from 6 test suites ran. (77365 ms total)
+[  PASSED  ] 124 tests.
+ui exit=-1073741515
+behaviorExit=0; headerSyntaxExit=0（当前缺陷版本分别预期 1、2）

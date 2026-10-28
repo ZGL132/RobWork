@@ -345,6 +345,21 @@ enum class PolicyRuleLevel { Must, Should };
 /// Scene=环境对象间〔静态场景默认不检〕）。编码 token 归 POL-T03。
 enum class CollisionDomain { Self, Environment, Tool, Scene };
 
+namespace detail {
+/** @brief POL-T13：碰撞域词表唯一校验；强制转换产生的表外值不能发布。 */
+inline bool isKnownCollisionDomain(CollisionDomain domain) noexcept
+{
+    switch (domain) {
+    case CollisionDomain::Self:
+    case CollisionDomain::Environment:
+    case CollisionDomain::Tool:
+    case CollisionDomain::Scene:
+        return true;
+    }
+    return false;
+}
+}  // namespace detail
+
 /// 作用域目标三类（§4.3：对象 ID／角色类／显式组）。
 enum class ScopeTargetKind { Object, Role, Group };
 
@@ -504,6 +519,12 @@ struct CollisionRules {
         if (enabled && enabledDomains.empty()) {
             throw PolicyError(PolicyErrorCode::ApplicabilityInvalid,
                               "碰撞已启用但启用域为空（无域可检，§5.1④）");
+        }
+        for (const CollisionDomain domain : enabledDomains) {
+            if (!detail::isKnownCollisionDomain(domain)) {
+                throw PolicyError(PolicyErrorCode::ApplicabilityInvalid,
+                                  "碰撞启用域含表外值（POL-T13）");
+            }
         }
         // 单位域错位防呆：安全间距槽位上的阈值必须以 SafetyClearance 域
         // 构造（rad/无量纲阈值误放此处在此暴露）。

@@ -47,7 +47,8 @@ std::string truncateMessage(const std::string& message)
     if (message.size() <= kMaxTranslateMessageBytes) {
         return message;
     }
-    return message.substr(0, kMaxTranslateMessageBytes) + "…（已截断，≤"
+    const auto cut = detail::utf8PrefixSize(message, kMaxTranslateMessageBytes);
+    return message.substr(0, cut) + "…（已截断，≤"
         + std::to_string(kMaxTranslateMessageBytes) + " 字节）";
 }
 
@@ -173,7 +174,10 @@ DiagnosticEntry DiagnosticsFactory::create(const core::DiagnosticRecord& record,
 
     DiagnosticEntry entry;
     entry.entryId = m_nextEntryId.fetch_add(1, std::memory_order_relaxed) + 1;  // 单调 ≥1
-    entry.record = record;                       // P-DIAG-1：core 契约原样内嵌（不扩充）
+    entry.record = record;                       // P-DIAG-1：core 契约值拷贝（字段不扩充；level 见下方权威规范化）
+    // F-618：正式条目的阻断级别由稳定码表唯一决定，防止调用方降级或默认值漂移。
+    // 仅规范化副本的 level；不回写调用方记录，也不替业务执行工程判定。
+    entry.record.level = descriptor->level;
     entry.category = descriptor->category;       // 分类来自码表——调用方不可覆盖（NFR-MNT-03）
     entry.severity = descriptor->severity;       // 同上；不随实例变化（§4.3 传播规则）
     entry.context = context;

@@ -58,6 +58,7 @@ const char* kT05Section95Codes[] = {
     "MDL-IMPORT-UNSUPPORTED-JOINT",
     "MDL-IMPORT-BRANCH-SELECTION",
     "MDL-IMPORT-ZERO-AXIS",
+    "MDL-IMPORT-VALUE-ILLEGAL",
     "MDL-IMPORT-PENDING-CONFIRM",
     "MDL-IMPORT-TEMPLATE-RANGE",
 };
@@ -488,6 +489,14 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
             EXPECT_FALSE(d.confirmable);
             EXPECT_TRUE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-IMPORT-VALUE-ILLEGAL") {
+            // MDL-CR-4/C02/F12：源非法值必须修正，不能确认成Provided零。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
             EXPECT_EQ(d.paramSchema, "[]");
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else {

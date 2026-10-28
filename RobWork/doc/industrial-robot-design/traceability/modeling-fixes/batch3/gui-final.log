@@ -1,0 +1,11 @@
+Note: Google Test filter = ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21 (1571 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (1572 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1572 ms total)
+[  PASSED  ] 1 test.

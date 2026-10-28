@@ -24,6 +24,7 @@
 #include <set>
 #include <stdexcept>
 #include <system_error>
+#include <unordered_set>
 #include <utility>
 
 namespace fs = std::filesystem;
@@ -44,15 +45,13 @@ namespace {
 StoreError osToStoreError(unsigned long osError, const std::string& what,
                           const std::string& path)
 {
-    constexpr unsigned long kDiskFull = 70;        // ERROR_DISK_FULL
-    constexpr unsigned long kQuotaExceeded = 395;  // ERROR_DISK_QUOTA_EXCEEDED
-    constexpr unsigned long kAccessDenied = 5;     // ERROR_ACCESS_DENIED
     const std::string detail = "project/tx-engine: " + what
         + " path=" + path + " osError=" + std::to_string(osError);
-    if (osError == kDiskFull || osError == kQuotaExceeded) {
+    if (osError == ERROR_DISK_FULL || osError == ERROR_HANDLE_DISK_FULL
+        || osError == ERROR_DISK_QUOTA_EXCEEDED) {
         return StoreError(StoreErrorCode::DiskFull, detail);
     }
-    if (osError == kAccessDenied) {
+    if (osError == ERROR_ACCESS_DENIED) {
         return StoreError(StoreErrorCode::AccessDenied, detail);
     }
     return StoreError(StoreErrorCode::WriteRejected, detail);
@@ -302,6 +301,9 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
             "project/tx-engine: commit requires valid plan.revisionId"
             "（修订身份由调用方生成——单一分配点口径）");
     }
+    if (m_index->tryRevision(plan.revisionId)) {
+        throw std::invalid_argument("project/tx-engine: revisionId already registered");
+    }
     if (!plan.branchId.isValid()) {
         throw std::invalid_argument(
             "project/tx-engine: commit requires valid branchId");
@@ -468,26 +470,19 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
 
     // ---- 命令留痕字节（§4.4.4；project 原样持久化——D-10）。
     const std::string commandBytes = codec::dump(plan.command);
+    // PRJ-R1：提交前复用唯一格式解析器核验留痕结构，不解释领域payload。
+    (void)codec::parseCommandRecord(commandBytes);
     const core::ContentVersion commandCv =
         codec::contentVersionOf(commandBytes);
 
-    // ---- S6 注册＋发布边界校验（PRJ-T06 时序契约：先注册新修订后校验
-    //      ——祖先链/谱系单调判定以新修订已注册为前提）。二者任一失败
-    //      （BranchMetadataRegression/喂入失真的 invalid_argument）都发生在
-    //      暂存目录创建之前——零磁盘副作用。注意：校验失败时新修订已注册
-    //      进会话索引且无撤销入口——该修订从任何 HEAD 闭包都不可达（无
-    //      parent 指向它），对查询不可见，属无害的内存残迹；此时调用方
-    //      已处于不变量违约的编程错误态（fail-fast 语义优先）。
-    m_index->registerRevision(manifest);
+    // PRJ-R1：登记、validate和metadata登记均处于守卫内；提交前任一步
+    // 失败都清除本次索引候选，磁盘残留仍按既有协议保留，不修改历史。
     const ObjectRefPair candidateRef{metadataOid, metadataCv};
-    m_index->validateMetadataPublish(authoritative, authoritativeRef,
-                                     candidate, candidateRef, newRevId);
     // ---- S6 时序第三步"切换权威"：候选通过发布边界校验后注册为新权威
     // 元数据版本——后续闭包行走（含本次新修订的 metadataRef）因此可达
     // （validate 契约要求 candidateRef 此前未注册，故注册必须在校验之后）。
-    m_index->registerMetadata(candidateRef, candidate);
 
-    // 幻影注册守卫（R3 审计 B6 修复，2026-10-15）：武装于注册后、解除于
+    // 幻影注册守卫（R3 审计 B6 修复，2026-10-15）：武装于首次注册前、解除于
     // 唯一提交点（replaceExisting 成功）——其间的环境失败（暂存写/publish/
     // head-switch）原本把本次注册留在会话索引：幻影修订可被 tryRevision/
     // metadataAt 查到（PRJ-TX-9"闭包外不可见"被破坏）、assembleView 读从
@@ -507,6 +502,10 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
             }
         }
     } phantomGuard{m_index, newRevId, candidateRef};
+    m_index->registerRevision(manifest);
+    m_index->validateMetadataPublish(authoritative, authoritativeRef,
+                                     candidate, candidateRef, newRevId);
+    m_index->registerMetadata(candidateRef, candidate);
 
     // =================================================================
     // 第 1 步（磁盘半边）：建 .staging/<tx-id>/（§7.1 第 1 步"建 .staging/
@@ -754,7 +753,8 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
     // DependencyInvalidated)（FIFO；失败重试一次＋开发诊断，不回滚——D-18）"）。
     // 总线可空＝跳过（§5.1 装配口径）。失败不影响提交事实。
     // =================================================================
-    if (m_eventBus != nullptr) {
+    try {
+      if (m_eventBus != nullptr) {
         core::RevisionCommittedPayload committed;
         committed.project = currentHead.projectId;
         committed.branch = plan.branchId;
@@ -770,13 +770,17 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
         invalidated.revision = newRevId;
         publishEventWithRetry(core::DomainEvent::make(invalidated),
                               "dependency-invalidated");
+      }
+    } catch (...) {
+        // PRJ-R1/D-18：事件构造、总线和诊断失败无权改变已提交事实。
+        reportDev("post-commit notification failed（已提交，不回滚）");
     }
 
     // =================================================================
     // 第 7 步：清理（§7.1"删除 .staging/<tx-id>/（含 tmp）；清理失败仅
     // 开发诊断"——已提交状态不受影响，残留不参与任何读取路径）。
     // =================================================================
-    {
+    try {
         const win32::FileResult rm = m_fileOps->removeTree(txDir.wstring());
         if (!rm.ok) {
             reportDev("cleanup-failed（.staging 清理失败——已提交状态不受"
@@ -784,6 +788,8 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
                           + txDir.string() + " osError="
                           + std::to_string(rm.osError));
         }
+    } catch (...) {
+        reportDev("post-commit cleanup threw（已提交，保留残留现场）");
     }
 
     // ---- 提交结果（供命令服务组装返回值/事件消费，PRJ-T10） ----
@@ -793,6 +799,7 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
     result.metadataRef = candidateRef;
     result.manifestDigest = manifestDigestHex;
     result.newHead = newHead;
+    result.metadata = candidate;
     return result;
 }
 
@@ -860,6 +867,8 @@ void TxEngine::publishEventWithRetry(const core::DomainEvent& event,
                              ? "首败——按协议重试一次"
                              : "重试后仍失败——不回滚已提交修订，D-18")
                       + "） event=" + what + " error=" + e.what());
+        } catch (...) {
+            reportDev(std::string{"event-publish-failed unknown event="} + what);
         }
     }
 }
@@ -868,7 +877,7 @@ void TxEngine::publishEventWithRetry(const core::DomainEvent& event,
 // 恢复扫描（§7.3/§7.4①④⑤）
 // =====================================================================
 
-TxRecoveryScan TxEngine::scanForRecovery()
+TxRecoveryScan TxEngine::scanForRecovery(bool cleanupTemporaryFiles)
 {
     TxRecoveryScan scan;
 
@@ -892,6 +901,8 @@ TxRecoveryScan TxEngine::scanForRecovery()
                            // 暂存区只应有目录条目，异常文件留给人工排查）
             }
             if (name == "tmp") {
+                // PRJ-R1：只读打开和查询刷新不能删除writer正在使用的目录。
+                if (!cleanupTemporaryFiles) { continue; }
                 // tmp 清理（§4.1"启动清理"）：删除失败仅开发诊断——
                 // 临时物残留无害（不参与任何读取路径）。
                 const win32::FileResult rm =
@@ -1032,6 +1043,10 @@ TxRecoveryScan TxEngine::scanForRecovery()
                 try {
                     const RevisionManifest manifest =
                         codec::parseRevisionManifest(*bytes);
+                    if (manifest.revisionId != *rid) {
+                        throw StoreError(StoreErrorCode::StoreCorrupt,
+                                         "manifest revisionId differs from directory path=" + it->path().string());
+                    }
                     loader.registerRevision(manifest);
                     onDisk[dirName] = manifest.revisionId;
                     metadataRefs.insert(manifest.metadataRef);
@@ -1079,6 +1094,13 @@ TxRecoveryScan TxEngine::scanForRecovery()
     revindex::CommittedClosure closure;
     try {
         closure = loader.committedClosure(head.revisionId);
+        const auto manifest = loader.tryRevision(head.revisionId);
+        if (!manifest || manifest->revisionSeq != head.revisionSeq
+            || manifest->branchId != head.branchId) {
+            throw StoreError(StoreErrorCode::StoreCorrupt,
+                             "HEAD/manifest identity or sequence mismatch path="
+                                 + (revisionsRoot() / head.revisionId.toCanonical() / "manifest.json").string());
+        }
         closureOk = true;
     } catch (const StoreError& e) {
         broken = true;
@@ -1123,10 +1145,29 @@ TxRecoveryScan TxEngine::scanForRecovery()
         // 期 parse 拒绝），对象半边在此。
         std::vector<objstore::ObjectKey> references;
         references.reserve(closure.revisions.size());
+        // PRJ-T19/PM-16：历史修订共享不可变对象，闭包引用是集合。
+        // 复用ObjectStore的键与hash，仅本次扫描去重，仍逐个实算全部唯一对象；
+        // 不建立跨扫描缓存，也不改变首读免检集合的未决语义。
+        std::unordered_set<objstore::ObjectKey, objstore::ObjectKeyHash> seenObjects;
         for (const RevisionId& rid : closure.revisions) {
             const auto manifest = loader.tryRevision(rid);
             if (!manifest) {
                 continue;  // 不可达防御（闭包成员必已注册）
+            }
+            // PRJ-R1：命令是正式修订必需内容；摘要正确不证明闭包结构合法。
+            const auto commandPath = revisionsRoot() / rid.toCanonical() / "command.json";
+            try {
+                const auto command = readAllBytes(commandPath);
+                if (!command) {
+                    throw StoreError(StoreErrorCode::StoreCorrupt, "required command missing");
+                }
+                (void)codec::parseCommandRecord(*command);
+            } catch (const StoreError& e) {
+                broken = true;
+                if (brokenDetail.empty()) {
+                    brokenDetail = "project/recovery: command invalid path=" + commandPath.string()
+                        + " detail=" + e.what();
+                }
             }
             // 闭包成员引用的元数据若在挂账集中＝闭包损坏（定位细节随
             // 用户诊断 cause 上报——§7.4④"定位到文件"）。
@@ -1140,8 +1181,8 @@ TxRecoveryScan TxEngine::scanForRecovery()
                           + failedMeta->second);
             }
             for (const ObjectRef& ref : manifest->objectRefs) {
-                references.push_back(objstore::ObjectKey{ref.objectId,
-                                                         ref.contentVersion});
+                const objstore::ObjectKey key{ref.objectId, ref.contentVersion};
+                if (seenObjects.insert(key).second) { references.push_back(key); }
             }
         }
         const objstore::ObjectScanReport objReport =
@@ -1175,6 +1216,10 @@ TxRecoveryScan TxEngine::scanForRecovery()
         }
     }
 
+    if (!broken && closureOk) {
+        scan.verifiedHead = head;
+        scan.committedRevisions = closure.revisions;
+    }
     if (broken) {
         scan.headIntegrityVerified = false;
         // 用户级损坏诊断（PRJ-STORE-CORRUPT；定位细节随 record.cause）。
@@ -1205,12 +1250,16 @@ HeadRecord TxEngine::readHead() const
 // 诊断出口
 // =====================================================================
 
-void TxEngine::reportDev(const std::string& message) const
+void TxEngine::reportDev(const std::string& message) const noexcept
 {
-    if (m_sink != nullptr) {
+    try {
+      if (m_sink != nullptr) {
         // 通道 token 约定前缀 "project/"（§5.0——diagnostics 侧分流/脱敏
         // 路由依据）。
         m_sink->reportDev("project/tx-engine", message);
+      }
+    } catch (...) {
+        // 诊断仅观察，不覆盖首败，不把已提交改报为未提交。
     }
 }
 

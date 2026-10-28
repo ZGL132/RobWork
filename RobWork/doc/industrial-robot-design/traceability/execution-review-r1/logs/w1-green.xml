@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="0" disabled="0" errors="0" time="0.085" timestamp="2026-10-28T08:09:47.324" name="AllTests">
+  <testsuite name="RunRegistryAdmissionTest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.07" timestamp="2026-10-28T08:09:47.326">
+    <testcase name="ResolvedNamePopulatesSubject_EXR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp" line="1387" status="run" result="completed" time="0.04" timestamp="2026-10-28T08:09:47.326" classname="RunRegistryAdmissionTest" />
+    <testcase name="ResolvedNameRejectsConflictingSubject_EXR01" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp" line="1406" status="run" result="completed" time="0.027" timestamp="2026-10-28T08:09:47.368" classname="RunRegistryAdmissionTest" />
+  </testsuite>
+  <testsuite name="CheckpointCoordinatorTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.008" timestamp="2026-10-28T08:09:47.401">
+    <testcase name="CheckpointIdBelongsToTaskRun_EXR03" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp" line="1132" status="run" result="completed" time="0." timestamp="2026-10-28T08:09:47.408" classname="CheckpointCoordinatorTest" />
+  </testsuite>
+</testsuites>

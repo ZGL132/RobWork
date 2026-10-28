@@ -184,6 +184,12 @@ struct Reader {
         return data[pos++];
     }
 
+    /** @brief 读取规范 bool/presence，非法字节拒绝而不归一化。 */
+    bool readBool() { const auto value = readU8(); if (value > 1) rejectBoolean(); return value == 1; }
+    /** @brief 带定位拒绝非规范布尔位型。 */
+    [[noreturn]] void rejectBoolean() { throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete, "非规范 bool/presence 字节"); }
+    /** @brief 按输入实际剩余字节限制集合数，避免短报文诱发巨额预分配。 */
+    void count(std::uint32_t value, std::size_t minimum) { if (value > (data.size()-pos)/minimum) throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete, "集合数量超过编码剩余长度"); }
     std::uint16_t readU16()
     {
         need(2);
@@ -439,6 +445,7 @@ AnalysisSnapshot parseRefsOnlyBody(Reader& r)
 
     // 对象引用闭包（顺序即冻结序——写入序恢复）。
     const std::uint32_t closureCount = r.readU32();
+    r.count(closureCount, 82);
     s.objectClosure.resize(closureCount);
     for (std::uint32_t i = 0; i < closureCount; ++i) {
         ObjectRefEntry& e = s.objectClosure[i];
@@ -450,6 +457,7 @@ AnalysisSnapshot parseRefsOnlyBody(Reader& r)
 
     // 分析配置引用。
     const std::uint32_t configCount = r.readU32();
+    r.count(configCount, 38);
     s.configurationRefs.resize(configCount);
     for (std::uint32_t i = 0; i < configCount; ++i) {
         ConfigEntry& e = s.configurationRefs[i];
@@ -467,18 +475,20 @@ AnalysisSnapshot parseRefsOnlyBody(Reader& r)
     // 必验工况集合；requiredCaseSetId 双端同函数重算（I-4——身份是导出值，
     // 不是编码载荷：解析结果不可能携带与内容不符的申报凭据）。
     const std::uint32_t caseCount = r.readU32();
+    r.count(caseCount, 20);
     s.caseSet.entries.resize(caseCount);
     for (std::uint32_t i = 0; i < caseCount; ++i) {
         CaseEntry& e = s.caseSet.entries[i];
         r.readBytes(e.caseId.bytes.data(), e.caseId.bytes.size());
         e.label = r.readLengthString();
-        e.enabled = r.readU8() != 0;
-        e.mandatory = r.readU8() != 0;
+        e.enabled = r.readBool();
+        e.mandatory = r.readBool();
     }
     s.caseSet.requiredCaseSetId = toIdentity(digestCaseSetEntries(s.caseSet.entries));
 
     // 外部资源固化状态（presence 字节→optional——缺失与空值不等价，§5.2）。
     const std::uint32_t resourceCount = r.readU32();
+    r.count(resourceCount, 18);
     s.externalResources.resize(resourceCount);
     for (std::uint32_t i = 0; i < resourceCount; ++i) {
         ExternalResourceState& e = s.externalResources[i];
@@ -492,7 +502,7 @@ AnalysisSnapshot parseRefsOnlyBody(Reader& r)
         }
         e.state = stateByte == 1u ? ExternalResourceStatus::Solidified
                                   : ExternalResourceStatus::Recorded;
-        if (r.readU8() == 1u) {
+        if (r.readBool()) {
             core::ContentVersion solidified;
             r.readBytes(solidified.bytes.data(), solidified.bytes.size());
             e.solidifiedContentVersion = std::move(solidified);
@@ -503,6 +513,7 @@ AnalysisSnapshot parseRefsOnlyBody(Reader& r)
 
     // 采样计划。
     const std::uint32_t planCount = r.readU32();
+    r.count(planCount, 96);
     s.samplingPlans.resize(planCount);
     for (std::uint32_t i = 0; i < planCount; ++i) {
         SamplingPlanRef& e = s.samplingPlans[i];
@@ -518,14 +529,15 @@ AnalysisSnapshot parseRefsOnlyBody(Reader& r)
     s.reproduction.productVersion = r.readLengthString();
     s.reproduction.evidenceContractVersion = r.readLengthString();
     const std::uint32_t codecVersionCount = r.readU32();
+    r.count(codecVersionCount, 2);
     s.reproduction.codecVersions.resize(codecVersionCount);
     for (std::uint32_t i = 0; i < codecVersionCount; ++i) {
         s.reproduction.codecVersions[i] = r.readLengthString();
     }
-    if (r.readU8() == 1u) {
+    if (r.readBool()) {
         s.reproduction.compilerContractVersion = r.readLengthString();
     }
-    if (r.readU8() == 1u) {
+    if (r.readBool()) {
         s.reproduction.collisionBackendVersion = r.readLengthString();
     }
     return s;
@@ -663,6 +675,11 @@ SnapshotBuilder& SnapshotBuilder::setReproduction(ReproductionBlock block)
 
 AnalysisSnapshot SnapshotBuilder::build(const IRevisionClosureSource& closureSource) const
 {
+    return buildImpl(&closureSource);
+}
+
+AnalysisSnapshot SnapshotBuilder::buildImpl(const IRevisionClosureSource* closureSource) const
+{
     // ---------------------------------------------------------------
     // 校验 1：身份三元组（§4.1.2 行 1——revision 是唯一对象解析锚，零值＝
     // 没有锚，后续闭包校验无从谈起，必须最先拒绝）。
@@ -740,7 +757,7 @@ AnalysisSnapshot SnapshotBuilder::build(const IRevisionClosureSource& closureSou
         // 修订闭包包含性（§4.1.5① 防混入——acceptance 2 反例的拒绝点）：
         // 所有 (oid,cv) 必须通过事实来源逐条校验，任一不属于锚定修订即拒绝
         // ——混入其他修订数据是 CON-01 不可变输入闭包的根本破坏。
-        if (!closureSource.objectInRevision(m_revision, e.objectId, e.contentVersion)) {
+        if (closureSource && !closureSource->objectInRevision(m_revision, e.objectId, e.contentVersion)) {
             rejectSnapshot("对象引用不属于锚定修订（防混入，§4.1.5①）：revision="
                            + m_revision.toCanonical()
                            + " objectId=" + e.objectId.toCanonical()
@@ -756,7 +773,9 @@ AnalysisSnapshot SnapshotBuilder::build(const IRevisionClosureSource& closureSou
                   return a.configKindToken < b.configKindToken;
               });
     for (std::size_t i = 0; i < snapshot.configurationRefs.size(); ++i) {
-        const ConfigEntry& e = snapshot.configurationRefs[i];
+        ConfigEntry& e = snapshot.configurationRefs[i];
+        // EV-T13：schema 归域，配置内容摘要由 evidence 计算。
+        e.contentIdentity = toIdentity(sha256(e.canonicalBytes.data(), e.canonicalBytes.size()));
         if (!isWellFormedToken(e.configKindToken) || e.canonicalBytes.empty()
             || !e.contentIdentity.isValid()) {
             rejectSnapshot("配置引用条目非法（configKindToken=\""
@@ -809,6 +828,8 @@ AnalysisSnapshot SnapshotBuilder::build(const IRevisionClosureSource& closureSou
         if (!e.resourceId.isValid()) {
             rejectSnapshot("外部资源 resourceId 为零值（§4.1.2）");
         }
+        if (e.state != ExternalResourceStatus::Recorded && e.state != ExternalResourceStatus::Solidified)
+            rejectSnapshot("未知外部资源固化状态");
         if (e.state == ExternalResourceStatus::Solidified) {
             // 固化态必须钉住内容版本（无版本承诺的"固化"不是固化——CON-03）。
             if (!e.solidifiedContentVersion.has_value()
@@ -877,6 +898,28 @@ AnalysisSnapshot SnapshotBuilder::build(const IRevisionClosureSource& closureSou
 // SnapshotCodec——规范编码（布局见文件头注释；全部纯函数）
 // =====================================================================
 
+AnalysisSnapshot SnapshotCodec::freezeContent(const AnalysisSnapshot& snapshot)
+{
+    SnapshotBuilder builder;
+    builder.setIdentity(snapshot.project, snapshot.branch, snapshot.revision, snapshot.revisionSeq);
+    builder.setPolicyRef(snapshot.policyRef).setNameMapRef(snapshot.nameMapRef).setReproduction(snapshot.reproduction);
+    for (const auto& value : snapshot.objectClosure) builder.addObjectRef(value);
+    for (const auto& value : snapshot.configurationRefs) builder.addConfiguration(value);
+    for (const auto& value : snapshot.caseSet.entries) builder.addCase(value);
+    for (const auto& value : snapshot.externalResources) builder.addExternalResource(value);
+    for (const auto& value : snapshot.samplingPlans) builder.addSamplingPlan(value);
+    return builder.buildImpl(nullptr);
+}
+
+void SnapshotCodec::validate(const AnalysisSnapshot& snapshot)
+{
+    const auto canonical = freezeContent(snapshot);
+    if (encodeRefsOnly(canonical) != encodeRefsOnly(snapshot)
+        || canonical.snapshotId != snapshot.snapshotId
+        || canonical.caseSet.requiredCaseSetId != snapshot.caseSet.requiredCaseSetId)
+        rejectSnapshot("快照内容、规范序或导出身份与冻结值不一致（EV-T13）");
+}
+
 std::vector<std::uint8_t> SnapshotCodec::encodeRefsOnly(const AnalysisSnapshot& snapshot)
 {
     std::vector<std::uint8_t> out;
@@ -906,7 +949,9 @@ AnalysisSnapshot SnapshotCodec::parseRefsOnly(const std::vector<std::uint8_t>& e
     // 身份重算：snapshotId＝refs-only 摘要（对刚解析出的内容重新编码取
     // 摘要——身份是编码的函数，不是编码的载荷；解析结果不可能携带与内容
     // 不符的申报身份，§4.1.2"由 builder 计算，非调用方申报"的解析侧延伸）。
+    const auto canonical = freezeContent(s);
     const std::vector<std::uint8_t> reencoded = encodeRefsOnly(s);
+    if (encodeRefsOnly(canonical) != reencoded) rejectSnapshot("快照编码不满足规范内容不变量");
     s.snapshotId = toIdentity(sha256(reencoded.data(), reencoded.size()));
     return s;
 }
@@ -953,12 +998,13 @@ SnapshotCodec::parseMaterialized(const std::vector<std::uint8_t>& encoding)
     // SnapshotIntegrity；NFR-COR-03 不静默）。
     MaterializedSnapshot result;
     const std::uint32_t payloadCount = r.readU32();
+    r.count(payloadCount, 20);
     for (std::uint32_t i = 0; i < payloadCount; ++i) {
         core::ObjectId oid;
         r.readBytes(oid.bytes.data(), oid.bytes.size());
         std::vector<std::uint8_t> bytes = r.readLengthBytes();
         verifyMaterializedPayload(s, oid, bytes);
-        result.payloads.emplace(std::move(oid), std::move(bytes));
+        if (!result.payloads.emplace(std::move(oid), std::move(bytes)).second) rejectSnapshot("重复物化对象载荷");
     }
     // 尾部恰好读完（同 parseRefsOnly——多余字节即拒绝）。
     if (r.pos != encoding.size()) {
@@ -968,7 +1014,9 @@ SnapshotCodec::parseMaterialized(const std::vector<std::uint8_t>& encoding)
     }
 
     // 身份重算（refs-only 形态——双形态同身份，§4.1.5⑤/D-01）。
+    const auto canonical = freezeContent(s);
     const std::vector<std::uint8_t> reencoded = encodeRefsOnly(s);
+    if (encodeRefsOnly(canonical) != reencoded) rejectSnapshot("物化快照编码不满足规范内容不变量");
     s.snapshotId = toIdentity(sha256(reencoded.data(), reencoded.size()));
     result.snapshot = std::move(s);
     return result;

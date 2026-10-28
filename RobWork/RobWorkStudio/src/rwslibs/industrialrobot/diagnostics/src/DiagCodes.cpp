@@ -1,7 +1,7 @@
 /**
  * @file   DiagCodes.cpp
  * @brief  稳定码注册表实现——词表 token、注册期验证、manifest 摘要与内置
- *         码表全量收编（§4.6 88 码——阶段 A 收编 87 码＋F-618 收编
+ *         码表全量收编（§4.6 94 码——阶段 A 收编 87 码＋F-618 收编
  *         RT-BOUNDS-MAGNITUDE，2026-10-10）。
  *
  * 设计依据：
@@ -26,7 +26,7 @@
  *      ＋§4.4"结论呈现（RPT-05 评审记录）"锚点）与 confirmable（SA-15
  *      确认流自省码）——不新增词表值（P-DIAG-3"不私裁"约束）。
  *   上述展开只决定码元数据的 category/severity 登记值；**码值集合本身
- *   （87＋1 码、拼写、前缀）与 §4.6 逐字一致，无任何重排**（dtb WP-09-T03
+ *   （87＋1＋6 码、拼写、前缀）与 §4.6 逐字一致，无任何重排**（dtb WP-09-T03
  *   约束）。若所有者对个别消歧点另有裁决，返工面＝对应表行两列值＋
  *   registryVersion 递增，码值不动。
  *
@@ -252,9 +252,9 @@ CodeDescriptor makeBuiltin(const BuiltinSpec& spec)
 
 /// §4.6 内置表数据（行序＝§4.6 表行序，行内＝收编清单原文序；逐码注释为
 /// 分类/严重的登记依据——展开规则 R1~R4 见文件头）。
-const std::array<BuiltinSpec, 88>& builtinSpecs()
+const std::array<BuiltinSpec, 94>& builtinSpecs()
 {
-    static const std::array<BuiltinSpec, 88> kSpecs{{
+    static const std::array<BuiltinSpec, 94> kSpecs{{
         // ---- PRJ（project §5.0 收编，10 项；分类串"权限/内部/权限/权限/
         //      内部/版本/输入/执行/权限"9 项对 10 码——R2 补第 7 位）----
         {"PRJ-LOCK-HELD", DiagnosticCategory::PermissionOrLock, DiagnosticSeverity::Warning,
@@ -327,7 +327,7 @@ const std::array<BuiltinSpec, 88>& builtinSpecs()
                                                   // 无 RuntimeErrorCode 枚举对应（事件码
                                                   // ——runtime §10.11 冻结关系不扩）
 
-        // ---- POLICY（policy §9.6 收编，23 项；串"版本×3/输入×8/版本×2/
+        // ---- POLICY（policy §9.6 收编，原23项＋POL-T13补6项；串"版本×3/输入×8/版本×2/
         //      数据不足/策略拒绝×4（…归执行失败）/资源/输入/策略拒绝/信息"
         //      段合计 22 对 23——R2 补第 12 位）----
         {"POLICY-SCHEMA-UNKNOWN-FIELD", DiagnosticCategory::FormatOrVersion,
@@ -384,6 +384,21 @@ const std::array<BuiltinSpec, 88>& builtinSpecs()
                                                   // 词表内唯一"非错误的有效结论"类＝
                                                   // infeasibility-proof（§4.4 结论呈现）；
                                                   // "信息"非 15 值 token——登记注记
+
+        // POL-T13/ERR-01：补齐真实生产输出。调用方对象/装配违约归
+        // Internal，输入缺失/查询非法归 InputInvalid，字节格式和资源分别归类。
+        {"POLICY-THRESHOLD-REQUIRED-MISSING", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},
+        {"POLICY-POLICY-OBJECT-INVALID", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Error, "[]"},
+        {"POLICY-ENCODING-INVALID", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},
+        {"POLICY-PORT-ASSEMBLY-INCOMPLETE", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Error, "[]"},
+        {"POLICY-OBJECT-MISSING", DiagnosticCategory::ResourceMissing,
+         DiagnosticSeverity::Error, "[]"},
+        {"POLICY-CLL-QUERY-INVALID", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},
 
         // ---- EVI（evidence §13 收编，7 项；分类串 7 项逐位对齐（R1）；
         //      严重串 6 项对 7 码——R2/R3：末三码按标注＋默认矩阵补齐）----
@@ -632,6 +647,14 @@ void StableCodeRegistry::registerCode(const CodeDescriptor& descriptor)
                 + descriptor.ownerUnit + "）");
     }
 
+    // 闭合词表先验证，禁止未知枚举落入 token 函数的兜底分支后进入正式 manifest。
+    if (descriptor.category > DiagnosticCategory::SecurityOrRedaction
+        || descriptor.severity > DiagnosticSeverity::Dev
+        || descriptor.retryable > RetryKind::AutoRetry) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 category/severity/retryable 含未登记的枚举值");
+    }
+
     // ③paramSchema：必填＋受限 JSON 形＋参数名词形＋无重复（"非空且参数名
     // 合法"——空数组 "[]" 是合法的显式"无参数"声明；完全缺省/空串＝违约，
     // 因实例占位一致性校验（§9.2）需要明确的模式边界）。
@@ -825,7 +848,7 @@ void StableCodeRegistry::deprecate(std::string_view code,
 }
 
 // =====================================================================
-// 内置码表装配（§4.6——88 码全量收编：阶段 A 87 码＋F-618 RT-BOUNDS-MAGNITUDE）
+// 内置码表装配（§4.6——94 码全量收编：阶段 A 87 码＋F-618 RT-BOUNDS-MAGNITUDE）
 // =====================================================================
 
 std::vector<CodeDescriptor> builtinCodeDescriptors()

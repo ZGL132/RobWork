@@ -1,0 +1,373 @@
+{
+  "taskId": "POL-T13",
+  "kind": "implementation-verification",
+  "implementationStart": "59af1f9b449ee23fb78dfe547b3a7339df9d325d",
+  "scopeBase": "fd198f54c0b66bc61dd64b29a04e2b1675f42dbc",
+  "runs": [
+    {
+      "id": "green-policy",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_policy_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-policy.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-policy/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 228,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 228,
+        "passed": 228,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/green-policy.xml",
+      "log": "raw/green-policy.log",
+      "report": "raw/green-policy/ird-test-report.json"
+    },
+    {
+      "id": "green-contract",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_policy_contract_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-contract.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-contract/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 24,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 24,
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/green-contract.xml",
+      "log": "raw/green-contract.log",
+      "report": "raw/green-contract/ird-test-report.json"
+    },
+    {
+      "id": "green-diagnostics",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_diagnostics_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-diagnostics.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-diagnostics/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 123,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 123,
+        "passed": 123,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/green-diagnostics.xml",
+      "log": "raw/green-diagnostics.log",
+      "report": "raw/green-diagnostics/ird-test-report.json"
+    },
+    {
+      "id": "green-runtime",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_runtime_test.exe\" \"--gtest_filter=*NameMap*:*Snapshot*:*WorkCell*:*HostPresentation*\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-runtime.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-runtime/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 97,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 97,
+        "passed": 97,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/green-runtime.xml",
+      "log": "raw/green-runtime.log",
+      "report": "raw/green-runtime/ird-test-report.json"
+    },
+    {
+      "id": "final-kinematics",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/final-kinematics.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/final-kinematics/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 297,
+      "skipped": 1,
+      "failed": 0,
+      "rawSummary": {
+        "total": 298,
+        "passed": 297,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 1,
+        "datasetInvalid": 0,
+        "decisive": false
+      },
+      "xml": "raw/final-kinematics.xml",
+      "log": "raw/final-kinematics.log",
+      "report": "raw/final-kinematics/ird-test-report.json"
+    },
+    {
+      "id": "green-kinematics",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-kinematics.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-kinematics/ird-test-report.json\"",
+      "exitCode": 1,
+      "passed": 295,
+      "skipped": 1,
+      "failed": 2,
+      "rawSummary": {
+        "total": 298,
+        "passed": 295,
+        "failed": 2,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 1,
+        "datasetInvalid": 0,
+        "decisive": false
+      },
+      "xml": "raw/green-kinematics.xml",
+      "log": "raw/green-kinematics.log",
+      "report": "raw/green-kinematics/ird-test-report.json"
+    },
+    {
+      "id": "final-ui",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe\" \"--gtest_filter=KinEvaluationChannel.*:KinAnchorCapture.*:KinSessionModelView.*\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/final-ui.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/final-ui/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 30,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 30,
+        "passed": 30,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/final-ui.xml",
+      "log": "raw/final-ui.log",
+      "report": "raw/final-ui/ird-test-report.json"
+    },
+    {
+      "id": "green-ui-channel-2",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe\" \"--gtest_filter=KinEvaluationChannel.*:KinAnchorCapture.*:KinSessionModelView.*\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-ui-channel-2.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/green-ui-channel-2/ird-test-report.json\"",
+      "exitCode": 1,
+      "passed": 29,
+      "skipped": 0,
+      "failed": 1,
+      "rawSummary": {
+        "total": 30,
+        "passed": 29,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/green-ui-channel-2.xml",
+      "log": "raw/green-ui-channel-2.log",
+      "report": "raw/green-ui-channel-2/ird-test-report.json"
+    },
+    {
+      "id": "red-policy",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_policy_test.exe\" \"--gtest_filter=PolicyReviewRegression.*:JointLimits.*POL_T13\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/red-policy.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/red-policy/ird-test-report.json\"",
+      "exitCode": 1,
+      "passed": 1,
+      "skipped": 0,
+      "failed": 12,
+      "rawSummary": {
+        "total": 13,
+        "passed": 1,
+        "failed": 12,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/red-policy.xml",
+      "log": "raw/red-policy.log",
+      "report": "raw/red-policy/ird-test-report.json"
+    },
+    {
+      "id": "red-registry",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_policy_contract_test.exe\" \"--gtest_filter=PolicyDiagnosticsRegistryContract.*\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/red-registry.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/red-registry/ird-test-report.json\"",
+      "exitCode": 1,
+      "passed": 0,
+      "skipped": 0,
+      "failed": 1,
+      "rawSummary": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/red-registry.xml",
+      "log": "raw/red-registry.log",
+      "report": "raw/red-registry/ird-test-report.json"
+    },
+    {
+      "id": "smoke-policy",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/core-smoke/policy/Release/sdurws_ird_policy_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/smoke-policy.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/smoke-policy/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 141,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 141,
+        "passed": 141,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/smoke-policy.xml",
+      "log": "raw/smoke-policy.log",
+      "report": "raw/smoke-policy/ird-test-report.json"
+    },
+    {
+      "id": "smoke-policy_contract",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/core-smoke/policy/Release/sdurws_ird_policy_contract_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/smoke-policy_contract.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/smoke-policy_contract/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 9,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/smoke-policy_contract.xml",
+      "log": "raw/smoke-policy_contract.log",
+      "report": "raw/smoke-policy_contract/ird-test-report.json"
+    },
+    {
+      "id": "smoke-diagnostics",
+      "command": "& \"C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/build/core-smoke/diagnostics/Release/sdurws_ird_diagnostics_test.exe\" \"--gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/smoke-diagnostics.xml\" \"--ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/smoke-diagnostics/ird-test-report.json\"",
+      "exitCode": 0,
+      "passed": 123,
+      "skipped": 0,
+      "failed": 0,
+      "rawSummary": {
+        "total": 123,
+        "passed": 123,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "xml": "raw/smoke-diagnostics.xml",
+      "log": "raw/smoke-diagnostics.log",
+      "report": "raw/smoke-diagnostics/ird-test-report.json"
+    }
+  ],
+  "notRun": [
+    {
+      "id": "first-ui-dll-launch",
+      "exitCode": -1073741515,
+      "reason": "进程缺DLL未进入gtest；依ird-python313-dll技能在本进程PATH前置已有SDURWS_IRD_PYTHON_DIR后重跑成功",
+      "log": "raw/green-ui-channel.log"
+    },
+    {
+      "id": "independent-acceptance",
+      "reason": "需所有者另开独立会话执行；本记录不是独验"
+    },
+    {
+      "id": "real-widgets-manual",
+      "reason": "本轮未修改控件/布局，UI测试为QCoreApplication模型接线；未冒称完整GUI场景人工验收"
+    }
+  ],
+  "builds": [
+    {
+      "log": "raw/green-build-1.log",
+      "exitCode": 0,
+      "command": "cmake --build build --config Release --target sdurws_ird_policy_test sdurws_ird_policy_contract_test sdurws_ird_kinematics_test sdurws_ird_ui_test"
+    },
+    {
+      "log": "raw/consumer-build.log",
+      "exitCode": 0,
+      "command": "cmake --build build --config Release --target sdurws_ird_policy_test sdurws_ird_diagnostics_test sdurws_ird_runtime_test sdurws_ird_ui_plugin sdurws_ird_studio"
+    },
+    {
+      "log": "raw/final-consumer-build.log",
+      "exitCode": 0,
+      "command": "cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_ui_test sdurws_ird_ui_plugin sdurws_ird_studio"
+    },
+    {
+      "log": "raw/smoke-build.log",
+      "exitCode": 0,
+      "command": "cmake --build build/core-smoke --config Release --target sdurws_ird_policy_test sdurws_ird_policy_contract_test sdurws_ird_diagnostics_test"
+    },
+    {
+      "log": "raw/benchmark-build.log",
+      "exitCode": 0,
+      "command": "pwsh -NoProfile -File C:/Users/zgl18/AppData/Local/Temp/ird-policy-fixes-20261028/build-benchmark.ps1"
+    }
+  ],
+  "benchmark": {
+    "source": "raw/PolicySessionBenchmark.cpp",
+    "buildScript": "raw/build-benchmark.ps1",
+    "result": "raw/benchmark.json",
+    "measurements": {
+      "sessions": 1000,
+      "evaluations": 5000,
+      "failed": 0,
+      "create_and_evaluate_p50_us": 124.6,
+      "create_and_evaluate_p95_us": 201.2,
+      "evaluate_mean_us": 2.37718
+    },
+    "note": "Release真实上游盒几何；解析判断failed=0。无冻结性能阈值，非正式性能独验通过。"
+  },
+  "note": "gtest skipped与原生envUnavailable分别列出；不得把decisive=false记为全项PASS。初次编译错误及中途失败原样保留。",
+  "gates": [
+    {
+      "id": "ird_gates",
+      "command": "cmake --build build --config Release --target ird_gates",
+      "exitCode": 1,
+      "log": "raw/ird-gates-final.log",
+      "dependencyScan": "PASS",
+      "enginePositiveNegativeSelfTests": "PASS",
+      "reuse": "FAIL: REUSE-FRESHNESS runtime/CMakeLists.txt"
+    },
+    {
+      "id": "validate-docs",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T13.json",
+      "exitCode": 1,
+      "log": "raw/validate-docs-4.log",
+      "reason": "既有生产证据冻结绑定旧runtime CMake摘要，历史报告不改写；未决功能审计不冒称通过"
+    }
+  ],
+  "implementationCommit": "a167f4d4d9435b565a1dea3217b8fa7935333451",
+  "postCommitChecks": [
+    {
+      "id": "commit-lint",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range fd198f54c0b66bc61dd64b29a04e2b1675f42dbc..a167f4d4d9435b565a1dea3217b8fa7935333451",
+      "exitCode": 0,
+      "log": "raw/commit-lint.log"
+    },
+    {
+      "id": "verify-task-scope",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T13.json -Base fd198f54c0b66bc61dd64b29a04e2b1675f42dbc -Head a167f4d4d9435b565a1dea3217b8fa7935333451",
+      "exitCode": 0,
+      "changed": 108,
+      "log": "raw/verify-task-scope.log"
+    }
+  ]
+}

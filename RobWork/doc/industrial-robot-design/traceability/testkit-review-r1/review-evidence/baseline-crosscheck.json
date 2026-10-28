@@ -1,0 +1,22 @@
+{
+  "xml": {
+    "tests": "121",
+    "failures": "0",
+    "disabled": "0",
+    "errors": "0",
+    "time": "19.318",
+    "timestamp": "2026-10-27T19:47:08.268",
+    "name": "AllTests"
+  },
+  "json": {
+    "total": 121,
+    "passed": 121,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "exit": "0"
+}

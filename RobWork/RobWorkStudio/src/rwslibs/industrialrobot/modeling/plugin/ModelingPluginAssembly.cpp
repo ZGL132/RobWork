@@ -194,6 +194,11 @@ bool ModelingPluginAssembly::executeDomainCommand(const std::string& commandId)
     return false;  /* 模块缺位＝失败隔离缺席域 */
 }
 
+void ModelingPluginAssembly::bindCompileProbe(const CompileProbe* probe)
+{
+    if (m_impl != nullptr) { m_impl->session().compileProbe = probe; }
+}
+
 void ModelingPluginAssembly::bindRuntimeNameMap(
     const sdurws::ird::runtime::RuntimeNameMap* map)
 {

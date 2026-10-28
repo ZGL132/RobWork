@@ -2404,8 +2404,8 @@ TEST_F(ModelingPanelGuiTest, ManualBodyFieldsAndCentroidChoice_MDL05_V17)
     EXPECT_TRUE(feedback->text().contains(QStringLiteral("明确选择")));
     choice->setCurrentIndex(1);EXPECT_FALSE(tensor->isEnabled());apply->click();
     EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1);
-    EXPECT_DOUBLE_EQ(body.mass.value(),4);EXPECT_DOUBLE_EQ(body.inertia.value().ixx,55);
-    EXPECT_DOUBLE_EQ(body.inertia.value().ixy,-7.9);EXPECT_DOUBLE_EQ(body.inertia.value().iyz,-23.7);
+    EXPECT_DOUBLE_EQ(body.mass.value(),4);EXPECT_DOUBLE_EQ(body.inertia.value().ixx,3);
+    EXPECT_DOUBLE_EQ(body.inertia.value().ixy,0.1);EXPECT_DOUBLE_EQ(body.inertia.value().iyz,0.3);
     EXPECT_EQ(body.inertia.provenance(),source);EXPECT_FALSE(mass->isChecked());
     const auto migrated=m_ws;
     com->setChecked(true);field(1)->setText("2");choice->setCurrentIndex(2);

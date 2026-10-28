@@ -17,7 +17,7 @@
 
 #include <algorithm>
 #include <boost/multiprecision/cpp_int.hpp>
-#include <random>
+#include "IdentityRandom.hpp"
 #include <stdexcept>
 
 namespace sdurws::ird::core {
@@ -94,10 +94,13 @@ void fnv1a128(const std::uint8_t* data, std::size_t n,
 // ---------------------------------------------------------------------
 std::array<std::uint8_t, 16> generateId128Bytes()
 {
-    // random_device 播种一次（thread_local）：进程内每线程独立引擎，无锁并发。
+    // 每线程初始化时消费128位熵（CORE-T12），避免单个32位种子导致独立流重复。
     // 生成器选择与契约：§4.1 明文"random_device 播种的 mt19937_64"——非密码学
     // 承诺，唯一性要求＝128 位随机空间下的碰撞概率可忽略。
-    thread_local std::mt19937_64 engine{std::random_device{}()};
+    thread_local std::mt19937_64 engine = [] {
+        std::random_device entropy;
+        return makeIdentityEngine(entropy);
+    }();
     std::array<std::uint8_t, 16> bytes{};
     do {
         const std::uint64_t w1 = engine();

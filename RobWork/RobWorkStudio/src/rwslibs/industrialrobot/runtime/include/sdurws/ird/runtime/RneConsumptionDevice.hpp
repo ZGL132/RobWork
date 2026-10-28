@@ -70,6 +70,8 @@ struct RneConsumptionDevice {
     std::vector<double> zeroOffsets;           ///< 逐关节零位偏置（rad/m；q_rw＝q_auth−offset 换算分量）
 
     rw::math::Rotation3D<double> flangeAlignInverse; ///< 末关节 R_alignᵀ（权威法兰系→关节帧坐标变换基）
+    /// F01：末固定段在末关节帧中的平移（m），仅用于消费载体的质心坐标映射。
+    rw::math::Vector3D<double> flangeTranslation{};
     double flangeBaseMass = 0.0;                     ///< 法兰连杆基线质量，单位 kg（§5.4 合成基项）
     rw::math::Vector3D<double> flangeBaseCom{};      ///< 基线质心（法兰系，m）
     rw::math::InertiaMatrix<double> flangeBaseInertia{}; ///< 基线惯量（质心系、法兰系姿态，kg·m²）

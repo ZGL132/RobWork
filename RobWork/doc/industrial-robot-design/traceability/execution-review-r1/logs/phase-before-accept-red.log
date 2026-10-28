@@ -1,0 +1,12 @@
+Note: Google Test filter = *ProtocolPhaseRejects*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkerProcessContractTest
+[ RUN      ] WorkerProcessContractTest.ProtocolPhaseRejectsEarlyOutputAndUnsolicitedAck_EXR05
+[       OK ] WorkerProcessContractTest.ProtocolPhaseRejectsEarlyOutputAndUnsolicitedAck_EXR05 (371 ms)
+[----------] 1 test from WorkerProcessContractTest (372 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (379 ms total)
+[  PASSED  ] 1 test.
+nativeExit=0

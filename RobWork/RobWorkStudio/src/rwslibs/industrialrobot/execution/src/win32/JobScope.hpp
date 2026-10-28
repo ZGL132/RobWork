@@ -66,6 +66,9 @@ public:
     /// 析构：关闭作业句柄（KILL_ON_JOB_CLOSE 兜杀残留进程——不留孤儿）。
     ~JobScope();
 
+    /** @brief 关闭本作业句柄并清空所有权；已关闭时幂等，用于保留墓碑时释放进程树。 */
+    void reset() noexcept;
+
     JobScope(const JobScope&) = delete;
     JobScope& operator=(const JobScope&) = delete;
 

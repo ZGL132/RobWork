@@ -1,0 +1,2 @@
+verify-task-scope: POL-T13 base=fd198f54c0b6 head=a167f4d4d943 changed=108 allowedRules=43 forbiddenRules=3
+verify-task-scope: PASS POL-T13 —— 108 个路径全部在允许面内

@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "EX-T11",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/foundation/EX-T11.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+      "sha256": "c693fe6b49d4d2c29e3c121e6922cb972d4e79c3a29a136ee41a22c72ef4a640",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp",
+      "sha256": "5ae1dbb4b1c82bde5d93dfaaccba3fd2f6d46d7aff4169eaba53cd2740147774",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/EventBusDeliveryContractTest.cpp",
+      "sha256": "009b054072b0ad6551bf5a32ac90e57c9affd1c73a2abd38e8a6b11ff93f9985",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/WorkerProcessContractTest.cpp",
+      "sha256": "c8294735c89a1606b19577c667a1000f4e9d116d53222ef4a38a23707646a56b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+      "sha256": "c0695cca16122e83d413da4bab9a34ece61a96f1bf018964f79f632f7f918cec",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp",
+      "sha256": "81e88b813ed1adafd55f92933f0206b2933ea469451b651e24224f7c7000ccdb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/WorkerSupervisor.hpp",
+      "sha256": "32a2dadd88db87533c22b42668e727022009644b3a0142a1809a4977f7fd60b2",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp",
+      "sha256": "c8be3bb3bd1ed76c4acd84708ef248375742462c10770586a512eab330c2a7fc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/CacheCoordinator.cpp",
+      "sha256": "3fe25aea713a18a7421c1637daaf0114b138ec41422ae4e0b2f7d04b541b27b4",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+      "sha256": "835edf29e50e47562aa48ee0b7f8761d0fee52f36c7b8795c48bd09074ad88d0",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Checkpoint.cpp",
+      "sha256": "60a4de3d97372db26c4853c440c2c899dba90c6d3fab68325c2eefad9feae0b8",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/EventBus.cpp",
+      "sha256": "1bcef15edc66e7117a5c8903112cc082c3a42fbe27b7addea9ce9fd11983436b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp",
+      "sha256": "f8e81165434ca47e48ea4f1d53aac8b147d1128929d7316f285b0272bfc52c47",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp",
+      "sha256": "44160cf159c33644880c5169d093e012073f95f91daa09f13427bab36bcd4690",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ChannelPair.cpp",
+      "sha256": "11ecc4a006408417aaad50732263483035c0777c237aa8ac97536badcfcacab3",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ChannelPair.hpp",
+      "sha256": "5eaadef66f2524151b10112782c2b3e5f5005bc556134327517ce097c5e48fdb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/JobScope.cpp",
+      "sha256": "de5aadee990f43b8b666308d8de4aadcaf185d8fe79502ab10f25bba9a082d4f",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/JobScope.hpp",
+      "sha256": "60ea0f24765994b9c3cc6c02e168eb51270409aa5417440937d2217d069d6cbb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+      "sha256": "51959f768ac9efee04461289fc889fb429c39e55ba65aeb4bab21ebef8304578",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.hpp",
+      "sha256": "52a5479135c622c17f4ffe1154f94703b40935aa791b8b8ffadce0966d13ce82",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+      "sha256": "55e6f9056551f4c56435f5f6e36754073a9fab64de357b372a0b92ca062ce170",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/CheckpointCacheTest.cpp",
+      "sha256": "e99ac26f2215014d592a85c247bbb61a76cf6add559fffa3993716b22e9283e3",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+      "sha256": "908ff4d475ca0255680579597e19e75f197c674ba64acc0a2cb5eb13246bd2bb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/WorkerWriterTest.cpp",
+      "sha256": "29242b21c2bfb196ed6becb7c453c88065d7beddff9f345ff9132fdec8b718c6",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp",
+      "sha256": "3a53f67cb31db95379cf4d38f84bcf03c5b07c33e3028a9efa755ec9c33094e0",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "sha256": "63984228c812e4006fa3e6fe5fe61536c367c2cc5803f3843189daca9d1c2f17",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "EX-T11：保留 core 身份、runtime 映射/judge、evidence 工厂/判定、project 事务；修正 execution 编排/同步/进程资源，不改上游/预算/业务装配；批准及未完成边界见本批记录",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/execution-review-r1/README.md"
+    }
+  ]
+}

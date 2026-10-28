@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="6.069" timestamp="2026-10-28T08:16:29.835" name="AllTests">
+  <testsuite name="WorkerProcessContractTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="6.062" timestamp="2026-10-28T08:16:29.838">
+    <testcase name="MalformedWorkerReclaimedAndOnlyPipesInherited_EXR07_EXR11" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp" line="1383" status="run" result="completed" time="6.061" timestamp="2026-10-28T08:16:29.838" classname="WorkerProcessContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1405&#x0A;Value of: exited&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1405
+Value of: exited
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1407&#x0A;Expected equality of these values:&#x0A;  m_events.countOf(WorkerEvent::Kind::WorkerExited)&#x0A;    Which is: 0&#x0A;  1u&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1407
+Expected equality of these values:
+  m_events.countOf(WorkerEvent::Kind::WorkerExited)
+    Which is: 0
+  1u
+    Which is: 1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1408&#x0A;Expected equality of these values:&#x0A;  supervisor-&gt;workerCount()&#x0A;    Which is: 1&#x0A;  0u&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1408
+Expected equality of these values:
+  supervisor->workerCount()
+    Which is: 1
+  0u
+    Which is: 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1409&#x0A;Expected equality of these values:&#x0A;  ::WaitForSingleObject(extra, 0)&#x0A;    Which is: 0&#x0A;  DWORD{258L}&#x0A;    Which is: 258&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:1409
+Expected equality of these values:
+  ::WaitForSingleObject(extra, 0)
+    Which is: 0
+  DWORD{258L}
+    Which is: 258
+]]></failure>
+      <properties>
+        <property name="ownedPid" value="66232"/>
+      </properties>
+    </testcase>
+  </testsuite>
+</testsuites>

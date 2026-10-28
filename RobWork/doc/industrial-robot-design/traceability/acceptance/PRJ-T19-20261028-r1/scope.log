@@ -1,0 +1,2 @@
+verify-task-scope: PRJ-T19 base=412e173b9079 head=59af1f9b449e changed=100 allowedRules=28 forbiddenRules=3
+verify-task-scope: PASS PRJ-T19 —— 100 个路径全部在允许面内

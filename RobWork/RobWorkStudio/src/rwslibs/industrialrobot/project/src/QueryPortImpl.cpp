@@ -162,10 +162,9 @@ RevisionView QueryPortImpl::head() const
         // 提交——绝无"清单可查但 HEAD 未切"的中间态视图（否则该修订
         // 会被误认已提交——自审项 A-6 的反例形态）。
         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
-        // 重读磁盘 HEAD（§5.2 原文"重读 HEAD 文件"——地面事实，不依赖
-        // 端口缓存）。parse 失败（缺失/损坏）由 Codec 以 StoreCorrupt 抛出。
-        const HeadRecord head = codec::parseHeadRecord(
-            readStoreFile(m_host.m_canonicalDirFs / "HEAD"));
+        m_host.refreshCommittedViewLocked();
+        // PRJ-R1：HEAD/index/metadata必须同版本，只读跨进程刷新整体闭包。
+        const HeadRecord& head = m_host.m_head;
         // HEAD 指向的修订必须在会话索引（打开时装载了闭包内全部修订、
         // 提交成功后索引同步前进）。查不到＝HEAD 被外部篡改指向未装载
         // 修订（悬挂）——数据侧损坏，防误认已提交（A-6）。
@@ -199,6 +198,7 @@ std::optional<RevisionView> QueryPortImpl::tryRevision(core::RevisionId id) cons
         // 修订（磁盘残留）则根本不在索引（装载纪律，§7.3）——两级防线
         // 共同保证"仅闭包内修订可取"（§5.2/A-6）。
         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        m_host.refreshCommittedViewLocked();
         manifest = m_host.m_index->tryRevision(id);
     }
     if (!manifest.has_value()) {
@@ -283,6 +283,7 @@ ProjectMetadataView QueryPortImpl::currentMetadata() const
     // executeCommit 成功路径同步前进（writer 锁内），锁内拷贝保证 ref 与
     // record 是同一权威版本（不会拿到"新 ref 配旧 record"的撕裂对）。
     std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+    m_host.refreshCommittedViewLocked();
     ProjectMetadataView view;
     view.ref = m_host.m_authoritativeRef;
     view.record = m_host.m_authoritative;  // 深拷贝（值语义——PA-3）
@@ -302,6 +303,7 @@ std::optional<ProjectMetadataView> QueryPortImpl::metadataAt(core::RevisionId id
         // （metadataRef 指向的元数据一经注册不可变，实际上锁外也安全；
         // 同锁完成消除了"修订在窗口前后"的讨论——简单且正确）。
         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        m_host.refreshCommittedViewLocked();
         const auto manifest = m_host.m_index->tryRevision(id);
         if (!manifest.has_value()) {
             return std::nullopt;  // 闭包外/不存在——可见性纪律同 tryRevision
@@ -327,6 +329,7 @@ std::vector<BranchTip> QueryPortImpl::branchTips() const
     ProjectMetadataRecord authoritative;
     {
         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        m_host.refreshCommittedViewLocked();
         authoritative = m_host.m_authoritative;
     }
     // 保持权威元数据 branches 数组的磁盘序：该序由 deriveNextMetadata
@@ -353,9 +356,10 @@ std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
     // "分支存在于权威元数据"；INV-M3——tip 一律取自 HEAD 引用版本，
     // 禁止经历史修订的元数据重建）。分支不存在＝调用方违约 → fail-fast
     // （实现口径 3：封闭集无对应稳定码，不私扩）。
-    core::RevisionId tip{};
+    std::vector<RevisionManifest> manifests;
     {
         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        m_host.refreshCommittedViewLocked();
         const auto found = revindex::RevisionIndex::branchTip(m_host.m_authoritative,
                                                               branch);
         if (!found.has_value()) {
@@ -363,7 +367,19 @@ std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
                 "project/query: unknown branch branch=" + branch.toCanonical()
                 + "（§5.2 表：未知分支抛——调用方契约违约）");
         }
-        tip = *found;
+        // PRJ-T19：只读刷新会整体替换索引，必须在同一锁内复制整条链；
+        // 锁外仅组装不可变文件，不能继续访问可能已被另一查询替换的索引。
+        std::optional<core::RevisionId> current = *found;
+        while (current.has_value() && manifests.size() < maxCount) {
+            const auto manifest = m_host.m_index->tryRevision(*current);
+            if (!manifest.has_value()) {
+                throw StoreError(StoreErrorCode::StoreCorrupt,
+                                 "project/query: branch history dangling parent revision="
+                                     + current->toCanonical());
+            }
+            manifests.push_back(*manifest);
+            current = manifest->parentRevisionId;
+        }
     }
 
     // 平凡请求：maxCount==0 → 空列表（字面语义"最多 0 条"；实现口径）。
@@ -372,23 +388,10 @@ std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
         return history;
     }
 
-    // 第二步（锁外沿链）：自 tip 沿 parent 逐级回溯至首修订或凑满
-    // maxCount。已提交修订一经索引注册永在且不可变（PA-2——索引只增
-    // 无删除），锁外查索引安全；分支 tip 维度的 parent 语义保证只含
-    // 本分支提交（§4.5——其他分支的提交不在本链上）。
-    history.reserve(maxCount);
-    std::optional<core::RevisionId> current = tip;
-    while (current.has_value() && history.size() < maxCount) {
-        const auto manifest = m_host.m_index->tryRevision(*current);
-        if (!manifest.has_value()) {
-            // parent 链悬挂＝装载不完整/存储损坏——数据侧（打开闭包
-            // 校验正常不可达，防御性拒绝）。
-            throw StoreError(StoreErrorCode::StoreCorrupt,
-                             "project/query: branch history dangling parent revision="
-                                 + current->toCanonical());
-        }
-        history.push_back(assembleView(*manifest));
-        current = manifest->parentRevisionId;
+    // 第二步只消费锁内取得的值快照，避免跨查询刷新导致索引悬空。
+    history.reserve(manifests.size());
+    for (const auto& manifest : manifests) {
+        history.push_back(assembleView(manifest));
     }
     return history;
 }
@@ -411,10 +414,9 @@ std::optional<std::vector<std::uint8_t>> QueryPortImpl::tryObject(
         return std::nullopt;
     }
     try {
-        // 直通 ObjectStore：不存在 → nullopt（§4.6 引用存在性 try 轨）；
-        // 损坏 → StoreCorrupt——在此被 catch 降级（见下）。缓存互斥在
-        // ObjectStore 内部（§4.6"缓存互斥内部实现"），与提交并发安全
-        // （对象文件不可变）。
+        std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        m_host.refreshCommittedViewLocked();
+        if (!m_host.m_index->referencesObject(oid, cv)) { return std::nullopt; }
         return m_host.m_objects->tryObject(oid, cv);
     } catch (const std::exception& e) {
         // noexcept 边界：损坏（篡改/位翻转）与环境失败都不可抛——开发
@@ -437,9 +439,15 @@ std::vector<std::uint8_t> QueryPortImpl::object(core::ObjectId oid,
                                                 core::ContentVersion cv) const
 {
     requireOpen();
-    // 强语义直通：引用缺失/摘要不符 → StoreCorrupt（§5.2 错误表"引用
-    // 缺失＝store-corrupt"）；全零身份 → invalid_argument（ObjectStore
-    // 契约透传）。不取 writer 锁——对象文件不可变（内容寻址只增）。
+    if (!oid.isValid() || !cv.isValid()) {
+        throw std::invalid_argument("project/query: object identity is invalid");
+    }
+    std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+    m_host.refreshCommittedViewLocked();
+    if (!m_host.m_index->referencesObject(oid, cv)) {
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/query: object outside committed closure oid=" + oid.toCanonical());
+    }
     return m_host.m_objects->object(oid, cv);
 }
 
@@ -458,6 +466,7 @@ std::vector<DraftInfo> QueryPortImpl::listDrafts(core::BranchId branch) const
     core::RevisionId tip{};
     {
         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+        m_host.refreshCommittedViewLocked();
         const auto found = revindex::RevisionIndex::branchTip(m_host.m_authoritative,
                                                               branch);
         if (found.has_value()) {

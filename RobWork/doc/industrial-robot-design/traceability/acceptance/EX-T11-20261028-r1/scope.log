@@ -1,0 +1,2 @@
+verify-task-scope: EX-T11 base=6a49e128c00f head=4284e8e05a42 changed=193 allowedRules=35 forbiddenRules=3
+verify-task-scope: PASS EX-T11 —— 193 个路径全部在允许面内

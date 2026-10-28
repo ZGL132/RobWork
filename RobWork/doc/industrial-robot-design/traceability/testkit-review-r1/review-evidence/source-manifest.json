@@ -1,0 +1,355 @@
+{
+  "head": "6dc1141ae1e4d0db61baf1e7ab8d2ed414669c9f",
+  "files": [
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\CMakeLists.txt",
+      "relative": "CMakeLists.txt",
+      "lines": 350,
+      "sha256": "334f1197c413e5cbda38b242002ae545a642045356147ba704a0c7d539ad8bae",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\Check.hpp",
+      "relative": "include/sdurws/ird/testkit/Check.hpp",
+      "lines": 106,
+      "sha256": "9f921111c2311fd172f01dc4f3c3e599341eb594ed2ca5d049a389daa9b7fbe0",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\ContractCheck.hpp",
+      "relative": "include/sdurws/ird/testkit/ContractCheck.hpp",
+      "lines": 126,
+      "sha256": "2e04cc6038fff1c53947c13737ff1777651a47475c97609058f742219ea36d38",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\Dataset.hpp",
+      "relative": "include/sdurws/ird/testkit/Dataset.hpp",
+      "lines": 203,
+      "sha256": "5dd10a580283480900f8bc9606cc0629e09766a44972aeedbe21fbba529dd7e5",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\Fault.hpp",
+      "relative": "include/sdurws/ird/testkit/Fault.hpp",
+      "lines": 126,
+      "sha256": "3359777bde403d5b37017209caca4b5f434d5ae262358563a960b0763f5f4595",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\Fixture.hpp",
+      "relative": "include/sdurws/ird/testkit/Fixture.hpp",
+      "lines": 191,
+      "sha256": "1d617d471ee9393f18a4e9b5b1fa9bd1d2025a40289056502bd363c9bd77204b",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\gtest\\AssertMacros.hpp",
+      "relative": "include/sdurws/ird/testkit/gtest/AssertMacros.hpp",
+      "lines": 87,
+      "sha256": "592ed9a0a58b4d9a38ee86d3c9ec7e99a62cd286351886a82c9f26acdd1f99e9",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\gtest\\GoldenFixture.hpp",
+      "relative": "include/sdurws/ird/testkit/gtest/GoldenFixture.hpp",
+      "lines": 194,
+      "sha256": "ef03acf26c7ccd89fb03c0c53f6e90bd195c7c9851113dc214f3fe750c3be874",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\gtest\\RecordListener.hpp",
+      "relative": "include/sdurws/ird/testkit/gtest/RecordListener.hpp",
+      "lines": 154,
+      "sha256": "005ef3ebf336c5df601ffae7ae7f7cfb9b56e5174ccc5bcddd371b97f6f76b30",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\JsonLite.hpp",
+      "relative": "include/sdurws/ird/testkit/JsonLite.hpp",
+      "lines": 127,
+      "sha256": "79f461314e8ffb8c1d0eefdf54b494818d3c642f33cbfcd57d08ed2750eb09b2",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\PerfBenchmark.hpp",
+      "relative": "include/sdurws/ird/testkit/PerfBenchmark.hpp",
+      "lines": 497,
+      "sha256": "0c2707e765464163491352b2aa1a31697f6026d0f1c58588d345c864fe482bc0",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\ProcessRunner.hpp",
+      "relative": "include/sdurws/ird/testkit/ProcessRunner.hpp",
+      "lines": 153,
+      "sha256": "ba58bb2ebdb58b293b442e5cf1d2f192117b0d424c9f93d55279a0a2dc20fdee",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\README.md",
+      "relative": "include/sdurws/ird/testkit/README.md",
+      "lines": 34,
+      "sha256": "20314441b27d33bdddc15cd33e4891ef37c02e32fa56935117e55bcd98ac543a",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\Report.hpp",
+      "relative": "include/sdurws/ird/testkit/Report.hpp",
+      "lines": 251,
+      "sha256": "c0b987b69cb66954e4f10eebae9d86d245c01f74f856dfd91551b6d1228587b2",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\ReproBenchmark.hpp",
+      "relative": "include/sdurws/ird/testkit/ReproBenchmark.hpp",
+      "lines": 416,
+      "sha256": "2f41a96e79b05bf2b114406ea3f1dcfa1dae6f03fffb8a55691350042448b12f",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\SetCheck.hpp",
+      "relative": "include/sdurws/ird/testkit/SetCheck.hpp",
+      "lines": 452,
+      "sha256": "18ac1e116a6b5e88e36e34bedc1ecf028007302f3e8f58c70bc2a880ee8bbece",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\TestPaths.hpp",
+      "relative": "include/sdurws/ird/testkit/TestPaths.hpp",
+      "lines": 180,
+      "sha256": "9bf102c60b0e8f76e802d5c73cdae6ef2e83749b634bc183484c8510892af613",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\ToleranceProfile.hpp",
+      "relative": "include/sdurws/ird/testkit/ToleranceProfile.hpp",
+      "lines": 111,
+      "sha256": "a7ae7389c8066c73d9fa9d609871eeabf6a8d9f670cb0efc3d1ec6045b093aff",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\Check.cpp",
+      "relative": "src/Check.cpp",
+      "lines": 153,
+      "sha256": "033415389bdd835315b7ac87aa0d482a0a056d98089c6d9a56521e915918141a",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\ContractCheck.cpp",
+      "relative": "src/ContractCheck.cpp",
+      "lines": 183,
+      "sha256": "a1069c553c5f25069b323342219b560d6a9270138c6e57c859eb31a261680fc3",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\Dataset.cpp",
+      "relative": "src/Dataset.cpp",
+      "lines": 508,
+      "sha256": "f6c849e346ceb36372c6f6f3d942647a84b23794925cd5afb2f19cdc422c0bf1",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\Fault.cpp",
+      "relative": "src/Fault.cpp",
+      "lines": 36,
+      "sha256": "36208eb510bbbf07a18741268d9919eb1db13a0bf78ac6cf4a050e2f357fe029",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\Fixture.cpp",
+      "relative": "src/Fixture.cpp",
+      "lines": 241,
+      "sha256": "bc87c1db8885c339a4e7d5a46b4a4844f3215da8d753756fa0396e80ea06f448",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\JsonLite.cpp",
+      "relative": "src/JsonLite.cpp",
+      "lines": 602,
+      "sha256": "4b4877be80ed54ebfc49ac4161b8d2b88dd9da3596f79572488bef821ba7b982",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\ProcessRunner.cpp",
+      "relative": "src/ProcessRunner.cpp",
+      "lines": 666,
+      "sha256": "97e503548bb047c538976de4dd3a71ed47d9b730aa70698853be7b6c7860a07b",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\Report.cpp",
+      "relative": "src/Report.cpp",
+      "lines": 432,
+      "sha256": "c6ac049bbb8bb3cd19c3368c9db90880698ba657f69f2495cc0876a371b14450",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\SetCheckMatch.cpp",
+      "relative": "src/SetCheckMatch.cpp",
+      "lines": 95,
+      "sha256": "b23c5bb7b4c5c079abeef7c2a77150c24bf1318b5648ede46b5bcb8a74ca498b",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\TestPaths.cpp",
+      "relative": "src/TestPaths.cpp",
+      "lines": 118,
+      "sha256": "b123627fbb72321e42d6caf426290996b09da307d8fd8d19c98eb217302cc5e5",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\src\\ToleranceProfile.cpp",
+      "relative": "src/ToleranceProfile.cpp",
+      "lines": 315,
+      "sha256": "a02daaed5979df5bebe5d4c21f713d8cca623a6d7266f0b86d5a9bf0e1973b06",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\BuildRedLineTest.cpp",
+      "relative": "test/BuildRedLineTest.cpp",
+      "lines": 265,
+      "sha256": "e2694c47217089427cb1a14501c69d39c26d011ce0cdb32263b8e0e470728862",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\CheckTest.cpp",
+      "relative": "test/CheckTest.cpp",
+      "lines": 131,
+      "sha256": "f6a607c1fac575e376f8655e0339013f2c1b7fe276fa401a157bb67cb5b74ca5",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\ContractCheckTest.cpp",
+      "relative": "test/ContractCheckTest.cpp",
+      "lines": 200,
+      "sha256": "e9f50eb11638df7e411316a1bcf6950db397be4f730d6f9d4dc93b302a27e927",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\CoreIntegrationExampleTest.cpp",
+      "relative": "test/CoreIntegrationExampleTest.cpp",
+      "lines": 51,
+      "sha256": "312073cad077c710b1aa3b36d2313c71028b9770b740e1a5a8ff73ef33326a13",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\DatasetTest.cpp",
+      "relative": "test/DatasetTest.cpp",
+      "lines": 292,
+      "sha256": "f09d20f4776bb150c69a164b3290e5b5dd97098702ed64b033140ace04f9d2be",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\FaultTest.cpp",
+      "relative": "test/FaultTest.cpp",
+      "lines": 232,
+      "sha256": "883d888295bcb3f8a51c6d23c37033969c417817fd0dccac578e95d300dddac5",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\FixtureTest.cpp",
+      "relative": "test/FixtureTest.cpp",
+      "lines": 453,
+      "sha256": "0a57f27007f904c9857a7d4c2d91d723b598a67a04a9e687ca0fddf427b33931",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\JsonLiteTest.cpp",
+      "relative": "test/JsonLiteTest.cpp",
+      "lines": 162,
+      "sha256": "4bcf7ca7e9c5976465811d6582f69cc56aa288bfedd9b5b0857c9d1ac94628ab",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\ListenerOwnershipTest.cpp",
+      "relative": "test/ListenerOwnershipTest.cpp",
+      "lines": 238,
+      "sha256": "bb86b0316ecd457b8227d1de500140d12a9a08493de9ee5272cb5c1cb38c51c3",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\PerfBenchmarkTest.cpp",
+      "relative": "test/PerfBenchmarkTest.cpp",
+      "lines": 248,
+      "sha256": "f7fa1c2d4c42b7661c6970578e82797cd226399bd90b01c38f00c9b51cdaff2e",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\ProcessRunnerTest.cpp",
+      "relative": "test/ProcessRunnerTest.cpp",
+      "lines": 436,
+      "sha256": "2614fa2251f46200985668cab5cabb0bf07c1cdf435f90b2bc406deaed78e91c",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\ReportTest.cpp",
+      "relative": "test/ReportTest.cpp",
+      "lines": 253,
+      "sha256": "3201c30ca7d904ba58eb8246d758dd6be85d37dedcdf0404b483dd317fd1a270",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\ReproBenchmarkTest.cpp",
+      "relative": "test/ReproBenchmarkTest.cpp",
+      "lines": 284,
+      "sha256": "ac72fdcb741e0c50c7839ff6b7eab8fa7e6c991ce61173469fe805ae7db3fb29",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\SetCheckTest.cpp",
+      "relative": "test/SetCheckTest.cpp",
+      "lines": 484,
+      "sha256": "7d44019393c45643349392ad2667f56e84355050df61d55b358b8f9faca1db73",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\TestMain.cpp",
+      "relative": "test/TestMain.cpp",
+      "lines": 33,
+      "sha256": "403142b2e7c9af905984dd3c4214d8da6187fe79dc93e9fbb53286830e41edd9",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\TestPathsTest.cpp",
+      "relative": "test/TestPathsTest.cpp",
+      "lines": 296,
+      "sha256": "fc2e7ea65e6efddbdc5607fd69f51eaef96c7c44d4a959700eb26021a20f0537",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\test\\ToleranceProfileTest.cpp",
+      "relative": "test/ToleranceProfileTest.cpp",
+      "lines": 182,
+      "sha256": "51ab542d9ef57c365fb65cdd8b0b27513a93c2aa904f9d636d8aac01ecbc6d5c",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "relative": "tools/install-scan/ird-install-scan.ps1",
+      "lines": 61,
+      "sha256": "7ffc8b90b2ccf4697cccc3bf22748ad05ad85e06df5d42caca1ab47f7bd5e461",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\lsnchild\\main.cpp",
+      "relative": "tools/lsnchild/main.cpp",
+      "lines": 104,
+      "sha256": "4721219f6284e3bae3431a9b024c52cdcb2375dd007b4a12dfaf67801e9e9aa8",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\prochelper\\main.cpp",
+      "relative": "tools/prochelper/main.cpp",
+      "lines": 187,
+      "sha256": "c6860d7f21293f7fef184e85ee44b57a17637bed07d982476843e3737785aaaf",
+      "sameAsPriorReview": true
+    },
+    {
+      "path": "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\testdata\\main.cpp",
+      "relative": "tools/testdata/main.cpp",
+      "lines": 125,
+      "sha256": "ff1da88a730a2ae33da8d1bcdd272335ddd1eb7edd40ab550f545fe6783fa079",
+      "sameAsPriorReview": true
+    }
+  ]
+}

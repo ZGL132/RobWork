@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-27T21:14:47.777" name="AllTests">
+  <testsuite name="JsonRoundtrip" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:14:47.777">
+    <testcase name="UnsignedIntegerTextIsExact_ReviewR06" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="54" status="run" result="completed" time="0." timestamp="2026-10-27T21:14:47.777" classname="JsonRoundtrip" />
+  </testsuite>
+  <testsuite name="JsonRejections" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:14:47.778">
+    <testcase name="DumpRejectsNonFiniteNumbers_ReviewR03" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="64" status="run" result="completed" time="0." timestamp="2026-10-27T21:14:47.778" classname="JsonRejections" />
+  </testsuite>
+  <testsuite name="ReproRecordReview" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:14:47.778">
+    <testcase name="ExactSeedRoundtrip_ReviewR06" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FixtureTest.cpp" line="46" status="run" result="completed" time="0." timestamp="2026-10-27T21:14:47.778" classname="ReproRecordReview" />
+  </testsuite>
+  <testsuite name="TestRecordJson" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T21:14:47.778">
+    <testcase name="NonFiniteAndMissingValuesStayMachineReadable_ReviewR03" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ReportTest.cpp" line="148" status="run" result="completed" time="0." timestamp="2026-10-27T21:14:47.778" classname="TestRecordJson" />
+  </testsuite>
+</testsuites>

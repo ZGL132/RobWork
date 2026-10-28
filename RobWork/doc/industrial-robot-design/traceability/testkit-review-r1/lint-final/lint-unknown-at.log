@@ -1,0 +1,3 @@
+lint: 字典 230 个需求 ID（C:\Users\zgl18\AppData\Local\Temp\ird-testkit-tools-ikr0c4th\data\requirements-ids.json）
+lint-fail: pol-collision-analytic/1.0.0: coveredAt ID 不在字典: AT-999
+lint: 扫描 1 个数据集版本，违规 1

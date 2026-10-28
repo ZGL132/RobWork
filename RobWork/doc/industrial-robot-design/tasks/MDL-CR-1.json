@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "MDL-CR-1",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "modeling专项评审修复第1批",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "MDL-01",
+    "MDL-02",
+    "MDL-06",
+    "MDL-10",
+    "MDL-12"
+  ],
+  "designRefs": [
+    "units/modeling.md#5",
+    "units/modeling.md#7"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/DhConvert.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingAuthorityFlows.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CanonicalBridge.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CanonicalBridgeTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/MDL-CR-1.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/MDL-CR-1.json",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/*.json",
+    "RobWork/doc/industrial-robot-design/traceability/modeling-fixes/batch1/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "本批局部修复与真实回归；实施待所有者独立验收"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "pwsh -NoProfile -File build/modeling-review-20261028/reproduce-probes.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/MDL-CR-1.json"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-1"
+  ],
+  "acceptance": [
+    "对应评审反例转PASS且无公差放宽",
+    "保留runtime模型owner及物理单位/来源/失败原子性",
+    "本批真实验证与独立可回滚提交，不自签独验"
+  ],
+  "note": "所有者2026-10-28分批修复指令；本批起点a32c040d41b129dc974c0b61da51934dd947b696，指定C:工作树/codex/core-review-fixes；沿既有H6格式登记，ready不是独验通过；C03求解骨架冻结，仅修输入/检验门，不冒称LM已复用迁移。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/MDL-CR-1.json"
+  }
+}

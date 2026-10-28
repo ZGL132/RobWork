@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <deque>
 #include <mutex>
+#include <limits>
 #include <thread>
 #include <utility>
 
@@ -129,6 +130,9 @@ struct WorkerSupervisor::WorkerRecord {
     FrameSequencer sequencer;          ///< seq 重排/去重/断裂（EX-CHN-1 判定本体）
     MessageReassembler reassembler;    ///< 分帧续传重组（DispatchRequest/FinalOutput）
     std::uint64_t outSeq = 1;          ///< 命令流发送序号（单调）
+    bool cancelRequested = false;     ///< 本尝试 CancelRequest 已成功提交命令流。
+    bool pauseRequested = false;      ///< 本尝试 PauseRequest 已成功提交命令流。
+    bool dispatchAccepted = false;    ///< 本尝试已确认派发受理。
     bool handshakeDone = false;        ///< 握手完成（Hello/HelloAck 已过）
     bool protocolFailed = false;       ///< 协议错误闩（fatal 触发后本通道废弃）
     bool hungJudged = false;           ///< 已出 WorkerHung 判定（恰一次）
@@ -151,7 +155,11 @@ struct WorkerSupervisor::WorkerRecord {
             ::CloseHandle(processHandle);
             processHandle = nullptr;
         }
-        channel.reset();  // 服务端句柄关闭——管道断裂是 worker 侧正常归宿
+        channel.reset();  // 服务端句柄关闭——挂起 I/O 已收敛。
+        job.reset();      // Dead 墓碑不保留内核作业句柄/残存子进程。
+        assignment.dispatch = {}; // 物化快照/模型字节不随墓碑长驻。
+        reassembler = MessageReassembler{}; // 非完整结果仅丢弃，不提升为成功产物。
+        sequencer = FrameSequencer{}; // 退出后也释放乱序缓冲，不随 Dead 墓碑保留载荷。
     }
 };
 
@@ -467,7 +475,8 @@ void WorkerSupervisor::requestCooperativeCancel(WorkerId worker)
     frame.type = ChannelMsgType::CancelRequest;
     frame.seq = record.outSeq++;
     frame.identity = record.identity;
-    (void)sendFrame(record, frame);  // 写失败＝通道断——协作取消退化为强杀路径（上层协议窗超时兜底）
+    record.cancelRequested = sendFrame(record, frame) || record.cancelRequested;
+    // 写失败不冒充请求已交付；上层协作窗超时仍走强杀兜底。
 }
 
 void WorkerSupervisor::requestPause(WorkerId worker)
@@ -490,7 +499,7 @@ void WorkerSupervisor::requestPause(WorkerId worker)
     frame.type = ChannelMsgType::PauseRequest;
     frame.seq = record.outSeq++;
     frame.identity = record.identity;
-    (void)sendFrame(record, frame);  // 写失败＝通道断——暂停意图滞留（保持 Running，§7.4"状态保持 Running"）
+    record.pauseRequested = sendFrame(record, frame) || record.pauseRequested;
 }
 
 void WorkerSupervisor::terminateForce(WorkerId worker, TerminationCause /*cause*/)
@@ -541,7 +550,7 @@ std::size_t WorkerSupervisor::workerCount() const noexcept
     return m_workers.size();  // 仅调度线程（头注——任意线程观测走 list()）
 }
 
-std::uint64_t WorkerSupervisor::aggregateJobMemoryBytes() const
+std::optional<std::uint64_t> WorkerSupervisor::aggregateJobMemoryBytes() const
 {
     // EX-T07（§6.6 内存采样行 JobMemory 半区）：全部活 worker 的作业提交
     // 内存峰值求和——ResourceController 生产采样源（SupervisorMemorySampler）
@@ -554,14 +563,18 @@ std::uint64_t WorkerSupervisor::aggregateJobMemoryBytes() const
         // 已死、等 poll 尾清账的记录）不再参与聚合——作业峰值是单调量，
         // 死进程的峰值若计入会永久抬高整体读数（ResourceController 误判
         // 内存压力；原实现经"死记录回池 Idle"长期踩中，本分支防同样窗口）。
-        // 查询失败的条目计 0：尽力求和不毒化整体读数——"半读数"的防混淆
-        // 语义由采样器层的整体失败通道承担（其注）。
+        // EXR-10：任一在途条目失采或加总溢出都返回无数据；合法零单独保留。
+        // 指标口径不变，不把探测失败错误翻译成低压力。
         if (record->job.valid() && record->processHandle != nullptr
             && !record->exitProcessed) {
             std::uint64_t jobBytes = 0;
-            if (win32::queryJobPeakCommittedBytes(record->job.handle(), jobBytes)) {
-                total += jobBytes;
+            if (!win32::queryJobPeakCommittedBytes(record->job.handle(), jobBytes)) {
+                return std::nullopt;
             }
+            if (std::numeric_limits<std::uint64_t>::max() - total < jobBytes) {
+                return std::nullopt;
+            }
+            total += jobBytes;
         }
     }
     return total;
@@ -680,6 +693,15 @@ void WorkerSupervisor::poll()
     for (auto& [id, record] : m_workers) {
         (void)id;
         drainInbox(*record);
+        // EXR-07：reader 可能因坏帧提前结束。退出事实仍从本进程句柄收割，
+        // 不依赖已经不存在的 Exited 事件生产者；不得把尚在运行的进程当退出。
+        if (record->protocolFailed && !record->exitProcessed
+            && record->processHandle != nullptr
+            && ::WaitForSingleObject(record->processHandle, 0) == WAIT_OBJECT_0) {
+            DWORD code = 0xFFFFFFFFu;
+            ::GetExitCodeProcess(record->processHandle, &code);
+            processExit(*record, code);
+        }
         // 缺口超时探测独立于帧到达（缺口后 worker 停发帧的场景也要能到
         // 点判定——EX-CHN-1 断裂面的时钟半区）。
         if (!record->protocolFailed && record->sequencer.gapTimedOut()) {
@@ -833,6 +855,24 @@ void WorkerSupervisor::handleCompleteFrame(WorkerRecord& record, ChannelFrame&& 
 
 void WorkerSupervisor::handleFrame(WorkerRecord& record, ChannelFrame&& frame)
 {
+    // EXR-05：身份已逐帧核过；这里核协议阶段与请求事实，不以收到消息自证合法。
+    const bool early = !record.handshakeDone && frame.type != ChannelMsgType::Hello;
+    const bool unsolicited =
+        (frame.type == ChannelMsgType::CancelAck && !record.cancelRequested)
+        || (frame.type == ChannelMsgType::PauseAck && !record.pauseRequested);
+    const bool repeatedDispatch = frame.type == ChannelMsgType::DispatchAccept && record.dispatchAccepted;
+    const bool beforeDispatchAccept = !record.dispatchAccepted
+        && (frame.type == ChannelMsgType::Progress || frame.type == ChannelMsgType::ResultBatch
+            || frame.type == ChannelMsgType::CheckpointBatch || frame.type == ChannelMsgType::FinalOutput);
+    const bool afterControlAck = (record.cancelSettledFlag || record.pauseAckFlag)
+        && (frame.type == ChannelMsgType::FinalOutput || frame.type == ChannelMsgType::ResultBatch);
+    if (early || beforeDispatchAccept || unsolicited || repeatedDispatch || afterControlAck) {
+        record.protocolFailed = true;
+        emit(WorkerEvent{WorkerEvent::Kind::ProtocolViolation, record.id, record.identity,
+            std::nullopt, 0, 0, {}, "EX-CHANNEL-PROTOCOL-ERROR",
+            "message violates handshake/request/terminal phase", true, 0, ExitClassification::Crashed});
+        return;
+    }
     record.lastActivity = clockNow(m_clock);  // "管道有数据"半区刷新（§6.5 失联判定）
     switch (frame.type) {
     case ChannelMsgType::Heartbeat: {
@@ -843,7 +883,8 @@ void WorkerSupervisor::handleFrame(WorkerRecord& record, ChannelFrame&& frame)
     }
     case ChannelMsgType::Hello:
         if (record.handshakeDone) {
-            // 重复 Hello＝宿主异常（开发诊断，非致命）。
+            record.protocolFailed = true;
+            // 重复 Hello 破坏已建立的阶段，通道失败后不再接纳输出。
             emit(WorkerEvent{WorkerEvent::Kind::ProtocolViolation, record.id,
                              record.identity, std::nullopt, 0, 0, {},
                              "EX-CHANNEL-PROTOCOL-ERROR", "repeated Hello after handshake",
@@ -853,6 +894,7 @@ void WorkerSupervisor::handleFrame(WorkerRecord& record, ChannelFrame&& frame)
         }
         break;
     case ChannelMsgType::DispatchAccept:
+        record.dispatchAccepted = true;
         emit(WorkerEvent{WorkerEvent::Kind::DispatchAccepted, record.id, record.identity,
                          std::nullopt, 0, 0, {}, "", "", false, 0,
                          ExitClassification::Crashed});
@@ -1078,6 +1120,7 @@ void WorkerSupervisor::processExit(WorkerRecord& record, std::uint32_t exitCode)
         // 池"的结构保证：复用查找只扫 Idle）。进程资源关闭，记录留作墓碑
         // （退出码/分类观测面）。
         record.phase = WorkerStatus::Phase::Dead;
+        // 保留 Dead 墓碑与 HandleAdapter 查询；关闭底层进程/管道句柄即可。
         record.closeProcessResources();
         {
             std::lock_guard<std::mutex> lock(m_statusMutex);

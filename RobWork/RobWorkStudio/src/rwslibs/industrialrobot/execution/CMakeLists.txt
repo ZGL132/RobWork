@@ -257,6 +257,7 @@ add_executable(sdurws_ird_execution_test
     test/RunRegistryAdmissionTest.cpp
     test/SchedulerEventBusTest.cpp
     test/ChannelProtocolTest.cpp
+    test/WorkerWriterTest.cpp # EXR-04/05：同单元真实 writer 固定交错与命令身份回归。
     test/ResourceGovernanceTest.cpp
     test/CheckpointCacheTest.cpp
     test/ContractSuiteFacilitiesTest.cpp)

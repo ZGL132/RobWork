@@ -52,6 +52,7 @@
  */
 
 #include <sdurws/ird/diagnostics/Redaction.hpp>
+#include "EntryDetail.hpp"
 
 #include <array>
 #include <atomic>
@@ -133,9 +134,7 @@ std::string truncateUtf8(const std::string& text, std::size_t maxBytes)
     if (maxBytes == 0 || text.size() <= maxBytes) {
         return text;
     }
-    std::size_t cut = maxBytes;
-    // 回退尾部的 UTF-8 续字节（0b10xxxxxx），保证切点前是完整字符。
-    while (cut > 0 && (static_cast<unsigned char>(text[cut]) & 0xC0) == 0x80) { --cut; }
+    const auto cut = detail::utf8PrefixSize(text, maxBytes);
     return text.substr(0, cut) + std::string{kTruncMarker};
 }
 
@@ -160,7 +159,7 @@ struct RedactionService::Impl {
         //   串（含转义）或无空白段。分组：1=键名（结构，保留）2=分隔符
         //   （保留）——值整体消费不捕获。
         , reCredentialKv{
-              R"re(\b(password|passwd|pwd|secret|token|apikey|api[_-]key|access[_-]key|private[_-]key|auth[_-]token|authorization|credential|credentials)\b([ \t]*[:=][ \t]*)(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&|)]+))re",
+              R"re(\b(password|passwd|pwd|secret|token|key|apikey|api[_-]key|access[_-]key|private[_-]key|auth[_-]token|authorization|credential|credentials)\b(["']?[ \t]*[:=][ \t]*)(?:\[REDACTED:credential:[0-9]+\]|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&|)}\]]+))re",
               std::regex::icase}
         // ②认证方案凭证：Bearer/Basic 后随 ≥8 字符凭证段（方案与空白保留
         //   ——方案名是结构；凭证段整体替换）。**不收 digest/ntlm/negotiate**

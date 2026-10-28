@@ -1,0 +1,68 @@
+[
+  {
+    "name": "lint-default-dict",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-missing-profile",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-unknown-at",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-optional-parameters",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-malformed-dictionary",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\data"
+    ],
+    "expectedExit": 1,
+    "actualExit": 1,
+    "status": "PASS"
+  },
+  {
+    "name": "lint-missing-root",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_testdata_lint.exe",
+      "--root",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-testkit-tools-ikr0c4th\\absent-data"
+    ],
+    "expectedExit": 2,
+    "actualExit": 2,
+    "status": "PASS"
+  }
+]

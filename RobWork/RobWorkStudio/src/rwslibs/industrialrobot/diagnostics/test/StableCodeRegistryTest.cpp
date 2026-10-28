@@ -110,7 +110,7 @@ void expectThrowsWithCode(Fn&& fn, DiagnosticsErrorCode expected, const char* wh
 // 漂移/重排；拼写逐字来自 units/diagnostics.md §4.6 各行清单）。
 // ---------------------------------------------------------------------
 
-/// §4.6 全量 88 码（行序＝§4.6 表行序、行内＝收编清单原文序；RT-BOUNDS-
+/// §4.6 全量 94 码（行序＝§4.6 表行序、行内＝收编清单原文序；RT-BOUNDS-
 /// MAGNITUDE＝F-618 收编〔2026-10-10，diagnostics.md §4.6 RT 行尾〕）。
 const std::vector<const char*>& builtinCodeLiterals()
 {
@@ -126,7 +126,7 @@ const std::vector<const char*>& builtinCodeLiterals()
         "RT-DWC-COMPILE-FAILED", "RT-NAME-CONFLICT", "RT-BASE-WORLD-INCONSISTENT",
         "RT-CAPABILITY-MISSING", "RT-ROBWORK-ERROR", "RT-CACHE-INCOMPATIBLE", "RT-CANCELLED",
         "RT-BOUNDS-MAGNITUDE",
-        // POLICY 23
+        // POLICY 29
         "POLICY-SCHEMA-UNKNOWN-FIELD", "POLICY-SCHEMA-VERSION-FUTURE",
         "POLICY-SCHEMA-VERSION-UNKNOWN", "POLICY-THRESHOLD-NON-FINITE",
         "POLICY-THRESHOLD-NON-POSITIVE", "POLICY-THRESHOLD-OUT-OF-RANGE",
@@ -138,6 +138,9 @@ const std::vector<const char*>& builtinCodeLiterals()
         "POLICY-CLL-EVALUATION-FAILED", "POLICY-CLL-GEOMETRY-MISSING",
         "POLICY-JNT-TABLE-INVALID", "POLICY-ENGINEERING-RANGE-INVALID",
         "POLICY-INFO-DEFAULT-APPLIED",
+        "POLICY-THRESHOLD-REQUIRED-MISSING", "POLICY-POLICY-OBJECT-INVALID",
+        "POLICY-ENCODING-INVALID", "POLICY-PORT-ASSEMBLY-INCOMPLETE",
+        "POLICY-OBJECT-MISSING", "POLICY-CLL-QUERY-INVALID",
         // EVI 7
         "EVI-SNAPSHOT-INCOMPLETE", "EVI-CASE-COVERAGE-MISSING", "EVI-EVIDENCE-MISSING",
         "EVI-PROOF-INVALID", "EVI-ENVELOPE-ILLEGAL-COMBINATION", "EVI-CACHE-INCOMPATIBLE",
@@ -184,12 +187,12 @@ TEST(DiagCodesRegistry, DtReg1_BuiltinTableRegistersFullyAndManifestStable)
     // ---- 空注册表＋全量注册（矩阵行前置"空注册表"）----
     StableCodeRegistry registry;
     EXPECT_FALSE(registry.sealed());
-    registerBuiltinCodes(registry);   // 不抛＝88 项全部通过注册期验证
+    registerBuiltinCodes(registry);   // 不抛＝94 项全部通过注册期验证
 
-    // ---- registeredCodes 计数＝§4.6 清单（10/15/23/7/18/8/7）----
+    // ---- registeredCodes 计数＝§4.6 清单（10/15/29/7/18/8/7）----
     EXPECT_EQ(registry.registeredCodes("project").size(), 10u);
     EXPECT_EQ(registry.registeredCodes("runtime").size(), 15u);
-    EXPECT_EQ(registry.registeredCodes("policy").size(), 23u);
+    EXPECT_EQ(registry.registeredCodes("policy").size(), 29u);
     EXPECT_EQ(registry.registeredCodes("evidence").size(), 7u);
     EXPECT_EQ(registry.registeredCodes("execution").size(), 18u);
     EXPECT_EQ(registry.registeredCodes("reporting").size(), 8u);
@@ -209,7 +212,7 @@ TEST(DiagCodesRegistry, DtReg1_BuiltinTableRegistersFullyAndManifestStable)
     // ---- manifest 摘要两次计算稳定（矩阵行"manifest 摘要稳定"）----
     const CodeTableManifest first = registry.manifest();
     const CodeTableManifest second = registry.manifest();
-    EXPECT_EQ(first.entries.size(), 88u);
+    EXPECT_EQ(first.entries.size(), 94u);
     ASSERT_EQ(first.entries.size(), second.entries.size());
     for (std::size_t i = 0; i < first.entries.size(); ++i) {
         EXPECT_TRUE(first.entries[i] == second.entries[i])
@@ -480,7 +483,7 @@ TEST(DiagCodesRegistry, DtReg5_ParamSchemaValidation)
         EXPECT_NE(r.find("RT-SCHEMA-TEST"), nullptr);
     }
 
-    // 内置表逐码 paramSchema 均为合法形（88 码全部通过注册即证明——此处
+    // 内置表逐码 paramSchema 均为合法形（94 码全部通过注册即证明——此处
     // 显式抽查 §9.2 示例码的参数面）。
     const auto builtin = makeBuiltinRegistry();
     EXPECT_EQ(builtin->find("PRJ-LOCK-HELD")->paramSchema, std::string("[\"pid\",\"host\"]"));
@@ -622,7 +625,7 @@ TEST(DiagCodesRegistry, DtReg5_RuntimeMutationRejectedAfterSeal)
 
     // 查询路径在运行期可用（"运行期 find/manifest 并发只读安全"）。
     EXPECT_NE(registry.find("RT-INPUT-INVALID"), nullptr);
-    EXPECT_EQ(registry.manifest().entries.size(), 88u);
+    EXPECT_EQ(registry.manifest().entries.size(), 94u);
 }
 
 // =====================================================================
@@ -675,7 +678,7 @@ TEST(DiagCodesVocabulary, DtPdiag3_Category15Severity4TokensFrozen)
     EXPECT_EQ(categories.size(), 15u);
 }
 
-/** P-DIAG-3 补充：内置 88 码的码元数据登记面（category/severity/level/
+/** P-DIAG-3 补充：内置 94 码的码元数据登记面（category/severity/level/
  * retryable/
  *  flags）逐码落值——词表承载进码表（"随码元数据登记"acceptance 原文）。 */
 TEST(DiagCodesVocabulary, DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata)

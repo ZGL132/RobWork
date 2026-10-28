@@ -1326,3 +1326,9 @@ diagnostics：建议码表注册（§9.6）；文案与用户可见表述归其�
 ### A-23 宿主工程策略生命周期消费（2026-10-20，WP-14-T12）
 
 策略编辑的RawPolicyInput、PolicyCodec、七段解析、发布门及contentIdentity仍是唯一权威，policy公共接口/实现未变化。L5按不可变project修订装配字节源和存在性/角色上下文，不将可变HEAD用于Provider的(oid,cv)缓存；多策略对象/坏编码保持失败，不伪装系统缺省。UI空字段保留nullopt；组定义尚无Raw承载时groupDefined=false，由既有解析明确拒绝未定义组。首次撤销可保留项目分配身份并恢复系统缺省语义，身份是project业务锚，语义身份仍由policy唯一计算。
+
+## 专项修正（POL-T13，2026-10-28）
+
+碰撞判定实现和 evaluator 装配入口仍唯一；每个会话独占上游后端、几何缓存和锁，避免不同 WorkCell 的局部 Frame ID 串用。逐几何接收结果决定完整覆盖，不能以模型壳存在代替。数值输入须全表有限，未知 query kind/碰撞域被拒；调用上下文在样本边界和终态化前复核。已测最小距离先累计再短路，coverage.excluded 与 appliedFilters 同源。
+
+有限关节的限位端点须有限且严格递增，否则按硬结构错误输出 IntervalInvalid，处置权仍归 modeling/project。有限端点的宽度、裕量或比值溢出时整体 Failed；近限位比采用先归一再乘2，避免次正规区间的半宽下溢。Group、真实距离后端及完整场景角色供给仍依原未决项，不引入新核心。实施证据与准确边界见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)，本记录不代表独验通过。

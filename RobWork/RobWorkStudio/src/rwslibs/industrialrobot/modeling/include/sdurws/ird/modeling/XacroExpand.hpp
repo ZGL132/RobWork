@@ -2,14 +2,14 @@
  * @file   XacroExpand.hpp
  * @brief  Xacro 受控展开语义——IXacroExpandService 纯函数服务、
  *         ValidatedXacroSource/XacroSubstitutionMap 输入值类型、
- *         ExpandOutcome 展开产出值类型（卡 §6.5/§9.4.9；任务 WP-13-T06）。
+ *         xacro::ExpandOutcome 展开产出值类型（卡 §6.5/§9.4.9；任务 WP-13-T06）。
  *
  * 设计依据：
  *   - units/modeling.md §6.5（Xacro 受控预处理——输入为 io 已验证字节＋
  *     依赖树；展开失败/依赖缺失→可定位诊断（宏名/行列），不产生草稿；
  *     展开产物进入与 URDF 相同的映射与安全边界（§6.3/§6.4）；来源记录：
  *     原始 .xacro 的 ResourceSnapshot digest 进草稿 externalRefs）、§9.4.9
- *     （IXacroExpandService 概要契约——ExpandOutcome expand(const
+ *     （IXacroExpandService 概要契约——xacro::ExpandOutcome expand(const
  *     ValidatedXacroSource&, const SubstitutionMap&, Diags&) const；未定义
  *     宏→行列定位诊断；绝不执行任意代码）、§3.3（公共头表 XacroExpand.hpp
  *     行——T06）、§3.4（纯函数服务：无共享可变状态、可重入、确定性）
@@ -198,7 +198,7 @@ struct XacroParameterItem {
  *
  * 与诊断码的关系（两层面分工——Import.hpp 同款）：diag 是稳定码呈现面
  * （MDL-IMPORT-XACRO-UNRESOLVED＝本单元语义面；IO-*＝io 护栏码透传），
- * error 是调用方判别面。失败一律无展开产物（ExpandOutcome.expandedBytes
+ * error 是调用方判别面。失败一律无展开产物（xacro::ExpandOutcome.expandedBytes
  * 为空——无草稿面），报告语义由 diags 承载。
  */
 enum class XacroExpandErrorCode : std::uint8_t {
@@ -248,7 +248,7 @@ struct XacroExpandError {
 };
 
 // =====================================================================
-// 产出值类型：ExpandOutcome（§9.4.9 expand 返回值）
+// 产出值类型：xacro::ExpandOutcome（§9.4.9 expand 返回值）
 // =====================================================================
 
 /**
@@ -271,12 +271,14 @@ struct XacroExpandError {
  * （V-09"无对象写入"——对象写入只发生在命令 prepare 之后，与导入向导
  * 无关，§6.7）。
  */
+namespace xacro {
 struct ExpandOutcome {
     std::optional<std::vector<std::uint8_t>> expandedBytes;  ///< 展开产物（URDF 形态；nullopt＝失败无草稿）
     std::vector<XacroParameterItem> parameters;              ///< 参数列表展示数据（定义序；失败时为已收集部分）
     XacroProvenance provenance{};                            ///< 来源记录（mapXacroExpanded 输入——§6.5）
     std::optional<XacroExpandError> error;                   ///< 最严重阻断条件（无错误时为空）
 };
+}  // namespace xacro
 
 // =====================================================================
 // 接口：IXacroExpandService（§9.4.9 原文签名）＋无状态实现
@@ -320,10 +322,10 @@ public:
      *                稳定码（护栏码透传），唯一构造点见 DiagCodes.hpp/
      *                io::errorCodeToken——禁字符串拼码）
      *
-     * @return ExpandOutcome{expandedBytes, parameters, provenance, error}
+     * @return xacro::ExpandOutcome{expandedBytes, parameters, provenance, error}
      *         （四元关系见类型注）
      */
-    virtual ExpandOutcome expand(const ValidatedXacroSource& source,
+    virtual xacro::ExpandOutcome expand(const ValidatedXacroSource& source,
                                  const XacroSubstitutionMap& substitutions,
                                  std::vector<core::DiagnosticRecord>& diags) const = 0;
 };
@@ -343,7 +345,7 @@ class XacroExpandService final : public IXacroExpandService {
 public:
     XacroExpandService() = default;
 
-    ExpandOutcome expand(const ValidatedXacroSource& source,
+    xacro::ExpandOutcome expand(const ValidatedXacroSource& source,
                          const XacroSubstitutionMap& substitutions,
                          std::vector<core::DiagnosticRecord>& diags) const override;
 };

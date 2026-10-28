@@ -1,0 +1,402 @@
+[
+  {
+    "name": "16-fatal",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.exe",
+      "--gtest_filter=Supplement.Fatal",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\16-fatal.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\16-fatal.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T20:01:36.435",
+      "name": "AllTests"
+    },
+    "xmlFailures": [
+      [
+        {
+          "message": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp:6\nValue of: false\n  Actual: false\nExpected: true\ncontrolled fatal\n",
+          "type": ""
+        },
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp:6\nValue of: false\n  Actual: false\nExpected: true\ncontrolled fatal\n"
+      ]
+    ],
+    "testcases": [
+      {
+        "name": "Fatal",
+        "file": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp",
+        "line": "6",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-27T20:01:36.435",
+        "classname": "Supplement"
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Supplement.Fatal"
+    ]
+  },
+  {
+    "name": "17-exception",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.exe",
+      "--gtest_filter=Supplement.Exception",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\17-exception.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\17-exception.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "1",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T20:01:36.464",
+      "name": "AllTests"
+    },
+    "xmlFailures": [
+      [
+        {
+          "message": "unknown file\nC++ exception with description \"controlled exception\" thrown in the test body.\n",
+          "type": ""
+        },
+        "unknown file\nC++ exception with description \"controlled exception\" thrown in the test body.\n"
+      ]
+    ],
+    "testcases": [
+      {
+        "name": "Exception",
+        "file": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp",
+        "line": "7",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-27T20:01:36.464",
+        "classname": "Supplement"
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Supplement.Exception"
+    ]
+  },
+  {
+    "name": "18-suite",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.exe",
+      "--gtest_filter=SuiteFailure.*",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\18-suite.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\18-suite.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T20:01:36.671",
+      "name": "AllTests"
+    },
+    "xmlFailures": [
+      [
+        {
+          "message": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp:10\nValue of: false\n  Actual: false\nExpected: true\ncontrolled suite failure\n",
+          "type": ""
+        },
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp:10\nValue of: false\n  Actual: false\nExpected: true\ncontrolled suite failure\n"
+      ]
+    ],
+    "testcases": [
+      {
+        "name": "Body",
+        "file": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp",
+        "line": "12",
+        "status": "run",
+        "result": "skipped",
+        "time": "0.",
+        "timestamp": "1970-01-01T08:00:00.000",
+        "classname": "SuiteFailure"
+      },
+      {
+        "name": "",
+        "status": "run",
+        "result": "completed",
+        "classname": "",
+        "time": "0.",
+        "timestamp": "1970-01-01T08:00:00.000"
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "SuiteFailure.Body"
+    ]
+  },
+  {
+    "name": "19-global",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.exe",
+      "--gtest_filter=Supplement.Pass",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\19-global.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\19-global.json",
+      "--review_global_fail"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1,
+    "xml": {
+      "tests": "1",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T20:01:36.703",
+      "name": "AllTests"
+    },
+    "xmlFailures": [
+      [
+        {
+          "message": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp:17\nFailed\ncontrolled environment failure\n",
+          "type": ""
+        },
+        "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp:17\nFailed\ncontrolled environment failure\n"
+      ]
+    ],
+    "testcases": [
+      {
+        "name": "Pass",
+        "file": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp",
+        "line": "5",
+        "status": "run",
+        "result": "skipped",
+        "time": "0.",
+        "timestamp": "1970-01-01T08:00:00.000",
+        "classname": "Supplement"
+      },
+      {
+        "name": "",
+        "status": "run",
+        "result": "completed",
+        "classname": "",
+        "time": "0.",
+        "timestamp": "1970-01-01T08:00:00.000"
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Supplement.Pass"
+    ]
+  },
+  {
+    "name": "20-parameters",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.exe",
+      "--gtest_filter=Cases/*",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\20-parameters.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\20-parameters.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "xml": {
+      "tests": "2",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T20:01:36.731",
+      "name": "AllTests"
+    },
+    "xmlFailures": [],
+    "testcases": [
+      {
+        "name": "Value/0",
+        "value_param": "1",
+        "file": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp",
+        "line": "14",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-27T20:01:36.731",
+        "classname": "Cases/Parameters"
+      },
+      {
+        "name": "Value/1",
+        "value_param": "2",
+        "file": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp",
+        "line": "14",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-27T20:01:36.731",
+        "classname": "Cases/Parameters"
+      }
+    ],
+    "summary": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": [
+      "Cases/Parameters.Value/0",
+      "Cases/Parameters.Value/1"
+    ]
+  },
+  {
+    "name": "21-disabled",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.exe",
+      "--gtest_filter=*DISABLED*",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\21-disabled.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\21-disabled.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "xml": {
+      "tests": "1",
+      "failures": "0",
+      "disabled": "1",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-10-27T20:01:36.764",
+      "name": "AllTests"
+    },
+    "xmlFailures": [],
+    "testcases": [
+      {
+        "name": "DISABLED_NotRun",
+        "file": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.cpp",
+        "line": "8",
+        "status": "notrun",
+        "result": "suppressed",
+        "time": "0.",
+        "timestamp": "1970-01-01T08:00:00.000",
+        "classname": "Supplement"
+      }
+    ],
+    "summary": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "testIds": []
+  },
+  {
+    "name": "22-write-failure",
+    "command": [
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\supplement.exe",
+      "--gtest_filter=Supplement.Pass",
+      "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\22-write-failure.xml",
+      "--ird_report=C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\intentionally-missing-parent\\report.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 0,
+    "reportExists": true
+  },
+  {
+    "name": "23-scan-clean",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\install-scan\\clean"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1
+  },
+  {
+    "name": "23-scan-library",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\install-scan\\library"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1
+  },
+  {
+    "name": "23-scan-header",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\install-scan\\header"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1
+  },
+  {
+    "name": "23-scan-missing",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\tools\\install-scan\\ird-install-scan.ps1",
+      "-InstallRoot",
+      "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141\\install-scan\\no-such-root"
+    ],
+    "cwd": "C:\\Users\\zgl18\\.codex\\visualizations\\2026\\10\\27\\01a17c71-e8b0-77a3-a24e-64fb5e74ce94\\testkit-review-6dc1141",
+    "exit": 1
+  }
+]

@@ -311,7 +311,8 @@ core::ContentIdentity makeContentIdentity(unsigned char seed)
 }
 
 /// 构造冻结快照（SnapshotBuilder 唯一合法生产者——身份为 builder 计算值）。
-evidence::AnalysisSnapshot makeSnapshot(const std::vector<evidence::CaseEntry>& cases)
+evidence::AnalysisSnapshot makeSnapshot(const std::vector<evidence::CaseEntry>& cases,
+    const OptimizationConfiguration* configuration=nullptr)
 {
     evidence::SnapshotBuilder builder;
     builder.setIdentity(core::ProjectId::generate(), core::BranchId::generate(),
@@ -336,6 +337,7 @@ evidence::AnalysisSnapshot makeSnapshot(const std::vector<evidence::CaseEntry>& 
     repro.productVersion = "perf-b07";
     repro.evidenceContractVersion = "1";
     builder.setReproduction(repro);
+    if(configuration) builder.addConfiguration({"opt.config",optimization::canonicalizeRunConfiguration(*configuration),{}});
     return builder.build(AllPresentClosure{});
 }
 
@@ -630,15 +632,16 @@ struct BenchJointFixture {
     /// 就绪联合请求（快照/覆盖/任务面就绪；基线根身份由调用方传入——跨腿
     /// 钉住后候选集合逐 ID 恒等，等价判定才有逐候选可比性）。
     JointRunRequest readyRequest(const OptimizationConfiguration& config,
-                                 const core::ObjectId& baselineRoot) const
+                                 const core::ObjectId& baselineRoot)
     {
+        snapshotHolder=makeSnapshot(makeTwoMandatoryCases(),&config); // EV-T13：配置与冻结输入同源。
         JointRunRequest req;
         req.config = config;
         req.baselineRoot = baselineRoot;
         req.baselineCv = baselineCv();
         req.snapshot = snapshotHolder;
-        req.task = {core::ProjectId::generate(), core::BranchId::generate(),
-                    core::RevisionId::generate(), core::RunId::generate(),
+        req.task = {snapshotHolder.project, snapshotHolder.branch,
+                    snapshotHolder.revision, core::RunId::generate(),
                     core::AttemptId{1U}};
         req.coverage = makeCoverage(snapshotHolder);
         return req;
@@ -2046,6 +2049,7 @@ TEST(OptRunTimeBenchmark, SameVersionCheckpointRecovery_WP23T08_B07)
 
     // ---- 恢复段：同版本 restore（Restored）→ 磁盘字节解码 → 续跑规格 ---
     execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.requestEvaluatorKey = std::string(optimization::kOptJointFullKey);
     restoreReq.checkpointId = ckptId;
     restoreReq.requestSliceId = sliceId;
     restoreReq.requestContractVersion = optimization::kOptJointFullContractVersion; // 同版本

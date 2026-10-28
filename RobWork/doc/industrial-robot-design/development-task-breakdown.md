@@ -859,7 +859,8 @@ DESIGN-T01（2026-10-27）：阶段B的OPT-B与RPT-01-B须可在轨迹/动力学
 | R-5（proximity 直链禁止） | policy 产品实现（碰撞唯一实现） | policy.md §3.4；AT-19 | 生效（WP-07-T01 起） | 2026-09-10 |
 | R-5（同上） | 各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 | 生效 | 2026-09-10 |
 | R-5（同上） | 各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 | 生效 | 2026-10-10 |
-| R-5（proximity 直链/包含禁止） | `sdurws_ird_runtime`（MA-02 真实碰撞设施——CollisionSession/CollisionDetector/PQP 窄相；判定权威仍归 policy 规则面〔RuntimeCollisionRules 由宿主从 policy CollisionRules 投影〕，runtime 只承载场景几何级判定执行；机器面＝IRD_R5_EXEMPT_TARGETS 增列） | 主线功能审计 MA-02 所有者 2026-10-21 立项；runtime.md v0.28 ② | 生效（wp13-t28 起） | 2026-10-21 |
+| R-5（proximity 直链/包含禁止） | `sdurws_ird_runtime`（MA-02 真实碰撞设施——CollisionSession/CollisionDetector/PQP 窄相；判定权威仍归 policy 规则面〔RuntimeCollisionRules 由宿主从 policy CollisionRules 投影〕，runtime 只承载场景几何级判定执行；机器面＝IRD_R5_EXEMPT_TARGETS 增列） | 主线功能审计 MA-02 所有者 2026-10-21 立项；runtime.md v0.28 ② | 已撤销（POL-T13删除重复设施，2026-10-28） | 2026-10-21 |
+| SUB（精确测试边） | `sdurws_ird_policy_contract_test -> sdurws_ird_diagnostics`：逐policy生产码核对正式registry/factory；不改变产品依赖 | POL-T13，用户2026-10-28要求按专项评审建议修复；仅此测试目标；对应IMPLEMENTATION.md与正式回归 | 已实施，待独验 | 2026-10-28 |
 | LIB（sdurw_loaders 须登记） | `sdurws_ird_runtime` 消费 sdurw_loaders 的 STL/OBJ 解析器（MA-01 网格资源通道——STLFile/LoaderOBJ；DAE/WRL/IV 依赖 Assimp 不引入）；机器面＝IRD_FRAMEWORK_REGISTER_ALLOWED 增列 | 主线功能审计 MA-01 所有者 2026-10-21 立项；runtime.md v0.28 ①；§4.6 实测表行同步 | 生效（wp13-t28 起） | 2026-10-21 |
 | T-1/T-2（testkit 分发/依赖） | 无例外 | testkit.md §2.4 | — | 2026-09-10 |
 | SUB（精确测试边） | `sdurws_ird_ui_gui_test -> sdurws_ird_modeling_plugin`；真实工程策略编辑窗口同源消费项目修订与策略解析，project/policy经插件既有PUBLIC依赖传递；不放宽产品库依赖 | WP-14-T12 A-23补充一，所有者明确批准；机器登记仅IRD_TEST_TARGET_EDGES一条 | 生效（仅集成GUI测试） | 2026-10-20 |
@@ -878,7 +879,7 @@ DESIGN-T01（2026-10-27）：阶段B的OPT-B与RPT-01-B须可在轨迹/动力学
 | `sdurw_math` | rw::math 数学类型 | core（WP-03-T01）、policy（WP-07-T01） |
 | `sdurw_kinematics` | Frame/State/StateStructure | runtime（WP-06-T01）、policy |
 | `sdurw_models` | WorkCell/Device/Joint | runtime、policy |
-| `sdurw_proximity` | 碰撞后端接口 | policy（R-5 例外）、runtime（MA-02 碰撞设施——R-5 例外第二引用方，2026-10-21 登记） |
+| `sdurw_proximity` | 碰撞后端接口 | policy（R-5 例外）；POL-T13删除runtime重复设施及直接链接，runtime例外撤销 |
 | `sdurwsim` | DynamicWorkCell/刚体动力学 | runtime（WP-06-T01）、dynamics（WP-17-T02） |
 | `sdurw_pathplanners` | 路径规划 | trajectory（WP-16-T06；业务域经各自计算库消费） |
 | `sdurw_loaders` | XML 解析＋网格模型加载（STL/OBJ） | runtime（MA-01 网格资源通道——2026-10-21 登记启用，LIB 门禁白名单同步；io/modeling 导入通道维持自行实现安全解析不变） |

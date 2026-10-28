@@ -1,0 +1,84 @@
+Note: Google Test filter = PolicyDiagnosticsRegistryContract.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PolicyDiagnosticsRegistryContract
+[ RUN      ] PolicyDiagnosticsRegistryContract.EveryEmittedCodeIsAccepted_POL_T13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(36): error: Expected: (descriptor) != (nullptr), actual: NULL vs (nullptr)
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-THRESHOLD-REQUIRED-MISSING
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(42): error: Expected: { const auto entry = factory.create(record, context); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::EqHelper::Compare("entry.record.code", "code", entry.record.code, code))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyDiagnosticsRegistryContractTest.cpp", 42, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws sdurws::ird::diagnostics::DiagnosticsError with description "diagnostics/code-unknown: 码未注册（POLICY-THRESHOLD-REQUIRED-MISSING）——工厂只接受已注册码".
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-THRESHOLD-REQUIRED-MISSING
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(36): error: Expected: (descriptor) != (nullptr), actual: NULL vs (nullptr)
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-POLICY-OBJECT-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(42): error: Expected: { const auto entry = factory.create(record, context); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::EqHelper::Compare("entry.record.code", "code", entry.record.code, code))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyDiagnosticsRegistryContractTest.cpp", 42, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws sdurws::ird::diagnostics::DiagnosticsError with description "diagnostics/code-unknown: 码未注册（POLICY-POLICY-OBJECT-INVALID）——工厂只接受已注册码".
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-POLICY-OBJECT-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(36): error: Expected: (descriptor) != (nullptr), actual: NULL vs (nullptr)
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-ENCODING-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(42): error: Expected: { const auto entry = factory.create(record, context); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::EqHelper::Compare("entry.record.code", "code", entry.record.code, code))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyDiagnosticsRegistryContractTest.cpp", 42, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws sdurws::ird::diagnostics::DiagnosticsError with description "diagnostics/code-unknown: 码未注册（POLICY-ENCODING-INVALID）——工厂只接受已注册码".
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-ENCODING-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(36): error: Expected: (descriptor) != (nullptr), actual: NULL vs (nullptr)
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-PORT-ASSEMBLY-INCOMPLETE
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(42): error: Expected: { const auto entry = factory.create(record, context); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::EqHelper::Compare("entry.record.code", "code", entry.record.code, code))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyDiagnosticsRegistryContractTest.cpp", 42, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws sdurws::ird::diagnostics::DiagnosticsError with description "diagnostics/code-unknown: 码未注册（POLICY-PORT-ASSEMBLY-INCOMPLETE）——工厂只接受已注册码".
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-PORT-ASSEMBLY-INCOMPLETE
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(36): error: Expected: (descriptor) != (nullptr), actual: NULL vs (nullptr)
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-OBJECT-MISSING
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(42): error: Expected: { const auto entry = factory.create(record, context); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::EqHelper::Compare("entry.record.code", "code", entry.record.code, code))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyDiagnosticsRegistryContractTest.cpp", 42, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws sdurws::ird::diagnostics::DiagnosticsError with description "diagnostics/code-unknown: 码未注册（POLICY-OBJECT-MISSING）——工厂只接受已注册码".
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-OBJECT-MISSING
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(36): error: Expected: (descriptor) != (nullptr), actual: NULL vs (nullptr)
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-CLL-QUERY-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(42): error: Expected: { const auto entry = factory.create(record, context); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::EqHelper::Compare("entry.record.code", "code", entry.record.code, code))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyDiagnosticsRegistryContractTest.cpp", 42, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws sdurws::ird::diagnostics::DiagnosticsError with description "diagnostics/code-unknown: 码未注册（POLICY-CLL-QUERY-INVALID）——工厂只接受已注册码".
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-CLL-QUERY-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(36): error: Expected: (descriptor) != (nullptr), actual: NULL vs (nullptr)
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-JNT-ENGINEERING-RANGE-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(42): error: Expected: { const auto entry = factory.create(record, context); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::EqHelper::Compare("entry.record.code", "code", entry.record.code, code))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\core-review-fixes\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyDiagnosticsRegistryContractTest.cpp", 42, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws sdurws::ird::diagnostics::DiagnosticsError with description "diagnostics/code-unknown: 码未注册（POLICY-JNT-ENGINEERING-RANGE-INVALID）——工厂只接受已注册码".
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(34): POLICY-JNT-ENGINEERING-RANGE-INVALID
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyDiagnosticsRegistryContractTest.cpp(46): error: Expected equality of these values:
+  policy::policyDiagCode(policy::PolicyDiagCode::JntEngineeringRangeInvalid)
+    Which is: "POLICY-JNT-ENGINEERING-RANGE-INVALID"
+  "POLICY-ENGINEERING-RANGE-INVALID"
+    Which is: 00007FF6E0A24698
+
+[  FAILED  ] PolicyDiagnosticsRegistryContract.EveryEmittedCodeIsAccepted_POL_T13 (1 ms)
+[----------] 1 test from PolicyDiagnosticsRegistryContract (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] PolicyDiagnosticsRegistryContract.EveryEmittedCodeIsAccepted_POL_T13
+
+ 1 FAILED TEST

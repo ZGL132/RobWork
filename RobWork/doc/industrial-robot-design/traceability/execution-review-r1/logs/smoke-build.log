@@ -1,0 +1,231 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  Errors.cpp
+  Snapshot.cpp
+  Slice.cpp
+  Verdict.cpp
+  Envelope.cpp
+  Currentness.cpp
+  Compatibility.cpp
+  Evaluator.cpp
+  正在生成代码...
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\evidence\Release\sdurws_ird_evidence.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(809,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\project\sdurws_ird_project.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(809,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  SolidifyServiceImpl.cpp
+  StoreClone.cpp
+  SaveAsServiceImpl.cpp
+  PackageServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+  正在生成代码...
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\project\Release\sdurws_ird_project.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Execution.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  StateMachine.cpp
+  Controller.cpp
+  Scheduler.cpp
+  RunRegistry.cpp
+  Admission.cpp
+  EventBus.cpp
+  ChannelProtocol.cpp
+  WorkerSupervisor.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(316,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(314,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  Checkpoint.cpp
+  CacheCoordinator.cpp
+  ChannelPair.cpp
+  JobScope.cpp
+  MemProbe.cpp
+  ProcessLauncher.cpp
+  正在生成代码...
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\Release\sdurws_ird_execution.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  SetCheckMatch.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  TaskStateMachineTest.cpp
+  CancelProtocolTest.cpp
+  RunRegistryAdmissionTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1264,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\sdurws_ird_execution_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1286,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\sdurws_ird_execution_test.vcxproj]
+  SchedulerEventBusTest.cpp
+  ChannelProtocolTest.cpp
+  WorkerWriterTest.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\sdurws_ird_execution_test.vcxproj]
+  (编译源文件“../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/WorkerWriterTest.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(296,37):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(296,37):
+              请参阅 "`anonymous-namespace'::parseArgs" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  ResourceGovernanceTest.cpp
+  CheckpointCacheTest.cpp
+  ContractSuiteFacilitiesTest.cpp
+  正在生成代码...
+  sdurws_ird_execution_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\Release\sdurws_ird_execution_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\Release\gtest.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_json-vc143-mt-x64-1_92.dll -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\Release\boost_json-vc143-mt-x64-1_92.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\Release\sdurws_ird_execution.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  main.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\sdurws_ird_execution_worker.vcxproj]
+  (编译源文件“../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(296,37):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(296,37):
+              请参阅 "`anonymous-namespace'::parseArgs" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  ChannelProtocol.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  正在生成代码...
+  sdurws_ird_execution_worker.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\Release\sdurws_ird_execution_worker.exe
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  ContractTestMain.cpp
+  LinkageContractTest.cpp
+  IdentityVocabularyContractTest.cpp
+  ArchiveCollaborationContractTest.cpp
+  EventBusDeliveryContractTest.cpp
+  WorkerProcessContractTest.cpp
+  CacheJudgeContractTest.cpp
+  ArchiveFaultContractTest.cpp
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(718,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\sdurws_ird_execution_contract_test.vcxproj]
+  RecoveryProcessContractTest.cpp
+  RecoveryChild.cpp
+  正在生成代码...
+  sdurws_ird_execution_contract_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\execution-smoke\execution\Release\sdurws_ird_execution_contract_test.exe

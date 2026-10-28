@@ -1,0 +1,11 @@
+Note: Google Test filter = ModelingBatch1.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingBatch1
+[ RUN      ] ModelingBatch1.MixedChainOffsetAndRatesReachRuntime
+ translationError_m=4.163336342344337e-17 rotationElementError=2.7755575615628914e-17 translationError_m=0 rotationElementError=2.7755575615628914e-17 translationError_m=0 rotationElementError=2.7755575615628914e-17 translationError_m=1.5700924586837752e-16 rotationElementError=2.7755575615628914e-17 translationError_m=1.1102230246251565e-16 rotationElementError=2.7755575615628914e-17 translationError_m=2.2204460492503131e-16 rotationElementError=2.7755575615628914e-17[       OK ] ModelingBatch1.MixedChainOffsetAndRatesReachRuntime (2 ms)
+[----------] 1 test from ModelingBatch1 (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (3 ms total)
+[  PASSED  ] 1 test.

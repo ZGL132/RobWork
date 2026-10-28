@@ -124,7 +124,7 @@ struct TranslationInput {
  *     comparison 完整（core C-1 强化）；来源码的必填上下文齐备（execution→
  *     task——§8.10 锚定规则；评估/命令路径的逐码上下文清单未由卡给出规范性
  *     枚举，阶段 A 只机械执行 §8.10 一条，登记于单元卡 v0.5）。后置——返回
- *     不可变 DiagnosticEntry（分类/严重取自码表；entryId/dedupKey/orderKey
+ *     不可变 DiagnosticEntry（分类/严重及 record.level 取自码表；entryId/dedupKey/orderKey
  *     已赋；同输入同输出，时间戳来自注入 IClock）。错误——CodeUnknown /
  *     CodeDeprecated / SubjectMissing / ComparisonMissing / ParamSchemaMismatch
  *     / ContextMissing / Usage。副作用——**无**（不入目录——入目录是 sink 的

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0." timestamp="2026-10-28T15:28:18.062" name="AllTests">
+  <testsuite name="MdlPropertyEstimation" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-28T15:28:18.062">
+    <testcase name="CentroidEditMigrateBranch_WP13T04_ACC3" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp" line="571" status="run" result="completed" time="0." timestamp="2026-10-28T15:28:18.062" classname="MdlPropertyEstimation">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:588&#x0A;Expected equality of these values:&#x0A;  body.inertia&#x0A;    Which is: 184-byte object &lt;00-00 00-00 00-00 00-00 9A-99 99-99 99-99 A9-3F 28-5C 8F-C2 F5-28 BC-3F 38-B4 C8-76 BE-9F BA-3F 2A-87 16-D9 CE-F7 A3-BF 7B-14 AE-47 E1-7A A4-BF 3C-DF 4F-8D 97-6E 92-BF 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 16-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-6B AC-58 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;  before.inertia&#x0A;    Which is: 184-byte object &lt;00-00 00-00 FF-7F 00-00 7B-14 AE-47 E1-7A 84-3F 7B-14 AE-47 E1-7A 84-3F FC-A9 F1-D2 4D-62 70-3F FC-A9 F1-D2 4D-62 50-3F 00-00 00-00 00-00 00-00 FC-A9 F1-D2 4D-62 60-3F 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 16-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-F8 E1-2C 6C-02 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp:588
+Expected equality of these values:
+  body.inertia
+    Which is: 184-byte object <00-00 00-00 00-00 00-00 9A-99 99-99 99-99 A9-3F 28-5C 8F-C2 F5-28 BC-3F 38-B4 C8-76 BE-9F BA-3F 2A-87 16-D9 CE-F7 A3-BF 7B-14 AE-47 E1-7A A4-BF 3C-DF 4F-8D 97-6E 92-BF 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 16-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-6B AC-58 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  before.inertia
+    Which is: 184-byte object <00-00 00-00 FF-7F 00-00 7B-14 AE-47 E1-7A 84-3F 7B-14 AE-47 E1-7A 84-3F FC-A9 F1-D2 4D-62 70-3F FC-A9 F1-D2 4D-62 50-3F 00-00 00-00 00-00 00-00 FC-A9 F1-D2 4D-62 60-3F 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 16-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 01-F8 E1-2C 6C-02 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="StructureEditTest" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-28T15:28:18.063">
+    <testcase name="RepeatedInsertAfterDeletionPreservesUniqueIdentity" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp" line="254" status="run" result="completed" time="0." timestamp="2026-10-28T15:28:18.063" classname="StructureEditTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:261&#x0A;Expected: (ws.design.joints[1].objectId) != (allocated), actual: 16-byte object &lt;DE-5F 85-AA 0A-6A F5-01 0A-29 D7-A1 62-AD 47-F4&gt; vs 16-byte object &lt;DE-5F 85-AA 0A-6A F5-01 0A-29 D7-A1 62-AD 47-F4&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:261
+Expected: (ws.design.joints[1].objectId) != (allocated), actual: 16-byte object <DE-5F 85-AA 0A-6A F5-01 0A-29 D7-A1 62-AD 47-F4> vs 16-byte object <DE-5F 85-AA 0A-6A F5-01 0A-29 D7-A1 62-AD 47-F4>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:262&#x0A;Value of: checkInvariants(ws.design).empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:262
+Value of: checkInvariants(ws.design).empty()
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="ReorderPermutesNamedPosesAndJointValues" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp" line="265" status="run" result="completed" time="0." timestamp="2026-10-28T15:28:18.063" classname="StructureEditTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:279&#x0A;Expected equality of these values:&#x0A;  ws.poseSetObject-&gt;entries[0].jointConfiguration[1]&#x0A;    Which is: 0.20000000000000001&#x0A;  .1&#x0A;    Which is: 0.10000000000000001&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:279
+Expected equality of these values:
+  ws.poseSetObject->entries[0].jointConfiguration[1]
+    Which is: 0.20000000000000001
+  .1
+    Which is: 0.10000000000000001
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:280&#x0A;Expected equality of these values:&#x0A;  ws.poseSetObject-&gt;entries[1].jointConfiguration[1]&#x0A;    Which is: 0.40000000000000002&#x0A;  .3&#x0A;    Which is: 0.29999999999999999&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:280
+Expected equality of these values:
+  ws.poseSetObject->entries[1].jointConfiguration[1]
+    Which is: 0.40000000000000002
+  .3
+    Which is: 0.29999999999999999
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:281&#x0A;Expected equality of these values:&#x0A;  ws.drivetrainObject-&gt;ratioPerJoint[1]&#x0A;    Which is: 144-byte object &lt;00-00 00-00 00-00 00-00 00-00 00-00 00-00 36-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;  drive.ratioPerJoint[0]&#x0A;    Which is: 144-byte object &lt;00-00 00-00 00-00 00-00 00-00 00-00 00-00 26-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:281
+Expected equality of these values:
+  ws.drivetrainObject->ratioPerJoint[1]
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 36-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  drive.ratioPerJoint[0]
+    Which is: 144-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 26-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:282&#x0A;Expected equality of these values:&#x0A;  ws.drivetrainObject-&gt;frictionPerJoint[1]&#x0A;    Which is: 432-byte object &lt;01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;  drive.frictionPerJoint[0]&#x0A;    Which is: 432-byte object &lt;01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:282
+Expected equality of these values:
+  ws.drivetrainObject->frictionPerJoint[1]
+    Which is: 432-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  drive.frictionPerJoint[0]
+    Which is: 432-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:283&#x0A;Expected equality of these values:&#x0A;  ws.drivetrainObject-&gt;torqueLimitsPerJoint[1]&#x0A;    Which is: 288-byte object &lt;01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;  drive.torqueLimitsPerJoint[0]&#x0A;    Which is: 288-byte object &lt;00-00 00-00 00-00 00-00 00-00 00-00 00-00 14-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:283
+Expected equality of these values:
+  ws.drivetrainObject->torqueLimitsPerJoint[1]
+    Which is: 288-byte object <01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  drive.torqueLimitsPerJoint[0]
+    Which is: 288-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 14-40 00-00 00-00 9A-99 99-99 99-99 B9-3F 9A-99 99-99 99-99 C9-3F 00-00 00-E4 55-FF 7F-00 00-8C DF-E4 55-FF 7F-00 00-10 DB-70 74-85 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:284&#x0A;Expected equality of these values:&#x0A;  ws.drivetrainObject-&gt;coupling-&gt;c&#x0A;    Which is: { 1, 2, 3, 4 }&#x0A;  (std::vector&lt;double&gt;{3.,4.,1.,2.})&#x0A;    Which is: { 3, 4, 1, 2 }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\StructureEditTest.cpp:284
+Expected equality of these values:
+  ws.drivetrainObject->coupling->c
+    Which is: { 1, 2, 3, 4 }
+  (std::vector<double>{3.,4.,1.,2.})
+    Which is: { 3, 4, 1, 2 }
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

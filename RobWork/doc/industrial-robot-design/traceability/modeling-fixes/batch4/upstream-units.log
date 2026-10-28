@@ -1,0 +1,64 @@
+void addLimits (std::vector< DummyLimit >& limits, Joint::Ptr j)
+{
+    if (limits.size () == 0)
+        return;
+
+    std::vector< DummyLimit > posLimits;
+    std::vector< DummyLimit > velLimits;
+    std::vector< DummyLimit > accLimits;
+    Q convFactor (limits.size ());
+    for (std::size_t i = 0; i < limits.size (); i++) {
+        convFactor[i] = 1;
+        switch (limits[i]._type) {
+            case PosLimitType: posLimits.push_back (limits[i]); break;
+            case VelLimitType: velLimits.push_back (limits[i]); break;
+            case AccLimitType: accLimits.push_back (limits[i]); break;
+        }
+    }
+
+    if (j.cast< RevoluteJoint> () != NULL) {
+        convFactor[0] = Deg2Rad;
+    }
+    else if (j.cast< SphericalJoint> () != NULL) {
+        convFactor[0] = Deg2Rad;
+        convFactor[1] = Deg2Rad;
+        convFactor[2] = Deg2Rad;
+    }
+    else if (j.cast< PrismaticSphericalJoint > () != NULL) {
+        convFactor[0] = Deg2Rad;
+        convFactor[1] = Deg2Rad;
+        convFactor[2] = Deg2Rad;
+    }
+    else if (j.cast< UniversalJoint > () != NULL) {
+        convFactor[0] = Deg2Rad;
+        convFactor[1] = Deg2Rad;
+    }
+    else if (j.cast< PrismaticUniversalJoint> () != NULL) {
+        convFactor[0] = Deg2Rad;
+        convFactor[1] = Deg2Rad;
+    }
+
+    Q minPos (posLimits.size ());
+    Q maxPos (posLimits.size ());
+    Q maxVel (velLimits.size ());
+    Q maxAcc (accLimits.size ());
+    for (std::size_t i = 0; i < posLimits.size (); i++) {
+        minPos[i] = posLimits[i]._min * convFactor[i];
+        maxPos[i] = posLimits[i]._max * convFactor[i];
+    }
+    for (std::size_t i = 0; i < velLimits.size (); i++) {
+        maxVel[i] = velLimits[i]._max * convFactor[i];
+    }
+    for (std::size_t i = 0; i < accLimits.size (); i++) {
+        maxAcc[i] = accLimits[i]._max * convFactor[i];
+    }
+    if (posLimits.size () > 0)
+        j->setBounds (std::pair< Q, Q > (minPos, maxPos));
+    if (velLimits.size () > 0)
+        j->setMaxVelocity (maxVel);
+    if (accLimits.size () > 0)
+        j->setMaxAcceleration (maxAcc);
+    return;
+}
+
+void addLimitsToFrame (std::vector< DummyLimit >& limits,  rw::core::Ptr<Frame> f)

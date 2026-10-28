@@ -1,0 +1,16 @@
+{
+  "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+  "unchangedFromHEAD": true,
+  "staleBindings": [
+    {
+      "file": "RobWork\\doc\\industrial-robot-design\\reuse\\changes\\REUSE-T52.json/files/6",
+      "expected": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd",
+      "actual": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+    },
+    {
+      "file": "RobWork\\doc\\industrial-robot-design\\reuse\\changes\\REUSE-T53.json/files/2",
+      "expected": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd",
+      "actual": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+    }
+  ]
+}

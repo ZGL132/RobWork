@@ -314,6 +314,8 @@ public:
 private:
     /// 重组中的部分消息（每类型至多一条在途——分片帧连续到达，无交错）。
     struct Partial {
+        ChannelMsgType type = ChannelMsgType::DispatchRequest; ///< 首片类型，后续不可变。
+        core::TaskIdentity identity;                          ///< 首片尝试身份，后续逐片核对。
         std::uint64_t totalLen = 0;       ///< 声明的完整消息长度
         std::uint32_t nextIndex = 0;      ///< 期望的下一分片序号
         std::uint32_t fragCount = 0;      ///< 声明的分片总数

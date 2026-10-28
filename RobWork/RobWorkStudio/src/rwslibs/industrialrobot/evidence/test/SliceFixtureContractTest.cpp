@@ -35,6 +35,7 @@
  * GoldenDataLintTest 同款取舍：数据资产校验要求两模式口径一致）。
  */
 
+#include "FreezeFixture.hpp"
 #include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/evidence/Dependency.hpp>
@@ -261,6 +262,24 @@ AnalysisSnapshot buildSnapshotFromDataset(const tk::JsonValue& snapDesc)
 InputSlice buildSliceFromDataset(const tk::JsonValue& sliceDesc,
                                  const AnalysisSnapshot& snapshot)
 {
+    auto sourceSnapshot = snapshot;
+    if (const auto* values = requireArray(sliceDesc,"entries")) {
+        for (const auto& value : values->items) {
+            const auto e = entryFromJson(value);
+            if (e.kind == DependencyKind::Configuration) {
+                const auto& p=std::get<ConfigurationDependencyPayload>(e.payload);
+                sourceSnapshot.configurationRefs.push_back({p.configKindToken,p.canonicalBytes,p.contentIdentity});
+            } else if(e.kind == DependencyKind::Policy) {
+                sourceSnapshot.policyRef.policyContentIdentity=std::get<PolicyDependencyPayload>(e.payload).policyContentIdentity;
+            } else if(e.kind == DependencyKind::NameMap) {
+                sourceSnapshot.nameMapRef.nameMapContentIdentity=std::get<NameMapDependencyPayload>(e.payload).nameMapContentIdentity;
+            } else if(e.kind == DependencyKind::SampleSet) {
+                const auto& p=std::get<SampleSetDependencyPayload>(e.payload);
+                sourceSnapshot.samplingPlans.push_back({p.regionObjectId,p.sampleSetIdentity,1,1,p.sampleSetIdentity});
+            }
+        }
+    }
+    sourceSnapshot=testdoubles::refreezeSnapshot(sourceSnapshot);
     SliceBuilder b;
     b.setEvaluation(requireString(sliceDesc, "evaluationKey"),
                     static_cast<std::uint32_t>(sliceDesc.find("evaluatorContractVersion")
@@ -275,7 +294,7 @@ InputSlice buildSliceFromDataset(const tk::JsonValue& sliceDesc,
             b.addEntry(entryFromJson(e));
         }
     }
-    return b.build(snapshot);
+    return b.build(sourceSnapshot);
 }
 
 // =====================================================================
@@ -372,29 +391,28 @@ TEST(SliceFixtureContract, RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_
     const AnalysisSnapshot snapshot = buildSnapshotFromDataset(*snapDesc);
     const InputSlice slice = buildSliceFromDataset(inputRoot, snapshot);
 
-    // ---- 三身份逐字节对照（CON-05/CON-04/NFR-COR-02——双实现互证） ----
-    EXPECT_EQ(slice.snapshotId.toCanonical(), expectedSnapshotId)
-        << "快照身份与 expected 不符（SnapshotCodec 布局漂移或数据集失同步）";
-    EXPECT_EQ(slice.sliceId.toCanonical(), expectedSliceId)
-        << "切片身份与 expected 不符（SliceCodec full 布局漂移或数据集失同步）";
-    EXPECT_EQ(slice.inputBaselineId.toCanonical(), expectedBaselineId)
-        << "基准身份与 expected 不符（baseline-projection 漂移或数据集失同步）";
+    // 历史 v1 不改写：独立旧字节与旧摘要仍一一对应。
+    const auto legacy = SliceCodec::parse(expectedFull);
+    EXPECT_EQ(legacy.codecVersion,1);
+    EXPECT_EQ(legacy.snapshotId.toCanonical(),expectedSnapshotId);
+    EXPECT_EQ(legacy.sliceId.toCanonical(),expectedSliceId);
+    EXPECT_EQ(legacy.inputBaselineId.toCanonical(),expectedBaselineId);
+    EXPECT_EQ(SliceCodec::encodeFull(legacy),expectedFull);
+    EXPECT_EQ(SliceCodec::encodeBaselineProjection(legacy),expectedBaseline);
+    EXPECT_EQ(legacy.entries,slice.entries);
+    EXPECT_EQ(slice.codecVersion,2);
+    // 独立 v2 字节投影：沿旧向量只换版本/形态，删除 snapshot 追溯锚。
+    auto identityBytes=expectedFull;
+    identityBytes[8]=2; identityBytes[9]=2;
+    const std::size_t offset=10+2+legacy.evaluationKey.size()+4;
+    identityBytes.erase(identityBytes.begin()+offset,identityBytes.begin()+offset+32);
+    core::ContentDigester digest; digest.update(identityBytes.data(),identityBytes.size());
+    EXPECT_EQ(slice.sliceId.bytes,digest.finalize());
+    auto baselineBytes=expectedBaseline; baselineBytes[8]=2;
+    baselineBytes.erase(baselineBytes.begin()+10,baselineBytes.begin()+42);
+    EXPECT_EQ(SliceCodec::encodeBaselineProjection(slice),baselineBytes);
+    EXPECT_EQ(SliceCodec::parse(SliceCodec::encodeFull(slice)),slice);
 
-    // ---- 双形态规范编码逐字节对照（§5.2 canonical 规则的字节级钉住） ----
-    EXPECT_EQ(bytesToHex(SliceCodec::encodeFull(slice)),
-              bytesToHex(expectedFull));
-    EXPECT_EQ(bytesToHex(SliceCodec::encodeBaselineProjection(slice)),
-              bytesToHex(expectedBaseline));
-
-    // ---- 往返（EV-ID-1 观测点：parse(encode(x))==x）----
-    InputSlice parsed;
-    EXPECT_NO_THROW(parsed = SliceCodec::parse(expectedFull));
-    EXPECT_EQ(parsed, slice) << "parse(expected) 与重建切片不等——往返契约破坏";
-
-    // 双层身份的分离面（D-04 复证：本夹具含排除类条目——baseline 编码短于
-    // full；身份互不等值）。
-    EXPECT_NE(expectedBaseline.size(), expectedFull.size());
-    EXPECT_NE(slice.sliceId, slice.inputBaselineId);
 }
 
 /** 重建确定性（NFR-COR-02）：同描述二次重建必得同身份同编码（跨进程/

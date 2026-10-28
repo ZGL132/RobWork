@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="14" failures="14" disabled="0" errors="0" time="0.551" timestamp="2026-10-28T03:57:22.624" name="AllTests">
+  <testsuite name="ProjectReviewRegression" tests="14" failures="14" disabled="0" skipped="0" errors="0" time="0.551" timestamp="2026-10-28T03:57:22.624">
+    <testcase name="PostCommitObserversCannotChangeCommitFact" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="125" status="run" result="completed" time="0.071" timestamp="2026-10-28T03:57:22.624" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:134&#x0A;Value of: result.committed()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:134
+Value of: result.committed()
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="InvalidRegisteredTokenRejectedBeforeCommit" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="142" status="run" result="completed" time="0.029" timestamp="2026-10-28T03:57:22.696" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:147&#x0A;Expected: opened.store-&gt;handlerRegistry().registerHandler( std::make_unique&lt;NoteHandler&gt;(&quot;Bad.Token&quot;)) throws an exception of type std::invalid_argument.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:147
+Expected: opened.store->handlerRegistry().registerHandler( std::make_unique<NoteHandler>("Bad.Token")) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="InvalidInverseRejectedBeforeCommit" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="152" status="run" result="completed" time="0.056" timestamp="2026-10-28T03:57:22.725" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:157&#x0A;Value of: submit(*opened.store).committed()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:157
+Value of: submit(*opened.store).committed()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:158&#x0A;Expected equality of these values:&#x0A;  before&#x0A;    Which is: &quot;{\&quot;formatId\&quot;:\&quot;rwdesign\&quot;,\&quot;schemaVersion\&quot;:10000,\&quot;projectId\&quot;:\&quot;prj-2dcad0cfc236133d3d873f3a4b814c6d\&quot;,\&quot;revisionId\&quot;:\&quot;rev-f73af53f857a1fed27fa03a15b86e119\&quot;,\&quot;revisionSeq\&quot;:1,\&quot;branchId\&quot;:\&quot;brn-e8ffbc942c0f483e31d830ee5639df7c\&quot;,\&quot;manifestDigest\&quot;:\&quot;8732cb2434ebb3d04de9188e140469645c6f83afc68c675dc70e810e0a7cba8d\&quot;}&quot;&#x0A;  readBytes(opened.store-&gt;canonicalPath() / &quot;HEAD&quot;)&#x0A;    Which is: &quot;{\&quot;formatId\&quot;:\&quot;rwdesign\&quot;,\&quot;schemaVersion\&quot;:10000,\&quot;projectId\&quot;:\&quot;prj-2dcad0cfc236133d3d873f3a4b814c6d\&quot;,\&quot;revisionId\&quot;:\&quot;rev-619efcb4d363feab501ff4e0071fefe7\&quot;,\&quot;revisionSeq\&quot;:2,\&quot;branchId\&quot;:\&quot;brn-e8ffbc942c0f483e31d830ee5639df7c\&quot;,\&quot;manifestDigest\&quot;:\&quot;44ada9d9b272c21dab4744eeb30856918c2456875ca435ac44a6bd1aff1d1d94\&quot;}&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:158
+Expected equality of these values:
+  before
+    Which is: "{\"formatId\":\"rwdesign\",\"schemaVersion\":10000,\"projectId\":\"prj-2dcad0cfc236133d3d873f3a4b814c6d\",\"revisionId\":\"rev-f73af53f857a1fed27fa03a15b86e119\",\"revisionSeq\":1,\"branchId\":\"brn-e8ffbc942c0f483e31d830ee5639df7c\",\"manifestDigest\":\"8732cb2434ebb3d04de9188e140469645c6f83afc68c675dc70e810e0a7cba8d\"}"
+  readBytes(opened.store->canonicalPath() / "HEAD")
+    Which is: "{\"formatId\":\"rwdesign\",\"schemaVersion\":10000,\"projectId\":\"prj-2dcad0cfc236133d3d873f3a4b814c6d\",\"revisionId\":\"rev-619efcb4d363feab501ff4e0071fefe7\",\"revisionSeq\":2,\"branchId\":\"brn-e8ffbc942c0f483e31d830ee5639df7c\",\"manifestDigest\":\"44ada9d9b272c21dab4744eeb30856918c2456875ca435ac44a6bd1aff1d1d94\"}"
+]]></failure>
+    </testcase>
+    <testcase name="DraftReadPreservesInFlightNewFile" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="162" status="run" result="completed" time="0.04" timestamp="2026-10-28T03:57:22.781" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:173&#x0A;Value of: fs::exists(pending)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:173
+Value of: fs::exists(pending)
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="MissingCurrentRecoversBackupWithoutWriting" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="178" status="run" result="completed" time="0.042" timestamp="2026-10-28T03:57:22.822" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:189&#x0A;Value of: recovered&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:189
+Value of: recovered
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="QueryHidesUncommittedObject" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="197" status="run" result="completed" time="0.043" timestamp="2026-10-28T03:57:22.865" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:204&#x0A;Value of: opened.store-&gt;query().tryObject(oid, cv)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:204
+Value of: opened.store->query().tryObject(oid, cv)
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:205&#x0A;Expected: opened.store-&gt;query().object(oid, cv) throws an exception of type StoreError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:205
+Expected: opened.store->query().object(oid, cv) throws an exception of type StoreError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="RecoveryRejectsMissingCommittedCommand" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="209" status="run" result="completed" time="0.04" timestamp="2026-10-28T03:57:22.908" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:216&#x0A;Expected: readOnly(dir) throws an exception of type StoreError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:216
+Expected: readOnly(dir) throws an exception of type StoreError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="RecoveryRejectsParentCycleWithValidDigest" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="220" status="run" result="completed" time="0.048" timestamp="2026-10-28T03:57:22.949" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:233&#x0A;Expected: readOnly(dir) throws an exception of type StoreError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:233
+Expected: readOnly(dir) throws an exception of type StoreError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="RecoveryRejectsHeadSequenceMismatch" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="237" status="run" result="completed" time="0.044" timestamp="2026-10-28T03:57:22.997" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:245&#x0A;Expected: readOnly(dir) throws an exception of type StoreError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:245
+Expected: readOnly(dir) throws an exception of type StoreError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="FailedValidationRollsBackRegistration" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="249" status="run" result="completed" time="0.029" timestamp="2026-10-28T03:57:23.041" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:264&#x0A;Value of: host.revisionIndex().tryRevision(plan.revisionId)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:264
+Value of: host.revisionIndex().tryRevision(plan.revisionId)
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="SdkDiskFullErrorsRemainDistinctFromWriteRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="269" status="run" result="completed" time="0." timestamp="2026-10-28T03:57:23.070" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:273&#x0A;Expected equality of these values:&#x0A;  error.code()&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;  StoreErrorCode::DiskFull&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;112&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:273
+Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+112
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:273&#x0A;Expected equality of these values:&#x0A;  error.code()&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;  StoreErrorCode::DiskFull&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;39&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:273
+Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+39
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:273&#x0A;Expected equality of these values:&#x0A;  error.code()&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;  StoreErrorCode::DiskFull&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;1295&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:273
+Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+1295
+]]></failure>
+    </testcase>
+    <testcase name="CreateNewPreservesCanonicalLongPath" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="281" status="run" result="completed" time="0.009" timestamp="2026-10-28T03:57:23.071" classname="ProjectReviewRegression">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/object-store: staging-write path=C:\Users\zgl18\AppData\Local\Temp\ird-test/94324-prj-r1-74c4e1b5ca5f0514\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\project.new-94324-10\.staging\ostore-0-7d32f40d79ec21447986a1484c3e0cefbf31a2f473d194cd4a726d57be9eae33.tmp osError=3&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/object-store: staging-write path=C:\Users\zgl18\AppData\Local\Temp\ird-test/94324-prj-r1-74c4e1b5ca5f0514\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\abcdefghij\project.new-94324-10\.staging\ostore-0-7d32f40d79ec21447986a1484c3e0cefbf31a2f473d194cd4a726d57be9eae33.tmp osError=3" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="IdempotentFinalizeRejectsTamperedManifest" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="292" status="run" result="completed" time="0.058" timestamp="2026-10-28T03:57:23.081" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:322&#x0A;Value of: opened.store-&gt;archive().finalize(retry, manifest).ok&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:322
+Value of: opened.store->archive().finalize(retry, manifest).ok
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="ArchiveRejectsReservedNamesCaseInsensitively" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp" line="328" status="run" result="completed" time="0.035" timestamp="2026-10-28T03:57:23.140" classname="ProjectReviewRegression">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:341&#x0A;Expected: opened.store-&gt;archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:341
+Expected: opened.store->archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:341&#x0A;Expected: opened.store-&gt;archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:341
+Expected: opened.store->archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:341&#x0A;Expected: opened.store-&gt;archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:341
+Expected: opened.store->archive().writeBatch(session, batch) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:343&#x0A;Value of: fs::exists(req.runDir / &quot;manifest.json&quot;)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ReviewRegressionTest.cpp:343
+Value of: fs::exists(req.runDir / "manifest.json")
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

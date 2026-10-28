@@ -1,0 +1,13 @@
+Note: Google Test filter = ReviewIdentity.FirstTwoValuesInFreshThreadsAreDistinct
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ReviewIdentity
+[ RUN      ] ReviewIdentity.FirstTwoValuesInFreshThreadsAreDistinct
+random_device result bits=32
+fresh_threads=131072 duplicate_full_ids=0
+[       OK ] ReviewIdentity.FirstTwoValuesInFreshThreadsAreDistinct (6374 ms)
+[----------] 1 test from ReviewIdentity (6374 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (6374 ms total)
+[  PASSED  ] 1 test.

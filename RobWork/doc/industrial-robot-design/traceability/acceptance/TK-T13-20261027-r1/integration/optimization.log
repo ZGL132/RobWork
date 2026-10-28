@@ -1,0 +1,16 @@
+Note: Google Test filter = OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1:OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from OptGoldenLhs
+[ RUN      ] OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1
+[       OK ] OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1 (2 ms)
+[----------] 1 test from OptGoldenLhs (2 ms total)
+
+[----------] 1 test from OptGoldenPareto
+[ RUN      ] OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1
+[       OK ] OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1 (3 ms)
+[----------] 1 test from OptGoldenPareto (12 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (15 ms total)
+[  PASSED  ] 2 tests.

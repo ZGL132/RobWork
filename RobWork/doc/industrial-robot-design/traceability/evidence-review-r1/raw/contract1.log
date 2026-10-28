@@ -1,0 +1,28 @@
+Note: Google Test filter = SliceFixtureContract.*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from SliceFixtureContract
+[ RUN      ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4
+[       OK ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4 (0 ms)
+[ RUN      ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance
+[       OK ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance (0 ms)
+[ RUN      ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1
+unknown file: error: C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：policy.collision-guard" thrown in the test body.
+
+[  FAILED  ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1 (1 ms)
+[ RUN      ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1
+unknown file: error: C++ exception with description "evidence/slice-incomplete: 依赖不属于来源快照：policy.collision-guard" thrown in the test body.
+
+[  FAILED  ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1 (0 ms)
+[ RUN      ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest
+[       OK ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest (0 ms)
+[----------] 5 tests from SliceFixtureContract (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (3 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1
+[  FAILED  ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1
+
+ 2 FAILED TESTS

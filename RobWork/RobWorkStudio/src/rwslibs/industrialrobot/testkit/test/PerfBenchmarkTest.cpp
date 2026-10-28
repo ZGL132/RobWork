@@ -30,6 +30,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iterator>
+#include <limits>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -38,6 +39,16 @@
 namespace fs = std::filesystem;
 namespace {
 using namespace sdurws::ird::testkit;
+
+/** 第一轮评审 R12：在浮点转索引前拒绝 NaN/Inf，避免未定义转换；P95 公式不变。 */
+TEST(PerfBenchmark, NonFinitePercentileRejected_ReviewR12)
+{
+    for (const double q : {std::numeric_limits<double>::quiet_NaN(),
+                           std::numeric_limits<double>::infinity(),
+                           -std::numeric_limits<double>::infinity()}) {
+        EXPECT_THROW(percentileLinearInterpolated({10.0, 20.0}, q), std::out_of_range);
+    }
+}
 
 // =====================================================================
 // P95 线性插值分位数——协议 §4.2 公式对已知向量的保真

@@ -293,6 +293,8 @@ struct ResumeQuery {
     core::ContentIdentity requestSliceId;
     /// 请求契约版本（恢复第三条件——EV-CPA-2）。
     std::uint32_t requestContractVersion = 0;
+    /// EV-T13：请求评估键，不能从检查点自报键反推。
+    std::string requestEvaluatorKey;
 };
 
 /**
@@ -307,6 +309,8 @@ struct CheckpointRestoreRequest {
     core::ContentIdentity requestSliceId;
     /// 请求契约版本（判定第三条件的请求侧）。
     std::uint32_t requestContractVersion = 0;
+    /// EV-T13：请求评估键，不能从检查点自报键反推。
+    std::string requestEvaluatorKey;
 };
 
 /**

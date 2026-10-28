@@ -605,15 +605,13 @@ StoreError osToStoreError(unsigned long osError,
     // 拒绝访问→AccessDenied、其余→WriteRejected；分类逻辑单点复用
     // （tx::osToStoreError 为事务域私有——本层按同表重铸，detail 前缀
     // 区分域，两处登记同源不漂移）。
-    constexpr unsigned long kDiskFull = 70;        // ERROR_DISK_FULL
-    constexpr unsigned long kQuotaExceeded = 395;  // ERROR_DISK_QUOTA_EXCEEDED
-    constexpr unsigned long kAccessDenied = 5;     // ERROR_ACCESS_DENIED
     const std::string detail = "project/save-as: " + what
         + " path=" + path + " osError=" + std::to_string(osError);
-    if (osError == kDiskFull || osError == kQuotaExceeded) {
+    if (osError == ERROR_DISK_FULL || osError == ERROR_HANDLE_DISK_FULL
+        || osError == ERROR_DISK_QUOTA_EXCEEDED) {
         return StoreError(StoreErrorCode::DiskFull, detail);
     }
-    if (osError == kAccessDenied) {
+    if (osError == ERROR_ACCESS_DENIED) {
         return StoreError(StoreErrorCode::AccessDenied, detail);
     }
     return StoreError(StoreErrorCode::WriteRejected, detail);

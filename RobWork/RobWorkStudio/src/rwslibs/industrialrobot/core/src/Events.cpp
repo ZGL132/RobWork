@@ -78,7 +78,8 @@ DomainEvent DomainEvent::make(ResultArchivedPayload payload)
 // ---- 变体访问守卫（kind 与实际持有备选不一致＝防御分支） ----
 const RevisionCommittedPayload& DomainEvent::asRevisionCommitted() const
 {
-    if (kind != DomainEventKind::RevisionCommitted) {
+    if (kind != DomainEventKind::RevisionCommitted
+        || !std::holds_alternative<RevisionCommittedPayload>(payload)) {
         throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
                         "（RevisionCommitted）");
     }
@@ -87,7 +88,8 @@ const RevisionCommittedPayload& DomainEvent::asRevisionCommitted() const
 
 const DependencyInvalidatedPayload& DomainEvent::asDependencyInvalidated() const
 {
-    if (kind != DomainEventKind::DependencyInvalidated) {
+    if (kind != DomainEventKind::DependencyInvalidated
+        || !std::holds_alternative<DependencyInvalidatedPayload>(payload)) {
         throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
                         "（DependencyInvalidated）");
     }
@@ -96,7 +98,8 @@ const DependencyInvalidatedPayload& DomainEvent::asDependencyInvalidated() const
 
 const TaskStatusChangedPayload& DomainEvent::asTaskStatusChanged() const
 {
-    if (kind != DomainEventKind::TaskStatusChanged) {
+    if (kind != DomainEventKind::TaskStatusChanged
+        || !std::holds_alternative<TaskStatusChangedPayload>(payload)) {
         throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
                         "（TaskStatusChanged）");
     }
@@ -105,7 +108,8 @@ const TaskStatusChangedPayload& DomainEvent::asTaskStatusChanged() const
 
 const ResultArchivedPayload& DomainEvent::asResultArchived() const
 {
-    if (kind != DomainEventKind::ResultArchived) {
+    if (kind != DomainEventKind::ResultArchived
+        || !std::holds_alternative<ResultArchivedPayload>(payload)) {
         throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
                         "（ResultArchived）");
     }
@@ -123,11 +127,15 @@ bool DomainEvent::operator==(const DomainEvent& o) const
 // ---- 参考总线（UT-EVT 语义钉子：FIFO/幂等退订/退订后不投递） ----
 namespace {
 
-/// 订阅句柄：持总线与 sink 指针；unsubscribe 幂等（重复调用二次起为 no-op）。
+/// 订阅句柄仅借用总线和sink：单线程，析构前总线必须存活；sink覆盖订阅期。
+/// CORE-T12/F-967：句柄析构等同显式退订；显式退订后可先销毁总线。
 class ReferenceSubscription final : public IEventSubscription {
 public:
     ReferenceSubscription(ReferenceEventBus* bus, IDomainEventSink* sink)
         : bus_(bus), sink_(sink) {}
+
+    /// CORE-T12：析构恢复RAII，removeSink仅擦除裸指针，不执行回调或分配。
+    ~ReferenceSubscription() override { unsubscribe(); }
 
     void unsubscribe() override
     {
@@ -163,8 +171,7 @@ std::unique_ptr<IEventSubscription> ReferenceEventBus::subscribe(IDomainEventSin
 
 void ReferenceEventBus::removeSink(IDomainEventSink* sink)
 {
-    // 友元访问路径（ReferenceSubscription 的成员函数可调用）：
-    // 本类声明 removeSink 为公有方法并在头文件作为实现细节注释——测试内组件。
+    // 同sink重复注册仍按原参考语义整体移除，不推广为execution的逐句柄语义。
     sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());
 }
 

@@ -1,0 +1,69 @@
+Note: Google Test filter = *CORE_T12
+[==========] Running 3 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from IdentityGenerate
+[ RUN      ] IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp(228): error: Expected equality of these values:
+  first.used
+    Which is: 1
+  4u
+    Which is: 4
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp(229): error: Expected equality of these values:
+  same.used
+    Which is: 1
+  4u
+    Which is: 4
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp(230): error: Expected equality of these values:
+  last.used
+    Which is: 1
+  4u
+    Which is: 4
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp(233): error: Expected: (av) != (cv), actual: { 13915952638675311015, 17511516338625233250 } vs { 13915952638675311015, 17511516338625233250 }
+
+[  FAILED  ] IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12 (1 ms)
+[----------] 1 test from IdentityGenerate (1 ms total)
+
+[----------] 1 test from EventPayload
+[ RUN      ] EventPayload.ActualVariantMismatch_CORE_T12
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp(203): error: Expected: event.asResultArchived() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp(206): error: Expected: event.asRevisionCommitted() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp(209): error: Expected: event.asTaskStatusChanged() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp(211): error: Expected: event.asDependencyInvalidated() throws an exception of type CoreError.
+  Actual: it throws std::bad_variant_access with description "bad variant access".
+
+[  FAILED  ] EventPayload.ActualVariantMismatch_CORE_T12 (1 ms)
+[----------] 1 test from EventPayload (1 ms total)
+
+[----------] 1 test from ReferenceBus
+[ RUN      ] ReferenceBus.DestructionUnsubscribes_CORE_T12
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp(220): error: Expected equality of these values:
+  bus.subscriberCount()
+    Which is: 1
+  0u
+    Which is: 0
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\EventsTest.cpp(222): error: Value of: sink.received().empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] ReferenceBus.DestructionUnsubscribes_CORE_T12 (0 ms)
+[----------] 1 test from ReferenceBus (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 3 test suites ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] IdentityGenerate.EveryEntropyWordAffectsStream_CORE_T12
+[  FAILED  ] EventPayload.ActualVariantMismatch_CORE_T12
+[  FAILED  ] ReferenceBus.DestructionUnsubscribes_CORE_T12
+
+ 3 FAILED TESTS

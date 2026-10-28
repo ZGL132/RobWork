@@ -82,28 +82,6 @@ bool toleranceLeq(const core::Tolerance& a, const core::Tolerance& b) noexcept
     return a.relative <= b.relative && a.absolute <= b.absolute;
 }
 
-/// QuantityKind → token（§4.4 量纲 token——与 core 单位表量纲同源）。
-const char* kindTokenOf(core::QuantityKind k) noexcept
-{
-    switch (k) {
-    case core::QuantityKind::Length:               return "length";
-    case core::QuantityKind::Angle:                return "angle";
-    case core::QuantityKind::Mass:                 return "mass";
-    case core::QuantityKind::Time:                 return "time";
-    case core::QuantityKind::Force:                return "force";
-    case core::QuantityKind::Torque:               return "torque";
-    case core::QuantityKind::Inertia:              return "inertia";
-    case core::QuantityKind::Power:                return "power";
-    case core::QuantityKind::LinearVelocity:       return "linear-velocity";
-    case core::QuantityKind::AngularVelocity:      return "angular-velocity";
-    case core::QuantityKind::LinearAcceleration:   return "linear-acceleration";
-    case core::QuantityKind::AngularAcceleration:  return "angular-acceleration";
-    case core::QuantityKind::Voltage:              return "voltage";
-    case core::QuantityKind::Dimensionless:        return "dimensionless";
-    }
-    return "unknown";
-}
-
 /// token → QuantityKind（try 轨；未知 nullopt）。
 std::optional<core::QuantityKind> kindFromToken(std::string_view token) noexcept
 {
@@ -162,6 +140,9 @@ ToleranceProfile ToleranceProfile::load(const std::filesystem::path& profileVers
     ss << in.rdbuf();
     const JsonValue root = parseJson(ss.str());
     if (!root.isObject()) { failField("$", "档案顶层须为对象"); }
+    if (requireString2(root, "schemaVersion") != "ird-tolerance-profile/1") {
+        failField("schemaVersion", "不支持的容差档案版本");
+    }
 
     ToleranceProfile p;
     p.profileId = requireString2(root, "profileId");
@@ -200,21 +181,11 @@ ToleranceProfile ToleranceProfile::load(const std::filesystem::path& profileVers
         e.fieldPath = requireString(item, "fieldPath", prefix);
         if (e.fieldPath.empty()) { failField(prefix + "fieldPath", "不得为空"); }
 
-        // quantityKind：以 core 词表 token 校验——存在某注册单位其量纲 token 等于
-        // 该值即合法（量纲 token 集＝十四类，无第二词表）。
+        // 解析一次并保存量纲；单位有效性及维度仍由 core 单位表裁定。
         const auto kindToken = requireString(item, "quantityKind", prefix);
-        static const char* kProbeTokens[] = {"m", "rad", "kg", "s", "N", "N*m",
-            "kg*m^2", "W", "m/s", "rad/s", "m/s^2", "rad/s^2", "V", "1"};
-        bool kindOk = false;
-        for (const auto* probe : kProbeTokens) {
-            const auto probeUnit = core::UnitToken::find(probe);
-            if (probeUnit.has_value()
-                && std::string_view{kindTokenOf(probeUnit->kind())} == kindToken) {
-                kindOk = true;
-                break;
-            }
-        }
-        if (!kindOk) { failField(prefix + "quantityKind", "未知量纲 token: " + kindToken); }
+        const auto kind = kindFromToken(kindToken);
+        if (!kind.has_value()) { failField(prefix + "quantityKind", "未知量纲 token: " + kindToken); }
+        e.kind = *kind;
 
         // unit：须已注册（§4.3.1——经 core 单位表产生标签）。
         const auto unitTokenStr = requireString(item, "unit", prefix);
@@ -226,7 +197,7 @@ ToleranceProfile ToleranceProfile::load(const std::filesystem::path& profileVers
 
         // quantityKind 与 unit 的量纲必须一致（§4.3.3：不符→unit-mismatch，
         // 数据集非法级——在装载期即拒绝，而非比较期）。
-        if (unit->kind() != kindFromToken(kindToken)) {
+        if (unit->kind() != e.kind) {
             failField(prefix + "quantityKind", "quantityKind 与 unit 量纲不符（"
                       + kindToken + " vs " + unitTokenStr + "）");
         }

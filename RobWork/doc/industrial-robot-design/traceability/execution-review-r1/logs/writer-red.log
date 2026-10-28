@@ -1,0 +1,25 @@
+Note: Google Test filter = WorkerWriterRegressionTest.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from WorkerWriterRegressionTest
+[ RUN      ] WorkerWriterRegressionTest.HeartbeatCannotReuseFinalFragmentSequence_EXR04
+heartbeat seq=1 final seq=1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\WorkerWriterTest.cpp(44): error: Expected: (f[0].seq) != (f[1].seq), actual: 1 vs 1
+
+[  FAILED  ] WorkerWriterRegressionTest.HeartbeatCannotReuseFinalFragmentSequence_EXR04 (2 ms)
+[ RUN      ] WorkerWriterRegressionTest.RejectPauseCommandFromAnotherAttempt_EXR05
+foreign attempt pause exit=21
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\WorkerWriterTest.cpp(50): error: Expected: (rc) != (21), actual: 21 vs 21
+
+[  FAILED  ] WorkerWriterRegressionTest.RejectPauseCommandFromAnotherAttempt_EXR05 (0 ms)
+[----------] 2 tests from WorkerWriterRegressionTest (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (4 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] WorkerWriterRegressionTest.HeartbeatCannotReuseFinalFragmentSequence_EXR04
+[  FAILED  ] WorkerWriterRegressionTest.RejectPauseCommandFromAnotherAttempt_EXR05
+
+ 2 FAILED TESTS
+nativeExit=1

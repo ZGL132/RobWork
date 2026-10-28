@@ -15,7 +15,6 @@
 #include <gtest/gtest.h>
 
 #include <sdurws/ird/core/Digest.hpp>
-#include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/testkit/Dataset.hpp>
 #include <sdurws/ird/testkit/JsonLite.hpp>
 
@@ -119,7 +118,8 @@ std::string validManifest()
   },
   "integrity": [
     { "path": "inputs/in.json", "sha256": "__IN_SHA__", "sizeBytes": __IN_SIZE__ },
-    { "path": "expected/out.json", "sha256": "__OUT_SHA__", "sizeBytes": __OUT_SIZE__ }
+    { "path": "expected/out.json", "sha256": "__OUT_SHA__", "sizeBytes": __OUT_SIZE__ },
+    { "path": "generate/make_fk.py", "sha256": "__GEN_SHA__", "sizeBytes": __GEN_SIZE__ }
   ],
   "generator": { "script": "generate/make_fk.py", "invocation": "python make_fk.py", "committed": true },
   "history": [ { "version": "1.0.0", "date": "2026-09-11", "change": "首版",
@@ -135,6 +135,9 @@ void writeDataset(const fs::path& root, const std::string& id,
     const auto dir = root / "golden" / id / version;
     fs::create_directories(dir / "inputs");
     fs::create_directories(dir / "expected");
+    fs::create_directories(dir / "generate");
+    const std::string generator = "# test fixture metadata; never executed\n";
+    std::ofstream(dir / "generate" / "make_fk.py", std::ios::binary) << generator;
     const std::string inContent = "{\"q1\":0.0}";
     const std::string outContent = "{\"tcp\":{\"x\":0.5}}";
     std::ofstream(dir / "inputs" / "in.json", std::ios::binary) << inContent;
@@ -150,6 +153,8 @@ void writeDataset(const fs::path& root, const std::string& id,
     replaceAll("__OUT_SHA__", sha256HexOf(outContent));
     replaceAll("__IN_SIZE__", std::to_string(inContent.size()));
     replaceAll("__OUT_SIZE__", std::to_string(outContent.size()));
+    replaceAll("__GEN_SHA__", sha256HexOf(generator));
+    replaceAll("__GEN_SIZE__", std::to_string(generator.size()));
     std::ofstream(dir / "manifest.json", std::ios::binary) << manifest;
 }
 
@@ -161,6 +166,7 @@ void expectReject(const std::string& id, const std::string& version,
         (void)GoldenDataset::load({id, version});
         FAIL() << "必须拒绝: " << id << "/" << version;
     } catch (const TestKitError& e) {
+        EXPECT_EQ(std::string(e.what()).find("dataset-invalid: dataset-invalid:"), std::string::npos);
         EXPECT_NE(std::string(e.what()).find(pathFragment), std::string::npos)
             << "字段路径缺失（期望含 " << pathFragment << "）: " << e.what();
     }
@@ -179,6 +185,69 @@ TEST(DatasetManifest, FullFieldLoad_UT_MAN)
     // resolve 走清单白名单（inputs/expected 各自登记才可解析）。
     EXPECT_NO_THROW((void)ds.resolveInput("inputs/in.json"));
     EXPECT_NO_THROW((void)ds.resolveExpected("expected/out.json"));
+}
+
+/** 既有 F-015：parameters 缺省为 {}，存在但非对象仍拒绝。 */
+TEST(DatasetManifest, OptionalParametersHaveObjectDefault_ReviewF015)
+{
+    FixtureRoot root;
+    auto text = validManifest();
+    const auto start = text.find("\"parameters\"");
+    const auto end = text.find("},", start) + 2;
+    text.erase(start, end - start);
+    writeDataset(root.root(), "kin-fk-planar-2r", "1.0.0", text);
+    EXPECT_EQ(GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}).manifest().parametersJson, "{}");
+    text = validManifest();
+    const auto a = text.find("{ \"link1\"");
+    text.replace(a, text.find('}', a) - a + 1, "null");
+    writeDataset(root.root(), "kin-fk-planar-2r", "1.0.0", text);
+    expectReject("kin-fk-planar-2r", "1.0.0", "parameters");
+}
+
+/** 既有 F-017：登记脚本以及 generate 内新增来源文件均必须受完整性保护。 */
+TEST(DatasetIntegrity, GeneratorCoverageRequired_ReviewF017)
+{
+    FixtureRoot root;
+    const auto dir = root.root() / "golden" / "kin-fk-planar-2r" / "1.0.0";
+    auto text = validManifest();
+    const auto start = text.find(",\n    { \"path\": \"generate/make_fk.py\"");
+    ASSERT_NE(start, std::string::npos);
+    text.erase(start, text.find('}', start) - start + 1);
+    writeDataset(root.root(), "kin-fk-planar-2r", "1.0.0", text);
+    expectReject("kin-fk-planar-2r", "1.0.0", "integrity");
+    writeDataset(root.root(), "kin-fk-planar-2r", "1.0.0", validManifest());
+    std::ofstream(dir / "generate" / "derivation.md") << "independent derivation";
+    expectReject("kin-fk-planar-2r", "1.0.0", "generate/derivation.md");
+    fs::remove(dir / "generate" / "derivation.md");
+    std::ofstream(dir / "generate" / "make_fk.py", std::ios::app) << "tampered";
+    expectReject("kin-fk-planar-2r", "1.0.0", "size");
+}
+
+/** 既有 F-018：所有整数域在转换之前校验，版本范围错误也统一 TestKitError。 */
+TEST(DatasetRejections, IntegerFieldsRejectFractionsAndRange_ReviewF018)
+{
+    FixtureRoot root;
+    for (const auto& change : std::vector<std::pair<std::string, std::string>>{
+             {"\"seed\": null", "\"seed\": 1.5"},
+             {"\"seed\": null", "\"seed\": 18446744073709551616"},
+             {"\"threadCount\": 1", "\"threadCount\": 1.5"},
+             {"\"threadCount\": 1", "\"threadCount\": 2147483648"},
+             {"\"threadCount\": 1", "\"threadCount\": \"1\""},
+             {"__IN_SIZE__", "10.5"}}) {
+        auto text = validManifest();
+        text.replace(text.find(change.first), change.first.size(), change.second);
+        writeDataset(root.root(), "kin-fk-planar-2r", "1.0.0", text);
+        EXPECT_THROW(GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"}), TestKitError)
+            << change.second;
+    }
+    int major = 0, minor = 0, patch = 0;
+    EXPECT_THROW(parseSemanticVersion("999999999999999999999.0.0", "version",
+                                      &major, &minor, &patch), TestKitError);
+    auto schema = validManifest();
+    const std::string original = "ird-golden-manifest/1";
+    schema.replace(schema.find(original), original.size(), "ird-golden-manifest/999999999999999999999");
+    writeDataset(root.root(), "kin-fk-planar-2r", "1.0.0", schema);
+    expectReject("kin-fk-planar-2r", "1.0.0", "schemaVersion");
 }
 
 /** 反例矩阵（acceptance 2）：字段路径逐项命中。

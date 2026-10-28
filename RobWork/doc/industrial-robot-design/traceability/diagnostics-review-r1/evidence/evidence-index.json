@@ -1,0 +1,658 @@
+{
+  "taskId": "DIAG-T12",
+  "base": "af375242c7b632d572c8190ee0d954aa149d80dc",
+  "boundary": "files 为 raw-evidence.zip 内部原始证据，逐字节核对且无 Git 换行转换；review 为修复前归档，原链接继续指向保留的 build 原件。源码哈希为打包时实际工作区原始字节，不冒充已提交 SHA。",
+  "archive": {
+    "path": "raw-evidence.zip",
+    "bytes": 165699,
+    "sha256": "88c0fb041e6231fbfa0a98671397b1bdbf90eb1a8344716ce32ae772436b17c6"
+  },
+  "tests": [
+    {
+      "name": "red",
+      "status": "FAIL",
+      "total": 12,
+      "passed": 0,
+      "skipped": 0,
+      "failed": 12,
+      "xmlParseStatus": "FAIL: raw legacy Windows exception bytes; root ASCII counts crosschecked only"
+    },
+    {
+      "name": "red-lifecycle",
+      "status": "FAIL",
+      "total": 3,
+      "passed": 0,
+      "skipped": 0,
+      "failed": 3,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "green-1",
+      "status": "FAIL",
+      "total": 16,
+      "passed": 14,
+      "skipped": 0,
+      "failed": 2,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "diagnostics",
+      "status": "PASS",
+      "total": 141,
+      "passed": 141,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "contract",
+      "status": "PASS",
+      "total": 26,
+      "passed": 26,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "assembly",
+      "status": "FAIL",
+      "total": 1,
+      "passed": 0,
+      "skipped": 0,
+      "failed": 1,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "assembly-final",
+      "status": "PASS",
+      "total": 1,
+      "passed": 1,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "policy",
+      "status": "PASS",
+      "total": 1,
+      "passed": 1,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "smoke-unit",
+      "status": "PASS",
+      "total": 23,
+      "passed": 23,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "smoke-contract",
+      "status": "PASS",
+      "total": 3,
+      "passed": 3,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "assertions",
+      "status": "PASS",
+      "total": 3,
+      "passed": 3,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    },
+    {
+      "name": "smoke-assertions",
+      "status": "PASS",
+      "total": 3,
+      "passed": 3,
+      "skipped": 0,
+      "failed": 0,
+      "xmlParseStatus": "PASS"
+    }
+  ],
+  "workingSourceSha256": {
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt": "98e687843702a0a454df4488dd54347e4373ac75ca11026cee43997ea087313d",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Confirmable.hpp": "5591837ce2d6f30b50fd02dd6c7ae96abdb69dde1ad5a0437c0d7c18f28ae05f",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Factory.hpp": "31bcdd757e6d8ed7bf41d1474b9211be20365960ac7a626a16a2e0fa6132625f",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Logging.hpp": "e7e80681ced3a7973cee65c0294525099af20b03598329a25a24abee0b6989e6",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Aggregation.cpp": "242f5ddf54076b8b9180a581b909beaa9b1e487e375d31de30f8c0cfbdc6251b",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Catalog.cpp": "e43e6d7b67eea377147c79177e1e03a9dcceae4d023537a4d95ca072f4094169",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Confirmable.cpp": "39e7f70ad68df3dd2a12bfdb67746edbeb0c1650e22396ac6192781b8eb1b715",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp": "331773b77a6f52a15be86aac1ae798a2fc00daa7a7c73ff3f3eab367b0c5e244",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp": "dea164101859b4858f05a9998b7902df1f0f631709fd9738a04b257b5ad67b6a",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp": "c623f146dfc973912a052390f58737d62d689fcaa05902f2e5d74f55a4914091",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp": "ded96267233205b2880e128e98b24188cda589c5e3b74ff75424df66943bf11f",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Redaction.cpp": "7f23bd7936113ee16c49a472c6a575dc355798bcb9e7e8afbdb62b5d4d721dff",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/ConfirmableTest.cpp": "8f2ca0b4787953af2001f0f70da7b320c930cc394fb906bc75873bb6b7d3889b",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/DiagnosticsRegressionTest.cpp": "2ed669472142d3d903a4124db44836c2b47f0f06696907d31936cf52bd60faf3",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt": "92d996c0226a98ecad172621b725832d090b8bcd24f1ef23580afc8b1bbd0bf4",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/DiagnosticsAssembly.cpp": "76a86880ed2bc141e19312c2a12484296a45aecc2fba007f77c5aeca1ade71f7",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/DiagnosticsAssemblyContractTest.cpp": "618047091c9e82d2e9ae8fe441962bd4674152fe7b48874a56cc9f3567e34a26",
+    "RobWork/doc/industrial-robot-design/reuse/changes/DIAG-T12.json": "cb5ff461335bf2b8d5e760efef81000b732ec69cd807c9a284c1567295ad0f53",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json": "0591dff217f1a1367ea234e1ab4ffa20878adbfbca084348f24f6fc8ee1edfc7",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json": "874428ae5f6cf348fbc9e7d560b0554bccc90f100068afce05b9416411503234",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json": "f7d7c1486375a6bfe381fc0065b58a1616755e6a2dfcd2488edda456c4fe6f83",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json": "a9068bab12c88695f90f8d164e539a5b687b716e28cacbce5a5718f7c8511846",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T12.json": "213f39bebbece43b50a48a6e0c74720533cade0d963588ca3e2fce740ea566e9",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md": "11575db981521fd5b5c9a0ff5e056dc40e0f88aaa8a63fb5dc27140f3b57bf9d"
+  },
+  "files": [
+    {
+      "path": "assembly-final-report.json",
+      "bytes": 1021,
+      "sha256": "29eea5172f63954ce120e9d3606cb74371e75e79166bfd265f3df15e86023802"
+    },
+    {
+      "path": "assembly-final.log",
+      "bytes": 580,
+      "sha256": "26a29ca84e27426610f74462c229a3143fc56767252b7c5fdbde8088551b2517"
+    },
+    {
+      "path": "assembly-final.xml",
+      "bytes": 721,
+      "sha256": "1ebf8c1a2611b42a906e1b900183c2ff9da4b661b47d0012fca189547dba3748"
+    },
+    {
+      "path": "assembly-report.json",
+      "bytes": 1085,
+      "sha256": "96c3bddf9c3e6c44d3ecd8ff0e800cb1658eab4f02a210ddb0b42270aacf57f9"
+    },
+    {
+      "path": "assembly.log",
+      "bytes": 968,
+      "sha256": "57f1abb546de61c4060055196a7686c0deacc2621bff1eb951f872c39b4641ba"
+    },
+    {
+      "path": "assembly.xml",
+      "bytes": 1285,
+      "sha256": "c481e695fd70355bccb7651dceb8fc885aee6b41df3bcca46d60e8a0736ac6ff"
+    },
+    {
+      "path": "assertions-report.json",
+      "bytes": 2586,
+      "sha256": "2166567d5fa3aed9b489e09d01fa97ea2695cf24bf6cc95a0f88f8ee2dbc5348"
+    },
+    {
+      "path": "assertions.log",
+      "bytes": 1088,
+      "sha256": "1e044c7581f55f9a5ef39efa9f5b185452bfddd89dd5368a0808e04036367539"
+    },
+    {
+      "path": "assertions.xml",
+      "bytes": 1422,
+      "sha256": "8735db76d0e359667d810816061f7d1cc9782ea5e6bf8300acab1fa1ef9435ae"
+    },
+    {
+      "path": "binding-audit.json",
+      "bytes": 69577,
+      "sha256": "f06fe6611662bb4ad852135c17d9ce173a326d03293b74caeb1e49bc3c5ca378"
+    },
+    {
+      "path": "binding-audit.log",
+      "bytes": 13417,
+      "sha256": "fcfee19d8a3f88673affd68366c969e09629bad4ec1c2d653e3d5de950036e88"
+    },
+    {
+      "path": "bindings-final.log",
+      "bytes": 1943,
+      "sha256": "a05eb703bd033de94d3acddca4c08a11c1c49fe66411a4db070bd0620244059c"
+    },
+    {
+      "path": "bindings.log",
+      "bytes": 1943,
+      "sha256": "a05eb703bd033de94d3acddca4c08a11c1c49fe66411a4db070bd0620244059c"
+    },
+    {
+      "path": "build-assertions.log",
+      "bytes": 1353,
+      "sha256": "3809eee23e179fa1726cc1c9c25f28c97254d550786aaefa233878ef0b4a2ce8"
+    },
+    {
+      "path": "build-consumers.log",
+      "bytes": 11706,
+      "sha256": "edbf7c26dfa5171111c63435de582e6e47116c010f3a615e4561d7086bd5aefb"
+    },
+    {
+      "path": "build-final.log",
+      "bytes": 20930,
+      "sha256": "334716886dc60f28b73178dc3404b6832ddb088e740a93e96f7868cceee7f6a2"
+    },
+    {
+      "path": "build-green.log",
+      "bytes": 20907,
+      "sha256": "77157f618854bb37056545c0a16c18a2ed19322a1854dc114be02ec13c030dba"
+    },
+    {
+      "path": "build-mid.log",
+      "bytes": 6267,
+      "sha256": "6ab612e4d7f99f816867faa552d618d6ef7fb04808716c02d63922b67626c4b9"
+    },
+    {
+      "path": "build-red.log",
+      "bytes": 19599,
+      "sha256": "45a8a3ad0a085ed1449be764aa2a698fe3736c2805edf36dc636d164f4565b64"
+    },
+    {
+      "path": "build-verify.log",
+      "bytes": 15315,
+      "sha256": "dc1be014ef4dc02e06012c63fd26e5f861a0332299fd62f4fea0609cb5a10189"
+    },
+    {
+      "path": "contract-report.json",
+      "bytes": 20496,
+      "sha256": "9b668617d4777c3ee5db9305ae78566c9fe2b68553e9079ea883a82b2316d45f"
+    },
+    {
+      "path": "contract.log",
+      "bytes": 5150,
+      "sha256": "cbf4d4085db26fc2c4b41ed63defc555a0004f0ed75569788664235ed5bb3554"
+    },
+    {
+      "path": "contract.xml",
+      "bytes": 10293,
+      "sha256": "bc2babe349de2c0eb80256dc5ba7d8ede2e132ecd56b756906e25a50cef25418"
+    },
+    {
+      "path": "diagnostics-report.json",
+      "bytes": 109543,
+      "sha256": "cc7c0b6bd0a427f7bf6cfd9e2c436f50bc91c6d11f5b1a457bbfe4c7c1060ff2"
+    },
+    {
+      "path": "diagnostics.log",
+      "bytes": 25102,
+      "sha256": "afd5dcceda1836aa7c7feaed92c95ba561fea82dca9ee81978dfdbffca57ab62"
+    },
+    {
+      "path": "diagnostics.xml",
+      "bytes": 52237,
+      "sha256": "114c879d644568dd30e6cd1f50d297d2746c812a3a1b922010e1d4fcdc9b96df"
+    },
+    {
+      "path": "docs-reuse-2.log",
+      "bytes": 269,
+      "sha256": "e7c54fa2ac21d061a8172ac1d340204624912be3344911e9cd7c99711ff2bbd9"
+    },
+    {
+      "path": "docs-reuse-3.log",
+      "bytes": 212,
+      "sha256": "a313fe2144bff1894e21e56cd4871c9ac81c76d3b8a3fa565e386a862c4fa499"
+    },
+    {
+      "path": "docs-reuse-4.log",
+      "bytes": 239,
+      "sha256": "c5b95a316393d31a02431db3b78167a1133d448ba6d7a004285fb91fa99d694a"
+    },
+    {
+      "path": "docs-reuse-final.log",
+      "bytes": 239,
+      "sha256": "c5b95a316393d31a02431db3b78167a1133d448ba6d7a004285fb91fa99d694a"
+    },
+    {
+      "path": "docs-reuse.log",
+      "bytes": 223,
+      "sha256": "3f366a7a78bed8d681c3b8aefe38d8e9644d3a6058efdbffed39f909b52245d0"
+    },
+    {
+      "path": "green-1-report.json",
+      "bytes": 12796,
+      "sha256": "57d6888d59e8c9f94d32a69927bd83643975dc6952f1079e2618f3ec644f21dc"
+    },
+    {
+      "path": "green-1.log",
+      "bytes": 4331,
+      "sha256": "5c3ae24b627be4581c95d325c43165cc3e12ed9563bb989deda1f05cd174c13a"
+    },
+    {
+      "path": "green-1.xml",
+      "bytes": 8388,
+      "sha256": "ed8f554aceb139bd0bae9e6fc4df14d6719fadfb63178038df7b270d38fd28d1"
+    },
+    {
+      "path": "ird-gates.log",
+      "bytes": 2439,
+      "sha256": "5799e3f7491bab3f22b29ca735382cee5e087e4da49b6cfa03d8fa792b275670"
+    },
+    {
+      "path": "policy-report.json",
+      "bytes": 1019,
+      "sha256": "d49a834b39e090e3b218f85fa5c6d33b7473c9cab36dc650d842327de4cef1b5"
+    },
+    {
+      "path": "policy.log",
+      "bytes": 593,
+      "sha256": "c0d39a43ce266984c5bb8b6e040301252140a64972bef0e380cc5f1663aefb57"
+    },
+    {
+      "path": "policy.xml",
+      "bytes": 727,
+      "sha256": "4aeeb334b0711324c76de5238e76a2b33b947cbc9d9cc6939b015ac3d8abee75"
+    },
+    {
+      "path": "red-lifecycle-report.json",
+      "bytes": 2765,
+      "sha256": "95bc117ac0961d45595b2d2f5be73cc347c4ef619a21ae4955232da1d109f55d"
+    },
+    {
+      "path": "red-lifecycle.log",
+      "bytes": 4261,
+      "sha256": "7397e8f0fd688478a8e70e60230cbc15c96364b1d315b02deb436d94b897fd59"
+    },
+    {
+      "path": "red-lifecycle.xml",
+      "bytes": 7885,
+      "sha256": "f9c533172c1946a108c2d859c0977c9f36e8bdf3b0a65480b2c8f9cf3291f588"
+    },
+    {
+      "path": "red-report.json",
+      "bytes": 10310,
+      "sha256": "bba223d332ba2ff16eb12963fcba636fefad8e23ac621b78d455528f84934c32"
+    },
+    {
+      "path": "red.log",
+      "bytes": 11892,
+      "sha256": "9a4e6daa7455970f02bf290faa642863a244f26421a9cd34f2bc15c405d5522f"
+    },
+    {
+      "path": "red.xml",
+      "bytes": 23826,
+      "sha256": "8fabda0f247a33f71d4f4a5909d2c5cd9191f28a9eec84702607a6762959035b"
+    },
+    {
+      "path": "review/CMakeLists.txt",
+      "bytes": 1206,
+      "sha256": "4a6bd0e47231e545ca33b9dc2fafb8fd168e669538540c38810135bc455ec4e1"
+    },
+    {
+      "path": "review/build-contract.log",
+      "bytes": 1712,
+      "sha256": "9923724716d5bd976bbd8ecbcfea83d511d6b8861a9778b331e9bb8ff2246fa4"
+    },
+    {
+      "path": "review/build-test.log",
+      "bytes": 1320,
+      "sha256": "383ae13e2955976229f9fb7ba1391713cfef9cf1cad9d30a65f0ec31982d80e5"
+    },
+    {
+      "path": "review/commands.ps1",
+      "bytes": 4556,
+      "sha256": "bca5aee2d18559e570be9a6c6053051ea5cf25d12cbce6e991276eb44c51585c"
+    },
+    {
+      "path": "review/contract.ird-test-report.json",
+      "bytes": 20496,
+      "sha256": "caf75f6a74471987bc8600170fb8b3cbe96a296f73ed538b273487e1a054a274"
+    },
+    {
+      "path": "review/contract.log",
+      "bytes": 5151,
+      "sha256": "5f50bfb206125340a7d70829c15bedc798312f2e2d939b903b8d9b80cbae12df"
+    },
+    {
+      "path": "review/contract.xml",
+      "bytes": 10299,
+      "sha256": "e00fd41a8d373aaf7b01546db26e44566b50865a70b0b6b5dc621edfe1145b8b"
+    },
+    {
+      "path": "review/coverage.md",
+      "bytes": 10054,
+      "sha256": "bca3be752739ee4c4f439711ce2a6c579c2f21ee7fdf685dbd1d51d97c4ff595"
+    },
+    {
+      "path": "review/delivery-check.log",
+      "bytes": 384,
+      "sha256": "a0578028e3738f6f43844e2aa9b9a306c5e9a7d96235501ea57376d04ef799e9"
+    },
+    {
+      "path": "review/diagnostics.ird-test-report.json",
+      "bytes": 95551,
+      "sha256": "ef70dba149a79244bbdfad8eaeb282676c9de39a17fc7218ba41b1bb4295a3bf"
+    },
+    {
+      "path": "review/diagnostics.log",
+      "bytes": 22058,
+      "sha256": "b6126504ba9ef86a2d0c589f084c2d48d2e58eb3c2356b46ac9f26495e7523c5"
+    },
+    {
+      "path": "review/diagnostics.xml",
+      "bytes": 45774,
+      "sha256": "af944a835287d359119da5ded6926ee20edb5eb588da7c298907aa40109ed95a"
+    },
+    {
+      "path": "review/evidence-check.log",
+      "bytes": 1569,
+      "sha256": "9f967d40cd6d1375ac8c1c1ee0dc3539decce1ae7196f0cf3d2f12d2952a624c"
+    },
+    {
+      "path": "review/evidence-index.json",
+      "bytes": 31269,
+      "sha256": "632bdccb4cd53eb356d808d97fca421db7ed92a10737ae7bd2797cfdfb74c29c"
+    },
+    {
+      "path": "review/probe-build.log",
+      "bytes": 801,
+      "sha256": "4b86529d68bc5b105f6b8caf348d781609606bc1e7fe5f37feaa43b1900ee53b"
+    },
+    {
+      "path": "review/probe-configure.log",
+      "bytes": 634,
+      "sha256": "b7cb4d2ec8f391d50a6e96be76ae4c63a8eb197350e9b0d6ec56d34820723681"
+    },
+    {
+      "path": "review/probe-crash-collision/crash-1000000000-77.log",
+      "bytes": 321,
+      "sha256": "a8e88e061ebd376f4737a4c95e736235d8b142ea1ac1387483a565c28fbc0fdb"
+    },
+    {
+      "path": "review/probe-extra-build.log",
+      "bytes": 1358,
+      "sha256": "68c3d62a13eb274781314a378e63041b7a3cdc25abbae1570e26af0b034708f7"
+    },
+    {
+      "path": "review/probe-extra.ird-test-report.json",
+      "bytes": 5229,
+      "sha256": "f98e2cd6e095f5fa8d0ea5da969be92a0c64f052434e8ba887293428e0162d8a"
+    },
+    {
+      "path": "review/probe-extra.log",
+      "bytes": 4121,
+      "sha256": "fe85f9dd696dd40ae9247d3d3903f962ffdaa8712c112f1a5444c2d5fb22f826"
+    },
+    {
+      "path": "review/probe-extra.xml",
+      "bytes": 5784,
+      "sha256": "6cd71803643a429ae5340dde8e4a68e2c99249aa0e7157312ded54537f28bcc4"
+    },
+    {
+      "path": "review/probe-final-build.log",
+      "bytes": 254,
+      "sha256": "2c816f11fb0828411d7f43b574121e4d069e8e017da0b8dae91f4326624f13a4"
+    },
+    {
+      "path": "review/probe-final.ird-test-report.json",
+      "bytes": 1864,
+      "sha256": "86bcb8f048781dc4042411af00d90bde9ba8dedbca1cb1dce18509fb346a52be"
+    },
+    {
+      "path": "review/probe-final.log",
+      "bytes": 1412,
+      "sha256": "7116cd42c124d9242ff83725ea23a89edc384283e5679cdf10013384edd4e47c"
+    },
+    {
+      "path": "review/probe-final.xml",
+      "bytes": 1710,
+      "sha256": "ec5eceb91991eb2c33701cd958a326a9487a21621afa5d7d88b3007ac7a83faa"
+    },
+    {
+      "path": "review/probe-real-assembly/dev-diagnostics.log",
+      "bytes": 65,
+      "sha256": "e82dd5743b94697f9f6dd7dac494b2e144f4ce198374fa40acbb286a67314ba1"
+    },
+    {
+      "path": "review/probe-registry-build.log",
+      "bytes": 254,
+      "sha256": "2c816f11fb0828411d7f43b574121e4d069e8e017da0b8dae91f4326624f13a4"
+    },
+    {
+      "path": "review/probe-registry.ird-test-report.json",
+      "bytes": 1069,
+      "sha256": "9c96f1837ef25c09c44835df11a5c13f775e8a1cca4aff480da0c83b331a2d7a"
+    },
+    {
+      "path": "review/probe-registry.log",
+      "bytes": 854,
+      "sha256": "fd5e4cd15cb6b246bdb2039d1a047c2e7453e43f6a54c2147146f951c0c8ce22"
+    },
+    {
+      "path": "review/probe-registry.xml",
+      "bytes": 1032,
+      "sha256": "1c6f3228ecd838682b860e000c8e543e993e326a8d5c2997f7121ce2d764d97b"
+    },
+    {
+      "path": "review/probe-valid-build.log",
+      "bytes": 254,
+      "sha256": "2c816f11fb0828411d7f43b574121e4d069e8e017da0b8dae91f4326624f13a4"
+    },
+    {
+      "path": "review/probe-valid.ird-test-report.json",
+      "bytes": 1907,
+      "sha256": "5a359bcb2c3ac2e1c2c60617c535699279450898fe543199b829ce264f9045a5"
+    },
+    {
+      "path": "review/probe-valid.log",
+      "bytes": 1416,
+      "sha256": "dd5bfb9fd8eb3b38a703d71a3f565ceda12495da60109680481e18e7c27528dc"
+    },
+    {
+      "path": "review/probe-valid.xml",
+      "bytes": 1922,
+      "sha256": "c8a10575f55f085264820292d56803a68830e5d745e0e6ae5631192102791ed2"
+    },
+    {
+      "path": "review/probe.cpp",
+      "bytes": 16492,
+      "sha256": "ca042801f85346d2d84c0c630f122b04d189da4c8a18528dd0cf470d1b884225"
+    },
+    {
+      "path": "review/probe.ird-test-report.json",
+      "bytes": 10103,
+      "sha256": "c0293f1edd39b27047a963ded508539b8d04e280d670ec11f47d569ed053bb2e"
+    },
+    {
+      "path": "review/probe.log",
+      "bytes": 8360,
+      "sha256": "6ea4b4162512df151cc08589d3b4467c5a347b6197ab98627894d8c6fe2412ca"
+    },
+    {
+      "path": "review/probe.xml",
+      "bytes": 12962,
+      "sha256": "4d1330848f86a7b922dfb7095b59b5a4a6a59bf75533237999635974f822cd43"
+    },
+    {
+      "path": "review/report-links.json",
+      "bytes": 9501,
+      "sha256": "e6d54a634a9f4486e3b6af52987654f7b9c1e87d9a776c7513e76f70cc71d9ba"
+    },
+    {
+      "path": "review/review.md",
+      "bytes": 65617,
+      "sha256": "24bde3d5c73aee70c9982fce9a3becacbf82a469a9e365e44f25713ea47cfe79"
+    },
+    {
+      "path": "review/site.json",
+      "bytes": 4154,
+      "sha256": "214290c4210165e0aef43ce5b082830e9e664688fd209930d902407f6151b842"
+    },
+    {
+      "path": "review/translation-cause.bin",
+      "bytes": 546,
+      "sha256": "bc3fcd7d2adcc7b6e88ea8239b5b2277f4e6489932833711d54dcde00258c640"
+    },
+    {
+      "path": "review/utf8-decode.log",
+      "bytes": 138,
+      "sha256": "d1780105da533331b96485e03063f1c2fa90f485679770b7eeb83d482d0f28b1"
+    },
+    {
+      "path": "smoke-assertions-build.log",
+      "bytes": 787,
+      "sha256": "3b90858ef43bac326123d1fd102d501395377ca2c9cee67fc36ba6bee43a624f"
+    },
+    {
+      "path": "smoke-assertions-report.json",
+      "bytes": 2586,
+      "sha256": "2166567d5fa3aed9b489e09d01fa97ea2695cf24bf6cc95a0f88f8ee2dbc5348"
+    },
+    {
+      "path": "smoke-assertions.log",
+      "bytes": 1088,
+      "sha256": "1e044c7581f55f9a5ef39efa9f5b185452bfddd89dd5368a0808e04036367539"
+    },
+    {
+      "path": "smoke-assertions.xml",
+      "bytes": 1422,
+      "sha256": "b6de027c16a8955df961fd67155770c761c713f61ea656d08754a1bde754676c"
+    },
+    {
+      "path": "smoke-build.log",
+      "bytes": 3631,
+      "sha256": "8de6f4fc3153e34190aa58f4824ee9f9a827f0708f4de3b174069ec3e2ca817b"
+    },
+    {
+      "path": "smoke-configure-2.log",
+      "bytes": 1003,
+      "sha256": "8525ad971e8ebcd5b12a3e4fe6c29185cac12e65581a042cc060fbe4bd397046"
+    },
+    {
+      "path": "smoke-configure-3.log",
+      "bytes": 6557,
+      "sha256": "b0420d6ca44605ca03c35285b33484bc29b50b406d16b60d6241308fa0a51fad"
+    },
+    {
+      "path": "smoke-configure.log",
+      "bytes": 1620,
+      "sha256": "4da18ce03717c6a0d1b325ef7314393099720dc6f540300dc47cf410e350f13b"
+    },
+    {
+      "path": "smoke-contract-report.json",
+      "bytes": 2539,
+      "sha256": "8385616940b6c82b22ece326f83e7c4c98f3bf51f6e3b3c020076bf5ab0e3680"
+    },
+    {
+      "path": "smoke-contract.log",
+      "bytes": 803,
+      "sha256": "6a39401cdf2b8beeaa87c750731b410c9a469b656ddf04c2bd7a1c2a1f7b7566"
+    },
+    {
+      "path": "smoke-contract.xml",
+      "bytes": 1345,
+      "sha256": "b654e0f6d5a12cc0bf03fd3fe4e4b3000d4e4ff156338e20e6bf8265aeae5df9"
+    },
+    {
+      "path": "smoke-unit-report.json",
+      "bytes": 18060,
+      "sha256": "e6ea968b8f7e7e3b3abe84e71878fc0542940934643c47626a83aaf722257c24"
+    },
+    {
+      "path": "smoke-unit.log",
+      "bytes": 4260,
+      "sha256": "d8860a10895549c3b1efb9afe2ee65f8444df804f1a851266c1b9fbe4f683ecd"
+    },
+    {
+      "path": "smoke-unit.xml",
+      "bytes": 8631,
+      "sha256": "40ce12e7f2a20d772da5bf6d41c7b252d6f1f698f8aaaf79e565006009724861"
+    },
+    {
+      "path": "upstream-search.log",
+      "bytes": 4197,
+      "sha256": "3a5f28462ee084fd5eb438b17311ac53e221796e4343d3b61458f238e3931751"
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="32" failures="30" disabled="0" errors="0" time="0.001" timestamp="2026-10-27T23:09:14.824" name="AllTests">
+  <testsuite name="ReviewR1_Controls" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.824">
+    <testcase name="ValidFeasibleAndIncomplete" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="27" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.824" classname="ReviewR1_Controls" />
+  </testsuite>
+  <testsuite name="ReviewR1_Identity" tests="4" failures="4" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.824">
+    <testcase name="UnrelatedRevisionKeepsSlice" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="28" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Identity">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:28&#x0A;Expected equality of these values:&#x0A;  slice(a).sliceId&#x0A;    Which is: 32-byte object &lt;54-12 DC-17 D5-A9 93-3D 8F-F4 CD-09 BD-C7 63-36 B4-68 5F-A5 34-5D D7-8E 27-3B A4-EE AA-88 C5-D6&gt;&#x0A;  slice(b).sliceId&#x0A;    Which is: 32-byte object &lt;6F-EC A6-D9 EE-EB 89-23 24-9E 01-9F D0-D2 80-2B 76-B4 A3-E3 16-79 B1-58 E9-C9 5E-ED 20-78 70-D7&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:28
+Expected equality of these values:
+  slice(a).sliceId
+    Which is: 32-byte object <54-12 DC-17 D5-A9 93-3D 8F-F4 CD-09 BD-C7 63-36 B4-68 5F-A5 34-5D D7-8E 27-3B A4-EE AA-88 C5-D6>
+  slice(b).sliceId
+    Which is: 32-byte object <6F-EC A6-D9 EE-EB 89-23 24-9E 01-9F D0-D2 80-2B 76-B4 A3-E3 16-79 B1-58 E9-C9 5E-ED 20-78 70-D7>
+]]></failure>
+    </testcase>
+    <testcase name="BudgetChangeKeepsBaseline" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Identity">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:29&#x0A;Expected equality of these values:&#x0A;  slice(a,true).inputBaselineId&#x0A;    Which is: 32-byte object &lt;58-A0 83-D3 8E-07 8C-B7 9C-12 24-1F 02-3E 54-50 C0-13 D8-21 60-C5 B3-48 E3-66 DE-CA F4-A3 7A-B5&gt;&#x0A;  slice(b,true).inputBaselineId&#x0A;    Which is: 32-byte object &lt;18-C7 15-99 0D-F5 BF-4F 30-5C F0-D2 12-90 16-DE B8-16 FB-EC B5-E1 E6-D8 04-E4 18-A3 DB-D7 5B-37&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:29
+Expected equality of these values:
+  slice(a,true).inputBaselineId
+    Which is: 32-byte object <58-A0 83-D3 8E-07 8C-B7 9C-12 24-1F 02-3E 54-50 C0-13 D8-21 60-C5 B3-48 E3-66 DE-CA F4-A3 7A-B5>
+  slice(b,true).inputBaselineId
+    Which is: 32-byte object <18-C7 15-99 0D-F5 BF-4F 30-5C F0-D2 12-90 16-DE B8-16 FB-EC B5-E1 E6-D8 04-E4 18-A3 DB-D7 5B-37>
+]]></failure>
+    </testcase>
+    <testcase name="ForgedSnapshotIsRejectedAtSliceBoundary" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="30" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Identity">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:30&#x0A;Expected: slice(s) throws an exception of type EvidenceError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:30
+Expected: slice(s) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="ForeignPolicyRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="31" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Identity">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:31&#x0A;Expected: b.build(s) throws an exception of type EvidenceError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:31
+Expected: b.build(s) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_Dependency" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.825">
+    <testcase name="UnknownEnumsRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="32" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Dependency">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:32&#x0A;Value of: validateDependencyDeclarations({d},{}).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:32
+Value of: validateDependencyDeclarations({d},{}).empty()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:32&#x0A;Value of: validateDependencyEntries({e}).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:32
+Value of: validateDependencyEntries({e}).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_Profile" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.825">
+    <testcase name="DuplicateAndCrossDomainRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="33" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Profile">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:33&#x0A;Value of: validateEvidenceProfile(p).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:33
+Value of: validateEvidenceProfile(p).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_Verdict" tests="6" failures="6" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.825">
+    <testcase name="UnconditionalRequiredCannotBeNA" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="34" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Verdict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:34&#x0A;Expected equality of these values:&#x0A;  r.status&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  c::EngineeringStatus::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:34
+Expected equality of these values:
+  r.status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:34&#x0A;Value of: checkFormalPassEligibility(f.v,f.s,r,f.profiles).eligible&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:34
+Value of: checkFormalPassEligibility(f.v,f.s,r,f.profiles).eligible
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="SatisfiedWithoutArtifactCannotPass" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Verdict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:35&#x0A;Expected equality of these values:&#x0A;  f.verdict().status&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  c::EngineeringStatus::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:35
+Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+    </testcase>
+    <testcase name="ForeignManifestSnapshotCannotPass" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="36" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Verdict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:36&#x0A;Expected equality of these values:&#x0A;  f.verdict().status&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  c::EngineeringStatus::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:36
+Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+    </testcase>
+    <testcase name="DuplicateEvidenceOrderIndependent" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="37" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Verdict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:37&#x0A;Expected equality of these values:&#x0A;  a.status&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  b.status&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:37
+Expected equality of these values:
+  a.status
+    Which is: 4-byte object <00-00 00-00>
+  b.status
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:37&#x0A;Expected equality of these values:&#x0A;  a.status&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  c::EngineeringStatus::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:37
+Expected equality of these values:
+  a.status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+    </testcase>
+    <testcase name="SearchInsufficientCanBeEnveloped" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="38" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.825" classname="ReviewR1_Verdict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:38&#x0A;Value of: r.missingItems.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:38
+Value of: r.missingItems.empty()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:38&#x0A;Value of: validateCombination(d,f.s,f.producers).empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:38
+Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:38&#x0A;Expected: ResultEnvelope::make(std::move(d)) doesn&apos;t throw an exception.&#x0A;  Actual: it throws sdurws::ird::evidence::EvidenceError with description &quot;evidence/envelope-illegal-combination: engineeringStatus=DataInsufficient 而 missingItems 为空（表 3 行 1：缺失项全量清单必含——空清单拒绝）&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:38
+Expected: ResultEnvelope::make(std::move(d)) doesn't throw an exception.
+  Actual: it throws sdurws::ird::evidence::EvidenceError with description "evidence/envelope-illegal-combination: engineeringStatus=DataInsufficient 而 missingItems 为空（表 3 行 1：缺失项全量清单必含——空清单拒绝）".
+]]></failure>
+    </testcase>
+    <testcase name="ProofCannotBypassMissingPolicyIdentity" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Verdict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:40&#x0A;Expected equality of these values:&#x0A;  f.verdict().status&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  c::EngineeringStatus::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:40
+Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <01-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_Envelope" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="ProfileMismatchRejectedByStrongBoundary" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="41" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Envelope">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:41&#x0A;Value of: validateCombination(d,f.s,f.producers).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:41
+Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="TaskRevisionMismatchRejectedByStrongBoundary" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="42" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Envelope">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:42&#x0A;Value of: validateCombination(d,f.s,f.producers).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:42
+Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_Codec" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="IndependentInvalidSnapshotVectorRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="43" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Codec">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:43&#x0A;Expected: SnapshotCodec::parseRefsOnly(b) throws an exception of type EvidenceError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:43
+Expected: SnapshotCodec::parseRefsOnly(b) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="InvalidSliceEntryRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="44" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Codec">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:44&#x0A;Expected: SliceCodec::parse(SliceCodec::encodeFull(sl)) throws an exception of type EvidenceError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:44
+Expected: SliceCodec::parse(SliceCodec::encodeFull(sl)) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+    <testcase name="F64IndependentByteVector" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="45" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Codec" />
+  </testsuite>
+  <testsuite name="ReviewR1_Compatibility" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="MissingIdentitiesCannotFullHit" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="46" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Compatibility">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:46&#x0A;Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:46
+Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0
+]]></failure>
+    </testcase>
+    <testcase name="PreviewCannotFullHit" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="47" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Compatibility">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:47&#x0A;Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:47
+Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0
+]]></failure>
+    </testcase>
+    <testcase name="CheckpointKeyMustMatchRequestedEvaluator" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="48" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_Compatibility">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:48&#x0A;Expected equality of these values:&#x0A;  judgeCheckpointCompatibility(q,s).verdict&#x0A;    Which is: \0&#x0A;  CheckpointCompatibilityResult::Incompatible&#x0A;    Which is: &#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:48
+Expected equality of these values:
+  judgeCheckpointCompatibility(q,s).verdict
+    Which is: \0
+  CheckpointCompatibilityResult::Incompatible
+    Which is: 
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalProfile" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="DuplicateSingleDomainRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="52" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalProfile">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:52&#x0A;Value of: validateEvidenceProfile(p).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:52
+Value of: validateEvidenceProfile(p).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="RequiredListRejectsSuggestedClass" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="53" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalProfile">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:53&#x0A;Value of: validateEvidenceProfile(p).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:53
+Value of: validateEvidenceProfile(p).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalProof" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="EmptyPreconditionsRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="54" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalProof">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:54&#x0A;Value of: validateProof(p,f.producers,f.s,f.sl.sliceId).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:54
+Value of: validateProof(p,f.producers,f.s,f.sl.sliceId).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="EmptyClaimAndSubjectRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="55" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalProof">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:55&#x0A;Value of: validateProof(p,f.producers,f.s,f.sl.sliceId).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:55
+Value of: validateProof(p,f.producers,f.s,f.sl.sliceId).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalSnapshot" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="ConfigIdentityComputedFromBytes" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="56" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalSnapshot">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:56&#x0A;Expected equality of these values:&#x0A;  result.configurationRefs[0].contentIdentity.bytes&#x0A;    Which is: { &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63), &apos;c&apos; (99, 0x63) }&#x0A;  digest({5})&#x0A;    Which is: { &apos;\xE7&apos; (231), &apos;{&apos; (123, 0x7B), &apos;\x9A&apos; (154), &apos;\x9A&apos; (154), &apos;\xE9&apos; (233), &apos;\xE3&apos; (227), &apos;\v&apos; (11, 0xB), &apos;\r&apos; (13, 0xD), &apos;\xBD&apos; (189), &apos;\xB6&apos; (182), &apos;\xF5&apos; (245), &apos;\x10&apos; (16), &apos;\xA2&apos; (162), &apos;d&apos; (100, 0x64), &apos;\xEF&apos; (239), &apos;\x9D&apos; (157), &apos;\xE7&apos; (231), &apos;\x81&apos; (129), &apos;P&apos; (80, 0x50), &apos;\x1D&apos; (29), &apos;{&apos; (123, 0x7B), &apos;k&apos; (107, 0x6B), &apos;\x92&apos; (146), &apos;\xAE&apos; (174), &apos;\x89&apos; (137), &apos;\xEB&apos; (235), &apos;\x5&apos; (5), &apos;\x9C&apos; (156), &apos;Z&apos; (90, 0x5A), &apos;\xB7&apos; (183), &apos;C&apos; (67, 0x43), &apos;\xDB&apos; (219) }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:56
+Expected equality of these values:
+  result.configurationRefs[0].contentIdentity.bytes
+    Which is: { 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63), 'c' (99, 0x63) }
+  digest({5})
+    Which is: { '\xE7' (231), '{' (123, 0x7B), '\x9A' (154), '\x9A' (154), '\xE9' (233), '\xE3' (227), '\v' (11, 0xB), '\r' (13, 0xD), '\xBD' (189), '\xB6' (182), '\xF5' (245), '\x10' (16), '\xA2' (162), 'd' (100, 0x64), '\xEF' (239), '\x9D' (157), '\xE7' (231), '\x81' (129), 'P' (80, 0x50), '\x1D' (29), '{' (123, 0x7B), 'k' (107, 0x6B), '\x92' (146), '\xAE' (174), '\x89' (137), '\xEB' (235), '\x5' (5), '\x9C' (156), 'Z' (90, 0x5A), '\xB7' (183), 'C' (67, 0x43), '\xDB' (219) }
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalSlice" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="ConfigurationMustBelongToSnapshot" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="57" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalSlice">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:57&#x0A;Expected: b.build(s) throws an exception of type EvidenceError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:57
+Expected: b.build(s) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalEnvelope" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="UnknownModeRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="58" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalEnvelope">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:58&#x0A;Value of: validateCombination(d,f.s,f.producers).empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:58
+Value of: validateCombination(d,f.s,f.producers).empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalEvaluator" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="UnknownSupportedModeRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="59" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalEvaluator">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:59&#x0A;Expected: requireValidEvaluatorRegistration(d,f.profiles,{}) throws an exception of type EvidenceError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:59
+Expected: requireValidEvaluatorRegistration(d,f.profiles,{}) throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalVerdict" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="EmptyDomainResultsAreNotComplete" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_AdditionalVerdict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:60&#x0A;Expected equality of these values:&#x0A;  f.verdict().status&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  c::EngineeringStatus::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:60
+Expected equality of these values:
+  f.verdict().status
+    Which is: 4-byte object <00-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_ReviewChain" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:09:14.826">
+    <testcase name="MissingProofPreconditionsCannotQualifyAsFormalReview" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="61" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_ReviewChain">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:76&#x0A;Expected equality of these values:&#x0A;  result.status&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  c::EngineeringStatus::DataInsufficient&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:76
+Expected equality of these values:
+  result.status
+    Which is: 4-byte object <01-00 00-00>
+  c::EngineeringStatus::DataInsufficient
+    Which is: 4-byte object <02-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:77&#x0A;Value of: checkReviewRecordEligibility(f.v,f.s,result,f.producers,f.profiles).eligible&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:77
+Value of: checkReviewRecordEligibility(f.v,f.s,result,f.producers,f.profiles).eligible
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="InvalidIndependentSnapshotBytesCannotProduceFrozenSlice" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="79" status="run" result="completed" time="0." timestamp="2026-10-27T23:09:14.826" classname="ReviewR1_ReviewChain">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:90&#x0A;Expected: buildInvalid() throws an exception of type EvidenceError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:90
+Expected: buildInvalid() throws an exception of type EvidenceError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

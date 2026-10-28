@@ -274,16 +274,18 @@ TEST(KinAnalysisConfig, ConfigDigestEntersSliceIdNotBaseline_WP15T10_ACC2)
     IRD_TEST_INFO(std::vector<std::string>{"KIN-13"},
                   std::vector<std::string>{"AT-27"});
 
-    // 同一冻结快照（对象/策略/样本基准全部不变），仅 config.ik 条目不同。
+    // POL-T13 消费者回归：每份切片都须属于其来源快照。两份快照共享
+    // 对象/策略/样本基准，只改变 config.ik，不能向旧快照塞入新配置。
+    const auto object = makeClosureObject();
     const evidence::AnalysisSnapshot snapshot =
-        buildSnapshot(makeClosureObject(), makeConfigurationRefEntry(validConfig()));
+        buildSnapshot(object, makeConfigurationRefEntry(validConfig()));
     AnalysisConfiguration enlarged = validConfig();
     enlarged.initialValuesCount = 8U;   // 扩大初值（§4.2.4 复评场景）
     enlarged.iterationLimit = 200U;
     const evidence::ConfigEntry changed = makeConfigurationRefEntry(enlarged);
 
     const evidence::InputSlice base = buildSlice(snapshot, makeConfigurationRefEntry(validConfig()));
-    const evidence::InputSlice after = buildSlice(snapshot, changed);
+    const evidence::InputSlice after = buildSlice(buildSnapshot(object, changed), changed);
 
     // sliceId 变（缓存不命中→重算——KIN-13"进入运行身份与缓存身份"）。
     EXPECT_FALSE(base.sliceId == after.sliceId)

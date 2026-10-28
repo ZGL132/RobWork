@@ -19,11 +19,8 @@
  *     联合观测行只断言 modeling 侧输入面，跨域断言归 runtime/policy
  *     契约测试
  *
- * ★ V-09/AT-31 Xacro 黄金样例面承载于 test/GoldenImportTest.cpp（两模式
- *   均编译）——本 TU 不重复：XacroExpand.hpp 与 DhConvert.hpp 存在
- *   ExpandOutcome 同名类型冲突（存量头面缺陷，findings 登记），本 TU 经
- *   CommandFixtures→CommandHandlers→DhConvert.hpp 链无法再包含
- *   XacroExpand.hpp。
+ * V-09/AT-31 Xacro 黄金样例由 test/GoldenImportTest.cpp 承载。
+ * F14 后公共头可共存；本文件仍按既有业务分组保留，不重复黄金测试。
  *
  * 设计依据：units/modeling.md §5.1/§6.1/§6.7/§10.2、units/testkit.md
  * §4.2；需求 AT-01/AT-31/AT-37、MDL-22、CON-03、NFR-SEC-02；runtime/

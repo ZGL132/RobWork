@@ -795,8 +795,8 @@ std::optional<CommandPayload> tryDecodeCommandPayload(const std::vector<std::uin
         if (!oid.has_value()) { return std::nullopt; }
         slot.objectId = *oid;
         if (!reader.readString(&slot.objectTypeToken)) { return std::nullopt; }
-        // token 词表核对（五对象之外＝无效载荷——路由失联面）。
-        if (!isModelingObjectTypeToken(slot.objectTypeToken)) { return std::nullopt; }
+        // F07：仅对象槽允许既有project资源token；用途/摘要/闭包仍由完整工作集处理器严格核查。
+        if (!isModelingObjectTypeToken(slot.objectTypeToken) && slot.objectTypeToken!="ExternalResource") { return std::nullopt; }
         if (!reader.readBytes(&slot.objectBytes)) { return std::nullopt; }
         payload.objects.push_back(std::move(slot));
     }

@@ -62,6 +62,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -1376,6 +1377,110 @@ TEST_F(WorkerProcessContractTest, DoubleDispatchSameTaskRejectedSingleActiveWork
         return false;
     }, 15000);
     EXPECT_EQ(supervisor->status(launched.worker).phase, WorkerStatus::Phase::Dead);
+}
+
+
+/** EXR-07/11：真实自有坏帧进程必须退出恰一次且清账，只继承两条管道。 */
+TEST_F(WorkerProcessContractTest, MalformedWorkerReclaimedAndOnlyPipesInherited_EXR07_EXR11)
+{
+    SECURITY_ATTRIBUTES attributes{sizeof(attributes), nullptr, TRUE};
+    const HANDLE extra = ::CreateEventW(&attributes, TRUE, FALSE, nullptr);
+    ASSERT_NE(extra, nullptr);
+    wchar_t exe[32768]{};
+    ASSERT_NE(::GetModuleFileNameW(nullptr, exe, 32768), 0u);
+    char previous[32768]{};
+    const DWORD previousSize = ::GetEnvironmentVariableA("IRD_EXECUTION_TEST_EXTRA_HANDLE", previous, 32768);
+    const auto value = std::to_string(reinterpret_cast<std::uintptr_t>(extra));
+    ::SetEnvironmentVariableA("IRD_EXECUTION_TEST_EXTRA_HANDLE", value.c_str());
+    auto supervisor = std::make_unique<WorkerSupervisor>(exe);
+    supervisor->setEventSink(&m_events);
+    const auto id = registerRun();
+    const auto launched = supervisor->launch(makeAssignment(id, "stage-a-script:v1\n"));
+    ::SetEnvironmentVariableA("IRD_EXECUTION_TEST_EXTRA_HANDLE", previousSize ? previous : nullptr);
+    if (!launched.ok) { ::CloseHandle(extra); FAIL() << "自有故障 worker 未启动"; }
+    const DWORD pid = supervisor->status(launched.worker).pid;
+    std::fprintf(stderr, "[EXR-07/11] owned pid=%lu\n", static_cast<unsigned long>(pid));
+    RecordProperty("ownedPid", std::to_string(pid));
+    const bool exited = pumpUntil(*supervisor, [this] {
+        return m_events.countOf(WorkerEvent::Kind::WorkerExited) != 0;
+    }, 6000);
+    EXPECT_TRUE(exited);
+    EXPECT_EQ(m_events.countOf(WorkerEvent::Kind::ProtocolViolation), 1u);
+    EXPECT_EQ(m_events.countOf(WorkerEvent::Kind::WorkerExited), 1u);
+    EXPECT_EQ(supervisor->status(launched.worker).phase, WorkerStatus::Phase::Dead);
+    EXPECT_EQ(::WaitForSingleObject(extra, 0), DWORD{WAIT_TIMEOUT});
+    ::CloseHandle(extra);
+    const HANDLE process = ::OpenProcess(SYNCHRONIZE, FALSE, pid);
+    if (process != nullptr) {
+        EXPECT_EQ(::WaitForSingleObject(process, 1000), DWORD{WAIT_OBJECT_0});
+        ::CloseHandle(process);
+    }
+    supervisor.reset(); // 即使断言失败，仅清理此测试拥有的 Job/子进程。
+}
+
+
+/** @brief EXR-07：重复坏帧子进程只留下值墓碑，不随次数累积本轮拥有的内核句柄。 */
+TEST_F(WorkerProcessContractTest, DeadRecordsReleaseProcessChannelAndJobHandles_EXR07)
+{
+    wchar_t exe[32768]{};
+    ASSERT_NE(::GetModuleFileNameW(nullptr, exe, 32768), 0u);
+    WorkerSupervisor supervisor(exe);
+    supervisor.setEventSink(&m_events);
+    DWORD afterWarmup = 0;
+    for (std::size_t n = 0; n < 4; ++n) {
+        const auto launch = supervisor.launch(makeAssignment(registerRun(), "stage-a-script:v1\n"));
+        ASSERT_TRUE(launch.ok);
+        std::fprintf(stderr, "[EXR-07 handles] owned pid=%lu\n",
+                     static_cast<unsigned long>(supervisor.status(launch.worker).pid));
+        ASSERT_TRUE(pumpUntil(supervisor, [&] {
+            return m_events.countOf(WorkerEvent::Kind::WorkerExited) == n + 1;
+        }, 6000));
+        EXPECT_EQ(supervisor.status(launch.worker).phase, WorkerStatus::Phase::Dead);
+        DWORD current = 0;
+        ASSERT_TRUE(::GetProcessHandleCount(::GetCurrentProcess(), &current));
+        if (n == 0) afterWarmup = current; // 首次 CRT/系统路径预热不算泄漏基线。
+        EXPECT_EQ(current, afterWarmup) << "Dead 墓碑不得保留 Job/进程/管道/读线程句柄";
+    }
+    EXPECT_EQ(supervisor.workerCount(), 4u); // 保留原墓碑查询契约，资源则已释放。
+}
+
+/** EXR-05：真进程握手前输出、派发受理前结果、未请求确认均不得推进宿主。 */
+TEST_F(WorkerProcessContractTest, ProtocolPhaseRejectsEarlyOutputAndUnsolicitedAck_EXR05)
+{
+    for (const char* mode : {"before-hello", "before-accept", "unsolicited-ack"}) {
+        wchar_t exe[32768]{};
+        ASSERT_NE(::GetModuleFileNameW(nullptr, exe, 32768), 0u);
+        char previous[32768]{};
+        const DWORD n = ::GetEnvironmentVariableA("IRD_EXECUTION_TEST_FAULT_MODE", previous, 32768);
+        ::SetEnvironmentVariableA("IRD_EXECUTION_TEST_FAULT_MODE", mode);
+        auto supervisor = std::make_unique<WorkerSupervisor>(exe);
+        supervisor->setEventSink(&m_events);
+        const auto id = registerRun();
+        const auto launch = supervisor->launch(makeAssignment(id, "stage-a-script:v1\n"));
+        ::SetEnvironmentVariableA("IRD_EXECUTION_TEST_FAULT_MODE", n ? previous : nullptr);
+        ASSERT_TRUE(launch.ok);
+        std::fprintf(stderr, "[EXR-05 phase] owned pid=%lu\n",
+                     static_cast<unsigned long>(supervisor->status(launch.worker).pid));
+        const auto prior = m_events.countOf(WorkerEvent::Kind::WorkerExited);
+        const auto eventStart = m_events.events.size();
+        EXPECT_TRUE(pumpUntil(*supervisor, [&] {
+            return m_events.countOf(WorkerEvent::Kind::WorkerExited) > prior;
+        }, 6000));
+        for (std::size_t i = eventStart; i < m_events.events.size(); ++i) {
+            const auto& event = m_events.events[i];
+            if (event.kind == WorkerEvent::Kind::ProtocolViolation) {
+                std::fprintf(stderr, "[EXR-05 %s] %s\n", mode, event.detail.c_str());
+                EXPECT_EQ(event.detail, "message violates handshake/request/terminal phase");
+            }
+        }
+        EXPECT_EQ(m_events.countOf(WorkerEvent::Kind::HandshakeRejected), 0u);
+        EXPECT_EQ(m_events.countOf(WorkerEvent::Kind::CancelAck), 0u);
+        EXPECT_EQ(m_events.countOf(WorkerEvent::Kind::DispatchAccepted), 0u);
+        EXPECT_EQ(m_events.countOf(WorkerEvent::Kind::FinalOutput), 0u);
+        EXPECT_FALSE(supervisor->workerHandle(launch.worker)->cancelSettled());
+        EXPECT_EQ(supervisor->status(launch.worker).phase, WorkerStatus::Phase::Dead);
+    }
+    EXPECT_EQ(m_events.countOf(WorkerEvent::Kind::ProtocolViolation), 3u);
 }
 
 }  // namespace

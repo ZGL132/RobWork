@@ -1953,3 +1953,130 @@ TEST(KinAnchorCapture, RebindKeepsOldTaskModelAndLifetime_REUSE_T17)
     snapshot.reset();
     EXPECT_TRUE(lease.expired()) << "锚与宿主都释放后快照必须可回收";
 }
+
+/**
+ * @brief POL-T13/ARC-05：真实发布快照经过宿主唯一装配入口；域和必检/Role
+ * 均由 policy 展开，几何缺失与距离后端缺失保持非评价态，不借呈现代理报安全。
+ */
+TEST (KinEvaluationChannel, HostCollisionUsesCompletePolicyRules_POL_T13)
+{
+    using namespace AnchorCaptureNS;
+    // 最小合法根对象：1 旋转关节＋2 连杆（HostCompilePipelineTest 夹具同构）。
+    modeling::RobotDesign design;
+    design.displayName = "AnchorTestRobot";
+    modeling::JointEntry joint;
+    joint.objectId  = core::ObjectId::generate ();
+    joint.localName = "J1";
+    joint.type      = modeling::JointType::Revolute;
+    joint.axis      = core::SourcedValue< rw::math::Vector3D< double > >::provided (
+        rw::math::Vector3D< double > (0.0, 0.0, 1.0),
+        core::ValueProvenance::make (core::ProvenanceKind::UserProvided));
+    joint.origin = core::SourcedValue< modeling::JointPose >::provided (
+        modeling::JointPose{}, core::ValueProvenance::make (core::ProvenanceKind::UserProvided));
+    joint.bounds = core::SourcedValue< modeling::JointLimits >::provided (
+        modeling::JointLimits{0.0, 1.0},
+        core::ValueProvenance::make (core::ProvenanceKind::UserProvided));
+    design.joints.push_back (std::move (joint));
+    modeling::LinkEntry base;
+    base.objectId  = core::ObjectId::generate ();
+    base.localName = "base";
+    design.links.push_back (std::move (base));
+    modeling::LinkEntry link1;
+    link1.objectId  = core::ObjectId::generate ();
+    link1.localName = "link1";
+    design.links.push_back (std::move (link1));
+
+    modeling::RobotDesignCodec codec;
+    auto encoded =
+        codec.encode (modeling::ObjectVariant{std::move (design)}, modeling::kCurrentFormatVersion);
+    ASSERT_TRUE (encoded.ok ());
+
+    auto query         = std::make_shared< QueryPort > ();
+    query->view.id     = core::RevisionId::generate ();
+    query->view.branch = core::BranchId::generate ();
+    query->view.seq    = 1;
+    const auto rootId  = core::ObjectId::generate ();
+    query->addObject (rootId, std::string (modeling::kRobotDesignObjectType), {0x01, 0x02});
+    std::vector< project::ObjectWrite > plannedWrites;
+    project::ObjectWrite write;
+    write.objectId         = rootId;
+    write.objectTypeToken  = std::string (modeling::kRobotDesignObjectType);
+    write.payloadCanonical = encoded.get ();
+    plannedWrites.push_back (std::move (write));
+    project::CompileRequest request{*query, plannedWrites, query->view.id};
+
+    auto snapshot = [&] {
+        sdurws::ird::ui::HostModelCompilePort port ({query.get (),
+                                                     core::ProjectId::generate (),
+                                                     std::string (modeling::kRobotDesignObjectType),
+                                                     nullptr});
+        const auto result = port.compileWorkCellAndDwc (request);
+        EXPECT_TRUE (result.ok);
+        return port.lastPublishedSnapshot ();
+    }();
+    ASSERT_TRUE (snapshot);
+
+    class Context final : public policy::IPolicyValidationContext
+    {
+      public:
+        /** @brief 本夹具闭包仅含受测链；存在性独立应答。 */
+        bool objectExists (core::ObjectId id) const override { return id.isValid (); }
+        /** @brief 本例两端均为机器人连杆；不声称完整场景角色供给。 */
+        std::optional< std::string > objectRole (core::ObjectId) const override
+        {
+            return "RobotLink";
+        }
+        /** @brief Group 仍不支持，不伪造组成员。 */
+        bool groupDefined (std::string_view) const override { return false; }
+    } context;
+    policy::RawPolicyInput raw;
+    raw.policyObject              = policy::systemDefaultPolicyObjectId ();
+    raw.collision.enabledDomains  = {policy::CollisionDomain::Self};
+    raw.collision.safetyClearance = policy::RawThresholdInput{0.0, "m"};
+    const auto assemble           = [&] {
+        const auto parsed = policy::resolvePolicy (raw, context);
+        EXPECT_TRUE (parsed.policy);
+        if (!parsed.policy)
+            return std::shared_ptr< const IKinCollisionSession >{};
+        return makePolicyCollisionSession (
+            snapshot, std::make_shared< const policy::EngineeringPolicySet > (*parsed.policy));
+    };
+    auto session = assemble ();
+    ASSERT_TRUE (session);
+    // 相邻默认排除：空作用域不是无碰撞。
+    auto verdict = session->evaluate ({0});
+    EXPECT_EQ (verdict.state, IkCollisionEvaluationState::EvidenceMissing);
+    EXPECT_NE (verdict.statusDetail.find ("EmptyScope"), std::string::npos);
+    const auto& links = snapshot->model ().chain ().links;
+    ASSERT_EQ (links.size (), 2U);
+    raw.collision.mandatoryPairs = {
+        policy::PairRule::make (policy::ScopeTarget::makeObject (links[0].objectId),
+                                policy::ScopeTarget::makeObject (links[1].objectId),
+                                policy::PolicyRuleLevel::Must,
+                                "相邻对强制复查")};
+    session = assemble ();
+    ASSERT_TRUE (session);
+    verdict = session->evaluate ({0});
+    EXPECT_EQ (verdict.state, IkCollisionEvaluationState::EvidenceMissing);
+    EXPECT_NE (verdict.statusDetail.find ("几何覆盖不足"), std::string::npos)
+        << "必检必须覆盖相邻默认过滤；缺真实碰撞几何仍不能报安全";
+    // Role 必检同样必须进入展开，无宿主侧 Object-only 投影。
+    raw.collision.mandatoryPairs[0].first = policy::ScopeTarget::makeRole ("RobotLink");
+    session                               = assemble ();
+    ASSERT_TRUE (session);
+    EXPECT_NE (session->evaluate ({0}).statusDetail.find ("几何覆盖不足"), std::string::npos);
+    // Tool 域没有对象，不能用 Self 域默认替代。
+    raw.collision.mandatoryPairs.clear ();
+    raw.collision.enabledDomains = {policy::CollisionDomain::Tool};
+    session                      = assemble ();
+    ASSERT_TRUE (session);
+    EXPECT_NE (session->evaluate ({0}).statusDetail.find ("EmptyScope"), std::string::npos);
+    // 有在检对但真实后端无距离能力：保留失败，绝不降成仅碰撞。
+    raw.collision.enabledDomains                = {policy::CollisionDomain::Self};
+    raw.collision.excludeAdjacentLinksByDefault = false;
+    raw.collision.safetyClearance               = policy::RawThresholdInput{0.01, "m"};
+    session                                     = assemble ();
+    ASSERT_TRUE (session);
+    EXPECT_EQ (session->evaluate ({0}).state, IkCollisionEvaluationState::FacilityFailed);
+    EXPECT_FALSE (makePolicyCollisionSession (nullptr, nullptr));
+}

@@ -23,11 +23,11 @@
  * 背景说明（本头在证据链上的位置——为什么需要"快照"这个概念）：
  *   正式评估的一切结果（证据/判定/包络/缓存/当前性）都必须能回答"当时
  *   消费的是什么输入"。AnalysisSnapshot 就是这个答案的载体：请求方组装、
- *   evidence 校验冻结（§4.1.5 协议），冻结后无任何修改途径——后续所有
+ *   evidence 校验冻结（§4.1.5 协议），冻结后按只读值传递并在消费边界复核——后续所有
  *   身份（sliceId/inputBaselineId/证据摘要）都从它派生。Preview 草稿输入
  *   不走本协议（§4.1.1），不产生快照、无内容身份承诺。
  *
- * 实现形态说明：值类型为聚合结构（公共成员＋成对 ==/!=，无 setter——
+ * 实现形态说明：值类型为聚合结构（公共成员＋成对 ==/!=，仍可修改公共成员——
  * "构造后不可变"由冻结协议保证：SnapshotBuilder::build() 是唯一合法
  * 生产者，产出后调用方按只读对待；EV-T02 DependencyEntry 同款纪律）；
  * builder/codec 的非平凡逻辑在 src/Snapshot.cpp（本头只放契约与纯声明）。
@@ -320,7 +320,7 @@ struct NameMapRef {
  * @brief 正式分析快照（§4.1.1："本次正式评估消费的完整不可变输入闭包"）。
  *
  * 生命周期与冻结纪律（§4.1.5③）：由 SnapshotBuilder::build() 一次性校验、
- * 计算 snapshotId 并返回；此后**无任何修改途径**——本结构不提供 setter，
+ * 计算 snapshotId 并返回；此后调用方须按只读值使用，消费边界复核内容/身份——本结构不提供 setter，
  * 调用方按只读值对待（快照不可变性是证据链与缓存正确性的前提，PA-2 同源
  * 精神）。snapshotId 由 builder 计算（非调用方申报——§4.1.2 原文）。
  *
@@ -496,6 +496,9 @@ public:
     AnalysisSnapshot build(const IRevisionClosureSource& closureSource) const;
 
 private:
+    friend class SnapshotCodec;
+    /** @brief EV-T13：共用内容冻结校验；null 仅限 codec，不伪造 project 修订事实。 */
+    AnalysisSnapshot buildImpl(const IRevisionClosureSource* closureSource) const;
     // 组装中间态（②逐类录入的累加缓冲——保持插入序，冻结时规范化排序）。
     core::ProjectId m_project;     ///< 身份三元组·项目（build() 验非零）
     core::BranchId m_branch;       ///< 身份三元组·分支（build() 验非零）
@@ -541,6 +544,13 @@ private:
  * 状态；线程安全（可重入）"原文）。
  */
 class SnapshotCodec {
+public:
+    /** @brief 核对冻结内容、规范序与摘要；不查询磁盘。
+     * @param snapshot [in] 调用期借用；非法值抛 EvidenceError。 */
+    static void validate(const AnalysisSnapshot& snapshot);
+private:
+    /** @brief 复用 builder 内容不变量；修订成员真实性仍归 project。 */
+    static AnalysisSnapshot freezeContent(const AnalysisSnapshot& snapshot);
 public:
     /// 编码 magic（§5.2 原文 "IRDSNAP1"——8 字节 ASCII）。
     static constexpr std::string_view kMagic{"IRDSNAP1"};

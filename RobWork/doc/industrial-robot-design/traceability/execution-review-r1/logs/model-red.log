@@ -1,0 +1,44 @@
+Note: Google Test filter = *EXR13
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from CacheCoordinatorTest
+[ RUN      ] CacheCoordinatorTest.WorkCellCandidateReachesJudge_EXR13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(1153): error: Expected equality of these values:
+  judge.calls.size()
+    Which is: 0
+  1u
+    Which is: 1
+
+[  FAILED  ] CacheCoordinatorTest.WorkCellCandidateReachesJudge_EXR13 (0 ms)
+[ RUN      ] CacheCoordinatorTest.SameLengthModelConflictReported_EXR13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(1165): error: Value of: m_sink->hasDevChannel("execution/cache")
+  Actual: false
+Expected: true
+
+[  FAILED  ] CacheCoordinatorTest.SameLengthModelConflictReported_EXR13 (0 ms)
+[ RUN      ] CacheCoordinatorTest.RejectedExactCandidateDoesNotHidePartialReuse_EXR13
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(1182): error: Expected equality of these values:
+  judge.calls.size()
+    Which is: 1
+  2u
+    Which is: 2
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(1183): error: Expected equality of these values:
+  result.modelVerdict
+    Which is: 1-byte object <04>
+  CacheLookup::ModelVerdict::WorkCellOnlyReuse
+    Which is: 1-byte object <03>
+
+[  FAILED  ] CacheCoordinatorTest.RejectedExactCandidateDoesNotHidePartialReuse_EXR13 (0 ms)
+[----------] 3 tests from CacheCoordinatorTest (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] CacheCoordinatorTest.WorkCellCandidateReachesJudge_EXR13
+[  FAILED  ] CacheCoordinatorTest.SameLengthModelConflictReported_EXR13
+[  FAILED  ] CacheCoordinatorTest.RejectedExactCandidateDoesNotHidePartialReuse_EXR13
+
+ 3 FAILED TESTS
+nativeExit=1

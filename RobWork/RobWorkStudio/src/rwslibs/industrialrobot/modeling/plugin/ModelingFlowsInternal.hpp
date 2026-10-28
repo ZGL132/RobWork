@@ -1,7 +1,6 @@
 /**
- * @file   ModelingFlowsInternal.hpp
- * @brief  命令流的域内拆分接口（插件私有——DhConvert/XacroExpand 两头
- *         同名 ExpandOutcome 不可共 TU，权威切换流独立编译单元承载）。
+ * @file 建模命令流内部适配；DH 与 Xacro 结果分别位于 dh/xacro 子命名空间。
+ * 仅作 UI 编排，模型编译与生命周期由 runtime 持有（F14）。
  */
 #ifndef IRD_MODELING_PLUGIN_MODELINGFLOWSINTERNAL_HPP
 #define IRD_MODELING_PLUGIN_MODELINGFLOWSINTERNAL_HPP

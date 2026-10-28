@@ -138,6 +138,7 @@ add_executable(sdurws_ird_diagnostics_test
     test/ConfirmableTest.cpp
     test/AggregationTest.cpp
     test/LoggingTest.cpp
+    test/DiagnosticsRegressionTest.cpp # 专项评审反例回归；独立预期、零 Qt
     test/RedactionTest.cpp
     test/CollaborationQueryTest.cpp)
 

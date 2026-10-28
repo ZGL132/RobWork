@@ -1,0 +1,16 @@
+Note: Google Test filter = *EXR13
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from CacheCoordinatorTest
+[ RUN      ] CacheCoordinatorTest.WorkCellCandidateReachesJudge_EXR13
+[       OK ] CacheCoordinatorTest.WorkCellCandidateReachesJudge_EXR13 (0 ms)
+[ RUN      ] CacheCoordinatorTest.SameLengthModelConflictReported_EXR13
+[       OK ] CacheCoordinatorTest.SameLengthModelConflictReported_EXR13 (0 ms)
+[ RUN      ] CacheCoordinatorTest.RejectedExactCandidateDoesNotHidePartialReuse_EXR13
+[       OK ] CacheCoordinatorTest.RejectedExactCandidateDoesNotHidePartialReuse_EXR13 (0 ms)
+[----------] 3 tests from CacheCoordinatorTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (3 ms total)
+[  PASSED  ] 3 tests.
+nativeExit=0

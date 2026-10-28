@@ -506,12 +506,15 @@ std::vector<ChannelFrame> MessageReassembler::accept(ChannelFrame&& frame, bool*
     if (!m_partial.has_value()) {
         // 首片：建立在途消息（totalLen/fragCount 以首片声明为准）。
         m_partial.emplace();
+        m_partial->type = frame.type;
+        m_partial->identity = frame.identity;
         m_partial->totalLen = totalLen;
         m_partial->fragCount = fragCount;
         m_partial->nextIndex = 0;
         m_partial->bytes.reserve(static_cast<std::size_t>(
             totalLen < kMaxMessageBytes ? totalLen : kMaxMessageBytes));
-    } else if (m_partial->totalLen != totalLen || m_partial->fragCount != fragCount) {
+    } else if (m_partial->totalLen != totalLen || m_partial->fragCount != fragCount
+               || m_partial->type != frame.type || !(m_partial->identity == frame.identity)) {
         // 后续片与首片声明失配＝通道错乱（协议错误）。
         m_failed = true;
         if (broken != nullptr) {

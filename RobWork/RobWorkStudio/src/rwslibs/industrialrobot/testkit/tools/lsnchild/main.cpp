@@ -35,8 +35,11 @@
 #include <gtest/gtest.h>
 
 #include <sdurws/ird/testkit/gtest/RecordListener.hpp>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
+#include <limits>
 #include <string>
+#include <vector>
 
 /**
  * @brief 摘除本辅助进程自有参数 --lsn_mode=<value>。
@@ -79,6 +82,42 @@ TEST(LsnChild, Fails)
 TEST(LsnChild, Skips)
 {
     GTEST_SKIP() << "lsnchild 显式跳过样本（F-958 skip 态载体）";
+}
+
+/// TK-T13/R03：真实失败详情含三种非有限值，以及有限极值相减溢出的差值。
+TEST(LsnChild, NonFiniteDetails_ReviewR03)
+{
+    namespace tk = sdurws::ird::testkit;
+    const double inf = std::numeric_limits<double>::infinity();
+    const double maximum = std::numeric_limits<double>::max();
+    IRD_CHECK_REPORT_(tk::checkCloseWithin("positive", inf, 0, {0, 0}, "m"));
+    IRD_CHECK_REPORT_(tk::checkCloseWithin("negative", -inf, 0, {0, 0}, "m"));
+    IRD_CHECK_REPORT_(tk::checkCloseWithin("nan", std::numeric_limits<double>::quiet_NaN(),
+                                         0, {0, 0}, "m"));
+    IRD_CHECK_REPORT_(tk::checkCloseWithin("overflow", maximum, -maximum, {0, 0}, "m"));
+}
+
+/// TK-T13/R03：实际长度缺失用 null，不能与真实 NaN 混淆。
+TEST(LsnChild, MissingActual_ReviewR03)
+{
+    IRD_CHECK_REPORT_(sdurws::ird::testkit::checkAllCloseWithin(
+        "values[*]", std::vector<double>{}, std::vector<double>{1}, {0, 0}, "m"));
+}
+
+/// TK-T13/R03：期望长度缺失也保留方向和 null，不把缺失记成零。
+TEST(LsnChild, MissingExpected_ReviewR03)
+{
+    IRD_CHECK_REPORT_(sdurws::ird::testkit::checkAllCloseWithin(
+        "values[*]", std::vector<double>{1}, std::vector<double>{}, {0, 0}, "m"));
+}
+
+/// TK-T13/R06：经实际 listener 嵌入的 uint64 最大种子也必须逐位写入。
+TEST(LsnChild, ExactSeed_ReviewR06)
+{
+    sdurws::ird::testkit::ReproRecord repro;
+    repro.seed = std::numeric_limits<std::uint64_t>::max();
+    sdurws::ird::testkit::report::bindFixtureContext(repro, nullptr, nullptr);
+    EXPECT_EQ(repro.seed, 18446744073709551615ULL);
 }
 
 /**
