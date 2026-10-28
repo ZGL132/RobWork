@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="1.572" timestamp="2026-10-28T15:46:53.488" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="1.572" timestamp="2026-10-28T15:46:53.488">
+    <testcase name="CompletePendingStateTracksUndoRedo_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1325" status="run" result="completed" time="1.571" timestamp="2026-10-28T15:46:53.488" classname="ModelingUiModuleHostWiring" />
+  </testsuite>
+</testsuites>

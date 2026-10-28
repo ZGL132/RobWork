@@ -1416,8 +1416,8 @@
           "symbol": "attachPrimitive",
           "qualifiedSymbol": "sdurws::ird::runtime::attachPrimitive",
           "startLine": 157,
-          "endLine": 218,
-          "sha256": "8b9bd18c06ba9d14eec629a1da2ca576aed471ee789f409e0346523c6966641a"
+          "endLine": 215,
+          "sha256": "b12be58ff07086b295502a4d012ca6bc97452a2f5f0ce5610fb10bd0f730021a"
         }
       ],
       "targets": [
@@ -1448,7 +1448,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -1477,8 +1477,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "meshFormatOf",
           "qualifiedSymbol": "sdurws::ird::runtime::meshFormatOf",
-          "startLine": 219,
-          "endLine": 238,
+          "startLine": 216,
+          "endLine": 235,
           "sha256": "ac7995c7804e42432f14052926203f3b34cf2e50dd71da674eed20630e4d8128"
         }
       ],
@@ -1525,8 +1525,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "meshContentFormat",
           "qualifiedSymbol": "sdurws::ird::runtime::meshContentFormat",
-          "startLine": 239,
-          "endLine": 272,
+          "startLine": 236,
+          "endLine": 269,
           "sha256": "81d432ddf081a9f4697b912bc059c52f69181f2a3cf70b4574ab2c22cbe54dbd"
         }
       ],
@@ -1573,8 +1573,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "MeshLocaleScope",
           "qualifiedSymbol": "sdurws::ird::runtime::MeshLocaleScope",
-          "startLine": 273,
-          "endLine": 295,
+          "startLine": 270,
+          "endLine": 292,
           "sha256": "bc7f5e243e9c52572a78e9d9b18cc33e20163feb32fd08774790809bb0fbba45"
         }
       ],
@@ -1621,8 +1621,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "parseMeshViaTempFile",
           "qualifiedSymbol": "sdurws::ird::runtime::parseMeshViaTempFile",
-          "startLine": 296,
-          "endLine": 354,
+          "startLine": 293,
+          "endLine": 351,
           "sha256": "3345ceb0cdd96059e425eac293c3cfbdefbd3ab7421b2ee3a2072c2e917786c0"
         }
       ],
@@ -1654,7 +1654,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -1683,9 +1683,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "MeshReferral",
           "qualifiedSymbol": "sdurws::ird::runtime::MeshReferral",
-          "startLine": 355,
-          "endLine": 364,
-          "sha256": "a557b6a5bb84aaab3e9472f5a45adc72ecc3a9be187c876cf223758c180b5d44"
+          "startLine": 352,
+          "endLine": 362,
+          "sha256": "1d18adcf72a355eb61ca6fca27caa7a740e4bb9effc2ae98e5bd02715d0afb90"
         }
       ],
       "targets": [
@@ -1731,9 +1731,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "attachResourceMeshGeometry",
           "qualifiedSymbol": "sdurws::ird::runtime::attachResourceMeshGeometry",
-          "startLine": 365,
-          "endLine": 436,
-          "sha256": "9373e67f94b78eebeb35bd488e3a98438c4546263431cbc49c4aa903618fa5c1"
+          "startLine": 363,
+          "endLine": 434,
+          "sha256": "8cfdb0562fe43a3cb73e0068b5f3f96d6fcc24230fbfb181fbac853ad844b846"
         }
       ],
       "targets": [
@@ -1764,7 +1764,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -1793,8 +1793,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "axisAlignmentRotation",
           "qualifiedSymbol": "sdurws::ird::runtime::axisAlignmentRotation",
-          "startLine": 437,
-          "endLine": 461,
+          "startLine": 435,
+          "endLine": 459,
           "sha256": "77344992d8c2301875707056c84b82e2ca6f8a50c21b5f1ab8bbaa8a3244d276"
         }
       ],
@@ -1826,7 +1826,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -1855,8 +1855,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "spanPlacement",
           "qualifiedSymbol": "sdurws::ird::runtime::spanPlacement",
-          "startLine": 462,
-          "endLine": 489,
+          "startLine": 460,
+          "endLine": 487,
           "sha256": "330407be8ad9f5eb6a89c8025406220393601cc812832985034aa73c5fbad6f2"
         }
       ],
@@ -1888,7 +1888,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -1917,8 +1917,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "throwIfError",
           "qualifiedSymbol": "sdurws::ird::runtime::throwIfError",
-          "startLine": 490,
-          "endLine": 502,
+          "startLine": 488,
+          "endLine": 500,
           "sha256": "80e70c25579d16dd75e099fb5912fb44c401dedecef80b72c0967ae286347665"
         }
       ],
@@ -1965,8 +1965,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "scopedFullName",
           "qualifiedSymbol": "sdurws::ird::runtime::scopedFullName",
-          "startLine": 503,
-          "endLine": 521,
+          "startLine": 501,
+          "endLine": 519,
           "sha256": "647fc85ddad919e53c0982069432a99ad1b0f290b1dfbef38461acee1aea8a99"
         }
       ],
@@ -2013,9 +2013,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "compileWorkCell",
           "qualifiedSymbol": "sdurws::ird::runtime::compileWorkCell",
-          "startLine": 522,
-          "endLine": 909,
-          "sha256": "81e2824765c436a3006b2a445f6b03372f0279e2495084f10cf1a9e44ad7719e"
+          "startLine": 520,
+          "endLine": 907,
+          "sha256": "6bc488b292661482f4e5b82d7d70ef1eb1f7123214e6434092c82115fdcd7a1c"
         }
       ],
       "targets": [
@@ -2046,7 +2046,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -2075,8 +2075,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::WorkCellConstView",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::WorkCellConstView",
-          "startLine": 910,
-          "endLine": 925,
+          "startLine": 908,
+          "endLine": 923,
           "sha256": "d604a71e7722d63faab87194b3091b120cc2be21e2a0a06a293986a075060695"
         }
       ],
@@ -2123,8 +2123,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::workCell",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::workCell",
-          "startLine": 926,
-          "endLine": 931,
+          "startLine": 924,
+          "endLine": 929,
           "sha256": "93153b45fd8f4901c98d472ab764486076af2d4cdc75d63bb87dc5751becac54"
         }
       ],
@@ -2171,8 +2171,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::findFrame",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findFrame",
-          "startLine": 932,
-          "endLine": 940,
+          "startLine": 930,
+          "endLine": 938,
           "sha256": "693e5791dd7dd1161a4905be35956f55b3e2de778f101cd4bb503e90400f418b"
         }
       ],
@@ -2204,7 +2204,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -2233,8 +2233,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::findDevice",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findDevice",
-          "startLine": 941,
-          "endLine": 946,
+          "startLine": 939,
+          "endLine": 944,
           "sha256": "a5b3c3534662a5d27bc8c7f5fcc8b2dbc6b48c92ea079564f58613869ea75556"
         }
       ],
@@ -2266,7 +2266,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -2295,8 +2295,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::frameCount",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::frameCount",
-          "startLine": 947,
-          "endLine": 952,
+          "startLine": 945,
+          "endLine": 950,
           "sha256": "357e190a62217fd896906a884694abe9bbc22b92982ddab6573ee151767fbdf8"
         }
       ],
@@ -2328,7 +2328,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -2357,8 +2357,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::defaultState",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::defaultState",
-          "startLine": 953,
-          "endLine": 958,
+          "startLine": 951,
+          "endLine": 956,
           "sha256": "93447eb9a203dc5cba2d5bce2965f95675768f9947e9158529a5c3aa76158b85"
         }
       ],
@@ -2390,7 +2390,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-          "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+          "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
         }
       ],
       "auditBoundary": "本功能含紧邻契约说明及尾部结构声明；整文件覆盖不要求全部改写。独验待所有者另开会话。",
@@ -2419,8 +2419,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "translateRobWorkError",
           "qualifiedSymbol": "sdurws::ird::runtime::translateRobWorkError",
-          "startLine": 959,
-          "endLine": 1072,
+          "startLine": 957,
+          "endLine": 1070,
           "sha256": "c373bb60990cee5950246fdb9bda865b46e2c7e68263f5cc2fe92cf267133f20"
         }
       ],
@@ -2805,7 +2805,7 @@
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::implementationVersion",
           "startLine": 183,
           "endLine": 190,
-          "sha256": "997202031c452fdf481d03208fa023cb8922a75bcaa5c39148f20f66da8db10c"
+          "sha256": "454ed8971cb67418b5f052cabaaeb38ef5e4eef4ca31946ddad64601a014f690"
         }
       ],
       "targets": [
@@ -2852,8 +2852,8 @@
           "symbol": "CanonicalModelCompiler::runStagesOneToFive",
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::runStagesOneToFive",
           "startLine": 191,
-          "endLine": 631,
-          "sha256": "386af70fd8d5258c4b871ad9ec1778e4276da0a495790318f83753bdbd742482"
+          "endLine": 634,
+          "sha256": "d30e6875ffdbdc2caa94deee0ebc9ca0fced58323eda2e28e27ffebdd54d542b"
         }
       ],
       "targets": [
@@ -2899,8 +2899,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "recheckConsumedResources",
           "qualifiedSymbol": "sdurws::ird::runtime::recheckConsumedResources",
-          "startLine": 632,
-          "endLine": 676,
+          "startLine": 635,
+          "endLine": 679,
           "sha256": "b9741bc205d36f3e3df9d7e86abd7aa20a47293512393d5f10d1f288c1458ea2"
         }
       ],
@@ -2947,8 +2947,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "CanonicalModelCompiler::compile",
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::compile",
-          "startLine": 677,
-          "endLine": 801,
+          "startLine": 680,
+          "endLine": 804,
           "sha256": "83804ca3736afb8f88929ade311ef8dbcc3444b0d9348eb8971396f7bb3e6790"
         }
       ],
@@ -2995,8 +2995,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "CanonicalModelCompiler::buildCanonicalModel",
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::buildCanonicalModel",
-          "startLine": 802,
-          "endLine": 833,
+          "startLine": 805,
+          "endLine": 836,
           "sha256": "2cf28f644c633ff67c8dff0ae4fca042b77aaa7cb9f301a40659b6f58f3a7533"
         }
       ],
@@ -3043,8 +3043,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "createCanonicalModelCompiler",
           "qualifiedSymbol": "sdurws::ird::runtime::createCanonicalModelCompiler",
-          "startLine": 834,
-          "endLine": 847,
+          "startLine": 837,
+          "endLine": 850,
           "sha256": "24825efa5dc079695ebbfde07ac4c07b282a4c5c24d08e1db8a240dd9b1d4f75"
         }
       ],
@@ -5780,8 +5780,8 @@
           "symbol": "ConcurrentSameMeshCompiles_REUSE_T13",
           "qualifiedSymbol": "test::ConcurrentSameMeshCompiles_REUSE_T13",
           "startLine": 956,
-          "endLine": 991,
-          "sha256": "af1ca7cc56ac2a2b3ff097def0636a74855c39762a7874bbba06193fe1b76b0c"
+          "endLine": 1022,
+          "sha256": "b90349a2cce056cf49897a235fc5c0db53b2e2e80dc9d2d3842d96e81898c6e4"
         }
       ],
       "targets": [
@@ -5827,8 +5827,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
           "symbol": "LoaderRestoresThreadLocale_REUSE_T13",
           "qualifiedSymbol": "test::LoaderRestoresThreadLocale_REUSE_T13",
-          "startLine": 992,
-          "endLine": 1043,
+          "startLine": 1023,
+          "endLine": 1074,
           "sha256": "9b2d709c2b5299c327137c971883713207747b74fc9dc931ae53a106405d0e8c"
         }
       ],
@@ -7413,7 +7413,7 @@
           "qualifiedSymbol": "test::CompilesTenStageChainAndPublishes_RT_T11_ACC3",
           "startLine": 439,
           "endLine": 487,
-          "sha256": "623d444cdd024da683c9bd7e9bcc61c6dc8912e75809f79a3e749cebd47534a1"
+          "sha256": "6d6db203f5b12be38e59b7e037c23fbe3e75c6a3a8365b12a583682b329aa36a"
         }
       ],
       "targets": [
@@ -8697,7 +8697,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
-          "sha256": "799ff8fe7f2e5b29fcd3c4ee79ee5bb538a3a38a57e4fc7cb6123d7a9c125217"
+          "sha256": "9944d39fa354da173e1245e8eaa8b988172d040c684f06528462be3203c0e549"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
@@ -8763,7 +8763,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
-          "sha256": "799ff8fe7f2e5b29fcd3c4ee79ee5bb538a3a38a57e4fc7cb6123d7a9c125217"
+          "sha256": "9944d39fa354da173e1245e8eaa8b988172d040c684f06528462be3203c0e549"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",

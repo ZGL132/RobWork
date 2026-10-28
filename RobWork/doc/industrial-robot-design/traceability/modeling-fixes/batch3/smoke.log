@@ -1,0 +1,72 @@
+Note: Google Test filter = StructureEditTest.*:MdlPropertyEstimation.*
+[==========] Running 30 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 16 tests from MdlPropertyEstimation
+[ RUN      ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23
+[       OK ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4 (0 ms)
+[----------] 16 tests from MdlPropertyEstimation (0 ms total)
+
+[----------] 14 tests from StructureEditTest
+[ RUN      ] StructureEditTest.AddJointAt_InsertsJointAndLink_AtMiddle
+[       OK ] StructureEditTest.AddJointAt_InsertsJointAndLink_AtMiddle (0 ms)
+[ RUN      ] StructureEditTest.AddJointAt_AppendsAtEnd
+[       OK ] StructureEditTest.AddJointAt_AppendsAtEnd (0 ms)
+[ RUN      ] StructureEditTest.AddJointAt_RejectsOutOfRange_WithoutMutation
+[       OK ] StructureEditTest.AddJointAt_RejectsOutOfRange_WithoutMutation (0 ms)
+[ RUN      ] StructureEditTest.RemoveJointAt_RemovesDownstreamLink
+[       OK ] StructureEditTest.RemoveJointAt_RemovesDownstreamLink (0 ms)
+[ RUN      ] StructureEditTest.RemoveJointAt_RejectsDeletingLastJoint
+[       OK ] StructureEditTest.RemoveJointAt_RejectsDeletingLastJoint (0 ms)
+[ RUN      ] StructureEditTest.RemoveJointAt_RejectsOutOfRange
+[       OK ] StructureEditTest.RemoveJointAt_RejectsOutOfRange (0 ms)
+[ RUN      ] StructureEditTest.ReorderJoint_SwapsWithLink_FollowParamsByIdentity
+[       OK ] StructureEditTest.ReorderJoint_SwapsWithLink_FollowParamsByIdentity (0 ms)
+[ RUN      ] StructureEditTest.ReorderJoint_RejectsAtBoundary_WithoutMutation
+[       OK ] StructureEditTest.ReorderJoint_RejectsAtBoundary_WithoutMutation (0 ms)
+[ RUN      ] StructureEditTest.ResetToSixAxis_RebuildsChain_PreservesNonChainFace
+[       OK ] StructureEditTest.ResetToSixAxis_RebuildsChain_PreservesNonChainFace (0 ms)
+[ RUN      ] StructureEditTest.ResetToSixAxis_ClearsDefaultTcp_WithChainRefs
+[       OK ] StructureEditTest.ResetToSixAxis_ClearsDefaultTcp_WithChainRefs (0 ms)
+[ RUN      ] StructureEditTest.RepeatedInsertAfterDeletionPreservesUniqueIdentity
+[       OK ] StructureEditTest.RepeatedInsertAfterDeletionPreservesUniqueIdentity (0 ms)
+[ RUN      ] StructureEditTest.ReorderPermutesNamedPosesAndJointValues
+[       OK ] StructureEditTest.ReorderPermutesNamedPosesAndJointValues (0 ms)
+[ RUN      ] StructureEditTest.InvalidAssociatedValuesRejectReorderAtomically
+[       OK ] StructureEditTest.InvalidAssociatedValuesRejectReorderAtomically (0 ms)
+[ RUN      ] StructureEditTest.ResetRetainsIdentityHistory
+[       OK ] StructureEditTest.ResetRetainsIdentityHistory (0 ms)
+[----------] 14 tests from StructureEditTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 30 tests from 2 test suites ran. (1 ms total)
+[  PASSED  ] 30 tests.

@@ -16,6 +16,9 @@
 #include <sdurws/ird/modeling/StructureEdit.hpp>
 
 #include <stdexcept>
+#include <algorithm>
+#include <map>
+#include <set>
 #include <utility>
 
 #include "DraftIdentity.hpp"  // deriveDraftObjectId/makeSeedLink（单元内共享——UI-T47 提升）
@@ -103,6 +106,28 @@ JointEntry makeSeedJoint(std::size_t ordinal, const std::string& localName)
 
 }  // namespace
 
+void rememberWorkingSetObjectIds(ModelingWorkingSet& ws)
+{
+    std::map<std::string,core::ObjectId> occupied;
+    const auto add=[&](const core::ObjectId& id){if(id.isValid()){occupied.emplace(id.toCanonical(),id);}};
+    for(const auto& id:ws.allocatedObjectIds){add(id);}
+    if(ws.rootObjectId){add(*ws.rootObjectId);}
+    for(const auto& joint:ws.design.joints){add(joint.objectId);}
+    for(const auto& link:ws.design.links){add(link.objectId);}
+    for(const auto& id:ws.design.toolRefs){add(id);}
+    for(const auto& id:ws.design.sceneRefs){add(id);}
+    if(ws.design.poseSetRef){add(*ws.design.poseSetRef);}
+    if(ws.design.drivetrainRef){add(*ws.design.drivetrainRef);}
+    if(ws.design.defaultTcp){add(ws.design.defaultTcp->toolOid);}
+    for(const auto& tool:ws.toolObjects){add(tool.objectId);}
+    for(const auto& scene:ws.sceneObjects){add(scene.objectId);}
+    if(ws.poseSetObject){add(ws.poseSetObject->objectId);}
+    if(ws.drivetrainObject){add(ws.drivetrainObject->objectId);}
+    for(const auto& resource:ws.design.resourceManifest){if(resource.solidifiedObject){add(resource.solidifiedObject->objectId);}}
+    ws.allocatedObjectIds.clear();
+    for(const auto& pair:occupied){ws.allocatedObjectIds.push_back(pair.second);}
+}
+
 // =====================================================================
 // 错误码 token
 // =====================================================================
@@ -114,6 +139,7 @@ std::string_view structureEditErrorCodeToken(StructureEditErrorCode code) noexce
     case StructureEditErrorCode::WouldDeleteLastJoint: return "would-delete-last-joint";
     case StructureEditErrorCode::ReorderAtBoundary: return "reorder-at-boundary";
     case StructureEditErrorCode::ReferencedByTcp: return "referenced-by-tcp";
+    case StructureEditErrorCode::AssociatedDataInvalid: return "associated-data-invalid";
     }
     return "unknown";
 }
@@ -136,7 +162,12 @@ std::optional<StructureEditError> addJointAt(ModelingWorkingSet& ws,
     // 先算名与身份（不触碰工作集——拒绝面已过，此为变更准备）。
     const std::string jointName = disambiguatedJointName(ws);
     const std::string linkName = disambiguatedLinkName(ws);
-    const std::size_t ordinal = n + 1;  // 批次内序（句柄键稳定——重建态同键）
+    rememberWorkingSetObjectIds(ws);
+    const auto occupied=[&](const core::ObjectId& id){return std::find(ws.allocatedObjectIds.begin(),ws.allocatedObjectIds.end(),id)!=ws.allocatedObjectIds.end();};
+    // F10：全闭包和历史共同排除，joint/link成对试探；同一输入历史得相同身份。
+    std::size_t ordinal = n + 1;
+    while(occupied(deriveDraftObjectId(std::string(kStructureDraftKey)+"joint/"+std::to_string(ordinal)))
+        ||occupied(deriveDraftObjectId(std::string(kStructureDraftKey)+"link/"+std::to_string(ordinal)))){++ordinal;}
     JointEntry joint = makeSeedJoint(ordinal, jointName);
     LinkEntry link = makeSeedLink(std::string(kStructureDraftKey) + "link/"
                                       + std::to_string(ordinal),
@@ -157,6 +188,7 @@ std::optional<StructureEditError> addJointAt(ModelingWorkingSet& ws,
                                + static_cast<std::ptrdiff_t>(index + 1),
                            std::move(link));
 
+    rememberWorkingSetObjectIds(ws);
     guardChainInvariants(ws, "add");
     recordChange(ws,
                  "joints[" + std::to_string(index) + "]",
@@ -189,6 +221,7 @@ std::optional<StructureEditError> removeJointAt(ModelingWorkingSet& ws,
     // 引用保护词表保留面（§5.2 v0.28 ②——常规链 TCP 挂工具不挂关节/
     // 连杆，此面为将来引用扩展防静默丢失；当前扫描 defaultTcp 的 TcpRef
     // 不指向关节/连杆，结构性不触发——保留实现位）。
+    rememberWorkingSetObjectIds(ws); // 删除前保留占用；删除不释放身份。
     const std::string removedName = ws.design.joints[index].localName;
     const std::string removedLinkName = ws.design.links[index + 1].localName;
 
@@ -235,11 +268,58 @@ std::optional<StructureEditError> reorderJoint(ModelingWorkingSet& ws,
     const std::size_t other = down ? index + 1 : index - 1;
     const std::string movedName = ws.design.joints[index].localName;
 
-    // 关节对交换＋连杆随动（连杆身份不变——C4 参数保留：axis/origin/
-    // zeroOffset/bounds/物性/几何引用随 ObjectId 自然随动；dhDerived 在
-    // Explicit 态不参与编码身份，重算不冒充权威——D-MDL-5）。
-    std::swap(ws.design.joints[index], ws.design.joints[other]);
-    std::swap(ws.design.links[index + 1], ws.design.links[other + 1]);
+    // F06：候选以稳定ObjectId建立新序→旧序映射，关联数据与对象同拍提交。
+    auto candidate=ws;
+    std::swap(candidate.design.joints[index],candidate.design.joints[other]);
+    std::swap(candidate.design.links[index+1],candidate.design.links[other+1]);
+    std::map<std::string,std::size_t> oldIndex;
+    for(std::size_t i=0;i<n;++i){
+        if(!oldIndex.emplace(ws.design.joints[i].objectId.toCanonical(),i).second){
+            return StructureEditError{StructureEditErrorCode::AssociatedDataInvalid,"关节身份重复，无法无损置换。"};
+        }
+    }
+    std::vector<std::size_t> permutation;
+    for(const auto& joint:candidate.design.joints){permutation.push_back(oldIndex.at(joint.objectId.toCanonical()));}
+    const auto permute=[&](auto& values,bool allowEmpty){
+        if(allowEmpty&&values.empty()){return true;}
+        if(values.size()!=n){return false;}
+        const auto original=values;
+        for(std::size_t i=0;i<n;++i){values[i]=original[permutation[i]];}
+        return true;
+    };
+    if(candidate.poseSetObject){
+        for(auto& pose:candidate.poseSetObject->entries){
+            if(!permute(pose.jointConfiguration,false)){return StructureEditError{StructureEditErrorCode::AssociatedDataInvalid,"命名姿态维度与关节序不一致。"};}
+        }
+    }
+    if(candidate.drivetrainObject){
+        auto& drive=*candidate.drivetrainObject;
+        if(!permute(drive.ratioPerJoint,true)||!permute(drive.frictionPerJoint,true)||!permute(drive.torqueLimitsPerJoint,true)){
+            return StructureEditError{StructureEditErrorCode::AssociatedDataInvalid,"逐关节传动数组维度不一致。"};
+        }
+        if(drive.coupling){
+            auto& coupling=*drive.coupling;
+            const auto original=coupling;
+            if(original.jointRangeLast>=n||original.jointRangeFirst>original.jointRangeLast
+                ||original.rows!=original.jointRangeLast-original.jointRangeFirst+1
+                ||original.cols==0||original.c.size()!=std::size_t(original.rows)*original.cols){
+                return StructureEditError{StructureEditErrorCode::AssociatedDataInvalid,"耦合窗口或矩阵维度不一致。"};
+            }
+            std::vector<std::size_t> positions;
+            for(std::size_t i=0;i<n;++i){if(permutation[i]>=original.jointRangeFirst&&permutation[i]<=original.jointRangeLast){positions.push_back(i);}}
+            if(positions.back()-positions.front()+1!=positions.size()){
+                return StructureEditError{StructureEditErrorCode::AssociatedDataInvalid,"重排将耦合窗口分散，当前连续窗口格式无法无损表达。"};
+            }
+            coupling.jointRangeFirst=static_cast<std::uint32_t>(positions.front());
+            coupling.jointRangeLast=static_cast<std::uint32_t>(positions.back());
+            // 只换关节行；电机列和单位不变，不在modeling重算传动算法。
+            for(std::size_t row=0;row<positions.size();++row){
+                const auto oldRow=permutation[positions[row]]-original.jointRangeFirst;
+                std::copy_n(original.c.begin()+oldRow*original.cols,original.cols,coupling.c.begin()+row*original.cols);
+            }
+        }
+    }
+    ws=std::move(candidate);
 
     guardChainInvariants(ws, "reorder");
     recordChange(ws,
@@ -262,7 +342,19 @@ std::optional<StructureEditError> resetToSixAxis(ModelingWorkingSet& ws)
     const auto specs = sixAxisTemplateDefaults();
     const core::ValueProvenance provenance =
         core::ValueProvenance::make(core::ProvenanceKind::UserProvided);
-    const std::string baseKey = std::string(kStructureDraftKey) + "reset-6r";
+    rememberWorkingSetObjectIds(ws);
+    std::set<std::string> occupied;
+    for(const auto& id:ws.allocatedObjectIds){occupied.insert(id.toCanonical());}
+    std::string baseKey;
+    for(std::size_t generation=0;;++generation){
+        baseKey=std::string(kStructureDraftKey)+"reset-6r/"+std::to_string(generation);
+        bool taken=false;
+        for(std::size_t i=0;i<=specs.size();++i){
+            taken=taken||occupied.count(deriveDraftObjectId(baseKey+"/link/"+std::to_string(i)).toCanonical())!=0;
+            if(i<specs.size()){taken=taken||occupied.count(deriveDraftObjectId(baseKey+"/joint/"+std::to_string(i)).toCanonical())!=0;}
+        }
+        if(!taken){break;}
+    }
 
     RobotDesign rebuilt;  // 缺省＝schemaVersion 单一权威/Explicit/空引用表
     rebuilt.displayName = ws.design.displayName;  // 呈现名保留（非链参数）
@@ -323,6 +415,7 @@ std::optional<StructureEditError> resetToSixAxis(ModelingWorkingSet& ws)
     // drivetrainRef 保留（MDL-16 传动设计挂在根对象、与链长无必然绑定——
     // 摩擦/力矩行数由 prepare 断言按新链长校验，失配走域拒绝面呈现）。
 
+    rememberWorkingSetObjectIds(ws);
     guardChainInvariants(ws, "reset");
     recordChange(ws,
                  "joints[0..]",

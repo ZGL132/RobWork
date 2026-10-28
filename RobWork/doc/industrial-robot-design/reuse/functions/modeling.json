@@ -40,7 +40,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -48,7 +48,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -80,7 +80,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
-          "sha256": "3845aabc98545fd5c431f65333322ef9c2759357e75eade847be93574b32a9ff"
+          "sha256": "5e9fc01fb4d06f4edf9133058b712ab132eb4d753b8ed436dca879954114188b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
@@ -92,7 +92,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
-          "sha256": "e405fedaab6eb178f9c5b28d37d9bc4c828b370f4afca82a68532be74a5bff7e"
+          "sha256": "0c3910193ed19299af27e1c779700bf2b9ea6bf20f318e1dfe9c037879c8750b"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
@@ -104,7 +104,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/PropertyEstimation.hpp",
-          "sha256": "e9b881b108be4f3fa9aebc086eaf8cda58dc0a6f5d343e90d10a0c675ec64ac1"
+          "sha256": "2c92162a01109b80f87a36ccfd9bd54366fbf162b498a0392367c00bad2e6db1"
         }
       ],
       "auditBoundary": "T27原函数体/已知谱oracle不变；T28相对自检改动后新消费者68/契约8和当前头真实扰动承接，原T27证据不改写；独验NOT RUN。",
@@ -160,7 +160,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -168,7 +168,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -200,7 +200,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
-          "sha256": "3845aabc98545fd5c431f65333322ef9c2759357e75eade847be93574b32a9ff"
+          "sha256": "5e9fc01fb4d06f4edf9133058b712ab132eb4d753b8ed436dca879954114188b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
@@ -212,7 +212,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
-          "sha256": "e405fedaab6eb178f9c5b28d37d9bc4c828b370f4afca82a68532be74a5bff7e"
+          "sha256": "0c3910193ed19299af27e1c779700bf2b9ea6bf20f318e1dfe9c037879c8750b"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
@@ -224,7 +224,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/PropertyEstimation.hpp",
-          "sha256": "e9b881b108be4f3fa9aebc086eaf8cda58dc0a6f5d343e90d10a0c675ec64ac1"
+          "sha256": "2c92162a01109b80f87a36ccfd9bd54366fbf162b498a0392367c00bad2e6db1"
         }
       ],
       "auditBoundary": "稳定functionId保留迁移链，sources为真实存活入口；两条直接迁移和必要相对自检按本包授权，独验NOT RUN。",
@@ -282,7 +282,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -290,7 +290,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4091,7 +4091,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4099,7 +4099,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4150,7 +4150,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4158,7 +4158,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4209,7 +4209,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4217,7 +4217,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4268,7 +4268,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4276,7 +4276,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4327,7 +4327,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4335,7 +4335,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4386,7 +4386,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4394,7 +4394,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4445,7 +4445,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4453,7 +4453,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4504,7 +4504,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4512,7 +4512,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4563,7 +4563,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4571,7 +4571,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4622,7 +4622,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4630,7 +4630,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4681,7 +4681,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4689,7 +4689,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4740,7 +4740,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4748,7 +4748,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4799,7 +4799,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4807,7 +4807,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4858,7 +4858,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4866,7 +4866,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4917,7 +4917,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4925,7 +4925,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -4976,7 +4976,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -4984,7 +4984,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5035,7 +5035,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5043,7 +5043,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5094,7 +5094,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5102,7 +5102,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5153,7 +5153,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5161,7 +5161,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5212,7 +5212,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5220,7 +5220,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5271,7 +5271,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5279,7 +5279,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5330,7 +5330,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5338,7 +5338,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5389,7 +5389,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5397,7 +5397,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5448,7 +5448,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5456,7 +5456,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5507,7 +5507,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5515,7 +5515,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5566,7 +5566,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5574,7 +5574,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5598,9 +5598,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlPropertyEstimation, CentroidEditMigrateBranch_WP13T04_ACC3)",
-          "startLine": 576,
-          "endLine": 611,
-          "sha256": "35081690ba41f5a062b767f88685ea58f9b2a0ac3a831ec298663ab2e2646b38"
+          "startLine": 571,
+          "endLine": 592,
+          "sha256": "ce1846ebcdd8a72e007776e30367c48362e1d574642fe35cadff59964706911a"
         }
       ]
     },
@@ -5625,7 +5625,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5633,7 +5633,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5657,8 +5657,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlPropertyEstimation, CentroidEditOverwriteBranch_WP13T04_ACC3)",
-          "startLine": 615,
-          "endLine": 638,
+          "startLine": 596,
+          "endLine": 619,
           "sha256": "9ff7f546e437a01232157541257c404709e8c1b993450d9825126d3992c2a671"
         }
       ]
@@ -5684,7 +5684,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5692,7 +5692,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5716,8 +5716,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlPropertyEstimation, CentroidEditUnresolvedRejected_WP13T04_ACC3)",
-          "startLine": 642,
-          "endLine": 660,
+          "startLine": 623,
+          "endLine": 641,
           "sha256": "e023b5e522d8c012769b074dd0a0d2e4e331b88c1291ef91c2c3ede702da9172"
         }
       ]
@@ -5743,7 +5743,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5751,7 +5751,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5775,8 +5775,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlPropertyEstimation, CentroidEditPreconditionsFailFast_WP13T04_ACC3)",
-          "startLine": 664,
-          "endLine": 679,
+          "startLine": 645,
+          "endLine": 660,
           "sha256": "1ebaf73efd2323de6532a6703549b7f244218353eb3742b5729ad2095403500a"
         }
       ]
@@ -5802,7 +5802,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5810,7 +5810,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5834,8 +5834,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlPropertyEstimation, MaterialDensityTableDefaults_WP13T04_ACC4)",
-          "startLine": 688,
-          "endLine": 707,
+          "startLine": 669,
+          "endLine": 688,
           "sha256": "bc5ea0271f843cd452efae955894f9e9e1445cb5dbd69d44314aabf6ea162d81"
         }
       ]
@@ -5861,7 +5861,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5869,7 +5869,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5893,8 +5893,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlPropertyEstimation, DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4)",
-          "startLine": 717,
-          "endLine": 748,
+          "startLine": 698,
+          "endLine": 729,
           "sha256": "507c09dff60271e34cacfc17aa6e525ce173ef69153755b671faad0066395665"
         }
       ]
@@ -5920,7 +5920,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5928,7 +5928,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -5952,8 +5952,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlDrivetrainSchema, FieldConstraintsAndProvenanceMarking_WP13T04_ACC5)",
-          "startLine": 760,
-          "endLine": 817,
+          "startLine": 741,
+          "endLine": 798,
           "sha256": "f08bd8c3c10d8f0681901d302d0adb2cddda1a7cdc50d275b3be184bafaf7737"
         }
       ]
@@ -5979,7 +5979,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -5987,7 +5987,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6011,8 +6011,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "auto sourced = [](double v, ProvenanceKind kind) {",
-          "startLine": 765,
-          "endLine": 767,
+          "startLine": 746,
+          "endLine": 748,
           "sha256": "9b5c622c07016e802a3e7f071d34c7cbda7b2cd62382b265c3395c296833d92a"
         }
       ]
@@ -6038,7 +6038,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6046,7 +6046,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6070,8 +6070,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlDrivetrainSchema, FrictionTorqueNotProvidedAccepted_WP13T04_ACC5)",
-          "startLine": 821,
-          "endLine": 840,
+          "startLine": 802,
+          "endLine": 821,
           "sha256": "7be171e04234dfb7a4c47676eefb2dbec9c5e601a9d88887d55ab2eed3ecf3c2"
         }
       ]
@@ -6097,7 +6097,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6105,7 +6105,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6129,8 +6129,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlInertiaReuse, KnownSpectrumAcrossScales_REUSE_T27)",
-          "startLine": 849,
-          "endLine": 887,
+          "startLine": 830,
+          "endLine": 868,
           "sha256": "164891d44a1e2a7dcb80b2c24057209d1551a97f2fd444d835c67b1e5506af19"
         }
       ]
@@ -6156,7 +6156,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6164,7 +6164,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6188,8 +6188,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlInertiaReuse, UpstreamAndAssertionConsumers_REUSE_T27)",
-          "startLine": 890,
-          "endLine": 918,
+          "startLine": 871,
+          "endLine": 899,
           "sha256": "aea82d3dc9c6a2c41ef58c93fa51542397a2a8354a10ed76f2a3d2527c798b02"
         }
       ]
@@ -6215,7 +6215,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6223,7 +6223,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6295,7 +6295,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6303,7 +6303,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6482,91 +6482,91 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "// =====================================================================",
           "startLine": 566,
-          "endLine": 575,
-          "sha256": "5a1aff82b2c642e9e06cc056286c68febc84b6cb8814e8ce72821bb8968385a8"
+          "endLine": 570,
+          "sha256": "8ca5c658dd6a31131b3d504b14aad029a20d12cabf89687d318828372dfd99ec"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/// 分支 (b) 强制覆盖完整张量：接受；com/inertia 均 UserProvided；",
-          "startLine": 613,
-          "endLine": 614,
+          "startLine": 594,
+          "endLine": 595,
           "sha256": "4c4884b7a2b19c0feb9b440cc197b828743276bba798499f357edf61e37f461b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/// 分支 (c) 既不迁移也不覆盖→CentroidEditUnresolved 调用方错误拒绝；",
-          "startLine": 640,
-          "endLine": 641,
+          "startLine": 621,
+          "endLine": 622,
           "sha256": "2be6b0ade764ab2ef327c8596baab185db2ca02cfc909b2590dda9ba1c56b42f"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/// 前置边界（fail-fast 轨）：无物性基准确认流＝调用方契约违约；",
-          "startLine": 662,
-          "endLine": 663,
+          "startLine": 643,
+          "endLine": 644,
           "sha256": "e0607843f2e659c6825ff96ec7d2faa5d9479001ecadee6bfd6d348f3f93b8e7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 681,
-          "endLine": 687,
+          "startLine": 662,
+          "endLine": 668,
           "sha256": "3d2579db8edf16c70c06c78a097a0b32359c6fd895b8b12fc0b9cb66f3e1a7fc"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/// 物性缺失面（DYN-06/M-8 modeling 侧闭环）：",
-          "startLine": 709,
-          "endLine": 716,
+          "startLine": 690,
+          "endLine": 697,
           "sha256": "f3e9b02c7e566034fc9baea8bcc84c25581bd6170e5bb5c59c190117a0bc1e21"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "// =====================================================================",
-          "startLine": 750,
-          "endLine": 759,
+          "startLine": 731,
+          "endLine": 740,
           "sha256": "990bed9b85d11411880fe68c326cdcc5c27195556cc527915dc378bc4aa40990"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/// 摩擦/力矩限值缺失（NotProvided）不触发传动不变量违例——DYN-06/M-8",
-          "startLine": 819,
-          "endLine": 820,
+          "startLine": 800,
+          "endLine": 801,
           "sha256": "e074acaa90abce09ac17cc091ba4c5516e9c6e4902a5fa3b76dc6936366bc659"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/**",
-          "startLine": 842,
-          "endLine": 848,
+          "startLine": 823,
+          "endLine": 829,
           "sha256": "cfaceabbddf5407fa189727870e9baa94157e6486cd8f38d3833eda977cde3e2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/** @brief MDL-05：公开上游对照与原 SPD/三角不等式消费者的严格边界。 */",
-          "startLine": 889,
-          "endLine": 889,
+          "startLine": 870,
+          "endLine": 870,
           "sha256": "24aabd5f1462ed929f6a20afd646161cabf5024328deb148732d3317eaeb8d00"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/**",
-          "startLine": 920,
-          "endLine": 926,
+          "startLine": 901,
+          "endLine": 907,
           "sha256": "274f6803457ce1e3cf696dd486dbf43866e286bdeb9c09d6b7fdd480c13d35c3"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/** @brief MDL-05／REUSE-T28：两个已知旋转长方体的质心与平行轴组合手算。 */",
-          "startLine": 974,
-          "endLine": 974,
+          "startLine": 955,
+          "endLine": 955,
           "sha256": "38976fdf27f46433fc7dbe8a55dbf377c849fe61bb8a5c18485bca254d803f74"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "/**",
-          "startLine": 1002,
-          "endLine": 1008,
+          "startLine": 983,
+          "endLine": 989,
           "sha256": "a7efac5a83b0e6fc99d700b6093c31b87b75538e6f728136adf4d9dfe7183ef3"
         }
       ]
@@ -6593,7 +6593,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6601,7 +6601,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6633,7 +6633,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
-          "sha256": "3845aabc98545fd5c431f65333322ef9c2759357e75eade847be93574b32a9ff"
+          "sha256": "5e9fc01fb4d06f4edf9133058b712ab132eb4d753b8ed436dca879954114188b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
@@ -6645,7 +6645,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
-          "sha256": "e405fedaab6eb178f9c5b28d37d9bc4c828b370f4afca82a68532be74a5bff7e"
+          "sha256": "0c3910193ed19299af27e1c779700bf2b9ea6bf20f318e1dfe9c037879c8750b"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
@@ -6657,7 +6657,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/PropertyEstimation.hpp",
-          "sha256": "e9b881b108be4f3fa9aebc086eaf8cda58dc0a6f5d343e90d10a0c675ec64ac1"
+          "sha256": "2c92162a01109b80f87a36ccfd9bd54366fbf162b498a0392367c00bad2e6db1"
         }
       ],
       "auditEvidence": [
@@ -6711,7 +6711,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6719,7 +6719,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6771,7 +6771,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6779,7 +6779,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6831,7 +6831,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6839,7 +6839,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6891,7 +6891,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6899,7 +6899,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -6951,7 +6951,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -6959,7 +6959,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -7011,7 +7011,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -7019,7 +7019,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -7043,8 +7043,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
           "symbol": "applyCentroidEdit",
           "startLine": 349,
-          "endLine": 425,
-          "sha256": "a154b6e1e19db646a63abe4e79a1f80572b60bac69a29bababb22db75725b4d4"
+          "endLine": 415,
+          "sha256": "c0c9fdabd8c4c8551960907b4db2ba07b6a17b76f5ea50a6edff86563c9930bb"
         }
       ],
       "differences": "产品显式迁移/覆盖/拒绝与来源标记、先算后写；沿用既有物性入口，不增加模型owner。"
@@ -7071,7 +7071,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -7079,7 +7079,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -7131,7 +7131,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -7139,7 +7139,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -7162,8 +7162,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlInertiaTransformReuse, RationalRotationAndScale_REUSE_T28)",
-          "startLine": 927,
-          "endLine": 972,
+          "startLine": 908,
+          "endLine": 953,
           "sha256": "4c1566f7837cf390e8270c2cb81a7ede7976f4837c909b13c43df9ce3429015d"
         }
       ],
@@ -7191,7 +7191,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -7199,7 +7199,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -7222,8 +7222,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlInertiaTransformReuse, MixedOffsetsAndStrictOutput_REUSE_T28)",
-          "startLine": 975,
-          "endLine": 1000,
+          "startLine": 956,
+          "endLine": 981,
           "sha256": "312c5eb4ee597ed64b2b774d6e16a1802e256539f9edec68f4872acde3441f7d"
         }
       ],
@@ -7251,7 +7251,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -7259,7 +7259,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -7282,8 +7282,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
           "symbol": "TEST(MdlInertiaTransformReuse, RelativeSymmetryScaleAndBoundary_REUSE_T28)",
-          "startLine": 1009,
-          "endLine": 1037,
+          "startLine": 990,
+          "endLine": 1018,
           "sha256": "0b5c68daa16ebceca263a4a458148cbe08933e502548b4d0376265c36f09b80c"
         }
       ],
@@ -7311,7 +7311,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
-          "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+          "sha256": "bdbf4c7779986f1e50607e2bf8f069ffaf11312330db45aa83eb035ba37bf504"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
@@ -7319,7 +7319,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
-          "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+          "sha256": "0839f880099f71b097f93af18e3706165b1265a786a55008fcb54a0884120732"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -7377,8 +7377,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
           "symbol": "}  // namespace sdurws::ird::modeling",
-          "startLine": 427,
-          "endLine": 427,
+          "startLine": 417,
+          "endLine": 417,
           "sha256": "90326b15d020ab806f5680f47a984be9625cfcf34018797215fe7c13e07ebbac"
         }
       ],
@@ -7504,13 +7504,13 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
           "symbol": "modelingPanelRegistration",
           "startLine": 901,
-          "endLine": 1350,
-          "sha256": "9d099c1afcd79c0c6c70e3607e13a0a031fc77a367b3d4c4d5ad7f2ae92064fb"
+          "endLine": 1351,
+          "sha256": "b7206106593ba0efcc779ab5223c2521e95517b774fd1a691b04bc6cd2033b58"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
           "symbol": "EXPECT_FALSE",
-          "startLine": 1351,
+          "startLine": 1352,
           "endLine": 1787,
           "sha256": "a548cb0cc24cdc3090c6f63c5126b3c6495c6747d199997d023f974c9f67cf3d"
         }
@@ -7531,7 +7531,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
-          "sha256": "0d49064f439164f740673ca05e54eab7945f19c81d86de91b4a830927621de0b"
+          "sha256": "d78605679933ea9bdd2910f11ae78bc4044fdde92b1dc51508e3c780ca1b9836"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",

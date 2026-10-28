@@ -249,3 +249,60 @@ TEST(StructureEditTest, ResetToSixAxis_ClearsDefaultTcp_WithChainRefs)
 }
 
 }  // namespace sdurws::ird::modeling::test
+namespace sdurws::ird::modeling::test {
+/** @brief F10：删后新增不复用历史ID，add/remove/add始终满足全局身份不变量。 */
+TEST(StructureEditTest, RepeatedInsertAfterDeletionPreservesUniqueIdentity)
+{
+    auto ws=makeSeedWorkset();
+    ASSERT_FALSE(addJointAt(ws,0));
+    const auto allocated=ws.design.joints[1].objectId;
+    ASSERT_FALSE(removeJointAt(ws,1));
+    ASSERT_FALSE(addJointAt(ws,0));
+    EXPECT_NE(ws.design.joints[1].objectId,allocated);
+    EXPECT_TRUE(checkInvariants(ws.design).empty());
+}
+/** @brief F06：以对象绑定置换命名位姿和逐关节传动值，来源一起随动。 */
+TEST(StructureEditTest, ReorderPermutesNamedPosesAndJointValues)
+{
+    auto ws=makeSeedWorkset();
+    PoseSet poses;poses.objectId=core::ObjectId::generate();
+    poses.entries={{"homeConfiguration",{.1,.2},""},{"saved",{.3,.4},""}};
+    ws.poseSetObject=poses;ws.design.poseSetRef=poses.objectId;
+    DrivetrainDesign drive;drive.objectId=core::ObjectId::generate();
+    const auto prov=core::ValueProvenance::make(core::ProvenanceKind::UserProvided);
+    drive.ratioPerJoint={core::SourcedValue<double>::provided(11.,prov),core::SourcedValue<double>::provided(22.,prov)};
+    drive.frictionPerJoint.resize(2);drive.frictionPerJoint[0].bias=core::SourcedValue<double>::provided(3.,prov);
+    drive.torqueLimitsPerJoint.resize(2);drive.torqueLimitsPerJoint[0].rated=core::SourcedValue<double>::provided(5.,prov);
+    drive.coupling=CouplingDesign{2,2,{1.,2.,3.,4.},0,1,1.};
+    ws.drivetrainObject=drive;ws.design.drivetrainRef=drive.objectId;
+    ASSERT_FALSE(reorderJoint(ws,0,true));
+    EXPECT_DOUBLE_EQ(ws.poseSetObject->entries[0].jointConfiguration[1],.1);
+    EXPECT_DOUBLE_EQ(ws.poseSetObject->entries[1].jointConfiguration[1],.3);
+    EXPECT_EQ(ws.drivetrainObject->ratioPerJoint[1],drive.ratioPerJoint[0]);
+    EXPECT_EQ(ws.drivetrainObject->frictionPerJoint[1],drive.frictionPerJoint[0]);
+    EXPECT_EQ(ws.drivetrainObject->torqueLimitsPerJoint[1],drive.torqueLimitsPerJoint[0]);
+    EXPECT_EQ(ws.drivetrainObject->coupling->c,(std::vector<double>{3.,4.,1.,2.}));
+}
+}
+
+namespace sdurws::ird::modeling::test {
+/** @brief F06：关联维度错误和无法表达的耦合窗口均在副本阶段拒绝，原值逐项不变。 */
+TEST(StructureEditTest, InvalidAssociatedValuesRejectReorderAtomically)
+{
+    auto ws=makeSeedWorkset();PoseSet poses;poses.objectId=core::ObjectId::generate();
+    poses.entries={{"bad",{.1},""}};ws.poseSetObject=poses;ws.design.poseSetRef=poses.objectId;
+    const auto before=ws;EXPECT_TRUE(reorderJoint(ws,0,true));EXPECT_EQ(ws,before);
+    ws.poseSetObject.reset();ws.design.poseSetRef.reset();ASSERT_FALSE(addJointAt(ws,1));
+    DrivetrainDesign drive;drive.objectId=core::ObjectId::generate();
+    drive.coupling=CouplingDesign{2,2,{1,0,0,1},0,1,1};ws.drivetrainObject=drive;ws.design.drivetrainRef=drive.objectId;
+    const auto coupled=ws;EXPECT_TRUE(reorderJoint(ws,1,true));EXPECT_EQ(ws,coupled);
+}
+/** @brief F10：当前跨部件占用也排除，整链重建历史不因再次重建释放。 */
+TEST(StructureEditTest, ResetRetainsIdentityHistory)
+{
+    auto ws=makeSeedWorkset();ASSERT_FALSE(resetToSixAxis(ws));const auto first=ws.design;
+    ASSERT_FALSE(resetToSixAxis(ws));
+    for(const auto& j:first.joints){for(const auto& current:ws.design.joints){EXPECT_NE(j.objectId,current.objectId);}}
+    for(const auto& l:first.links){for(const auto& current:ws.design.links){EXPECT_NE(l.objectId,current.objectId);}}
+}
+}

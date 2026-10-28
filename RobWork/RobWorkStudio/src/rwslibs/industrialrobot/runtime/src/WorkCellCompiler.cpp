@@ -207,13 +207,10 @@ void attachPrimitive(rw::models::WorkCell& workCell,
 //     （§8.6：SafePath/预算归 io，provider 返回前已校验）；本层以
 //     ContentDigester 复算 SHA-256 比对 ResourceRef.contentDigest（S4
 //     复查的挂接点复核——同内容才挂接，失配跳过该引用）。
-//   ②帧内变换——CanonicalModel 的 ResourceRef 无 localTransform 字段
-//    （契约演化面），网格以**恒等帧内位姿**挂接（网格原点＝连杆/工具/
-//    场景系原点）；字段引入属 codec 版本演化，不私裁。
-// 失败语义：provider 缺位/资源缺失/摘要失配/格式不可解析/解析异常——
-// 全部跳过该引用并保持图元代理回退（§8.6 诚实缺省：能力缺失≠非法，
-// 编译不阻塞、零错误级诊断）；无 localTransform 的网格挂接同名契约与
-// 呈现代理（RT-ID/RT-CACHE 不入身份域）一致。
+//   ②帧内变换——F05：每引用的localTransform随canonical1.5入身份/缓存，
+//     原资源字节不预烘焙，Geometry按所挂帧到mesh的变换放置。
+// 失败语义：provider缺位/资源缺失/摘要失配/格式不可解析/解析异常，
+// 跳过该引用并保持图元代理回退（§8.6）；不把资源缺失伪装为网格已加载。
 // =====================================================================
 
 /**
@@ -360,6 +357,7 @@ struct MeshReferral {
     rw::core::Ptr<rw::kinematics::FixedFrame> frame; ///< 挂接帧（已入 WC 帧树）
     const char* facet;                               ///< 呈现面"visual"/碰撞面"collision"
     ResourceRef ref;                                 ///< 内容寻址引用（§8.6）
+    rw::math::Transform3D<double> localTransform = detail::identityTransform3D(); ///< 所挂帧到网格。
 };
 
 /**
@@ -369,7 +367,7 @@ struct MeshReferral {
  * → ContentDigester 复算 SHA-256 比对引用摘要（S4 挂接点复核，失配跳
  * 过）→ 显式sourcePathHint判格式，缺省按OBJ/STL真实解析（dae/wrl/iv依赖
  * Assimp/Inventor——明确跳过）→ 临时文件解析（见 parseMeshViaTempFile）
- * → Geometry 载体挂接帧（恒等帧内位姿——localTransform 契约演化面，
+ * → Geometry 载体按每引用的localTransform挂接帧（m，
  * 见上批注）。任何失败跳过该引用＝图元代理回退（§8.6 诚实缺省），不
  * 阻塞编译、零错误级诊断。
  *
@@ -415,14 +413,14 @@ void attachResourceMeshGeometry(
             // 路径不入身份；缺hint时依据已校验内容选择解码器，成功仍须有实际三角面。
             const auto meshData=parseMeshViaTempFile(bytes.data,bytes.size,format);
             if (meshData.isNull() || meshData->getTriMesh(false)->size()==0) { continue; }
-            // 载体纪律同 attachPrimitive：显式名/恒等位姿/scale=1（网格
+            // 载体纪律同 attachPrimitive：显式名/权威局部位姿/scale=1（网格
             // 坐标＝m 真值直用——io 侧单位契约）。
             const rw::geometry::Geometry::Ptr geometry = rw::core::ownedPtr(
                 new rw::geometry::Geometry(meshData,
                                            referral.frame->getName() + "."
                                                + referral.facet,
                                            1.0));
-            geometry->setTransform(detail::identityTransform3D());
+            geometry->setTransform(referral.localTransform);
             geometry->setFrame(referral.frame);
             const rw::core::Ptr<rw::models::RigidObject> carrier =
                 rw::core::ownedPtr(
@@ -612,11 +610,11 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
         // 不收集——§8.6 可选引用语义）。
         if (chain.links.front().visual.has_value()) {
             meshReferrals.push_back({previousFrame, "visual",
-                                     *chain.links.front().visual});
+                                     *chain.links.front().visual, chain.links.front().visualTransform});
         }
         if (chain.links.front().collision.has_value()) {
             meshReferrals.push_back({previousFrame, "collision",
-                                     *chain.links.front().collision});
+                                     *chain.links.front().collision, chain.links.front().collisionTransform});
         }
 
         // 设备链（SerialDevice 构造输入——基座到法兰的连通 Frame 序列；
@@ -744,11 +742,11 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
             // 权威 FK 下的连杆原点——网格恒等挂接即随构型运动）。
             if (chain.links.at(i + 1).visual.has_value()) {
                 meshReferrals.push_back({linkFrame, "visual",
-                                         *chain.links.at(i + 1).visual});
+                                         *chain.links.at(i + 1).visual, chain.links.at(i + 1).visualTransform});
             }
             if (chain.links.at(i + 1).collision.has_value()) {
                 meshReferrals.push_back({linkFrame, "collision",
-                                         *chain.links.at(i + 1).collision});
+                                         *chain.links.at(i + 1).collision, chain.links.at(i + 1).collisionTransform});
             }
         }
 
@@ -769,7 +767,7 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
             // 工具/场景几何在碰撞评估消费；呈现经同一几何载体）。
             if (tool.geometry.has_value()) {
                 meshReferrals.push_back({tcpFrame, "collision",
-                                         *tool.geometry});
+                                         *tool.geometry, tool.geometryTransform});
             }
         }
 
@@ -787,7 +785,7 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
             // MA-01 收集：场景几何（facet 统一 collision——同工具口径）。
             if (sceneObject.geometry.has_value()) {
                 meshReferrals.push_back({sceneFrame, "collision",
-                                         *sceneObject.geometry});
+                                         *sceneObject.geometry, sceneObject.geometryTransform});
             }
         }
 

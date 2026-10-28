@@ -61,10 +61,16 @@ enum class StructureEditErrorCode {
     /// 引用时拒绝——I-MDL-9；常规链 TCP 挂工具不挂关节/连杆，此面为
     /// 将来引用扩展的防静默丢失保留，见 §5.2 v0.28 删除段）
     ReferencedByTcp,
+    AssociatedDataInvalid, ///< 关联数组失配或耦合窗口无法无损置换；拒绝且工作集不变。
 };
 
 /// 局部错误码稳定 token（枚举成员名连字符串——UT 判别与 UI 呈现映射承载）。
 std::string_view structureEditErrorCodeToken(StructureEditErrorCode code) noexcept;
+
+/** @brief [in,out] ws将当前闭包全部有效身份并入分配历史；排序去重、无IO，仅UI线程。
+ * 删除/重建/历史恢复前调用，避免已消失身份被新对象复用；不改变工程内容和摘要。
+ */
+void rememberWorkingSetObjectIds(ModelingWorkingSet& ws);
 
 /**
  * @brief 结构编辑拒绝值（局部错误面：码＋定位细节——detail 面向诊断链/

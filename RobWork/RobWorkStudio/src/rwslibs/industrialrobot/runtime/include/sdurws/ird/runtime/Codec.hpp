@@ -97,7 +97,8 @@ inline constexpr std::uint16_t kVersionMajor = 1;
 // 本编码仍非project持久化格式，旧项目字节和历史证据均不改写。
 // WP-13-T24 B3g（MDL-15）：1.3将场景几何编码为presence＋条件资源。
 // presence同时进入身份域；旧1.2缓存精确版本拒绝，从原项目对象重编译，项目存储不改。
-inline constexpr std::uint16_t kVersionMinor = 4;
+// F05：1.5为每次几何引用编码所挂帧到mesh的局部位姿，旧1.4缓存重编译。
+inline constexpr std::uint16_t kVersionMinor = 5;
 
 /// 编码头域标志：全字段编码（parse 的唯一输入形态）。
 inline constexpr std::uint16_t kDomainFull = 0;

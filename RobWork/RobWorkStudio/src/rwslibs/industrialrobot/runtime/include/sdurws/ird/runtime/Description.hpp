@@ -154,6 +154,7 @@ struct WorkingRange {
  */
 struct GeometryRef {
     ResourceRef resource; ///< 被引用的几何资源（内容摘要入身份，路径不入——§8.6）
+    rw::math::Transform3D<double> localTransform = detail::identityTransform3D(); ///< 所挂连杆/TCP/场景帧到网格的变换，m；每引用独立。
 };
 
 // =====================================================================

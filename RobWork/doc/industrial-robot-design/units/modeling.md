@@ -392,7 +392,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 | --- | --- | --- |
 | `objectId` / `localName` | 同关节 | — |
 | `body.mass` | `SourcedValue<double>`，kg；已提供则 m>0（断言①） | 缺失＝NotProvided，不触发断言，走 DataInsufficient 降级（MDL-06/V15-01） |
-| `body.centerOfMass` | `SourcedValue<rw::math::Vector3D<double>>`，m，连杆系下 | 修改触发平行轴确认流（§5.3，M-2） |
+| `body.centerOfMass` | `SourcedValue<rw::math::Vector3D<double>>`，m，连杆系下 | 修改触发刚体平移/完整覆盖确认流（§5.3，C01/M-2） |
 | `body.inertia` | `SourcedValue<InertiaTensor{ixx,iyy,izz,ixy,ixz,iyz}>`，kg·m²；基准＝**质心、参考姿态＝连杆坐标系**（M-2）；已提供则对称（相对 1×10⁻¹²，附录 D 第 6 项）＋SPD（对称化后特征值严格>0，第 7 项）＋惯性椭球三角不等式（断言②③） | 同上 |
 | `body.material` | `std::optional<MaterialRef{ materialId, densitySourced }>`, kg/m³ | 估算输入（§5.3） |
 | `shape.visual` / `shape.collision` | `std::optional<GeometryRef{ resourceRefId（→resourceManifest）, localTransform（T_link_geom，m/rad）, kind: Mesh|Primitive }>` | 视觉/碰撞分离字段（evidence 失效矩阵的语义基础）；碰撞几何不等于碰撞判定（policy 唯一评估） |
@@ -541,7 +541,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 **规则**：
 
 1. 估算结果一律 `ValueProvenance{kind=GeometricEstimate, methodTag="mdl-property-formula/1"}`；用户直接修改物性→UserProvided 覆盖（保留来源标记，MDL-05"允许几何级权威值覆盖"）。
-2. **质心修改确认流**：用户修改 com 时，编辑器必须让用户显式二选一——(a) 惯量按平行轴定理迁移（`I' = I + m((d·d)E − ddᵀ)`，d＝质心位移）；(b) 强制覆盖完整张量（用户输入全部六分量）。选择随编辑差值与命令摘要留痕；**不允许质心与惯量基准静默脱钩**（M-2/MDL-05）。既无迁移也无覆盖的 com 修改＝调用方错误拒绝。
+2. **质心修改确认流（C01，所有者2026-10-28裁决）**：惯量张量始终关于刚体自身实际质心，并在连杆局部坐标轴表达（kg·m²）。修改com仅代表刚体安装平移，编辑器要求显式二选一：(a) 整体平移，关于COM的张量六分量及来源保持不变（兼容旧`migrate-inertia` token，禁止正平行轴增量）；(b) 用户覆盖完整六分量张量，代表整体物性输入。未来局部旋转仅按`R I_C Rᵀ`变换表达坐标轴。选择留痕；未选择即拒绝。多段刚体合成仍按上文相对合成COM的平行轴公式处理，两者不可混用。
 3. **合法性与缺失**：估算输出在返回前自检（对称、SPD、三角不等式）；物性**缺失**（NotProvided）不触发断言、不阻断应用，登记为就绪校验 Warning 并在动力学评估侧按 DYN-06 走 DataInsufficient 降级（V15-01）。
 4. **估算精度与版本**：公式表版本号随 methodTag 入来源；估算算法确定性（同输入→同字节）；估算精度不做统计声明（"估算值"限定语在报告措辞冻结，RPT-05）。
 5. **边界**：modeling 只负责参数与估算契约；runtime 负责编译；dynamics 负责实际动力学计算；**估算质量不当作动力学证据**（DYN-06 可信等级由 dynamics/evidence 口径判定，modeling 仅提供来源标记）。

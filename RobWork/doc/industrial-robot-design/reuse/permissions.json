@@ -54,7 +54,7 @@
       "id": "REUSE-T13-WorkCellCompiler.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
-        "sha256": "5c5386025703263ad98ed1df3921cf553f8128f1a9410a206d41af674b5e40fc"
+        "sha256": "63d88f4c5af24cc8e6bcc2581846a215d7e51b130b25c37e977c1fcbfd364b55"
       },
       "targets": [
         "sdurws_ird_runtime"
@@ -113,7 +113,7 @@
       "id": "REUSE-T13-WorkCellGeometryTest.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-        "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+        "sha256": "e65cfaafc6bde8e9abe3fb323420b39ad2f802f8770f3e03db2c338522da96e2"
       },
       "targets": [
         "sdurws_ird_runtime_test"

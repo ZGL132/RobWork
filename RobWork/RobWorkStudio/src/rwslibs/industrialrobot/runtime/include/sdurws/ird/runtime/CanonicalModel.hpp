@@ -191,6 +191,8 @@ struct CanonicalLink {
     /// 惯量张量，质心系下表示（单位 kg·m²；MDL-05 惯量基准）。Provided 时
     /// 须对称（容差 1×10⁻¹²，附录 D 第 6 项）且正定（SPD）。
     core::SourcedValue<rw::math::InertiaMatrix<double>> inertia;
+    rw::math::Transform3D<double> visualTransform = detail::identityTransform3D(); ///< F05：所挂帧到网格的局部变换，m；仅对应资源存在时有效。
+    rw::math::Transform3D<double> collisionTransform = detail::identityTransform3D(); ///< F05：所挂帧到网格的局部变换，m；仅对应资源存在时有效。
 };
 
 /**
@@ -228,6 +230,7 @@ struct CanonicalTool {
      */
     std::vector<std::pair<std::string, rw::math::Transform3D<double>>> namedTcpOffsets;
 
+    rw::math::Transform3D<double> geometryTransform = detail::identityTransform3D(); ///< F05：所挂帧到网格的局部变换，m；仅对应资源存在时有效。
 };
 
 /**
@@ -249,6 +252,7 @@ struct CanonicalSceneObject {
     /// MDL-15/AT-28：nullopt表示无实体几何的世界固定帧，仍保留对象/名称索引。
     /// 有值时须命中resourceManifest；presence入内容身份，不将显示标记视为碰撞几何。
     std::optional<ResourceRef> geometry;
+    rw::math::Transform3D<double> geometryTransform = detail::identityTransform3D(); ///< F05：所挂帧到网格的局部变换，m；仅对应资源存在时有效。
 };
 
 /**

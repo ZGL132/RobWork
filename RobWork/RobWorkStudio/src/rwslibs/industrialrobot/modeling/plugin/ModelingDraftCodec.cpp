@@ -127,12 +127,13 @@ std::string encodeModelingDraft(const ModelingWorkingSet& ws)
     const auto array=[](const auto& values){QJsonArray out;for(const auto& value:values){out.append(objectHex(ObjectVariant{value}));}return out;};
     QJsonArray changes;
     for(const auto& change:ws.changes){changes.append(QJsonObject{{"subject",QString::fromStdString(change.subject)},{"summary",QString::fromStdString(change.summary)}});}
+    QJsonArray allocated;for(const auto& id:ws.allocatedObjectIds){allocated.append(QString::fromStdString(id.toCanonical()));}
     const QJsonObject document{{"format","ird-modeling-draft"},{"version",1},
         {"rootId",ws.rootObjectId?QJsonValue(QString::fromStdString(ws.rootObjectId->toCanonical())):QJsonValue(QJsonValue::Null)},
         {"root",objectHex(ObjectVariant{ws.design})},{"tools",array(ws.toolObjects)},{"scenes",array(ws.sceneObjects)},
         {"poses",ws.poseSetObject?QJsonValue(objectHex(ObjectVariant{*ws.poseSetObject})):QJsonValue(QJsonValue::Null)},
         {"drivetrain",ws.drivetrainObject?QJsonValue(objectHex(ObjectVariant{*ws.drivetrainObject})):QJsonValue(QJsonValue::Null)},
-        {"changes",changes}};
+        {"changes",changes},{"allocatedObjectIds",allocated}};
     return QJsonDocument(document).toJson(QJsonDocument::Compact).toStdString();
 }
 
@@ -166,6 +167,15 @@ std::optional<ModelingWorkingSet> decodeModelingDraft(const std::string& payload
             out.design=typedObject<RobotDesign>(doc.value("root"));
             out.toolObjects=typedArray<ToolDefinition>(doc.value("tools"));out.sceneObjects=typedArray<SceneObject>(doc.value("scenes"));
             out.poseSetObject=optionalObject<PoseSet>(doc.value("poses"));out.drivetrainObject=optionalObject<DrivetrainDesign>(doc.value("drivetrain"));
+            if(doc.contains("allocatedObjectIds")){
+                if(!doc.value("allocatedObjectIds").isArray()){rejectDraft("草稿身份分配历史不是数组。");}
+                std::set<std::string> seen;
+                for(const auto& value:doc.value("allocatedObjectIds").toArray()){
+                    const auto id=core::ObjectId::tryFromCanonical(textValue(value));
+                    if(!id||!seen.insert(id->toCanonical()).second){rejectDraft("草稿身份分配历史无效或重复。");}
+                    out.allocatedObjectIds.push_back(*id);
+                }
+            }
             if(!doc.value("changes").isArray()){rejectDraft("草稿未应用摘要缺失。");}
             for(const auto& entry:doc.value("changes").toArray()){
                 if(!entry.isObject()){rejectDraft("草稿变更摘要不是对象。");}

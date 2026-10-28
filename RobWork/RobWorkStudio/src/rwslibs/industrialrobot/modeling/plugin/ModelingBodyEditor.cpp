@@ -38,16 +38,16 @@ std::optional<ManualBodyResult> evaluateManualBodyEdit(
     std::string choice;
     // 第二步守住M-2：改变质心必须有明确处置；缺旧基准只允许完整提供。
     if(changedCom){
-        if(!edit.resolution){error="质心已改变，请明确选择平行轴迁移或覆盖完整张量。";return std::nullopt;}
+        if(!edit.resolution){error="质心已改变，请明确选择整体平移保持质心惯量或覆盖完整张量。";return std::nullopt;}
         const bool complete=candidate.mass.tryValue()&&before.centerOfMass.tryValue()&&before.inertia.tryValue();
         if(*edit.resolution==CentroidEditResolution::MigrateInertia){
-            if(!complete){error="平行轴迁移需要已提供的质量、旧质心和旧惯量；请改用完整张量覆盖。";return std::nullopt;}
-            if(edit.inertia){error="迁移与完整张量覆盖不能同时提交，请只选择一种处置。";return std::nullopt;}
+            if(!complete){error="整体平移保持惯量需要已提供的质量、旧质心和旧惯量；请改用完整张量覆盖。";return std::nullopt;}
+            if(edit.inertia){error="整体平移与完整张量覆盖不能同时提交，请只选择一种处置。";return std::nullopt;}
         }else if(!edit.inertia){
             error="覆盖时必须填写完整惯量六分量（kg·m²）。";return std::nullopt;
         }
         if(complete){
-            // 域前置已检查；本轮质量可能显式更新，迁移按该已确认质量计算。
+            // 域前置已检查；本轮质量可能显式更新，惯量仍是关于实际COM的原张量。
             if(applyCentroidEdit(candidate,*edit.centerOfMass,edit.resolution,edit.inertia)){
                 error="质心处置尚未确认，请重新选择。";return std::nullopt;
             }
@@ -60,7 +60,7 @@ std::optional<ManualBodyResult> evaluateManualBodyEdit(
     }else if(edit.inertia&&(!before.inertia.tryValue()||before.inertia.value()!=*edit.inertia)){
         candidate.inertia=core::SourcedValue<InertiaTensor>::provided(*edit.inertia,user);
     }
-    // 第三步复用同单元唯一惯量自检；输入和迁移结果均需有限/SPD/三角成立。
+    // 第三步复用同单元唯一惯量自检；输入和编辑结果均需有限/SPD/三角成立。
     if(const auto t=candidate.inertia.tryValue()){
         const std::array<std::array<double,3>,3> matrix{{
             {{t->ixx,t->ixy,t->ixz}},{{t->ixy,t->iyy,t->iyz}},{{t->ixz,t->iyz,t->izz}}}};
@@ -80,7 +80,7 @@ ModelingBodyEditor::ModelingBodyEditor(QWidget* parent,Accept accept)
     auto* layout=new QVBoxLayout(this);m_title=new QLabel(this);layout->addWidget(m_title);
     auto* note=new QLabel(QStringLiteral("勾选要修改的项目；未勾选保留原值与来源。"
         "质心为物体局部坐标系m；惯量在质心、姿态与物体局部坐标系一致，kg·m²。"
-        "改变质心必须明确选择迁移或完整覆盖；确认只写草稿。"),this);
+        "改变质心必须明确选择整体平移或完整覆盖；确认只写草稿。"),this);
     note->setWordWrap(true);layout->addWidget(note);
     m_mass=new QCheckBox(QStringLiteral("修改质量 (kg)"),this);m_mass->setObjectName("ird_body_mass_edit");
     m_com=new QCheckBox(QStringLiteral("修改质心 (m)"),this);m_com->setObjectName("ird_body_com_edit");
@@ -94,7 +94,7 @@ ModelingBodyEditor::ModelingBodyEditor(QWidget* parent,Accept accept)
     for(int i=0;i<3;++i){position->addWidget(new QLabel(QString::fromLatin1("xyz"+i,1)+" (m)",this),0,i);position->addWidget(m_values[i+1],1,i);}
     layout->addLayout(position);
     m_resolution=new QComboBox(this);m_resolution->setObjectName("ird_body_centroid_resolution");
-    m_resolution->addItems({QStringLiteral("请选择质心处置（无默认）"),QStringLiteral("按平行轴迁移惯量"),QStringLiteral("覆盖完整惯量张量")});
+    m_resolution->addItems({QStringLiteral("请选择质心处置（无默认）"),QStringLiteral("整体平移（保持质心惯量）"),QStringLiteral("覆盖完整惯量张量")});
     layout->addWidget(m_resolution);layout->addWidget(m_tensor);
     auto* tensor=new QGridLayout;const char* names[]={"Ixx","Iyy","Izz","Ixy","Ixz","Iyz"};
     for(int i=0;i<6;++i){
@@ -186,7 +186,7 @@ void ModelingBodyEditor::submit()
     m_before=result->body;cancelPending();
     // 摘要保留域契约要求的稳定处置token；窗口只呈现其中文语义。
     const auto human=QString::fromStdString(result->summary)
-        .replace(QString::fromUtf8(centroidEditResolutionToken(CentroidEditResolution::MigrateInertia).data()),QStringLiteral("按平行轴迁移惯量"))
+        .replace(QString::fromUtf8(centroidEditResolutionToken(CentroidEditResolution::MigrateInertia).data()),QStringLiteral("整体平移（保持质心惯量）"))
         .replace(QString::fromUtf8(centroidEditResolutionToken(CentroidEditResolution::OverwriteInertia).data()),QStringLiteral("覆盖完整惯量张量"));
     m_feedback->setText(QStringLiteral("已写入草稿：")+human);
 }

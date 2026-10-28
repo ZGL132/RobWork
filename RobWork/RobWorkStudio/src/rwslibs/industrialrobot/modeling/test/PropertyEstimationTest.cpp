@@ -567,12 +567,7 @@ TEST(MdlPropertyEstimation, SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC
 // acceptance 3——质心修改确认流三分支（V-17；MDL-05/M-2）
 // =====================================================================
 
-/// 分支 (a) 平行轴迁移：接受；com→UserProvided；惯量按 I+m((d·d)E−ddᵀ)
-/// 迁移且保留原 provenance（迁移不改变来源事实——头注契约）。
-/// 手算（m=2 kg，d=(0.2,0.1,0.1) m）：
-///   Ixx'=0.01+2(0.1²+0.1²)=0.05；Iyy'=0.01+2(0.2²+0.1²)=0.11；
-///   Izz'=0.004+2(0.2²+0.1²)=0.104；Ixy'=0.001−2·0.2·0.1=−0.039；
-///   Ixz'=0−2·0.2·0.1=−0.04；Iyz'=0.002−2·0.1·0.1=−0.018。
+/// C01：刚体安装平移只改局部COM坐标，关于实际COM的完整张量与来源不变。
 TEST(MdlPropertyEstimation, CentroidEditMigrateBranch_WP13T04_ACC3)
 {
     IRD_TEST_INFO("MDL-05", {}, std::nullopt);
@@ -589,22 +584,8 @@ TEST(MdlPropertyEstimation, CentroidEditMigrateBranch_WP13T04_ACC3)
     EXPECT_NEAR(body.centerOfMass.value()[2], 0.1, closeTolerance(0.1));
     EXPECT_EQ(body.centerOfMass.provenance().kind, ProvenanceKind::UserProvided);
 
-    // 惯量六分量逐项手算对照（上式）＋来源保留（GeometricEstimate）。
-    ASSERT_TRUE(body.inertia.state() == FieldState::Provided);
-    const InertiaTensor& migrated = body.inertia.value();
-    EXPECT_NEAR(migrated.ixx, 0.05, closeTolerance(0.05));
-    EXPECT_NEAR(migrated.iyy, 0.11, closeTolerance(0.11));
-    EXPECT_NEAR(migrated.izz, 0.104, closeTolerance(0.104));
-    EXPECT_NEAR(migrated.ixy, -0.039, closeTolerance(0.039));
-    EXPECT_NEAR(migrated.ixz, -0.04, closeTolerance(0.04));
-    EXPECT_NEAR(migrated.iyz, -0.018, closeTolerance(0.018));
-    EXPECT_EQ(body.inertia.provenance().kind, ProvenanceKind::GeometricEstimate);
-    // 迁移公式与估算器平行轴实现同源（单一实现点——数值应与直接调用一致）。
-    const PropertyEstimator estimator;
-    const rwmath::Vector3D<double> delta = newCom - before.centerOfMass.value();
-    const InertiaTensor direct =
-        estimator.migrateByParallelAxis(before.inertia.value(), before.mass.value(), delta);
-    EXPECT_TRUE(migrated == direct);
+    // 解析不变量：同一刚体平移不改变关于自身实际COM的张量六分量。
+    EXPECT_EQ(body.inertia, before.inertia);
     // 质量与材料不被确认流触碰。
     EXPECT_TRUE(body.mass == before.mass);
     EXPECT_TRUE(body.material == before.material);

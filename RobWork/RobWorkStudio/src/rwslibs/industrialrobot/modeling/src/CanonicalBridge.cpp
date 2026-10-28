@@ -598,8 +598,7 @@ runtime::Expected<runtime::JointDescription, ModelingError>
  *   - accessVersion 取 io::kAccessVersion 单点（P-RT-6 裁决值，不私写 1）。
  *
  * @param geometryRef [in] modeling 几何引用（resourceRefId＋局部位姿——
- *                    局部位姿不入 runtime GeometryRef：runtime 几何引用以
- *                    资源为粒度，位姿语义由几何资源自身承载/编译链处理）
+ *                    保留所挂帧到网格的局部位姿，资源字节不预烘焙）
  * @param design      [in] 根对象（resourceManifest 查找域）
  * @param field       [in] 定位字段（引用方——错误 params）
  * @return ok＝runtime 几何引用；err＝ModelingError
@@ -643,6 +642,7 @@ runtime::Expected<runtime::GeometryRef, ModelingError>
             deriveRecordedResourceObjectId(entry->resourceId);
         out.resource.state = runtime::ResourceState::Recorded;
     }
+    out.localTransform = geometryRef.localTransform; // F05：保留每次引用的局部位姿。
     out.resource.contentDigest = entry->contentDigest;  // 内容摘要透传（CON-05——不自算）
     out.resource.sourcePathHint = std::nullopt;         // 路径不入 Description＝不入身份
     out.resource.accessVersion = io::kAccessVersion;    // 读取契约版本单点（P-RT-6）
@@ -1049,6 +1049,10 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         const rw::math::Rotation3D<double> r =
             rotMul(tool.mountInterface.R(), chosen->offset.R());
         td.tcpOffset = rw::math::Transform3D<double>(p, r);
+        if (td.geometry) {
+            // T_tcp_mesh = inverse(T_tool_tcp) * T_tool_mesh；mount已在TCP帧上。
+            td.geometry->localTransform = rw::math::inverse(chosen->offset) * tool.geometry->localTransform;
+        }
         // A-15/MDL-13：保留每个原始tcpKey，安装接口必须参与所有偏移的复合，
         // 否则非默认TCP会在编译边界丢失。这里仅做描述映射，排序与身份归runtime。
         for (const auto& entry : tool.tcpList) {

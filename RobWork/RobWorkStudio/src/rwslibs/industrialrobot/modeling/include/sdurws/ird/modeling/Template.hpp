@@ -267,6 +267,10 @@ struct ModelingWorkingSet {
     std::optional<PoseSet> poseSetObject;          ///< 至多一份（§4.6——与根 poseSetRef 对应）
     std::optional<DrivetrainDesign> drivetrainObject;  ///< 至多一份（§4.7——与根 drivetrainRef 对应）
 
+    /// F10：草稿分配历史（含已删除/撤销身份），仅UI线程；随草稿保存，非工程内容身份。
+    /// 不参与语义相等/dirty：撤销物理编辑可回基线，但身份永不重新分配。
+    std::vector<core::ObjectId> allocatedObjectIds;
+
     bool operator==(const ModelingWorkingSet& o) const
     {
         return design == o.design && changes == o.changes

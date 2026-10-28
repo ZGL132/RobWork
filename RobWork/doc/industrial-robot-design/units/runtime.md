@@ -1655,4 +1655,10 @@ DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列
 
 RobotDesignDescription/RobotChain 的 flangeOffset 是末关节变量之后到末连杆/法兰的固定变换（平移 m、旋转无量纲，旧 modeling 字节默认恒等）。唯一模型 owner runtime 将它挂为 FixedFrame；连杆原始 COM/关于 COM 的惯量仍在该连杆帧表达，RNE 特殊载体只作必要坐标适配，不能修改 canonical 物性定义。canonical 缓存协议升为 1.4、实现版本升为 ird-runtime-canonical-compiler/1.2，禁止复用旧编译产物。
 
+### MDL-CR-3 几何引用局部安装变换（F05）
+
+Description 的 GeometryRef.localTransform 表示所挂连杆/TCP/场景帧到mesh的变换（平移m，旋转无量纲），默认恒等。canonical在每次引用上分别保存visualTransform/collisionTransform/geometryTransform；资源清单只标识资源内容，同字节资源可安装在不同位置。工具几何原在工具系表达，modeling桥仅以inverse(T_tool_tcp)转换到runtime所挂TCP帧，mountInterface已在TCP帧上，不重复旋转/平移。runtime复用Geometry::setTransform挂接，物理张量、DWC及运动学坐标不因此改变。
+
+协议升为canonical1.5、实现版本ird-runtime-canonical-compiler/1.3；局部变换进入内容身份和缓存，旧1.4缓存拒绝并从原项目对象重编译，project/modeling对象原格式不变。实施回归不代表独立验收。
+
 sampleCompiledChain 在 runtime 内调用同一正式 WorkCell 编译器与上游 Device::setQ/Kinematics::worldTframe，仅向 modeling 返回纯值位姿；局部 State/WorkCell 不逃逸且不持久化。集成和独立冒烟使用同一实现；不新增运动学核心。有限多构型验证为接受必要条件，不等同连续空间的数学证明。

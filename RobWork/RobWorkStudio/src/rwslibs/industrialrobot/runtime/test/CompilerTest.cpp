@@ -458,7 +458,7 @@ TEST(CompilerTest, CompilesTenStageChainAndPublishes_RT_T11_ACC3)
     // 来源定位（S1 锚定 → §9.1 快照身份域）与请求一致。
     EXPECT_EQ(snap.revision(), req.revision);
     // REUSE-T13/§9.4：真实发布链必须携带新实现版本，旧WC缓存不能复用。
-    EXPECT_EQ(compiler.implementationVersion(), "ird-runtime-canonical-compiler/1.2");
+    EXPECT_EQ(compiler.implementationVersion(), "ird-runtime-canonical-compiler/1.3");
     EXPECT_EQ(snap.compilerVersion(), compiler.implementationVersion());
     // 同模型/选项不升级版本会沿原公式得到同一旧WC键；仅变实现版本，
     // 必须由既有判定器拒绝旧产物，无需另建缓存或修改公共契约版本。
