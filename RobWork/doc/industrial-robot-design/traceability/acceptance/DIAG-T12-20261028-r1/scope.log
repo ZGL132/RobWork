@@ -1,0 +1,2 @@
+verify-task-scope: DIAG-T12 base=af375242c7b6 head=5affd13c12ca changed=33 allowedRules=25 forbiddenRules=3
+verify-task-scope: PASS DIAG-T12 —— 33 个路径全部在允许面内

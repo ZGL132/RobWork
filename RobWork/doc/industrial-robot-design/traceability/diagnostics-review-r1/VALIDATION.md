@@ -46,4 +46,8 @@
 
 原有 runtime 冻结证据绑定、16 文件 7,420 非空行覆盖缺口及 59 项未决功能债务，来源为 `traceability/acceptance/POL-T13-20261028-r1.json` 与 `EX-T11-20261028-r1.json`。本包只补本次变动文件实际函数区段，不关闭旧 pending、不承诺其余继承覆盖缺口数量不变，也不放行门禁失败的依赖。本轮结论为实施待独验、全局门禁未转绿。
 
-原评审报告及隔离探针的只读归档在 ZIP 的 review/；原路径仍保留。evidence/evidence-index.json 记录归档及每个内部原件的字节数与 SHA-256，不是全库证据索引。红例、已返工的中间失败、最终通过均保留各自原件。
+原评审报告及隔离探针的只读归档在 ZIP 的 review/；原路径仍保留。evidence/evidence-index.json 记录归档及每个内部原件的字节数与 SHA-256，不是全库证据索引。
+
+## 独立验收（2026-10-28）
+
+所有者另开独立会话对实施与回归面验收 **PASS**，登记于 [acceptance/DIAG-T12-20261028-r1.json](../acceptance/DIAG-T12-20261028-r1.json)（证据同目录），范围显式 `-Base af375242c -Head 5affd13c12ca`（33 路径允许面）。独立会话真实重跑：集成 diagnostics 141／契约 26／UI 装配 1／policy 生产码消费者 1／独立 smoke 23＋3 全部 decisive 与实施批逐项一致；ird_gates 红线子阶段零命中；validate-reuse 复现同一 runtime/CMakeLists.txt 冻结生产证据 REUSE-FRESHNESS（先于本批）。28 条继承 pending（DiagCodes 24／EntryDetail 3／Factory 1）独立复算与申报逐字一致。**一处申报偏差发现并登记**：Redaction.cpp L237（单行注释）无区段覆盖，本批 binding-audit「17 文件全覆盖」在该行不成立——gate 口径下为 FRESHNESS 修复后的隐藏 COVERAGE 失败点，已入 acceptance issues，随 diagnostics 准入结案批补全。**任务保持 ready**：树级门禁转绿（runtime 生产证据重跑重绑＋POL-T13 16 文件矩阵＋本批 28 条 pending 与该 1 行）后收口 done；D10 同步在途 I/O 硬时限缺口按申报保留。红例、已返工的中间失败、最终通过均保留各自原件。
