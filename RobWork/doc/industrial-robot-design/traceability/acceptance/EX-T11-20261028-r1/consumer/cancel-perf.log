@@ -1,0 +1,12 @@
+Note: Google Test filter = CancelTimingBenchmark.NormalCancelSettleRealWorkerThresholds_WP23T03_B02
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CancelTimingBenchmark
+[ RUN      ] CancelTimingBenchmark.NormalCancelSettleRealWorkerThresholds_WP23T03_B02
+[perf-b02] 预热腿实测 d1=14.102600 ms, d2b=16.701200 ms（剔除）
+[       OK ] CancelTimingBenchmark.NormalCancelSettleRealWorkerThresholds_WP23T03_B02 (8234 ms)
+[----------] 1 test from CancelTimingBenchmark (8234 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (8235 ms total)
+[  PASSED  ] 1 test.

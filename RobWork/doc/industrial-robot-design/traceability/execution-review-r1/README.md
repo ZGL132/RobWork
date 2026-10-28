@@ -82,3 +82,7 @@ VS x64 环境构建：cmake --build build --config Release --target sdurws_ird_e
 回滚按依赖成组：身份接纳/检查点校验及测试；IPC writer/命令阶段/重组/监督器及真进程测试；Win32句柄/读取消/退出清理；C1总线/公共注释/单元设计/UI两处注释/契约；optional签名/采样器/文档/探针；模型候选/字节比较及judge测试。相应矩阵/逐文件凭证同步回滚。本批无新磁盘格式/协议字段、无旧归档重写，不为回滚恢复部分结果或扩大句柄继承。
 
 前序 REUSE-T23/F-964 的拒绝转换原子性和 REUSE-T41/F-967 的生产总线选择继续保留，未重报历史已修问题；只修 execution 相邻生命周期缺口。diagnostics 后续仍应消费 evidence 正式判定、登记映射及稳定码，不能把脚本worker、Cancelled/部分输出、归档失败包装成完整正式成功。C5/C2和全量复用阻断解决后，仍须所有者另开独立验收。
+
+## 独立验收（2026-10-28）
+
+所有者另开独立会话对实施与回归面验收 **PASS**，登记于 [acceptance/EX-T11-20261028-r1.json](../acceptance/EX-T11-20261028-r1.json)（证据同目录），范围显式 `-Base 6a49e128c -Head 4284e8e05a42`（193 路径允许面）。独立会话真实重跑：集成 169＋44／独立冒烟 169＋44／UI 消费者 12＋9（ui_contract_test 目标同过滤）／取消协作基准 1（8.2s）全部 decisive；隔离探针独立重编（VsDevCmd＋Build-Probes.py＋cl @red/@green）＝红 0/2 预期反例＋绿 2/2。C1 订阅位与 EXR-01 准入 diff 审查成立，其余九项逐条对应。树级门禁失败与本批前逐字一致（runtime/CMakeLists.txt 冻结生产报告绑定，本批零 runtime 改动）；隐藏 COVERAGE 缺口复算＝恰为 POL-T13 批 16 文件 7,420 行，EX-T11 自身文件区段覆盖完整、零新增债。**任务保持 ready**：树级门禁转绿（两项既有结案债，见 POL-T13-20261028-r1.json admissionGate）后收口 done。

@@ -1,0 +1,36 @@
+Note: Google Test filter = PeerBridgeContractTest.*:UiLinkage.*:SessionContract.*:InteractionTaskContract.*
+[==========] Running 12 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from UiLinkage
+[ RUN      ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR
+[       OK ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR (0 ms)
+[ RUN      ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR
+[       OK ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR (0 ms)
+[ RUN      ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR
+[       OK ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR (0 ms)
+[ RUN      ] UiLinkage.PerfTestTargetAndExecutionDirectLinkRegistered_WP23T02_B01
+[       OK ] UiLinkage.PerfTestTargetAndExecutionDirectLinkRegistered_WP23T02_B01 (0 ms)
+[ RUN      ] UiLinkage.LargeDataPerfTestTargetAndDomainDirectLinksRegistered_WP23T04_B03
+[       OK ] UiLinkage.LargeDataPerfTestTargetAndDomainDirectLinksRegistered_WP23T04_B03 (0 ms)
+[----------] 5 tests from UiLinkage (4 ms total)
+
+[----------] 7 tests from SessionContract
+[ RUN      ] SessionContract.StoreCloseProtocolTimingAndCounts
+[       OK ] SessionContract.StoreCloseProtocolTimingAndCounts (0 ms)
+[ RUN      ] SessionContract.TaskPortPerTaskAddressing
+[       OK ] SessionContract.TaskPortPerTaskAddressing (0 ms)
+[ RUN      ] SessionContract.SwitchKeepsOldStoreContextUntilArchiveDone
+[       OK ] SessionContract.SwitchKeepsOldStoreContextUntilArchiveDone (0 ms)
+[ RUN      ] SessionContract.ExitPendingOnlyForExitIntent
+[       OK ] SessionContract.ExitPendingOnlyForExitIntent (0 ms)
+[ RUN      ] SessionContract.TForceThresholdsAssemblyConfigurable
+[       OK ] SessionContract.TForceThresholdsAssemblyConfigurable (0 ms)
+[ RUN      ] SessionContract.O31SessionFacesAreUiOwnedInterfaces
+[       OK ] SessionContract.O31SessionFacesAreUiOwnedInterfaces (0 ms)
+[ RUN      ] SessionContract.CloseThenReopenDispatchesAttachOrSwitchWithoutEscape_UI_T84_ACC1
+[       OK ] SessionContract.CloseThenReopenDispatchesAttachOrSwitchWithoutEscape_UI_T84_ACC1 (0 ms)
+[----------] 7 tests from SessionContract (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 2 test suites ran. (4 ms total)
+[  PASSED  ] 12 tests.

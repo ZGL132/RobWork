@@ -1,0 +1,30 @@
+Note: Google Test filter = PeerBridge.*:InteractionTaskContractTest.*
+[==========] Running 9 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from InteractionTaskContractTest
+[ RUN      ] InteractionTaskContractTest.BridgeImplementsUiInteractionPort_O31
+[       OK ] InteractionTaskContractTest.BridgeImplementsUiInteractionPort_O31 (0 ms)
+[ RUN      ] InteractionTaskContractTest.PresenterInvokedOnUiThreadOnly_M_1
+[       OK ] InteractionTaskContractTest.PresenterInvokedOnUiThreadOnly_M_1 (0 ms)
+[ RUN      ] InteractionTaskContractTest.TaskPortControlOrderAndProgressProtocol
+[       OK ] InteractionTaskContractTest.TaskPortControlOrderAndProgressProtocol (0 ms)
+[ RUN      ] InteractionTaskContractTest.ControlRequestsAreFireAndForget_NFR_PERF_02
+[       OK ] InteractionTaskContractTest.ControlRequestsAreFireAndForget_NFR_PERF_02 (0 ms)
+[ RUN      ] InteractionTaskContractTest.FindingQueryPortFeedsBridgeEnrichment
+[       OK ] InteractionTaskContractTest.FindingQueryPortFeedsBridgeEnrichment (0 ms)
+[----------] 5 tests from InteractionTaskContractTest (2 ms total)
+
+[----------] 4 tests from PeerBridge
+[ RUN      ] PeerBridge.ContractTestDirectLinkFaceRegistered_O31_UI_T14
+[       OK ] PeerBridge.ContractTestDirectLinkFaceRegistered_O31_UI_T14 (0 ms)
+[ RUN      ] PeerBridge.CommandInteractionL5AdapterBridgesUiPort_UI_T14
+[       OK ] PeerBridge.CommandInteractionL5AdapterBridgesUiPort_UI_T14 (0 ms)
+[ RUN      ] PeerBridge.SchedulerFakeFeedsPresentationPortViaFaultInterceptor_UI_T14
+[       OK ] PeerBridge.SchedulerFakeFeedsPresentationPortViaFaultInterceptor_UI_T14 (0 ms)
+[ RUN      ] PeerBridge.RedactionPolicyValueFaceBindsDiagnosticsHeader_UI_T14
+[       OK ] PeerBridge.RedactionPolicyValueFaceBindsDiagnosticsHeader_UI_T14 (0 ms)
+[----------] 4 tests from PeerBridge (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 2 test suites ran. (3 ms total)
+[  PASSED  ] 9 tests.
