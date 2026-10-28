@@ -186,7 +186,7 @@ std::string CanonicalModelCompiler::implementationVersion() const noexcept
     // 实现版本（非空约定——§9.1 合法列；实现内部演进标识，"契约或实现
     // 变化＝新键"（§9.4）中的实现侧分量：算法修正/装配规则调整时递增）。
     // REUSE-T13：移动关节偏置/轴对齐修正会改变WC，必须失效旧1.0缓存。
-    return std::string{"ird-runtime-canonical-compiler/1.1"};
+    return std::string{"ird-runtime-canonical-compiler/1.2"};
 }
 
 // =====================================================================
@@ -494,6 +494,7 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
 
     // ---- 机器人链块（§4.3.3）——Description 逐字段 → Canonical 部件。
     RobotChain chain;
+    chain.flangeOffset = d.flangeOffset;
     chain.robotObjectId = robotEntry->objectId;   // S2② 定位的 robot-design 对象
     chain.robotLocalName = d.robotLocalName;
     // deviceName＝名称端口生成物（§4.3.3"＝§7 生成规则输出"）——顶层 Device

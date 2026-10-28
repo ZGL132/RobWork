@@ -83,7 +83,7 @@ TEST(CodecRoundtripTest, NamedTcpRoundtripTamperAndOldMinor_REQ01_A15)
     ASSERT_EQ(decoded.get().tools()[0].namedTcpOffsets.size(), 1U);
     EXPECT_EQ(decoded.get(), model);
     EXPECT_EQ(rtcodec::encode(decoded.get()), bytes);
-    EXPECT_EQ(rtcodec::kVersionMinor, 3U); // B3g场景可选几何升版；A15完整命名目录仍保留。
+    EXPECT_EQ(rtcodec::kVersionMinor, 4U); // F01：独立末静段进入缓存与身份，旧缓存不能沿用。
     // 头7字节magic，随后major/minor各2字节大端；伪装为旧1.1精确拒绝。
     auto old = bytes; old[9] = 0; old[10] = 1;
     EXPECT_FALSE(rtcodec::parse(old).ok());
@@ -511,3 +511,17 @@ TEST(RT_ID_3_DisplayFieldExclusion, IdentityDomainEncodingIsStrictSubset)
 }
 
 }  // namespace
+
+/** @brief F01：末固定段全量入canonical身份/codec，不只验schema升版。 */
+TEST(CodecRoundtripTest, FlangeFixedSegmentRoundtripAndIdentity)
+{
+    auto f=richFixture();
+    const auto before=f.build();
+    f.chain.flangeOffset=rw::math::Transform3D<double>(rw::math::Vector3D<double>(.2,-.1,.3),
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    const auto model=f.build();
+    EXPECT_NE(model.contentIdentity(),before.contentIdentity());
+    const auto parsed=rtcodec::parse(rtcodec::encode(model));
+    ASSERT_TRUE(parsed.ok());
+    EXPECT_EQ(parsed.get(),model);
+}

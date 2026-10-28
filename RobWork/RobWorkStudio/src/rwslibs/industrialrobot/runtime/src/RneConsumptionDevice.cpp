@@ -148,10 +148,11 @@ RneConsumptionDevice buildRneConsumptionDevice(const CanonicalModel& model)
         // ---- 连杆帧：尾巴补偿 R_alignᵀ（S6 WorkCellCompiler.cpp:715-726
         //      同源——连杆系精确等于权威 FK）。
         const rw::math::Rotation3D<double> rAlignT = rw::math::inverse(rAlign);
+        const auto linkOffset = rw::math::Transform3D<>(rw::math::Vector3D<double>(0, 0, 0), rAlignT)
+            * (i + 1 == chain.joints.size() ? chain.flangeOffset : rw::math::Transform3D<>::identity());
         rw::core::Ptr<rw::kinematics::FixedFrame> linkFrame = rw::core::ownedPtr(
             new rw::kinematics::FixedFrame("ird-rne/link" + std::to_string(i + 1),
-                                           rw::math::Transform3D<>(
-                                               rw::math::Vector3D<double>(0, 0, 0), rAlignT)));
+                                           linkOffset));
         out.stateStructure->addFrame(linkFrame, joint);
         prevLinkFrame = linkFrame;
         linkFrames.push_back(linkFrame);
@@ -167,8 +168,8 @@ RneConsumptionDevice buildRneConsumptionDevice(const CanonicalModel& model)
             rw::math::InertiaMatrix<double>());                  // 质心系，kg·m²
         rwsim::dynamics::BodyInfo info;
         info.mass = mass;
-        info.masscenter = rAlignT * com;            // 权威连杆系→关节帧（薄适配）
-        info.inertia = rAlignT * inertia * rAlign;  // 张量相似变换（R·I·Rᵀ 形态）
+        info.masscenter = linkOffset * com;            // 权威连杆系→关节帧（薄适配）
+        info.inertia = linkOffset.R() * inertia * rw::math::inverse(linkOffset.R());  // 张量相似变换（R·I·Rᵀ 形态）
         rw::core::Ptr<rw::models::RigidObject> object = rw::core::ownedPtr(
             new rw::models::RigidObject(linkFrame));  // 持有副本——引用计数共享
         linkBodies.emplace_back(info, object);
@@ -189,6 +190,8 @@ RneConsumptionDevice buildRneConsumptionDevice(const CanonicalModel& model)
             rw::math::InertiaMatrix<double>());
         out.flangeAlignInverse = axisAlignmentRotation(chain.joints.back().axis);
         out.flangeAlignInverse.inverse();  // 正交阵逆＝转置（基线 inverse() 原地语义）
+        out.flangeTranslation = out.flangeAlignInverse * chain.flangeOffset.P();
+        out.flangeAlignInverse = out.flangeAlignInverse * chain.flangeOffset.R();
     }
 
     // ---- 设备整体构造：基座体 FixedBody 零物性占位（links[0] 固连基座、

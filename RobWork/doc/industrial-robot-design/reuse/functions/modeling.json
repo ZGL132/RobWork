@@ -56,7 +56,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
-          "sha256": "14e705397b6930e3cc7896351a2c9e2ed60074915bf9c6e528451a700f8464f5"
+          "sha256": "e854f376bce53967492f1ecbea570e112c519923a40b1bdd3eec89bf1710765d"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
@@ -76,7 +76,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
-          "sha256": "8b7b0ee69876441c1f9629d6d5763bf6af934e47dc11dc68911161f5e7c730ae"
+          "sha256": "a3e967c56874bcd43dab82f2f89c2f1d3a5e16fb8681f023118c3bba249309ca"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
@@ -176,7 +176,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
-          "sha256": "14e705397b6930e3cc7896351a2c9e2ed60074915bf9c6e528451a700f8464f5"
+          "sha256": "e854f376bce53967492f1ecbea570e112c519923a40b1bdd3eec89bf1710765d"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
@@ -196,7 +196,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
-          "sha256": "8b7b0ee69876441c1f9629d6d5763bf6af934e47dc11dc68911161f5e7c730ae"
+          "sha256": "a3e967c56874bcd43dab82f2f89c2f1d3a5e16fb8681f023118c3bba249309ca"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
@@ -542,8 +542,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rotVec",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotVec",
-          "startLine": 169,
-          "endLine": 176,
+          "startLine": 167,
+          "endLine": 174,
           "sha256": "260ec79da63465428730a2ed45e5d0024c8a4980dea8a7b8b4c136973f05536b"
         }
       ],
@@ -579,8 +579,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rotMul",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotMul",
-          "startLine": 181,
-          "endLine": 193,
+          "startLine": 179,
+          "endLine": 191,
           "sha256": "3f4112172f7ba37c2cf4c441f0428c5c8d9240d007fb45ef76c84ce5c15c0b8d"
         }
       ],
@@ -616,8 +616,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "transformMul",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::transformMul",
-          "startLine": 196,
-          "endLine": 203,
+          "startLine": 194,
+          "endLine": 201,
           "sha256": "ebb72c65a05976ff5967fa3e7d5b06bd62de78635da4b7d163907a1e1fd90e26"
         }
       ],
@@ -653,8 +653,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rotZ",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotZ",
-          "startLine": 206,
-          "endLine": 213,
+          "startLine": 204,
+          "endLine": 211,
           "sha256": "1011fffbf0bfc5904c6197a5311ae462179a78182bdf99165a99aae9ab4e7537"
         }
       ],
@@ -690,8 +690,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rotX",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotX",
-          "startLine": 216,
-          "endLine": 223,
+          "startLine": 214,
+          "endLine": 221,
           "sha256": "a6479cf20423d54e01fbb415214d50f4312345636071e35ebb2e70a826659916"
         }
       ],
@@ -727,8 +727,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "axisAngleRotation",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::axisAngleRotation",
-          "startLine": 228,
-          "endLine": 241,
+          "startLine": 226,
+          "endLine": 239,
           "sha256": "a85ed8bb72e4ea83ffd4b2e23cef322d24930b08b7f424dbaac06a1952f4793a"
         }
       ],
@@ -764,8 +764,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rotateTranspose",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTranspose",
-          "startLine": 888,
-          "endLine": 895,
+          "startLine": 886,
+          "endLine": 893,
           "sha256": "573a6ea9dd10a6a1b4878218f974bf4d10b0261a6158652b6d41f648efaeeb5d"
         }
       ],
@@ -801,8 +801,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rotateTransposeFrame",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTransposeFrame",
-          "startLine": 898,
-          "endLine": 910,
+          "startLine": 896,
+          "endLine": 908,
           "sha256": "2b03a4f585df0172b11d2be654f5a367bf20143f50facf555598875d225495e1"
         }
       ],
@@ -838,8 +838,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rotationAngleBetween",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationAngleBetween",
-          "startLine": 372,
-          "endLine": 390,
+          "startLine": 370,
+          "endLine": 388,
           "sha256": "6da87b8ce90e5b8acd9b69b96a23f5ac3dbb7a473eb175f8395505471867e2a9"
         }
       ],
@@ -875,8 +875,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "dhCoreTransform",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhCoreTransform",
-          "startLine": 260,
-          "endLine": 264,
+          "startLine": 258,
+          "endLine": 262,
           "sha256": "22f301776c472452b90974678161712761d2263e00ba53c02abf32aaceb58346"
         }
       ],
@@ -912,8 +912,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "dhStaticSegment",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhStaticSegment",
-          "startLine": 273,
-          "endLine": 277,
+          "startLine": 271,
+          "endLine": 275,
           "sha256": "40a50af819fbcaf100b6548b49ed917315801d3ba0e793349fd6d7dc60f16f4a"
         }
       ],
@@ -949,8 +949,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "dhRebuildStep",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhRebuildStep",
-          "startLine": 300,
-          "endLine": 317,
+          "startLine": 298,
+          "endLine": 315,
           "sha256": "d61c037fee4826aa9eff9cf8e46b1f8564e2e6b818cb9adbb52928e98e8aa65c"
         }
       ],
@@ -986,8 +986,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "solveLinearSystem",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::solveLinearSystem",
-          "startLine": 504,
-          "endLine": 543,
+          "startLine": 502,
+          "endLine": 541,
           "sha256": "acc613e41483a0d83ee98d1bcb461c148ac71bc09c669965283ab94e23dcd657"
         }
       ],
@@ -1023,8 +1023,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "numericJacobian",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::numericJacobian",
-          "startLine": 553,
-          "endLine": 584,
+          "startLine": 551,
+          "endLine": 582,
           "sha256": "04a69f6837a314b7cf4f80df4056162261ba6b16a86bdcd3fbce3319b9e070b5"
         }
       ],
@@ -1060,8 +1060,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "lmSolve",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::lmSolve",
-          "startLine": 607,
-          "endLine": 723,
+          "startLine": 605,
+          "endLine": 721,
           "sha256": "d55ec9434b5b4471aab56a7ef31f4807e7187f3f2fc693894202b5ec3722c190"
         }
       ],
@@ -1097,8 +1097,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
           "symbol": "rankAndFreeColumns",
           "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rankAndFreeColumns",
-          "startLine": 735,
-          "endLine": 778,
+          "startLine": 733,
+          "endLine": 776,
           "sha256": "9ebea29e7d49e4ad918732daa8842838128a9596edadc1300a648d9c4a5a08e9"
         }
       ],
@@ -1161,7 +1161,7 @@
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-      "functionId": "modeling.zeroConfigFK",
+      "functionId": "modeling.compiledChainEquivalence",
       "ownerUnit": "modeling",
       "requirements": [
         "MDL-10"
@@ -1169,11 +1169,11 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
-          "symbol": "zeroConfigFK",
-          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::zeroConfigFK",
-          "startLine": 1793,
-          "endLine": 1812,
-          "sha256": "0bddab268c3e4daf679960f242da542ef475fedb35e9b158a7a8335cdf6a7b8b"
+          "symbol": "verifyEquivalent",
+          "qualifiedSymbol": "sdurws::ird::modeling::DhExplicitConverter::verifyEquivalent",
+          "startLine": 1765,
+          "endLine": 1841,
+          "sha256": "8c64da7ac03cfdc4bb7c0e4ee7bc4750b71fe5b967c7fabef31d312256bff945"
         }
       ],
       "targets": [
@@ -1186,9 +1186,9 @@
       "status": "pending",
       "search": {
         "command": "rg -n \"zeroConfigFK|baseTframe\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src/rw/models/Device.hpp",
-        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+        "conclusion": "Owner批准F03输入/门禁修复，真实上游Kinematics由runtime持有并调用；详见MDL-CR-2实施记录"
       },
-      "differences": "新发现零位验证自持链前向累计；优先runtime受控上游FK端口，禁止在modeling自建WorkCell；保留DH两描述等价性独立oracle与公差",
+      "differences": "F03删除modeling零位FK；调用runtime正式WorkCell多构型采样值端口，LM骨架C03冻结；实施待独验，不虚关迁移债务",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -1591,11 +1591,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -1650,11 +1650,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -1709,11 +1709,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -1768,11 +1768,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -1827,11 +1827,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -1886,11 +1886,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -1945,11 +1945,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2004,11 +2004,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2063,11 +2063,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2122,11 +2122,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2181,11 +2181,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2240,11 +2240,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2299,11 +2299,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2358,11 +2358,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2417,11 +2417,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2476,11 +2476,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2535,11 +2535,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2571,7 +2571,7 @@
           "qualifiedSymbol": "sdurws::ird::modeling::XacroExpandService::expand",
           "startLine": 933,
           "endLine": 1142,
-          "sha256": "0a73218ea2a14c19258c56ee86696aee94e3c89165edaedefa0b1a5a7ab28420"
+          "sha256": "da8e3e7ed146915db092f9d8267e2abe1a2d8463b8b2c11f5146ba8dab74386e"
         }
       ],
       "targets": [
@@ -2594,11 +2594,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
@@ -2653,11 +2653,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -2712,11 +2712,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -2771,11 +2771,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -2830,11 +2830,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -2889,11 +2889,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -2948,11 +2948,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -3007,11 +3007,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -3066,11 +3066,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -3125,11 +3125,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
-          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+          "sha256": "cb72c4de1f9aa7596ebb2cdb871cc265c21751091e03e6777dec613e0e307553"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
-          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+          "sha256": "cbffb508fa4a93c667fb8a2c3c1e12bc898087ed00c2a6b20aa1a4893b127739"
         }
       ],
       "auditEvidence": [
@@ -6609,7 +6609,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
-          "sha256": "14e705397b6930e3cc7896351a2c9e2ed60074915bf9c6e528451a700f8464f5"
+          "sha256": "e854f376bce53967492f1ecbea570e112c519923a40b1bdd3eec89bf1710765d"
         },
         {
           "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
@@ -6629,7 +6629,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
-          "sha256": "8b7b0ee69876441c1f9629d6d5763bf6af934e47dc11dc68911161f5e7c730ae"
+          "sha256": "a3e967c56874bcd43dab82f2f89c2f1d3a5e16fb8681f023118c3bba249309ca"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",

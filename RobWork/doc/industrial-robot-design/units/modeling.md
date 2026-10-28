@@ -759,8 +759,7 @@ T_{i-1,i} = Rot_z(θᵢ + qᵢ) · Trans_z(dᵢ) · Trans_x(aᵢ) · Rot_x(αᵢ
 
 - 基座与工具变换**不在 DH 参数内**：基座安装走 BasePlacement（§7.7 隔离）；法兰后工具走 ToolDefinition——DH 只参数化关节链（MDL-02 范围）。
 - 零位对齐（**v0.42 增量修订——audit F-590 零位烘焙纪律**）：权威零位语义由 `zeroOffset` 承载（`q_authoritative = q_zeroOffset + q_rw`，runtime 口径）；DH 的 θᵢ_offset 与 zeroOffset 在转换中显式分离，**zeroOffset 不烘入展开几何**——权威零位旋转的唯一烘焙归口在 modeling→Description 映射的单一折叠 `origin_desc = origin · R(axis, zeroOffset)`（CanonicalBridge mapJoint 与等价验证映射同规，不按来源特判）。展开产物为 q_model=0（＝DH 变量零位；建模域坐标 `q_authoritative = q_model − zeroOffset`）位姿；roundtrip 验证含零位（q_model=0 时显式位姿==DH 派生位姿 Rot_z(θᵢ)；映射后 q_authoritative=0 构型==DH 派生位姿 Rot_z(θᵢ+zeroOffset)——修复前展开预烘 zeroOffset、映射再折叠一次，零位构型多转 R_axis(q0)）。求解方向（§7.5）重建式同规：Rot_z(θᵢ)（zeroOffset 不入几何、不入求解相位）。
-- **DH→显式（权威展开，无损）**：拆分装配（**v0.44 增量修订——audit F-631 一般位姿位置发散修复**；推导：运行时 origin·R(axis,q) 组合的转轴过 origin 平移后的点，标准 DH 单步的转轴 z_{i-1} 过**父**帧原点——origin 平移必须沿转轴本身（Trans_z 沿轴不改轴线），Tx(a)/Rx(α) 不得留在本关节 origin 内——原实现烘入尾部使转轴过子原点，一般位姿（a≠0、q≠0）位置误差 2a·sin(θ/2)，a=0.5、q=1.1 时 0.5227 m）：
-  `origin_i = [Trans_x(a_{i-1})·Rot_x(α_{i-1})]（i>0 头部静段，S_{-1}=I）· Rot_z(θᵢ_offset)·Trans_z(dᵢ) · [i＝末关：Trans_x(aᵢ)·Rot_x(αᵢ)]（链尾静段）`；**零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}**（全链 FK 严格还原；一般位姿全链 FK 组合序＝各关节 origin·R(axis,ψ) 直乘、末关节拆 [纯段]·R(axis,ψ)·[尾段]——恒等于级联；末关节一般位姿单关节组合的一阶残差（2a·sin(ψ/2)）为 runtime origin·R(axis,ψ) 表达面的定理性极限——转轴必过自身关节系原点，链上无旋转后静段槽位，以拆分组合序为恢复路径）。`axis_i`＝关节系内转轴方向（世界系恒等于 z_{i-1}）：中间关节＝ez（头部静段 Rx(α_{i-1}) 与显式累积帧的回拉 Rx(−α_{i-1}) 相消）；末关节＝Rx(−αᵢ)·ez＝(0, sinαᵢ, cosαᵢ)（**v0.43 F-591**：尾部静段 Rx(αᵢ) 由 axis 吸收——原式 `axis=z_i=T_{0,i}·(0,0,1)` 为基座系子帧 z，α≠0 链被 runtime 按关节系方向消费后物理轴错误）；数值误差仅浮点累乘（对照附录 D 第 4 项容差验证，实测远优于 1×10⁻⁹）。a=0 且 α=0 链逐位零漂移（Tx(0)Rx(0)＝精确恒等不改变乘积）。
+- **DH→显式（F01 / Owner 2026-10-28 修订）**：令 `S_i=Tx(a_i)·Rx(alpha_i)`、`S_-1=I`，则 `origin_i=S_(i-1)·Rz(theta_i)·Tz(d_i)`，所有关节局部 `axis=(0,0,1)`。最后 `S_(n-1)` 作为独立 `flangeOffset` 交给 runtime，在末关节变量之后建立 FixedFrame。完整链为 `Π(origin_i·Rz(zeroOffset_i+q_i))·flangeOffset`，与标准 DH 直接矩阵级联等价。禁止把末段烘入末关节 origin，禁止测试专门调整组合顺序。显式权威的 flangeOffset 同为权威固定段；切换候选必须保持实际法兰坐标，不要求退化链逐项回收同一 DH 参数。
 - **变换方向图**：
 
 ```
@@ -798,8 +797,8 @@ DH 权威 ──(展开，无损，允许)──> 显式权威        显式权�
 
 ### 7.6 等价验证与权威切换（MDL-02/10、ARC-03）
 
-- **权威切换条件**：仅 Exact/ExactNonUnique **且**编译链 FK 对照等价验证通过后，才可置 `authority=StandardDH`；Approximate/NotExpressible 锁定显式权威。等价验证＝对同一模型分别按（切换前显式权威）与（候选 DH 权威）构造 Description→经 runtime 编译链（S1–S5 buildCanonicalModel）取 FK 对照——位置 ≤1×10⁻⁹ m、姿态 ≤1×10⁻⁹ rad（附录 D 第 4 项；AT-16）。
-- **roundtrip 验证**（§10 行 V-11）：DH 权威→展开显式→再求 DH：参数级（≤第 5 项容差）与 FK 级（≤第 4 项容差）双重一致；黄金数据集三套（DH/显式/不可表达样本，DTB WP-13-T16）承载。
+- **权威切换条件**：仅 Exact/ExactNonUnique **且**编译链 FK 对照等价验证通过后，才可置 `authority=StandardDH`；Approximate/NotExpressible 锁定显式权威。等价验证＝对同一模型分别按（切换前显式权威）与（候选 DH 权威）构造 Description→经 runtime 正式 WorkCell 编译及上游 FK 取边界点、各轴边界、交错非零内点的全链位姿对照（F03；采样为必要门，不宣称有限采样证明任意连续构型全域）——位置 ≤1×10⁻⁹ m、姿态 ≤1×10⁻⁹ rad（附录 D 第 4 项；AT-16）。
+- **roundtrip 验证**（§10 行 V-11；Owner 2026-10-28）：保留黄金原件和 10⁻⁹ 阈值，比较独立 Fixed 末段与真实 runtime 多构型物理等价；退化链允许参数重表示。C03 冻结 LM/雅可比骨架，只修真实 axis 输入与接受门；Exact/ExactNonUnique 的数值分类本身不能代替多构型验证，部分可表达链可能被保守拒绝。
 - 切换动作是**独立领域命令**（`apply-robot-design` 的权威切换变体）：prepare 内执行转换判定＋等价验证（调用 runtime 编译分段入口，只读、不发布快照），摘要记录判定状态与验证容差结果；验证失败不产生修订。
 - **基座—世界变换隔离（MDL-22/M-11）**：转换只作用于关节链；`R_world_base` 由 runtime 从 BasePlacement 编译产生、四消费方（三维视图/环境几何/碰撞/重力投影）读同一编译产物；modeling 在任何转换、导入、优化路径中都**不得**计算、缓存或二次叠加基座—世界旋转（含倒挂/壁装模板的渲染位姿——归 runtime 编译产物）。预设轴向以 runtime `installationPresetRotation()` 为唯一权威产出点（P-RT-4 交叉核对随 WP-13-T11 完成并留痕）。
 

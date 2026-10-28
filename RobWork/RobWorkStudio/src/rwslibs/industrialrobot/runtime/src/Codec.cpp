@@ -766,6 +766,7 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
     w.raw16(chain.robotObjectId.bytes);
     w.str(chain.robotLocalName);
     w.str(chain.deviceName);
+    writeTransform(w, chain.flangeOffset);  // canonical 1.4：F01 固定段参与内容身份。
     w.u32(static_cast<std::uint32_t>(chain.joints.size()));
     for (const CanonicalJoint& j : chain.joints) {
         w.raw16(j.objectId.bytes);
@@ -973,6 +974,7 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
             || !r.str(chain.deviceName)) {
             return failed();
         }
+        if (!readTransform(r, chain.flangeOffset)) { return failed(); }
         if (!r.u32(n)) { return failed(); }
         chain.joints.resize(n);
         for (CanonicalJoint& j : chain.joints) {

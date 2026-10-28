@@ -361,6 +361,8 @@ struct CanonicalModelHeader {
  * 值语义纯结构；线程安全。
  */
 struct RobotChain {
+    /// F01：末关节变量之后的固定段；内容身份包含该值，模型 owner 仍为 runtime。
+    rw::math::Transform3D<double> flangeOffset = detail::identityTransform3D();
     /// 机器人对象稳定身份（∈ header.objectRefs；规范对象身份锚）。
     core::ObjectId robotObjectId;
     /// 机器人局部名（进入名称映射设备作用域，MDL-14；非法：空/含 '/'）。

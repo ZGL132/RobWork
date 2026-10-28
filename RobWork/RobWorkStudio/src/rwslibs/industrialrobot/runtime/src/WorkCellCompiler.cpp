@@ -21,13 +21,8 @@
  *   - 任务契约 tasks/foundation/RT-T07.json（acceptance 1～3）、
  *     tasks/foundation/RT-T15.json（图元挂接面/诚实跳过面/身份面）
  *
- * ★ 编译模式说明：本文件调用大量基线库非模板符号（WorkCell/StateStructure/
- * SerialDevice/RevoluteJoint 的构造与查询＋RT-T15 起的 Cylinder/Box/
- * RigidObject 构造——实现于 sdurw_kinematics/sdurw_models/sdurw_geometry
- * 的 .cpp），**只在集成模式编译**（CMakeLists 按 TARGET sdurw_kinematics
- * 条件增列；冒烟模式无框架库可链，本文件不进构建——§5.1 冒烟口径"仅验证
- * 目标注册与 include 路径"，理由已在 CMake 增列块与 units/runtime.md §15.4
- * 登记）。
+ * 编译模式：集成与冒烟都使用这一正式编译实现；冒烟复用本 C: 树已构建
+ * 的上游导出库，不另造 FK 核心或测试专用展开顺序（F03）。
  *
  * 线程安全：每次调用独占对象树与mesh临时目录；Windows加载器调用隔离
  * 线程locale（REUSE-T13）。非Windows原加载器的进程locale限制仍开放，
@@ -40,6 +35,10 @@
  */
 
 #include "WorkCellCompiler.hpp"
+#include <sdurws/ird/runtime/Compiler.hpp>
+#include <rw/math/Q.hpp>
+#include <rw/kinematics/Kinematics.hpp>
+#include <cmath>
 
 #include <sdurws/ird/runtime/Adapter.hpp>
 #include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // checkWorldBaseTransform/
@@ -724,6 +723,8 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
                 linkStatic = rw::math::Transform3D<double>(
                     rw::math::Vector3D<double>(0.0, 0.0, 0.0), rAlignT);
             }
+            // F01：固定段必须位于关节变量之后，保持一般构型的转轴线与 FK。
+            if (isLastLink) { linkStatic = linkStatic * chain.flangeOffset; }
             rw::core::Ptr<rw::kinematics::FixedFrame> linkFrame =
                 rw::core::ownedPtr(new rw::kinematics::FixedFrame(linkFrameName, linkStatic));
             workCell->addFrame(linkFrame, jointFrame);
@@ -1024,6 +1025,48 @@ core::DiagnosticRecord translateRobWorkError(const std::exception& ex,
         diagCode, std::move(subject), std::nullopt, std::nullopt,
         "runtime 编译段 " + std::string(stage) + "（RobWork 异常转译）",
         cause, action);
+}
+
+// F03：唯一模型 owner 内调用正式编译器；只把纯值位姿交给调用方。
+Expected<std::vector<std::vector<rw::math::Transform3D<double>>>, RuntimeError>
+sampleCompiledChain(const CanonicalModel& model,
+                    const std::vector<std::vector<double>>& configurations)
+{
+    using Result = Expected<std::vector<std::vector<rw::math::Transform3D<double>>>, RuntimeError>;
+    try {
+        auto compiled = compileWorkCell(model);
+        const auto map = buildRuntimeNameMap(model);
+        auto device = compiled.workCell->getDevices().at(0);
+        auto state = compiled.workCell->getDefaultState();
+        std::vector<rw::kinematics::Frame*> frames;
+        const auto& chain = model.chain();
+        for (std::size_t i = 1; i < chain.links.size(); ++i) {
+            const auto scope = i + 1 == chain.links.size() ? NameScope::Flange : NameScope::LinkFrame;
+            frames.push_back(compiled.workCell->findFrame(scopedFullName(map, chain.links[i].objectId, scope)));
+        }
+        for (const auto& tool : model.tools()) {
+            frames.push_back(compiled.workCell->findFrame(scopedFullName(map, tool.objectId, NameScope::Tcp)));
+        }
+        std::vector<std::vector<rw::math::Transform3D<double>>> result;
+        for (const auto& q : configurations) {
+            if (q.size() != device->getDOF() ||
+                !std::all_of(q.begin(), q.end(), [](double v) { return std::isfinite(v); })) {
+                return Result::err(RuntimeError(RuntimeErrorCode::InputInvalid, "FK采样构型维度/有限性不合法"));
+            }
+            device->setQ(rw::math::Q(q), state);
+            std::vector<rw::math::Transform3D<double>> values;
+            for (auto* frame : frames) {
+                if (frame == nullptr) { return Result::err(RuntimeError(RuntimeErrorCode::StructureInvalid, "FK采样帧缺失")); }
+                values.push_back(rw::kinematics::Kinematics::worldTframe(frame, state));
+            }
+            result.push_back(std::move(values));
+        }
+        return Result::ok(std::move(result));
+    } catch (const RuntimeError& error) {
+        return Result::err(error);
+    } catch (const std::exception& error) {
+        return Result::err(RuntimeError(RuntimeErrorCode::WorkCellCompileFailed, error.what()));
+    }
 }
 
 }  // namespace sdurws::ird::runtime

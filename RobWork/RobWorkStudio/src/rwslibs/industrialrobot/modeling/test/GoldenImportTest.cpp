@@ -266,7 +266,7 @@ ResourceDependencyTree singleNodeTree(const std::string& entryRel,
 /// 把展开产物装配回 mapXacroExpanded 的 ValidatedSource（调用方装配面
 /// ——展开字节＋产物摘要快照＋原依赖树；XacroExpandTest 同款）。
 ValidatedSource assembleExpandedSource(
-    const sdurws::ird::modeling::ExpandOutcome& outcome,
+    const sdurws::ird::modeling::xacro::ExpandOutcome& outcome,
     const ResourceDependencyTree& tree)
 {
     ValidatedSource source;
@@ -686,7 +686,7 @@ TEST(MdlGoldenImport, GoldenXacroMacroMapping_AT31_WP13T16_ACC3)
         = singleNodeTree("golden-macro.xacro", xacroBytes);
     const XacroExpandService service;
     std::vector<sdurws::ird::core::DiagnosticRecord> expandDiags;
-    const sdurws::ird::modeling::ExpandOutcome expanded = service.expand(
+    const sdurws::ird::modeling::xacro::ExpandOutcome expanded = service.expand(
         makeXacroSource("golden-macro.xacro", xacroBytes, entryTree), {},
         expandDiags);
     ASSERT_TRUE(expanded.expandedBytes.has_value()) << "黄金宏样例展开必须成功";
@@ -843,7 +843,7 @@ TEST(MdlGoldenImport, GoldenXacroCyclePassthrough_V09_WP13T16_ACC3)
 
     const XacroExpandService service;
     std::vector<sdurws::ird::core::DiagnosticRecord> diags;
-    const sdurws::ird::modeling::ExpandOutcome outcome
+    const sdurws::ird::modeling::xacro::ExpandOutcome outcome
         = service.expand(makeXacroSource("cycle-a.xacro", cycleABytes, tree,
                                          std::move(includes)),
                          {}, diags);

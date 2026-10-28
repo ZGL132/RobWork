@@ -269,7 +269,12 @@ else()
         include("${IRL_RWSIM_ODE_TARGETS_FILE}")
         add_library(sdurwsim_ode ALIAS RWSIM::sdurwsim_ode)
     endif()
+    # F03：冒烟同样链接正式 WorkCell 编译与采样；不提供零位/替身 FK。
+    if(NOT TARGET sdurw_loaders)
+        add_library(sdurw_loaders ALIAS RW::sdurw_loaders)
+    endif()
     target_sources(sdurws_ird_runtime PRIVATE
+        src/WorkCellCompiler.cpp
         src/RneConsumptionDevice.cpp   # REUSE-T52：工厂 TU 双模式编译（同上）
         src/FdEngineSession.cpp)       # REUSE-T53：FD 受控引擎会话工厂（公共头
                                        # FdEngineSession.hpp）——CanonicalModel→
@@ -279,6 +284,7 @@ else()
                                        # ＝WP-09 dynamics ForwardDynamics（已落位）
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_math
+        sdurw_loaders
         sdurw_models
         sdurwsim
         sdurwsim_ode)                  # REUSE-T53：ODE 引擎导入目标（上方守卫）

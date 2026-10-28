@@ -502,7 +502,7 @@ TEST(MdlCodec, EncodeRejectsUnsupportedVersion_WP13T03_ACC4)
     EXPECT_TRUE(hasType);
     // 未知次版本（1.2——{1,1} 已随 F01 落位为当前格式，未来次版本仍不可
     // 产出；版本闸语义不变，仅探测值随当前版本前移）
-    auto futureMinor = codec.encode(object, FormatVersion{1, 2});
+    auto futureMinor = codec.encode(object, FormatVersion{1, kCurrentFormatVersion.minor + 1});
     ASSERT_FALSE(futureMinor.ok());
     EXPECT_EQ(futureMinor.error().code, ModelingErrorCode::SchemaVersionUnsupported);
 }
@@ -824,4 +824,21 @@ TEST(MdlCodec, VelocityValuesEnterEncodedIdentity_WP13T25)
     auto changed = codec.encode(ObjectVariant{design}, kCurrentFormatVersion);
     ASSERT_TRUE(changed.ok());
     EXPECT_NE(withValues.get(), changed.get());
+}
+
+/** @brief F01：末静段参与持久化身份且完整往返，旧minor默认identity。 */
+TEST(MdlCodec, FlangeFixedSegmentIsPersistentInput)
+{
+    auto design = makeCanonicalExplicitDesign();
+    RobotDesignCodec codec;
+    auto before = codec.encode(ObjectVariant{design}, kCurrentFormatVersion);
+    ASSERT_TRUE(before.ok());
+    design.flangeOffset = rw::math::Transform3D<double>(rw::math::Vector3D<double>(.1,.2,.3),
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    auto bytes = codec.encode(ObjectVariant{design}, kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());
+    EXPECT_NE(bytes.get(), before.get());
+    auto decoded = codec.decode(bytes.get(), kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    EXPECT_EQ(std::get<RobotDesign>(decoded.get()), design);
 }

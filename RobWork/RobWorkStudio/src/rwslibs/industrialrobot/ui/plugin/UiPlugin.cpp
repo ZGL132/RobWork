@@ -5578,6 +5578,7 @@ void IrdWorkbenchHostPlugin::assemblePresentationPipeline()
                 m_diag.pipeline->logDev(kPluginDevChannel, message);
             }
         }});
+    if (m_domains) { m_domains->modeling.bindCompileProbe(m_compileProbe.get()); }
     m_runtimeNameContext = std::make_unique<HostRuntimeNameContext>(
         m_runtimeNameMap.get());
 

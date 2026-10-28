@@ -1535,3 +1535,15 @@ TEST(ModelingCommandFlows, ImportUrdfSeedsSelfCollisionCandidatesToSession_MDL04
         EXPECT_EQ(fx.session.importedSelfCollisionCandidates[1].second, "l2");
     }
 }
+
+/** @brief F03：正式命令流缺少编译服务时不改权威、参数或草稿。 */
+TEST(ModelingCommandFlows, AuthoritySwitchWithoutRuntimeProbePreservesDraft)
+{
+    FlowHarness h;
+    h.session.draft = makeSixAxisDraft();
+    const auto before = h.session.draft;
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand("modeling.switch-authority", h.session, h.deps(), h.host, summary));
+    EXPECT_EQ(h.session.draft, before);
+    EXPECT_NE(summary.find("编译验证"), std::string::npos);
+}

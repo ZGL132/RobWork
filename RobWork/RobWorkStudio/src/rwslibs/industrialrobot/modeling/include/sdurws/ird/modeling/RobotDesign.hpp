@@ -545,6 +545,10 @@ struct RobotDesign {
     /// 连杆链（links.size()==joints.size()+1——runtime StructureInvalid 同口径）。
     std::vector<LinkEntry> links;
 
+    /// F01：末关节变量之后到末连杆/法兰的固定段（m/rad），两态均保留；
+    /// DH 自身末静段由展开追加于本段之前，旧格式读回恒等。模型构建归 runtime。
+    rw::math::Transform3D<double> flangeOffset = rw::math::Transform3D<double>::identity();
+
     std::optional<TcpRef> defaultTcp;      ///< 默认 TCP（有 tools 时须已设置——KIN-14/I-MDL-9）
     std::vector<core::ObjectId> toolRefs;  ///< 工具引用表（指向 tool-definition 对象；无重复）
     std::vector<core::ObjectId> sceneRefs; ///< 场景引用表（指向 scene-object 对象；无重复）

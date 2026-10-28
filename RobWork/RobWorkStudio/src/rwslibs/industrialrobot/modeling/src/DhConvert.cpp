@@ -11,21 +11,18 @@
  *     常量定义于 DhConvert.hpp 唯一书写点）
  *   - 任务契约 tasks/foundation/WP-13-T09.json acceptance 1～5
  *
- * 展开拆分语义（audit F-631——本文件当前几何口径）：标准 DH 单步
- * T_{i-1,i}＝Rz(θ)Tz(d)Tx(a)Rx(α) 的转轴 z_{i-1} 过父帧原点，而运行时
- * origin·R(axis,q) 组合的转轴过 origin 平移后的点——原实现把 Tx(a)Rx(α)
- * 烘入本关节 origin 尾部使转轴过子原点（一般位姿位置误差 2a·sin(θ/2)）。
- * 修复后 Tx(a_k)Rx(α_k) 前移入下一关节 origin 头部、链尾静段落末关节
- * origin 尾部（零位累积 Π origin 严格等于标准级联，全链 FK 严格还原；
- * 静段落位推导与一般位姿组合序见 expandDhChain/dhRebuildStep 注及
- * units/modeling.md §7.4 F-631 增量修订）。
+ * F01/F03（Owner 2026-10-28）：正式展开把末静段单独返回 flangeOffset，
+ * runtime 在末关节变量后构造 FixedFrame；目标轴为累积旋转乘权威 axis。
+ * 切换接受只消费正式 runtime 多构型 FK，不采用本文件内部残差核充当 oracle。
+ * C03 冻结 LM/数值差分/消元/秩判定骨架；其中 dhRebuildStep 等历史内部
+ * 表示保留，不能把残差 Exact 或数值秩亏本身解释成全局物理等价证明。
  *
  * 实现纪律（确定性——NFR-COR-01/02）：
  *   - 求解器为确定性 Levenberg-Marquardt：固定初值（单位参数＝中性恒等
  *     θ=d=a=α=0）、固定数值微分步长与迭代上限、固定阻尼界限与停滞判据；
  *     不读时钟/环境/locale——同输入逐位同解。以下"过程常数"是数值程序
  *     参数（只影响求解过程，不影响判定结论——判定只用附录 D 阈值），
- *     与工程阈值严格分属两类（AGENTS §2.5 确定性来源注记义务）。
+ *     与工程阈值严格分属两类。冻结骨架不构成新的精度或完整性承诺。
  *   - 线性代数为自持实现（高斯消元＋部分主元）：不引第三方依赖（AGENTS
  *     §3 第三方纪律），规模 4n≤28（R1 链长上限——七轴模板）内精度充足；
  *     旋转矩阵一律逐元素构造（rw::math 模板头 header-only 纪律——不调用
@@ -35,6 +32,7 @@
  */
 
 #include <sdurws/ird/modeling/DhConvert.hpp>
+#include <sdurws/ird/runtime/Compiler.hpp>
 
 #include <sdurws/ird/modeling/DiagCodes.hpp>  // MDL-DH-* 三码常量（产码唯一书写点）
 
@@ -972,7 +970,7 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
         // 显式侧相对变换入链（JointPose→Transform3D 同构转换——零语义差）。
         acc = transformMul(acc, static_cast<rw::math::Transform3D<double>>(joint.origin.value()));
         t.base.originPositions.push_back(acc.P());
-        t.base.axisDirections.push_back(zAxisOf(acc));
+        t.base.axisDirections.push_back(normalized(acc.R() * joint.axis.value()));
         t.rotations.push_back(acc.R());
         maxPositionMagnitude = std::max(maxPositionMagnitude, acc.P().norm2());
     }
@@ -1189,17 +1187,17 @@ constexpr double kWitnessProjectionOffset = 0.1;
  * （std::invalid_argument——AGENTS 错误纪律；五状态的结构检查只属于
  * explicitToDh 方向）。
  */
-ExpandOutcome expandDhChain(const DhChain& chain)
+dh::ExpandOutcome expandDhChain(const DhChain& chain)
 {
     // 步① 输入契约检查（§9.4.7 @错误 两值——顺序固定）。
     if (chain.joints.empty()) {
-        ExpandOutcome out;
+        dh::ExpandOutcome out;
         out.ok = false;
         out.errorCode = DhErrorCode::ChainEmpty;
         return out;  // 空链——调用方契约违约（值面）
     }
     if (chain.mixedInBaseTransform.has_value()) {
-        ExpandOutcome out;
+        dh::ExpandOutcome out;
         out.ok = false;
         out.errorCode = DhErrorCode::DegenerateBase;
         return out;  // 基座—世界变换混入——§7.6 隔离声明拒绝（M-11）
@@ -1220,7 +1218,7 @@ ExpandOutcome expandDhChain(const DhChain& chain)
     }
 
     // 步②③ 逐级装配（§7.4 展开的 F-631 拆分语义——见下逐项注）。
-    ExpandOutcome out;
+    dh::ExpandOutcome out;
     out.ok = true;
     out.joints.reserve(chain.joints.size());
     // 上一关节的连杆静段 S_{j-1}＝Tx(a_{j-1})·Rx(α_{j-1})（初始＝恒等：
@@ -1229,66 +1227,17 @@ ExpandOutcome expandDhChain(const DhChain& chain)
     const std::size_t jointCount = chain.joints.size();
     for (std::size_t k = 0; k < jointCount; ++k) {
         const DhChainJoint& joint = chain.joints[k];
-        // 步② 当前步相对变换（F-631 拆分语义）：
-        //   origin_k = [S_{k-1}（头部——上一关节静段）]
-        //            · Rz(θ_offset_k)·Tz(d_k)            （纯 z 螺旋核心）
-        //            · [S_k（尾部——仅末关节携带链尾静段）]
-        // ——★ 零位烘焙纪律（audit F-590）：展开产物是 q_model=0（＝DH 变量
-        // 零位）位姿，zeroOffset **不烘入几何**——权威零位旋转的折叠唯一归口
-        // 在 modeling→Description 映射的单一折叠（origin·R(axis, zeroOffset)，
-        // CanonicalBridge mapJoint / 等价验证映射同规）。zeroOffset 字段
-        // 本身仍按"两态均权威"原样透传（限位平移等消费方依赖）。
-        // ★ 静段落位推导（audit F-631）：运行时按 origin·R(axis, zeroOffset
-        // ＋q) 组合，转轴过 origin 平移后的点；标准 DH 单步的转轴 z_{k-1}
-        // 过父帧原点——origin 的平移必须沿转轴本身（Tz(d) 沿 z 平移不改变
-        // 轴线），故 Tx(a)/Rx(α) 不能留在本关节 origin 内（原实现烘入尾部，
-        // 转轴被挪到子原点，一般位姿位置误差 2a·sin(θ/2)）。Tx(a_k)Rx(α_k)
-        // 逐一前移入下一关节 origin 头部后，链上只剩末静段 S_{n-1} 无槽：
-        // 丢弃则 (a,α) 在累积目标中结构性不可观测（Exact 判定/V-11 roundtrip
-        // 崩塌，MDL-10 无损性破坏），故 S_{n-1} 落**末关节 origin 尾部**——
-        // 零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}（全链 FK 逐位还原；
-        // 一般位姿全链 FK 组合序＝各关节 origin·R(axis,ψ) 直乘、末关节拆
-        // [纯段]·R(axis,ψ)·[尾段]，恒等于级联——units/modeling.md §7.4
-        // F-631 增量修订）。运行时对末关节 origin 不拆分单关节组合的残差
-        // 是该表达面的定理性极限（转轴必过自身关节系原点），以本拆分序为
-        // 全链 FK 的恢复路径。
-        const bool isLast = (k + 1 == jointCount);
-        rw::math::Transform3D<double> origin = prevStatic;
-        origin = transformMul(origin, dhCoreTransform(joint.dh.thetaOffset,
-                                                      joint.dh.d));
-        if (isLast) {
-            origin = transformMul(origin, dhStaticSegment(joint.dh.a,
-                                                          joint.dh.alpha));
-        }
-        // 步③ 产物装配：origin=当前步相对变换（T_parent_joint——core.md §4.6
-        // 读法）；axis=关节系内方向（audit F-591/F-631——见下）。
+        // F01：origin 只含前一静段与当前 Rz(theta)Tz(d)；当前变量不能越过 Tx(a)。
+        const auto origin = transformMul(prevStatic,
+            dhCoreTransform(joint.dh.thetaOffset, joint.dh.d));
         JointEntry entry;
         entry.objectId = joint.objectId;
         entry.localName = joint.localName;
         entry.type = joint.type;
-        // axis＝关节系内的物理转轴方向（世界系转轴须严格等于 z_{k-1}）：
-        //   中间关节（k<n−1）：origin 头部静段 S_{k-1} 携带扭转 Rx(α_{k-1})，
-        //   而显式累积帧相对 DH 帧的回拉恰为 Rx(−α_{k-1})——两者相消，关节
-        //   系内方向＝ez＝(0,0,1)（世界轴向＝累积帧 R·origin.R·ez，展开后
-        //   ＝R_{0,k-1}·ez＝z_{k-1}，F-591 口径不变）；
-        //   末关节：本关节静段 S_k 的 Rx(α_k) 留在本关节 origin 旋转尾部，
-        //   须由 axis 吸收：origin.R·axis＝Rx(α_k)·ez ⇒
-        //   axis＝Rx(−α_k)·ez＝(0, sinα_k, cosα_k)（解析元素；归一化为
-        //   防御性，数学上恒为单位向量）。
-        if (isLast) {
-            entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
-                normalized(rw::math::Vector3D<double>(
-                    0.0, std::sin(joint.dh.alpha), std::cos(joint.dh.alpha))),
-                core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
-                                            std::nullopt, std::nullopt,
-                                            std::string("dh-to-explicit")));
-        } else {
-            entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
-                rw::math::Vector3D<double>(0.0, 0.0, 1.0),
-                core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
-                                            std::nullopt, std::nullopt,
-                                            std::string("dh-to-explicit")));
-        }
+        entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            rw::math::Vector3D<double>(0.0, 0.0, 1.0),
+            core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
+                std::nullopt, std::nullopt, std::string("dh-to-explicit")));
         entry.origin = core::SourcedValue<JointPose>::provided(
             JointPose(origin),
             core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
@@ -1304,6 +1253,7 @@ ExpandOutcome expandDhChain(const DhChain& chain)
         // 静段前移：本关节的 S_k 成为下一关节 origin 的头部（F-631 拆分）。
         prevStatic = dhStaticSegment(joint.dh.a, joint.dh.alpha);
     }
+    out.flangeOffset = prevStatic;
     return out;
 }
 
@@ -1346,7 +1296,7 @@ std::string jointContext(std::size_t index, const std::string& localName)
 // IDhExplicitConverter 产品实现
 // =====================================================================
 
-ExpandOutcome DhExplicitConverter::dhToExplicit(const DhChain& chain,
+dh::ExpandOutcome DhExplicitConverter::dhToExplicit(const DhChain& chain,
                                                 std::vector<core::DiagnosticRecord>& /*diags*/) const
 {
     // 本方法两个状态都不产诊断（见头注——输入契约违约的错误面＝DhErrorCode
@@ -1642,6 +1592,7 @@ std::optional<runtime::RobotDesignDescription> buildChainDescription(
 {
     const RobotDesign& design = ws.design;
     runtime::RobotDesignDescription desc;
+    desc.flangeOffset = design.flangeOffset;
     desc.descriptionContractVersion = 1;  // ≥1（§4.3.1——等价验证内部构造恒 1）
     // 机器人局部名：displayName 非空即用（呈现名不入编译身份——但名称面
     // 须非空合法）；空则确定性回退 "robot"（两侧同规——对照不受影响）。
@@ -1685,7 +1636,7 @@ std::optional<runtime::RobotDesignDescription> buildChainDescription(
             entry.maxAcceleration = joint.maxAcceleration;
             chain.joints.push_back(std::move(entry));
         }
-        const ExpandOutcome expanded = expandDhChain(chain);
+        const dh::ExpandOutcome expanded = expandDhChain(chain);
         if (!expanded.ok) {
             // 展开失败（空链/基座混入——合法工作集不可达；防御面）。
             failure = std::string("DH 权威链展开失败：")
@@ -1693,6 +1644,7 @@ std::optional<runtime::RobotDesignDescription> buildChainDescription(
             return std::nullopt;
         }
         geometry = std::move(expanded.joints);
+        desc.flangeOffset = expanded.flangeOffset * desc.flangeOffset;
     }
 
     // ---- 关节→JointDescription 映射（★ 零位折叠纪律——见下）----
@@ -1778,37 +1730,34 @@ std::optional<runtime::RobotDesignDescription> buildChainDescription(
 }
 
 /**
- * @brief RobWork 零位构型（q_rw=0）FK 逐关节累积（等价验证的对照面——双方同规）。
- *
- * 约定（固定、两侧一致）：T_i = T_{i-1}·origin_i·R(axis_i, zeroOffset_i)。
- * 零位语义注：Description 显式表示已折叠零位（origin 含权威零位旋转、
- * CanonicalJoint.zeroOffset 恒 0——CompilerImpl S5 v0.12 登记），故本函数
- * 的 zeroOffset 旋转对 S1～S5 产物为恒等占位——保留该因子是为与 runtime
- * 契约面语义对齐（若对端后续承载真实零位，对照面无需变更）；权威零位
- * 对齐的检验落在两侧折叠后的 origin 一致性上。
- *
- * @param model [in] 分段编译产物（S5 CanonicalModel——只读）
- * @return 逐关节世界位姿（链序；joints 空则空）
+ * @brief F03：固定、确定性的边界与非零混合构型；活动关节按链序，单位 rad/m。
+ * @param model [in] runtime 规范链；不改 bounds/workingRange。
+ * @return 零位/中性位、各轴边界、整链边界及交错内点。无界轴用 ±0.7 SI 探测。
  */
-std::vector<rw::math::Transform3D<double>> zeroConfigFK(const runtime::CanonicalModel& model)
+std::vector<std::vector<double>> equivalenceConfigurations(const runtime::CanonicalModel& model)
 {
-    std::vector<rw::math::Transform3D<double>> frames;
-    const runtime::RobotChain& chain = model.chain();
-    frames.reserve(chain.joints.size());
-    rw::math::Transform3D<double> acc = model.world().T_world_base;
-    for (const runtime::CanonicalJoint& joint : chain.joints) {
-        // 零位旋转（轴角 Rodrigues——与 axisAngleRotation 同一实现，双方
-        // 同规；axis 为 S5 规格化单位向量）。
-        const rw::math::Rotation3D<double> zeroRot = axisAngleRotation(
-            joint.axis, joint.zeroOffset);
-        acc = transformMul(
-            transformMul(acc, rw::math::Transform3D<double>(joint.origin.P(),
-                                                            joint.origin.R())),
-            rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.0, 0.0, 0.0),
-                                          zeroRot));
-        frames.push_back(acc);
+    std::vector<double> neutral, lower, upper;
+    for (const auto& j : model.chain().joints) {
+        if (j.type == runtime::JointType::Fixed) { continue; }
+        const double lo = j.bounds ? j.bounds->lower : (j.workingRange ? j.workingRange->lower : -.7);
+        const double hi = j.bounds ? j.bounds->upper : (j.workingRange ? j.workingRange->upper : .7);
+        lower.push_back(lo); upper.push_back(hi);
+        neutral.push_back(std::clamp(0., lo, hi));
     }
-    return frames;
+    std::vector<std::vector<double>> samples{neutral, lower, upper};
+    for (std::size_t i = 0; i < neutral.size(); ++i) {
+        auto q = neutral; q[i] = lower[i]; samples.push_back(q);
+        q[i] = upper[i]; samples.push_back(q);
+    }
+    for (int k = 0; k < 4; ++k) {
+        std::vector<double> q;
+        for (std::size_t i = 0; i < neutral.size(); ++i) {
+            const double fraction = ((i + k) % 4 + 1.) / 5.;
+            q.push_back((1. - fraction) * lower[i] + fraction * upper[i]);
+        }
+        samples.push_back(std::move(q));
+    }
+    return samples;
 }
 
 }  // namespace
@@ -1850,31 +1799,41 @@ EquivalenceReport DhExplicitConverter::verifyEquivalent(const ModelingWorkingSet
     report.compileOk = true;
 
     // ---- FK 对照（附录 D 第 4 项：位置 ≤1×10⁻⁹ m 且姿态 ≤1×10⁻⁹ rad）----
-    const std::vector<rw::math::Transform3D<double>> framesA = zeroConfigFK(compiledA.get());
-    const std::vector<rw::math::Transform3D<double>> framesB = zeroConfigFK(compiledB.get());
-    if (framesA.size() != framesB.size()) {
-        // S5 产物链长应与输入一致（runtime 编译器不变量）——不一致＝编译
-        // 语义缺陷，按编译失败面报告（不静默对照）。
+    const auto samples = equivalenceConfigurations(compiledA.get());
+    const auto sampledA = runtime::sampleCompiledChain(compiledA.get(), samples);
+    const auto sampledB = runtime::sampleCompiledChain(compiledB.get(), samples);
+    if (!sampledA.ok() || !sampledB.ok()) {
         report.compileOk = false;
-        report.failureDetail = "两侧编译产物链长不一致（编译器不变量违例）";
+        report.failureDetail = !sampledA.ok() ? sampledA.error().what() : sampledB.error().what();
         return report;
     }
     bool equivalent = true;
-    for (std::size_t i = 0; i < framesA.size(); ++i) {
-        DhJointDeviation dev;
-        dev.jointIndex = i;
-        dev.originPositionDeviation = (framesA[i].P() - framesB[i].P()).norm2();
-        dev.axisAngleDeviation = rotationAngleBetween(framesA[i].R(), framesB[i].R());
-        report.maxPositionDeviation = std::max(report.maxPositionDeviation,
-                                               dev.originPositionDeviation);
-        report.maxOrientationDeviation = std::max(report.maxOrientationDeviation,
-                                                  dev.axisAngleDeviation);
-        report.jointDeviations.push_back(dev);
-        // 全称判定：任一关节任一项超差即不等价（逐关节逐项——与第 5 项
-        // 同纪律，防误差互相掩盖）。
-        if (dev.originPositionDeviation > kFkEquivalencePositionToleranceM
-            || dev.axisAngleDeviation > kFkEquivalenceOrientationToleranceRad) {
-            equivalent = false;  // 不短路——全量偏差明细随报告（全量列出纪律）
+    for (std::size_t q = 0; q < samples.size(); ++q) {
+        const auto& framesA = sampledA.get().at(q);
+        const auto& framesB = sampledB.get().at(q);
+        if (framesA.size() != framesB.size()) {
+            report.compileOk = false;
+            report.failureDetail = "两侧真实编译链/工具帧数不一致";
+            return report;
+        }
+        for (std::size_t i = 0; i < framesA.size(); ++i) {
+            DhJointDeviation dev;
+            dev.jointIndex = i;
+            dev.originPositionDeviation = (framesA[i].P() - framesB[i].P()).norm2();
+            dev.axisAngleDeviation = rotationAngleBetween(framesA[i].R(), framesB[i].R());
+            report.maxPositionDeviation = std::max(report.maxPositionDeviation, dev.originPositionDeviation);
+            report.maxOrientationDeviation = std::max(report.maxOrientationDeviation, dev.axisAngleDeviation);
+            // 保留逐帧报告合同：各构型的最大偏差归并到同一稳定链序条目。
+            if (report.jointDeviations.size() <= i) { report.jointDeviations.push_back(dev); }
+            else {
+                auto& maximum = report.jointDeviations[i];
+                maximum.originPositionDeviation = std::max(maximum.originPositionDeviation, dev.originPositionDeviation);
+                maximum.axisAngleDeviation = std::max(maximum.axisAngleDeviation, dev.axisAngleDeviation);
+            }
+            // NaN/Inf 不得越过比较门；保留原有 1e-9 m/rad 严格阈值，不放宽。
+            if (!std::isfinite(dev.originPositionDeviation) || !std::isfinite(dev.axisAngleDeviation) ||
+                dev.originPositionDeviation > kFkEquivalencePositionToleranceM ||
+                dev.axisAngleDeviation > kFkEquivalenceOrientationToleranceRad) { equivalent = false; }
         }
     }
     report.equivalent = equivalent;
@@ -1976,7 +1935,7 @@ AuthoritySwitchDecision prepareAuthoritySwitch(const ModelingWorkingSet& draft,
         entry.workingRange = joint.workingRange;
         chain.joints.push_back(std::move(entry));
     }
-    const ExpandOutcome expanded = expandDhChain(chain);
+    const dh::ExpandOutcome expanded = expandDhChain(chain);
     if (!expanded.ok
         || expanded.joints.size() != candidate.design.joints.size()) {
         // 判定选定解回展开失败＝实现缺陷（Exact 解必可展开——防御面，
@@ -1992,6 +1951,8 @@ AuthoritySwitchDecision prepareAuthoritySwitch(const ModelingWorkingSet& draft,
         candidate.design.joints[i].axis = expanded.joints[i].axis;
         candidate.design.joints[i].origin = expanded.joints[i].origin;
     }
+    // F01/F03：显式独立末段保留；候选 DH 自带末段先抵消，再由真实编译门验证。
+    candidate.design.flangeOffset = rw::math::inverse(expanded.flangeOffset) * baseline.design.flangeOffset;
     decision.candidate = std::move(candidate);
 
     // ---- 门④ 等价验证（附录 D 第 4 项 FK 对照——S1～S5 只读分段）----

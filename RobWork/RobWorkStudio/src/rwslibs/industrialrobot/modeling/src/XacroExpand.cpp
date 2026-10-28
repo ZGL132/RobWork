@@ -930,11 +930,11 @@ bool detectIncludeCycle(Engine& engine, const ValidatedXacroSource& source)
 // →解析→展开走查→出口装配）
 // =====================================================================
 
-ExpandOutcome XacroExpandService::expand(const ValidatedXacroSource& source,
+xacro::ExpandOutcome XacroExpandService::expand(const ValidatedXacroSource& source,
                                          const XacroSubstitutionMap& substitutions,
                                          std::vector<core::DiagnosticRecord>& diags) const
 {
-    ExpandOutcome outcome;
+    xacro::ExpandOutcome outcome;
 
     // 来源记录恒装配（§6.5"来源记录"——成功失败都成立：digest 来自 io
     // 快照，substitutions 保序透传；mapXacroExpanded 的第二输入）。路径

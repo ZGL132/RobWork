@@ -565,13 +565,11 @@ TEST(MdlCanonicalBridge, JointsDhAuthorityExpandsToExplicit_WP13T12_ACC1)
                                         0.0, std::cos(alpha), -std::sin(alpha),
                                         0.0, std::sin(alpha), std::cos(alpha));
     // Rot_z(θ)·(a,0,d)：x'＝a·cosθ、y'＝a·sinθ、z'＝d。
-    const rwmath::Vector3D<double> expectP(aM * std::cos(theta),
-                                           aM * std::sin(theta), dM);
-    const rwmath::Rotation3D<double> t = expectedRotMul(rz, rx);
-    // 展开轴＝Rx(−α)·ez（关节系内方向——F-591；解析元素 (0, sinα, cosα)）。
-    const rwmath::Vector3D<double> expectAxis(0.0, std::sin(alpha), std::cos(alpha));
-    const rwmath::Rotation3D<double> folded =
-        expectedRotMul(t, expectedAxisAngle(expectAxis, q0));
+    const rwmath::Vector3D<double> expectP(0,0,dM);
+    const rwmath::Vector3D<double> expectAxis(0,0,1);
+    const auto folded = expectedRotMul(rz, expectedAxisAngle(expectAxis,q0));
+    EXPECT_TRUE(sameTransform(built.get().flangeOffset,
+        rwmath::Transform3D<double>(rwmath::Vector3D<double>(aM,0,0),rx)));
 
     // 轴＝Rx(−α)·ez（§7.4 F-591 公式）——两侧浮点求值序不同，以 1e-12 近等
     // 比较（浮点累乘的容差纪律，T09 同款）。
@@ -605,7 +603,7 @@ TEST(MdlCanonicalBridge, JointsDhAuthorityExpandsToExplicit_WP13T12_ACC1)
     const rwmath::Rotation3D<double> expectAuthZero = expectedRotMul(rzAuth, rx);
     for (std::size_t r = 0; r < 3; ++r) {
         for (std::size_t c = 0; c < 3; ++c) {
-            EXPECT_NEAR(jd.origin.R()(r, c), expectAuthZero(r, c), 1e-12)
+            EXPECT_NEAR((jd.origin * built.get().flangeOffset).R()(r, c), expectAuthZero(r, c), 1e-12)
                 << "权威零位旋转 Rz(θ+q0)·Rx(α) (" << r << "," << c << ")";
         }
     }
@@ -687,11 +685,8 @@ TEST(MdlCanonicalBridge, DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F59
                       + rwmath::Vector3D<double>(rows[i - 1].a, 0.0, 0.0);
         }
         if (isLast) {
-            // 链尾静段 S_i＝Tx(a_i)Rx(α_i)：旋转 Rx 右乘，平移经合成旋转
-            // 左乘（4×4 语义的 3×3/平移分解）。
-            originR = expectedRotMul(originR, refRx(row.alpha));
-            originP = originP + expectedRotVec(originR, rwmath::Vector3D<double>(
-                                                    row.a, 0.0, 0.0));
+            explicitDesign.flangeOffset = rwmath::Transform3D<double>(
+                rwmath::Vector3D<double>(row.a,0,0),refRx(row.alpha));
         }
         exJoint.origin = core::SourcedValue<JointPose>::provided(
             JointPose(rwmath::Transform3D<double>(originP, originR)), userProv());
@@ -699,9 +694,7 @@ TEST(MdlCanonicalBridge, DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F59
         // 回拉相消）；末关节 (0,sinα,cosα)（尾部静段 Rx(α_i) 由 axis 吸收
         // ——F-631/F-591 卡面公式）。
         exJoint.axis = core::SourcedValue<rwmath::Vector3D<double>>::provided(
-            isLast ? rwmath::Vector3D<double>(0.0, std::sin(row.alpha),
-                                              std::cos(row.alpha))
-                   : rwmath::Vector3D<double>(0.0, 0.0, 1.0),
+            rwmath::Vector3D<double>(0,0,1),
             userProv());
         explicitDesign.joints.push_back(std::move(exJoint));
     }
@@ -721,6 +714,7 @@ TEST(MdlCanonicalBridge, DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F59
     auto exBuilt = buildFrom(exClosure);
     ASSERT_TRUE(exBuilt.ok()) << exBuilt.error().detail;
 
+    EXPECT_TRUE(sameTransform(dhBuilt.get().flangeOffset, exBuilt.get().flangeOffset));
     // 逐元素相等（DH 派生 vs 显式直写——零位对齐的判别面）。
     ASSERT_EQ(dhBuilt.get().joints.size(), exBuilt.get().joints.size());
     for (std::size_t i = 0; i < dhBuilt.get().joints.size(); ++i) {

@@ -428,6 +428,8 @@ struct JointFrictionDescription {
  * 可默认构造，便于增量装配）。
  */
 struct RobotDesignDescription {
+    /// F01：末关节运动之后的固定段 T_jointEnd_flange（m/rad），由 runtime 构建。
+    rw::math::Transform3D<double> flangeOffset = detail::identityTransform3D();
     /// 契约版本（进入编译缓存键，§9.4；合法 ≥1——§4.3.1 同口径）。
     std::uint32_t descriptionContractVersion = 0;
     std::string robotLocalName; ///< 机器人局部名（进入名称映射设备作用域，

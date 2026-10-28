@@ -201,6 +201,7 @@ bool RobotDesign::operator==(const RobotDesign& o) const
         && basePlacement == o.basePlacement
         && joints == o.joints
         && links == o.links
+        && transformEqual(flangeOffset, o.flangeOffset)
         && defaultTcp == o.defaultTcp
         && toolRefs == o.toolRefs
         && sceneRefs == o.sceneRefs
@@ -376,6 +377,9 @@ std::vector<InvariantViolation> checkInvariants(const RobotDesign& design)
 
     // ---- I-MDL-3（单位合法）：Provided 值全部有限（NaN/Inf 非法）----
     {
+        if (!allFiniteOf(JointPose(design.flangeOffset))) {
+            addViolation(out, InvariantId::IMdl3, "flangeOffset");
+        }
         // 基座：customEaa（rad）/basePosition（m）
         checkSourcedFinite(out, InvariantId::IMdl3, design.basePlacement.customEaa,
                            "basePlacement.customEaa");

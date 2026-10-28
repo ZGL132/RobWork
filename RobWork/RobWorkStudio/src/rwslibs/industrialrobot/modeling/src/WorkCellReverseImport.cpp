@@ -1131,8 +1131,9 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
         }
         std::vector<core::DiagnosticRecord> dhDiags;
         const DhExplicitConverter converter;
-        const ExpandOutcome expanded = converter.dhToExplicit(dhChain, dhDiags);
+        const dh::ExpandOutcome expanded = converter.dhToExplicit(dhChain, dhDiags);
         if (expanded.ok) {
+            draft.flangeOffset = expanded.flangeOffset;
             // 展开产物即完整 JointEntry（身份/名称/zeroOffset 透传；axis/
             // origin 来源标记＝DerivedReadOnly＋dh-to-explicit——如实表达
             // "由 DH 派生"的提取事实；mapped 清单逐关节登记）。

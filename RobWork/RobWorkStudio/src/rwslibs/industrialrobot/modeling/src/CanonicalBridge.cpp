@@ -758,7 +758,8 @@ std::optional<ModelingError> mapBodyData(const BodyData& body,
 runtime::Expected<std::vector<JointEntry>, ModelingError>
     expandStandardDhGeometry(const RobotDesign& root,
                              const IDhExplicitConverter& converter,
-                             std::vector<core::DiagnosticRecord>& diags)
+                             std::vector<core::DiagnosticRecord>& diags,
+                             rw::math::Transform3D<double>& flangeOffset)
 {
     DhChain chain;
     chain.joints.reserve(root.joints.size());
@@ -803,7 +804,7 @@ runtime::Expected<std::vector<JointEntry>, ModelingError>
     }
     // §7.4 无损展开（权威展开，C-5）——空链/基座混入在此不可达（解码门
     // 保证 joints≥1；builder 恒不混入基座变换），错误分支为防御面。
-    const ExpandOutcome expanded = converter.dhToExplicit(chain, diags);
+    const dh::ExpandOutcome expanded = converter.dhToExplicit(chain, diags);
     if (!expanded.ok) {
         return runtime::Expected<std::vector<JointEntry>, ModelingError>::err(
             bridgeError(
@@ -811,6 +812,7 @@ runtime::Expected<std::vector<JointEntry>, ModelingError>
                 {{"detail", std::string(dhErrorCodeToken(expanded.errorCode))}},
                 "DH 权威链展开失败（§7.4——消费方不得到达 Description 构造）"));
     }
+    flangeOffset = expanded.flangeOffset * flangeOffset;
     return runtime::Expected<std::vector<JointEntry>, ModelingError>::ok(
         expanded.joints);
 }
@@ -832,6 +834,7 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
                      std::vector<core::DiagnosticRecord>& diags)
 {
     runtime::RobotDesignDescription desc;
+    desc.flangeOffset = root.flangeOffset;
 
     // ---- ①descriptionContractVersion（§9.1 行 1：建模 schemaVersion——
     // 同源演进 R-MDL-3；解码门已保证主版本受支持，此处防御 0 值）。
@@ -865,7 +868,7 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         // StandardDH 权威：dhDerived 为权威（D-MDL-5——axis/origin 不在
         // 字节内、解码后为 NotProvided 待重算）。展开失败→错误侧携带
         // DhExpandFailed（定位到对象/字段）。
-        auto expanded = expandStandardDhGeometry(root, converter, diags);
+        auto expanded = expandStandardDhGeometry(root, converter, diags, desc.flangeOffset);
         if (!expanded.ok()) {
             return runtime::Expected<runtime::RobotDesignDescription,
                                      ModelingError>::err(expanded.error());

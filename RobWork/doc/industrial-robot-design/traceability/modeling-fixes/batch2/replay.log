@@ -1,0 +1,155 @@
+[==========] Running 14 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 14 tests from ModelingReview
+[ RUN      ] ModelingReview.DhThroughActualRuntimeVsAnalyticNonzeroQ
+ translationError_m=1.594436429147036e-16 rotationElementError=2.2204460492503131e-16DH n=1 scale=0 error=2.2204460492503131e-16 expectedP=Vector3D(0.59169282131090606, -0.23405039460501367, 0.99747585671139183) actualP=Vector3D(0.59169282131090617, -0.23405039460501365, 0.99747585671139194)
+ translationError_m=2.2204460492503131e-16 rotationElementError=1.1102230246251565e-16DH n=1 scale=0.5 error=2.2204460492503131e-16 expectedP=Vector3D(0.54075722637208079, -0.11594195377673407, 1.0154664808347071) actualP=Vector3D(0.54075722637208079, -0.11594195377673407, 1.0154664808347074)
+ translationError_m=1.2412670766236366e-16 rotationElementError=2.2204460492503131e-16DH n=1 scale=-0.69999999999999996 error=2.2204460492503131e-16 expectedP=Vector3D(0.55988613009066324, -0.40301442242306418, 0.94417006805489045) actualP=Vector3D(0.55988613009066335, -0.40301442242306412, 0.94417006805489045)
+ translationError_m=5.5511151231257827e-17 rotationElementError=1.1102230246251565e-16DH n=2 scale=0 error=1.1102230246251565e-16 expectedP=Vector3D(0.64561240079077886, -0.14311300817879608, 1.2164817433390565) actualP=Vector3D(0.64561240079077886, -0.14311300817879602, 1.2164817433390565)
+ translationError_m=7.8504622934188758e-17 rotationElementError=1.6653345369377348e-16DH n=2 scale=0.5 error=1.6653345369377348e-16 expectedP=Vector3D(0.47432805353715635, -0.078668417486569608, 1.2507555354597124) actualP=Vector3D(0.47432805353715629, -0.078668417486569553, 1.2507555354597124)
+ translationError_m=1.5700924586837752e-16 rotationElementError=3.3306690738754696e-16DH n=2 scale=-0.69999999999999996 error=3.3306690738754696e-16 expectedP=Vector3D(0.75948211496514062, -0.37859928504195361, 1.0837135306261143) actualP=Vector3D(0.75948211496514051, -0.37859928504195373, 1.0837135306261143)
+ translationError_m=6.2063353831181828e-17 rotationElementError=3.3306690738754696e-16DH n=6 scale=0 error=3.3306690738754696e-16 expectedP=Vector3D(0.29358575048755986, 0.21955852084252894, 2.2753917818330942) actualP=Vector3D(0.29358575048755992, 0.21955852084252897, 2.2753917818330942)
+ translationError_m=2.6073996056774539e-16 rotationElementError=5.5511151231257827e-16DH n=6 scale=0.5 error=5.5511151231257827e-16 expectedP=Vector3D(0.051429041861960498, -0.48642148662297036, 1.9747710603384661) actualP=Vector3D(0.051429041861960623, -0.4864214866229703, 1.9747710603384663)
+ translationError_m=5.9787339602818165e-16 rotationElementError=4.4408920985006262e-16DH n=6 scale=-0.69999999999999996 error=5.9787339602818165e-16 expectedP=Vector3D(1.7286991187872418, -0.039608368307619407, 1.7953108749418962) actualP=Vector3D(1.7286991187872416, -0.039608368307618852, 1.7953108749418962)
+ translationError_m=3.680231288099056e-16 rotationElementError=5.5511151231257827e-16DH n=7 scale=0 error=5.5511151231257827e-16 expectedP=Vector3D(-0.012720484989200156, 0.0047426960450330999, 2.4696928713314685) actualP=Vector3D(-0.012720484989200143, 0.0047426960450334676, 2.4696928713314685)
+ translationError_m=1.1102230246251565e-16 rotationElementError=6.6613381477509392e-16DH n=7 scale=0.5 error=6.6613381477509392e-16 expectedP=Vector3D(0.32350868122764886, -0.74340677992650139, 2.0095301846715952) actualP=Vector3D(0.32350868122764898, -0.74340677992650139, 2.0095301846715952)
+ translationError_m=5.900916318210353e-16 rotationElementError=6.6613381477509392e-16DH n=7 scale=-0.69999999999999996 error=6.6613381477509392e-16 expectedP=Vector3D(1.9174762811096264, 0.2673539630681121, 2.1026635339659161) actualP=Vector3D(1.9174762811096264, 0.26735396306811249, 2.1026635339659157)
+[       OK ] ModelingReview.DhThroughActualRuntimeVsAnalyticNonzeroQ (2 ms)
+[ RUN      ] ModelingReview.PrismaticOffsetMustTranslateNotRotate
+Prismatic q=0 error= translationError_m=1.1102230246251565e-16 rotationElementError=2.7755575615628914e-171.1102230246251565e-16
+ translationError_m=1.1102230246251565e-16 rotationElementError=2.7755575615628914e-17Prismatic q=0.20000000000000001 error= translationError_m=2.2204460492503131e-16 rotationElementError=2.7755575615628914e-172.2204460492503131e-16
+ translationError_m=2.2204460492503131e-16 rotationElementError=2.7755575615628914e-17Prismatic q=-0.10000000000000001 error= translationError_m=1.5700924586837752e-16 rotationElementError=2.7755575615628914e-171.5700924586837752e-16
+ translationError_m=1.5700924586837752e-16 rotationElementError=2.7755575615628914e-17[       OK ] ModelingReview.PrismaticOffsetMustTranslateNotRotate (0 ms)
+[ RUN      ] ModelingReview.PrismaticVelocityAndAccelerationAreAccepted
+[       OK ] ModelingReview.PrismaticVelocityAndAccelerationAreAccepted (0 ms)
+[ RUN      ] ModelingReview.StandardDhPreservesJointRateLimits
+[       OK ] ModelingReview.StandardDhPreservesJointRateLimits (0 ms)
+[ RUN      ] ModelingReview.AuthoritySwitchMustPreserveNonzeroQAxis
+ translationError_m=5.5511151231257827e-17 rotationElementError=0 translationError_m=2.7755575615628914e-17 rotationElementError=0[       OK ] ModelingReview.AuthoritySwitchMustPreserveNonzeroQAxis (5 ms)
+[ RUN      ] ModelingReview.StructureAddRemoveAddMustNotDuplicateIds
+structure invariant I-MDL-2 joints[1].objectId
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(90): error: Value of: violations.empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] ModelingReview.StructureAddRemoveAddMustNotDuplicateIds (0 ms)
+[ RUN      ] ModelingReview.StructureReorderKeepsPoseAndDrivetrainBinding
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(91): error: Expected equality of these values:
+  ws.poseSetObject->entries[0].jointConfiguration[1]
+    Which is: 0.20000000000000001
+  .1
+    Which is: 0.10000000000000001
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(91): error: Expected equality of these values:
+  ws.drivetrainObject->ratioPerJoint[1].value()
+    Which is: 11
+  10.
+    Which is: 10
+
+[  FAILED  ] ModelingReview.StructureReorderKeepsPoseAndDrivetrainBinding (0 ms)
+[ RUN      ] ModelingReview.RejectedDrivetrainEditMustNotMutate
+rejected drivetrain edit kind=0 createdObject=1 createdRef=1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(92): error: Expected equality of these values:
+  ws
+    Which is: 1168-byte object <01-00 00-00 F8-01 00-00 70-72 6F-62 65-00 00-00 00-00 00-00 00-00 00-00 05-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 F8-01 00-00 00-00 00-00 F8-01 00-00 01-00 00-00 FF-7F 00-00 ... 40-00 00-00 00-00 00-00 F3-FC B5-58 FF-7F 00-00 90-40 08-E0 F8-01 00-00 01-00 00-00 00-00 00-00 70-43 08-E0 F8-01 00-00 00-00 04-E0 F8-01 00-00 00-00 00-00 F8-01 00-00 01-00 00-00 00-00 00-00>
+  before
+    Which is: 1168-byte object <01-00 00-00 00-00 00-00 70-72 6F-62 65-00 00-00 00-00 00-00 00-00 00-00 05-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 F8-01 00-00 ... F8-00 00-00 00-00 00-00 D9-50 E4-55 FF-7F 00-00 88-9D 07-E0 F8-01 00-00 18-9D 07-E0 F8-01 00-00 60-9D 07-E0 F8-01 00-00 21-E0 59-CF FE-7F 00-00 40-9D 07-E0 F8-01 00-00 00-9C 07-E0 F8-01 00-00>
+
+rejected drivetrain edit kind=1 createdObject=1 createdRef=1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(92): error: Expected equality of these values:
+  ws
+    Which is: 1168-byte object <01-00 00-00 F8-01 00-00 70-72 6F-62 65-00 00-00 00-00 00-00 00-00 00-00 05-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 F8-01 00-00 00-00 00-00 F8-01 00-00 01-00 00-00 FF-7F 00-00 ... 40-00 00-00 00-00 00-00 F3-FC B5-58 FF-7F 00-00 90-40 08-E0 F8-01 00-00 01-00 00-00 00-00 00-00 70-43 08-E0 F8-01 00-00 00-00 04-E0 F8-01 00-00 00-00 00-00 F8-01 00-00 01-00 00-00 00-00 00-00>
+  before
+    Which is: 1168-byte object <01-00 00-00 00-00 00-00 70-72 6F-62 65-00 00-00 00-00 00-00 00-00 00-00 05-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 F8-01 00-00 ... F8-00 00-00 00-00 00-00 D9-50 E4-55 FF-7F 00-00 88-9D 07-E0 F8-01 00-00 18-9D 07-E0 F8-01 00-00 60-9D 07-E0 F8-01 00-00 21-E0 59-CF FE-7F 00-00 40-9D 07-E0 F8-01 00-00 00-9C 07-E0 F8-01 00-00>
+
+rejected drivetrain edit kind=2 createdObject=1 createdRef=1
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(92): error: Expected equality of these values:
+  ws
+    Which is: 1168-byte object <01-00 00-00 F8-01 00-00 70-72 6F-62 65-00 00-00 00-00 00-00 00-00 00-00 05-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 F8-01 00-00 00-00 00-00 F8-01 00-00 01-00 00-00 FF-7F 00-00 ... 40-00 00-00 00-00 00-00 F3-FC B5-58 FF-7F 00-00 90-40 08-E0 F8-01 00-00 01-00 00-00 00-00 00-00 70-43 08-E0 F8-01 00-00 00-00 04-E0 F8-01 00-00 00-00 00-00 F8-01 00-00 01-00 00-00 00-00 00-00>
+  before
+    Which is: 1168-byte object <01-00 00-00 00-00 00-00 70-72 6F-62 65-00 00-00 00-00 00-00 00-00 00-00 05-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 F8-01 00-00 ... F8-00 00-00 00-00 00-00 D9-50 E4-55 FF-7F 00-00 88-9D 07-E0 F8-01 00-00 18-9D 07-E0 F8-01 00-00 60-9D 07-E0 F8-01 00-00 21-E0 59-CF FE-7F 00-00 40-9D 07-E0 F8-01 00-00 00-9C 07-E0 F8-01 00-00>
+
+[  FAILED  ] ModelingReview.RejectedDrivetrainEditMustNotMutate (0 ms)
+[ RUN      ] ModelingReview.WorkCellRateUnitsAndInvalidText
+WC rate input=180 state=0 actual=180
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(94): error: The difference between j.maxVelocity.value() and 3.141592653589793 is 176.85840734641022, which exceeds 1e-12, where
+j.maxVelocity.value() evaluates to 180,
+3.141592653589793 evaluates to 3.1415926535897931, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(94): error: The difference between j.maxAcceleration.value() and 3.141592653589793 is 176.85840734641022, which exceeds 1e-12, where
+j.maxAcceleration.value() evaluates to 180,
+3.141592653589793 evaluates to 3.1415926535897931, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+WC rate input=bad state=0 actual=0
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(94): error: Expected equality of these values:
+  j.maxVelocity.state()
+    Which is: 4-byte object <00-00 00-00>
+  c::FieldState::Invalid
+    Which is: 4-byte object <03-00 00-00>
+
+[  FAILED  ] ModelingReview.WorkCellRateUnitsAndInvalidText (0 ms)
+[ RUN      ] ModelingReview.UrdfEmptyOrMalformedMustNotThrow
+URDF variant=<axis xyz=''/>
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(95): error: Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn't throw an exception.
+  Actual: it throws sdurws::ird::core::CoreError with description "core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）".
+
+URDF variant=<limit lower='-1' upper='1' velocity='bad'/>
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(95): error: Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn't throw an exception.
+  Actual: it throws sdurws::ird::core::CoreError with description "core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）".
+
+URDF variant=<limit lower='' upper='1'/>
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(95): error: Expected: ModelImportMapper{}.mapUrdf(xmlSource(xml),{},d) doesn't throw an exception.
+  Actual: it throws sdurws::ird::core::CoreError with description "core/provenance/invalid: 原始输入串不得为空（非法态的存在意义是保留原串）".
+
+[  FAILED  ] ModelingReview.UrdfEmptyOrMalformedMustNotThrow (0 ms)
+[ RUN      ] ModelingReview.DiffMustShowPartAndRateChanges
+diff kind=0 count=0
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(96): error: Expected: (count) > (0u), actual: 0 vs 0
+
+diff kind=1 count=0
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(96): error: Expected: (count) > (0u), actual: 0 vs 0
+
+[  FAILED  ] ModelingReview.DiffMustShowPartAndRateChanges (0 ms)
+[ RUN      ] ModelingReview.PackageUiImportMustKeepParts
+规范包导入报告
+
+部件对象：1
+固化资源：0
+
+确认后将替换当前草稿。
+应用语义：经『应用草稿』分配新模型根。
+UI imported toolRefs=1 toolObjects=0
+C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(98): error: Expected equality of these values:
+  session.draft.toolObjects.size()
+    Which is: 0
+  1u
+    Which is: 1
+
+[  FAILED  ] ModelingReview.PackageUiImportMustKeepParts (38 ms)
+[ RUN      ] ModelingReview.DhZeroOffsetControl
+DH zeroOffset=0 q=0 translationError_m=2.2887833992611187e-16 rotationElementError=1.2490009027033011e-16
+DH zeroOffset=0 q=0.40000000000000002 translationError_m=3.2487068343022356e-16 rotationElementError=6.6613381477509392e-16
+[       OK ] ModelingReview.DhZeroOffsetControl (0 ms)
+[ RUN      ] ModelingReview.GeometryLocalPoseReachesProductionWorkCell
+geometry localPose actual=Transform3D(Vector3D(0, 0, 0), Rotation3D(1, 0, 0, 0, 1, 0, 0, 0, 1)) expected=Transform3D(Vector3D(1, 2, 3), Rotation3D(0.97517032720181596, -0.21871076129167871, -0.034762563776534999, 0.19767681165408388, 0.93043206365703013, -0.30857746685912768, 0.099833416646828155, 0.29404383655185584, 0.95056378592206336))
+ translationError_m=3.7416573867739413 rotationElementError=0.30857746685912768C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\build\modeling-review-20261028\probe.cpp(125): error: Expected: (error(g->getTransform(),gr.localTransform)) <= (1e-9), actual: 3.7416573867739413 vs 1e-09
+
+[  FAILED  ] ModelingReview.GeometryLocalPoseReachesProductionWorkCell (12 ms)
+[----------] 14 tests from ModelingReview (61 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 1 test suite ran. (61 ms total)
+[  PASSED  ] 6 tests.
+[  FAILED  ] 8 tests, listed below:
+[  FAILED  ] ModelingReview.StructureAddRemoveAddMustNotDuplicateIds
+[  FAILED  ] ModelingReview.StructureReorderKeepsPoseAndDrivetrainBinding
+[  FAILED  ] ModelingReview.RejectedDrivetrainEditMustNotMutate
+[  FAILED  ] ModelingReview.WorkCellRateUnitsAndInvalidText
+[  FAILED  ] ModelingReview.UrdfEmptyOrMalformedMustNotThrow
+[  FAILED  ] ModelingReview.DiffMustShowPartAndRateChanges
+[  FAILED  ] ModelingReview.PackageUiImportMustKeepParts
+[  FAILED  ] ModelingReview.GeometryLocalPoseReachesProductionWorkCell
+
+ 8 FAILED TESTS

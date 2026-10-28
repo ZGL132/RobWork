@@ -34,7 +34,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -71,7 +71,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -108,7 +108,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -145,7 +145,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -182,7 +182,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -219,7 +219,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -256,7 +256,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
@@ -311,7 +311,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
@@ -354,7 +354,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -393,7 +393,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -432,7 +432,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -471,7 +471,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -510,7 +510,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -549,7 +549,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -588,7 +588,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -627,7 +627,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -666,7 +666,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -705,7 +705,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -744,7 +744,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -783,7 +783,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -822,7 +822,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -861,7 +861,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -900,7 +900,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -939,7 +939,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -978,7 +978,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -1017,7 +1017,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -1054,7 +1054,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditEvidence": [
@@ -1109,7 +1109,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditEvidence": [
@@ -1164,7 +1164,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditEvidence": [
@@ -1219,7 +1219,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditEvidence": [
@@ -1274,7 +1274,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "auditEvidence": [
@@ -1320,8 +1320,8 @@
           "symbol": "WorkCellCompiler.cpp",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellCompiler.cpp",
           "startLine": 1,
-          "endLine": 140,
-          "sha256": "db25c087784775d17d1f97e7f155e7090c357ab14cfaace6c100cea02f51eb38"
+          "endLine": 139,
+          "sha256": "11984773a4ce55925c0001f59aac4506b36b3943b5ec5f0c97a62c32e0b56b8a"
         }
       ],
       "targets": [
@@ -1340,7 +1340,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1367,8 +1367,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "linkCylinderRadius",
           "qualifiedSymbol": "sdurws::ird::runtime::linkCylinderRadius",
-          "startLine": 141,
-          "endLine": 157,
+          "startLine": 140,
+          "endLine": 156,
           "sha256": "474d183e70111b9cc13c2aadcb9dc1675cfc80c625c032ef8bd965f304e8e479"
         }
       ],
@@ -1388,7 +1388,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1415,8 +1415,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "attachPrimitive",
           "qualifiedSymbol": "sdurws::ird::runtime::attachPrimitive",
-          "startLine": 158,
-          "endLine": 219,
+          "startLine": 157,
+          "endLine": 218,
           "sha256": "8b9bd18c06ba9d14eec629a1da2ca576aed471ee789f409e0346523c6966641a"
         }
       ],
@@ -1436,7 +1436,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1477,8 +1477,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "meshFormatOf",
           "qualifiedSymbol": "sdurws::ird::runtime::meshFormatOf",
-          "startLine": 220,
-          "endLine": 239,
+          "startLine": 219,
+          "endLine": 238,
           "sha256": "ac7995c7804e42432f14052926203f3b34cf2e50dd71da674eed20630e4d8128"
         }
       ],
@@ -1498,7 +1498,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1525,8 +1525,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "meshContentFormat",
           "qualifiedSymbol": "sdurws::ird::runtime::meshContentFormat",
-          "startLine": 240,
-          "endLine": 273,
+          "startLine": 239,
+          "endLine": 272,
           "sha256": "81d432ddf081a9f4697b912bc059c52f69181f2a3cf70b4574ab2c22cbe54dbd"
         }
       ],
@@ -1546,7 +1546,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1573,8 +1573,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "MeshLocaleScope",
           "qualifiedSymbol": "sdurws::ird::runtime::MeshLocaleScope",
-          "startLine": 274,
-          "endLine": 296,
+          "startLine": 273,
+          "endLine": 295,
           "sha256": "bc7f5e243e9c52572a78e9d9b18cc33e20163feb32fd08774790809bb0fbba45"
         }
       ],
@@ -1594,7 +1594,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1621,8 +1621,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "parseMeshViaTempFile",
           "qualifiedSymbol": "sdurws::ird::runtime::parseMeshViaTempFile",
-          "startLine": 297,
-          "endLine": 355,
+          "startLine": 296,
+          "endLine": 354,
           "sha256": "3345ceb0cdd96059e425eac293c3cfbdefbd3ab7421b2ee3a2072c2e917786c0"
         }
       ],
@@ -1642,7 +1642,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1683,8 +1683,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "MeshReferral",
           "qualifiedSymbol": "sdurws::ird::runtime::MeshReferral",
-          "startLine": 356,
-          "endLine": 365,
+          "startLine": 355,
+          "endLine": 364,
           "sha256": "a557b6a5bb84aaab3e9472f5a45adc72ecc3a9be187c876cf223758c180b5d44"
         }
       ],
@@ -1704,7 +1704,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1731,8 +1731,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "attachResourceMeshGeometry",
           "qualifiedSymbol": "sdurws::ird::runtime::attachResourceMeshGeometry",
-          "startLine": 366,
-          "endLine": 437,
+          "startLine": 365,
+          "endLine": 436,
           "sha256": "9373e67f94b78eebeb35bd488e3a98438c4546263431cbc49c4aa903618fa5c1"
         }
       ],
@@ -1752,7 +1752,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1793,8 +1793,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "axisAlignmentRotation",
           "qualifiedSymbol": "sdurws::ird::runtime::axisAlignmentRotation",
-          "startLine": 438,
-          "endLine": 462,
+          "startLine": 437,
+          "endLine": 461,
           "sha256": "77344992d8c2301875707056c84b82e2ca6f8a50c21b5f1ab8bbaa8a3244d276"
         }
       ],
@@ -1814,7 +1814,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1855,8 +1855,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "spanPlacement",
           "qualifiedSymbol": "sdurws::ird::runtime::spanPlacement",
-          "startLine": 463,
-          "endLine": 490,
+          "startLine": 462,
+          "endLine": 489,
           "sha256": "330407be8ad9f5eb6a89c8025406220393601cc812832985034aa73c5fbad6f2"
         }
       ],
@@ -1876,7 +1876,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1917,8 +1917,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "throwIfError",
           "qualifiedSymbol": "sdurws::ird::runtime::throwIfError",
-          "startLine": 491,
-          "endLine": 503,
+          "startLine": 490,
+          "endLine": 502,
           "sha256": "80e70c25579d16dd75e099fb5912fb44c401dedecef80b72c0967ae286347665"
         }
       ],
@@ -1938,7 +1938,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -1965,8 +1965,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "scopedFullName",
           "qualifiedSymbol": "sdurws::ird::runtime::scopedFullName",
-          "startLine": 504,
-          "endLine": 522,
+          "startLine": 503,
+          "endLine": 521,
           "sha256": "647fc85ddad919e53c0982069432a99ad1b0f290b1dfbef38461acee1aea8a99"
         }
       ],
@@ -1986,7 +1986,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2013,9 +2013,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "compileWorkCell",
           "qualifiedSymbol": "sdurws::ird::runtime::compileWorkCell",
-          "startLine": 523,
-          "endLine": 908,
-          "sha256": "d4aeef63d9b1cd67e533dcbe536bb1a5bd0171d8194543a355e424cd7c679f12"
+          "startLine": 522,
+          "endLine": 909,
+          "sha256": "81e2824765c436a3006b2a445f6b03372f0279e2495084f10cf1a9e44ad7719e"
         }
       ],
       "targets": [
@@ -2034,7 +2034,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2075,8 +2075,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::WorkCellConstView",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::WorkCellConstView",
-          "startLine": 909,
-          "endLine": 924,
+          "startLine": 910,
+          "endLine": 925,
           "sha256": "d604a71e7722d63faab87194b3091b120cc2be21e2a0a06a293986a075060695"
         }
       ],
@@ -2096,7 +2096,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2123,8 +2123,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::workCell",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::workCell",
-          "startLine": 925,
-          "endLine": 930,
+          "startLine": 926,
+          "endLine": 931,
           "sha256": "93153b45fd8f4901c98d472ab764486076af2d4cdc75d63bb87dc5751becac54"
         }
       ],
@@ -2144,7 +2144,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2171,8 +2171,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::findFrame",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findFrame",
-          "startLine": 931,
-          "endLine": 939,
+          "startLine": 932,
+          "endLine": 940,
           "sha256": "693e5791dd7dd1161a4905be35956f55b3e2de778f101cd4bb503e90400f418b"
         }
       ],
@@ -2192,7 +2192,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2233,8 +2233,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::findDevice",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findDevice",
-          "startLine": 940,
-          "endLine": 945,
+          "startLine": 941,
+          "endLine": 946,
           "sha256": "a5b3c3534662a5d27bc8c7f5fcc8b2dbc6b48c92ea079564f58613869ea75556"
         }
       ],
@@ -2254,7 +2254,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2295,8 +2295,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::frameCount",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::frameCount",
-          "startLine": 946,
-          "endLine": 951,
+          "startLine": 947,
+          "endLine": 952,
           "sha256": "357e190a62217fd896906a884694abe9bbc22b92982ddab6573ee151767fbdf8"
         }
       ],
@@ -2316,7 +2316,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2357,8 +2357,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::defaultState",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::defaultState",
-          "startLine": 952,
-          "endLine": 957,
+          "startLine": 953,
+          "endLine": 958,
           "sha256": "93447eb9a203dc5cba2d5bce2965f95675768f9947e9158529a5c3aa76158b85"
         }
       ],
@@ -2378,7 +2378,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2419,9 +2419,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "translateRobWorkError",
           "qualifiedSymbol": "sdurws::ird::runtime::translateRobWorkError",
-          "startLine": 958,
-          "endLine": 1029,
-          "sha256": "a70669882a514e5c4e793ed7b8c6d12a6d02d3c1687886ddb1215fe8d173866a"
+          "startLine": 959,
+          "endLine": 1072,
+          "sha256": "c373bb60990cee5950246fdb9bda865b46e2c7e68263f5cc2fe92cf267133f20"
         }
       ],
       "targets": [
@@ -2440,7 +2440,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2488,7 +2488,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2536,7 +2536,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2584,7 +2584,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2632,7 +2632,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2680,7 +2680,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2728,7 +2728,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2776,7 +2776,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2805,7 +2805,7 @@
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::implementationVersion",
           "startLine": 183,
           "endLine": 190,
-          "sha256": "b82e8659da925592bcb3c02cbd10fa10c35e6fa7a58e3e0228c721a10463fc28"
+          "sha256": "997202031c452fdf481d03208fa023cb8922a75bcaa5c39148f20f66da8db10c"
         }
       ],
       "targets": [
@@ -2824,7 +2824,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2852,8 +2852,8 @@
           "symbol": "CanonicalModelCompiler::runStagesOneToFive",
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::runStagesOneToFive",
           "startLine": 191,
-          "endLine": 630,
-          "sha256": "797c9fa34c8b150b93097ad012cdc1a3cd4671a1a84bbbd2aa680d28ecbeb94a"
+          "endLine": 631,
+          "sha256": "386af70fd8d5258c4b871ad9ec1778e4276da0a495790318f83753bdbd742482"
         }
       ],
       "targets": [
@@ -2872,7 +2872,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2899,8 +2899,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "recheckConsumedResources",
           "qualifiedSymbol": "sdurws::ird::runtime::recheckConsumedResources",
-          "startLine": 631,
-          "endLine": 675,
+          "startLine": 632,
+          "endLine": 676,
           "sha256": "b9741bc205d36f3e3df9d7e86abd7aa20a47293512393d5f10d1f288c1458ea2"
         }
       ],
@@ -2920,7 +2920,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2947,8 +2947,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "CanonicalModelCompiler::compile",
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::compile",
-          "startLine": 676,
-          "endLine": 800,
+          "startLine": 677,
+          "endLine": 801,
           "sha256": "83804ca3736afb8f88929ade311ef8dbcc3444b0d9348eb8971396f7bb3e6790"
         }
       ],
@@ -2968,7 +2968,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -2995,8 +2995,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "CanonicalModelCompiler::buildCanonicalModel",
           "qualifiedSymbol": "sdurws::ird::runtime::CanonicalModelCompiler::buildCanonicalModel",
-          "startLine": 801,
-          "endLine": 832,
+          "startLine": 802,
+          "endLine": 833,
           "sha256": "2cf28f644c633ff67c8dff0ae4fca042b77aaa7cb9f301a40659b6f58f3a7533"
         }
       ],
@@ -3016,7 +3016,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3043,8 +3043,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
           "symbol": "createCanonicalModelCompiler",
           "qualifiedSymbol": "sdurws::ird::runtime::createCanonicalModelCompiler",
-          "startLine": 833,
-          "endLine": 846,
+          "startLine": 834,
+          "endLine": 847,
           "sha256": "24825efa5dc079695ebbfde07ac4c07b282a4c5c24d08e1db8a240dd9b1d4f75"
         }
       ],
@@ -3064,7 +3064,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3112,7 +3112,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3160,7 +3160,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3208,7 +3208,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3256,7 +3256,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3304,7 +3304,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3352,7 +3352,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3400,7 +3400,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3448,7 +3448,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3496,7 +3496,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3544,7 +3544,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3592,7 +3592,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3640,7 +3640,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3688,7 +3688,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3736,7 +3736,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3784,7 +3784,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3832,7 +3832,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3880,7 +3880,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3928,7 +3928,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -3976,7 +3976,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4024,7 +4024,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4072,7 +4072,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4120,7 +4120,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4168,7 +4168,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4216,7 +4216,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4264,7 +4264,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4312,7 +4312,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4360,7 +4360,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4408,7 +4408,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4456,7 +4456,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4504,7 +4504,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4552,7 +4552,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4600,7 +4600,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4648,7 +4648,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4696,7 +4696,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4744,7 +4744,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4792,7 +4792,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4840,7 +4840,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4888,7 +4888,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4936,7 +4936,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -4984,7 +4984,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5032,7 +5032,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5080,7 +5080,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5128,7 +5128,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5176,7 +5176,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5224,7 +5224,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5272,7 +5272,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5320,7 +5320,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5368,7 +5368,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5416,7 +5416,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5464,7 +5464,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5512,7 +5512,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5560,7 +5560,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5608,7 +5608,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5656,7 +5656,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5704,7 +5704,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5752,7 +5752,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5800,7 +5800,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5848,7 +5848,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5896,7 +5896,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5944,7 +5944,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -5992,7 +5992,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6040,7 +6040,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6088,7 +6088,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6136,7 +6136,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6184,7 +6184,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6232,7 +6232,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6280,7 +6280,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6328,7 +6328,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6376,7 +6376,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6424,7 +6424,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6472,7 +6472,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6520,7 +6520,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6568,7 +6568,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6616,7 +6616,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6664,7 +6664,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6712,7 +6712,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6760,7 +6760,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6808,7 +6808,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6856,7 +6856,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6904,7 +6904,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -6952,7 +6952,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7000,7 +7000,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7048,7 +7048,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7096,7 +7096,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7144,7 +7144,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7192,7 +7192,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7240,7 +7240,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7288,7 +7288,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7336,7 +7336,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7384,7 +7384,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7413,7 +7413,7 @@
           "qualifiedSymbol": "test::CompilesTenStageChainAndPublishes_RT_T11_ACC3",
           "startLine": 439,
           "endLine": 487,
-          "sha256": "4e5fdbd005b2358731bdc5012ff1b0a6d06a55d9abacab476ac7c5466a2c85e8"
+          "sha256": "623d444cdd024da683c9bd7e9bcc61c6dc8912e75809f79a3e749cebd47534a1"
         }
       ],
       "targets": [
@@ -7432,7 +7432,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7480,7 +7480,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7528,7 +7528,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7576,7 +7576,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7624,7 +7624,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7672,7 +7672,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7720,7 +7720,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7768,7 +7768,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7816,7 +7816,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7864,7 +7864,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7912,7 +7912,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -7960,7 +7960,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8008,7 +8008,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8056,7 +8056,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8104,7 +8104,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8152,7 +8152,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8200,7 +8200,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8248,7 +8248,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8296,7 +8296,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8344,7 +8344,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8392,7 +8392,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8440,7 +8440,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8488,7 +8488,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8536,7 +8536,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8584,7 +8584,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8632,7 +8632,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
@@ -8693,11 +8693,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
-          "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
+          "sha256": "799ff8fe7f2e5b29fcd3c4ee79ee5bb538a3a38a57e4fc7cb6123d7a9c125217"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
@@ -8759,11 +8759,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
-          "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
+          "sha256": "799ff8fe7f2e5b29fcd3c4ee79ee5bb538a3a38a57e4fc7cb6123d7a9c125217"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
@@ -8838,7 +8838,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelFixture.hpp",
@@ -8905,7 +8905,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "nonOverlapEvidence": {
@@ -8956,7 +8956,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377"
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d"
         }
       ],
       "nonOverlapEvidence": {
@@ -8977,8 +8977,8 @@
           "qualifiedSymbol": "sdurws::ird::runtime::RneConsumptionDevice",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
           "startLine": 1,
-          "sha256": "27d1b17a72611ce4bded8939f1ab92b5a124dc5e1d088009b00c6f3a3c868f84",
-          "endLine": 101
+          "sha256": "5fd3a18b6f99201d7b90693f153c2f0aa7e561fee8844399b5b530682524d974",
+          "endLine": 103
         }
       ],
       "targets": [
@@ -8996,13 +8996,13 @@
       "differences": "RNE 载体工厂公共契约头（runtime 唯一模型 owner 的构造面——2026-10-26 所有者构造面上收裁决；消费者＝WP-07 dynamics 已落位、WP-09 FD 预留）：载体值聚合/所有权生命周期/GAP-RNE-FRAME 薄适配契约注释——上游无对应物（runtime 侧产品职责），nonOverlap＝RNE 消费载体为产品编排语义非上游 API",
       "inputs": [
         {
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
       "nonOverlapEvidence": {
-        "sha256": "27d1b17a72611ce4bded8939f1ab92b5a124dc5e1d088009b00c6f3a3c868f84",
+        "sha256": "5fd3a18b6f99201d7b90693f153c2f0aa7e561fee8844399b5b530682524d974",
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp"
       }
     },
@@ -9018,8 +9018,8 @@
           "qualifiedSymbol": "sdurws::ird::runtime::buildRneConsumptionDevice",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
           "startLine": 1,
-          "sha256": "6c284faa7234ccd632e501de06fc9eeeaeec7b78f16ac8d6d70bfa477accd1d4",
-          "endLine": 219
+          "sha256": "1467d61201f31e261f693cf27a7939a4ab0c3d6356b6eb2d9cf115e763d2dcd9",
+          "endLine": 222
         }
       ],
       "targets": [
@@ -9037,7 +9037,7 @@
       "differences": "工厂实现：CanonicalModel→StateStructure+SerialDevice+RigidDevice 一次性载体——关节帧 tAligned=origin·R_align＋zeroOffset 烘焙＋连杆帧 R_alignᵀ（S6 同源语义）＋GAP-RNE-FRAME BodyInfo 关节帧换算（R_alignᵀ·com、R_alignᵀ·I·R_align——A2 裁决薄适配落点，2026-10-26 构造面上收后归 runtime 单点；§8.2/S7 产品映射/modeling 导出零触碰）；公共边界防御（空链/Fixed/轴单位/偏置有限——InputInvalid）；轴对齐函数与 WorkCellCompiler.cpp 同源（本单元内最小授权面镜像，合并归卫生批）；断开实验＝本工厂换算行去除→dynamics oracle 真实失败",
       "inputs": [
         {
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
         }
       ],
@@ -9065,8 +9065,8 @@
           "qualifiedSymbol": "sdurws::ird::runtime::sdurwsim",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
           "startLine": 1,
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
-          "endLine": 467
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
+          "endLine": 473
         }
       ],
       "targets": [
@@ -9084,13 +9084,13 @@
       "differences": "runtime 构建脚本 REUSE-T52 增列：集成 target_sources 工厂 TU＋冒烟分支框架供给（REUSE-T51 同款 find_package(RobWork)＋同名 ALIAS＋sdurwsim 直含 targets/sdurwsim.cmake——非安装树 RobWorkSimConfig REQUIRED RobWorkStudio 探针在案；sdurwsim 非集成判定符全库零命中）——工厂 TU 双模式编译＝单一实现；门禁代码/词表零改动；本行全文件铺面已解阻原 runtime.CMake.ird_add_gtest pending 行（其 352-364 区段被本包增列推移、pending 审计义务〔宏与上游 ADD_RW_GTEST 对照〕由本行承载并随 REUSE-T52 已迁移状态闭合区段归属",
       "inputs": [
         {
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
       "nonOverlapEvidence": {
-        "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
+        "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
       }
     },
@@ -9126,7 +9126,7 @@
       "differences": "FD 受控引擎会话公共契约头（GAP-FD-BUILD-01 §2 runtime 承接面——业务只提交 SI 广义力/步长，不接触引擎实现类；T52 RNE 契约头行同款形态）：会话 API＋FdFlangeOverride 值面＋适配差异与所有权/生命周期契约注释；move-only（拷贝即共享引擎实例——类型层禁止）；上游无对应物（runtime 侧产品职责），nonOverlap＝会话编排契约为产品语义非上游 API",
       "inputs": [
         {
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
         }
       ],
@@ -9168,7 +9168,7 @@
       "differences": "引擎会话工厂实现（runtime 唯一模型 owner 构造面——2026-10-26 构造面上收裁决同墙复利）：会话私有载体复用 buildRneConsumptionDevice（H1，其公共头预留 WP-09）＋WorkCell(tree) 载体 StateStructure＋ODESimulator（sdurwsim_ode，H1 直接 API）装配；上游适配差异六项为消费边界适配零上游改动（力控仅转动→移动关节 fail-fast／关节摩擦死代码→声明三元组逐子步补偿／初速度不传→Velocity 伺服单子步播种／设备基座帧身份＋父体回溯沿帧链→载体体挂链帧＋重名前缀设备／零几何 FixedBody 越界→基座占位球／设备读回钳制→1e300 限速承载读回不钳制）；RNE 载体 BodyInfo 关节帧表达 vs ODE 体承载帧解释→FD 会话按规范值直写（适配差异 6）；gravityBase 经 R_world_base 投影世界系显式设值（旧 request.gravityBase 治理语义保留）；会话 RAII exitPhysics；断开实验＝step 内驱动输入通道去除→dynamics 解析基准真实失败",
       "inputs": [
         {
-          "sha256": "23b072f9ced2d31c056d0af78272bcbfd8623bee32591e2edb8c6bd93da4a377",
+          "sha256": "cb7a1bd0c5eefc1106f78b43acb849a8f673703d57613b3f46f3621677e4625d",
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt"
         }
       ],

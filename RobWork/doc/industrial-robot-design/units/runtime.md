@@ -1649,3 +1649,10 @@ DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列
 ## 专项修正（POL-T13，2026-10-28）
 
 本条取代历史 MA-02 中 runtime 自持碰撞检测器/规则的当前实现说明：RuntimeCollisionSession 及其公共头、实现、专属测试和直接 proximity/PQP 链接已删除。runtime 继续独占规范模型、编译 WorkCell、名称映射和快照生命周期；碰撞策略与判定由 policy 单一权威供给，宿主经既有 kinematics 适配器连接。历史 MA-02 记录不改写为本轮验收。见 [POL-T13](../traceability/policy-review-r1/IMPLEMENTATION.md)。
+
+
+### modeling 评审修复 F01/F03 交接补充（Owner 2026-10-28）
+
+RobotDesignDescription/RobotChain 的 flangeOffset 是末关节变量之后到末连杆/法兰的固定变换（平移 m、旋转无量纲，旧 modeling 字节默认恒等）。唯一模型 owner runtime 将它挂为 FixedFrame；连杆原始 COM/关于 COM 的惯量仍在该连杆帧表达，RNE 特殊载体只作必要坐标适配，不能修改 canonical 物性定义。canonical 缓存协议升为 1.4、实现版本升为 ird-runtime-canonical-compiler/1.2，禁止复用旧编译产物。
+
+sampleCompiledChain 在 runtime 内调用同一正式 WorkCell 编译器与上游 Device::setQ/Kinematics::worldTframe，仅向 modeling 返回纯值位姿；局部 State/WorkCell 不逃逸且不持久化。集成和独立冒烟使用同一实现；不新增运动学核心。有限多构型验证为接受必要条件，不等同连续空间的数学证明。

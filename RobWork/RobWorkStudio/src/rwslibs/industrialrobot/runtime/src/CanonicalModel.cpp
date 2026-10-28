@@ -620,6 +620,7 @@ CanonicalModel CanonicalModelBuilder::build() const
     }
 
     // 逐关节校验＋轴向规格化（"编译器规格化"是 §4.3.3 axis 行明文的构造步骤）。
+    requireValidTransform(chain.flangeOffset, "chain.flangeOffset");
     for (std::size_t i = 0; i < chain.joints.size(); ++i) {
         CanonicalJoint& j = chain.joints.at(i);
         const std::string what = "chain.joints[" + std::to_string(i) + "]";
@@ -1017,6 +1018,7 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
     if (!vecEqual(m_world.gravityWorld, o.m_world.gravityWorld)) { return false; }
 
     // 链块。
+    if (!transformEqual(m_chain.flangeOffset, o.m_chain.flangeOffset)) { return false; }
     if (!(m_chain.robotObjectId == o.m_chain.robotObjectId
           && m_chain.robotLocalName == o.m_chain.robotLocalName
           && m_chain.deviceName == o.m_chain.deviceName
